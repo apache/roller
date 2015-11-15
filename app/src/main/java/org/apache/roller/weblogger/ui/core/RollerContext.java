@@ -51,7 +51,6 @@ import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 
@@ -65,8 +64,6 @@ public class RollerContext extends ContextLoaderListener
     
     private static ServletContext servletContext = null;
 
-    private WebApplicationContext context = null;
-    
     public RollerContext() {
         super();
     }
@@ -116,21 +113,13 @@ public class RollerContext extends ContextLoaderListener
         // listeners don't initialize in the order specified in 2.3 containers
         super.contextInitialized(sce);
 
-        context = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                RollerContext.servletContext);
-
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
         if (ctxPath == null) {
             log.fatal("Roller requires an exploded WAR file to run.");
             return;
         }
-        if (!ctxPath.endsWith(File.separator)) {
-            ctxPath += File.separator + "resources";
-        } else {
-            ctxPath += "resources";
-        }
-        
+
         // Now prepare the core services of the app so we can bootstrap
         try {
             WebloggerStartup.prepare();
@@ -140,17 +129,18 @@ public class RollerContext extends ContextLoaderListener
         }
         
         
-        // if preparation failed or is incomplete then we are done,
-        // otherwise try to bootstrap the business tier
+        // if preparation incomplete (e.g., database tables need creating)
+        // continue on - BootstrapFilter will start the database install/upgrade process
+        // otherwise bootstrap the business tier
         if (!WebloggerStartup.isPrepared()) {
             StringBuilder buf = new StringBuilder();
-            buf.append("\n--------------------------------------------------------------");
-            buf.append("\nRoller Weblogger startup INCOMPLETE, user interaction required");
-            buf.append("\n--------------------------------------------------------------");
+            buf.append("\n----------------------------------------------------------------");
+            buf.append("\nRoller Weblogger startup INCOMPLETE, user interaction commencing");
+            buf.append("\n----------------------------------------------------------------");
             log.info(buf.toString());
         } else {
             try {
-                WebloggerFactory.bootstrap(context);
+                WebloggerFactory.bootstrap();
             } catch (WebloggerException ex) {
                 log.fatal("Roller Weblogger initialization failed", ex);
             }

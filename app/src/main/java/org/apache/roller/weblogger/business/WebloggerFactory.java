@@ -26,9 +26,13 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.ServletContext;
 
 /**
  * Provides access to the Weblogger instance and bootstraps the business tier.
@@ -82,31 +86,31 @@ public final class WebloggerFactory {
      * Bootstrap the Roller Weblogger business tier
      *
      * There are two possible application contexts, the web-level defined in web.xml
-     * (activated when running the WAR) and the unit tests which use the spring.context.file
-     * in roller.properties.  In the former case, the application passes in the webContext
-     * and this method will use that.
+     * (activated when running the WAR) and the unit tests which use the spring.unittests.context
+     * file in roller.properties.
      *
-     * @param  webContext - ApplicationContext to use if provided
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws RuntimeException If the app cannot be bootstrapped.
      * @throws WebloggerException if any manager cannot be initialized
      */
-    public static void bootstrap(ApplicationContext webContext) throws WebloggerException {
+    public static void bootstrap() throws WebloggerException {
         
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
             throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
-        
         try {
-            if (webContext == null) {
-                String contextFilename = WebloggerConfig.getProperty("spring.context.file");
+            ServletContext servletContext = RollerContext.getServletContext();
+            if (servletContext == null) {
+                // running unit tests
+                String contextFilename = WebloggerConfig.getProperty("spring.unittests.context");
                 if (contextFilename == null) {
-                    throw new IllegalStateException("unable to lookup default spring module via property 'spring.context.file'");
+                    throw new IllegalStateException("unable to lookup Spring unitttests module via property 'spring.unittests.context'");
                 }
                 context = new ClassPathXmlApplicationContext(contextFilename);
             } else {
-                context = webContext;
+                // running the webapp
+                context = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
             }
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
             strategy = context.getBean("jpaPersistenceStrategy", JPAPersistenceStrategy.class);
