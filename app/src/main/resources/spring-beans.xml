@@ -46,7 +46,6 @@
     </beans:bean>
 
     <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">
-        <beans:constructor-arg ref="threadManager"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
@@ -70,8 +69,6 @@
     <beans:bean id="themeManager" class="org.apache.roller.weblogger.business.themes.ThemeManagerImpl">
         <beans:constructor-arg ref="weblogManager"/>
     </beans:bean>
-
-    <beans:bean id="threadManager" class="org.apache.roller.weblogger.business.ThreadManagerImpl"/>
 
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>

@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public final class HitCountQueue {
     private static HitCountQueue instance = null;
-    private List<String> queue = Collections.synchronizedList(new ArrayList<String>());
+    private List<String> queue = Collections.synchronizedList(new ArrayList<>());
 
     static {
         instance = new HitCountQueue();
@@ -62,6 +62,6 @@ public final class HitCountQueue {
      * Reset the queued hits.
      */
     public synchronized void resetHits() {
-        this.queue = Collections.synchronizedList(new ArrayList<String>());
+        this.queue = Collections.synchronizedList(new ArrayList<>());
     }
 }
