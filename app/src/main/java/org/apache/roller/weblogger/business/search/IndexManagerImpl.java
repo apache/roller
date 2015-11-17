@@ -24,6 +24,9 @@ package org.apache.roller.weblogger.business.search;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.commons.logging.Log;
@@ -41,7 +44,6 @@ import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.ThreadManager;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;
@@ -53,7 +55,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
@@ -66,7 +67,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private IndexReader reader;
     private WeblogEntryManager weblogEntryManager;
-    private final ThreadManager threadManager;
+    private final ExecutorService serviceScheduler;
 
     private final int MAX_TOKEN_COUNT = 100;
 
@@ -99,8 +100,8 @@ public class IndexManagerImpl implements IndexManager {
      * errors. The preferred way of getting an index is through the
      * RollerContext.
      */
-    protected IndexManagerImpl(ThreadManager tm) {
-        this.threadManager = tm;
+    protected IndexManagerImpl() {
+        serviceScheduler = Executors.newCachedThreadPool();
 
         // check config to see if the internal search is enabled
         String enabled = WebloggerConfig.getProperty("search.enabled");
@@ -242,15 +243,9 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     private void scheduleIndexOperation(final IndexOperation op) {
-        try {
-            // only if search is enabled
-            if (this.searchEnabled) {
-                mLogger.debug("Starting scheduled index operation: "
-                        + op.getClass().getName());
-                threadManager.executeInBackground(op);
-            }
-        } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
+        if (this.searchEnabled) {
+            mLogger.debug("Starting scheduled index operation: " + op.getClass().getName());
+            serviceScheduler.submit(op);
         }
     }
 
@@ -258,15 +253,9 @@ public class IndexManagerImpl implements IndexManager {
      * @param op
      */
     public void executeIndexOperationNow(final IndexOperation op) {
-        try {
-            // only if search is enabled
-            if (this.searchEnabled) {
-                mLogger.debug("Executing index operation now: "
-                        + op.getClass().getName());
-                threadManager.executeInForeground(op);
-            }
-        } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
+        if (this.searchEnabled) {
+            mLogger.debug("Executing index operation now: " + op.getClass().getName());
+            op.run();
         }
     }
 
@@ -391,9 +380,15 @@ public class IndexManagerImpl implements IndexManager {
     @Override
     @PreDestroy
     public void shutdown() {
-        if (useRAMIndex) {
-            scheduleIndexOperation(getSaveIndexOperation());
-        } else {
+        // trigger an immediate shutdown of any backgrounded tasks
+        serviceScheduler.shutdownNow();
+        try {
+            serviceScheduler.awaitTermination(20, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            mLogger.debug(e.getMessage(), e);
+        }
+
+        if (!useRAMIndex) {
             indexConsistencyMarker.delete();
         }
 
@@ -402,7 +397,6 @@ public class IndexManagerImpl implements IndexManager {
                 reader.close();
             }
         } catch (IOException e) {
-            // won't happen, since it was
         }
     }
 
