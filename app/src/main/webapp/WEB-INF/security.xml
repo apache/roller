@@ -55,7 +55,6 @@
         <remember-me user-service-ref="rollerUserService"
                      key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
 
-        <custom-filter ref="openidAuthenticationProcessingFilter" position="OPENID_FILTER"/>
     </http>
 
     <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
@@ -70,11 +69,10 @@
     <!-- Read users from Roller API -->
     <authentication-manager alias='rollerAuthenticationManager'>
         <authentication-provider ref="rememberMeAuthenticationProvider"/>
-        <!-- Uncomment one of the three below, based on whether database, LDAP, or
-             OpenID authentication is desired. -->
+        <!-- Uncomment one of the two below, based on whether database or LDAP
+             authentication is desired. -->
         <authentication-provider user-service-ref="rollerUserService"/>
-        <!--authentication-provider ref="ldapAuthProvider"/>
-        <authentication-provider ref="openIDAuthProvider"/-->
+        <!--authentication-provider ref="ldapAuthProvider"/-->
     </authentication-manager>
 
     <beans:bean id="rollerUserService"
@@ -83,41 +81,6 @@
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
         <beans:constructor-arg value="springRocks"/>
-    </beans:bean>
-
-    <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">
-        <beans:property name="userDetailsService" ref="rollerUserService"/>
-    </beans:bean>
-
-    <beans:bean id="openidAuthenticationProcessingFilter"
-                class="org.apache.roller.weblogger.ui.core.filters.CustomOpenIDAuthenticationProcessingFilter">
-        <beans:property name="filterProcessesUrl" value="/roller_j_openid_security_check"/>
-        <beans:property name="authenticationManager" ref="rollerAuthenticationManager"/>
-        <beans:property name="authenticationSuccessHandler" ref="myAuthenticationSuccessHandler"/>
-        <beans:property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
-    </beans:bean>
-
-    <beans:bean id="myAuthenticationSuccessHandler"
-                class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
-        <beans:property name="defaultTargetUrl" value="/roller-ui/menu.rol"/>
-    </beans:bean>
-
-    <beans:bean id="myAuthenticationFailureHandler"
-                class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-        <beans:property name="defaultFailureUrl" value="/roller-ui/login.rol?error=true"/>
-        <beans:property name="exceptionMappings">
-            <beans:props>
-                <beans:prop key="org.springframework.security.core.userdetails.UsernameNotFoundException">
-                    /roller-ui/register.rol
-                </beans:prop>
-                <beans:prop key="org.springframework.security.authentication.BadCredentialsException">
-                    /roller-ui/login.rol?error=true
-                </beans:prop>
-                <beans:prop key="org.springframework.security.core.AuthenticationException">
-                    /roller-ui/login.rol?error=true
-                </beans:prop>
-            </beans:props>
-        </beans:property>
     </beans:bean>
 
     <!-- Uncomment & customize below beans if using LDAP -->

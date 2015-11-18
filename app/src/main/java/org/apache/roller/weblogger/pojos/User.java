@@ -68,8 +68,6 @@ import javax.persistence.TemporalType;
                 query="SELECT u FROM User u WHERE u.userName= ?1"),
         @NamedQuery(name="User.getByUserName&Enabled",
                 query="SELECT u FROM User u WHERE u.userName= ?1 AND u.enabled = ?2"),
-        @NamedQuery(name="User.getByOpenIdUrl",
-                query="SELECT u FROM User u WHERE u.openIdUrl = ?1"),
         @NamedQuery(name="User.getByUserNameOrEmailAddressStartsWith",
                 query="SELECT u FROM User u WHERE u.userName LIKE ?1 OR u.emailAddress LIKE ?1"),
         @NamedQuery(name="User.getByUserNameOrderByUserName",
@@ -91,7 +89,6 @@ public class User implements Serializable {
     private String  userName;
     private String  password;
     private GlobalRole globalRole;
-    private String  openIdUrl;
     private String  screenName;
     private String  fullName;
     private String  emailAddress;
@@ -191,15 +188,6 @@ public class User implements Serializable {
         } else {
             setPassword(newPassword);
         }
-    }
-
-    @Column(name="openid_url", nullable=false)
-    public String getOpenIdUrl() {
-        return openIdUrl;
-    }
-
-    public void setOpenIdUrl(String openIdUrl) {
-        this.openIdUrl = openIdUrl;
     }
 
     @Basic(optional=false)
