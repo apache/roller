@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.core.security;
 
@@ -56,59 +59,21 @@ public class RollerUserDetailsService implements UserDetailsService {
         try {
             UserManager umgr = roller.getUserManager();
             User userData;
-            // OpenID user?
-            if (userName.startsWith("http://") || userName.startsWith("https://")) {
-                if (userName.endsWith("/")) {
-                    userName = userName.substring(0, userName.length() -1 );
-                }
-                try {
-                    userData = umgr.getUserByOpenIdUrl(userName);
-                    if (userData == null) {
-                        log.warn("No user found with OpenID URL: " + userName +
-                                " (OpenID aliased by auth provider?) Confirm URL exists in roller_user table");
-                    }
-                } catch (WebloggerException ex) {
-                    throw new DataRetrievalFailureException("ERROR in user lookup", ex);
-                }
-                String name;
-                String password;
-                List<SimpleGrantedAuthority> authorities;
-                
-                // We are not throwing UsernameNotFound exception in case of 
-                // openid authentication in order to receive OpenID Simple Registration (SREG)
-                // attributes from the authentication filter and save them
-                if (userData == null) {
-                     authorities = new ArrayList<SimpleGrantedAuthority>(1);
-                     SimpleGrantedAuthority g = new SimpleGrantedAuthority("rollerOpenidLogin");
-                     authorities.add(g);
-                     name = "openid";
-                     password = "openid";
-                } else {
-                     authorities = getAuthorities(userData, umgr);
-                     name = userData.getUserName();
-                     password = userData.getPassword();
-                }
-                return new org.springframework.security.core.userdetails.User(name, password,
-                        true, true, true, true, authorities);
-            } else {
-                // standard username/password auth
-                try {
-                    userData = umgr.getUserByUserName(userName);
-                } catch (WebloggerException ex) {
-                    throw new DataRetrievalFailureException("ERROR in user lookup", ex);
-                }
-                if (userData == null) {
-                    throw new UsernameNotFoundException("ERROR no user: " + userName);
-                }
-                List<SimpleGrantedAuthority> authorities =  getAuthorities(userData, umgr);
-                return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
-                        true, true, true, true, authorities);
-            }            
+            // standard username/password auth
+            try {
+                userData = umgr.getUserByUserName(userName);
+            } catch (WebloggerException ex) {
+                throw new DataRetrievalFailureException("ERROR in user lookup", ex);
+            }
+            if (userData == null) {
+                throw new UsernameNotFoundException("ERROR no user: " + userName);
+            }
+            List<SimpleGrantedAuthority> authorities =  getAuthorities(userData, umgr);
+            return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
+                    true, true, true, true, authorities);
         } catch (WebloggerException ex) {
             throw new DataAccessResourceFailureException("ERROR: fetching roles", ex);
         }
-        
-
     }
         
      private List<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {

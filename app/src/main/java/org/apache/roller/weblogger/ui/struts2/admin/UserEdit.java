@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.ArrayList;
@@ -27,13 +26,11 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.CharSetUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -141,16 +138,6 @@ public class UserEdit extends UIAction {
         if (!hasActionErrors()) {
             getBean().copyTo(user);
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID)) {
-                try {
-                    String randomString = RandomStringUtils.randomAlphanumeric(255);
-                    user.resetPassword(randomString);
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
-            }
-
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
                 try {
@@ -223,22 +210,6 @@ public class UserEdit extends UIAction {
                 addError("userAdmin.error.userNotFound");
             }
         }
-        if ((authMethod == AuthMethod.OPENID) && StringUtils.isEmpty(getBean().getOpenIdUrl())) {
-            addError("userRegister.error.missingOpenID");
-        }
-
-        // check that OpenID, if provided, is not taken
-        if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
-            try {
-                User user = userManager.getUserByOpenIdUrl(bean.getOpenIdUrl());
-                if (user != null && !(user.getUserName().equals(bean.getUserName()))) {
-                    addError("error.add.user.openIdInUse");
-                }
-            } catch (WebloggerException ex) {
-                log.error("error checking OpenID URL", ex);
-                addError("generic.error.check.logs");
-            }
-        }
     }
 
     public CreateUserBean getBean() {
@@ -259,7 +230,7 @@ public class UserEdit extends UIAction {
         } catch (WebloggerException ex) {
             log.error("ERROR getting permissions for user " + user.getUserName(), ex);
         }
-        return new ArrayList<UserWeblogRole>();
+        return new ArrayList<>();
     }
 
     public String getAuthMethod() {

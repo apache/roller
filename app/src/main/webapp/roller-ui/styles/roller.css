@@ -257,16 +257,6 @@ div.yourWeblogBox {
     padding: 8px 0px 10px 0px;
 }
 
-input#f_openid_identifier {
-    background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
-    padding-left:18px;
-}
-
-input.f_openid_identifier {
-    background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
-    padding-left:18px;
-}
-
 /* ----------------------------------------------------------------------
 Table styles
 ---------------------------------------------------------------------- */

@@ -78,8 +78,8 @@ public interface UserManager {
     
     /**
      * get a user by activation code
-     * @param activationCode
-     * @return
+     * @param activationCode activate code from email
+     * @return User object
      * @throws WebloggerException
      */
     User getUserByActivationCode(String activationCode)
@@ -119,19 +119,6 @@ public interface UserManager {
      */
     User getUserByUserName(String userName, Boolean enabled)
         throws WebloggerException;
-
-    /**
-     * Lookup a user by Open ID URL.
-     *
-     * This lookup is restricted to 'enabled' users by default.  So this method
-     * will return null if the user is found but is not enabled.
-     *
-     * @param openIdUrl OpenIdUrl of user to lookup.
-     * @return The user, or null if not found or not enabled.
-     * @throws WebloggerException If there is a problem.
-     */
-    User getUserByOpenIdUrl(String openIdUrl)
-            throws WebloggerException;
 
     /**
      * Lookup a group of users.
@@ -312,6 +299,3 @@ public interface UserManager {
     boolean hasEffectiveGlobalRole(User user, GlobalRole roleToCheck) throws WebloggerException;
 
 }
-
-
-

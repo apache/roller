@@ -25,7 +25,6 @@ import java.util.TimeZone;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.CharSetUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -198,14 +197,6 @@ public class Register extends UIAction implements ServletRequestAware {
                     ud.setActivationCode(inActivationCode);
                 }
 
-                String openidurl = getBean().getOpenIdUrl();
-                if (openidurl != null) {
-                    if (openidurl.endsWith("/")) {
-                        openidurl = openidurl.substring(0, openidurl.length() - 1);
-                    }
-                    ud.setOpenIdUrl(openidurl);
-                }
-
                 // save new user
                 userManager.addUser(ud);
 
@@ -314,21 +305,13 @@ public class Register extends UIAction implements ServletRequestAware {
             addError("error.add.user.badUserName");
         }
         
-        // check password, it is required if OpenID and SSO are disabled
         if (AuthMethod.ROLLERDB.name().equals(getAuthMethod())
                 && StringUtils.isEmpty(getBean().getPasswordText())) {
                 addError("error.add.user.passwordEmpty");
                 return;
         }
         
-        // User.password does not allow null, so generate one
-        if (getAuthMethod().equals(AuthMethod.OPENID.name())) {
-            String randomString = RandomStringUtils.randomAlphanumeric(255);
-            getBean().setPasswordText(randomString);
-            getBean().setPasswordConfirm(randomString);
-        }
-        
-        // check that passwords match 
+        // check that passwords match
         if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
         }
@@ -343,20 +326,6 @@ public class Register extends UIAction implements ServletRequestAware {
                 }
             } catch (WebloggerException ex) {
                 log.error("error checking for user", ex);
-                addError("generic.error.check.logs");
-            }
-        }
-
-        // check that OpenID, if provided, is not taken
-        if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
-            try {
-                if (userManager.getUserByOpenIdUrl(getBean().getOpenIdUrl()) != null) {
-                    addError("error.add.user.openIdInUse");
-                    // reset OpenID URL
-                    getBean().setOpenIdUrl(null);
-                }
-            } catch (WebloggerException ex) {
-                log.error("error checking OpenID URL", ex);
                 addError("generic.error.check.logs");
             }
         }

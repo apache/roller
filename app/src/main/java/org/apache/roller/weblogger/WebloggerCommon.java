@@ -50,8 +50,7 @@ public final class WebloggerCommon {
 
     public enum AuthMethod {
         ROLLERDB("db"),
-        LDAP("ldap"),
-        OPENID("openid");
+        LDAP("ldap");
 
         private final String propertyName;
 

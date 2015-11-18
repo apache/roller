@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import org.apache.roller.weblogger.WebloggerException;
@@ -38,7 +37,6 @@ public class CreateUserBean {
     private String emailAddress = null;
     private String locale = null;
     private String timeZone = null;
-    private String openIdUrl = null;
     private Boolean enabled = Boolean.TRUE;
     private String activationCode = null;
     private boolean administrator = false;
@@ -107,14 +105,6 @@ public class CreateUserBean {
         this.timeZone = timeZone;
     }
 
-    public String getOpenIdUrl() {
-        return openIdUrl;
-    }
-
-    public void setOpenIdUrl(String openIdUrl) {
-        this.openIdUrl = openIdUrl;
-    }
-
     public Boolean getEnabled() {
         return enabled;
     }
@@ -141,13 +131,11 @@ public class CreateUserBean {
     
     
     public void copyTo(User dataHolder) {
-        
         dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
         dataHolder.setTimeZone(this.timeZone);
-        dataHolder.setOpenIdUrl(this.openIdUrl);
         dataHolder.setEnabled(this.enabled);
         dataHolder.setActivationCode(this.activationCode);
     }
@@ -163,7 +151,6 @@ public class CreateUserBean {
         this.emailAddress = dataHolder.getEmailAddress();
         this.locale = dataHolder.getLocale();
         this.timeZone = dataHolder.getTimeZone();
-        this.openIdUrl = dataHolder.getOpenIdUrl();
         this.enabled = dataHolder.getEnabled();
         this.activationCode = dataHolder.getActivationCode();
 

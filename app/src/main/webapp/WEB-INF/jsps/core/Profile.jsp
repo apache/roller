@@ -70,14 +70,6 @@
             <s:hidden name="bean.password" />
         </s:else>
         
-        <s:if test="authMethod == 'OPENID'">
-            <tr>
-                <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
-                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" style="width:75%" id="f_openid_identifier" /></td>
-                <td class="description"><s:text name="userRegister.tip.openIdUrl" /></td>
-            </tr>     
-        </s:if>
-        
         <tr>
             <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
             <td class="field">

@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -84,30 +83,6 @@ public class Profile extends UIAction {
             // copy updated attributes
             getBean().copyTo(existingUser);
 
-            if (StringUtils.isNotEmpty(getBean().getOpenIdUrl())) { 
-                try {
-                    String openidurl = getBean().getOpenIdUrl();
-                    if (openidurl != null && openidurl.endsWith("/")) {
-                        openidurl = openidurl.substring(0, openidurl.length() - 1);
-                    }
-                    existingUser.setOpenIdUrl(openidurl);
-                } catch (Exception ex) {
-                    log.error("Unexpected error saving user OpenID URL", ex);
-                    addError("generic.error.check.logs");
-                    return INPUT;
-                }
-            }
-
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID)) {
-                String randomString = RandomStringUtils.randomAlphanumeric(255);
-                try {
-                    existingUser.resetPassword(randomString);
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
-            }
-
             // If user set both password and passwordConfirm then reset password
             if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
@@ -133,25 +108,9 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
-        if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
-            // check that passwords match if they were specified (w/StringUtils.equals, null == null)
-            if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
-                addError("userRegister.error.mismatchedPasswords");
-            }
-            if (authMethod == AuthMethod.OPENID) {
-                addError("userRegister.error.missingOpenID");
-            }
-        } else {
-            // check that OpenID, if provided, is not taken
-            try {
-                User user = userManager.getUserByOpenIdUrl(bean.getOpenIdUrl());
-                if (user != null && !(user.getUserName().equals(bean.getUserName()))) {
-                    addError("error.add.user.openIdInUse");
-                }
-            } catch (WebloggerException ex) {
-                log.error("error checking OpenID URL", ex);
-                addError("generic.error.check.logs");
-            }
+        // check that passwords match if they were specified (w/StringUtils.equals, null == null)
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+            addError("userRegister.error.mismatchedPasswords");
         }
     }
 
