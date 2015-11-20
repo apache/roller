@@ -151,12 +151,6 @@ public final class MenuHelper {
         Menu tabMenu = new Menu();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
 
-        // Hack - for blogger convenience, the design tab of the edit
-        // menu defaults to the templates tab item (instead of theme edit)
-        // if the weblog is using a custom theme.
-        boolean customThemeOverride = "editor".equals(menuId)
-                && WeblogTheme.CUSTOM.equals(weblog.getEditorTheme());
-
         // iterate over tabs from parsed config
         for (ParsedTab configTab : menuConfig.getTabs()) {
 
@@ -237,11 +231,7 @@ public final class MenuHelper {
 
                         // the url for the tab is the url of the first tab item
                         if (firstItem) {
-                            if (customThemeOverride && "tabbedmenu.design".equals(tab.getKey())) {
-                                tab.setAction("templates");
-                            } else {
-                                tab.setAction(tabItem.getAction());
-                            }
+                            tab.setAction(tabItem.getAction());
                             firstItem = false;
                         }
 

@@ -14,13 +14,26 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.apache.roller.weblogger.business.themes.SharedTheme;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
 
 /**
@@ -29,20 +42,148 @@ import java.io.Serializable;
  * A WeblogTheme is what is used throughout the rendering process to do the
  * rendering for a given weblog design.
  */
-public abstract class WeblogTheme implements Theme, Serializable {
+public class WeblogTheme {
+
+    private static Log log = LogFactory.getLog(WeblogTheme.class);
 
     protected WeblogManager weblogManager;
     protected Weblog weblog = null;
+    private SharedTheme theme = null;
 
-    // this is the name that will be used to identify a user customized theme
-    public static final String CUSTOM = "custom";
-
-    public WeblogTheme(WeblogManager weblogManager, Weblog weblog) {
-        this.weblogManager = weblogManager;
+    public WeblogTheme(WeblogManager manager, Weblog weblog, SharedTheme theme) {
+        this.weblogManager = manager;
         this.weblog = weblog;
+        this.theme = theme;
     }
 
     public Weblog getWeblog() {
         return this.weblog;
     }
+
+    public String getId() {
+        return this.theme.getId();
+    }
+
+    public String getName() {
+        return this.theme.getName();
+    }
+
+    public String getDescription() {
+        return this.theme.getDescription();
+    }
+
+    public String getAuthor() {
+        return "N/A";
+    }
+
+    public Date getLastModified() {
+        return this.theme.getLastModified();
+    }
+
+    public boolean isEnabled() {
+        return this.theme.isEnabled();
+    }
+
+    public int compareTo(Theme other) {
+        return theme.compareTo(other);
+    }
+
+    /**
+     * Get the collection of all templates associated with this Theme.
+     */
+    public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
+        Map<String, ThemeTemplate> pages = new TreeMap<>();
+
+        // first get shared theme pages (non-db)
+        try {
+            for (ThemeTemplate template : this.theme.getTemplates()) {
+                // note that this will put theme pages over custom
+                // pages in the pages list, which is what we want
+                pages.put(template.getName(), template);
+            }
+        } catch(Exception e) {
+            // how??
+            log.error(e);
+        }
+
+        // now get templates from the database
+        try {
+            for (ThemeTemplate template : weblogManager.getTemplates(this.weblog)) {
+                // note that this will replace shared templates with any overrides
+                // from the db, which is what we want
+                pages.put(template.getName(), template);
+            }
+        } catch(Exception e) {
+            // db error
+            log.error(e);
+        }
+
+        return new ArrayList<>(pages.values());
+    }
+    
+
+    /**
+     * Lookup the default template.
+     * Returns null if the template cannot be found.
+     */
+    public ThemeTemplate getDefaultTemplate() throws WebloggerException {
+        ThemeTemplate defaultTemplate = weblogManager.getTemplateByAction(this.weblog, ComponentType.WEBLOG);
+        if (defaultTemplate == null) {
+            defaultTemplate = this.theme.getDefaultTemplate();
+        }
+
+        return defaultTemplate;
+    }
+    
+    
+    /**
+     * Lookup the specified template by action.
+     * Returns null if the template cannot be found.
+     */
+    public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
+        if (action == null) {
+            return null;
+        }
+        ThemeTemplate template = weblogManager.getTemplateByAction(this.weblog, action);
+        if (template == null) {
+            template = theme.getTemplateByAction(action);
+        }
+
+        return template;
+    }
+    
+    
+    /**
+     * Lookup the specified template by name.
+     * Returns null if the template cannot be found.
+     */
+    public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
+        if (name == null) {
+            return null;
+        }
+        ThemeTemplate template = weblogManager.getTemplateByName(this.weblog, name);
+        if (template == null) {
+            template = theme.getTemplateByName(name);
+        }
+
+        return template;
+    }
+    
+    
+    /**
+     * Lookup the specified template by link.
+     * Returns null if the template cannot be found.
+     */
+    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
+        if (link == null) {
+            return null;
+        }
+        ThemeTemplate template = weblogManager.getTemplateByLink(this.weblog, link);
+        if (template == null) {
+            template = theme.getTemplateByLink(link);
+        }
+
+        return template;
+    }
+
 }

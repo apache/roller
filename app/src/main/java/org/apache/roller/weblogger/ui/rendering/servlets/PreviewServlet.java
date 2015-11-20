@@ -125,10 +125,8 @@ public class PreviewServlet extends HttpServlet {
             // and set the EditorTheme to our previewTheme
             tmpWebsite = new Weblog();
             tmpWebsite.setData(weblog);
-            if(previewTheme != null && previewTheme.isEnabled()) {
+            if (previewTheme != null && previewTheme.isEnabled()) {
                 tmpWebsite.setEditorTheme(previewTheme.getId());
-            } else if(WeblogTheme.CUSTOM.equals(previewRequest.getThemeName())) {
-                tmpWebsite.setEditorTheme(WeblogTheme.CUSTOM);
             }
 
             // we've got to set the weblog in our previewRequest because that's

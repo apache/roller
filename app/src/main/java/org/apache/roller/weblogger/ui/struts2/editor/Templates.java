@@ -89,7 +89,7 @@ public class Templates extends UIAction {
 			pages.addAll(raw);
 			// Remove style sheet from list so not to show when theme is
 			// selected in shared theme mode
-			if (getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
+/*			if (getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
 				pages.remove(WebloggerFactory
 						.getWeblogger()
 						.getWeblogManager()
@@ -97,41 +97,24 @@ public class Templates extends UIAction {
 								getActionWeblog(),
 								getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET)
 										.getLink()));
-			}
+			} */
 			setTemplates(pages);
 
 			// build list of action types that may be added
 			Map<ComponentType, String> actionsMap = new EnumMap<>(ComponentType.class);
 			addComponentTypeToMap(actionsMap, ComponentType.CUSTOM);
 
-			if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-				// if the weblog is using a custom theme then determine which
-				// action templates are still available to be created
-				addComponentTypeToMap(actionsMap, ComponentType.PERMALINK);
-				addComponentTypeToMap(actionsMap, ComponentType.SEARCH);
-				addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
-				addComponentTypeToMap(actionsMap, ComponentType.TAGSINDEX);
+            addComponentTypeToMap(actionsMap, ComponentType.PERMALINK);
+            addComponentTypeToMap(actionsMap, ComponentType.SEARCH);
+            addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
+            addComponentTypeToMap(actionsMap, ComponentType.TAGSINDEX);
 
-				for (WeblogTemplate tmpPage : getTemplates()) {
-					if (!ComponentType.CUSTOM.equals(tmpPage
-							.getAction())) {
-						actionsMap.remove(tmpPage.getAction());
-					}
-				}
-			} else {
-				// Make sure we have an option for the default web page
-				addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
-				if (getNewTmplAction() == null) {
-					setNewTmplAction(ComponentType.WEBLOG);
-				}
-				for (WeblogTemplate tmpPage : getTemplates()) {
-					if (ComponentType.WEBLOG.equals(tmpPage.getAction())) {
-						actionsMap.remove(ComponentType.WEBLOG);
-						setNewTmplAction(null);
-						break;
-					}
-				}
-			}
+            for (WeblogTemplate tmpPage : getTemplates()) {
+                if (!ComponentType.CUSTOM.equals(tmpPage
+                        .getAction())) {
+                    actionsMap.remove(tmpPage.getAction());
+                }
+            }
 			setAvailableActions(actionsMap);
 
 		} catch (WebloggerException ex) {
@@ -252,7 +235,7 @@ public class Templates extends UIAction {
 	 * @return true, if is custom theme
 	 */
 	public boolean isCustomTheme() {
-		return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
+		return true;
 	}
 
 	public List<WeblogTemplate> getTemplates() {

@@ -54,7 +54,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -153,20 +152,12 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		WeblogTheme weblogTheme = null;
 
-		// if theme is custom or null then return a WeblogCustomTheme
-		if (weblog.getEditorTheme() == null
-				|| WeblogTheme.CUSTOM.equals(weblog.getEditorTheme())) {
-			weblogTheme = new WeblogCustomTheme(weblogManager, weblog);
-
-			// otherwise we are returning a WeblogSharedTheme
-		} else {
-			SharedTheme staticTheme = this.themes.get(weblog.getEditorTheme());
-			if (staticTheme != null) {
-				weblogTheme = new WeblogSharedTheme(weblogManager, weblog, staticTheme);
-			} else {
-				log.warn("Unable to lookup theme " + weblog.getEditorTheme());
-			}
-		}
+        SharedTheme staticTheme = this.themes.get(weblog.getEditorTheme());
+        if (staticTheme != null) {
+            weblogTheme = new WeblogTheme(weblogManager, weblog, staticTheme);
+        } else {
+            log.warn("Unable to lookup theme " + weblog.getEditorTheme());
+        }
 
 		// TODO: if somehow the theme is still null should we provide some
 		// kind of fallback option like a default theme?
@@ -275,8 +266,6 @@ public class ThemeManagerImpl implements ThemeManager {
 			}
 		}
 
-		// set weblog's theme to custom, then save
-		weblog.setEditorTheme(WeblogTheme.CUSTOM);
 		weblogManager.saveWeblog(weblog);
 	}
 

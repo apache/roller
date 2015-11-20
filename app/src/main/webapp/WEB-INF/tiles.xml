@@ -303,11 +303,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/ThemeEdit.jsp" />
     </definition>
     
-    <definition name=".StylesheetEdit" extends=".tiles-tabbedpage"  >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/StylesheetEdit.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
-    </definition>
-
     <definition name=".Templates" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Templates.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/TemplatesSidebar.jsp" />
