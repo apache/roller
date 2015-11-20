@@ -104,8 +104,7 @@ public class ThemeEdit extends UIAction {
 
         // See if we're using a shared theme with a custom template
         try {
-            if (!WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())
-                    && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
+            if (getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
 
                 ThemeTemplate override = weblogManager.getTemplateByLink(getActionWeblog(),
                                 getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET).getLink());
@@ -120,17 +119,9 @@ public class ThemeEdit extends UIAction {
     }
 
     public String execute() {
-
         // set theme to current value
-        if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-            setThemeId(null);
-            setSelectedThemeId(null);
-            setImportTheme(false);
-        } else {
-            setThemeId(getActionWeblog().getTheme().getId());
-            setSelectedThemeId(getThemeId());
-        }
-
+        setThemeId(getActionWeblog().getTheme().getId());
+        setSelectedThemeId(getThemeId());
         return INPUT;
     }
 
@@ -142,13 +133,14 @@ public class ThemeEdit extends UIAction {
         Weblog weblog = getActionWeblog();
 
         // Are we dealing with a custom theme scenario?
-        if (WeblogTheme.CUSTOM.equals(getThemeType())) {
+        if ("custom".equals(getThemeType())) {
+            SharedTheme t = null;
 
             // do theme import if requested
             if (importTheme) {
                 try {
                     if (!StringUtils.isEmpty(selectedThemeId)) {
-                        SharedTheme t = themeManager.getTheme(selectedThemeId);
+                        t = themeManager.getTheme(selectedThemeId);
                         // if moving from shared w/custom SS to custom import of same shared theme,
                         // keep the custom stylesheet.
                         boolean skipStylesheet = (sharedThemeCustomStylesheet && selectedThemeId.equals(weblog.getEditorTheme()));
@@ -166,19 +158,20 @@ public class ThemeEdit extends UIAction {
             if (!hasActionErrors()) {
                 try {
                     // save updated weblog and flush
-                    weblog.setEditorTheme(WeblogTheme.CUSTOM);
+                    if (t != null) {
+                        weblog.setEditorTheme(t.getId());
+                    }
                     weblogManager.saveWeblog(weblog);
                     WebloggerFactory.flush();
 
                     // make sure to flush the page cache so ppl can see the change
                     CacheManager.invalidate(weblog);
 
-                    addMessage("themeEditor.setTheme.success", WeblogTheme.CUSTOM);
+                    addMessage("themeEditor.setTheme.success", t != null ? t.getName() : "custom");
                     addMessage("themeEditor.setCustomTheme.instructions");
 
                 } catch (WebloggerException re) {
-                    log.error("Error saving weblog - "
-                            + getActionWeblog().getHandle(), re);
+                    log.error("Error saving weblog - " + getActionWeblog().getHandle(), re);
                     addError("generic.error.check.logs");
                 }
             }
@@ -239,7 +232,7 @@ public class ThemeEdit extends UIAction {
     }
 
     public boolean isCustomTheme() {
-        return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
+        return false;
     }
 
     // has this weblog had a custom theme before?

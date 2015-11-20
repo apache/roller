@@ -32,7 +32,7 @@
     <p class="pagetip"><s:text name="pageForm.tip" /></p>
 </s:else>
                 
-<s:form action="templateEdit!save" id="template">
+<s:form action="templateEdit!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
@@ -125,11 +125,36 @@
                 <s:submit value="%{getText('generic.save')}" />
                 <input type="button" value='<s:text name="generic.done"/>'
                     onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
+                <%--s:if test="!customTheme"--%>
+                    <s:submit value="%{getText('templateEdit.revert')}" onclick="revertTemplate();return false;" />
+                <%--/s:if--%>
+                <s:submit value="%{getText('templateEdit.delete')}" onclick="deleteTemplate();return false;" />
             </td>
         </tr>
     </table>
 
   
+    <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+    <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
+
+    <script>
+        function revertTemplate() {
+            if (window.confirm('<s:text name="templateEdit.confirmRevert"/>')) {
+                document.templateEdit.action = "<s:url action='templateEdit!revert' />";
+                document.templateEdit.submit();
+            }
+        };
+        function deleteTemplate() {
+            if (window.confirm('<s:text name="templateEdit.confirmDelete"/>')) {
+                document.templateEdit.action = "<s:url action='templateEdit!delete' />";
+                document.templateEdit.submit();
+            }
+        };
+        $(function() {
+            $( "#template-code-tabs" ).tabs();
+        });
+    </script>
+
     <%-- ================================================================== --%>
     <%-- Advanced settings inside a control toggle --%>
     

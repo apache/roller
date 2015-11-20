@@ -417,11 +417,6 @@
             <result name="input" type="tiles">.ThemeEdit</result>
         </action>
         
-        <action name="stylesheetEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.StylesheetEdit">
-            <result name="input" type="tiles">.StylesheetEdit</result>
-        </action>
-        
         <action name="templates!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Templates">
             <result name="list" type="tiles">.Templates</result>

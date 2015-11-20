@@ -27,10 +27,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.Theme;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -51,6 +57,12 @@ public class TemplateEdit extends UIAction {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
     }
 
     // form bean for collection all template properties
@@ -195,6 +207,94 @@ public class TemplateEdit extends UIAction {
     }
 
 
+    /**
+     * Revert the stylesheet to its original state.  UI provides this only for shared themes.
+     */
+    public String revert() {
+        if (!hasActionErrors()) {
+            try {
+
+                WeblogTemplate templateToRevert = getTemplate();
+
+                // lookup the theme used by this weblog
+                Theme theme = themeManager.getTheme(getActionWeblog().getEditorTheme());
+
+                templateToRevert.setLastModified(new Date());
+
+                if (templateToRevert.getTemplateRendition(TemplateRendition.RenditionType.STANDARD) != null) {
+                    TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
+                            .getTemplateRendition(TemplateRendition.RenditionType.STANDARD);
+                    // if we have a template, then set it
+                    WeblogTemplateRendition existingTemplateCode = templateToRevert
+                            .getTemplateRendition(TemplateRendition.RenditionType.STANDARD);
+                    existingTemplateCode
+                            .setTemplate(templateCode.getTemplate());
+                    weblogManager.saveTemplateRendition(existingTemplateCode);
+                }
+                if (templateToRevert.getTemplateRendition(TemplateRendition.RenditionType.MOBILE) != null) {
+                    TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
+                            .getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
+                    WeblogTemplateRendition existingTemplateCode = templateToRevert
+                            .getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
+                    existingTemplateCode
+                            .setTemplate(templateCode.getTemplate());
+                }
+
+                // save template and flush
+                weblogManager.saveTemplate(templateToRevert);
+                WebloggerFactory.flush();
+
+                // notify caches
+                CacheManager.invalidate(templateToRevert);
+
+                // success message
+                addMessage("templateEdit.revert.success",
+                        templateToRevert.getName());
+
+            } catch (WebloggerException ex) {
+                log.error("Error updating stylesheet template for weblog - "
+                        + getActionWeblog().getHandle(), ex);
+                addError("generic.error.check.logs");
+            }
+        }
+        return execute();
+    }
+
+    /**
+     * set theme to default stylesheet, ie delete it.
+     */
+    public String delete() {
+        if (template != null && !hasActionErrors()) {
+            try {
+                // Delete template and flush
+
+                // Remove template and page codes
+                weblogManager.removeTemplate(template);
+
+                Weblog weblog = getActionWeblog();
+
+                // save updated weblog and flush
+                weblogManager.saveWeblog(weblog);
+
+                // notify caches
+                CacheManager.invalidate(template);
+
+                // Flush for operation
+                WebloggerFactory.flush();
+
+                // success message
+                addMessage("templateEdit.default.success", template.getName());
+
+                template = null;
+
+            } catch (Exception e) {
+                log.error("Error deleting template for weblog - "
+                        + getActionWeblog().getHandle(), e);
+                addError("generic.error.check.logs");
+            }
+        }
+        return INPUT;
+    }
     public TemplateEditBean getBean() {
         return bean;
     }

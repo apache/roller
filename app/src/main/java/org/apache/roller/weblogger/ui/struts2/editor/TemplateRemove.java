@@ -90,42 +90,35 @@ public class TemplateRemove extends UIAction {
 
 		if (getTemplate() != null) {
             try {
-                if (!getTemplate().isRequired()
-                        || !WeblogTheme.CUSTOM.equals(getActionWeblog()
-                        .getEditorTheme())) {
+                // if weblog template remove custom style sheet also
+                if (getTemplate().getName().equals(
+                        WeblogTemplate.DEFAULT_PAGE)) {
 
-                    // if weblog template remove custom style sheet also
-                    if (getTemplate().getName().equals(
-                            WeblogTemplate.DEFAULT_PAGE)) {
+                    ThemeTemplate stylesheet = getActionWeblog().getTheme()
+                            .getTemplateByAction(ComponentType.STYLESHEET);
 
-                        ThemeTemplate stylesheet = getActionWeblog().getTheme()
-                                .getTemplateByAction(ComponentType.STYLESHEET);
+                    // Delete style sheet if the same name
+                    if (stylesheet != null
+                            && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null
+                            && stylesheet.getLink().equals(
+                            getActionWeblog().getTheme()
+                                    .getTemplateByAction(ComponentType.STYLESHEET).getLink())) {
+                        // Same so OK to delete
+                        WeblogTemplate css = weblogManager.getTemplateByLink(
+                                getActionWeblog(), stylesheet.getLink());
 
-                        // Delete style sheet if the same name
-                        if (stylesheet != null
-                                && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null
-                                && stylesheet.getLink().equals(
-                                getActionWeblog().getTheme()
-                                        .getTemplateByAction(ComponentType.STYLESHEET).getLink())) {
-                            // Same so OK to delete
-                            WeblogTemplate css = weblogManager.getTemplateByLink(
-                                    getActionWeblog(), stylesheet.getLink());
-
-                            if (css != null) {
-                                weblogManager.removeTemplate(css);
-                            }
+                        if (css != null) {
+                            weblogManager.removeTemplate(css);
                         }
                     }
-
-                    // notify cache
-                    CacheManager.invalidate(getTemplate());
-                    weblogManager.removeTemplate(getTemplate());
-                    WebloggerFactory.flush();
-
-                    return SUCCESS;
-                } else {
-                    addError("editPages.remove.requiredTemplate");
                 }
+
+                // notify cache
+                CacheManager.invalidate(getTemplate());
+                weblogManager.removeTemplate(getTemplate());
+                WebloggerFactory.flush();
+
+                return SUCCESS;
 
             } catch (Exception ex) {
                 log.error("Error removing page - " + getRemoveId(), ex);

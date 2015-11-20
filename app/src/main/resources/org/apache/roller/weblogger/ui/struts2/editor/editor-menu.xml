@@ -53,9 +53,6 @@ The availability of each menu or menu item is governed by four attributes:
         <menu-item action="themeEdit"
                    name="tabbedmenu.website.themes" />
         
-        <menu-item action="stylesheetEdit"
-                   name="tabbedmenu.design.stylesheet" />
-        
         <menu-item action="templates"
                    name="tabbedmenu.website.pages"
                    subactions="templateAdd,templateEdit,templateRemove,templatesRemove" />
