@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -38,8 +38,6 @@ import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -77,13 +75,17 @@ public class WeblogConfig extends UIAction {
     // categories list
     private List weblogCategories = Collections.emptyList();
     
-    // list of available editors
-    private List editorsList = Collections.emptyList();
-    
     // list of available plugins
     private List pluginsList = Collections.emptyList();
-    
-    
+
+    // list of available editors
+    private static List<Pair<String, String>> editorsList = new ArrayList<>(2);
+
+    static {
+        editorsList.add(Pair.of("editor-text.jsp", "editor.text.name"));
+        editorsList.add(Pair.of("editor-xinha.jsp", "editor.xinha.name"));
+    }
+
     public WeblogConfig() {
         this.actionName = "weblogConfig";
         this.desiredMenu = "editor";
@@ -101,13 +103,6 @@ public class WeblogConfig extends UIAction {
         try {
             // set categories list
             setWeblogCategories(weblogManager.getWeblogCategories(getActionWeblog()));
-            
-            // set the Editor Page list
-            UIPluginManager pmgr = RollerContext.getUIPluginManager();
-            List editorList = pmgr.getWeblogEntryEditors();
-            if(editorList != null) {
-                setEditorsList(editorList);
-            }
             
             // set plugins list
             Map<String, WeblogEntryPlugin> pluginsMap = pluginManager.getWeblogEntryPlugins(getActionWeblog());
@@ -228,10 +223,6 @@ public class WeblogConfig extends UIAction {
         return editorsList;
     }
     
-    public void setEditorsList(List editorsList) {
-        this.editorsList = editorsList;
-    }
-
     public List getPluginsList() {
         return pluginsList;
     }

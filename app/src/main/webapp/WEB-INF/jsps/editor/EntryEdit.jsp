@@ -148,7 +148,7 @@
     <%-- ================================================================== --%>
     <%-- Weblog editor --%>
 
-    <s:include value="%{editor.jspPage}" />
+    <s:include value="/WEB-INF/jsps/editor/EntryEditor.jsp" />
 
     <br />
 

@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
-
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import org.apache.commons.lang3.CharSetUtils;
@@ -150,10 +152,8 @@ public class CreateWeblog extends UIAction {
                     getBean().getLocale(),
                     getBean().getTimeZone());
             
-            // pick a weblog editor for this weblog
-            String def = WebloggerRuntimeConfig.getProperty("users.editor.pages");
-            String[] defs = Utilities.stringToStringArray(def,",");
-            wd.setEditorPage(defs[0]);
+            // set weblog editor to default one, can be changed by blogger on blog settings page
+            wd.setEditorPage(WebloggerConfig.getProperty("plugins.defaultEditor", "editor-text.jsp"));
 
             try {
                 // add weblog and flush

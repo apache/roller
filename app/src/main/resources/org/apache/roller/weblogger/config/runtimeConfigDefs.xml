@@ -100,17 +100,10 @@
           <type>string</type>
           <default-value></default-value>
       </property-def>
-       <property-def name="site.allowUserWeblogCreation" key="configForm.allowUserWeblogCreation">
-           <type>boolean</type>
-           <default-value>true</default-value>
-       </property-def>
-      <property-def  name="users.editor.pages"  key="configForm.editorPages">
-         <type>text</type>
-         <default-value>editor-text.jsp,editor-xinha.jsp</default-value>
-         <rows>3</rows>
-         <cols>40</cols>
+      <property-def name="site.allowUserWeblogCreation" key="configForm.allowUserWeblogCreation">
+          <type>boolean</type>
+          <default-value>true</default-value>
       </property-def>
-
    </display-group >
 
    <!-- Weblog Rendering Settings Group -->
