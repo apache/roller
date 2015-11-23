@@ -71,7 +71,7 @@
     <tr>
         <td class="label"><s:text name="websiteSettings.editor" /></td>
         <td class="field">
-            <s:select name="bean.editorPage" size="1" list="editorsList" listKey="id" listValue="getText(name)" />
+            <s:select name="bean.editorPage" size="1" list="editorsList" listKey="left" listValue="getText(right)" />
        </td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>

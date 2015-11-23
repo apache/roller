@@ -44,8 +44,6 @@ import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
-import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -67,17 +65,6 @@ public class RollerContext extends ContextLoaderListener
     public RollerContext() {
         super();
     }
-    
-    
-    /**
-     * Access to the plugin manager for the UI layer. TODO: we may want 
-     * something similar to the Roller interface for the UI layer if we dont 
-     * want methods like this here in RollerContext.
-     */
-    public static UIPluginManager getUIPluginManager() {
-        return UIPluginManagerImpl.getInstance();
-    }
-    
     
     /**
      * Get the ServletContext.

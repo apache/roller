@@ -43,9 +43,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
-import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.MediacastException;
@@ -480,9 +477,8 @@ public final class EntryEdit extends UIAction {
         return availablePlugins;
     }
 
-    public WeblogEntryEditor getEditor() {
-        UIPluginManager pmgr = RollerContext.getUIPluginManager();
-        return pmgr.getWeblogEntryEditor(getActionWeblog().getEditorPage());
+    public String getEditor() {
+        return getActionWeblog().getEditorPage();
     }
 
     public boolean isUserAnAuthor() {
