@@ -23,12 +23,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.TaskLock;
+
+import static org.apache.roller.util.RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS;
 
 
 /**
@@ -65,7 +69,7 @@ public class TaskScheduler implements Runnable {
         boolean firstRun = true;
         
         // run forever, or until we get interrupted
-        while(true) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 // get current time
                 Date now = new Date();
@@ -111,13 +115,19 @@ public class TaskScheduler implements Runnable {
                 }
                 
             } catch (InterruptedException ex) {
-                // thread interrupted
                 log.debug("Thread interrupted, scheduler is stopping");
-                pool.shutdownNow();
                 break;
             }
         }
-        
+
+        // thread interrupted
+        pool.shutdownNow();
+        try {
+            pool.awaitTermination(GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS, TimeUnit.SECONDS);
+            log.debug("TaskScheduler executor was terminated successfully");
+        } catch (InterruptedException e) {
+            log.debug(e.getMessage(), e);
+        }
     }
     
     

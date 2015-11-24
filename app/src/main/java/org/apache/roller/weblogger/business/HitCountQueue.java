@@ -115,10 +115,9 @@ public final class HitCountQueue {
             log.info("stopping worker "+this.worker.getName());
             worker.interrupt();
             try {
-                // wait 10 seconds for graceful shutdown
-                worker.join(10 * 1000);
+                worker.join(RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_MILLISECONDS);
             } catch (InterruptedException e) {
-                log.debug("interrupted", e);
+                log.debug(e.getMessage(), e);
             }
         }
         

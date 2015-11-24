@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +35,8 @@ import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.TaskLock;
 
+import static org.apache.roller.util.RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_MILLISECONDS;
+import static org.apache.roller.util.RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS;
 
 /**
  * Manage Roller's thread use.
@@ -142,11 +146,22 @@ public abstract class ThreadManagerImpl implements ThreadManager {
         
         // trigger an immediate shutdown of any backgrounded tasks
         serviceScheduler.shutdownNow();
-        
+        try {
+            serviceScheduler.awaitTermination(GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LOG.debug(e.getMessage(), e);
+        }
+
         // only stop if we are already running
         if(schedulerThread != null) {
             LOG.debug("Stopping scheduler");
             schedulerThread.interrupt();
+            try {
+                schedulerThread.join(GRACEFUL_SHUTDOWN_WAIT_IN_MILLISECONDS);
+                LOG.debug("Scheduler was stopped successfully");
+            } catch (InterruptedException e) {
+                LOG.debug(e.getMessage(), e);
+            }
         }
     }
     
