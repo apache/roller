@@ -59,7 +59,6 @@ import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -225,7 +224,7 @@ public class CommentServlet extends HttpServlet {
             // we know what the weblog entry is, so setup our urls
             dispatch_url = "/roller-ui/rendering/page/" + weblog.getHandle();
             dispatch_url += "/entry/"
-                    + URLUtilities.encode(commentRequest.getWeblogAnchor());
+                    + Utilities.encode(commentRequest.getWeblogAnchor());
 
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog

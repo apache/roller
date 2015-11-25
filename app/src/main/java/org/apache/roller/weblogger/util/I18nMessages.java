@@ -49,7 +49,7 @@ public final class I18nMessages {
     
     
     private I18nMessages(String locale) {
-        Locale loc = I18nUtils.toLocale(locale);
+        Locale loc = Utilities.toLocale(locale);
         this.locale = loc;
         this.bundle = ResourceBundle.getBundle("ApplicationResources", loc);
     }
@@ -68,7 +68,7 @@ public final class I18nMessages {
         LOG.debug("request for messages in locale = " + locale);
         
         // check if we already have a message utils created for that locale
-        I18nMessages messages = messagesMap.get(I18nUtils.toLocale(locale));
+        I18nMessages messages = messagesMap.get(Utilities.toLocale(locale));
         
         // if no utils for that language yet then construct
         if(messages == null) {

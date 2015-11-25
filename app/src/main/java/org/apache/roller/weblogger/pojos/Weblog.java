@@ -39,15 +39,13 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.util.I18nUtils;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -399,7 +397,7 @@ public class Weblog implements Serializable {
      */
     @Transient
     public Locale getLocaleInstance() {
-        return I18nUtils.toLocale(getLocale());
+        return Utilities.toLocale(getLocale());
     }
     
     

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -74,7 +74,7 @@ public class EntriesPager {
     
     
     private String createURL(String base, Map<String, String> params) {
-        String qString = URLUtilities.getQueryString(params);
+        String qString = Utilities.getQueryString(params);
         
         if(base.indexOf('?') != -1) {
             // if base url already has params them just append our query string

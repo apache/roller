@@ -116,11 +116,11 @@ public class Trackback {
         
         // build trackback post parameters as query string
         Map<String, String> params = new HashMap<>();
-        params.put("title", URLUtilities.encode(title));
-        params.put("excerpt", URLUtilities.encode(excerpt));
-        params.put("url", URLUtilities.encode(url));
-        params.put("blog_name", URLUtilities.encode(blog_name));
-        String queryString = URLUtilities.getQueryString(params);
+        params.put("title", Utilities.encode(title));
+        params.put("excerpt", Utilities.encode(excerpt));
+        params.put("url", Utilities.encode(url));
+        params.put("blog_name", Utilities.encode(blog_name));
+        String queryString = Utilities.getQueryString(params);
         
         LOG.debug("query string - " + queryString);
         

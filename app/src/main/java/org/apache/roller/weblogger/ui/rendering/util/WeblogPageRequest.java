@@ -33,7 +33,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.servlet.http.HttpServletRequest;
@@ -125,7 +124,7 @@ public class WeblogPageRequest extends WeblogRequest {
             if (pathElements.length == 2) {
 
                 if ("entry".equals(this.context)) {
-                    this.weblogAnchor = URLUtilities.decode(pathElements[1]);
+                    this.weblogAnchor = Utilities.decode(pathElements[1]);
 
                     // Other page
                     otherPageHit = true;
@@ -142,7 +141,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     otherPageHit = true;
 
                 } else if ("category".equals(this.context)) {
-                    this.weblogCategoryName = URLUtilities
+                    this.weblogCategoryName = Utilities
                             .decode(pathElements[1]);
 
                     // Other page
@@ -152,7 +151,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     this.weblogPageName = pathElements[1];
                     String tagsString = request.getParameter("tags");
                     if (tagsString != null) {
-                        this.tags = Utilities.splitStringAsTags(URLUtilities
+                        this.tags = Utilities.splitStringAsTags(Utilities
                                 .decode(tagsString));
                     }
 
@@ -163,7 +162,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
                 } else if ("tags".equals(this.context)) {
                     String tagsString = pathElements[1].replace('+', ' ');
-                    this.tags = Utilities.splitStringAsTags(URLUtilities
+                    this.tags = Utilities.splitStringAsTags(Utilities
                             .decode(tagsString));
                     int maxSize = WebloggerConfig.getIntProperty(
                             "tags.queries.maxIntersectionSize", 3);
@@ -233,7 +232,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
 
                 if (request.getParameter("cat") != null) {
-                    this.weblogCategoryName = URLUtilities.decode(request
+                    this.weblogCategoryName = Utilities.decode(request
                             .getParameter("cat"));
                 }
             }

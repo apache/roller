@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesListPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
-import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -143,11 +143,11 @@ public class FeedModel implements Model {
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
-                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+                params.put("tags", Utilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();
             if(category != null && category.trim().length() > 0) {
-                params.put("cat", URLUtilities.encode(category));
+                params.put("cat", Utilities.encode(category));
             }  
             if(feedRequest.isExcerpts()) {
                 params.put("excerpts", "true");
@@ -175,11 +175,11 @@ public class FeedModel implements Model {
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
-                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+                params.put("tags", Utilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();
             if(category != null && category.trim().length() > 0) {
-                params.put("cat", URLUtilities.encode(category));
+                params.put("cat", Utilities.encode(category));
             }  
             if(feedRequest.isExcerpts()) {
                 params.put("excerpts", "true");

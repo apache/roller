@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
@@ -26,8 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.ui.core.util.menu.Menu;
-import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
+import org.apache.roller.weblogger.ui.core.menu.Menu;
+import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 
@@ -94,7 +93,7 @@ public class MenuModel implements Model {
 
 
     /**
-     * Get a Menu representing the author UI action menu, if the use is
+     * Get a Menu representing the author UI action menu, if the user is
      * currently logged in.
      */
     public Menu getAuthorMenu() {
