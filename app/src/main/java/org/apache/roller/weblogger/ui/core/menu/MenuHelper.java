@@ -18,8 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-package org.apache.roller.weblogger.ui.core.util.menu;
+package org.apache.roller.weblogger.ui.core.menu;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +31,6 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.util.Utilities;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -57,32 +55,21 @@ public final class MenuHelper {
 
     private static Log log = LogFactory.getLog(MenuHelper.class);
 
-    private static Map<String, ParsedMenu> menus = new HashMap<String, ParsedMenu>();
-
-    // menu, menuName, tabName action/subaction check
-    private static Map<String, HashMap<String, HashSet<String>>> itemMenu = new HashMap<String, HashMap<String, HashSet<String>>>();
+    private static Map<String, ParsedMenu> menus = new HashMap<>();
 
     private MenuHelper() {
     }
 
     static {
         try {
-
             // parse menus and cache so we can efficiently reuse them
-            String menu = "editor";
             ParsedMenu editorMenu = unmarshall(
-                    menu,
-                    MenuHelper.class
-                            .getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/editor/editor-menu.xml"));
-            menus.put(menu, editorMenu);
+                    MenuHelper.class.getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/editor/editor-menu.xml"));
+            menus.put("editor", editorMenu);
 
-            menu = "admin";
             ParsedMenu adminMenu = unmarshall(
-                    menu,
-                    MenuHelper.class
-                            .getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/admin/admin-menu.xml"));
-            menus.put(menu, adminMenu);
-
+                    MenuHelper.class.getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/admin/admin-menu.xml"));
+            menus.put("admin", adminMenu);
         } catch (Exception ex) {
             log.error("Error parsing menu configs", ex);
         }
@@ -102,9 +89,7 @@ public final class MenuHelper {
      * 
      * @return the menu
      */
-    public static Menu getMenu(String menuId, String currentAction, User user,
-            Weblog weblog) {
-
+    public static Menu getMenu(String menuId, String currentAction, User user, Weblog weblog) {
         if (menuId == null) {
             return null;
         }
@@ -115,8 +100,7 @@ public final class MenuHelper {
         ParsedMenu menuConfig = menus.get(menuId);
         if (menuConfig != null) {
             try {
-                menu = buildMenu(menuId, menuConfig, currentAction, user,
-                        weblog);
+                menu = buildMenu(menuConfig, currentAction, user, weblog);
             } catch (WebloggerException ex) {
                 log.error("ERROR: fetching user roles", ex);
             }
@@ -128,23 +112,14 @@ public final class MenuHelper {
     /**
      * Builds the menu.
      * 
-     * @param menuId
-     *            the menu id
-     * @param menuConfig
-     *            the menu config
-     * @param currentAction
-     *            the current action
-     * @param user
-     *            the user
-     * @param weblog
-     *            the weblog
-     * 
+     * @param menuConfig the menu config
+     * @param currentAction the current action
+     * @param user the user
+     * @param weblog the weblog
      * @return the menu
-     * 
-     * @throws WebloggerException
-     *             the weblogger exception
+     * @throws WebloggerException the weblogger exception
      */
-    private static Menu buildMenu(String menuId, ParsedMenu menuConfig,
+    private static Menu buildMenu(ParsedMenu menuConfig,
             String currentAction, User user, Weblog weblog)
             throws WebloggerException {
 
@@ -161,8 +136,7 @@ public final class MenuHelper {
             if (configTab.getEnabledProperty() != null) {
                 includeTab = getBooleanProperty(configTab.getEnabledProperty());
             } else if (configTab.getDisabledProperty() != null) {
-                includeTab = !getBooleanProperty(configTab
-                        .getDisabledProperty());
+                includeTab = !getBooleanProperty(configTab.getDisabledProperty());
             }
 
             // global role check
@@ -176,7 +150,6 @@ public final class MenuHelper {
             }
 
             if (includeTab) {
-
                 // all checks passed, tab should be included
                 MenuTab tab = new MenuTab();
                 tab.setKey(configTab.getName());
@@ -187,15 +160,12 @@ public final class MenuHelper {
 
                 // now check if each tab item should be included
                 for (ParsedTabItem configTabItem : configTab.getTabItems()) {
-
                     boolean includeItem = true;
 
                     if (configTabItem.getEnabledProperty() != null) {
-                        includeItem = getBooleanProperty(configTabItem
-                                .getEnabledProperty());
+                        includeItem = getBooleanProperty(configTabItem.getEnabledProperty());
                     } else if (configTabItem.getDisabledProperty() != null) {
-                        includeItem = !getBooleanProperty(configTabItem
-                                .getDisabledProperty());
+                        includeItem = !getBooleanProperty(configTabItem.getDisabledProperty());
                     }
 
                     // global role check
@@ -211,10 +181,6 @@ public final class MenuHelper {
                     }
 
                     if (includeItem) {
-
-                        // log.debug("tab item allowed - "
-                        // + configTabItem.getName());
-
                         // all checks passed, item should be included
                         MenuTabItem tabItem = new MenuTabItem();
                         tabItem.setKey(configTabItem.getName());
@@ -222,8 +188,7 @@ public final class MenuHelper {
 
                         // is this the selected item? Only one can be selected
                         // so skip the rest
-                        if (currentAction != null && selectable
-                                && isSelected(currentAction, configTabItem)) {
+                        if (currentAction != null && selectable && isSelected(currentAction, configTabItem)) {
                             tabItem.setSelected(true);
                             tab.setSelected(true);
                             selectable = false;
@@ -251,9 +216,7 @@ public final class MenuHelper {
     /**
      * Check enabled property, prefers runtime properties.
      * 
-     * @param propertyName
-     *            the property name
-     * 
+     * @param propertyName the property name
      * @return the boolean property
      */
     private static boolean getBooleanProperty(String propertyName) {
@@ -266,34 +229,23 @@ public final class MenuHelper {
     /**
      * Checks if is selected.
      * 
-     * @param currentAction
-     *            the current action
-     * @param tabItem
-     *            the tab item
-     * 
+     * @param currentAction the current action
+     * @param tabItem the tab item
      * @return true, if is selected
      */
-    private static boolean isSelected(String currentAction,
-            ParsedTabItem tabItem) {
-
+    private static boolean isSelected(String currentAction, ParsedTabItem tabItem) {
         if (currentAction.equals(tabItem.getAction())) {
             return true;
         }
-
-        // an item is also considered selected if it's a subforward of the
-        // current action
+        // an item is also considered selected if it's a subforward of the current action
         Set<String> subActions = tabItem.getSubActions();
-
         return subActions != null && subActions.contains(currentAction);
     }
 
     /**
      * Unmarshall the given input stream into our defined set of Java objects.
      * 
-     * @param menuId
-     *            the menu id
-     * @param instream
-     *            the instream
+     * @param instream the instream
      * 
      * @return the parsed menu
      * 
@@ -302,7 +254,7 @@ public final class MenuHelper {
      * @throws JDOMException
      *             the jDOM exception
      */
-    private static ParsedMenu unmarshall(String menuId, InputStream instream)
+    private static ParsedMenu unmarshall(InputStream instream)
             throws IOException, JDOMException {
 
         if (instream == null) {
@@ -317,7 +269,7 @@ public final class MenuHelper {
         Element root = doc.getRootElement();
         List<Element> parsedMenus = root.getChildren("menu");
         for (Element e : parsedMenus) {
-            config.addTab(elementToParsedTab(menuId, e));
+            config.addTab(elementToParsedTab(e));
         }
 
         return config;
@@ -325,67 +277,29 @@ public final class MenuHelper {
 
     /**
      * Element to parsed tab.
-     * 
-     * @param menuId
-     *            the menu id
+     *
      * @param element
      *            the element
      * 
      * @return the parsed tab
      */
-    private static ParsedTab elementToParsedTab(String menuId, Element element) {
-
+    private static ParsedTab elementToParsedTab(Element element) {
         ParsedTab tab = new ParsedTab();
 
         tab.setName(element.getAttributeValue("name"));
-        tab.setRequiredWeblogRole(
-                WeblogRole.valueOf(element.getAttributeValue("weblogRole")));
+        tab.setRequiredWeblogRole(WeblogRole.valueOf(element.getAttributeValue("weblogRole")));
         tab.setRequiredGlobalRole(GlobalRole.valueOf(element.getAttributeValue("globalRole")));
         tab.setEnabledProperty(element.getAttributeValue("enabledProperty"));
         tab.setDisabledProperty(element.getAttributeValue("disabledProperty"));
 
         List<Element> menuItems = element.getChildren("menu-item");
 
-        // Build our tab action relation
-        HashMap<String, HashSet<String>> menu = itemMenu.get(menuId);
-        if (menu == null) {
-            menu = new HashMap<String, HashSet<String>>();
-        }
-
         for (Element e : menuItems) {
-
             ParsedTabItem tabItem = elementToParsedTabItem(e);
-
-            HashSet<String> item = menu.get(tab.getName());
-            if (item != null) {
-                if (!item.contains(tabItem.getAction())) {
-                    item.add(tabItem.getAction());
-                }
-            } else {
-                item = new HashSet<String>();
-                item.add(tabItem.getAction());
-            }
-
-            // Add subaction items
-            Set<String> subActions = tabItem.getSubActions();
-            if (subActions != null) {
-                for (String subAction : subActions) {
-                    if (!item.contains(subAction)) {
-                        item.add(subAction);
-                    }
-                }
-            }
-
-            // save our tab action relation
-            menu.put(tab.getName(), item);
-
             tab.addItem(tabItem);
-
         }
 
         // Save relation
-        itemMenu.put(menuId, menu);
-
         return tab;
     }
 
@@ -398,7 +312,6 @@ public final class MenuHelper {
      * @return the parsed tab item
      */
     private static ParsedTabItem elementToParsedTabItem(Element element) {
-
         ParsedTabItem tabItem = new ParsedTabItem();
 
         tabItem.setName(element.getAttributeValue("name"));
@@ -406,7 +319,7 @@ public final class MenuHelper {
 
         String subActions = element.getAttributeValue("subactions");
         if (subActions != null) {
-            Set<String> set = new HashSet<String>();
+            Set<String> set = new HashSet<>();
             for (String string : Utilities.stringToStringList(subActions, ",")) {
                 set.add(string);
             }
@@ -429,5 +342,4 @@ public final class MenuHelper {
 
         return tabItem;
     }
-
 }

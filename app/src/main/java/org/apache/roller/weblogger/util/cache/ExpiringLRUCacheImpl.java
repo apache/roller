@@ -43,7 +43,7 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
     }
     
     
-    protected ExpiringLRUCacheImpl(String id, int maxsize, long timeout) {
+    public ExpiringLRUCacheImpl(String id, int maxsize, long timeout) {
         
         super(id, maxsize);
         
@@ -78,7 +78,7 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
     public synchronized Object get(String key) {
         
         Object value = null;
-        ExpiringCacheEntry entry = null;
+        ExpiringCacheEntry entry;
         
         synchronized(this) {
             entry = (ExpiringCacheEntry) super.get(key);

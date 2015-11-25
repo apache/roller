@@ -25,8 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -49,9 +48,9 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         String url = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
         if (previewTheme != null) {
-            params.put("theme", URLUtilities.encode(previewTheme));
+            params.put("theme", Utilities.encode(previewTheme));
         }
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     /**
@@ -63,13 +62,13 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         
         Map<String, String> params = new HashMap<>();
         if (previewTheme != null) {
-            params.put("theme", URLUtilities.encode(previewTheme));
+            params.put("theme", Utilities.encode(previewTheme));
         }
         if (previewAnchor != null) {
-            params.put("previewEntry", URLUtilities.encode(previewAnchor));
+            params.put("previewEntry", Utilities.encode(previewAnchor));
         }
         
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     /**
@@ -81,17 +80,17 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
         if(category != null && dateString == null) {
-            pathinfo += "category/" + URLUtilities.encodePath(category);
+            pathinfo += "category/" + Utilities.encodePath(category);
         } else if(dateString != null && category == null) {
             pathinfo += "date/" + dateString;
         } else if(tags != null && tags.size() > 0) {
-            pathinfo += "tags/" + URLUtilities.getEncodedTagsString(tags);
+            pathinfo += "tags/" + Utilities.getEncodedTagsString(tags);
         } else {
             if (dateString != null) {
                 params.put("date", dateString);
             }
             if (category != null) {
-                params.put("cat", URLUtilities.encode(category));
+                params.put("cat", Utilities.encode(category));
             }
         }
 
@@ -100,10 +99,10 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         }
         
         if(previewTheme != null) {
-            params.put("theme", URLUtilities.encode(previewTheme));
+            params.put("theme", Utilities.encode(previewTheme));
         }
 
-        return pathinfo + URLUtilities.getQueryString(params);
+        return pathinfo + Utilities.getQueryString(params);
     }
 
     /**
@@ -117,7 +116,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         Map<String, String> params = new HashMap<>();
 
         if(previewTheme != null) {
-            params.put("theme", URLUtilities.encode(previewTheme));
+            params.put("theme", Utilities.encode(previewTheme));
         }
         
         if(pageLink != null) {
@@ -128,10 +127,10 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
                 params.put("date", dateString);
             }
             if(category != null) {
-                params.put("cat", URLUtilities.encode(category));
+                params.put("cat", Utilities.encode(category));
             }
             if(tags != null && tags.size() > 0) {
-                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+                params.put("tags", Utilities.getEncodedTagsString(tags));
             }
             if(pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
@@ -141,7 +140,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return getWeblogCollectionURL(weblog, category, dateString, tags, pageNum, absolute);
         }
         
-        return pathinfo + URLUtilities.getQueryString(params);
+        return pathinfo + Utilities.getQueryString(params);
     }
 
 }

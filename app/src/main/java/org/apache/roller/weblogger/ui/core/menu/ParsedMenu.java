@@ -16,58 +16,29 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.core.util.menu;
+package org.apache.roller.weblogger.ui.core.menu;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * Tab in a Menu.
+ * A parsed xml defined menu.
  */
-public class MenuTab {
+public class ParsedMenu {
     
-    private String key = null;
-    private String action = null;
-    private boolean selected = false;
-    private List<MenuTabItem> items = new ArrayList<MenuTabItem>();
+    private List<ParsedTab> tabs = new ArrayList<ParsedTab>();
     
-    
-    public void addItem(MenuTabItem item) {
-        this.items.add(item);
-    }
-    
-    
-    public String getKey() {
-        return key;
+    public void addTab(ParsedTab tab) {
+        this.tabs.add(tab);
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public List<ParsedTab> getTabs() {
+        return tabs;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String url) {
-        this.action = url;
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-    
-    public List<MenuTabItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<MenuTabItem> items) {
-        this.items = items;
+    public void setTabs(List<ParsedTab> tabs) {
+        this.tabs = tabs;
     }
     
 }

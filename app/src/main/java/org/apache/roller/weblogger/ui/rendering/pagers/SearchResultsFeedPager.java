@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -92,15 +92,15 @@ public class SearchResultsFeedPager extends AbstractPager {
     protected String createURL(String url, Map params) {
         String category = feedRequest.getWeblogCategoryName();
         if(category != null && category.trim().length() > 0) {
-            params.put("cat", URLUtilities.encode(category));
+            params.put("cat", Utilities.encode(category));
         }
         String term = feedRequest.getTerm();
         if(term != null && term.trim().length() > 0) {
-            params.put("q", URLUtilities.encode(term.trim()));
+            params.put("q", Utilities.encode(term.trim()));
         }     
         List tags = feedRequest.getTags();
         if(tags != null && tags.size() > 0) {
-            params.put("tags", URLUtilities.getEncodedTagsString(tags));
+            params.put("tags", Utilities.getEncodedTagsString(tags));
         }
         if(feedRequest.isExcerpts()) {
             params.put("excerpts", "true");

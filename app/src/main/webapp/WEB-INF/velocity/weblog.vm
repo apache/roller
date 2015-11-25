@@ -679,7 +679,7 @@ Show weblog author menu with vertical or horizontal orientation.
 
 
 #** 
-Show weblog author menu with vertical or horizontal orientation.
+Show weblog admin menu with vertical or horizontal orientation.
 *#
 #macro(showAdminMenu $vertical)
   

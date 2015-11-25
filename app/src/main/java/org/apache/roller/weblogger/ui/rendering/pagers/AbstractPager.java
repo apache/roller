@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -99,7 +99,7 @@ public abstract class AbstractPager implements Pager {
     
     protected String createURL(String url, Map params) {
         
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     

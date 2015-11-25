@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -88,7 +88,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         if (parameters != null) {
             params.putAll(parameters);
         }
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     /**
@@ -98,7 +98,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         String url = getRootURL(absolute) + "/roller-ui/authoring/entryAdd.rol";
         Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     /**
@@ -109,7 +109,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
         params.put("bean.id", entryId);
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     /**
@@ -119,7 +119,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         String url = getRootURL(absolute) + "/roller-ui/authoring/weblogConfig.rol";
         Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     /**
@@ -130,7 +130,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         String url = getRootURL(true) + "/planetrss";
         Map<String, String> params = new HashMap<>();
         params.put("planet", planet);
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
 
     /**
@@ -144,14 +144,14 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Get url for a single weblog entry on a given weblog.
      */
     public String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute) {
-        return getWeblogURL(weblog, absolute) + "entry/" + URLUtilities.encode(entryAnchor);
+        return getWeblogURL(weblog, absolute) + "entry/" + Utilities.encode(entryAnchor);
     }
     
     /**
      * Get url for a single weblog media file on a given weblog.
      */
     public String getMediaFileURL(Weblog weblog, String fileAnchor, boolean absolute) {
-        return getWeblogURL(weblog, absolute) + "mediaresource/" + URLUtilities.encode(fileAnchor);
+        return getWeblogURL(weblog, absolute) + "mediaresource/" + Utilities.encode(fileAnchor);
     }
 
     /**
@@ -189,17 +189,17 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         Map<String, String> params = new HashMap<>();
 
         if(category != null && dateString == null) {
-            pathinfo.append("category/").append(URLUtilities.encodePath(category));
+            pathinfo.append("category/").append(Utilities.encodePath(category));
         } else if(dateString != null && category == null) {
             pathinfo.append("date/").append(dateString);  
         } else if(tags != null && tags.size() > 0) {
-            pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
+            pathinfo.append("tags/").append(Utilities.getEncodedTagsString(tags));
         } else {
             if(dateString != null) {
                 params.put("date", dateString);
             }
             if(category != null) {
-                params.put("cat", URLUtilities.encode(category));
+                params.put("cat", Utilities.encode(category));
             }
         }
 
@@ -207,7 +207,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
             params.put("page", Integer.toString(pageNum));
         }
         
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo.toString() + Utilities.getQueryString(params);
     }
     
     
@@ -230,10 +230,10 @@ public class MultiWeblogURLStrategy implements URLStrategy {
                 params.put("date", dateString);
             }
             if(category != null) {
-                params.put("cat", URLUtilities.encode(category));
+                params.put("cat", Utilities.encode(category));
             }
             if(tags != null && tags.size() > 0) {
-                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+                params.put("tags", Utilities.getEncodedTagsString(tags));
             }
             if(pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
@@ -243,7 +243,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
             return getWeblogCollectionURL(weblog, category, dateString, tags, pageNum, absolute);
         }
         
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo.toString() + Utilities.getQueryString(params);
     }
 
     /**
@@ -256,19 +256,19 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         
         Map<String, String> params = new HashMap<>();
         if (category != null && category.trim().length() > 0) {
-            params.put("cat", URLUtilities.encode(category));
+            params.put("cat", Utilities.encode(category));
         }
         if (tags != null && tags.size() > 0) {
-          params.put("tags", URLUtilities.getEncodedTagsString(tags));
+          params.put("tags", Utilities.getEncodedTagsString(tags));
         }
         if (term != null && term.trim().length() > 0) {
-            params.put("q", URLUtilities.encode(term.trim()));
+            params.put("q", Utilities.encode(term.trim()));
         }
         if (excerpts) {
             params.put("excerpts", "true");
         }
         
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
     
     /**
@@ -279,18 +279,18 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
         Map<String, String> params = new HashMap<>();
         if(query != null) {
-            params.put("q", URLUtilities.encode(query));
+            params.put("q", Utilities.encode(query));
             
             // other stuff only makes sense if there is a query
             if(category != null) {
-                params.put("cat", URLUtilities.encode(category));
+                params.put("cat", Utilities.encode(category));
             }
             if(pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
             }
         }
         
-        return url + URLUtilities.getQueryString(params);
+        return url + Utilities.getQueryString(params);
     }
     
     /**

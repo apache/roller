@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -316,7 +315,7 @@ public class UtilitiesModel implements Model {
      */
     public final String encode(String s) {
         if(s != null) {
-            return URLUtilities.encode(s);
+            return Utilities.encode(s);
         } else {
             return s;
         }
@@ -329,7 +328,7 @@ public class UtilitiesModel implements Model {
      */
     public final String decode(String s) {
         if(s != null) {
-            return URLUtilities.decode(s);
+            return Utilities.decode(s);
         } else {
             return s;
         }

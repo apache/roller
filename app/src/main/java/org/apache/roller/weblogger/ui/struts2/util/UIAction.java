@@ -31,8 +31,8 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.util.menu.Menu;
-import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
+import org.apache.roller.weblogger.ui.core.menu.Menu;
+import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.struts2.interceptor.RequestAware;
 
 import java.text.DateFormat;

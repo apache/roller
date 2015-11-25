@@ -214,7 +214,7 @@ public class MailUtil {
         
         try {
             ResourceBundle resources = ResourceBundle.getBundle(
-                    "ApplicationResources", I18nUtils.toLocale(user.getLocale()));
+                    "ApplicationResources", Utilities.toLocale(user.getLocale()));
             
             String from = WebloggerRuntimeConfig.getProperty(
                     "user.account.activation.mail.from");

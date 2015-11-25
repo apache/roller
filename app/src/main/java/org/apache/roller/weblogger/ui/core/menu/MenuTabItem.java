@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.core.util.menu;
+package org.apache.roller.weblogger.ui.core.menu;
 
 
 /**
