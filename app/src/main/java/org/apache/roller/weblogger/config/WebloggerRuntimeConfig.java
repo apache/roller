@@ -20,25 +20,12 @@
  */
 package org.apache.roller.weblogger.config;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * This class is for reading the application's runtime properties.  At installation
@@ -58,7 +45,6 @@ public final class WebloggerRuntimeConfig {
     
     private static Log log = LogFactory.getLog(WebloggerRuntimeConfig.class);
     
-    private static String RUNTIME_CONFIG = "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
     // special case for our context urls
@@ -135,25 +121,11 @@ public final class WebloggerRuntimeConfig {
     public static RuntimeConfigDefs getRuntimeConfigDefs() {
         if(configDefs == null) {
             try {
-                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                Schema schema = sf.newSchema(new StreamSource(
-                        RuntimeConfigDefs.class.getResourceAsStream("/runtimeConfigDefs.xsd")));
-
-                InputStream is = WebloggerRuntimeConfig.class.getResourceAsStream(RUNTIME_CONFIG);
-                JAXBContext jaxbContext = JAXBContext.newInstance(RuntimeConfigDefs.class);
-                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-                jaxbUnmarshaller.setSchema(schema);
-                jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
-                    public boolean handleEvent(ValidationEvent event) {
-                        log.error("Parsing error: " +
-                                event.getMessage() + "; Line #" +
-                                event.getLocator().getLineNumber() + "; Column #" +
-                                event.getLocator().getColumnNumber());
-                        return false;
-                    }
-                });
-                configDefs = (RuntimeConfigDefs) jaxbUnmarshaller.unmarshal(is);
-
+                configDefs = (RuntimeConfigDefs) Utilities.jaxbUnmarshall(
+                        "/org/apache/roller/weblogger/config/runtimeConfigDefs.xsd",
+                        "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml",
+                        false,
+                        RuntimeConfigDefs.class);
             } catch(Exception e) {
                 // error while parsing :(
                 log.error("Error parsing runtime config defs", e);
@@ -162,40 +134,6 @@ public final class WebloggerRuntimeConfig {
         return configDefs;
     }
 
-    /**
-     * Get the runtime configuration definitions XML file as a string.
-     *
-     * This is basically a convenience method for accessing this file.
-     * The file itself contains meta-data about what configuration
-     * properties we change at runtime via the UI and how to setup
-     * the display for editing those properties.
-     */
-    public static String getRuntimeConfigDefsAsString() {
-        
-        log.debug("Trying to load runtime config defs file");
-        
-        try {
-            InputStreamReader reader =
-                    new InputStreamReader(WebloggerConfig.class.getResourceAsStream(RUNTIME_CONFIG));
-            StringWriter configString = new StringWriter();
-            
-            char[] buf = new char[WebloggerCommon.EIGHT_KB_IN_BYTES];
-            int length = 0;
-            while((length = reader.read(buf)) > 0) {
-                configString.write(buf, 0, length);
-            }
-            
-            reader.close();
-            
-            return configString.toString();
-        } catch(Exception e) {
-            log.error("Error loading runtime config defs file", e);
-        }
-        
-        return "";
-    }
-    
-    
     /**
      * Special method which sets the non-persisted absolute url to this site.
      *

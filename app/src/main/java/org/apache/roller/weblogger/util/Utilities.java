@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.util;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,11 +43,20 @@ import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -835,5 +845,39 @@ public class Utilities {
             }
         }
         return Locale.getDefault();
+    }
+
+    public static Object jaxbUnmarshall(String xsdPath, String xmlPath, boolean xmlFromFileSystem,
+                                        Class... classesToBeBound)
+            throws WebloggerException {
+
+        try {
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(new StreamSource(
+                    Utilities.class.getResourceAsStream(xsdPath)));
+
+            InputStream is;
+            if (xmlFromFileSystem) {
+                is = new FileInputStream(xmlPath);
+            } else {
+                is = Utilities.class.getResourceAsStream(xmlPath);
+            }
+            JAXBContext jaxbContext = JAXBContext.newInstance(classesToBeBound);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            jaxbUnmarshaller.setSchema(schema);
+            jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    mLogger.error("Parsing error: " +
+                            event.getMessage() + "; Line #" +
+                            event.getLocator().getLineNumber() + "; Column #" +
+                            event.getLocator().getColumnNumber());
+                    return false;
+                }
+            });
+            return jaxbUnmarshaller.unmarshal(is);
+        } catch (Exception ex) {
+            throw new WebloggerException(
+                    "JAXB Unmarshalling Error", ex);
+        }
     }
 }

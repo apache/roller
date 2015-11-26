@@ -336,7 +336,7 @@ public abstract class UIAction extends ActionSupport
     }
     
     public Menu getMenu() {
-        return MenuHelper.getMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(), getActionWeblog());
+        return MenuHelper.generateMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(), getActionWeblog());
     }
     
     

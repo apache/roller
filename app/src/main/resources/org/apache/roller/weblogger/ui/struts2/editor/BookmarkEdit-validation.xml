@@ -31,10 +31,4 @@
         </field-validator>
     </field>
     
-    <field name="bean.feedUrl">
-        <field-validator type="url">
-            <message key="Bookmark.error.feedUrlBad">unspecified key</message>
-        </field-validator>
-    </field>
-    
 </validators>

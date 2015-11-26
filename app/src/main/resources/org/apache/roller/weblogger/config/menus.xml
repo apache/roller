@@ -1,0 +1,116 @@
+<!-- 
+Defines the menus provided with Weblogger
+-->
+<menus>
+    <menu id="admin">
+        <tab titleKey="tabbedmenu.admin" globalRole="ADMIN" weblogRole="NOBLOGNEEDED">
+            <tabItem action="globalConfig"
+                     titleKey="tabbedmenu.admin.config"/>
+            <tabItem action="userAdmin"
+                     titleKey="tabbedmenu.admin.userAdmin">
+                <subactions>
+                    <subaction>createUser</subaction>
+                    <subaction>modifyUser</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="globalCommentManagement"
+                     titleKey="tabbedmenu.admin.commentManagement"/>
+            <tabItem action="commonPingTargets"
+                     titleKey="tabbedmenu.admin.pingTargets">
+                <subactions>
+                    <subaction>commonPingTargetAdd</subaction>
+                    <subaction>commonPingTargetEdit</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="planets"
+                     titleKey="tabbedmenu.admin.planets"
+                     enabledProperty="planet.aggregator.enabled">
+                <subactions>
+                    <subaction>planetSubscriptions</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="cacheInfo"
+                     titleKey="tabbedmenu.admin.cacheInfo"/>
+        </tab>
+    </menu>
+    <menu id="editor">
+        <tab titleKey="tabbedmenu.weblog" weblogRole="EDIT_DRAFT" globalRole="BLOGGER" >
+            <tabItem action="entryAdd"
+                     titleKey="tabbedmenu.weblog.newEntry"
+                     weblogRole="EDIT_DRAFT">
+                <subactions>
+                    <subaction>entryEdit</subaction>
+                    <subaction>entryRemove</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="entries"
+                     titleKey="tabbedmenu.weblog.archives"
+                     weblogRole="POST">
+                <subactions>
+                    <subaction>entryRemoveViaList</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="comments"
+                     titleKey="tabbedmenu.admin.commentManagement"
+                     weblogRole="POST"/>
+            <tabItem action="categories"
+                     titleKey="tabbedmenu.weblog.categories"
+                     weblogRole="POST">
+                <subactions>
+                    <subaction>categoryAdd</subaction>
+                    <subaction>categoryEdit</subaction>
+                    <subaction>categoryRemove</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="bookmarks"
+                     titleKey="tabbedmenu.bookmarks.allFolders"
+                     weblogRole="OWNER">
+                <subactions>
+                    <subaction>bookmarkAdd</subaction>
+                    <subaction>bookmarkEdit</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="mediaFileView"
+                     titleKey="tabbedmenu.weblog.mediaFiles"
+                     weblogRole="POST">
+                <subactions>
+                    <subaction>mediaFileAdd</subaction>
+                    <subaction>mediaFileEdit</subaction>
+                </subactions>
+            </tabItem>
+        </tab>
+        <tab titleKey="tabbedmenu.design" weblogRole="OWNER" globalRole="LOGIN" enabledProperty="themes.customtheme.allowed">
+            <tabItem action="themeEdit"
+                     titleKey="tabbedmenu.website.themes"/>
+            <tabItem action="templates"
+                     titleKey="tabbedmenu.website.pages">
+                <subactions>
+                    <subaction>templateAdd</subaction>
+                    <subaction>templateEdit</subaction>
+                    <subaction>templateRemove</subaction>
+                    <subaction>templatesRemove</subaction>
+                </subactions>
+            </tabItem>
+        </tab>
+        <tab titleKey="tabbedmenu.website" weblogRole="OWNER" globalRole="BLOGGER">
+            <tabItem action="weblogConfig"
+                     titleKey="tabbedmenu.website.settings">
+                <subactions>
+                    <subaction>weblogRemove</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="members"
+                     titleKey="tabbedmenu.website.members"
+                     enabledProperty="groupblogging.enabled">
+                <subactions>
+                    <subaction>invite</subaction>
+                </subactions>
+            </tabItem>
+            <tabItem action="pings"
+                     titleKey="tabbedmenu.weblog.pingSetup"
+                     disabledProperty="pings.disablePingUsage"/>
+            <tabItem action="maintenance"
+                     titleKey="tabbedmenu.website.maintenance"/>
+        </tab>
+    </menu>
+</menus>

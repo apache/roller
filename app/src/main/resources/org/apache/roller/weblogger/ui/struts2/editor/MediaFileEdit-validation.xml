@@ -21,10 +21,4 @@
         </field-validator>
     </field>
     
-    <field name="bean.copyrightText">
-        <field-validator type="stringlength">
-            <param name="maxLength">1023</param>
-            <message key="MediaFile.error.copyrightTextSize">unspecified key</message>
-        </field-validator>
-    </field>
 </validators>
