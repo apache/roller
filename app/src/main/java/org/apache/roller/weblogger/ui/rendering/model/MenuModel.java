@@ -82,7 +82,7 @@ public class MenuModel implements Model {
             if (pageRequest.isLoggedIn()) {
                 boolean isAdmin = userManager.isGlobalAdmin(pageRequest.getUser());
                 if (isAdmin) {
-                    return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+                    return MenuHelper.generateMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
                 }
             }
         } catch (WebloggerException ex) {
@@ -98,7 +98,7 @@ public class MenuModel implements Model {
      */
     public Menu getAuthorMenu() {
         if(pageRequest.isLoggedIn()) {
-            return MenuHelper.getMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog());
+            return MenuHelper.generateMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog());
         }
         return null;
     }

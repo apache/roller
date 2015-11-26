@@ -18,7 +18,6 @@ package org.apache.roller.weblogger.pojos;
 // GlobalRole defines system-wide roles as opposed to individual blog permissions
 // Each role includes the roles of those of lower weight as defined in this enum
 // LOGIN and COMMENT presently unused/unncoded
-// TODO: Implement comparator
 public enum GlobalRole {
     // For pages that don't need authenticated users (initial install, user registration, login, etc.)
     NOAUTHNEEDED(0),

@@ -14,27 +14,26 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.core.menu;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * A Menu of MenuTab objects.
+ * The top-level menu for a UI, consisting of MenuTabs and below those
+ * MenuTabItems.
  */
 public class Menu {
-    
-    private List<MenuTab> tabs = new ArrayList<MenuTab>();
-    
-    
+    private List<MenuTab> tabs = new ArrayList<>();
+
     public void addTab(MenuTab tab) {
         this.tabs.add(tab);
     }
-    
-    
+
     public List<MenuTab> getTabs() {
         return tabs;
     }
@@ -42,5 +41,77 @@ public class Menu {
     public void setTabs(List<MenuTab> menus) {
         this.tabs = menus;
     }
-    
+
+    public static class MenuTab {
+        private String key = null;
+        private String action = null;
+        private boolean selected = false;
+        private List<MenuTabItem> items = new ArrayList<>();
+
+        public void addItem(MenuTabItem item) {
+            this.items.add(item);
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String url) {
+            this.action = url;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
+
+        public List<MenuTabItem> getItems() {
+            return items;
+        }
+
+        public void setItems(List<MenuTabItem> items) {
+            this.items = items;
+        }
+    }
+
+    public static class MenuTabItem {
+        private String key = null;
+        private String action = null;
+        private boolean selected = false;
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String url) {
+            this.action = url;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
+    }
 }

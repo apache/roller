@@ -14,11 +14,4 @@
         </field-validator>
     </field>
     
-    <field name="bean.description">
-        <field-validator type="stringlength">
-            <param name="maxLength">255</param>
-            <message key="Category.error.descriptionSize">unspecified key</message>
-        </field-validator>
-    </field>
-
 </validators>

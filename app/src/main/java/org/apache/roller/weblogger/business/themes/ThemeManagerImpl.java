@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business.themes;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,14 +36,6 @@ import java.util.Set;
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +50,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Base implementation of a ThemeManager.
@@ -317,25 +309,11 @@ public class ThemeManagerImpl implements ThemeManager {
         //ThemeMetadata themeMetadata2;
         SharedTheme sharedTheme;
         try {
-            // lookup theme descriptor and parse it
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = sf.newSchema(new StreamSource(
-                    SharedTheme.class.getResourceAsStream("/theme.xsd")));
-
-            InputStream is = new FileInputStream(themePath + File.separator + "theme.xml");
-            JAXBContext jaxbContext = JAXBContext.newInstance(SharedTheme.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            jaxbUnmarshaller.setSchema(schema);
-            jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    log.error("Theme parsing error: " +
-                            event.getMessage() + "; Line #" +
-                            event.getLocator().getLineNumber() + "; Column #" +
-                            event.getLocator().getColumnNumber());
-                    return false;
-                }
-            });
-            sharedTheme = (SharedTheme) jaxbUnmarshaller.unmarshal(is);
+            sharedTheme = (SharedTheme) Utilities.jaxbUnmarshall(
+                    "/theme.xsd",
+                    themePath + File.separator + "theme.xml",
+                    true,
+                    SharedTheme.class);
             sharedTheme.setThemeDir(themePath);
         } catch (Exception ex) {
             throw new WebloggerException(

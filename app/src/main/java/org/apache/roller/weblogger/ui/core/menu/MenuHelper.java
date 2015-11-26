@@ -27,77 +27,82 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTab;
+import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTabItem;
+import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTab;
+import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTabItem;
 import org.apache.roller.weblogger.util.Utilities;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * A helper class for dealing with UI menus.
- * 
- * Note : Debug logging disabled here as it is too expensive time wise.
- * 
  */
+@XmlRootElement(name="menus")
 public final class MenuHelper {
 
     private static Log log = LogFactory.getLog(MenuHelper.class);
 
-    private static Map<String, ParsedMenu> menus = new HashMap<>();
+    private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
 
-    private MenuHelper() {
+    private List<ParsedMenu> menuList = new ArrayList<>(2);
+
+    @XmlElements(@XmlElement(name="menu"))
+    public List<ParsedMenu> getMenuList() {
+        return menuList;
     }
 
-    static {
-        try {
-            // parse menus and cache so we can efficiently reuse them
-            ParsedMenu editorMenu = unmarshall(
-                    MenuHelper.class.getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/editor/editor-menu.xml"));
-            menus.put("editor", editorMenu);
+    public void setMenuList(List<ParsedMenu> list) {
+        this.menuList = list;
+    }
 
-            ParsedMenu adminMenu = unmarshall(
-                    MenuHelper.class.getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/admin/admin-menu.xml"));
-            menus.put("admin", adminMenu);
+    private MenuHelper() {}
+
+    static {
+        // parse and cache menus so we can efficiently reuse them
+        try {
+            MenuHelper menus = (MenuHelper) Utilities.jaxbUnmarshall(
+                    "/org/apache/roller/weblogger/config/menus.xsd",
+                    "/org/apache/roller/weblogger/config/menus.xml",
+                    false,
+                    MenuHelper.class);
+
+            for (ParsedMenu menu : menus.getMenuList()) {
+                menuMap.put(menu.getId(), menu);
+            }
         } catch (Exception ex) {
             log.error("Error parsing menu configs", ex);
         }
     }
 
     /**
-     * Gets the menu.
+     * Creates and returns a Menu object with tabs and tab items removed and active tab and item
+     * highlighted as appropriate for the User, Weblog, and Action being performed.
      * 
-     * @param menuId
-     *            the menu id
-     * @param currentAction
-     *            the current action. Null to ignore.
-     * @param user
-     *            the user
-     * @param weblog
-     *            the weblog
-     * 
-     * @return the menu
+     * @param menuId unique identifier for the menu (e.g., "editor", "admin")
+     *
+     * @param currentAction the current action being invoked. Null to ignore.
+     *
+     * @param user the User
+     *
+     * @param weblog Weblog instance User is working with
+     *
+     * @return Menu object
      */
-    public static Menu getMenu(String menuId, String currentAction, User user, Weblog weblog) {
-        if (menuId == null) {
-            return null;
-        }
-
+    public static Menu generateMenu(String menuId, String currentAction, User user, Weblog weblog) {
         Menu menu = null;
 
         // do we know the specified menu config?
-        ParsedMenu menuConfig = menus.get(menuId);
+        ParsedMenu menuConfig = menuMap.get(menuId);
         if (menuConfig != null) {
             try {
                 menu = buildMenu(menuConfig, currentAction, user, weblog);
@@ -105,7 +110,6 @@ public final class MenuHelper {
                 log.error("ERROR: fetching user roles", ex);
             }
         }
-
         return menu;
     }
 
@@ -128,9 +132,6 @@ public final class MenuHelper {
 
         // iterate over tabs from parsed config
         for (ParsedTab configTab : menuConfig.getTabs()) {
-
-            // log.debug("config tab = " + configTab.getName());
-
             // does this tab have an enabledProperty?
             boolean includeTab = true;
             if (configTab.getEnabledProperty() != null) {
@@ -139,75 +140,70 @@ public final class MenuHelper {
                 includeTab = !getBooleanProperty(configTab.getDisabledProperty());
             }
 
-            // global role check
-            if (includeTab && !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole())) {
-                includeTab = false;
+            if (!includeTab
+               || !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole())
+               || (weblog != null && !umgr.checkWeblogRole(user, weblog, configTab.getRequiredWeblogRole()))
+               ) {
+                continue;
             }
 
-            // weblog role check
-            if (includeTab && weblog != null) {
-                includeTab = umgr.checkWeblogRole(user, weblog, configTab.getRequiredWeblogRole());
-            }
+            // all checks passed, tab should be included
+            MenuTab tab = new MenuTab();
+            tab.setKey(configTab.getTitleKey());
 
-            if (includeTab) {
-                // all checks passed, tab should be included
-                MenuTab tab = new MenuTab();
-                tab.setKey(configTab.getName());
+            // setup tab items
+            boolean firstItem = true;
+            boolean selectable = true;
 
-                // setup tab items
-                boolean firstItem = true;
-                boolean selectable = true;
+            // now check if each tab item should be included
+            for (ParsedTabItem tabItem : configTab.getTabItems()) {
+                boolean includeItem = true;
 
-                // now check if each tab item should be included
-                for (ParsedTabItem configTabItem : configTab.getTabItems()) {
-                    boolean includeItem = true;
-
-                    if (configTabItem.getEnabledProperty() != null) {
-                        includeItem = getBooleanProperty(configTabItem.getEnabledProperty());
-                    } else if (configTabItem.getDisabledProperty() != null) {
-                        includeItem = !getBooleanProperty(configTabItem.getDisabledProperty());
-                    }
-
-                    // global role check
-                    if (includeItem && (configTabItem.getRequiredGlobalRole() != null)) {
-                        if (!user.hasEffectiveGlobalRole(configTabItem.getRequiredGlobalRole())) {
-                            includeItem = false;
-                        }
-                    }
-
-                    // weblog role check
-                    if (includeItem && weblog != null && (configTabItem.getRequiredWeblogRole() != null)) {
-                        includeItem = umgr.checkWeblogRole(user, weblog, configTabItem.getRequiredWeblogRole());
-                    }
-
-                    if (includeItem) {
-                        // all checks passed, item should be included
-                        MenuTabItem tabItem = new MenuTabItem();
-                        tabItem.setKey(configTabItem.getName());
-                        tabItem.setAction(configTabItem.getAction());
-
-                        // is this the selected item? Only one can be selected
-                        // so skip the rest
-                        if (currentAction != null && selectable && isSelected(currentAction, configTabItem)) {
-                            tabItem.setSelected(true);
-                            tab.setSelected(true);
-                            selectable = false;
-                        }
-
-                        // the url for the tab is the url of the first tab item
-                        if (firstItem) {
-                            tab.setAction(tabItem.getAction());
-                            firstItem = false;
-                        }
-
-                        // add the item
-                        tab.addItem(tabItem);
-                    }
+                if (tabItem.getEnabledProperty() != null) {
+                    includeItem = getBooleanProperty(tabItem.getEnabledProperty());
+                } else if (tabItem.getDisabledProperty() != null) {
+                    includeItem = !getBooleanProperty(tabItem.getDisabledProperty());
                 }
 
-                // add the tab
-                tabMenu.addTab(tab);
+                // disabled and global role check
+                if (!includeItem ||
+                        tabItem.getRequiredGlobalRole() != null
+                        && !user.hasEffectiveGlobalRole(tabItem.getRequiredGlobalRole())) {
+                    continue;
+                }
+
+                // weblog role check
+                if (weblog != null
+                        && (tabItem.getRequiredWeblogRole() != null
+                            && !umgr.checkWeblogRole(user, weblog, tabItem.getRequiredWeblogRole()))) {
+                    continue;
+                }
+
+                // all checks passed, item should be included
+                MenuTabItem newTabItem = new MenuTabItem();
+                newTabItem.setKey(tabItem.getTitleKey());
+                newTabItem.setAction(tabItem.getAction());
+
+                // is this the selected item? Only one can be selected
+                // so skip the rest
+                if (currentAction != null && selectable && isSelected(currentAction, tabItem)) {
+                    newTabItem.setSelected(true);
+                    tab.setSelected(true);
+                    selectable = false;
+                }
+
+                // the url for the tab is the url of the first tab item
+                if (firstItem) {
+                    tab.setAction(newTabItem.getAction());
+                    firstItem = false;
+                }
+
+                // add the item
+                tab.addItem(newTabItem);
             }
+
+            // add the tab
+            tabMenu.addTab(tab);
         }
 
         return tabMenu;
@@ -237,109 +233,9 @@ public final class MenuHelper {
         if (currentAction.equals(tabItem.getAction())) {
             return true;
         }
-        // an item is also considered selected if it's a subforward of the current action
+        // an item is also considered selected if it's a subaction of the current action
         Set<String> subActions = tabItem.getSubActions();
         return subActions != null && subActions.contains(currentAction);
     }
 
-    /**
-     * Unmarshall the given input stream into our defined set of Java objects.
-     * 
-     * @param instream the instream
-     * 
-     * @return the parsed menu
-     * 
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     * @throws JDOMException
-     *             the jDOM exception
-     */
-    private static ParsedMenu unmarshall(InputStream instream)
-            throws IOException, JDOMException {
-
-        if (instream == null) {
-            throw new IOException("InputStream is null!");
-        }
-
-        ParsedMenu config = new ParsedMenu();
-
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(instream);
-
-        Element root = doc.getRootElement();
-        List<Element> parsedMenus = root.getChildren("menu");
-        for (Element e : parsedMenus) {
-            config.addTab(elementToParsedTab(e));
-        }
-
-        return config;
-    }
-
-    /**
-     * Element to parsed tab.
-     *
-     * @param element
-     *            the element
-     * 
-     * @return the parsed tab
-     */
-    private static ParsedTab elementToParsedTab(Element element) {
-        ParsedTab tab = new ParsedTab();
-
-        tab.setName(element.getAttributeValue("name"));
-        tab.setRequiredWeblogRole(WeblogRole.valueOf(element.getAttributeValue("weblogRole")));
-        tab.setRequiredGlobalRole(GlobalRole.valueOf(element.getAttributeValue("globalRole")));
-        tab.setEnabledProperty(element.getAttributeValue("enabledProperty"));
-        tab.setDisabledProperty(element.getAttributeValue("disabledProperty"));
-
-        List<Element> menuItems = element.getChildren("menu-item");
-
-        for (Element e : menuItems) {
-            ParsedTabItem tabItem = elementToParsedTabItem(e);
-            tab.addItem(tabItem);
-        }
-
-        // Save relation
-        return tab;
-    }
-
-    /**
-     * Element to parsed tab item.
-     * 
-     * @param element
-     *            the element
-     * 
-     * @return the parsed tab item
-     */
-    private static ParsedTabItem elementToParsedTabItem(Element element) {
-        ParsedTabItem tabItem = new ParsedTabItem();
-
-        tabItem.setName(element.getAttributeValue("name"));
-        tabItem.setAction(element.getAttributeValue("action"));
-
-        String subActions = element.getAttributeValue("subactions");
-        if (subActions != null) {
-            Set<String> set = new HashSet<>();
-            for (String string : Utilities.stringToStringList(subActions, ",")) {
-                set.add(string);
-            }
-            tabItem.setSubActions(set);
-        }
-
-        if (element.getAttributeValue("globalRole") != null) {
-            tabItem.setRequiredGlobalRole(GlobalRole.valueOf(
-                    element.getAttributeValue("globalRole")));
-        }
-
-        if (element.getAttributeValue("weblogRole") != null) {
-            tabItem.setRequiredWeblogRole(WeblogRole.valueOf(
-                element.getAttributeValue("weblogRole")));
-        }
-
-        tabItem.setEnabledProperty(element.getAttributeValue("enabledProperty"));
-        tabItem.setDisabledProperty(element
-                .getAttributeValue("disabledProperty"));
-
-        return tabItem;
-    }
 }
