@@ -56,7 +56,6 @@ public class MediaFile implements Serializable {
             MediaFile.class);
 
     private String id = WebloggerCommon.generateUUID();
-
     private String name;
     private String altText;
     private String titleText;

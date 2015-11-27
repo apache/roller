@@ -16,7 +16,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
@@ -58,10 +57,10 @@ public class Planet implements Serializable, Comparable<Planet> {
     private transient String[] catArray = null;
     
     // attributes
-    private String id = WebloggerCommon.generateUUID();
-    private String handle = null;
-    private String title = null;
-    private String description = null;
+    private String id;
+    private String handle;
+    private String title;
+    private String description;
     private int maxPageEntries = 45;
     private int maxFeedEntries = 45;
     
@@ -69,12 +68,12 @@ public class Planet implements Serializable, Comparable<Planet> {
     private String categoryRestriction = null;
     
     // associations
-    private Set<Subscription> subscriptions = new TreeSet<Subscription>();
-    
-    
+    private Set<Subscription> subscriptions = new TreeSet<>();
+
     public Planet() {}
     
     public Planet(String handle, String title, String desc) {
+        this.id = WebloggerCommon.generateUUID();
         this.handle = handle;
         this.title = title;
         this.description = desc;

@@ -49,19 +49,17 @@ public class PingTarget implements Serializable {
 
     public static final long serialVersionUID = -6354583200913127874L;
 
-    private String id = WebloggerCommon.generateUUID();
-    private String name = null;
-    private String pingUrl = null;
-    private Timestamp lastSuccess = null;
-    private boolean autoEnabled = false;
-
+    private String id;
+    private String name;
+    private String pingUrl;
+    private Timestamp lastSuccess;
+    private boolean autoEnabled;
 
     /**
      * Default empty constructor.
      */
     public PingTarget() {
     }
-
 
     /**
      * Constructor.
@@ -71,6 +69,7 @@ public class PingTarget implements Serializable {
      * @param autoEnable if true, pings sent to target by default
      */
     public PingTarget(String name, String pingUrl, boolean autoEnable) {
+        this.id = WebloggerCommon.generateUUID();
         this.name = name;
         this.pingUrl = pingUrl;
         this.lastSuccess = null;

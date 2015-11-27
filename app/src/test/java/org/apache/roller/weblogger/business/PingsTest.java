@@ -27,6 +27,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
@@ -73,6 +74,7 @@ public class PingsTest extends TestCase {
         }
         
         testCommonPing = new PingTarget();
+        testCommonPing.setId(WebloggerCommon.generateUUID());
         testCommonPing.setName("testCommonPing");
         testCommonPing.setPingUrl("http://localhost/testCommonPing");
     }

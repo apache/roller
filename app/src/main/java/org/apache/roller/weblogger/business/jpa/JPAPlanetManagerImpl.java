@@ -36,6 +36,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.FeedProcessor;
 import org.apache.roller.weblogger.business.FeedProcessorImpl;
 import org.apache.roller.weblogger.business.PlanetManager;
@@ -297,6 +298,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
             Planet planet = getPlanet("all");
             if (planet == null) {
                 planet = new Planet();
+                planet.setId(WebloggerCommon.generateUUID());
                 planet.setHandle("all");
                 planet.setTitle("All Blogs");
                 savePlanet(planet);

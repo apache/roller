@@ -372,6 +372,7 @@ public final class TestUtils {
             throws Exception {
 
         PingTarget testPing = new PingTarget();
+        testPing.setId(WebloggerCommon.generateUUID());
         testPing.setName("testCommonPing");
         testPing.setPingUrl("http://localhost/testCommonPing");
 

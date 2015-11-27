@@ -24,6 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -49,7 +50,7 @@ public class BookmarkEdit extends UIAction {
     }
 
     // bean for managing form data
-    private BookmarkBean bean = new BookmarkBean();
+    private WeblogBookmark formBean = new WeblogBookmark();
 
     // the bookmark we are adding or editing
     private WeblogBookmark bookmark = null;
@@ -74,17 +75,18 @@ public class BookmarkEdit extends UIAction {
     }
 
     public void prepare() {
-        if (StringUtils.isEmpty(bean.getId())) {
+        if (isAdd()) {
             // Create and initialize new, not-yet-saved WeblogBookmark
             bookmark = new WeblogBookmark();
+            bookmark.setId(WebloggerCommon.generateUUID());
             bookmark.setWeblog(getActionWeblog());
         } else {
             // existing bookmark, retrieve its info from DB
             try {
-                bookmark = weblogManager.getBookmark(getBean().getId());
+                bookmark = weblogManager.getBookmark(formBean.getId());
             } catch (WebloggerException ex) {
                 addError("generic.error.check.logs");
-                log.error("Error looking up bookmark" + getBean().getId(), ex);
+                log.error("Error looking up bookmark" + formBean.getId(), ex);
             }
         }
     }
@@ -94,7 +96,10 @@ public class BookmarkEdit extends UIAction {
     public String execute() {
         if (!isAdd()) {
             // load bean with database values during initial load
-            getBean().copyFrom(getBookmark());
+            formBean.setId(bookmark.getId());
+            formBean.setName(bookmark.getName());
+            formBean.setDescription(bookmark.getDescription());
+            formBean.setUrl(bookmark.getUrl());
         }
         return INPUT;
     }
@@ -105,7 +110,9 @@ public class BookmarkEdit extends UIAction {
 
         if(!hasActionErrors()) {
             try {
-                getBean().copyTo(bookmark);
+                bookmark.setName(formBean.getName());
+                bookmark.setDescription(formBean.getDescription());
+                bookmark.setUrl(formBean.getUrl());
                 if (isAdd()) {
                     bookmark.calculatePosition();
                     getActionWeblog().addBookmark(bookmark);
@@ -129,9 +136,9 @@ public class BookmarkEdit extends UIAction {
 
     public void myValidate() {
         // if name new or changed, check new name doesn't already exist
-        if ((isAdd() || !getBean().getName().equals(bookmark.getName()))
-             && bookmark.getWeblog().hasBookmark(getBean().getName())) {
-                addError("bookmarkForm.error.duplicateName", getBean().getUrl());
+        if ((isAdd() || !getFormBean().getName().equals(bookmark.getName()))
+                && bookmark.getWeblog().hasBookmark(getFormBean().getName())) {
+                addError("bookmarkForm.error.duplicateName", getFormBean().getUrl());
         }
     }
 
@@ -139,12 +146,12 @@ public class BookmarkEdit extends UIAction {
         return actionName.equals("bookmarkAdd");
     }
 
-    public BookmarkBean getBean() {
-        return bean;
+    public WeblogBookmark getFormBean() {
+        return formBean;
     }
 
-    public void setBean(BookmarkBean bean) {
-        this.bean = bean;
+    public void setFormBean(WeblogBookmark bean) {
+        this.formBean = bean;
     }
 
     public WeblogBookmark getBookmark() {

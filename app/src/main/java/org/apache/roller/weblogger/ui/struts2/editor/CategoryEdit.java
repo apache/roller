@@ -24,6 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -43,7 +44,7 @@ public class CategoryEdit extends UIAction {
     private static Log log = LogFactory.getLog(CategoryEdit.class);
 
     // bean for managing form data
-    private CategoryBean bean = new CategoryBean();
+    private WeblogCategory formBean = new WeblogCategory();
 
     // the (new or already existing) category we are editing
     private WeblogCategory category = null;
@@ -75,13 +76,14 @@ public class CategoryEdit extends UIAction {
 
 
     public void prepare() {
-        if (StringUtils.isEmpty(bean.getId())) {
+        if (isAdd()) {
             // Create and initialize new, not-yet-saved category
             category = new WeblogCategory();
             category.setWeblog(getActionWeblog());
+            category.setId(WebloggerCommon.generateUUID());
         } else {
             try {
-                category = weblogManager.getWeblogCategory(getBean().getId());
+                category = weblogManager.getWeblogCategory(getFormBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up category", ex);
             }
@@ -96,7 +98,8 @@ public class CategoryEdit extends UIAction {
     public String execute() {
         if (!isAdd()) {
             // make sure bean is properly loaded from pojo data
-            getBean().copyFrom(category);
+            formBean.setId(category.getId());
+            formBean.setName(category.getName());
         }
         return INPUT;
     }
@@ -114,7 +117,7 @@ public class CategoryEdit extends UIAction {
         if(!hasActionErrors()) {
             try {
                 // copy updated attributes
-                getBean().copyTo(category);
+                category.setName(formBean.getName());
                 // save changes
                 if (isAdd()) {
                     category.calculatePosition();
@@ -142,18 +145,18 @@ public class CategoryEdit extends UIAction {
 
     public void myValidate() {
         // make sure new name is not a duplicate of an existing category
-        if ((isAdd() || !category.getName().equals(bean.getName())) &&
-            category.getWeblog().hasCategory(bean.getName())) {
-            addError("categoryForm.error.duplicateName", bean.getName());
+        if ((isAdd() || !category.getName().equals(formBean.getName())) &&
+            category.getWeblog().hasCategory(formBean.getName())) {
+            addError("categoryForm.error.duplicateName", formBean.getName());
         }
     }
 
-    public CategoryBean getBean() {
-        return bean;
+    public WeblogCategory getFormBean() {
+        return formBean;
     }
 
-    public void setBean(CategoryBean bean) {
-        this.bean = bean;
+    public void setFormBean(WeblogCategory bean) {
+        this.formBean = bean;
     }
     
 }
