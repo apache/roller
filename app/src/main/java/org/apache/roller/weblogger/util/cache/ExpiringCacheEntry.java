@@ -14,48 +14,40 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.util.cache;
 
 import java.io.Serializable;
-
 
 /**
  * A cache entry that expires.
  *
  * We use this class to wrap objects being cached and associate a timestamp
- * and timeout period with them so we can know when they expire.
+ * and timeout period with them so we can know when they expire.  Negative
+ * timestamp values indicate non-expiration.
  */
 public class ExpiringCacheEntry implements Serializable {
-    
     private Object value;
     private long timeCached = -1;
     private long timeout = 0;
-    
-    
+
     public ExpiringCacheEntry(Object value, long timeout) {
         this.value = value;
-        
-        // make sure that we don't support negative values
-        if(timeout > 0) {
-            this.timeout = timeout;
-        }
-        
+        this.timeout = timeout;
         this.timeCached = System.currentTimeMillis();
     }
-    
-    
+
     public long getTimeCached() {
         return this.timeCached;
     }
-    
-    
+
     public long getTimeout() {
         return this.timeout;
     }
-    
-    
+
     /**
      * Retrieve the value of this cache entry.
      *
@@ -68,16 +60,15 @@ public class ExpiringCacheEntry implements Serializable {
             return this.value;
         }
     }
-    
-    
+
     /**
      * Determine if this cache entry has expired.
      */
     public boolean hasExpired() {
-        
+        if (timeout < 0) {
+            return false;
+        }
         long now = System.currentTimeMillis();
-        
         return ((this.timeCached + this.timeout) < now);
     }
-    
 }

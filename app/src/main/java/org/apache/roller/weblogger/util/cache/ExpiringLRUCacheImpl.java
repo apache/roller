@@ -18,42 +18,85 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.util.cache;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An LRU cache where entries expire after a given timeout period.
+ *
+ * Negative timeout values indicate entries will never time out but can be
+ * pushed out of the cache when the cache reaches its max size
+ *
+ * Zero timeout value means entries are invalid just after being placed
+ * in and hence never usable.
  */
-public class ExpiringLRUCacheImpl extends LRUCacheImpl {
-    
+public class ExpiringLRUCacheImpl implements Cache {
     private static Log log = LogFactory.getLog(ExpiringLRUCacheImpl.class);
-    
+
+    private String id = null;
+    private Map<String, Object> cache = null;
     private long timeout = 0;
-    
-    
-    protected ExpiringLRUCacheImpl(String id) {
-        
-        super(id);
-        this.timeout = DateUtils.MILLIS_PER_HOUR;
-    }
-    
-    
+
+    // for metrics
+    protected double hits = 0;
+    protected double misses = 0;
+    protected double puts = 0;
+    protected double removes = 0;
+    protected Date startTime = new Date();
+
     public ExpiringLRUCacheImpl(String id, int maxsize, long timeout) {
-        
-        super(id, maxsize);
-        
-        // timeout is specified in seconds; only positive values allowed
-        if (timeout > 0) {
-            this.timeout = timeout * DateUtils.MILLIS_PER_SECOND;
-        }
+        this.id = id;
+        this.cache = Collections.synchronizedMap(new LRULinkedHashMap<>(maxsize));
+        this.timeout = timeout * DateUtils.MILLIS_PER_SECOND;
     }
-    
-    
+
+    public String getId() {
+        return this.id;
+    }
+
+    public synchronized void remove(String key) {
+        this.cache.remove(key);
+        removes++;
+    }
+
+    public synchronized void clear() {
+        this.cache.clear();
+
+        // clear metrics
+        hits = 0;
+        misses = 0;
+        puts = 0;
+        removes = 0;
+        startTime = new Date();
+    }
+
+    public Map<String, Object> getStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("startTime", this.startTime);
+        stats.put("hits", this.hits);
+        stats.put("misses", this.misses);
+        stats.put("puts", this.puts);
+        stats.put("removes", this.removes);
+
+        // calculate efficiency
+        if((misses - removes) > 0) {
+            double efficiency = hits / (misses + hits);
+            stats.put("efficiency", efficiency * WebloggerCommon.PERCENT_100);
+        }
+
+        return stats;
+    }
+
     /**
      * Store an entry in the cache.
      *
@@ -62,12 +105,11 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
      */
     @Override
     public synchronized void put(String key, Object value) {
-        
         ExpiringCacheEntry entry = new ExpiringCacheEntry(value, this.timeout);
-        super.put(key, entry);
+        this.cache.put(key, entry);
+        puts++;
     }
-    
-    
+
     /**
      * Retrieve an entry from the cache.
      *
@@ -76,27 +118,48 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
      */
     @Override
     public synchronized Object get(String key) {
-        
         Object value = null;
         ExpiringCacheEntry entry;
         
         synchronized(this) {
-            entry = (ExpiringCacheEntry) super.get(key);
+            entry = (ExpiringCacheEntry) this.cache.get(key);
+
+            // for metrics
+            if(entry == null) {
+                misses++;
+            } else {
+                hits++;
+            }
         }
         
         if (entry != null) {
-            
             value = entry.getValue();
             
             // if the value is null then that means this entry expired
             if (value == null) {
                 log.debug("EXPIRED ["+key+"]");
                 hits--;
-                super.remove(key);
+                remove(key);
             }
         }
         
         return value;
     }
-    
+
+    // David Flanaghan: http://www.davidflanagan.com/blog/000014.html
+    private static class LRULinkedHashMap<String, Object>
+            extends LinkedHashMap<String, Object> {
+        protected int maxsize;
+
+        public LRULinkedHashMap(int maxsize) {
+            super(maxsize * 4 / 3 + 1, 0.75f, true);
+            this.maxsize = maxsize;
+        }
+
+        protected boolean removeEldestEntry(Map.Entry eldest) {
+            return this.size() > this.maxsize;
+        }
+    }
+
+
 }
