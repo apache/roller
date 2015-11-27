@@ -49,24 +49,24 @@
 
     <s:if test="actionName == 'bookmarkEdit'">
         <%-- bean for bookmark add does not have a bean id yet --%>
-        <s:hidden name="bean.id" />
+        <s:hidden name="formBean.id" />
     </s:if>
 
     <table>
         
         <tr>
             <td><s:text name="generic.name" /></td>
-            <td><s:textfield name="bean.name" maxlength="255" size="70" style="width:50%"/></td>
+            <td><s:textfield name="formBean.name" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
         
         <tr>
             <td><s:text name="bookmarkForm.url" /></td>
-            <td><s:textfield name="bean.url" maxlength="255" size="70" style="width:50%"/></td>
+            <td><s:textfield name="formBean.url" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
         
         <tr>
             <td><s:text name="generic.description" /></td>
-            <td><s:textfield name="bean.description" maxlength="255" size="70" style="width:50%"/></td>
+            <td><s:textfield name="formBean.description" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
 
     </table>

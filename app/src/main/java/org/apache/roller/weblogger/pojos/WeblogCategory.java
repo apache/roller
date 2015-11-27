@@ -62,7 +62,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     public static final long serialVersionUID = 1435782148712018954L;
     
     // unique internal ID of object
-    private String id = WebloggerCommon.generateUUID();
+    private String id = null;
     // category name
     private String name = null;
     // left-to-right comparative ordering of category, higher numbers go to the right
@@ -76,6 +76,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     public WeblogCategory(
             Weblog weblog,
             String name) {
+        this.id = WebloggerCommon.generateUUID();
         this.name = name;
         this.weblog = weblog;
         calculatePosition();

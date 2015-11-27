@@ -45,14 +45,14 @@
     <s:hidden name="weblog" />
     <s:if test="actionName == 'categoryEdit'">
         <%-- bean for add does not have a bean id yet --%>
-        <s:hidden name="bean.id" />
+        <s:hidden name="formBean.id" />
     </s:if>
 
     <table>
         
         <tr>
             <td><s:text name="generic.name" /></td>
-            <td><s:textfield name="bean.name" size="70" maxlength="255" style="width:50%"/></td>
+            <td><s:textfield name="formBean.name" size="70" maxlength="255" style="width:50%"/></td>
         </tr>
         
     </table>

@@ -72,8 +72,8 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     private int inboundblogs = 0;
 
     // associations
-    private Planet planet = new Planet();
-    private Set<SubscriptionEntry> entries = new HashSet<SubscriptionEntry>();
+    private Planet planet;
+    private Set<SubscriptionEntry> entries = new HashSet<>();
     
     
     public Subscription() {}

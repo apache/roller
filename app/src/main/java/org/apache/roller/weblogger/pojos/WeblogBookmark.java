@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
@@ -50,7 +49,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     private Weblog weblog;
     
-    private String id = WebloggerCommon.generateUUID();
+    private String id;
     private String name;
     private String description;
     private String url;
@@ -67,6 +66,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
             String name,
             String desc,
             String url) {
+        this.id = WebloggerCommon.generateUUID();
         this.weblog = parent;
         this.name = name;
         this.description = desc;

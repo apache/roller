@@ -72,7 +72,7 @@ function onMove()
                 <td class="rollertable" align="center">
                     <s:url var="editUrl" action="categoryEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="bean.id" value="#category.id" />
+                        <s:param name="formBean.id" value="#category.id" />
                     </s:url>
                     <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" /></s:a>
                 </td>

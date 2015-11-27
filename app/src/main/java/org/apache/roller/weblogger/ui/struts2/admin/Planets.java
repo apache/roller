@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -38,7 +39,7 @@ public class Planets extends UIAction {
     private static Log log = LogFactory.getLog(Planets.class);
     
     // a bean to manage submitted data
-    private PlanetBean bean = new PlanetBean();
+    private Planet bean = new Planet();
     
     // the planet we are working on
     private Planet planet = null;
@@ -62,7 +63,6 @@ public class Planets extends UIAction {
 
     @Override
     public void prepare() {
-        
         if(getBean().getId() != null) {
             try {
                 setPlanet(planetManager.getPlanetById(getBean().getId()));
@@ -77,16 +77,15 @@ public class Planets extends UIAction {
      * Show planets page.
      */
     public String execute() {
-        
         // if we are loading an existing planet then populate the bean
         if(getPlanet() != null) {
-            getBean().copyFrom(getPlanet());
+            bean.setId(getPlanet().getId());
+            bean.setTitle(getPlanet().getTitle());
+            bean.setHandle(getPlanet().getHandle());
         }
-        
         return LIST;
     }
-    
-    
+
     public String save() {
         
         myValidate();
@@ -97,12 +96,14 @@ public class Planets extends UIAction {
                 if(aPlanet == null) {
                     log.debug("Adding New Planet");
                     aPlanet = new Planet();
+                    aPlanet.setId(WebloggerCommon.generateUUID());
                 } else {
                     log.debug("Updating Existing Planet");
                 }
 
                 // copy in submitted data
-                getBean().copyTo(aPlanet);
+                aPlanet.setTitle(bean.getTitle());
+                aPlanet.setHandle(bean.getHandle());
 
                 // save and flush
                 planetManager.savePlanet(aPlanet);
@@ -179,11 +180,11 @@ public class Planets extends UIAction {
     }
     
     
-    public PlanetBean getBean() {
+    public Planet getBean() {
         return bean;
     }
 
-    public void setBean(PlanetBean bean) {
+    public void setBean(Planet bean) {
         this.bean = bean;
     }
     

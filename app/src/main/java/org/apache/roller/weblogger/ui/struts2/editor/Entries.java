@@ -184,7 +184,7 @@ public class Entries extends UIAction {
     public List<WeblogCategory> getCategories() {
         // make list of categories with first option being being a transient
         // category just meant to represent the default option of any category
-        List<WeblogCategory> cats = new ArrayList<WeblogCategory>();
+        List<WeblogCategory> cats = new ArrayList<>();
         
         WeblogCategory tmpCat = new WeblogCategory();
         tmpCat.setName("Any");

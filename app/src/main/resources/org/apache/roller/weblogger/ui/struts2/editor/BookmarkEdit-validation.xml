@@ -3,7 +3,7 @@
         "http://struts.apache.org/dtds/xwork-validator-1.0.3.dtd">
 <validators>
     
-    <field name="bean.name">
+    <field name="formBean.name">
         <field-validator type="requiredstring">
             <message key="Bookmark.error.nameNull">unspecified key</message>
         </field-validator>
@@ -14,14 +14,14 @@
         </field-validator>
     </field>
     
-    <field name="bean.description">
+    <field name="formBean.description">
         <field-validator type="stringlength">
             <param name="maxLength">255</param>
             <message key="Bookmark.error.descriptionSize">unspecified key</message>
         </field-validator>
     </field>
     
-    <field name="bean.url">
+    <field name="formBean.url">
         <field-validator type="requiredstring">
             <message key="Bookmark.error.urlNull">unspecified key</message>
         </field-validator>

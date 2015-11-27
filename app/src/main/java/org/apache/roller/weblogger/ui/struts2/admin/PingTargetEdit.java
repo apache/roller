@@ -24,6 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.PingTargetManager;
@@ -45,7 +46,7 @@ public class PingTargetEdit extends UIAction {
     }
 
     // a bean for managing submitted data
-    private PingTargetBean bean = new PingTargetBean();
+    private PingTarget bean = new PingTarget();
 
     // ping target we are working on, if any
     private PingTarget pingTarget = null;
@@ -65,7 +66,11 @@ public class PingTargetEdit extends UIAction {
     }
 
     public void prepare() {
-        if (!StringUtils.isEmpty(getBean().getId())) {
+        if (isAdd()) {
+            pingTarget = new PingTarget();
+            pingTarget.setId(WebloggerCommon.generateUUID());
+            pingTarget.setAutoEnabled(false);
+        } else {
             // edit case
             try {
                 pingTarget = pingTargetManager.getPingTarget(getBean().getId());
@@ -75,16 +80,14 @@ public class PingTargetEdit extends UIAction {
             if (pingTarget == null) {
                 addError("pingTarget.notFound", getBean().getId());
             }
-        } else {
-            // add case
-            pingTarget = new PingTarget();
-            pingTarget.setAutoEnabled(false);
         }
     }
 
     public String execute() {
         if (!isAdd()) {
-            getBean().copyFrom(pingTarget);
+            bean.setId(pingTarget.getId());
+            bean.setName(pingTarget.getName());
+            bean.setPingUrl(pingTarget.getPingUrl());
         }
         return INPUT;
     }
@@ -98,7 +101,9 @@ public class PingTargetEdit extends UIAction {
         if (!hasActionErrors()) {
             try {
                 // copy data from form into ping target
-                getBean().copyTo(pingTarget);
+                pingTarget.setName(bean.getName());
+                pingTarget.setPingUrl(bean.getPingUrl());
+
                 pingTargetManager.savePingTarget(pingTarget);
                 WebloggerFactory.flush();
 
@@ -148,11 +153,11 @@ public class PingTargetEdit extends UIAction {
         return actionName.equals("commonPingTargetAdd");
     }
 
-    public PingTargetBean getBean() {
+    public PingTarget getBean() {
         return bean;
     }
 
-    public void setBean(PingTargetBean bean) {
+    public void setBean(PingTarget bean) {
         this.bean = bean;
     }
 }
