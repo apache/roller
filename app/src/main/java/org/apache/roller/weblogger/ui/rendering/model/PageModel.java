@@ -34,6 +34,8 @@ import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
+import org.apache.roller.weblogger.ui.core.menu.Menu;
+import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesDayPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
@@ -322,4 +324,14 @@ public class PageModel implements Model {
         return null;
     }
 
+    /**
+     * Get a Menu representing the editor UI action menu, if the user is
+     * currently logged in.
+     */
+    public Menu getEditorMenu() {
+        if(pageRequest.isLoggedIn()) {
+            return MenuHelper.generateMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog());
+        }
+        return null;
+    }
 }

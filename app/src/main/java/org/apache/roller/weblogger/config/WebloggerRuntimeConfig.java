@@ -100,11 +100,10 @@ public final class WebloggerRuntimeConfig {
      * Retrieve a property as an int ... defaults to -1 if there is an error
      **/
     public static int getIntProperty(String name) {
-        
         // get the value first, then convert
         String value = WebloggerRuntimeConfig.getProperty(name);
         
-        if (value == null) {
+        if (value == null || value.isEmpty()) {
             return -1;
         }
         

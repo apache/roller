@@ -47,34 +47,34 @@ import java.util.Set;
 /**
  * A helper class for dealing with UI menus.
  */
-@XmlRootElement(name="menus")
 public final class MenuHelper {
-
     private static Log log = LogFactory.getLog(MenuHelper.class);
-
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
 
-    private List<ParsedMenu> menuList = new ArrayList<>(2);
-
-    @XmlElements(@XmlElement(name="menu"))
-    public List<ParsedMenu> getMenuList() {
-        return menuList;
-    }
-
-    public void setMenuList(List<ParsedMenu> list) {
-        this.menuList = list;
-    }
-
     private MenuHelper() {}
+
+    @XmlRootElement(name="menus")
+    private static class MenuListHolder {
+        private List<ParsedMenu> menuList = new ArrayList<>(2);
+
+        @XmlElements(@XmlElement(name="menu"))
+        public List<ParsedMenu> getMenuList() {
+            return menuList;
+        }
+
+        public void setMenuList(List<ParsedMenu> list) {
+            this.menuList = list;
+        }
+    }
 
     static {
         // parse and cache menus so we can efficiently reuse them
         try {
-            MenuHelper menus = (MenuHelper) Utilities.jaxbUnmarshall(
+            MenuListHolder menus = (MenuListHolder) Utilities.jaxbUnmarshall(
                     "/org/apache/roller/weblogger/config/menus.xsd",
                     "/org/apache/roller/weblogger/config/menus.xml",
                     false,
-                    MenuHelper.class);
+                    MenuListHolder.class);
 
             for (ParsedMenu menu : menus.getMenuList()) {
                 menuMap.put(menu.getId(), menu);

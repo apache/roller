@@ -242,11 +242,11 @@
              <type>string</type>
              <default-value></default-value>
          </property-def>
-         <property-def  name="planet.site.proxyhost"  key="configForm.proxyHost">
+         <property-def name="planet.site.proxyhost"  key="configForm.proxyHost">
              <type>string</type>
              <default-value></default-value>
          </property-def>
-         <property-def  name="planet.site.proxyport"  key="configForm.proxyPort">
+         <property-def name="planet.site.proxyport"  key="configForm.proxyPort">
              <type>string</type>
              <default-value></default-value>
          </property-def>
