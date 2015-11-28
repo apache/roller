@@ -16,9 +16,9 @@
     <packaging>war</packaging>
 
     <properties>
-        <lucene.version>5.2.1</lucene.version>
-        <spring.version>4.2.0.RELEASE</spring.version>
-        <spring.security.version>4.0.2.RELEASE</spring.security.version>
+        <lucene.version>5.3.1</lucene.version>
+        <spring.version>4.2.3.RELEASE</spring.version>
+        <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <struts2.version>2.3.24</struts2.version>
     </properties>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
-            <version>2.6.0</version>
+            <version>2.6.1</version>
         </dependency>
 
         <!-- Alternative testing with Hibernate (used by default with JBoss)
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.12</version>
+            <version>1.7.13</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -268,7 +268,7 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <type>jar</type>
         </dependency>
         <dependency>

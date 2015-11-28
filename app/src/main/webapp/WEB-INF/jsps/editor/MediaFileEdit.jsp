@@ -57,7 +57,7 @@
     <s:set var="subtitleKey">mediaFileEdit.subtitle</s:set>
     <s:set var="mainAction">mediaFileEdit</s:set>
     <s:set var="pageTip">mediaFileEdit.pagetip</s:set>
-    <s:if test="bean.isImage">
+    <s:if test="bean.imageFile">
         <div class="mediaFileThumbnail">
             <a href='<s:property value="bean.permalink" />' target="_blank">
                 <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
@@ -149,7 +149,7 @@
                     <s:param value="bean.contentType" />
                     <s:param value="bean.length" />
                 </s:text>
-                <s:if test="bean.isImage">
+                <s:if test="bean.imageFile">
                     <s:text name="mediaFileEdit.fileDimensions">
                         <s:param value="bean.width" />
                         <s:param value="bean.height" />

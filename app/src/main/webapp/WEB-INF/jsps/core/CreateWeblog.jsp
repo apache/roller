@@ -52,7 +52,7 @@ function handlePreview(handle) {
 
 <tr>
         <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
-    <td class="field"><s:textfield name="bean.description" size="40" maxlength="255" /></td>
+    <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" /></td>
     <td class="description"><s:text name="createWebsite.tip.description" /></td>
 </tr>
 
@@ -93,7 +93,7 @@ function handlePreview(handle) {
 <tr>
     <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
     <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
-        <select id="themeSelector" name="bean.theme" size="1"
+        <select id="themeSelector" name="bean.editorTheme" size="1"
         ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
         <br />
         <br />

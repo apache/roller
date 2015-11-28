@@ -41,7 +41,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class Profile extends UIAction {
     private static Log log = LogFactory.getLog(Profile.class);
     
-    private ProfileBean bean = new ProfileBean();
+    private User bean = new User();
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
     private UserManager userManager;
@@ -68,7 +68,13 @@ public class Profile extends UIAction {
     public String execute() {
         User ud = getAuthenticatedUser();
         // load up the form from the users existing profile data
-        getBean().copyFrom(ud);
+        bean.setId(ud.getId());
+        bean.setUserName(ud.getUserName());
+        bean.setScreenName(ud.getScreenName());
+        bean.setFullName(ud.getFullName());
+        bean.setEmailAddress(ud.getEmailAddress());
+        bean.setLocale(ud.getLocale());
+        bean.setTimeZone(ud.getTimeZone());
         return INPUT;
     }
 
@@ -81,13 +87,19 @@ public class Profile extends UIAction {
             User existingUser = getAuthenticatedUser();
 
             // copy updated attributes
-            getBean().copyTo(existingUser);
+            existingUser.setScreenName(bean.getScreenName());
+            existingUser.setFullName(bean.getFullName());
+            existingUser.setEmailAddress(bean.getEmailAddress());
+            existingUser.setLocale(bean.getLocale());
+            existingUser.setTimeZone(bean.getTimeZone());
 
             // If user set both password and passwordConfirm then reset password
-            if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
-                    !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
+            if (!StringUtils.isEmpty(bean.getPasswordText()) &&
+                    !StringUtils.isEmpty(bean.getPasswordConfirm())) {
                 try {
-                    existingUser.resetPassword(getBean().getPasswordText());
+                    existingUser.resetPassword(bean.getPasswordText());
+                    bean.setPasswordText(null);
+                    bean.setPasswordConfirm(null);
                 } catch (WebloggerException e) {
                     addMessage("yourProfile.passwordResetError");
                 }
@@ -109,7 +121,7 @@ public class Profile extends UIAction {
 
     public void myValidate() {
         // check that passwords match if they were specified (w/StringUtils.equals, null == null)
-        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+        if (!StringUtils.equals(bean.getPasswordText(), bean.getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
         }
     }
@@ -118,11 +130,11 @@ public class Profile extends UIAction {
         return authMethod.name();
     }
     
-    public ProfileBean getBean() {
+    public User getBean() {
         return bean;
     }
 
-    public void setBean(ProfileBean bean) {
+    public void setBean(User bean) {
         this.bean = bean;
     }
 }

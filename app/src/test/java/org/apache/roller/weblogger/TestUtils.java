@@ -87,6 +87,7 @@ public final class TestUtils {
         userName = JUNIT_PREFIX + userName;
 
         User testUser = new User();
+        testUser.setId(WebloggerCommon.generateUUID());
         testUser.setUserName(userName);
         testUser.setPassword("password");
         testUser.setGlobalRole(GlobalRole.BLOGGER);

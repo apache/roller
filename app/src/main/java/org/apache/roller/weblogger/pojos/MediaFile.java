@@ -72,11 +72,12 @@ public class MediaFile implements Serializable {
     private String creatorUserName;
 
     private InputStream is;
-
     private MediaFileDirectory directory;
-
     private FileContent content;
     private FileContent thumbnail;
+
+    // Not persisted, for use on forms only.
+    private String directoryId;
 
     public MediaFile() {
     }
@@ -389,4 +390,12 @@ public class MediaFile implements Serializable {
         }
     };
 
+    @Transient
+    public String getDirectoryId() {
+        return directoryId;
+    }
+
+    public void setDirectoryId(String directoryId) {
+        this.directoryId = directoryId;
+    }
 }

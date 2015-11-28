@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.TimeZone;
@@ -28,6 +27,7 @@ import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -72,7 +72,7 @@ public class Register extends UIAction implements ServletRequestAware {
     private String activationStatus = null;
     
     private String activationCode = null;
-    private ProfileBean bean = new ProfileBean();
+    private User bean = new User();
 
     public Register() {
         this.pageTitle = "newUser.addNewUser";
@@ -121,7 +121,13 @@ public class Register extends UIAction implements ServletRequestAware {
                 User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
                 if (fromSSOUser != null) {
                     // Copy user details from Spring Security, including LDAP attributes
-                    getBean().copyFrom(fromSSOUser);
+                    bean.setId(fromSSOUser.getId());
+                    bean.setUserName(fromSSOUser.getUserName());
+                    bean.setScreenName(fromSSOUser.getScreenName());
+                    bean.setFullName(fromSSOUser.getFullName());
+                    bean.setEmailAddress(fromSSOUser.getEmailAddress());
+                    bean.setLocale(fromSSOUser.getLocale());
+                    bean.setTimeZone(fromSSOUser.getTimeZone());
                 }
             }
         } catch (Exception ex) {
@@ -146,24 +152,30 @@ public class Register extends UIAction implements ServletRequestAware {
             log.error("Error checking user count", e);
             return DISABLED_RETURN_CODE;
         }
-                
+
         myValidate();
-        
+
         if (!hasActionErrors()) {
             try {
                 // copy form data into new user pojo
                 User ud = new User();
-                // copyTo skips password
-                getBean().copyTo(ud);
-                ud.setUserName(getBean().getUserName());
+                ud.setId(WebloggerCommon.generateUUID());
+                ud.setScreenName(bean.getScreenName());
+                ud.setFullName(bean.getFullName());
+                ud.setEmailAddress(bean.getEmailAddress());
+                ud.setLocale(bean.getLocale());
+                ud.setTimeZone(bean.getTimeZone());
+                ud.setUserName(bean.getUserName());
                 ud.setDateCreated(new java.util.Date());
                 ud.setEnabled(Boolean.TRUE);
                 ud.setGlobalRole(GlobalRole.BLOGGER);
 
                 // If user set both password and passwordConfirm then reset password
-                if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
-                        !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
-                    ud.resetPassword(getBean().getPasswordText());
+                if (!StringUtils.isEmpty(bean.getPasswordText()) &&
+                        !StringUtils.isEmpty(bean.getPasswordConfirm())) {
+                    ud.resetPassword(bean.getPasswordText());
+                    bean.setPasswordText(null);
+                    bean.setPasswordConfirm(null);
                 }
 
                 // are we using email activation?
@@ -284,14 +296,14 @@ public class Register extends UIAction implements ServletRequestAware {
             // Preserve username and password, Spring Security case
             User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
             if (fromSSOUser != null) {
-                getBean().setPasswordText(unusedPassword);
-                getBean().setPasswordConfirm(unusedPassword);
-                getBean().setUserName(fromSSOUser.getUserName());
+                bean.setPasswordText(unusedPassword);
+                bean.setPasswordConfirm(unusedPassword);
+                bean.setUserName(fromSSOUser.getUserName());
             }
         }
 
         // Blocking "anonymousUser" as Spring Security uses it for an unauthenticated user
-        if ("anonymousUser".equalsIgnoreCase(getBean().getUserName())) {
+        if ("anonymousUser".equalsIgnoreCase(bean.getUserName())) {
             addError("error.add.user.badUserName");
         }
 
@@ -300,29 +312,29 @@ public class Register extends UIAction implements ServletRequestAware {
         if (allowed == null || allowed.trim().length() == 0) {
             allowed = DEFAULT_ALLOWED_CHARS;
         }
-        String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
-        if (!safe.equals(getBean().getUserName()) ) {
+        String safe = CharSetUtils.keep(bean.getUserName(), allowed);
+        if (!safe.equals(bean.getUserName()) ) {
             addError("error.add.user.badUserName");
         }
         
         if (AuthMethod.ROLLERDB.name().equals(getAuthMethod())
-                && StringUtils.isEmpty(getBean().getPasswordText())) {
+                && StringUtils.isEmpty(bean.getPasswordText())) {
                 addError("error.add.user.passwordEmpty");
                 return;
         }
         
         // check that passwords match
-        if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+        if (!bean.getPasswordText().equals(bean.getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
         }
         
         // check that username is not taken
-        if (!StringUtils.isEmpty(getBean().getUserName())) {
+        if (!StringUtils.isEmpty(bean.getUserName())) {
             try {
-                if (userManager.getUserByUserName(getBean().getUserName(), null) != null) {
+                if (userManager.getUserByUserName(bean.getUserName(), null) != null) {
                     addError("error.add.user.userNameInUse");
                     // reset user name
-                    getBean().setUserName(null);
+                    bean.setUserName(null);
                 }
             } catch (WebloggerException ex) {
                 log.error("error checking for user", ex);
@@ -340,11 +352,11 @@ public class Register extends UIAction implements ServletRequestAware {
         this.servletRequest = servletRequest;
     }
     
-    public ProfileBean getBean() {
+    public User getBean() {
         return bean;
     }
 
-    public void setBean(ProfileBean bean) {
+    public void setBean(User bean) {
         this.bean = bean;
     }
 

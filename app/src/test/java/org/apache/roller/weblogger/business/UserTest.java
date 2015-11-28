@@ -28,6 +28,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
@@ -69,6 +70,7 @@ public class UserTest extends TestCase {
         User user = null;
         
         User testUser = new User();
+        testUser.setId(WebloggerCommon.generateUUID());
         testUser.setUserName("testUser");
         testUser.setPassword("password");
         testUser.setScreenName("Test User Screen Name");
