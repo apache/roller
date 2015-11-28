@@ -42,6 +42,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 
 /**
@@ -85,7 +86,7 @@ public class User implements Serializable {
     
     public static final long serialVersionUID = -6354583200913127874L;
 
-    private String  id = WebloggerCommon.generateUUID();
+    private String  id;
     private String  userName;
     private String  password;
     private GlobalRole globalRole;
@@ -97,7 +98,12 @@ public class User implements Serializable {
     private String  timeZone;
     private Boolean enabled = Boolean.TRUE;
     private String  activationCode;
-    
+
+    // below two fields not persisted but used for password entry and confirmation
+    // on new user & user update forms.
+    private String passwordText;
+    private String passwordConfirm;
+
     public User() {
     }
     
@@ -109,6 +115,7 @@ public class User implements Serializable {
             String locale, String timeZone,
             Date dateCreated,
             Boolean isEnabled) {
+        this.id = WebloggerCommon.generateUUID();
         this.userName = userName;
         this.password = password;
         this.globalRole = globalRole;
@@ -162,8 +169,13 @@ public class User implements Serializable {
         return this.globalRole;
     }
 
+    @Transient
     public boolean isGlobalAdmin() {
         return this.globalRole == GlobalRole.ADMIN;
+    }
+
+    public void setGlobalAdmin(boolean administrator) {
+        setGlobalRole(administrator ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
     }
 
     public boolean hasEffectiveGlobalRole(GlobalRole roleToCheck) {
@@ -303,4 +315,21 @@ public class User implements Serializable {
         return new HashCodeBuilder().append(getUserName()).toHashCode();
     }
 
+    @Transient
+    public String getPasswordText() {
+        return passwordText;
+    }
+
+    public void setPasswordText(String passwordText) {
+        this.passwordText = passwordText;
+    }
+
+    @Transient
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
 }

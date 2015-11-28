@@ -57,7 +57,7 @@ public class UserEdit extends UIAction {
     }
 
     // a bean to store our form data
-    private CreateUserBean bean = new CreateUserBean();
+    private User bean = new User();
 
     // user we are creating or modifying
     private User user = null;
@@ -86,17 +86,16 @@ public class UserEdit extends UIAction {
     // prepare for action by loading user object we are modifying
     public void prepare() {
         if (isAdd()) {
-            // create new User
             user = new User();
         } else {
             try {
                 // load the user object we are modifying
                 if (bean.getId() != null) {
                     // action came from CreateUser or return from ModifyUser
-                    user = userManager.getUser(getBean().getId());
+                    user = userManager.getUser(bean.getId());
                 } else if (bean.getUserName() != null) {
                     // action came from UserAdmin screen.
-                    user = userManager.getUserByUserName(getBean().getUserName(), null);
+                    user = userManager.getUserByUserName(bean.getUserName(), null);
                 }
             } catch (Exception e) {
                 log.error("Error looking up user (id/username) :" + bean.getId() + "/" + bean.getUserName(), e);
@@ -111,11 +110,21 @@ public class UserEdit extends UIAction {
     public String execute() {
         if (isAdd()) {
             // initial user create
-            getBean().setLocale(Locale.getDefault().toString());
-            getBean().setTimeZone(TimeZone.getDefault().getID());
+            bean.setLocale(Locale.getDefault().toString());
+            bean.setTimeZone(TimeZone.getDefault().getID());
         } else {
             // populate form data from user profile data
-            getBean().copyFrom(user);
+            bean.setId(user.getId());
+            bean.setUserName(user.getUserName());
+            bean.setPassword(user.getPassword());
+            bean.setScreenName(user.getScreenName());
+            bean.setFullName(user.getFullName());
+            bean.setEmailAddress(user.getEmailAddress());
+            bean.setLocale(user.getLocale());
+            bean.setTimeZone(user.getTimeZone());
+            bean.setEnabled(user.getEnabled());
+            bean.setActivationCode(user.getActivationCode());
+            bean.setGlobalRole(user.getGlobalRole());
         }
         return INPUT;
     }
@@ -125,7 +134,7 @@ public class UserEdit extends UIAction {
      */
     @SkipValidation
     public String firstSave() {
-        addMessage("createUser.add.success", getBean().getUserName());
+        addMessage("createUser.add.success", bean.getUserName());
         return execute();
     }
 
@@ -136,12 +145,18 @@ public class UserEdit extends UIAction {
         myValidate();
         
         if (!hasActionErrors()) {
-            getBean().copyTo(user);
+            user.setScreenName(bean.getScreenName());
+            user.setFullName(bean.getFullName());
+            user.setEmailAddress(bean.getEmailAddress());
+            user.setLocale(bean.getLocale());
+            user.setTimeZone(bean.getTimeZone());
+            user.setEnabled(bean.getEnabled());
+            user.setActivationCode(bean.getActivationCode());
 
             // reset password if set
-            if (!StringUtils.isEmpty(getBean().getPassword())) {
+            if (!StringUtils.isEmpty(bean.getPassword())) {
                 try {
-                    user.resetPassword(getBean().getPassword());
+                    user.resetPassword(bean.getPassword());
                 } catch (WebloggerException e) {
                     addMessage("yourProfile.passwordResetError");
                 }
@@ -150,15 +165,15 @@ public class UserEdit extends UIAction {
             try {
                 if (isAdd()) {
                     // fields not copied over from above copyTo():
-                    user.setUserName(getBean().getUserName());
+                    user.setUserName(bean.getUserName());
                     user.setDateCreated(new java.util.Date());
-                    user.setGlobalRole(getBean().isAdministrator() ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
+                    user.setGlobalRole(bean.getGlobalRole());
                     // save new user
                     userManager.addUser(user);
                 } else {
                     if (!isUserEditingSelf()) {
-                        user.setGlobalRole(getBean().isAdministrator() ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
-                    } else if (userManager.isGlobalAdmin(user) != getBean().isAdministrator()) {
+                        user.setGlobalRole(bean.getGlobalRole());
+                    } else if (userManager.getGlobalRole(user) != bean.getGlobalRole()) {
                         addError("userAdmin.cantChangeOwnRole");
                     }
                     userManager.saveUser(user);
@@ -193,15 +208,15 @@ public class UserEdit extends UIAction {
             if(allowed == null || allowed.trim().length() == 0) {
                 allowed = Register.DEFAULT_ALLOWED_CHARS;
             }
-            String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
+            String safe = CharSetUtils.keep(bean.getUserName(), allowed);
 
-            if (StringUtils.isEmpty(getBean().getUserName())) {
+            if (StringUtils.isEmpty(bean.getUserName())) {
                 addError("error.add.user.missingUserName");
-            } else if (!safe.equals(getBean().getUserName()) ) {
+            } else if (!safe.equals(bean.getUserName()) ) {
                 addError("error.add.user.badUserName");
             }
             if (authMethod == AuthMethod.ROLLERDB
-                    && StringUtils.isEmpty(getBean().getPassword())) {
+                    && StringUtils.isEmpty(bean.getPassword())) {
                 addError("error.add.user.missingPassword");
             }
         }
@@ -212,11 +227,11 @@ public class UserEdit extends UIAction {
         }
     }
 
-    public CreateUserBean getBean() {
+    public User getBean() {
         return bean;
     }
 
-    public void setBean(CreateUserBean bean) {
+    public void setBean(User bean) {
         this.bean = bean;
     }
 

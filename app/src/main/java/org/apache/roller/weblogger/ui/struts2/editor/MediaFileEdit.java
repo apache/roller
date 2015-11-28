@@ -50,7 +50,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class MediaFileEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(MediaFileEdit.class);
-    private MediaFileBean bean = new MediaFileBean();
+    private MediaFile bean = new MediaFile();
     private MediaFileDirectory directory;
     private String mediaFileId;
     private List<MediaFileDirectory> allDirectories;
@@ -152,7 +152,18 @@ public class MediaFileEdit extends UIAction {
         if (!isAdd()) {
             try {
                 MediaFile mediaFile = mediaFileManager.getMediaFile(getMediaFileId());
-                this.bean.copyFrom(mediaFile);
+                bean.setId(mediaFile.getId());
+                bean.setName(mediaFile.getName());
+                bean.setAltText(mediaFile.getAltText());
+                bean.setTitleText(mediaFile.getTitleText());
+                bean.setAnchor(mediaFile.getAnchor());
+                bean.setNotes(mediaFile.getNotes());
+                bean.setDirectory(mediaFile.getDirectory());
+                bean.setDirectoryId(mediaFile.getDirectory().getId());
+                bean.setWidth(mediaFile.getWidth());
+                bean.setHeight(mediaFile.getHeight());
+                bean.setLength(mediaFile.getLength());
+                bean.setContentType(mediaFile.getContentType());
             } catch (Exception e) {
                 log.error("Error uploading file " + bean.getName(), e);
                 addError("uploadFiles.error.upload", bean.getName());
@@ -172,7 +183,11 @@ public class MediaFileEdit extends UIAction {
             try {
                 if (isAdd()) {
                     MediaFile mediaFile = new MediaFile();
-                    bean.copyTo(mediaFile);
+                    mediaFile.setName(bean.getName());
+                    mediaFile.setAltText(bean.getAltText());
+                    mediaFile.setTitleText(bean.getTitleText());
+                    mediaFile.setAnchor(bean.getAnchor());
+                    mediaFile.setNotes(bean.getNotes());
                     String fileName = getUploadedFileFileName();
 
                     // make sure fileName is valid
@@ -223,7 +238,11 @@ public class MediaFileEdit extends UIAction {
                     }
                 } else {
                     MediaFile mediaFile = mediaFileManager.getMediaFile(getMediaFileId());
-                    bean.copyTo(mediaFile);
+                    mediaFile.setName(bean.getName());
+                    mediaFile.setAltText(bean.getAltText());
+                    mediaFile.setTitleText(bean.getTitleText());
+                    mediaFile.setAnchor(bean.getAnchor());
+                    mediaFile.setNotes(bean.getNotes());
 
                     if (uploadedFile != null) {
                         mediaFile.setLength(this.uploadedFile.length());
@@ -255,11 +274,11 @@ public class MediaFileEdit extends UIAction {
     }
 
 
-    public MediaFileBean getBean() {
+    public MediaFile getBean() {
         return bean;
     }
 
-    public void setBean(MediaFileBean b) {
+    public void setBean(MediaFile b) {
         this.bean = b;
     }
 

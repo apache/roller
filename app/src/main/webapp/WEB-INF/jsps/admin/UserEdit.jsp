@@ -123,7 +123,7 @@
         <tr>
             <td class="label"><label for="userAdmin" /><s:text name="userAdmin.userAdmin" /></label></td>
             <td class="field">
-                <s:checkbox name="bean.administrator" />
+                <s:checkbox name="bean.globalAdmin"/>
             </td>
             <td class="description"><s:text name="userAdmin.tip.userAdmin" /></td>
         </tr>

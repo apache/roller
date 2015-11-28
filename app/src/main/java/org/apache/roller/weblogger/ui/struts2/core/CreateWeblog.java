@@ -69,7 +69,7 @@ public class CreateWeblog extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private CreateWeblogBean bean = new CreateWeblogBean();
+    private Weblog bean = new Weblog();
 
     public CreateWeblog() {
         this.pageTitle = "createWebsite.title";
@@ -146,9 +146,9 @@ public class CreateWeblog extends UIAction {
                     getBean().getHandle(),
                     user.getUserName(),
                     getBean().getName(),
-                    getBean().getDescription(),
+                    getBean().getTagline(),
                     getBean().getEmailAddress(),
-                    getBean().getTheme(),
+                    getBean().getEditorTheme(),
                     getBean().getLocale(),
                     getBean().getTimeZone());
             
@@ -212,11 +212,11 @@ public class CreateWeblog extends UIAction {
         return themeManager.getEnabledThemesList();
     }
 
-    public CreateWeblogBean getBean() {
+    public Weblog getBean() {
         return bean;
     }
 
-    public void setBean(CreateWeblogBean bean) {
+    public void setBean(Weblog bean) {
         this.bean = bean;
     }
     
