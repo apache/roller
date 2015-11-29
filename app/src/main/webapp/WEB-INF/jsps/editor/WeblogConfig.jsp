@@ -52,7 +52,7 @@
     
     <tr>
         <td class="label"><s:text name="websiteSettings.icon" /></td>
-        <td class="field"><s:textfield name="bean.icon" size="40"/></td>
+        <td class="field"><s:textfield name="bean.iconPath" size="40"/></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
@@ -149,7 +149,7 @@
      <tr>
         <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
         <td class="field">
-            <s:select name="bean.defaultCommentDays" list="commentDaysList" size="1" listKey="left" listValue="right" />
+            <s:select name="bean.defaultCommentDaysString" list="commentDaysList" size="1" listKey="left" listValue="right" />
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     

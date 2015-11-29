@@ -27,6 +27,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
@@ -65,6 +66,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
             WeblogEntry testEntry1 = new WeblogEntry();
+            testEntry1.setId(WebloggerCommon.generateUUID());
             testEntry1.setTitle("entryTestEntry1");
             testEntry1.setText("blah blah entry1");
             testEntry1.setAnchor("testEntryAnchor1");
@@ -77,6 +79,7 @@ public class PlanetManagerLocalTest extends TestCase {
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry1);
 
             WeblogEntry testEntry2 = new WeblogEntry();
+            testEntry2.setId(WebloggerCommon.generateUUID());
             testEntry2.setTitle("entryTestEntry2");
             testEntry2.setText("blah blah entry2");
             testEntry2.setAnchor("testEntryAnchor2");
@@ -89,6 +92,7 @@ public class PlanetManagerLocalTest extends TestCase {
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry2);
 
             WeblogEntry testEntry3 = new WeblogEntry();
+            testEntry3.setId(WebloggerCommon.generateUUID());
             testEntry3.setTitle("entryTestEntry3");
             testEntry3.setText("blah blah entry3");
             testEntry3.setAnchor("testEntryAnchor3");

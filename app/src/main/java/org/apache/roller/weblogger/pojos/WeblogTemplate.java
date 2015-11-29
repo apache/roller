@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -85,6 +86,9 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private boolean hidden = false;
     private boolean navbar = false;
     private String  outputContentType = null;
+
+    private String  contentsStandard = null;
+    private String  contentsMobile = null;
 
     // associations
     private Weblog weblog = null;
@@ -282,6 +286,36 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
             .append(getName())
             .append(getWeblog())
             .toHashCode();
+    }
+
+    @Transient
+    public String getContentsStandard() {
+        return this.contentsStandard;
+    }
+
+    public void setContentsStandard( String contents ) {
+        this.contentsStandard = contents;
+    }
+
+    @Transient
+    public String getContentsMobile() {
+        return this.contentsMobile;
+    }
+
+    public void setContentsMobile( String contents ) {
+        this.contentsMobile = contents;
+    }
+
+    @Transient
+    public Boolean getAutoContentType() {
+        return StringUtils.isEmpty(this.outputContentType);
+    }
+
+    public void setAutoContentType(Boolean autoContentType) {
+        // empty content-type indicates that template uses auto content-type detection
+        if (autoContentType) {
+            outputContentType = null;
+        }
     }
 
 }

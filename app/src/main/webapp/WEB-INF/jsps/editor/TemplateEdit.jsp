@@ -195,7 +195,7 @@
                                    onchange="showContentTypeField()" 
                                    id="template_bean_autoContentType2"/>
                             <s:text name="pageForm.useManualContentType" />
-                            <s:textfield name="bean.manualContentType" />
+                            <s:textfield name="bean.outputContentType" />
                         </s:if>
                         <s:else>
                             <input type="radio" name="bean.autoContentType" 
@@ -210,7 +210,7 @@
                                    onchange="showContentTypeField()" 
                                    id="template_bean_autoContentType2"/>
                             <s:text name="pageForm.useManualContentType" />
-                            <s:textfield name="bean.manualContentType" />
+                            <s:textfield name="bean.outputContentType" />
                         </s:else>
                         
                         <br />
