@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,11 +29,10 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -66,7 +64,7 @@ public class TemplateEdit extends UIAction {
     }
 
     // form bean for collection all template properties
-    private TemplateEditBean bean = new TemplateEditBean();
+    private WeblogTemplate bean = new WeblogTemplate();
 
     // the template we are working on
     private WeblogTemplate template = null;
@@ -101,15 +99,33 @@ public class TemplateEdit extends UIAction {
                 addError("Unable to locate specified template");
                 return LIST;
             }
-            WeblogTemplate page = getTemplate();
-            getBean().copyFrom(template);
+
+            bean.setId(template.getId());
+            bean.setName(template.getName());
+            bean.setAction(template.getAction());
+            bean.setDescription(template.getDescription());
+            bean.setLink(template.getLink());
+
+            if (template.getTemplateRendition(RenditionType.STANDARD) != null) {
+                bean.setContentsStandard(template.getTemplateRendition(RenditionType.STANDARD).getTemplate());
+            } else {
+                bean.setContentsStandard("");
+            }
+            if (template.getTemplateRendition(RenditionType.MOBILE) != null) {
+                bean.setContentsMobile(template.getTemplateRendition(RenditionType.MOBILE).getTemplate());
+            }
+            log.debug("Standard: " + bean.getContentsStandard() + " Mobile: " + bean.getContentsMobile());
+
+            bean.setNavbar(template.isNavbar());
+            bean.setHidden(template.isHidden());
+            bean.setOutputContentType(template.getOutputContentType());
 
             // empty content-type indicates that page uses auto content-type detection
-            if (StringUtils.isEmpty(page.getOutputContentType())) {
+            if (StringUtils.isEmpty(template.getOutputContentType())) {
                 getBean().setAutoContentType(Boolean.TRUE);
             } else {
                 getBean().setAutoContentType(Boolean.FALSE);
-                getBean().setManualContentType(page.getOutputContentType());
+                getBean().setOutputContentType(template.getOutputContentType());
             }
 
         } catch (WebloggerException ex) {
@@ -136,18 +152,38 @@ public class TemplateEdit extends UIAction {
 
         if (!hasActionErrors()) {
             try {
-
                 WeblogTemplate templateToSave = getTemplate();
-                getBean().copyTo(templateToSave);
-                templateToSave.setLastModified(new Date());
 
-                if (getBean().getAutoContentType() == null ||
-                        !getBean().getAutoContentType()) {
-                    templateToSave.setOutputContentType(getBean().getManualContentType());
+                if (templateToSave.getTemplateRendition(RenditionType.STANDARD) != null) {
+                    // if we have a template, then set it
+                    WeblogTemplateRendition tc = templateToSave.getTemplateRendition(RenditionType.STANDARD);
+                    tc.setTemplate(bean.getContentsStandard());
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
                 } else {
-                    // empty content-type indicates that template uses auto content-type detection
-                    templateToSave.setOutputContentType(null);
+                    // otherwise create it, then set it
+                    WeblogTemplateRendition tc = new WeblogTemplateRendition(templateToSave, RenditionType.STANDARD);
+                    tc.setTemplate("");
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
                 }
+
+                if (templateToSave.getTemplateRendition(RenditionType.MOBILE) != null) {
+                    WeblogTemplateRendition tc = templateToSave.getTemplateRendition(RenditionType.MOBILE);
+                    tc.setTemplate(bean.getContentsMobile());
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
+                }
+
+                // the rest of the template properties can be modified only when
+                // dealing with a CUSTOM weblog template
+                if (templateToSave.isCustom()) {
+                    templateToSave.setName(bean.getName());
+                    templateToSave.setAction(bean.getAction());
+                    templateToSave.setDescription(bean.getDescription());
+                    templateToSave.setLink(bean.getLink());
+                    templateToSave.setNavbar(bean.isNavbar());
+                    templateToSave.setHidden(bean.isHidden());
+                }
+                templateToSave.setLastModified(new Date());
+                templateToSave.setOutputContentType(getBean().getOutputContentType());
 
                 // save template
                 weblogManager.saveTemplate(templateToSave);
@@ -295,11 +331,11 @@ public class TemplateEdit extends UIAction {
         }
         return INPUT;
     }
-    public TemplateEditBean getBean() {
+    public WeblogTemplate getBean() {
         return bean;
     }
 
-    public void setBean(TemplateEditBean bean) {
+    public void setBean(WeblogTemplate bean) {
         this.bean = bean;
     }
 

@@ -268,6 +268,7 @@ public final class TestUtils {
             throws Exception {
 
         WeblogEntry testEntry = new WeblogEntry();
+        testEntry.setId(WebloggerCommon.generateUUID());
         testEntry.setTitle(anchor);
         testEntry.setText("blah blah entry");
         testEntry.setAnchor(anchor);

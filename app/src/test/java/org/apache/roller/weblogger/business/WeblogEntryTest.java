@@ -36,6 +36,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.User;
@@ -112,6 +113,7 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
+        testEntry.setId(WebloggerCommon.generateUUID());
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
@@ -119,6 +121,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWeblog(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
+        testEntry.setStatus(PubStatus.DRAFT);
 
         WeblogCategory cat = testWeblog.getWeblogCategory("General");
         testEntry.setCategory(cat);
@@ -351,6 +354,7 @@ public class WeblogEntryTest extends TestCase {
             testUser = TestUtils.getManagedUser(testUser);
 
             WeblogEntry testEntry = new WeblogEntry();
+            testEntry.setId(WebloggerCommon.generateUUID());
             testEntry.setTitle("entryTestEntry");
             testEntry.setText("blah blah entry");
             testEntry.setAnchor("testEntryAnchor");
@@ -877,12 +881,14 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
+        testEntry.setId(WebloggerCommon.generateUUID());
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWeblog(testWeblog);
+        testEntry.setStatus(PubStatus.DRAFT);
         testEntry.setCreatorUserName(testUser.getUserName());
 
         WeblogCategory cat = testWeblog.getWeblogCategory("General");

@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import java.io.Serializable;
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -112,6 +113,7 @@ public class Weblog implements Serializable {
     private String  creator          = null;
     private String  analyticsCode    = null;
     private int     hitsToday        = 0;
+    private boolean applyCommentDefaults = false;
 
     // Associated objects
     private Map<String, WeblogEntryPlugin> initializedPlugins = null;
@@ -873,4 +875,32 @@ public class Weblog implements Serializable {
                 .toHashCode();
     }
 
+    // convenience methods for populating fields from forms
+
+    @Transient
+    public String[] getDefaultPluginsArray() {
+        return StringUtils.split(defaultPlugins, ",");
+    }
+
+    public void setDefaultPluginsArray(String[] strings) {
+        defaultPlugins = StringUtils.join(strings, ",");
+    }
+
+    @Transient
+    public String getDefaultCommentDaysString() {
+        return "" + defaultCommentDays;
+    }
+
+    public void setDefaultCommentDaysString(String dcd) {
+        defaultCommentDays = Integer.parseInt(dcd);
+    }
+
+    @Transient
+    public boolean isApplyCommentDefaults() {
+        return applyCommentDefaults;
+    }
+
+    public void setApplyCommentDefaults(boolean applyCommentDefaults) {
+        this.applyCommentDefaults = applyCommentDefaults;
+    }
 }

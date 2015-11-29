@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
@@ -93,7 +94,8 @@ public class IndexManagerTest extends TestCase {
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogEntryManager wem = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
-        WeblogEntry wd1 = new WeblogEntry();            
+        WeblogEntry wd1 = new WeblogEntry();
+        wd1.setId(WebloggerCommon.generateUUID());
         wd1.setTitle("The Tholian Web");
         wd1.setText(
          "When the Enterprise attempts to ascertain the fate of the  "
@@ -118,6 +120,7 @@ public class IndexManagerTest extends TestCase {
             new AddEntryOperation(WebloggerFactory.getWeblogger().getWeblogEntryManager(), (IndexManagerImpl)imgr, wd1));
 
         WeblogEntry wd2 = new WeblogEntry();
+        wd2.setId(WebloggerCommon.generateUUID());
         wd2.setTitle("A Piece of the Action");
         wd2.setText(
           "The crew of the Enterprise attempts to make contact with "

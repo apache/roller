@@ -70,7 +70,7 @@ public class WeblogConfig extends UIAction {
     }
 
     // bean for managing submitted data
-    private WeblogConfigBean bean = new WeblogConfigBean();
+    private Weblog bean = new Weblog();
     
     // categories list
     private List weblogCategories = Collections.emptyList();
@@ -124,8 +124,27 @@ public class WeblogConfig extends UIAction {
     public String execute() {
         
         // load bean with data from weblog
-        getBean().copyFrom(getActionWeblog());
-        
+        Weblog currentWeblog = getActionWeblog();
+        bean.setHandle(currentWeblog.getHandle());
+        bean.setName(currentWeblog.getName());
+        bean.setTagline(currentWeblog.getTagline());
+        bean.setEditorPage(currentWeblog.getEditorPage());
+        bean.setBlacklist(currentWeblog.getBlacklist());
+        bean.setAllowComments(currentWeblog.getAllowComments());
+        bean.setDefaultAllowComments(currentWeblog.getDefaultAllowComments());
+        bean.setDefaultCommentDays(currentWeblog.getDefaultCommentDays());
+        bean.setModerateComments(currentWeblog.getModerateComments());
+        bean.setEmailComments(currentWeblog.getEmailComments());
+        bean.setEmailAddress(currentWeblog.getEmailAddress());
+        bean.setLocale(currentWeblog.getLocale());
+        bean.setTimeZone(currentWeblog.getTimeZone());
+        bean.setDefaultPlugins(currentWeblog.getDefaultPlugins());
+        bean.setEntryDisplayCount(currentWeblog.getEntryDisplayCount());
+        bean.setActive(currentWeblog.isActive());
+        bean.setCommentModerationRequired(currentWeblog.getCommentModerationRequired());
+        bean.setAnalyticsCode(currentWeblog.getAnalyticsCode());
+        bean.setIconPath(currentWeblog.getIconPath());
+        bean.setAbout(currentWeblog.getAbout());
         return INPUT;
     }
     
@@ -142,11 +161,29 @@ public class WeblogConfig extends UIAction {
             try {
                 Weblog weblog = getActionWeblog();
 
-                if (getBean().getAnalyticsCode() != null) {
-                    getBean().setAnalyticsCode(getBean().getAnalyticsCode().trim());
+                if (bean.getAnalyticsCode() != null) {
+                    bean.setAnalyticsCode(bean.getAnalyticsCode().trim());
                 }
 
-                getBean().copyTo(weblog);
+                weblog.setName(bean.getName());
+                weblog.setTagline(bean.getTagline());
+                weblog.setEditorPage(bean.getEditorPage());
+                weblog.setBlacklist(bean.getBlacklist());
+                weblog.setAllowComments(bean.getAllowComments());
+                weblog.setDefaultAllowComments(bean.getDefaultAllowComments());
+                weblog.setModerateComments(bean.getModerateComments());
+                weblog.setEmailComments(bean.getEmailComments());
+                weblog.setEmailAddress(bean.getEmailAddress());
+                weblog.setLocale(bean.getLocale());
+                weblog.setTimeZone(bean.getTimeZone());
+                weblog.setDefaultPlugins(bean.getDefaultPlugins());
+                weblog.setEntryDisplayCount(bean.getEntryDisplayCount());
+                weblog.setActive(bean.isActive());
+                weblog.setCommentModerationRequired(bean.getCommentModerationRequired());
+                weblog.setIconPath(bean.getIconPath());
+                weblog.setAbout(bean.getAbout());
+                weblog.setAnalyticsCode(bean.getAnalyticsCode());
+                weblog.setDefaultCommentDays(bean.getDefaultCommentDays());
 
                 // ROL-485: comments not allowed on inactive weblogs
                 if(!weblog.isActive()) {
@@ -158,7 +195,7 @@ public class WeblogConfig extends UIAction {
                 weblogManager.saveWeblog(weblog);
 
                 // ROL-1050: apply comment defaults to existing entries
-                if(getBean().getApplyCommentDefaults()) {
+                if(bean.isApplyCommentDefaults()) {
                     weblogEntryManager.applyCommentDefaultsToEntries(weblog);
                 }
 
@@ -185,7 +222,7 @@ public class WeblogConfig extends UIAction {
         
         // make sure user didn't enter an invalid entry display count
         int maxEntries = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
-        if(getBean().getEntryDisplayCount() > maxEntries) {
+        if(bean.getEntryDisplayCount() > maxEntries) {
             addError("websiteSettings.error.entryDisplayCount");
         }
         
@@ -194,7 +231,7 @@ public class WeblogConfig extends UIAction {
         List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
-            Blacklist.populateSpamRules(getBean().getBlacklist(), null, stringRules, regexRules);
+            Blacklist.populateSpamRules(bean.getBlacklist(), null, stringRules, regexRules);
             addMessage("websiteSettings.acceptedBlacklist",
                     Arrays.asList(new String[] {""+stringRules.size(), ""+regexRules.size()}));
         } catch (Exception e) {
@@ -203,11 +240,11 @@ public class WeblogConfig extends UIAction {
     }
     
     
-    public WeblogConfigBean getBean() {
+    public Weblog getBean() {
         return bean;
     }
 
-    public void setBean(WeblogConfigBean bean) {
+    public void setBean(Weblog bean) {
         this.bean = bean;
     }
 

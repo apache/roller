@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +50,7 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -108,39 +110,45 @@ public class WeblogEntry implements Serializable {
         WebloggerConfig.getBooleanProperty("weblogentry.title.useUnderscoreSeparator") ? '_' : '-';
 
     // Simple properies
-    private String    id            = WebloggerCommon.generateUUID();
-    private String    title         = null;
-    private String    text          = null;
-    private String    summary       = null;
-    private String    notes         = null;
-    private String    enclosureUrl  = null;
-    private String    enclosureType = null;
-    private Long      enclosureLength  = null;
-    private String    anchor        = null;
-    private Timestamp pubTime       = null;
-    private Timestamp updateTime    = null;
-    private String    plugins       = null;
-    private Boolean   allowComments = Boolean.TRUE;
-    private Integer   commentDays   = 7;
-    private Boolean   rightToLeft   = Boolean.FALSE;
-    private Boolean   pinnedToMain  = Boolean.FALSE;
-    private PubStatus status        = PubStatus.DRAFT;
-    private String    creatorUserName = null;
-    private String    searchDescription = null;
+    private String id;
+    private String title;
+    private String text;
+    private String summary;
+    private String notes;
+    private String enclosureUrl;
+    private String enclosureType;
+    private Long enclosureLength;
+    private String anchor;
+    private Timestamp pubTime;
+    private Timestamp updateTime;
+    private String plugins;
+    private Boolean allowComments = Boolean.TRUE;
+    private Integer commentDays = 7;
+    private Boolean rightToLeft = Boolean.FALSE;
+    private Boolean pinnedToMain = Boolean.FALSE;
+    private PubStatus status;
+    private String creatorUserName;
+    private String searchDescription;
 
     // set to true when switching between pending/draft/scheduled and published
     // either the aggregate table needs the entry's tags added (for published)
     // or subtracted (anything else)
-    private Boolean   refreshAggregates = Boolean.FALSE;
+    private Boolean refreshAggregates = Boolean.FALSE;
 
     // Associated objects
-    private Weblog        weblog  = null;
-    private WeblogCategory category = null;
+    private Weblog weblog;
+    private WeblogCategory category;
     
     private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
     private Set<WeblogEntryTag> removedTags = new HashSet<WeblogEntryTag>();
     private Set<WeblogEntryTag> addedTags = new HashSet<WeblogEntryTag>();
-    
+
+    // temporary non-persisted fields used for form entry
+    private int hours = 0;
+    private int minutes = 0;
+    private int seconds = 0;
+    private String dateString;
+
     //----------------------------------------------------------- Construction
     
     public WeblogEntry() {
@@ -156,6 +164,7 @@ public class WeblogEntry implements Serializable {
             Timestamp pubTime,
             Timestamp updateTime,
             PubStatus status) {
+        this.id = WebloggerCommon.generateUUID();
         this.category = category;
         this.weblog = weblog;
         this.creatorUserName = creator.getUserName();
@@ -177,7 +186,6 @@ public class WeblogEntry implements Serializable {
      * Set bean properties based on other bean.
      */
     public void setData(WeblogEntry other) {
-        
         this.setId(other.getId());
         this.setCategory(other.getCategory());
         this.setWeblog(other.getWeblog());
@@ -716,7 +724,7 @@ public class WeblogEntry implements Serializable {
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
     public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
-        List<WeblogEntryComment> list = new ArrayList<WeblogEntryComment>();
+        List<WeblogEntryComment> list = new ArrayList<>();
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
@@ -885,19 +893,25 @@ public class WeblogEntry implements Serializable {
     /** Convenience method for checking status */
     @Transient
     public boolean isDraft() {
-        return getStatus().equals(PubStatus.DRAFT);
+        return PubStatus.DRAFT.equals(getStatus());
     }
 
     /** Convenience method for checking status */
     @Transient
     public boolean isPending() {
-        return getStatus().equals(PubStatus.PENDING);
+        return PubStatus.PENDING.equals(getStatus());
+    }
+
+    /** Convenience method for checking status */
+    @Transient
+    public boolean isScheduled() {
+        return PubStatus.SCHEDULED.equals(getStatus());
     }
 
     /** Convenience method for checking status */
     @Transient
     public boolean isPublished() {
-        return getStatus().equals(PubStatus.PUBLISHED);
+        return PubStatus.PUBLISHED.equals(getStatus());
     }
 
     /**
@@ -1040,4 +1054,53 @@ public class WeblogEntry implements Serializable {
         this.refreshAggregates = refreshAggregates;
     }
 
+    @Transient
+    public String getCategoryId() {
+        return category.getId();
+    }
+
+    public void setCategoryId(String categoryId) {
+        try {
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            setCategory(wmgr.getWeblogCategory(categoryId));
+        } catch (WebloggerException e) {
+            mLogger.error("Error setting category for blog entry", e);
+        }
+    }
+
+    @Transient
+    public int getHours() {
+        return hours;
+    }
+
+    public void setHours(int hours) {
+        this.hours = hours;
+    }
+
+    @Transient
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
+    }
+
+    @Transient
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public void setSeconds(int seconds) {
+        this.seconds = seconds;
+    }
+
+    @Transient
+    public String getDateString() {
+        return dateString;
+    }
+
+    public void setDateString(String dateString) {
+        this.dateString = dateString;
+    }
 }

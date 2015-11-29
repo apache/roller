@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
@@ -62,8 +63,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -120,7 +124,7 @@ public final class EntryEdit extends UIAction {
     private static final int MAX_TAGS = WebloggerConfig.getIntProperty("services.tagdata.max", 20);
 
     // bean for managing form data
-    private EntryBean bean = new EntryBean();
+    private WeblogEntry bean = new WeblogEntry();
 
     // the entry we are adding or editing
     private WeblogEntry entry = null;
@@ -148,9 +152,10 @@ public final class EntryEdit extends UIAction {
     }
 
     public void prepare() {
-        if (getBean().getId() == null) {
+        if (isAdd()) {
             // Create and initialize new, not-yet-saved Weblog Entry
             entry = new WeblogEntry();
+            entry.setId(WebloggerCommon.generateUUID());
             entry.setCreatorUserName(getAuthenticatedUser().getUserName());
             entry.setWeblog(getActionWeblog());
         } else {
@@ -159,35 +164,72 @@ public final class EntryEdit extends UIAction {
                 // retrieve from DB WeblogEntry based on ID
                 setEntry(weblogEntryManager.getWeblogEntry(getBean().getId()));
             } catch (WebloggerException ex) {
-                log.error(
-                        "Error looking up entry by id - " + getBean().getId(),
-                        ex);
+                log.error("Error looking up entry by id - " + getBean().getId(), ex);
             }
         }
     }
 
+    private boolean isAdd() {
+        return actionName.equals("entryAdd");
+    }
+
     /**
      * Show form for adding/editing weblog entry.
-     * 
+     *
      * @return String The result of the action.
      */
     @SkipValidation
     public String execute() {
-        if (getActionName().equals("entryEdit")) {
-            // load bean with pojo data
-            getBean().copyFrom(getEntry(), getLocale());
-        } else {
-            // set weblog defaults
-            getBean().setAllowComments(getActionWeblog().getDefaultAllowComments());
-            getBean().setCommentDays(getActionWeblog().getDefaultCommentDays());
-            // apply weblog default plugins
-            if (getActionWeblog().getDefaultPlugins() != null) {
-                getBean().setPlugins(
-                        StringUtils.split(getActionWeblog().getDefaultPlugins(),
-                                ","));
-            }
-        }
+        try {
+            if (isAdd()) {
+                // set weblog defaults
+                bean.setAllowComments(getActionWeblog().getDefaultAllowComments());
+                bean.setCommentDays(getActionWeblog().getDefaultCommentDays());
+                // apply weblog default plugins
+                if (getActionWeblog().getDefaultPlugins() != null) {
+                    bean.setPlugins(getActionWeblog().getDefaultPlugins());
+                }
+            } else {
+                // load bean with pojo data
+                bean.setId(entry.getId());
+                bean.setTitle(entry.getTitle());
+                bean.setStatus(entry.getStatus());
+                bean.setText(entry.getText());
+                bean.setSummary(entry.getSummary());
+                bean.setNotes(entry.getNotes());
+                bean.setCategory(entry.getCategory());
+                bean.setTagsAsString(entry.getTagsAsString());
+                bean.setSearchDescription(entry.getSearchDescription());
+                bean.setPlugins(entry.getPlugins());
 
+                // init pubtime values
+                if (entry.getPubTime() != null) {
+                    log.debug("entry pubtime is " + entry.getPubTime());
+
+                    //Calendar cal = Calendar.getInstance(locale);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(entry.getPubTime());
+                    cal.setTimeZone(entry.getWeblog().getTimeZoneInstance());
+
+                    bean.setHours(cal.get(Calendar.HOUR_OF_DAY));
+                    bean.setMinutes(cal.get(Calendar.MINUTE));
+                    bean.setSeconds(cal.get(Calendar.SECOND));
+
+                    log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", " + bean.getMinutes() + ", " + bean.getSeconds());
+                }
+
+                bean.setAllowComments(entry.getAllowComments());
+                bean.setCommentDays(entry.getCommentDays());
+                bean.setRightToLeft(entry.getRightToLeft());
+                bean.setPinnedToMain(entry.getPinnedToMain());
+                bean.setEnclosureUrl(entry.getEnclosureUrl());
+                bean.setEnclosureType(entry.getEnclosureType());
+                bean.setEnclosureLength(entry.getEnclosureLength());
+            }
+        } catch (WebloggerException e) {
+            log.error("Error saving entry", e);
+            addError("generic.error.check.logs");
+        }
         return INPUT;
     }
 
@@ -197,7 +239,7 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String saveDraft() {
-        getBean().setStatus(PubStatus.DRAFT.name());
+        getBean().setStatus(PubStatus.DRAFT);
         if (entry.isPublished()) {
             // entry reverted from published to non-viewable draft
             // so need to reduce tag aggregates
@@ -214,27 +256,54 @@ public final class EntryEdit extends UIAction {
     public String publish() {
         if (getActionWeblog().userHasWeblogRole(
                 getAuthenticatedUser(), WeblogRole.POST)) {
-            Timestamp pubTime = getBean().getPubTime(getLocale(),
-                    getActionWeblog().getTimeZoneInstance());
+            Timestamp pubTime = calculatePubTime();
+
             if (pubTime != null && pubTime.after(
                     new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE))) {
-                getBean().setStatus(PubStatus.SCHEDULED.name());
+                getBean().setStatus(PubStatus.SCHEDULED);
                 if (entry.isPublished()) {
                     // entry went from published to scheduled, need to reduce tag aggregates
                     entry.setRefreshAggregates(true);
                 }
             } else {
-                getBean().setStatus(PubStatus.PUBLISHED.name());
+                getBean().setStatus(PubStatus.PUBLISHED);
                 if (getBean().getId() != null && !entry.isPublished()) {
                     // if not a new add, need to add tags to aggregates
                     entry.setRefreshAggregates(true);
                 }
             }
         } else {
-            getBean().setStatus(PubStatus.PENDING.name());
+            getBean().setStatus(PubStatus.PENDING);
         }
         return save();
     }
+
+    private Timestamp calculatePubTime() {
+        Timestamp pubtime = null;
+
+        String dateString = bean.getDateString();
+        if(!StringUtils.isEmpty(dateString)) {
+            try {
+                // Don't require user add preceding '0' of month and day.
+                DateFormat df = new SimpleDateFormat("M/d/yy");
+                df.setTimeZone(getActionWeblog().getTimeZoneInstance());
+                Date newDate = df.parse(dateString);
+
+                // Now handle the time from the hour, minute and second combos
+                Calendar cal = Calendar.getInstance(getActionWeblog().getTimeZoneInstance(), getLocale());
+                cal.setTime(newDate);
+                cal.set(Calendar.HOUR_OF_DAY, bean.getHours());
+                cal.set(Calendar.MINUTE, bean.getMinutes());
+                cal.set(Calendar.SECOND, bean.getSeconds());
+                pubtime = new Timestamp(cal.getTimeInMillis());
+            } catch (Exception e) {
+                log.error("Error calculating pubtime", e);
+            }
+        }
+
+        return pubtime;
+    }
+
 
     /**
      * Processing logic common for saving drafts and publishing entries
@@ -248,11 +317,28 @@ public final class EntryEdit extends UIAction {
 
                 // set updatetime & pubtime
                 weblogEntry.setUpdateTime(new Timestamp(new Date().getTime()));
-                weblogEntry.setPubTime(getBean().getPubTime(getLocale(),
-                        getActionWeblog().getTimeZoneInstance()));
+                weblogEntry.setPubTime(calculatePubTime());
 
                 // copy data to pojo
-                getBean().copyTo(weblogEntry);
+                weblogEntry.setTitle(bean.getTitle());
+                weblogEntry.setStatus(bean.getStatus());
+                weblogEntry.setText(bean.getText());
+                weblogEntry.setSummary(bean.getSummary());
+                weblogEntry.setNotes(bean.getNotes());
+                weblogEntry.setTagsAsString(bean.getTagsAsString());
+                weblogEntry.setSearchDescription(bean.getSearchDescription());
+                weblogEntry.setEnclosureUrl(bean.getEnclosureUrl());
+                weblogEntry.setEnclosureType(bean.getEnclosureType());
+                weblogEntry.setEnclosureLength(bean.getEnclosureLength());
+                weblogEntry.setCategory(bean.getCategory());
+
+                // join values from all plugins into a single string
+                weblogEntry.setPlugins(StringUtils.join(bean.getPlugins(), ","));
+
+                // comment settings & right-to-left option
+                weblogEntry.setAllowComments(bean.getAllowComments());
+                weblogEntry.setCommentDays(bean.getCommentDays());
+                weblogEntry.setRightToLeft(bean.getRightToLeft());
 
                 // handle pubtime auto set
                 if (weblogEntry.isPublished() && weblogEntry.getPubTime() == null) {
@@ -335,11 +421,11 @@ public final class EntryEdit extends UIAction {
         return INPUT;
     }
 
-    public EntryBean getBean() {
+    public WeblogEntry getBean() {
         return bean;
     }
 
-    public void setBean(EntryBean bean) {
+    public void setBean(WeblogEntry bean) {
         this.bean = bean;
     }
 
@@ -418,7 +504,7 @@ public final class EntryEdit extends UIAction {
             }
 
             if (results != null) {
-                for (Iterator mit = results.getMessages(); mit.hasNext();) {
+                for (Iterator mit = results.getMessages(); mit.hasNext(); ) {
                     RollerMessage msg = (RollerMessage) mit.next();
                     if (msg.getArgs() == null) {
                         addMessage(msg.getKey());
@@ -482,8 +568,7 @@ public final class EntryEdit extends UIAction {
     }
 
     public boolean isUserAnAuthor() {
-        return getActionWeblog().userHasWeblogRole(getAuthenticatedUser(),
-                WeblogRole.POST);
+        return getActionWeblog().userHasWeblogRole(getAuthenticatedUser(), WeblogRole.POST);
     }
 
     /**
