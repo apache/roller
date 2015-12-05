@@ -21,13 +21,9 @@
 package org.apache.roller.weblogger.business;
 
 import java.sql.Timestamp;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -38,62 +34,63 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
 
 
 /**
  * Test Search Manager business layer operations.
  */
-public class IndexManagerTest extends TestCase {
-    User testUser = null;
-    Weblog testWeblog = null;
-    public static Log log = LogFactory.getLog(IndexManagerTest.class);    
+public class IndexManagerTest extends WebloggerTest {
+    public static Log log = LogFactory.getLog(IndexManagerTest.class);
 
-    public IndexManagerTest(String name) {
-        super(name);
-    }
-        
-    public static Test suite() {
-        return new TestSuite(IndexManagerTest.class);
+    private User testUser = null;
+    private Weblog testWeblog = null;
+
+    @Resource
+    private IndexManager indexManager;
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
     }
 
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @Before
     public void setUp() throws Exception {
-        
-        // setup weblogger
-        TestUtils.setupWeblogger();
+        super.setUp();
         
         try {
-            testUser = TestUtils.setupUser("entryTestUser");
-            testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
-            TestUtils.endSession(true);
-
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            assertEquals(1, wmgr.getWeblogCount());
- 
+            testUser = setupUser("entryTestUser");
+            testWeblog = setupWeblog("entryTestWeblog", testUser);
+            endSession(true);
+            assertEquals(1, weblogManager.getWeblogCount());
         } catch (Exception ex) {
             log.error("ERROR in test setup", ex);
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @After
     public void tearDown() throws Exception {
-        
         try {
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
         } catch (Exception ex) {
             log.error("ERROR in test teardown", ex);
             throw new Exception("Test teardown failed", ex);
         }
     }
-        
-    public void testSearch() throws Exception {
-        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        WeblogEntryManager wem = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
+    @Test
+    public void testSearch() throws Exception {
         WeblogEntry wd1 = new WeblogEntry();
         wd1.setId(WebloggerCommon.generateUUID());
         wd1.setTitle("The Tholian Web");
@@ -106,18 +103,17 @@ public class IndexManagerTest extends TestCase {
         wd1.setStatus(PubStatus.PUBLISHED);
         wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
-        wd1.setWeblog(TestUtils.getManagedWebsite(testWeblog));
+        wd1.setWeblog(getManagedWeblog(testWeblog));
 
-        WeblogCategory cat = wmgr.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
+        WeblogCategory cat = weblogManager.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
         wd1.setCategory(cat);
 
-        wem.saveWeblogEntry(wd1);
-        TestUtils.endSession(true);
-        wd1 = TestUtils.getManagedWeblogEntry(wd1);
+        weblogEntryManager.saveWeblogEntry(wd1);
+        endSession(true);
+        wd1 = getManagedWeblogEntry(wd1);
 
-        IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
-        imgr.executeIndexOperationNow(
-            new AddEntryOperation(WebloggerFactory.getWeblogger().getWeblogEntryManager(), (IndexManagerImpl)imgr, wd1));
+        indexManager.executeIndexOperationNow(
+                new AddEntryOperation(weblogEntryManager, indexManager, wd1));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setId(WebloggerCommon.generateUUID());
@@ -131,37 +127,37 @@ public class IndexManagerTest extends TestCase {
         wd2.setCreatorUserName(testUser.getUserName());
         wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
-        wd2.setWeblog(TestUtils.getManagedWebsite(testWeblog));
+        wd2.setWeblog(getManagedWeblog(testWeblog));
 
-        cat = wmgr.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
+        cat = weblogManager.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
         wd2.setCategory(cat);
 
-        wem.saveWeblogEntry(wd2);
-        TestUtils.endSession(true);
-        wd2 = TestUtils.getManagedWeblogEntry(wd2);
+        weblogEntryManager.saveWeblogEntry(wd2);
+        endSession(true);
+        wd2 = getManagedWeblogEntry(wd2);
 
-        imgr.executeIndexOperationNow(
-            new AddEntryOperation(WebloggerFactory.getWeblogger().getWeblogEntryManager(), (IndexManagerImpl)imgr, wd2));
+        indexManager.executeIndexOperationNow(
+            new AddEntryOperation(weblogEntryManager, indexManager, wd2));
 
         Thread.sleep(DateUtils.MILLIS_PER_SECOND);
 
-        SearchOperation search = new SearchOperation(imgr);
+        SearchOperation search = new SearchOperation(indexManager);
         search.setTerm("Enterprise");
-        imgr.executeIndexOperationNow(search);
+        indexManager.executeIndexOperationNow(search);
         assertEquals(2, search.getResultsCount());
 
-        SearchOperation search2 = new SearchOperation(imgr);
+        SearchOperation search2 = new SearchOperation(indexManager);
         search2.setTerm("Tholian");
-        imgr.executeIndexOperationNow(search2);
+        indexManager.executeIndexOperationNow(search2);
         assertEquals(1, search2.getResultsCount());
 
         // Clean up
-        imgr.removeEntryIndexOperation(wd1);
-        imgr.removeEntryIndexOperation(wd2);
+        indexManager.removeEntryIndexOperation(wd1);
+        indexManager.removeEntryIndexOperation(wd2);
 
-        SearchOperation search3 = new SearchOperation(imgr);
+        SearchOperation search3 = new SearchOperation(indexManager);
         search3.setTerm("Enterprise");
-        imgr.executeIndexOperationNow(search3);
+        indexManager.executeIndexOperationNow(search3);
         assertEquals(0, search3.getResultsCount());
     }    
 }

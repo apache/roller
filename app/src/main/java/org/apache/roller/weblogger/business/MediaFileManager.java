@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 
@@ -76,76 +76,60 @@ public interface MediaFileManager {
     /**
      * Create default folder for media files in a weblog.
      */
-    MediaFileDirectory createDefaultMediaFileDirectory(Weblog weblog)
-            throws WebloggerException;
-
-    /**
-     * Create a media file directory
-     */
-    void createMediaFileDirectory(MediaFileDirectory directory)
+    MediaDirectory createDefaultMediaDirectory(Weblog weblog)
             throws WebloggerException;
 
     /**
      * Create a media file directory with a given name.
      */
-    MediaFileDirectory createMediaFileDirectory(Weblog weblog,
-            String name) throws WebloggerException;
+    MediaDirectory createMediaDirectory(Weblog weblog,
+                                            String name) throws WebloggerException;
 
     /**
      * Get media file directory by id
      */
-    MediaFileDirectory getMediaFileDirectory(String id)
+    MediaDirectory getMediaDirectory(String id)
             throws WebloggerException;
 
     /**
      * Get media file directory by its path
      */
-    MediaFileDirectory getMediaFileDirectoryByName(Weblog weblog,
-            String name) throws WebloggerException;
-
-    /**
-     * Get media file by directory path (single folder + file name).
-     */
-    MediaFile getMediaFileByPath(Weblog weblog, String path)
-            throws WebloggerException;
+    MediaDirectory getMediaDirectoryByName(Weblog weblog,
+                                               String name) throws WebloggerException;
 
     /**
      * Get the list of media file directories for the given weblog.
      */
-    List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog)
+    List<MediaDirectory> getMediaDirectories(Weblog weblog)
             throws WebloggerException;
 
     /**
      * Get the default folder for media files for the given weblog.
      */
-    MediaFileDirectory getDefaultMediaFileDirectory(Weblog weblog)
+    MediaDirectory getDefaultMediaDirectory(Weblog weblog)
             throws WebloggerException;
 
     /**
      * Move a set of media files to a new directory.
      */
     void moveMediaFiles(Collection<MediaFile> mediaFiles,
-            MediaFileDirectory directory) throws WebloggerException;
+            MediaDirectory directory) throws WebloggerException;
 
     /**
      * Move one media file to a new directory.
      */
-    void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory)
+    void moveMediaFile(MediaFile mediaFile, MediaDirectory directory)
             throws WebloggerException;
 
     /**
      * Remove all media files associated with a weblog.
-     * 
-     * @param website
      */
-    void removeAllFiles(Weblog website) throws WebloggerException;
+    void removeAllFiles(Weblog weblog) throws WebloggerException;
 
     /**
      * Remove media file directory
-     * 
-     * @param mediaFileDir
      */
-    void removeMediaFileDirectory(MediaFileDirectory mediaFileDir)
+    void removeMediaDirectory(MediaDirectory mediaFileDir)
             throws WebloggerException;
 
 }

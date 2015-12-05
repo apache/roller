@@ -99,7 +99,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     public void removeWeblog(Weblog weblog) throws WebloggerException {
-        
         // remove contents first, then remove weblog
         this.removeWeblogContents(weblog);
         this.strategy.remove(weblog);
@@ -153,10 +152,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove mediafile metadata
         // remove uploaded files
         mediaFileManager.removeAllFiles(weblog);
-        //List<MediaFileDirectory> dirs = mmgr.getMediaFileDirectories(weblog);
-        //for (MediaFileDirectory dir : dirs) {
-            //this.strategy.remove(dir);
-        //}
         this.strategy.flush();
 
         // remove entries
@@ -174,7 +169,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         removeCategories.executeUpdate();
 
         // remove permissions
-        for (UserWeblogRole role : userManager.getWeblogRoles(weblog)) {
+        for (UserWeblogRole role : userManager.getWeblogRolesIncludingPending(weblog)) {
             userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
         }
 
@@ -261,7 +256,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
         }
 
-        mediaFileManager.createDefaultMediaFileDirectory(newWeblog);
+        mediaFileManager.createDefaultMediaDirectory(newWeblog);
 
         // flush so that all data up to this point can be available in db
         this.strategy.flush();

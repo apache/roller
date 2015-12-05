@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -51,9 +51,9 @@ public class MediaFileEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(MediaFileEdit.class);
     private MediaFile bean = new MediaFile();
-    private MediaFileDirectory directory;
+    private MediaDirectory directory;
     private String mediaFileId;
-    private List<MediaFileDirectory> allDirectories;
+    private List<MediaDirectory> allDirectories;
 
     private MediaFileManager mediaFileManager;
 
@@ -95,15 +95,15 @@ public class MediaFileEdit extends UIAction {
      */
     public void prepare() {
         try {
-            allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
+            allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
-                setDirectory(mediaFileManager.getMediaFileDirectory(bean.getDirectoryId()));
+                setDirectory(mediaFileManager.getMediaDirectory(bean.getDirectoryId()));
             } else if (StringUtils.isNotEmpty(directoryName)) {
-                setDirectory(mediaFileManager.getMediaFileDirectoryByName(getActionWeblog(), directoryName));
+                setDirectory(mediaFileManager.getMediaDirectoryByName(getActionWeblog(), directoryName));
             } else {
-                MediaFileDirectory root = mediaFileManager.getDefaultMediaFileDirectory(getActionWeblog());
+                MediaDirectory root = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
                 if (root == null) {
-                    root = mediaFileManager.createDefaultMediaFileDirectory(getActionWeblog());
+                    root = mediaFileManager.createDefaultMediaDirectory(getActionWeblog());
                 }
                 setDirectory(root);
             }
@@ -256,7 +256,7 @@ public class MediaFileEdit extends UIAction {
                     // Move file
                     if (!getBean().getDirectoryId().equals(mediaFile.getDirectory().getId())) {
                         log.debug("Processing move of " + mediaFile.getId());
-                        MediaFileDirectory targetDirectory = mediaFileManager.getMediaFileDirectory(getBean().getDirectoryId());
+                        MediaDirectory targetDirectory = mediaFileManager.getMediaDirectory(getBean().getDirectoryId());
                         mediaFileManager.moveMediaFile(mediaFile, targetDirectory);
                     }
 
@@ -282,11 +282,11 @@ public class MediaFileEdit extends UIAction {
         this.bean = b;
     }
 
-    public MediaFileDirectory getDirectory() {
+    public MediaDirectory getDirectory() {
         return directory;
     }
 
-    public void setDirectory(MediaFileDirectory directory) {
+    public void setDirectory(MediaDirectory directory) {
         this.directory = directory;
     }
 
@@ -322,7 +322,7 @@ public class MediaFileEdit extends UIAction {
         this.directoryName = directoryName;
     }
 
-    public List<MediaFileDirectory> getAllDirectories() {
+    public List<MediaDirectory> getAllDirectories() {
         return allDirectories;
     }
 

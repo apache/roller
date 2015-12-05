@@ -34,7 +34,6 @@ public class Weblogger {
     // managers
     private final IndexManager         indexManager;
     private final MediaFileManager     mediaFileManager;
-    private final FileContentManager   fileContentManager;
     private final PingTargetManager    pingTargetManager;
     private final PluginManager        pluginManager;
     private final PropertiesManager    propertiesManager;
@@ -54,7 +53,6 @@ public class Weblogger {
     protected Weblogger(
             IndexManager         indexManager,
             MediaFileManager     mediaFileManager,
-            FileContentManager   fileContentManager,
             PingTargetManager    pingTargetManager,
             PluginManager        pluginManager,
             PropertiesManager    propertiesManager,
@@ -67,7 +65,6 @@ public class Weblogger {
 
         this.indexManager        = indexManager;
         this.mediaFileManager    = mediaFileManager;
-        this.fileContentManager  = fileContentManager;
         this.pingTargetManager   = pingTargetManager;
         this.pluginManager       = pluginManager;
         this.propertiesManager   = propertiesManager;
@@ -93,10 +90,6 @@ public class Weblogger {
 
     public MediaFileManager getMediaFileManager() {
         return mediaFileManager;
-    }
-
-    public FileContentManager getFileContentManager() {
-        return fileContentManager;
     }
 
     public WeblogEntryManager getWeblogEntryManager() {

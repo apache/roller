@@ -16,6 +16,7 @@
 package org.apache.roller.weblogger;
 
 import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -76,8 +77,15 @@ abstract public class WebloggerTest {
     @Resource
     protected JPAPersistenceStrategy strategy;
 
-    public void setJpaPersistenceStrategy(JPAPersistenceStrategy strategy) {
+    public void setJPAPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
+    }
+
+    @Resource
+    protected PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     @Before
