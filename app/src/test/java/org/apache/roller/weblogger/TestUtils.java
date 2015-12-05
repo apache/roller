@@ -20,10 +20,6 @@
  */
 package org.apache.roller.weblogger;
 
-import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -51,9 +47,7 @@ public final class TestUtils {
     public static final String JUNIT_PREFIX = "junit_";
 
     public static void setupWeblogger() throws Exception {
-
         if (!WebloggerFactory.isBootstrapped()) {
-
             // do core services preparation
             WebloggerStartup.prepare();
 
@@ -221,22 +215,6 @@ public final class TestUtils {
         }
 
         return cat;
-    }
-
-    /**
-     * Convenience method for removing a weblog category.
-     */
-    public static void teardownWeblogCategory(String id) throws Exception {
-
-        // lookup the cat
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        WeblogCategory cat = mgr.getWeblogCategory(id);
-
-        // remove the cat
-        mgr.removeWeblogCategory(cat);
-
-        // flush to db
-        WebloggerFactory.flush();
     }
 
     /**
@@ -465,150 +443,4 @@ public final class TestUtils {
                 .getWeblogEntry(weblogEntry.getId());
     }
 
-    /**
-     * Convenience method that returns managed copy of given WeblogEntry.
-     */
-    public static WeblogCategory getManagedWeblogCategory(WeblogCategory cat)
-            throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager()
-                .getWeblogCategory(cat.getId());
-    }
-
-    /**
-     * Convenience method that creates a planet and stores it.
-     */
-    public static Planet setupPlanet(String handle)
-            throws Exception {
-
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-
-        // store
-        Planet testPlanet = new Planet(handle, handle, handle);
-        mgr.savePlanet(testPlanet);
-
-        // flush
-        WebloggerFactory.flush();
-
-        // query to make sure we return the persisted object
-        Planet group = mgr.getPlanetById(testPlanet.getId());
-
-        if (group == null) {
-            throw new WebloggerException("error inserting new group");
-        }
-
-        return group;
-    }
-
-    /**
-     * Convenience method for removing a planet.
-     */
-    public static void teardownPlanet(String handle) throws Exception {
-
-        // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        Planet planet = mgr.getPlanet(handle);
-
-        // remove
-        mgr.deletePlanet(planet);
-
-        // flush
-        WebloggerFactory.flush();
-    }
-
-    /**
-     * Convenience method that creates a sub and stores it.
-     */
-    public static Subscription setupSubscription(Planet planet, String feedUrl)
-            throws Exception {
-
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-
-        // store
-        Subscription testSub = new Subscription();
-        testSub.setFeedURL(feedUrl);
-        testSub.setTitle(feedUrl);
-        testSub.setPlanet(planet);
-        mgr.saveSubscription(testSub);
-
-        planet.getSubscriptions().add(testSub);
-
-        // flush
-        WebloggerFactory.flush();
-
-        // query to make sure we return the persisted object
-        Subscription sub = mgr.getSubscriptionById(testSub.getId());
-
-        if (sub == null) {
-            throw new WebloggerException("error inserting new subscription");
-        }
-
-        return sub;
-    }
-
-    /**
-     * Convenience method for removing a sub.
-     */
-    public static void teardownSubscription(String id) throws Exception {
-
-        // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        Subscription sub = mgr.getSubscriptionById(id);
-
-        // remove
-        mgr.deleteSubscription(sub);
-
-        // flush
-        WebloggerFactory.flush();
-    }
-
-    /**
-     * Convenience method that creates an entry and stores it.
-     */
-    public static SubscriptionEntry setupEntry(Subscription sub, String title)
-            throws Exception {
-
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-
-        // make sure we are using a persistent object
-        Subscription testSub = mgr.getSubscriptionById(sub.getId());
-
-        // store
-        SubscriptionEntry testEntry = new SubscriptionEntry();
-        testEntry.setPermalink(title);
-        testEntry.setTitle(title);
-        testEntry
-                .setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
-        testEntry.setSubscription(testSub);
-        testSub.getEntries().add(testEntry);
-        mgr.saveEntry(testEntry);
-
-        // flush
-        WebloggerFactory.flush();
-
-        // query to make sure we return the persisted object
-        SubscriptionEntry entry = mgr.getEntryById(testEntry.getId());
-
-        if (entry == null) {
-            throw new WebloggerException("error inserting new entry");
-        }
-
-        return entry;
-    }
-
-    /**
-     * Convenience method for removing an entry.
-     */
-    public static void teardownEntry(String id) throws Exception {
-
-        // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        SubscriptionEntry entry = mgr.getEntryById(id);
-
-        // remove
-        mgr.deleteEntry(entry);
-        entry.getSubscription().getEntries().remove(entry);
-
-        // flush
-        WebloggerFactory.flush();
-    }
 }

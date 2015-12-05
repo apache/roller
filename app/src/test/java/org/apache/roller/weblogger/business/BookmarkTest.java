@@ -18,68 +18,61 @@
 * Source file modified from the original ASF source; all changes made
 * are also under Apache License.
 */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Iterator;
 import java.util.List;
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Test Weblogger Bookmark Management.
  */
-public class BookmarkTest extends TestCase {
-    
+public class BookmarkTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(BookmarkTest.class);
-    
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @Before
     public void setUp() throws Exception {
-        TestUtils.setupWeblogger();
+        super.setUp();
         
         try {
-            testUser = TestUtils.setupUser("bkmrkTestUser");
-            testWeblog = TestUtils.setupWeblog("bkmrkTestWeblog", testUser);
-            TestUtils.endSession(true);
+            testUser = setupUser("bkmrkTestUser");
+            testWeblog = setupWeblog("bkmrkTestWeblog", testUser);
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
     }
     
+    @After
     public void tearDown() throws Exception {
-        
         try {
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
         } catch (Exception ex) {
             log.error("ERROR in tearDown", ex);
             throw new Exception("Test teardown failed", ex);
         }
     }
     
-    public Weblogger getRoller() {
-        return WebloggerFactory.getWeblogger();
-    }
-    
-    
+    @Test
     public void testBookmarkCRUD() throws Exception {
-        
-        WeblogManager wmgr = getRoller().getWeblogManager();
-
         // Add bookmark
         WeblogBookmark bookmark1 = new WeblogBookmark(
                 testWeblog,
@@ -88,7 +81,7 @@ public class BookmarkTest extends TestCase {
                 "http://www.example1.com");
         testWeblog.addBookmark(bookmark1);
         bookmark1.calculatePosition();
-        wmgr.saveBookmark(bookmark1);
+        weblogManager.saveBookmark(bookmark1);
 
         // Add another bookmark
         WeblogBookmark bookmark2 = new WeblogBookmark(
@@ -98,10 +91,10 @@ public class BookmarkTest extends TestCase {
                 "http://www.example2.com");
         testWeblog.addBookmark(bookmark2);
         bookmark2.calculatePosition();
-        wmgr.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog);
 
-        TestUtils.endSession(true);
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        endSession(true);
+        testWeblog = getManagedWeblog(testWeblog);
         WeblogBookmark bookmarkb, bookmarka;
 
         // See that two bookmarks were stored
@@ -112,66 +105,59 @@ public class BookmarkTest extends TestCase {
         bookmarkb = iter.next();
 
         // Remove one bookmark directly
-        wmgr.removeBookmark(bookmarka);
-
-        TestUtils.endSession(true);
-        assertNull(wmgr.getBookmark(bookmarka.getId()));
+        weblogManager.removeBookmark(bookmarka);
+        endSession(true);
+        assertNull(weblogManager.getBookmark(bookmarka.getId()));
 
         // Weblog should now contain one bookmark
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
         assertNotNull(testWeblog);
         assertEquals(1, testWeblog.getBookmarks().size());
         assertEquals(bookmarkb.getId(), testWeblog.getBookmarks().get(0).getId());
 
         // Remove other bookmark via removing from weblog
         testWeblog.getBookmarks().remove(bookmarkb);
-        wmgr.saveWeblog(testWeblog);
-        TestUtils.endSession(true);
+        weblogManager.saveWeblog(testWeblog);
+        endSession(true);
 
         // Last bookmark should be gone
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
         assertEquals(0, testWeblog.getBookmarks().size());
-        assertNull(wmgr.getBookmark(bookmarkb.getId()));
+        assertNull(weblogManager.getBookmark(bookmarkb.getId()));
     }
 
     /**
      * Test all bookmark lookup methods.
      */
+    @Test
     public void testBookmarkLookups() throws Exception {
-        
-        WeblogManager wmgr = getRoller().getWeblogManager();
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
 
         // add some bookmarks
-        WeblogBookmark b1 = new WeblogBookmark(
-                testWeblog, "b1", "testbookmark13",
+        WeblogBookmark b1 = new WeblogBookmark(testWeblog, "b1", "testbookmark13",
                 "http://example1.com");
         testWeblog.addBookmark(b1);
-        wmgr.saveBookmark(b1);
-        WeblogBookmark b2 = new WeblogBookmark(
-                testWeblog, "b2", "testbookmark14",
+        weblogManager.saveBookmark(b1);
+        WeblogBookmark b2 = new WeblogBookmark(testWeblog, "b2", "testbookmark14",
                 "http://example2.com");
         testWeblog.addBookmark(b2);
-        wmgr.saveBookmark(b2);
-        WeblogBookmark b3 = new WeblogBookmark(
-                testWeblog, "b3", "testbookmark16",
+        weblogManager.saveBookmark(b2);
+        WeblogBookmark b3 = new WeblogBookmark(testWeblog, "b3", "testbookmark16",
                 "http://example3.com");
         testWeblog.addBookmark(b3);
-        wmgr.saveBookmark(b3);
+        weblogManager.saveBookmark(b3);
         
-        TestUtils.endSession(true);
+        endSession(true);
         
         // test lookup by id
-        WeblogBookmark testBookmark = wmgr.getBookmark(b1.getId());
+        WeblogBookmark testBookmark = weblogManager.getBookmark(b1.getId());
         assertNotNull(testBookmark);
         assertEquals("b1", testBookmark.getName());
 
         // test lookup of all bookmarks for a website
-        Weblog testWeblog2 = wmgr.getWeblog(testWeblog.getId());
+        Weblog testWeblog2 = weblogManager.getWeblog(testWeblog.getId());
         List<WeblogBookmark> allBookmarks = testWeblog2.getBookmarks();
         assertNotNull(allBookmarks);
         assertEquals(3, allBookmarks.size());
-        
     }
 }

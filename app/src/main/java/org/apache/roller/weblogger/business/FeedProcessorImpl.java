@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
@@ -66,6 +67,8 @@ public class FeedProcessorImpl implements FeedProcessor {
     private PluginManager pluginManager;
     private PlanetManager planetManager;
     private URLStrategy urlStrategy;
+    private JPAPersistenceStrategy strategy;
+
     private static Log log = LogFactory.getLog(FeedProcessorImpl.class);
     
     public FeedProcessorImpl() {
@@ -90,6 +93,10 @@ public class FeedProcessorImpl implements FeedProcessor {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     /**
@@ -487,7 +494,7 @@ public class FeedProcessorImpl implements FeedProcessor {
 
                 // save and flush
                 planetManager.saveSubscription(sub);
-                WebloggerFactory.flush();
+                strategy.flush();
 
                 log.debug("Added entries");
                 entries += newEntries.size();

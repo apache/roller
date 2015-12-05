@@ -21,49 +21,45 @@ package org.apache.roller.weblogger.business;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Test database implementation of PlanetManager for local feeds.
- * @author Dave Johnson
  */
-public class PlanetManagerLocalTest extends TestCase {
+public class PlanetManagerLocalTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(PlanetManagerLocalTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
     
-    public static void main(String[] args) {
-        TestRunner.run(PlanetManagerLocalTest.class);
-    }
-    
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @Before
     public void setUp() throws Exception {
         
         try {
-            TestUtils.setupWeblogger();
+            super.setUp();
 
-            testUser = TestUtils.setupUser("entryTestUser");
-            testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
-            TestUtils.endSession(true);
+            testUser = setupUser("entryTestUser");
+            testWeblog = setupWeblog("entryTestWeblog", testUser);
+            endSession(true);
 
-            testUser = TestUtils.getManagedUser(testUser);
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            testUser = getManagedUser(testUser);
+            testWeblog = getManagedWeblog(testWeblog);
 
             WeblogEntry testEntry1 = new WeblogEntry();
             testEntry1.setId(WebloggerCommon.generateUUID());
@@ -76,7 +72,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry1.setCreatorUserName(testUser.getUserName());
             testEntry1.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry1.setStatus(PubStatus.PUBLISHED);
-            WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry1);
+            weblogEntryManager.saveWeblogEntry(testEntry1);
 
             WeblogEntry testEntry2 = new WeblogEntry();
             testEntry2.setId(WebloggerCommon.generateUUID());
@@ -89,7 +85,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry2.setCreatorUserName(testUser.getUserName());
             testEntry2.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry2.setStatus(PubStatus.PUBLISHED);
-            WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry2);
+            weblogEntryManager.saveWeblogEntry(testEntry2);
 
             WeblogEntry testEntry3 = new WeblogEntry();
             testEntry3.setId(WebloggerCommon.generateUUID());
@@ -102,56 +98,49 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry3.setCreatorUserName(testUser.getUserName());
             testEntry3.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry3.setStatus(PubStatus.PUBLISHED);
-            WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry3);
+            weblogEntryManager.saveWeblogEntry(testEntry3);
 
-            TestUtils.endSession(true);
+            endSession(true);
             
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @After
     public void tearDown() throws Exception {
-        
         try {
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);
         }
     }
     
+    @Test
     public void testRefreshEntries() {
         try {      
-            PlanetManager manager = WebloggerFactory.getWeblogger().getPlanetManager();
-            
             // run sync task to fill aggregator with websites created by super
-            manager.syncAllBlogsPlanet();
+            planetManager.syncAllBlogsPlanet();
 
-            Planet planet = manager.getPlanet("all");
+            Planet planet = planetManager.getPlanet("all");
             assertEquals(1, planet.getSubscriptions().size());
 
-            WebloggerFactory.getWeblogger().getPlanetManager().updateSubscriptions();
+            planetManager.updateSubscriptions();
 
-            planet = manager.getPlanet("all");
-            List agg = manager.getEntries(planet, 0, -1);
+            planet = planetManager.getPlanet("all");
+            List agg = planetManager.getEntries(planet, 0, -1);
             assertEquals(3, agg.size());
 
-            TestUtils.teardownPlanet(planet.getHandle());
+            teardownPlanet(planet.getHandle());
         }
         catch (Exception e) {
             e.printStackTrace();
             fail();
         }
     }
-    
-    public static Test suite() {
-        return new TestSuite(PlanetManagerLocalTest.class);
-    }
-    
-    
 }
 
