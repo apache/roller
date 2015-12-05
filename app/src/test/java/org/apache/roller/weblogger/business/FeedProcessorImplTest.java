@@ -18,27 +18,29 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.Set;
+import static org.junit.Assert.*;
 
 /**
  * Test custom weblogger feed fetcher.
  */
-public class FeedProcessorImplTest extends TestCase {
-    
+public class FeedProcessorImplTest  extends WebloggerTest {
     public static Log log = LogFactory.getLog(FeedProcessorImplTest.class);
     
     String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
@@ -50,16 +52,21 @@ public class FeedProcessorImplTest extends TestCase {
     private User testUser = null;
     private Weblog testWeblog = null;
 
+    @Resource
+    protected FeedProcessor feedProcessor;
+
+    public void setFeedProcessor(FeedProcessor feedProcessor) {
+        this.feedProcessor = feedProcessor;
+    }
+
     /**
      * All tests in this suite require a user and a weblog.
      */
-    @Override
+    @Before
     public void setUp() throws Exception {
-        TestUtils.setupWeblogger();
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-
-        testUser = TestUtils.setupUser("webloggerFetcherTestUser");
-        testWeblog = TestUtils.setupWeblog("webloggerFetcherTestWeblog", testUser);
+        super.setUp();
+        testUser = setupUser("webloggerFetcherTestUser");
+        testWeblog = setupWeblog("webloggerFetcherTestWeblog", testUser);
 
         // add test planet
         planet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
@@ -70,25 +77,24 @@ public class FeedProcessorImplTest extends TestCase {
         testSub.setFeedURL(externalFeedUrl);
         testSub.setPlanet(planet);
         planet.getSubscriptions().add(testSub);
-        mgr.savePlanet(planet);
-        mgr.saveSubscription(testSub);
-        TestUtils.endSession(true);
+        planetManager.savePlanet(planet);
+        planetManager.saveSubscription(testSub);
+        endSession(true);
     }
     
-    @Override
+    @After
     public void tearDown() throws Exception {
-        TestUtils.teardownSubscription(testSub.getId());
-        TestUtils.teardownPlanet("testPlanetHandle");
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
+        teardownSubscription(testSub.getId());
+        teardownPlanet("testPlanetHandle");
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
     }
 
+    @Test
     public void testFetchFeed() throws WebloggerException {
         try {
-            FeedProcessor feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
-
             // fetch feed
-            Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
+            Subscription sub = feedProcessor.fetchSubscription(externalFeedUrl);
             assertNotNull(sub);
             assertEquals(externalFeedUrl, sub.getFeedURL());
             assertEquals(expectedSiteUrl, sub.getSiteURL());
@@ -102,13 +108,11 @@ public class FeedProcessorImplTest extends TestCase {
         }
     }
 
-
+    @Test
     public void testFetchFeedConditionally() throws WebloggerException {
         try {
-            FeedProcessor feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
-
             // fetch feed
-            Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
+            Subscription sub = feedProcessor.fetchSubscription(externalFeedUrl);
             assertNotNull(sub);
             assertEquals(externalFeedUrl, sub.getFeedURL());
             assertEquals(expectedSiteUrl, sub.getSiteURL());
@@ -117,7 +121,7 @@ public class FeedProcessorImplTest extends TestCase {
             assertTrue(sub.getEntries().size() > 0);
 
             // now do a conditional fetch and we should get back null
-            Subscription updatedSub = feedFetcher.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
+            Subscription updatedSub = feedProcessor.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
             assertNull(updatedSub);
 
         } catch (WebloggerException ex) {
@@ -126,18 +130,17 @@ public class FeedProcessorImplTest extends TestCase {
         }
     }
 
+    @Test
     public void testFetchInternalSubscription() throws Exception {
         try {
-            FeedProcessor feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
-
             // first fetch non-conditionally so we know we should get a Sub
-            Subscription sub = feedFetcher.fetchSubscription(rollerFeedUrl);
+            Subscription sub = feedProcessor.fetchSubscription(rollerFeedUrl);
             assertNotNull(sub);
             assertEquals(rollerFeedUrl, sub.getFeedURL());
             assertNotNull(sub.getLastUpdated());
 
             // now do a conditional fetch and we should get back null
-            Subscription updatedSub = feedFetcher.fetchSubscription(rollerFeedUrl, sub.getLastUpdated());
+            Subscription updatedSub = feedProcessor.fetchSubscription(rollerFeedUrl, sub.getLastUpdated());
             assertNull(updatedSub);
 
         } catch (Throwable e) {
@@ -145,19 +148,18 @@ public class FeedProcessorImplTest extends TestCase {
         }
     }
 
+    @Test
     public void testUpdateSubscription() throws Exception {
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        Subscription sub = mgr.getSubscriptionById(testSub.getId());
+        Subscription sub = planetManager.getSubscriptionById(testSub.getId());
 
         // update the subscription
-        FeedProcessor updater = WebloggerFactory.getWeblogger().getFeedFetcher();
         Set<Subscription> subscriptionSet = new HashSet<>();
         subscriptionSet.add(sub);
-        updater.updateSubscriptions(subscriptionSet);
-        TestUtils.endSession(true);
+        feedProcessor.updateSubscriptions(subscriptionSet);
+        endSession(true);
 
         // verify the results
-        sub = mgr.getSubscription(planet, externalFeedUrl);
+        sub = planetManager.getSubscription(planet, externalFeedUrl);
         assertNotNull(sub);
         assertEquals(externalFeedUrl, sub.getFeedURL());
         assertEquals(expectedSiteUrl, sub.getSiteURL());

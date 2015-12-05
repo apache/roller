@@ -16,28 +16,21 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.io.File;
 import java.net.URL;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import com.rometools.fetcher.impl.SyndFeedInfo;
 import com.rometools.fetcher.impl.DiskFeedInfoCache;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 
-/**
- * @author David M Johnson
- */
-public class DiskFeedInfoCacheTest extends TestCase {
+public class DiskFeedInfoCacheTest extends WebloggerTest {
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(DiskFeedInfoCacheTest.class);
-    }
-    
+    @Test
     public void testCache() throws Exception {
         URL url = new URL("http://cnn.com");
         SyndFeedInfo info = new SyndFeedInfo();
@@ -48,7 +41,9 @@ public class DiskFeedInfoCacheTest extends TestCase {
         assertTrue("testPlanetCache not zero length", testPlanetCache.trim().length() > 0);
         
         File cacheDir = new File(testPlanetCache);
-        if (!cacheDir.exists()) cacheDir.mkdirs();
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
+        }
         
         DiskFeedInfoCache cache =
                 new DiskFeedInfoCache(WebloggerConfig.getProperty("planet.aggregator.cache.dir"));
@@ -57,11 +52,6 @@ public class DiskFeedInfoCacheTest extends TestCase {
         SyndFeedInfo info2 = cache.getFeedInfo(url);
         assertNotNull(info2);
         assertEquals(url, info2.getUrl());
-    }
-    
-    public static Test suite() {
-        return new TestSuite(DiskFeedInfoCacheTest.class);
-        
     }
     
 }

@@ -55,22 +55,29 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
 
-    private final WeblogManager weblogManager;
-    private final URLStrategy urlStrategy;
-    private final FeedProcessor feedProcessor;
-    private final JPAPersistenceStrategy strategy;
+    private WeblogManager weblogManager;
+    private URLStrategy urlStrategy;
+    private FeedProcessor feedProcessor;
+    private JPAPersistenceStrategy strategy;
 
-    protected JPAPlanetManagerImpl(WeblogManager weblogManager, URLStrategy urlStrategy, FeedProcessor feedProcessor,
-                                   JPAPersistenceStrategy strategy) {
-        log.debug("Instantiating JPA Planet Manager");
-        
-        this.weblogManager = weblogManager;
+    protected JPAPlanetManagerImpl() {}
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
+    }
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    public void setFeedProcessor(FeedProcessor feedProcessor) {
         this.feedProcessor = feedProcessor;
+    }
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
     }
-    
-    
+
     public void savePlanet(Planet group) throws WebloggerException {
         strategy.store(group);
     }

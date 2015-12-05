@@ -34,7 +34,6 @@
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
-        <beans:constructor-arg ref="feedProcessor"/>
         <beans:constructor-arg ref="planetManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
     </beans:bean>
@@ -95,13 +94,14 @@
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="pluginManager" ref="pluginManager"/>
         <beans:property name="planetManager" ref="planetManager"/>
+        <beans:property name="strategy" ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
-        <beans:constructor-arg ref="weblogManager"/>
-        <beans:constructor-arg ref="urlStrategy"/>
-        <beans:constructor-arg ref="feedProcessor"/>
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
+        <beans:property name="urlStrategy" ref="urlStrategy"/>
+        <beans:property name="feedProcessor" ref="feedProcessor"/>
+        <beans:property name="strategy" ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>

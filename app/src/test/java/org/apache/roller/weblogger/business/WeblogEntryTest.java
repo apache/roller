@@ -358,6 +358,7 @@ public class WeblogEntryTest extends TestCase {
             testEntry.setTitle("entryTestEntry");
             testEntry.setText("blah blah entry");
             testEntry.setAnchor("testEntryAnchor");
+            testEntry.setStatus(PubStatus.PUBLISHED);
             testEntry.setPubTime(
                     new java.sql.Timestamp(new java.util.Date().getTime()));
             testEntry.setUpdateTime(

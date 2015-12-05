@@ -42,7 +42,6 @@ public class Weblogger {
     private final UserManager          userManager;
     private final WeblogManager        weblogManager;
     private final WeblogEntryManager   weblogEntryManager;
-    private final FeedProcessor        feedFetcher;
     private final PlanetManager        planetManager;
 
     // url strategy
@@ -63,7 +62,6 @@ public class Weblogger {
             UserManager          userManager,
             WeblogManager        weblogManager,
             WeblogEntryManager   weblogEntryManager,
-            FeedProcessor feedFetcher,
             PlanetManager        planetManager,
             URLStrategy          urlStrategy) throws WebloggerException {
 
@@ -78,7 +76,6 @@ public class Weblogger {
         this.weblogManager       = weblogManager;
         this.weblogEntryManager  = weblogEntryManager;
         this.urlStrategy         = urlStrategy;
-        this.feedFetcher         = feedFetcher;
         this.planetManager       = planetManager;
     }
 
@@ -124,10 +121,6 @@ public class Weblogger {
 
     public URLStrategy getUrlStrategy() {
         return urlStrategy;
-    }
-
-    public FeedProcessor getFeedFetcher() {
-        return feedFetcher;
     }
 
     public PlanetManager getPlanetManager() {
