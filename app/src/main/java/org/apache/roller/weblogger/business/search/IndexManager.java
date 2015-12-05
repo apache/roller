@@ -20,10 +20,14 @@
  */
 package org.apache.roller.weblogger.business.search;
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.Directory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * Interface to Roller's Lucene-based search facility.
@@ -31,6 +35,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public interface IndexManager
 {
+    ReadWriteLock getReadWriteLock();
+
     /** Does index need to be rebuilt */
     boolean isInconsistentAtStartup();
     
@@ -48,6 +54,13 @@ public interface IndexManager
     
     /** Execute operation immediately */
     void executeIndexOperationNow(final IndexOperation op);
+
+    void resetSharedReader();
+
+    IndexReader getSharedIndexReader();
+
+    /** Return directory used by Lucene index */
+    Directory getIndexDirectory();
 
     /**
      * Initialize the search system.

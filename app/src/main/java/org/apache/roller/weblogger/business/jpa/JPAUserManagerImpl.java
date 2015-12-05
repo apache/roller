@@ -64,7 +64,7 @@ public class JPAUserManagerImpl implements UserManager {
         String userName = user.getUserName();
         
         // remove permissions, maintaining both sides of relationship
-        List<UserWeblogRole> perms = getWeblogRoles(user);
+        List<UserWeblogRole> perms = getWeblogRolesIncludingPending(user);
         for (UserWeblogRole perm : perms) {
             this.strategy.remove(perm);
         }
@@ -459,6 +459,13 @@ public class JPAUserManagerImpl implements UserManager {
     
     public List<UserWeblogRole> getWeblogRoles(User user) throws WebloggerException {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName",
+                UserWeblogRole.class);
+        q.setParameter(1, user.getUserName());
+        return q.getResultList();
+    }
+
+    public List<UserWeblogRole> getWeblogRolesIncludingPending(User user) throws WebloggerException {
+        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserNameIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
         return q.getResultList();

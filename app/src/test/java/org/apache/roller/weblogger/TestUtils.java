@@ -179,20 +179,6 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method for removing a permission.
-     */
-    public static void teardownPermissions(UserWeblogRole perm)
-            throws Exception {
-
-        // remove all permissions
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        mgr.revokeWeblogRole(perm.getUser(), perm.getWeblog());
-
-        // flush to db
-        WebloggerFactory.flush();
-    }
-
-    /**
      * Convenience method for creating a weblog category.
      */
     public static WeblogCategory setupWeblogCategory(Weblog weblog, String name)
@@ -343,78 +329,6 @@ public final class TestUtils {
 
         // flush to db
         WebloggerFactory.flush();
-    }
-
-    /**
-     * Convenience method for creating a ping target.
-     */
-    public static PingTarget setupPingTarget(String name, String url)
-            throws Exception {
-
-        PingTarget testPing = new PingTarget();
-        testPing.setId(WebloggerCommon.generateUUID());
-        testPing.setName("testCommonPing");
-        testPing.setPingUrl("http://localhost/testCommonPing");
-
-        // store ping
-        PingTargetManager pingMgr = WebloggerFactory.getWeblogger()
-                .getPingTargetManager();
-        pingMgr.savePingTarget(testPing);
-
-        // flush to db
-        WebloggerFactory.flush();
-
-        // query for it
-        PingTarget ping = pingMgr.getPingTarget(testPing.getId());
-
-        if (ping == null) {
-            throw new WebloggerException("error setting up ping target");
-        }
-
-        return ping;
-    }
-
-    /**
-     * Convenience method for removing a ping target.
-     */
-    public static void teardownPingTarget(String id) throws Exception {
-
-        // query for it
-        PingTargetManager pingMgr = WebloggerFactory.getWeblogger()
-                .getPingTargetManager();
-        PingTarget ping = pingMgr.getPingTarget(id);
-
-        // remove the ping
-        pingMgr.removePingTarget(ping);
-
-        // flush to db
-        WebloggerFactory.flush();
-    }
-
-    /**
-     * Convenience method for creating an auto ping.
-     */
-    public static AutoPing setupAutoPing(PingTarget ping, Weblog weblog)
-            throws Exception {
-
-        PingTargetManager mgr = WebloggerFactory.getWeblogger()
-                .getPingTargetManager();
-
-        // store auto ping
-        AutoPing autoPing = new AutoPing(ping, getManagedWebsite(weblog));
-        mgr.saveAutoPing(autoPing);
-
-        // flush to db
-        WebloggerFactory.flush();
-
-        // query for it
-        autoPing = mgr.getAutoPing(autoPing.getId());
-
-        if (autoPing == null) {
-            throw new WebloggerException("error setting up auto ping");
-        }
-
-        return autoPing;
     }
 
     /**

@@ -40,6 +40,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.util.BytesRef;
 import org.apache.roller.weblogger.business.search.FieldConstants;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -56,12 +57,12 @@ public abstract class IndexOperation implements Runnable {
 
     // ~ Instance fields
     // ========================================================
-    protected IndexManagerImpl manager;
+    protected IndexManager manager;
     private IndexWriter writer;
 
     // ~ Constructors
     // ===========================================================
-    public IndexOperation(IndexManagerImpl manager) {
+    public IndexOperation(IndexManager manager) {
         this.manager = manager;
     }
 

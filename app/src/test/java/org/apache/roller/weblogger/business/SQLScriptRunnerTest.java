@@ -14,35 +14,37 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import junit.framework.TestCase;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test parsing and running of SQL scripts
  */
-public class SQLScriptRunnerTest extends TestCase {
+public class SQLScriptRunnerTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(SQLScriptRunnerTest.class);
 
-    public void setUp() {
-        try {
-            TestUtils.setupWeblogger();
-        } catch (Exception e) {
-            log.error("ERROR initializing Roller", e);
-        }
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
     }
 
-    public void testParseOnly() throws Exception {        
+    @Test
+    public void testParseOnly() throws Exception {
         DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
         Connection con = dbp.getConnection(); 
         
@@ -58,8 +60,9 @@ public class SQLScriptRunnerTest extends TestCase {
                 + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql";
         SQLScriptRunner runner = new SQLScriptRunner(scriptPath, false);
         assertTrue(runner.getCommandCount() == 5);
-    }    
-    
+    }
+
+    @Test
     public void testSimpleRun() throws Exception {
         DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
         Connection con = dbp.getConnection(); 
@@ -91,8 +94,8 @@ public class SQLScriptRunnerTest extends TestCase {
         assertFalse(tableExists(con, "testrolleruser"));
         assertFalse(tableExists(con, "testuserrole"));
     }
-        
-    public static boolean tableExists(Connection con, String tableName) throws SQLException {
+
+    private boolean tableExists(Connection con, String tableName) throws SQLException {
         ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
         while (rs.next()) {
             if (tableName.toLowerCase().equals(rs.getString("TABLE_NAME").toLowerCase())) {

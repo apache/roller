@@ -25,8 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -46,9 +46,9 @@ public class MediaFileImageChooser extends UIAction {
     private String directoryName;
 
     private List<MediaFile> childFiles;
-    private MediaFileDirectory currentDirectory;
+    private MediaDirectory currentDirectory;
 
-    private List<MediaFileDirectory> allDirectories;
+    private List<MediaDirectory> allDirectories;
 
     private MediaFileManager mediaFileManager;
 
@@ -87,15 +87,15 @@ public class MediaFileImageChooser extends UIAction {
     @SkipValidation
     public String execute() {
         try {
-            MediaFileDirectory directory;
+            MediaDirectory directory;
             if (this.directoryId != null) {
-                directory = mediaFileManager.getMediaFileDirectory(this.directoryId);
+                directory = mediaFileManager.getMediaDirectory(this.directoryId);
             } else if (this.directoryName != null) {
-                directory = mediaFileManager.getMediaFileDirectoryByName(
+                directory = mediaFileManager.getMediaDirectoryByName(
                         getActionWeblog(), this.directoryName);
                 this.directoryId = directory.getId();
             } else {
-                directory = mediaFileManager.getDefaultMediaFileDirectory(getActionWeblog());
+                directory = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
                 this.directoryId = directory.getId();
             }
 
@@ -110,7 +110,7 @@ public class MediaFileImageChooser extends UIAction {
             this.currentDirectory = directory;
 
             // List of available directories
-            allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
+            allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
             return SUCCESS;
 
         } catch (Exception e) {
@@ -188,7 +188,7 @@ public class MediaFileImageChooser extends UIAction {
     /**
      * @return the currentDirectory
      */
-    public MediaFileDirectory getCurrentDirectory() {
+    public MediaDirectory getCurrentDirectory() {
         return currentDirectory;
     }
 
@@ -196,11 +196,11 @@ public class MediaFileImageChooser extends UIAction {
      * @param currentDirectory
      *            the currentDirectory to set
      */
-    public void setCurrentDirectory(MediaFileDirectory currentDirectory) {
+    public void setCurrentDirectory(MediaDirectory currentDirectory) {
         this.currentDirectory = currentDirectory;
     }
 
-    public List<MediaFileDirectory> getAllDirectories() {
+    public List<MediaDirectory> getAllDirectories() {
         return allDirectories;
     }
 

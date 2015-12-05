@@ -26,7 +26,6 @@
     <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.Weblogger">
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
-        <beans:constructor-arg ref="fileContentManager"/>
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="pluginManager"/>
         <beans:constructor-arg ref="propertiesManager"/>

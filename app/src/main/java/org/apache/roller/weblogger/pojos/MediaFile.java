@@ -72,7 +72,7 @@ public class MediaFile implements Serializable {
     private String creatorUserName;
 
     private InputStream is;
-    private MediaFileDirectory directory;
+    private MediaDirectory directory;
     private FileContent content;
     private FileContent thumbnail;
 
@@ -176,11 +176,11 @@ public class MediaFile implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="directoryid", nullable=false)
-    public MediaFileDirectory getDirectory() {
+    public MediaDirectory getDirectory() {
         return directory;
     }
 
-    public void setDirectory(MediaFileDirectory dir) {
+    public void setDirectory(MediaDirectory dir) {
         this.directory = dir;
     }
 

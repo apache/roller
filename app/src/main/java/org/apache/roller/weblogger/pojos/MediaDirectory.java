@@ -43,27 +43,26 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="media_directory")
 @NamedQueries({
-        @NamedQuery(name="MediaFileDirectory.getByWeblog",
-                query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 order by d.name"),
-        @NamedQuery(name="MediaFileDirectory.getByWeblogAndName",
-                query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
+        @NamedQuery(name="MediaDirectory.getByWeblog",
+                query="SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 order by d.name"),
+        @NamedQuery(name="MediaDirectory.getByWeblogAndName",
+                query="SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
 })
-public class MediaFileDirectory {
+public class MediaDirectory {
 
     private String id;
     String name;
     Weblog weblog;
     Set<MediaFile> mediaFiles = new HashSet<>();
 
-    public MediaFileDirectory() {
+    public MediaDirectory() {
     }
 
-    public MediaFileDirectory(Weblog weblog, String name) {
-
+    public MediaDirectory(Weblog weblog, String name) {
         this.id = WebloggerCommon.generateUUID();
         this.name = name;
         this.weblog = weblog;
-        weblog.getMediaFileDirectories().add(this);
+        weblog.getMediaDirectories().add(this);
     }
 
     @Id
@@ -155,10 +154,10 @@ public class MediaFileDirectory {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof MediaFileDirectory)) {
+        if (!(other instanceof MediaDirectory)) {
             return false;
         }
-        MediaFileDirectory o = (MediaFileDirectory) other;
+        MediaDirectory o = (MediaDirectory) other;
         return new EqualsBuilder().append(getId(), o.getId())
                 .append(getName(), o.getName()).isEquals();
     }

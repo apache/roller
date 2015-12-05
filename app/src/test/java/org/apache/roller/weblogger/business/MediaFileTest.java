@@ -25,258 +25,178 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
 
 /**
  * Test media file related business operations.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MediaFileTest extends TestCase {
-
+public class MediaFileTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(MediaFileTest.class);
-    // static final String runtimeEnv;
+
+    private User testUser = null;
+    private Weblog testWeblog = null;
+
     public final static String TEST_IMAGE = "/hawk.jpg";
 
-    public MediaFileTest() {
+    @Resource
+    private MediaFileManager mediaFileManager;
+
+    public void setMediaFileManager(MediaFileManager mediaFileManager) {
+        this.mediaFileManager = mediaFileManager;
     }
 
+    @Before
     public void setUp() throws Exception {
-        TestUtils.setupWeblogger();
+        super.setUp();
+
+        try {
+            testUser = setupUser("mediaFileTestUser");
+            testWeblog = setupWeblog("mediaFileTestWeblog", testUser);
+            endSession(true);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new Exception("Test setup failed", ex);
+        }
     }
 
+    @After
     public void tearDown() throws Exception {
+        try {
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
+        } catch (Exception ex) {
+            log.error("ERROR in test teardown", ex);
+            throw new Exception("Test teardown failed", ex);
+        }
     }
 
     /**
      * Test creation of directory by path
      */
-    public void testCreateMediaFileDirectoryByPath() throws Exception {
-        User testUser;
-        Weblog testWeblog;
-
-        // TODO: Setup code, to be moved to setUp method.
-        log.info("Before setting up weblogger");
-        // setup weblogger
-        try {
-            testUser = TestUtils.setupUser("mediaFileTestUser8");
-            testWeblog = TestUtils
-                    .setupWeblog("mediaFileTestWeblog8", testUser);
-            TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
-
-        /**
-         * Real test starts here.
-         */
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+    @Test
+    public void testCreateMediaDirectoryByPath() throws Exception {
+        testWeblog = getManagedWeblog(testWeblog);
 
         try {
-            mfMgr.createMediaFileDirectory(testWeblog, "");
+            mediaFileManager.createMediaDirectory(testWeblog, "");
             assertTrue(false);
         } catch (WebloggerException e) {
             assertTrue(true);
         }
 
         try {
-            mfMgr.createMediaFileDirectory(testWeblog, "default");
+            mediaFileManager.createMediaDirectory(testWeblog, "default");
             assertTrue(false);
         } catch (WebloggerException e) {
             assertTrue(true);
         }
 
-        MediaFileDirectory newDirectory1 = mfMgr
-                .createMediaFileDirectory(testWeblog, "test1");
-        MediaFileDirectory newDirectory2 = mfMgr
-                .createMediaFileDirectory(testWeblog, "test2");
-        TestUtils.endSession(true);
+        MediaDirectory newDirectory1 = mediaFileManager.createMediaDirectory(testWeblog, "test1");
+        MediaDirectory newDirectory2 = mediaFileManager.createMediaDirectory(testWeblog, "test2");
+        endSession(true);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
 
-        MediaFileDirectory newDirectory1ById = mfMgr
-                .getMediaFileDirectory(newDirectory1.getId());
+        MediaDirectory newDirectory1ById = mediaFileManager.getMediaDirectory(newDirectory1.getId());
         assertEquals(newDirectory1, newDirectory1ById);
 
-        MediaFileDirectory newDirectory2ById = mfMgr
-                .getMediaFileDirectory(newDirectory2.getId());
+        MediaDirectory newDirectory2ById = mediaFileManager.getMediaDirectory(newDirectory2.getId());
         assertEquals("test2", newDirectory2ById.getName());
 
         // show throw error when creating directory that already exists
         try {
-            mfMgr.createMediaFileDirectory(testWeblog, "test1");
+            mediaFileManager.createMediaDirectory(testWeblog, "test1");
             assertTrue(false);
         } catch (WebloggerException e) {
             assertTrue(true);
         }
-
-        TestUtils.endSession(true);
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
-        TestUtils.endSession(true);
     }
 
     /**
      * Test directory creation
      */
-    public void testCreateMediaFileDirectory() throws Exception {
-        User testUser;
-        Weblog testWeblog;
+    @Test
+    public void testCreateMediaDirectory() throws Exception {
+        MediaDirectory directory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
 
-        // TODO: Setup code, to be moved to setUp method.
-        log.info("Before setting up weblogger");
-        // setup weblogger
-        try {
-            testUser = TestUtils.setupUser("mediaFileTestUser");
-            testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog", testUser);
-            TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
-
-        /**
-         * Real test starts here.
-         */
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-
-        // no need to create root directory, that is done automatically now
-        MediaFileDirectory directory = mfMgr
-                .getDefaultMediaFileDirectory(testWeblog);
-
-        TestUtils.endSession(true);
-
-        MediaFileDirectory directoryById = mfMgr
-                .getMediaFileDirectory(directory.getId());
+        MediaDirectory directoryById = mediaFileManager.getMediaDirectory(directory.getId());
         assertEquals(directory, directoryById);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        MediaFileDirectory rootDirectory = mfMgr
-                .getDefaultMediaFileDirectory(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
         assertEquals(directory, rootDirectory);
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
-        TestUtils.endSession(true);
     }
 
     /**
      * Test getting list of all directories for a given user.
      */
-    public void testGetMediaFileDirectories() throws Exception {
+    @Test
+    public void testGetMediaDirectories() throws Exception {
+        mediaFileManager.createMediaDirectory(testWeblog, "dir1");
+        mediaFileManager.createMediaDirectory(testWeblog, "dir2");
+        endSession(true);
 
-        User testUser;
-        Weblog testWeblog;
-        testUser = TestUtils.setupUser("mediaFileTestUser2");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog2", testUser);
-
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
-                "dir1");
-        mfMgr.createMediaFileDirectory(directory1);
-
-        MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
-                "dir2");
-        mfMgr.createMediaFileDirectory(directory2);
-
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        List<MediaFileDirectory> directories = mfMgr
-                .getMediaFileDirectories(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
+        List<MediaDirectory> directories = mediaFileManager.getMediaDirectories(testWeblog);
         assertNotNull(directories);
         assertEquals(3, directories.size());
         assertTrue(containsName(directories, "default"));
         assertTrue(containsName(directories, "dir1"));
         assertTrue(containsName(directories, "dir2"));
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
-        TestUtils.endSession(true);
     }
 
     /**
      * Test utility to determine whether the given list of directories contains
      * a directory of given path.
-     * 
      */
-    private boolean containsName(Collection<MediaFileDirectory> directories,
+    private boolean containsName(Collection<MediaDirectory> directories,
             String name) {
-        for (MediaFileDirectory directory : directories) {
+        for (MediaDirectory directory : directories) {
             if (name.equals(directory.getName())) {
                 return true;
             }
         }
         return false;
-
     }
 
     /**
-     * Test utility to determine whether the list of files contains a file with
+     * Test utility to determine whether a list of files contains a file with
      * given name.
-     * 
      */
-    private boolean containsFileWithName(Collection<MediaFile> files,
-            String name) {
+    private boolean containsFileWithName(Collection<MediaFile> files, String name) {
         for (MediaFile file : files) {
             if (name.equals(file.getName())) {
                 return true;
             }
         }
         return false;
-
     }
 
     /**
      * Test deletion of media file
      */
+    @Test
     public void testDeleteMediaFile() throws Exception {
-        User testUser;
-        Weblog testWeblog;
-        testUser = TestUtils.setupUser("mediaFileTestUser4");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog4", testUser);
-
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        // no need to create root directory, that is done automatically now
-        MediaFileDirectory rootDirectory = mfMgr
-                .getDefaultMediaFileDirectory(testWeblog);
-
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setName("test4.jpg");
@@ -286,60 +206,40 @@ public class MediaFileTest extends TestCase {
         mediaFile.setContentType("image/jpeg");
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 
-        mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
         String id = mediaFile.getId();
-        TestUtils.endSession(true);
+        endSession(true);
         assertNotNull(id);
         assertNotNull(id.length() > 0);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        MediaFile mediaFile1 = mfMgr.getMediaFile(id);
+        testWeblog = getManagedWeblog(testWeblog);
+        MediaFile mediaFile1 = mediaFileManager.getMediaFile(id);
 
         assertEquals("test4.jpg", mediaFile1.getName());
 
         try {
-            mfMgr.removeMediaFile(testWeblog, mediaFile1);
+            mediaFileManager.removeMediaFile(testWeblog, mediaFile1);
         } catch (Exception ignorable) {
             log.debug("ERROR removing media file", ignorable);
         }
-        TestUtils.endSession(true);
+        endSession(true);
 
-        MediaFile mediaFile2 = mfMgr.getMediaFile(id);
+        MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
         assertNull(mediaFile2);
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
 
         String uploadsDirName = WebloggerConfig.getProperty("mediafiles.storage.dir");
         File flag = new File(uploadsDirName + File.separator
                 + "migration-status.properties");
         flag.delete();
-        
-        TestUtils.endSession(true);
     }
 
     /**
      * Test creation of media file.
      */
+    @Test
     public void testCreateMediaFile() throws Exception {
-
-        User testUser;
-        Weblog testWeblog;
-        testUser = TestUtils.setupUser("mediaFileTestUser3");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog3", testUser);
-
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        // no need to create root directory, that is done automatically now
-        MediaFileDirectory rootDirectory = mfMgr
-                .getDefaultMediaFileDirectory(testWeblog);
-
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setName("test.jpg");
@@ -350,42 +250,25 @@ public class MediaFileTest extends TestCase {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
-        TestUtils.endSession(true);
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        endSession(true);
         assertNotNull(mediaFile.getId());
         assertNotNull(mediaFile.getId().length() > 0);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        MediaFile mediaFile1 = mfMgr.getMediaFile(mediaFile.getId());
+        testWeblog = getManagedWeblog(testWeblog);
+        MediaFile mediaFile1 = mediaFileManager.getMediaFile(mediaFile.getId());
         assertEquals("test.jpg", mediaFile1.getName());
         assertEquals("This is a test image", mediaFile1.getNotes());
         assertEquals(2000, mediaFile1.getLength());
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
      * Test media file update
      */
+    @Test
     public void testUpdateMediaFile() throws Exception {
-        User testUser;
-        Weblog testWeblog;
-        testUser = TestUtils.setupUser("mediaFileTestUser5");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog5", testUser);
-
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        // no need to create root directory, that is done automatically now
-        MediaFileDirectory rootDirectory = mfMgr
-                .getDefaultMediaFileDirectory(testWeblog);
-
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setName("test5.jpg");
@@ -394,65 +277,41 @@ public class MediaFileTest extends TestCase {
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-
-        mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
 
         rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
-        TestUtils.endSession(true);
+        endSession(true);
         assertNotNull(id);
         assertNotNull(id.length() > 0);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        MediaFile mediaFile1 = mfMgr.getMediaFile(id);
+        testWeblog = getManagedWeblog(testWeblog);
+        MediaFile mediaFile1 = mediaFileManager.getMediaFile(id);
         mediaFile1.setName("updated.gif");
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
-        mfMgr.updateMediaFile(testWeblog, mediaFile1);
-        TestUtils.endSession(true);
+        mediaFileManager.updateMediaFile(testWeblog, mediaFile1);
+        endSession(true);
 
-        MediaFile mediaFile2 = mfMgr.getMediaFile(id);
+        MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
         assertEquals("updated.gif", mediaFile2.getName());
         assertEquals("updated desc", mediaFile2.getNotes());
         assertEquals("image/gif", mediaFile2.getContentType());
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
      * Test media file and directory gets
      */
+    @Test
     public void testGetDirectoryContents() throws Exception {
-        User testUser;
-        Weblog testWeblog;
-        testUser = TestUtils.setupUser("mediaFileTestUser6");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog6", testUser);
-
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        // no need to create root directory, that is done automatically now
-        MediaFileDirectory rootDirectory = mfMgr
-                .getDefaultMediaFileDirectory(testWeblog);
-
-        MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
-                "dir1");
-        mfMgr.createMediaFileDirectory(directory1);
-
-        MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
-                "dir2");
-        mfMgr.createMediaFileDirectory(directory2);
-
-        MediaFileDirectory directory3 = new MediaFileDirectory(testWeblog,
-                "dir3");
-        mfMgr.createMediaFileDirectory(directory3);
-
-        TestUtils.endSession(true);
+        mediaFileManager.createMediaDirectory(testWeblog, "dir1");
+        mediaFileManager.createMediaDirectory(testWeblog, "dir2");
+        mediaFileManager.createMediaDirectory(testWeblog, "dir3");
+        weblogManager.saveWeblog(testWeblog);
+        endSession(true);
         
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+        testWeblog = getManagedWeblog(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setDirectory(rootDirectory);
@@ -461,7 +320,7 @@ public class MediaFileTest extends TestCase {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setDirectory(rootDirectory);
@@ -470,15 +329,15 @@ public class MediaFileTest extends TestCase {
         mediaFile2.setLength(4000);
         mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mfMgr.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
 
-        TestUtils.endSession(true);
+        endSession(true);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+        testWeblog = getManagedWeblog(testWeblog);
+        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
-        List<MediaFileDirectory> childDirectories = testWeblog
-                .getMediaFileDirectories();
+        List<MediaDirectory> childDirectories = testWeblog
+                .getMediaDirectories();
         assertEquals(4, childDirectories.size());
         assertTrue(containsName(childDirectories, "dir1"));
         assertTrue(containsName(childDirectories, "dir2"));
@@ -488,158 +347,95 @@ public class MediaFileTest extends TestCase {
         assertEquals(2, mediaFiles.size());
         assertTrue(containsFileWithName(mediaFiles, "test6_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test6_2.jpg"));
-        TestUtils.endSession(true);
+        endSession(true);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+        testWeblog = getManagedWeblog(testWeblog);
+        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
         assertTrue(rootDirectory.hasMediaFile("test6_1.jpg"));
         assertTrue(rootDirectory.hasMediaFile("test6_2.jpg"));
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
      * Test moving files across directories.
      */
+    @Test
     public void testMoveDirectoryContents() throws Exception {
+        MediaDirectory dir1 = mediaFileManager.createMediaDirectory(testWeblog, "dir1");
+        mediaFileManager.createMediaDirectory(testWeblog, "dir2");
+        mediaFileManager.createMediaDirectory(testWeblog, "dir3");
+        endSession(true);
 
-        User testUser;
-        Weblog testWeblog;
-        testUser = TestUtils.setupUser("mediaFileTestUser11");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestUser11", testUser);
+        testWeblog = getManagedWeblog(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
 
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
+        MediaFile mediaFile = new MediaFile();
+        mediaFile.setDirectory(rootDirectory);
+        mediaFile.setName("test7_1.jpg");
+        mediaFile.setNotes("This is a test image 7.1");
+        mediaFile.setLength(4000);
+        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+        mediaFile.setContentType("image/jpeg");
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
 
-        // no need to create root directory, that is done automatically now
-        MediaFileDirectory rootDirectory = mfMgr
-                .getDefaultMediaFileDirectory(testWeblog);
+        MediaFile mediaFile2 = new MediaFile();
+        mediaFile2.setDirectory(rootDirectory);
+        mediaFile2.setName("test7_2.jpg");
+        mediaFile2.setNotes("This is a test image 7.2");
+        mediaFile2.setLength(4000);
+        mediaFile2.setInputStream(getClass()
+                .getResourceAsStream(TEST_IMAGE));
+        mediaFile2.setContentType("image/jpeg");
+        mediaFileManager.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
 
-        try {
+        endSession(true);
 
-            MediaFileDirectory directory1 = new MediaFileDirectory(
-                    testWeblog, "dir1");
-            mfMgr.createMediaFileDirectory(directory1);
-            String dir1Id = directory1.getId();
+        testWeblog = getManagedWeblog(testWeblog);
+        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
-            MediaFileDirectory directory2 = new MediaFileDirectory(
-                    testWeblog, "dir2");
-            mfMgr.createMediaFileDirectory(directory2);
+        Set<MediaFile> mediaFiles = rootDirectory.getMediaFiles();
+        assertEquals(2, mediaFiles.size());
+        assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
+        assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
 
-            MediaFileDirectory directory3 = new MediaFileDirectory(
-                    testWeblog, "dir3");
-            mfMgr.createMediaFileDirectory(directory3);
-            //rootDirectory.getChildDirectories().add(directory3);
-            
-            TestUtils.endSession(true);
-            
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+        MediaDirectory targetDirectory = mediaFileManager
+                .getMediaDirectory(dir1.getId());
+        mediaFileManager.moveMediaFiles(mediaFiles, targetDirectory);
+        endSession(true);
 
-            MediaFile mediaFile = new MediaFile();
-            mediaFile.setDirectory(rootDirectory);
-            mediaFile.setName("test7_1.jpg");
-            mediaFile.setNotes("This is a test image 7.1");
-            mediaFile.setLength(4000);
-            mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
-            mediaFile.setContentType("image/jpeg");
-            mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
+        targetDirectory = mediaFileManager.getMediaDirectory(dir1.getId());
 
-            MediaFile mediaFile2 = new MediaFile();
-            mediaFile2.setDirectory(rootDirectory);
-            mediaFile2.setName("test7_2.jpg");
-            mediaFile2.setNotes("This is a test image 7.2");
-            mediaFile2.setLength(4000);
-            mediaFile2.setInputStream(getClass()
-                    .getResourceAsStream(TEST_IMAGE));
-            mediaFile2.setContentType("image/jpeg");
-            mfMgr.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
+        mediaFiles = targetDirectory.getMediaFiles();
+        assertEquals(2, mediaFiles.size());
+        assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
+        assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
 
-            TestUtils.endSession(true);
-
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
-
-            Set<MediaFile> mediaFiles = rootDirectory.getMediaFiles();
-            assertEquals(2, mediaFiles.size());
-            assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
-            assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
-
-            MediaFileDirectory targetDirectory = mfMgr
-                    .getMediaFileDirectory(dir1Id);
-            mfMgr.moveMediaFiles(mediaFiles, targetDirectory);
-            TestUtils.endSession(true);
-
-            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
-            targetDirectory = mfMgr.getMediaFileDirectory(dir1Id);
-
-            mediaFiles = targetDirectory.getMediaFiles();
-            assertEquals(2, mediaFiles.size());
-            assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
-            assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
-
-            mediaFiles = rootDirectory.getMediaFiles();
-            assertEquals(0, mediaFiles.size());
-
-        } finally {
-            TestUtils.endSession(true);
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
-        }
+        mediaFiles = rootDirectory.getMediaFiles();
+        assertEquals(0, mediaFiles.size());
     }
 
     /**
      * Test deletion of media file folder association with named queries
-     * 
-     * This test fails but it should not, so Z'ed out not to run.
      */
-    public void ZtestDirectoryDeleteAssociation() throws Exception {
+    @Test
+    public void testDirectoryDeleteAssociation() throws Exception {
+        MediaDirectory dir1 = mediaFileManager.createMediaDirectory(testWeblog, "dir1");
+        mediaFileManager.createMediaDirectory(testWeblog, "dir2");
+        mediaFileManager.createMediaDirectory(testWeblog, "dir3");
+        weblogManager.saveWeblog(testWeblog);
+        endSession(true);
 
-        User testUser;
-        Weblog testWeblog;
-        testUser = TestUtils.setupUser("mediaFileTestUser12");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog12", testUser);
-
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
-                "dir1");
-        mfMgr.createMediaFileDirectory(directory1);
-
-        MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
-                "dir2");
-        mfMgr.createMediaFileDirectory(directory2);
-
-        MediaFileDirectory directory3 = new MediaFileDirectory(testWeblog,
-                "dir3");
-        mfMgr.createMediaFileDirectory(directory3);
-
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-
-        List<MediaFileDirectory> childDirectories = testWeblog.getMediaFileDirectories();
-
-        assertEquals(3, childDirectories.size());
-
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
+        List<MediaDirectory> directories = testWeblog.getMediaDirectories();
+        assertEquals(4, directories.size());
 
         // Delete folder
-        MediaFileDirectory directoryById = mfMgr
-                .getMediaFileDirectory(directory1.getId());
+        MediaDirectory directoryById = mediaFileManager.getMediaDirectory(dir1.getId());
+        mediaFileManager.removeMediaDirectory(directoryById);
+        endSession(true);
 
-        mfMgr.removeMediaFileDirectory(directoryById);
-        TestUtils.endSession(true);
-
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
-        TestUtils.endSession(true);
+        directories = testWeblog.getMediaDirectories();
+        assertEquals(3, directories.size());
+        endSession(true);
     }
 }

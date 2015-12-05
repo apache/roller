@@ -246,6 +246,8 @@ public interface UserManager {
     List<UserWeblogRole> getPendingWeblogRoles(User user)
             throws WebloggerException;
 
+    List<UserWeblogRole> getWeblogRolesIncludingPending(User user) throws WebloggerException;
+
     /**
      * Get all active User WeblogRoles associated with a weblog.
      */

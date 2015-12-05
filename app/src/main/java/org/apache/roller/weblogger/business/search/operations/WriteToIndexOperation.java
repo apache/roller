@@ -14,21 +14,23 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Aug 12, 2003 */
 package org.apache.roller.weblogger.business.search.operations;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 
 /**
  * An operation that writes to index.
- * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public abstract class WriteToIndexOperation extends IndexOperation {
     
-    public WriteToIndexOperation(IndexManagerImpl mgr) {
+    public WriteToIndexOperation(IndexManager mgr) {
         super(mgr);
     }
     

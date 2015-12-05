@@ -24,85 +24,80 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
 
 /**
  * Test File Management business layer operations.
  */
-public class FileContentManagerTest extends TestCase {
+public class FileContentManagerTest extends WebloggerTest {
 
     private static Log log = LogFactory.getLog(FileContentManagerTest.class);
     User testUser = null;
     Weblog testWeblog = null;
 
-    public FileContentManagerTest(String name) {
-        super(name);
+    @Resource
+    private FileContentManager fileContentManager;
+
+    public void setFileContentManager(FileContentManager fileContentManager) {
+        this.fileContentManager = fileContentManager;
     }
 
-    public static Test suite() {
-        return new TestSuite(FileContentManagerTest.class);
-    }
-
-    @Override
+    @Before
     public void setUp() throws Exception {
-
-        // setup weblogger
-        TestUtils.setupWeblogger();
-
+        super.setUp();
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
-        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("30000");
-        ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("true");
-        pmgr.saveProperties(config);
-        TestUtils.endSession(true);
+        Map<String, RuntimeConfigProperty> config = propertiesManager.getProperties();
+        config.get("uploads.dir.maxsize").setValue("30000");
+        config.get("uploads.types.forbid").setValue("");
+        config.get("uploads.types.allowed").setValue("");
+        config.get("uploads.enabled").setValue("true");
+        propertiesManager.saveProperties(config);
+        endSession(true);
     }
 
     /**
      * Test simple file save/delete.
      */
+    @Test
     public void testFileCRUD() throws Exception {
-
         try {
-            testUser = TestUtils.setupUser("FCMTest_userName1");
-            testWeblog = TestUtils.setupWeblog("FCMTest_handle1", testUser);
-            TestUtils.endSession(true);
+            testUser = setupUser("FCMTest_userName1");
+            testWeblog = setupWeblog("FCMTest_handle1", testUser);
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
         }
 
         // update roller properties to prepare for test
-        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("true");
-        ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("opml");
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("1.00");
-        pmgr.saveProperties(config);
-        TestUtils.endSession(true);
+        Map<String, RuntimeConfigProperty> config = propertiesManager.getProperties();
+        config.get("uploads.enabled").setValue("true");
+        config.get("uploads.types.allowed").setValue("opml");
+        config.get("uploads.dir.maxsize").setValue("1.00");
+        propertiesManager.saveProperties(config);
+        endSession(true);
 
-        /* NOTE: upload dir for unit tests is set in
-        roller/testdata/roller-custom.properties */
-        FileContentManager fmgr = WebloggerFactory.getWeblogger().getFileContentManager();
+        /* NOTE: upload dir for unit tests is set in roller-custom.properties */
 
         // File should not exist initially
         try {
-            FileContent fileContent = fmgr.getFileContent(testWeblog, "bookmarks-file-id");
+            FileContent fileContent = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
             assertTrue("Non-existent file retrieved without any exception", false);
         } catch (FileNotFoundException e) {
             assertTrue("Exception thrown for non-existent file as expected", true);
@@ -110,27 +105,27 @@ public class FileContentManagerTest extends TestCase {
 
         // store a file
         InputStream is = getClass().getResourceAsStream("/jetty.xml");
-        fmgr.saveFileContent(testWeblog, "bookmarks-file-id", is);
+        fileContentManager.saveFileContent(testWeblog, "bookmarks-file-id", is);
 
         // make sure file was stored successfully
-        FileContent fileContent1 = fmgr.getFileContent(testWeblog, "bookmarks-file-id");
+        FileContent fileContent1 = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
         assertEquals("bookmarks-file-id", fileContent1.getFileId());
 
 
         // delete file
-        fmgr.deleteFile(testWeblog, "bookmarks-file-id");
+        fileContentManager.deleteFile(testWeblog, "bookmarks-file-id");
 
         // File should not exist after delete
         try {
-            FileContent fileContent = fmgr.getFileContent(testWeblog, "bookmarks-file-id");
+            FileContent fileContent = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
             assertTrue("Non-existant file retrieved without any exception", false);
         } catch (FileNotFoundException e) {
             assertTrue("Exception thrown for non-existant file as expected", true);
         }
 
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
+        endSession(true);
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
     }
 
     /**
@@ -138,58 +133,55 @@ public class FileContentManagerTest extends TestCase {
      *
      * This should test all conditions where a save should fail.
      */
+    @Test
     public void testCanSave() throws Exception {
-
         try {
-            testUser = TestUtils.setupUser("FCMTest_userName2");
-            testWeblog = TestUtils.setupWeblog("FCMTest_handle2", testUser);
-            TestUtils.endSession(true);
+            testUser = setupUser("FCMTest_userName2");
+            testWeblog = setupWeblog("FCMTest_handle2", testUser);
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
         }
 
-        FileContentManager fmgr = WebloggerFactory.getWeblogger().getFileContentManager();
-        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("1.00");
-        ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("true");
-        pmgr.saveProperties(config);
-        TestUtils.endSession(true);
+        Map<String, RuntimeConfigProperty> config = propertiesManager.getProperties();
+        config.get("uploads.dir.maxsize").setValue("1.00");
+        config.get("uploads.types.forbid").setValue("");
+        config.get("uploads.types.allowed").setValue("");
+        config.get("uploads.enabled").setValue("true");
+        propertiesManager.saveProperties(config);
+        endSession(true);
 
-        config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("1.00");
-        pmgr.saveProperties(config);
-        TestUtils.endSession(true);
+        config = propertiesManager.getProperties();
+        config.get("uploads.dir.maxsize").setValue("1.00");
+        propertiesManager.saveProperties(config);
+        endSession(true);
 
         RollerMessages msgs = new RollerMessages();
-        boolean canSave = fmgr.canSave(testWeblog, "test.gif", "text/plain", 2500000, msgs);
+        boolean canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 2500000, msgs);
         assertFalse(canSave);
 
-        config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("gif");
-        pmgr.saveProperties(config);
-        TestUtils.endSession(true);
+        config = propertiesManager.getProperties();
+        config.get("uploads.types.forbid").setValue("gif");
+        propertiesManager.saveProperties(config);
+        endSession(true);
 
         // forbidden types check should fail
         msgs = new RollerMessages();
-        fmgr.canSave(testWeblog, "test.gif", "text/plain", 10, msgs);
+        canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, msgs);
         assertFalse(canSave);
 
-
-        config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("false");
-        pmgr.saveProperties(config);
-        TestUtils.endSession(true);
+        config = propertiesManager.getProperties();
+        config.get("uploads.enabled").setValue("false");
+        propertiesManager.saveProperties(config);
+        endSession(true);
 
         // uploads disabled should fail
         msgs = new RollerMessages();
-        fmgr.canSave(testWeblog, "test.gif", "text/plain", 10, msgs);
+        canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, msgs);
         assertFalse(canSave);
 
-        TestUtils.endSession(true);
-        TestUtils.teardownWeblog(testWeblog.getId());
-        TestUtils.teardownUser(testUser.getUserName());
+        endSession(true);
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
     }
 }

@@ -18,87 +18,60 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-
-/**
- * Test Properties related business operations.
- */
-public class PropertiesTest extends TestCase {
-    
+public class PropertiesTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(PropertiesTest.class);
-    
-    
-    public PropertiesTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(PropertiesTest.class);
-    }
-    
-    
+
+    @Before
     public void setUp() throws Exception {
-        // setup weblogger
-        TestUtils.setupWeblogger();
+        super.setUp();
     }
-    
-    public void tearDown() throws Exception {
-    }
-    
-    
+
+    @Test
     public void testPropertiesCRUD() throws Exception {
-        
-        // remember, the properties table is initialized during Roller startup
-        PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        TestUtils.endSession(true);
-        
-        RuntimeConfigProperty prop = null;
+        RuntimeConfigProperty prop;
         
         // get a property by name
-        prop = mgr.getProperty("site.name");
+        prop = propertiesManager.getProperty("site.name");
         assertNotNull(prop);
         
         // update a property
         prop.setValue("testtest");
-        mgr.saveProperty(prop);
-        TestUtils.endSession(true);
+        propertiesManager.saveProperty(prop);
+        endSession(true);
         
         // make sure property was updated
-        prop = null;
-        prop = mgr.getProperty("site.name");
+        prop = propertiesManager.getProperty("site.name");
         assertNotNull(prop);
         assertEquals("testtest", prop.getValue());
         
         // get all properties
-        Map props = mgr.getProperties();
+        Map<String, RuntimeConfigProperty> props = propertiesManager.getProperties();
         assertNotNull(props);
         assertTrue(props.containsKey("site.name"));
         
         // update multiple properties
-        prop = (RuntimeConfigProperty) props.get("site.name");
+        prop = props.get("site.name");
         prop.setValue("foofoo");
-        prop = (RuntimeConfigProperty) props.get("site.description");
+        prop = props.get("site.description");
         prop.setValue("blahblah");
-        mgr.saveProperties(props);
-        TestUtils.endSession(true);
+        propertiesManager.saveProperties(props);
+        endSession(true);
         
         // make sure all properties were updated
-        props = mgr.getProperties();
+        props = propertiesManager.getProperties();
         assertNotNull(props);
-        assertEquals("foofoo", ((RuntimeConfigProperty)props.get("site.name")).getValue());
-        assertEquals("blahblah", ((RuntimeConfigProperty)props.get("site.description")).getValue());
+        assertEquals("foofoo", props.get("site.name").getValue());
+        assertEquals("blahblah", props.get("site.description").getValue());
     }
-    
 }

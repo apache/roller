@@ -10,7 +10,7 @@
     <class>org.apache.roller.weblogger.pojos.SubscriptionEntry</class>
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
-    <class>org.apache.roller.weblogger.pojos.MediaFileDirectory</class>
+    <class>org.apache.roller.weblogger.pojos.MediaDirectory</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>
     <class>org.apache.roller.weblogger.pojos.RuntimeConfigProperty</class>
     <class>org.apache.roller.weblogger.pojos.User</class>

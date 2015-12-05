@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.search;
 
 import java.io.File;
@@ -225,6 +224,7 @@ public class IndexManagerImpl implements IndexManager {
         executeIndexOperationNow(removeOp);
     }
 
+    @Override
     public ReadWriteLock getReadWriteLock() {
         return rwl;
     }
@@ -259,10 +259,12 @@ public class IndexManagerImpl implements IndexManager {
         }
     }
 
+    @Override
     public synchronized void resetSharedReader() {
         reader = null;
     }
 
+    @Override
     public synchronized IndexReader getSharedIndexReader() {
         if (reader == null) {
             try {
@@ -280,6 +282,7 @@ public class IndexManagerImpl implements IndexManager {
      * 
      * @return Directory The directory containing the index, or null if error.
      */
+    @Override
     public Directory getIndexDirectory() {
         if (useRAMIndex) {
             return fRAMindex;

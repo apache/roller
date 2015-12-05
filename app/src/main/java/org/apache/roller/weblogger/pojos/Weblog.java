@@ -122,7 +122,7 @@ public class Weblog implements Serializable {
 
     private List<WeblogBookmark> bookmarks = new ArrayList<>();
 
-    private List<MediaFileDirectory> mediaFileDirectories = new ArrayList<>();
+    private List<MediaDirectory> mediaDirectories = new ArrayList<>();
 
     public Weblog() {
     }
@@ -780,14 +780,14 @@ public class Weblog implements Serializable {
         this.bookmarks = bookmarks;
     }
 
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.MediaFileDirectory.class,
-            cascade={CascadeType.REMOVE, CascadeType.PERSIST}, mappedBy="weblog")
-    public List<MediaFileDirectory> getMediaFileDirectories() {
-        return mediaFileDirectories;
+    @OneToMany(targetEntity=MediaDirectory.class,
+            cascade={CascadeType.ALL}, mappedBy="weblog")
+    public List<MediaDirectory> getMediaDirectories() {
+        return mediaDirectories;
     }
 
-    public void setMediaFileDirectories(List<MediaFileDirectory> mediaFileDirectories) {
-        this.mediaFileDirectories = mediaFileDirectories;
+    public void setMediaDirectories(List<MediaDirectory> mediaDirectories) {
+        this.mediaDirectories = mediaDirectories;
     }
 
     /**
@@ -830,8 +830,8 @@ public class Weblog implements Serializable {
      *
      * @return true if directory is present, false otherwise.
      */
-    public boolean hasMediaFileDirectory(String name) {
-        for (MediaFileDirectory directory : this.getMediaFileDirectories()) {
+    public boolean hasMediaDirectory(String name) {
+        for (MediaDirectory directory : this.getMediaDirectories()) {
             if (directory.getName().equals(name)) {
                 return true;
             }
@@ -839,8 +839,8 @@ public class Weblog implements Serializable {
         return false;
     }
 
-    public MediaFileDirectory getMediaFileDirectory(String name) {
-        for (MediaFileDirectory dir : this.getMediaFileDirectories()) {
+    public MediaDirectory getMediaDirectory(String name) {
+        for (MediaDirectory dir : this.getMediaDirectories()) {
             if (name.equals(dir.getName())) {
                 return dir;
             }
