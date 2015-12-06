@@ -132,7 +132,7 @@ public class FileContentManagerTest extends WebloggerTest {
      *
      * This should test all conditions where a save should fail.
      */
-    @Ignore("(Issue 287) WebloggerRuntimeConfig will need to have a passed-in properties manager for this to work")
+    @Test
     public void testCanSave() throws Exception {
         Map<String, RuntimeConfigProperty> config = propertiesManager.getProperties();
         config.get("uploads.dir.maxsize").setValue("1.00");

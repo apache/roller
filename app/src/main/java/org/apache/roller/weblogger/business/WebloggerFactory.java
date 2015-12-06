@@ -83,7 +83,18 @@ public final class WebloggerFactory {
     }
 
     /**
-     * Bootstrap the Roller Weblogger business tier
+     * Variant of bootstrap() used by the running WAR (not JUnit testing).
+     */
+    public static void bootstrap() throws WebloggerException {
+        ServletContext servletContext = RollerContext.getServletContext();
+        if (servletContext == null) {
+            throw new RuntimeException("Error bootstrapping Weblogger; no web context available.");
+        }
+        bootstrap(WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext));
+    }
+
+    /**
+     * Bootstrap the Roller Weblogger business tier.
      *
      * There are two possible application contexts, the web-level defined in web.xml
      * (activated when running the WAR) and the unit tests which use the spring.unittests.context
@@ -93,25 +104,13 @@ public final class WebloggerFactory {
      * @throws RuntimeException If the app cannot be bootstrapped.
      * @throws WebloggerException if any manager cannot be initialized
      */
-    public static void bootstrap() throws WebloggerException {
-        
+    public static void bootstrap(ApplicationContext inContext) throws WebloggerException {
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
             throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
         try {
-            ServletContext servletContext = RollerContext.getServletContext();
-            if (servletContext == null) {
-                // running unit tests
-                String contextFilename = WebloggerConfig.getProperty("spring.unittests.context");
-                if (contextFilename == null) {
-                    throw new IllegalStateException("unable to lookup Spring unitttests module via property 'spring.unittests.context'");
-                }
-                context = new ClassPathXmlApplicationContext(contextFilename);
-            } else {
-                // running the webapp
-                context = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-            }
+            context = inContext;
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
             strategy = context.getBean("jpaPersistenceStrategy", JPAPersistenceStrategy.class);
             // TODO:  Move below to @PostConstruct in IndexManagerImpl (presently requires webloggerInstance to be active)
