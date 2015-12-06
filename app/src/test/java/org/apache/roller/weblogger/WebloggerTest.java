@@ -205,17 +205,6 @@ abstract public class WebloggerTest {
                         .iterator().next(), WeblogEntry.PubStatus.PUBLISHED, weblog, user);
     }
 
-    /**
-     * Convenience method for creating a published weblog entry with the blog's
-     * default category
-     */
-    protected WeblogEntry setupWeblogEntry(String anchor, Weblog weblog,
-                                               User user, WeblogEntryManager weblogEntryManager) throws Exception {
-
-        return setupWeblogEntry(anchor, weblog.getWeblogCategories()
-                .iterator().next(), WeblogEntry.PubStatus.PUBLISHED, weblog, user);
-    }
-
     protected WeblogEntry setupWeblogEntry(String anchor, WeblogCategory cat,
                                            WeblogEntry.PubStatus status, Weblog weblog, User user)
             throws Exception {

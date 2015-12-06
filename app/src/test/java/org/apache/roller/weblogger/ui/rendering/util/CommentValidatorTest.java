@@ -17,57 +17,49 @@
  *
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import junit.framework.TestCase;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.TestUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-/**
- *
- * @author David M. Johnson
- */
-public class CommentValidatorTest extends TestCase {
+public class CommentValidatorTest extends WebloggerTest {
     CommentValidationManager mgr = null;
     Weblog        weblog = null;
     User           user = null;
     WeblogEntry    entry = null;
     
-    /** Creates a new instance of CommentValidatorTest */
-    public CommentValidatorTest() {
-    } 
-
-    protected void setUp() throws Exception {
-        // setup weblogger
-        TestUtils.setupWeblogger();
-        
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
         mgr = new CommentValidationManager();
-        
-        user = TestUtils.setupUser("johndoe");
-        //TestUtils.endSession(true);
-
-        weblog = TestUtils.setupWeblog("doeblog", user);
-        //TestUtils.endSession(true)
-        
-        entry = TestUtils.setupWeblogEntry("anchor1", weblog, user);
-
-        TestUtils.endSession(true);
+        user = setupUser("johndoe");
+        weblog = setupWeblog("doeblog", user);
+        entry = setupWeblogEntry("anchor1", weblog, user);
+        endSession(true);
     }
     
-    protected void tearDown() throws Exception {
-        TestUtils.teardownWeblogEntry(entry.getId());
-        //TestUtils.teardownWeblogCategory(weblog.getDefaultCategory().getId());
-        TestUtils.teardownWeblog(weblog.getId());
-        TestUtils.teardownUser(user.getUserName());
+    @After
+    public void tearDown() throws Exception {
+        teardownWeblogEntry(entry.getId());
+        teardownWeblog(weblog.getId());
+        teardownUser(user.getUserName());
     }
-    
+
+    @Test
     public void testExcessSizeCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
@@ -84,7 +76,8 @@ public class CommentValidatorTest extends TestCase {
         comment.setContent(sb.toString()); 
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
-    
+
+    @Test
     public void testExcessLinksCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
@@ -102,7 +95,8 @@ public class CommentValidatorTest extends TestCase {
         ); 
         assertTrue(mgr.validateComment(comment, msgs) != 100);        
     }
-    
+
+    @Test
     public void testBlacklistCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
@@ -116,20 +110,20 @@ public class CommentValidatorTest extends TestCase {
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
     
-// To run this test add the Akismet validator to comment.validator.classnames
-// and put your Akismet key in comment.validator.akismet.apikey
-//
-//     public void testAkismetCommentValidator() {
-//        RollerMessages msgs = new RollerMessages();
-//        WeblogEntryComment comment = createEmptyComment();       
-//        comment.setContent("nice friendly stuff"); 
-//        
-//        assertEquals(100, mgr.validateComment(comment, msgs));
-//
-//        comment.setName("viagra-test-123");
-//        assertTrue(mgr.validateComment(comment, msgs) != 100);
-//    }
-    
+    // To run this test add the Akismet validator to comment.validator.classnames
+    // and put your Akismet key in comment.validator.akismet.apikey
+    @Ignore
+    public void testAkismetCommentValidator() {
+        RollerMessages msgs = new RollerMessages();
+        WeblogEntryComment comment = createEmptyComment();
+        comment.setContent("nice friendly stuff");
+
+        assertEquals(100, mgr.validateComment(comment, msgs));
+
+        comment.setName("viagra-test-123");
+        assertTrue(mgr.validateComment(comment, msgs) != 100);
+    }
+
     private WeblogEntryComment createEmptyComment() {
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setUrl("http://example.com");

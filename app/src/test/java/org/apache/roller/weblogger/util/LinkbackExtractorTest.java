@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,44 +14,26 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.roller.weblogger.WebloggerTest;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-/**
- * Test linkback extractor.
- */
-public class LinkbackExtractorTest extends TestCase {
-    
-    /**
-     * Constructor for LinkbackExtractorTest.
-     * @param arg0
-     */
-    public LinkbackExtractorTest(String arg0) {
-        super(arg0);
-    }
 
-    public static void main(String[] args) {
-    }
-    
-    /**
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
+public class LinkbackExtractorTest extends WebloggerTest {
+
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
     }
-    
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
+
+    @Test
     public void testLinkbackExtractor() throws Exception {
         String[][] testrefs = new String[][]
         {
@@ -72,11 +54,6 @@ public class LinkbackExtractorTest extends TestCase {
         le = new LinkbackExtractor(testrefs[1][0],testrefs[1][1]);
         assertEquals("Apache Roller", le.getTitle());
 
-        // todo: le.getPermalink() and le.getExcerpt() working
-    }
-    
-    public static Test suite() {
-        return new TestSuite(LinkbackExtractorTest.class);
     }
     
 }

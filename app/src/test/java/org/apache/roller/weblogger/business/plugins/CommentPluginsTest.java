@@ -14,45 +14,51 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins;
 
-import junit.framework.TestCase;
-import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
 
 
 /**
  * Test comment plugins.
  */
-public class CommentPluginsTest extends TestCase {
+public class CommentPluginsTest extends WebloggerTest {
 
-    private String convertLinesStart = "paragraph1\n\nparagraph2\nline2\nline3\n\nparagraph3";
-    private String convertLinesFormatted = "\n<p>paragraph1</p>\n\n\n<p>paragraph2<br/>\nline2<br/>\nline3</p>\n\n\n<p>paragraph3</p>\n\n";
-    
-    
-    protected void setUp() throws Exception {
-        TestUtils.setupWeblogger();
+    @Resource
+    private PluginManager pluginManager;
+
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
     }
-    
-    protected void tearDown() throws Exception {
-        // no-op
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
     }
-    
-    
+
+    @Test
     public void testAutoFormatPlugin() {
-        
-        PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
-        
+        String convertLinesStart = "paragraph1\n\nparagraph2\nline2\nline3\n\nparagraph3";
+        String convertLinesFormatted = "\n<p>paragraph1</p>\n\n\n<p>paragraph2<br/>\nline2<br/>\nline3</p>\n\n\n<p>paragraph3</p>\n\n";
+
         // setup test comment
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setContent(convertLinesStart); 
         comment.setPlugins("AutoFormat Plugin");
         
         // reformat
-        String output = pmgr.applyCommentPlugins(comment, comment.getContent());
+        String output = pluginManager.applyCommentPlugins(comment, comment.getContent());
         
         // make sure it turned out how we planned
         assertEquals(convertLinesFormatted, output);        

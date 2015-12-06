@@ -54,22 +54,16 @@ public class FileContentManagerImpl implements FileContentManager {
      */
     public FileContentManagerImpl() {
 
-        String inStorageDir = WebloggerConfig
-                .getProperty("mediafiles.storage.dir");
-
+        String inStorageDir = WebloggerConfig.getProperty("mediafiles.storage.dir");
         // Note: System property expansion is now handled by WebloggerConfig.
-
         if (inStorageDir == null || inStorageDir.trim().length() < 1) {
             inStorageDir = System.getProperty("user.home") + File.separator
                     + "roller_data" + File.separator + "mediafiles";
         }
-
         if (!inStorageDir.endsWith(File.separator)) {
             inStorageDir += File.separator;
         }
-
         this.storageDir = inStorageDir.replace('/', File.separatorChar);
-
     }
 
     /**
@@ -158,8 +152,7 @@ public class FileContentManagerImpl implements FileContentManager {
      */
     public boolean overQuota(Weblog weblog) {
 
-        String maxDir = WebloggerRuntimeConfig
-                .getProperty("uploads.dir.maxsize");
+        String maxDir = WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize");
 
         // maxDirSize in megabytes
         BigDecimal maxDirSize = new BigDecimal(maxDir);
@@ -225,10 +218,8 @@ public class FileContentManagerImpl implements FileContentManager {
         }
 
         // fourth check, is upload type allowed?
-        String allows = WebloggerRuntimeConfig
-                .getProperty("uploads.types.allowed");
-        String forbids = WebloggerRuntimeConfig
-                .getProperty("uploads.types.forbid");
+        String allows = WebloggerRuntimeConfig.getProperty("uploads.types.allowed");
+        String forbids = WebloggerRuntimeConfig.getProperty("uploads.types.forbid");
         String[] allowFiles = StringUtils.split(
                 StringUtils.deleteWhitespace(allows), ",");
         String[] forbidFiles = StringUtils.split(
