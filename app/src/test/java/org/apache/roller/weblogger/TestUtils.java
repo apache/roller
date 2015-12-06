@@ -24,19 +24,13 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
-import org.apache.roller.weblogger.pojos.UserWeblogRole;
 
 /**
  * Utility class for unit test classes.
@@ -179,41 +173,6 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method for creating a weblog category.
-     */
-    public static WeblogCategory setupWeblogCategory(Weblog weblog, String name)
-            throws Exception {
-
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
-        WeblogCategory testCat = new WeblogCategory(weblog, name);
-        weblog.addCategory(testCat);
-        mgr.saveWeblogCategory(testCat);
-
-        // flush to db
-        WebloggerFactory.flush();
-
-        // query for object
-        WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
-
-        if (cat == null) {
-            throw new WebloggerException("error setting up weblog category");
-        }
-
-        return cat;
-    }
-
-    /**
-     * Convenience method for creating a published weblog entry.
-     */
-    public static WeblogEntry setupWeblogEntry(String anchor,
-            WeblogCategory cat, Weblog weblog, User user) throws Exception {
-
-        return TestUtils.setupWeblogEntry(anchor, cat, PubStatus.PUBLISHED,
-                weblog, user);
-    }
-
-    /**
      * Convenience method for creating a published weblog entry with the blog's
      * default category
      */
@@ -274,58 +233,6 @@ public final class TestUtils {
 
         // remove the entry
         mgr.removeWeblogEntry(entry);
-
-        // flush to db
-        WebloggerFactory.flush();
-    }
-
-    /**
-     * Convenience method for creating a comment.
-     */
-    public static WeblogEntryComment setupComment(String content,
-            WeblogEntry entry) throws Exception {
-
-        WeblogEntryComment testComment = new WeblogEntryComment();
-        testComment.setName("test");
-        testComment.setEmail("test");
-        testComment.setUrl("test");
-        testComment.setRemoteHost("foofoo");
-        testComment.setContent("this is a test comment");
-        testComment.setPostTime(new java.sql.Timestamp(new java.util.Date()
-                .getTime()));
-        testComment.setWeblogEntry(getManagedWeblogEntry(entry));
-        testComment.setStatus(ApprovalStatus.APPROVED);
-
-        // store testComment
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
-                .getWeblogEntryManager();
-        mgr.saveComment(testComment);
-
-        // flush to db
-        WebloggerFactory.flush();
-
-        // query for object
-        WeblogEntryComment comment = mgr.getComment(testComment.getId());
-
-        if (comment == null) {
-            throw new WebloggerException("error setting up comment");
-        }
-
-        return comment;
-    }
-
-    /**
-     * Convenience method for removing a comment.
-     */
-    public static void teardownComment(String id) throws Exception {
-
-        // lookup the comment
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
-                .getWeblogEntryManager();
-        WeblogEntryComment comment = mgr.getComment(id);
-
-        // remove the comment
-        mgr.removeComment(comment);
 
         // flush to db
         WebloggerFactory.flush();

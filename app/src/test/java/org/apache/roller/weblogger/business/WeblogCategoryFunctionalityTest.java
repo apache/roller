@@ -18,26 +18,29 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Test Weblog Category related business operations.
  */
-public class WeblogCategoryFunctionalityTest extends TestCase {
-    
+public class WeblogCategoryFunctionalityTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(WeblogCategoryFunctionalityTest.class);
     
     User testUser = null;
@@ -51,190 +54,151 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * All tests in this suite require a user and a weblog.
      */
-    public void setUp() {
-        
-        log.info("BEGIN");
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
         
         try {
-            // setup weblogger
-            TestUtils.setupWeblogger();
-            
-            testUser = TestUtils.setupUser("categoryTestUser");
-            testWeblog = TestUtils.setupWeblog("categoryTestWeblog", testUser);
+            testUser = setupUser("categoryTestUser");
+            testWeblog = setupWeblog("categoryTestWeblog", testUser);
             
             // setup several categories for testing
-            cat1 = TestUtils.setupWeblogCategory(testWeblog, "catTest-cat1");
-            cat2 = TestUtils.setupWeblogCategory(testWeblog, "catTest-cat2");
-            cat3 = TestUtils.setupWeblogCategory(testWeblog, "catTest-cat3");
+            cat1 = setupWeblogCategory(testWeblog, "catTest-cat1");
+            cat2 = setupWeblogCategory(testWeblog, "catTest-cat2");
+            cat3 = setupWeblogCategory(testWeblog, "catTest-cat3");
             
             // a simple test cat at the root level
-            testCat = TestUtils.setupWeblogCategory(testWeblog, "catTest-testCat");
+            testCat = setupWeblogCategory(testWeblog, "catTest-testCat");
             
-            TestUtils.endSession(true);
+            endSession(true);
         } catch (Throwable t) {
             log.error("ERROR in setup", t);
         }
-        
-        log.info("END");
     }
     
+    @After
     public void tearDown() {
-        
-        log.info("BEGIN");
-        
         try {
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
         } catch (Throwable t) {
             log.error("ERROR in teardown", t);
         }
-        
-        log.info("END");
     }
 
-    /**
-     * Test the hasCategory() method on WeblogCategory.
-     */
+    @Test
     public void testHasCategory() throws Exception {
-        
-        log.info("BEGIN");
-
         // check that root has category
         assertTrue(testWeblog.hasCategory(testCat.getName()));
-        
-        log.info("END");
     }
     
-    
-    /**
-     * Lookup category by id.
-     */
+    @Test
     public void testLookupCategoryById() throws Exception {
-        
-        log.info("BEGIN");
-
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
-        WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
+        WeblogCategory cat = weblogManager.getWeblogCategory(testCat.getId());
         assertNotNull(cat);
         assertEquals(cat, testCat);
-        
-        log.info("END");
     }
-    
-    
-    /**
-     * Lookup category by name.
-     */
+
+    @Test
     public void testLookupCategoryByName() throws Exception {
-        
-        log.info("BEGIN");
-
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogCategory cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat1");
+        testWeblog = getManagedWeblog(testWeblog);
+        WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat1");
         assertNotNull(cat);
         assertEquals(cat, cat1);
         
-        cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat3");
+        cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat3");
         assertNotNull(cat);
         assertEquals(cat, cat3);
         
         // test lazy lookup, specifying just a name without slashes
-        cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat1");
+        cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat1");
         assertNotNull(cat);
         assertEquals(cat, cat1);
-
-        log.info("END");
     }
-    
-    
-    /**
-     * Lookup all categories for a weblog.
-     */
+
+    @Test
     public void testLookupAllCategoriesByWeblog() throws Exception {
-        
-        log.info("BEGIN");
-
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        List cats = mgr.getWeblogCategories(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
+        List cats = weblogManager.getWeblogCategories(testWeblog);
         assertNotNull(cats);
         assertEquals(5, cats.size());
-        
-        log.info("END");
     }
 
-    /**
-     * Test moving entries in category to new category.
-     */
+    @Test
     public void testMoveWeblogCategoryContents() throws Exception {
-        log.info("BEGIN");
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        WeblogEntryManager wemgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        WeblogEntry e1 = null;
-        WeblogEntry e2 = null; 
-        try {
+        testWeblog = getManagedWeblog(testWeblog);
+        testUser = getManagedUser(testUser);
 
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            testUser = TestUtils.getManagedUser(testUser);
+        // add some categories and entries to test with
+        WeblogCategory c1 = new WeblogCategory(testWeblog, "c1");
+        testWeblog.addCategory(c1);
+        weblogManager.saveWeblogCategory(c1);
 
-            // add some categories and entries to test with
-            WeblogCategory c1 = new WeblogCategory(testWeblog, "c1");
-            testWeblog.addCategory(c1);
-            mgr.saveWeblogCategory(c1);
+        WeblogCategory dest = new WeblogCategory(testWeblog, "dest");
+        testWeblog.addCategory(dest);
+        weblogManager.saveWeblogCategory(dest);
 
-            WeblogCategory dest = new WeblogCategory(testWeblog, "dest");
-            testWeblog.addCategory(dest);
-            mgr.saveWeblogCategory(dest);
+        endSession(true);
 
-            TestUtils.endSession(true);
+        c1 = weblogManager.getWeblogCategory(c1.getId());
+        dest = weblogManager.getWeblogCategory(dest.getId());
 
-            c1 = mgr.getWeblogCategory(c1.getId());
-            dest = mgr.getWeblogCategory(dest.getId());
+        testWeblog = getManagedWeblog(testWeblog);
+        testUser = getManagedUser(testUser);
+        setupWeblogEntry("e1", c1, PubStatus.PUBLISHED, testWeblog, testUser);
+        setupWeblogEntry("e2", c1, PubStatus.DRAFT, testWeblog, testUser);
+        endSession(true);
 
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            testUser = TestUtils.getManagedUser(testUser);
-            e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
-            e2 = TestUtils.setupWeblogEntry("e2", c1, PubStatus.DRAFT, testWeblog, testUser);
+        // need to query for cats again since session was closed
+        c1 = weblogManager.getWeblogCategory(c1.getId());
+        dest = weblogManager.getWeblogCategory(dest.getId());
 
-            TestUtils.endSession(true);
+        // verify number of entries in each category
+        assertEquals(0, retrieveWeblogEntries(dest, false).size());
+        assertEquals(0, retrieveWeblogEntries(dest, true).size());
+        assertEquals(2, retrieveWeblogEntries(c1, false).size());
+        assertEquals(1, retrieveWeblogEntries(c1, true).size());
 
-            // need to query for cats again since session was closed
-            c1 = mgr.getWeblogCategory(c1.getId());
-            dest = mgr.getWeblogCategory(dest.getId());
+        // move contents of source category c1 to destination category dest
+        weblogManager.moveWeblogCategoryContents(c1, dest);
+        weblogManager.saveWeblogCategory(c1);
+        endSession(true);
 
-            // verify number of entries in each category
-            assertEquals(0, dest.retrieveWeblogEntries(true).size());
-            assertEquals(0, dest.retrieveWeblogEntries(false).size());
-            assertEquals(2, c1.retrieveWeblogEntries(false).size());
-            assertEquals(1, c1.retrieveWeblogEntries(true).size());
+        // after move, verify number of entries in each category
+        dest = weblogManager.getWeblogCategory(dest.getId());
+        c1 = weblogManager.getWeblogCategory(c1.getId());
 
-            // move contents of source category c1 to destination category dest
-            mgr.moveWeblogCategoryContents(c1, dest);
-            mgr.saveWeblogCategory(c1);
-            TestUtils.endSession(true);
+        // Hierarchy is flattened under dest
+        assertEquals(2, retrieveWeblogEntries(dest, false).size());
+        assertEquals(1, retrieveWeblogEntries(dest, true).size());
 
-            // after move, verify number of entries in each category
-            dest = mgr.getWeblogCategory(dest.getId());
-            c1 = mgr.getWeblogCategory(c1.getId());
-
-            // Hierarchy is flattened under dest      
-            assertEquals(2, dest.retrieveWeblogEntries(false).size());
-            assertEquals(1, dest.retrieveWeblogEntries(true).size());
-
-            // c1 category should be empty now
-            assertEquals(0, c1.retrieveWeblogEntries(false).size());
-
-        } finally {
-            wemgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e1));
-            wemgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e2));
-        }
-        
-        log.info("END");
+        // c1 category should be empty now
+        assertEquals(0, retrieveWeblogEntries(c1, false).size());
     }
-    
+
+    private List<WeblogEntry> retrieveWeblogEntries(WeblogCategory category, boolean publishedOnly)
+            throws WebloggerException {
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(category.getWeblog());
+        wesc.setCatName(category.getName());
+        if (publishedOnly) {
+            wesc.setStatus(PubStatus.PUBLISHED);
+        }
+        return weblogEntryManager.getWeblogEntries(wesc);
+    }
+
+    private WeblogCategory setupWeblogCategory(Weblog weblog, String name) throws Exception {
+        WeblogCategory testCat = new WeblogCategory(weblog, name);
+        weblog.addCategory(testCat);
+        weblogManager.saveWeblogCategory(testCat);
+        strategy.flush();
+
+        // query for object
+        WeblogCategory cat = weblogManager.getWeblogCategory(testCat.getId());
+        if (cat == null) {
+            throw new WebloggerException("error setting up weblog category");
+        }
+        return cat;
+    }
 }

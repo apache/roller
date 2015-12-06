@@ -18,99 +18,78 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
-/**
- * Test WeblogCategory CRUD actions.
- */
-public class WeblogCategoryCRUDTest extends TestCase {
-    
+public class WeblogCategoryCRUDTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(WeblogCategoryCRUDTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
     
-    
     /**
      * All tests in this suite require a user and a weblog.
      */
-    public void setUp() {
-        
-        log.info("BEGIN");
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
         
         try {
-            // setup weblogger
-            TestUtils.setupWeblogger();
-            
-            testUser = TestUtils.setupUser("categoryCRUDTestUser");
-            testWeblog = TestUtils.setupWeblog("categoryCRUDTestWeblog", testUser);
-            TestUtils.endSession(true);
+            testUser = setupUser("categoryCRUDTestUser");
+            testWeblog = setupWeblog("categoryCRUDTestWeblog", testUser);
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
         }
-        
-        log.info("END");
     }
     
+    @After
     public void tearDown() {
-        
-        log.info("BEGIN");
-        
         try {
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
         }
-        
-        log.info("END");
     }
     
     
     /**
      * Test WeblogCategory.equals() method.
      */
+    @Test
     public void testWeblogCategoryEquality() throws Exception {
-        
-        log.info("BEGIN");
-        
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
 
         WeblogCategory testCat = new WeblogCategory(testWeblog, null);
         WeblogCategory testCat2 = new WeblogCategory(testWeblog, "root2");
         assertFalse(testCat2.equals(testCat));
-        mgr.removeWeblogCategory(testCat);
-        mgr.removeWeblogCategory(testCat2);
-
-        log.info("END");
+        weblogManager.removeWeblogCategory(testCat);
+        weblogManager.removeWeblogCategory(testCat2);
     }
     
     
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testBasicCRUD() throws Exception {
-        
-        log.info("BEGIN");
-        
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogCategory cat;
 
         // root category is always available
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
 
         // make sure we are starting with 1 categories
         assertEquals(1, testWeblog.getWeblogCategories().size());
@@ -118,80 +97,72 @@ public class WeblogCategoryCRUDTest extends TestCase {
         // add a new category
         WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory");
         testWeblog.addCategory(newCat);
-        mgr.saveWeblogCategory(newCat);
-        TestUtils.endSession(true);
+        weblogManager.saveWeblogCategory(newCat);
+        endSession(true);
         
         // make sure category was added
-        cat = mgr.getWeblogCategory(newCat.getId());
+        cat = weblogManager.getWeblogCategory(newCat.getId());
         assertNotNull(cat);
         assertEquals(newCat, cat);
         
         // make sure category count increased
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
         assertEquals(2, testWeblog.getWeblogCategories().size());
 
         // update category
         cat.setName("testtest");
-        mgr.saveWeblogCategory(cat);
-        TestUtils.endSession(true);
+        weblogManager.saveWeblogCategory(cat);
+        endSession(true);
 
         // verify category was updated
-        cat = mgr.getWeblogCategory(newCat.getId());
+        cat = weblogManager.getWeblogCategory(newCat.getId());
         assertNotNull(cat);
         assertEquals("testtest", cat.getName());
         assertEquals(2, testWeblog.getWeblogCategories().size());
 
         // remove category
-        mgr.removeWeblogCategory(cat);
-        TestUtils.endSession(true);
+        weblogManager.removeWeblogCategory(cat);
+        endSession(true);
 
         // make sure cat was removed
-        cat = mgr.getWeblogCategory(newCat.getId());
+        cat = weblogManager.getWeblogCategory(newCat.getId());
         assertNull(cat);
         
         // make sure category count decreased
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
         assertEquals(1, testWeblog.getWeblogCategories().size());
-        
-        log.info("END");
     }
     
     
     /**
      * Make sure that deleting a category deletes all child categories.
      */
+    @Test
     public void testCategoryCascadingDelete() throws Exception {
-        
-        log.info("BEGIN");
-        
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        
         // root category is always available
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
 
         // add a category above default one
         WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory");
         testWeblog.addCategory(testCat);
-        mgr.saveWeblogCategory(testCat);
-        TestUtils.endSession(true);
+        weblogManager.saveWeblogCategory(testCat);
+        endSession(true);
         
         // check that testCat can be retrieved
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
 
         assertEquals(2, testWeblog.getWeblogCategories().size());
         testCat = testWeblog.getWeblogCategories().get(1);
         assertEquals("SampleCategory", testCat.getName());
 
         // now delete category and subcats should be deleted by cascade
-        mgr.removeWeblogCategory(testCat);
-        TestUtils.endSession(true);
+        weblogManager.removeWeblogCategory(testCat);
+        endSession(true);
         
         // verify cascading delete succeeded
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testWeblog = getManagedWeblog(testWeblog);
         assertEquals(1, testWeblog.getWeblogCategories().size());
-        assertNull(mgr.getWeblogCategoryByName(TestUtils.getManagedWebsite(testWeblog), "SampleCategory"));
-        
-        log.info("END");
+        assertNull(weblogManager.getWeblogCategoryByName(getManagedWeblog(testWeblog), "SampleCategory"));
     }
     
 }

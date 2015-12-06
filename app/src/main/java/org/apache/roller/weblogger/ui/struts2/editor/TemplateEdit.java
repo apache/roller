@@ -158,18 +158,18 @@ public class TemplateEdit extends UIAction {
                     // if we have a template, then set it
                     WeblogTemplateRendition tc = templateToSave.getTemplateRendition(RenditionType.STANDARD);
                     tc.setTemplate(bean.getContentsStandard());
-                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
+                    weblogManager.saveTemplateRendition(tc);
                 } else {
                     // otherwise create it, then set it
                     WeblogTemplateRendition tc = new WeblogTemplateRendition(templateToSave, RenditionType.STANDARD);
                     tc.setTemplate("");
-                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
+                    weblogManager.saveTemplateRendition(tc);
                 }
 
                 if (templateToSave.getTemplateRendition(RenditionType.MOBILE) != null) {
                     WeblogTemplateRendition tc = templateToSave.getTemplateRendition(RenditionType.MOBILE);
                     tc.setTemplate(bean.getContentsMobile());
-                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
+                    weblogManager.saveTemplateRendition(tc);
                 }
 
                 // the rest of the template properties can be modified only when

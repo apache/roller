@@ -17,16 +17,15 @@
 *
 * Source file modified from the original ASF source; all changes made
 * are also under Apache License.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
-
 package org.apache.roller.weblogger.business;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -34,131 +33,123 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WeblogTemplateRenditionTest extends TestCase{
+import static org.junit.Assert.*;
+
+public class WeblogTemplateRenditionTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(WeblogPageTest.class);
 
-       User testUser = null;
-       Weblog testWeblog = null;
-       WeblogTemplate testPage = null;
-       WeblogTemplateRendition standardCode = null;
-       WeblogTemplateRendition mobileCode = null;
+    User testUser = null;
+    Weblog testWeblog = null;
+    WeblogTemplate testPage = null;
+    WeblogTemplateRendition standardCode = null;
+    WeblogTemplateRendition mobileCode = null;
 
+    /**
+     * All tests in this suite require a user and a weblog.
+     */
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
 
-       public WeblogTemplateRenditionTest(String name) {
-           super(name);
-       }
+        try {
+            testUser = setupUser("wtTestUser3");
+            testWeblog = setupWeblog("wtTestWeblog", testUser);
+            endSession(true);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new Exception("Test setup failed", ex);
+        }
 
+        testPage = new WeblogTemplate();
+        testPage.setAction(ComponentType.WEBLOG);
+        testPage.setName("testTemplate");
+        testPage.setDescription("Test Weblog Template");
+        testPage.setLink("testTemp");
+        testPage.setLastModified(new java.util.Date());
+        testPage.setWeblog(getManagedWeblog(testWeblog));
+    }
 
-       public static Test suite() {
-           return new TestSuite(WeblogTemplateRenditionTest.class);
-       }
+    @After
+    public void tearDown() throws Exception {
+        try {
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new Exception("Test teardown failed", ex);
+        }
+        testPage = null;
+    }
 
+    /**
+     * Test basic persistence operations ... Create, Update, Delete
+     */
+    @Test
+    public void testTemplateCRUD() throws Exception {
+        // create template
+        weblogManager.saveTemplate(testPage);
 
-       /**
-        * All tests in this suite require a user and a weblog.
-        */
-       public void setUp() throws Exception {
+        //create standard template rendition
+        WeblogTemplateRendition standardTemplateCode = new WeblogTemplateRendition(testPage,
+                RenditionType.STANDARD);
+        standardTemplateCode.setTemplate("standard.template.code");
+        standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
 
-           // setup weblogger
-           TestUtils.setupWeblogger();
+        //create mobile code
+        WeblogTemplateRendition mobileTemplateCode = new WeblogTemplateRendition(testPage,
+                RenditionType.MOBILE);
+        mobileTemplateCode.setTemplate("mobile.template.code");
+        mobileTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
 
-           try {
-               testUser = TestUtils.setupUser("wtTestUser");
-               testWeblog = TestUtils.setupWeblog("wtTestWeblog", testUser);
-               TestUtils.endSession(true);
-           } catch (Exception ex) {
-               log.error(ex);
-               throw new Exception("Test setup failed", ex);
-           }
+        endSession(true);
 
-           testPage = new WeblogTemplate();
-           testPage.setAction(ComponentType.WEBLOG);
-           testPage.setName("testTemplate");
-           testPage.setDescription("Test Weblog Template");
-           testPage.setLink("testTemp");
-           testPage.setLastModified(new java.util.Date());
-           testPage.setWeblog(TestUtils.getManagedWebsite(testWeblog));
-       }
+        // check that create was successful
+        WeblogTemplate testPageCheck = weblogManager.getTemplate(testPage.getId());
 
-       public void tearDown() throws Exception {
+        assertNotNull(testPageCheck);
 
-           try {
-               TestUtils.teardownWeblog(testWeblog.getId());
-               TestUtils.teardownUser(testUser.getUserName());
-               TestUtils.endSession(true);
-           } catch (Exception ex) {
-               log.error(ex);
-               throw new Exception("Test teardown failed", ex);
-           }
+        standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
+        assertNotNull(standardCode);
+        assertEquals(standardTemplateCode.getTemplate(), standardCode.getTemplate());
 
-           testPage = null;
-       }
+        mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
+        assertNotNull(mobileCode);
+        assertEquals(mobileTemplateCode.getTemplate(), mobileCode.getTemplate());
 
+        // update template Code
+        standardCode = null;
+        standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
+        standardCode.setTemplate("update.standard.template");
+        weblogManager.saveTemplateRendition(standardCode);
 
-       /**
-        * Test basic persistence operations ... Create, Update, Delete
-        */
-       public void testTemplateCRUD() throws Exception {
-           WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        mobileCode = null;
+        mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
+        mobileCode.setTemplate("update.mobile.template");
+        weblogManager.saveTemplateRendition(mobileCode);
 
-           // create template
-           mgr.saveTemplate(testPage);
+        endSession(true);
 
-           //create standard template rendition
-           WeblogTemplateRendition standardTemplateCode = new WeblogTemplateRendition(testPage, RenditionType.STANDARD);
-           standardTemplateCode.setTemplate("standard.template.code");
-           standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
+        // check that update was successful
+        standardCode = null;
+        standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
+        assertEquals("update.standard.template", standardCode.getTemplate());
 
-           //create mobile code
-           WeblogTemplateRendition mobileTemplateCode = new WeblogTemplateRendition(testPage, RenditionType.MOBILE);
-           mobileTemplateCode.setTemplate("mobile.template.code");
-           mobileTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
+        mobileCode = null;
+        mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
+        assertEquals("update.mobile.template", mobileCode.getTemplate());
 
-           TestUtils.endSession(true);
+        WeblogTemplate page = weblogManager.getTemplate(testPage.getId());
+        weblogManager.removeTemplate(page);
+        endSession(true);
 
-           // check that create was successful
-           WeblogTemplate testPageCheck = mgr.getTemplate(testPage.getId());
+        // check that template remove was successful
+        testPageCheck = weblogManager.getTemplate(testPage.getId());
+        assertNull(testPageCheck);
 
-           assertNotNull(testPageCheck);
-
-           standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
-           assertNotNull(standardCode);
-           assertEquals(standardTemplateCode.getTemplate(), standardCode.getTemplate());
-
-           mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
-           assertNotNull(mobileCode);
-           assertEquals(mobileTemplateCode.getTemplate() ,mobileCode.getTemplate());
-
-           // update template Code
-           standardCode = null;
-           standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
-           standardCode.setTemplate("update.standard.template");
-           mgr.saveTemplateRendition(standardCode);
-
-           mobileCode = null;
-           mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
-           mobileCode.setTemplate("update.mobile.template");
-           mgr.saveTemplateRendition(mobileCode);
-
-           TestUtils.endSession(true);
-
-           // check that update was successful
-           standardCode = null;
-           standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
-           assertEquals("update.standard.template",standardCode.getTemplate());
-
-           mobileCode = null;
-           mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
-           assertEquals("update.mobile.template",mobileCode.getTemplate());
-
-           WeblogTemplate page = mgr.getTemplate(testPage.getId());
-           mgr.removeTemplate(page);
-           TestUtils.endSession(true);
-
-           // check that template remove was successful
-           testPageCheck = mgr.getTemplate(testPage.getId());
-           assertNull(testPageCheck);
-
-       }
+    }
 }

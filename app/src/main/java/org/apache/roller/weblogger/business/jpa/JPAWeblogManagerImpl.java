@@ -790,7 +790,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public void removeWeblogCategory(WeblogCategory cat)
             throws WebloggerException {
-        if(cat.retrieveWeblogEntries(false).size() > 0) {
+
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(cat.getWeblog());
+        wesc.setCatName(cat.getName());
+
+        if (weblogEntryManager.getWeblogEntries(wesc).size() > 0) {
             throw new WebloggerException("Cannot remove category with entries");
         }
 
@@ -806,7 +811,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             throws WebloggerException {
 
         // get all entries in category and subcats
-        List<WeblogEntry> results = srcCat.retrieveWeblogEntries(false);
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(srcCat.getWeblog());
+        wesc.setCatName(srcCat.getName());
+        List<WeblogEntry> results = weblogEntryManager.getWeblogEntries(wesc);
 
         // Loop through entries in src cat, assign them to dest cat
         Weblog website = destCat.getWeblog();

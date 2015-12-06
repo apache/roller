@@ -17,123 +17,129 @@
  *
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
 import java.util.Map;
-import junit.framework.TestCase;
+
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- *
- */
-public class WeblogStatsTest extends TestCase {
-    
+import static org.junit.Assert.*;
+
+
+public class WeblogStatsTest extends WebloggerTest {
     private User user1, user2;
-    
     private Weblog website1;
-        private WeblogEntry entry11;
-            private WeblogEntryComment comment11;
-            private WeblogEntryComment comment12;
-        private WeblogEntry entry12;
-            private WeblogEntryComment comment13;
-
+    private WeblogEntry entry11;
+    private WeblogEntryComment comment11;
+    private WeblogEntryComment comment12;
+    private WeblogEntryComment comment13;
     private Weblog website2;
-        private WeblogEntry entry21;
-            private WeblogEntryComment comment21; 
-    
-    public WeblogStatsTest() {
-    }  
-    protected void setUp() throws Exception {
+    private WeblogEntryComment comment21;
+
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
         // create weblog with three entries and two comments per entry
-        user1 = TestUtils.setupUser("a_commentCountTestUser");
-        user2 = TestUtils.setupUser("b_commentCountTestUser");
-        
-        website1 = TestUtils.setupWeblog("a_testWebsite1", user1);
-        entry11 = TestUtils.setupWeblogEntry(
+        user1 = setupUser("a_commentCountTestUser");
+        user2 = setupUser("b_commentCountTestUser");
+
+        website1 = setupWeblog("a_testWebsite1", user1);
+        entry11 = setupWeblogEntry(
                 "anchor11", website1, user1);
-        comment11 = TestUtils.setupComment("Comment11", entry11);
-        comment12 = TestUtils.setupComment("Comment12", entry11);
-        entry12 = TestUtils.setupWeblogEntry(
+        comment11 = setupComment("Comment11", entry11);
+        comment12 = setupComment("Comment12", entry11);
+        WeblogEntry entry12 = setupWeblogEntry(
                 "anchor12", website1, user1);
-        comment13 = TestUtils.setupComment("Comment13", entry12);
-        
-        website2 = TestUtils.setupWeblog("b_testWebsite2", user1);
-        entry21 = TestUtils.setupWeblogEntry(
+        comment13 = setupComment("Comment13", entry12);
+
+        website2 = setupWeblog("b_testWebsite2", user1);
+        WeblogEntry entry21 = setupWeblogEntry(
                 "anchor21", website2, user1);
-        comment21 = TestUtils.setupComment("Comment21", entry21);
-        TestUtils.endSession(true);
+        comment21 = setupComment("Comment21", entry21);
+        endSession(true);
 
         Thread.sleep(DateUtils.MILLIS_PER_SECOND);
     }
-    public void testGetMostCommentedWeblogs() throws Exception {        
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();     
-        List list = mgr.getMostCommentedWeblogs(null, null, 0, -1);  
-        
+
+    @After
+    public void tearDown() throws Exception {
+        teardownComment(comment11.getId());
+        teardownComment(comment12.getId());
+        teardownComment(comment13.getId());
+        teardownWeblog(website1.getId());
+
+        teardownComment(comment21.getId());
+        teardownWeblog(website2.getId());
+
+        teardownUser(user1.getUserName());
+        teardownUser(user2.getUserName());
+
+        endSession(true);
+    }
+
+    @Test
+    public void testGetMostCommentedWeblogs() throws Exception {
+        List list = weblogManager.getMostCommentedWeblogs(null, null, 0, -1);
+
         assertNotNull(list);
         assertEquals(2, list.size());
-        
-        StatCount s1 = (StatCount)list.get(0);
+
+        StatCount s1 = (StatCount) list.get(0);
         assertEquals(website1.getId(), s1.getSubjectId());
-        assertEquals(3L, s1.getCount());   
+        assertEquals(3L, s1.getCount());
         assertEquals(website1.getHandle(), s1.getSubjectNameShort());
         assertEquals(website1.getHandle(), s1.getWeblogHandle());
-        
-        StatCount s2 = (StatCount)list.get(1);
+
+        StatCount s2 = (StatCount) list.get(1);
         assertEquals(website2.getId(), s2.getSubjectId());
-        assertEquals(1L, s2.getCount());   
+        assertEquals(1L, s2.getCount());
     }
+
+    @Test
     public void testGetMostCommentedWeblogEntries() throws Exception {
-        
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();      
-        List list = mgr.getMostCommentedWeblogEntries(null, null, null, 0, -1);
-        
+        List list = weblogEntryManager.getMostCommentedWeblogEntries(null, null, null, 0, -1);
+
         assertNotNull(list);
         assertEquals(3, list.size());
-        
-        StatCount s1 = (StatCount)list.get(0);
-        assertEquals(2L, s1.getCount()); 
+
+        StatCount s1 = (StatCount) list.get(0);
+        assertEquals(2L, s1.getCount());
         assertEquals(entry11.getAnchor(), s1.getSubjectNameShort());
         assertEquals(entry11.getWeblog().getHandle(), s1.getWeblogHandle());
-               
-        StatCount s2 = (StatCount)list.get(1);
-        assertEquals(1L, s2.getCount());   
+
+        StatCount s2 = (StatCount) list.get(1);
+        assertEquals(1L, s2.getCount());
     }
-    public void testGetUserNameLetterMap() throws Exception {        
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();      
-        Map map = mgr.getUserNameLetterMap();    
+
+    @Test
+    public void testGetUserNameLetterMap() throws Exception {
+        Map map = userManager.getUserNameLetterMap();
         assertNotNull(map.get("A"));
         assertNotNull(map.get("B"));
         assertNotNull(map.get("C"));
     }
-    public void testGetWeblogLetterMap() throws Exception {        
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        Map map = mgr.getWeblogHandleLetterMap();    
+
+    @Test
+    public void testGetWeblogLetterMap() throws Exception {
+        Map map = weblogManager.getWeblogHandleLetterMap();
         assertNotNull(map.get("A"));
         assertNotNull(map.get("B"));
         assertNotNull(map.get("C"));
     }
-    protected void tearDown() throws Exception {
-        
-        // TODO: ATLAS figure out why comments must be torn down first
-        TestUtils.teardownComment(comment11.getId());
-        TestUtils.teardownComment(comment12.getId());
-        TestUtils.teardownComment(comment13.getId());
-        TestUtils.teardownWeblog(website1.getId());
-        
-        TestUtils.teardownComment(comment21.getId());
-        TestUtils.teardownWeblog(website2.getId());  
-        
-        TestUtils.teardownUser(user1.getUserName());        
-        TestUtils.teardownUser(user2.getUserName());        
-        
-        TestUtils.endSession(true);
-    }
+
 }
