@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -59,6 +60,14 @@ public class FileContentManagerTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        try {
+            testUser = setupUser("FCMTest_userName1");
+            testWeblog = setupWeblog("FCMTest_handle1", testUser);
+            endSession(true);
+        } catch (Exception ex) {
+            log.error(ex);
+        }
     }
 
     @After
@@ -69,6 +78,8 @@ public class FileContentManagerTest extends WebloggerTest {
         config.get("uploads.types.allowed").setValue("");
         config.get("uploads.enabled").setValue("true");
         propertiesManager.saveProperties(config);
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
         endSession(true);
     }
 
@@ -77,14 +88,6 @@ public class FileContentManagerTest extends WebloggerTest {
      */
     @Test
     public void testFileCRUD() throws Exception {
-        try {
-            testUser = setupUser("FCMTest_userName1");
-            testWeblog = setupWeblog("FCMTest_handle1", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-        }
-
         // update roller properties to prepare for test
         Map<String, RuntimeConfigProperty> config = propertiesManager.getProperties();
         config.get("uploads.enabled").setValue("true");
@@ -122,10 +125,6 @@ public class FileContentManagerTest extends WebloggerTest {
         } catch (FileNotFoundException e) {
             assertTrue("Exception thrown for non-existant file as expected", true);
         }
-
-        endSession(true);
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getUserName());
     }
 
     /**
@@ -133,16 +132,8 @@ public class FileContentManagerTest extends WebloggerTest {
      *
      * This should test all conditions where a save should fail.
      */
-    @Test
+    @Ignore("(Issue 287) WebloggerRuntimeConfig will need to have a passed-in properties manager for this to work")
     public void testCanSave() throws Exception {
-        try {
-            testUser = setupUser("FCMTest_userName2");
-            testWeblog = setupWeblog("FCMTest_handle2", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-        }
-
         Map<String, RuntimeConfigProperty> config = propertiesManager.getProperties();
         config.get("uploads.dir.maxsize").setValue("1.00");
         config.get("uploads.types.forbid").setValue("");
@@ -179,9 +170,5 @@ public class FileContentManagerTest extends WebloggerTest {
         msgs = new RollerMessages();
         canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, msgs);
         assertFalse(canSave);
-
-        endSession(true);
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getUserName());
     }
 }

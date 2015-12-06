@@ -20,23 +20,22 @@
  */
 package org.apache.roller.weblogger.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.ExpiringLRUCacheImpl;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
-public class ExpiringLRUCacheImplTest extends TestCase {
-    
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        // TODO Auto-generated method stub
+public class ExpiringLRUCacheImplTest extends WebloggerTest {
+
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
     }
-    
+
+    @Test
     public void testLRU() {
         // Create cache with 3 item limit and 15 second timeout
         Cache cache = new ExpiringLRUCacheImpl("test", 3, 15000);
@@ -58,7 +57,8 @@ public class ExpiringLRUCacheImplTest extends TestCase {
         cache.put("key4", "string4");
         assertNull(cache.get("key3"));
     }
-    
+
+    @Test
     public void testRemove() {
         // Create cache with 100 item limit and 15 second timeout
         Cache cache = new ExpiringLRUCacheImpl("test", 100, 15000);
@@ -78,18 +78,6 @@ public class ExpiringLRUCacheImplTest extends TestCase {
 
         cache.clear();
         assertNull(cache.get("key3"));
-    }
-    
-    /**
-     * @see junit.framework.TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        // TODO Auto-generated method stub
-        super.tearDown();
-    }
-    
-    public static Test suite() {
-        return new TestSuite(ExpiringLRUCacheImplTest.class);
     }
     
 }

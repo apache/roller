@@ -18,49 +18,36 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins.entry;
 
-import junit.framework.TestCase;
+import org.apache.roller.weblogger.WebloggerTest;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Test regex utils.
  */
-public class ObfuscateEmailPluginTest extends TestCase {
+public class ObfuscateEmailPluginTest extends WebloggerTest {
     
-    /**
-     *
-     */
-    public ObfuscateEmailPluginTest() {
-        super();
-    }
-
     ObfuscateEmailPlugin oep = new ObfuscateEmailPlugin();
 
-    /**
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
     }
     
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
+    @Test
     public void testEncodingEmail() {
         // test mailto: escaping
         String test = "test <a href='mailto:this@email.com'>email</a> string";
         String expect = "test <a href='mailto:%74%68%69%73%40%65%6d%61%69%6c%2e%63%6f%6d'>email</a> string";
         String result = oep.encodeEmail(test) ;
-        //System.out.println(result);
         assertEquals(expect, result);
     }
-    
+
+    @Test
     public void testObfuscateEmail() {
         // test "plaintext" escaping
         String test = "this@email.com";
@@ -68,13 +55,13 @@ public class ObfuscateEmailPluginTest extends TestCase {
         String result = oep.encodeEmail(test) ;
         assertEquals(expect, result);
     }
-    
+
+    @Test
     public void testHexEmail() {
         // test hex & obfuscate together
         String test = "test <a href='mailto:this@email.com'>this@email.com</a> string, and this@email.com";
         String expect = "test <a href='mailto:%74%68%69%73%40%65%6d%61%69%6c%2e%63%6f%6d'>this-AT-email-DOT-com</a> string, and this-AT-email-DOT-com";
         String result = oep.encodeEmail(test) ;
-        //System.out.println(result);
         assertEquals(expect, result);
     }
     

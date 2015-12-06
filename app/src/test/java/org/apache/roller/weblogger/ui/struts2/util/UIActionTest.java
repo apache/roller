@@ -14,25 +14,19 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.util;
 
+import org.apache.roller.weblogger.WebloggerTest;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+public class UIActionTest extends WebloggerTest {
 
-
-public class UIActionTest extends TestCase {
-
-    public UIActionTest() {
-    }
-
-    public static Test suite() {
-        return new TestSuite(UIActionTest.class);
-    }
-
+    @Test
     public void testCleanTextEmpty() {
         assertEquals(null,UIAction.cleanTextKey(null));
         assertEquals("",UIAction.cleanTextKey(""));
@@ -40,6 +34,7 @@ public class UIActionTest extends TestCase {
         assertEquals("",UIAction.cleanTextArg(""));
     }
 
+    @Test
     public void testCleanTextKey() {
         assertEquals(null,UIAction.cleanTextKey(null));
         assertEquals("",UIAction.cleanTextKey(""));
@@ -58,6 +53,7 @@ public class UIActionTest extends TestCase {
         assertEquals("", UIAction.cleanTextKey("something %{foo} more"));
     }
 
+    @Test
     public void testCleanTextArg() {
         assertEquals("&lt;i&gt;some text&lt;/i&gt;",UIAction.cleanTextArg("<i>some text</i>"));
         assertEquals("&lt;i&gt;some ${text}&lt;/i&gt;",UIAction.cleanTextArg("<i>some ${text}</i>"));
