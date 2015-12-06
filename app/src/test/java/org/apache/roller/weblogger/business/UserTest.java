@@ -1,6 +1,6 @@
 /*
 * Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
+* contributor license agreements.  The ASF licenses this file to You
 * under the Apache License, Version 2.0 (the "License"); you may not
 * use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -18,56 +18,38 @@
 * Source file modified from the original ASF source; all changes made
 * are also under Apache License.
 */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Test User related business operations.
  */
-public class UserTest extends TestCase {
-    
+public class UserTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(UserTest.class);
-    
-    
-    public UserTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(UserTest.class);
-    }
-    
-    
+
+    @Before
     public void setUp() throws Exception {
-        // setup weblogger
-        TestUtils.setupWeblogger();
+        super.setUp();
     }
-    
-    public void tearDown() throws Exception {
-    }
-    
     
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testUserCRUD() throws Exception {
-        
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        User user = null;
+        User user;
         
         User testUser = new User();
         testUser.setId(WebloggerCommon.generateUUID());
@@ -82,40 +64,37 @@ public class UserTest extends TestCase {
         testUser.setEnabled(Boolean.TRUE);
         
         // make sure test user does not exist
-        user = mgr.getUserByUserName(testUser.getUserName());
+        user = userManager.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // add test user
-        mgr.addUser(testUser);
+        userManager.addUser(testUser);
         String userName = testUser.getUserName();
-        TestUtils.endSession(true);
+        endSession(true);
         
         // make sure test user exists
-        user = null;
-        user = mgr.getUserByUserName(userName);
+        user = userManager.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser, user);
         
         // modify user and save
         user.setScreenName("testtesttest");
         user.setFullName("testtesttest");
-        mgr.saveUser(user);
-        TestUtils.endSession(true);
+        userManager.saveUser(user);
+        endSession(true);
         
         // make sure changes were saved
-        user = null;
-        user = mgr.getUserByUserName(userName);
+        user = userManager.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals("testtesttest", user.getScreenName());
         assertEquals("testtesttest", user.getFullName());
 
         // remove test user
-        mgr.removeUser(user);
-        TestUtils.endSession(true);
+        userManager.removeUser(user);
+        endSession(true);
         
         // make sure user no longer exists
-        user = null;
-        user = mgr.getUserByUserName(userName);
+        user = userManager.getUserByUserName(userName);
         assertNull(user);
     }
     
@@ -123,38 +102,34 @@ public class UserTest extends TestCase {
     /**
      * Test lookup mechanisms.
      */
+    @Test
     public void testUserLookups() throws Exception {
-        
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        User user = null;
+        User user;
         
         // add test user
-        User testUser = TestUtils.setupUser("userTestUser");
-        TestUtils.endSession(true);
+        User testUser = setupUser("userTestUser");
+        endSession(true);
         
         // lookup by username
-        user = mgr.getUserByUserName(testUser.getUserName());
+        user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
         // lookup by id
         String userName = user.getUserName();
-        user = null;
-        user = mgr.getUserByUserName(userName);
+        user = userManager.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
         // lookup by UserName (part)
-        user = null;
-        List users1 = mgr.getUsersStartingWith(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
+        List users1 = userManager.getUsersStartingWith(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users1.size());
         user = (User) users1.get(0);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
         // lookup by Email (part)
-        user = null;
-        List users2 = mgr.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
+        List users2 = userManager.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users2.size());
         user = (User) users2.get(0);
         assertNotNull(user);
@@ -162,31 +137,29 @@ public class UserTest extends TestCase {
         
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);
-        mgr.saveUser(user);
-        TestUtils.endSession(true);
-        user = null;
-        user = mgr.getUserByUserName(testUser.getUserName());
+        userManager.saveUser(user);
+        endSession(true);
+        user = userManager.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // remove test user
-        TestUtils.teardownUser(testUser.getUserName());
-        TestUtils.endSession(true);
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
     
     
     /**
      * Test basic user role persistence ... Add, Remove
      */
+    @Test
     public void testRoleCRUD() throws Exception {
-        
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        User user = null;
+        User user;
         
         // add test user
-        User testUser = TestUtils.setupUser("roleTestUser");
-        TestUtils.endSession(true);
+        User testUser = setupUser("roleTestUser");
+        endSession(true);
         
-        user = mgr.getUserByUserName(testUser.getUserName());
+        user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         
         if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
@@ -197,25 +170,17 @@ public class UserTest extends TestCase {
         
         // change role to NOAUTHNEEDED
         user.setGlobalRole(GlobalRole.LOGIN);
-        mgr.saveUser(user);
-        TestUtils.endSession(true);
+        userManager.saveUser(user);
+        endSession(true);
         
         // check that role was switched
-        user = mgr.getUserByUserName(testUser.getUserName());
+        user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertTrue(user.getGlobalRole() == GlobalRole.LOGIN);
 
         // remove test user
-        TestUtils.teardownUser(testUser.getUserName());
-        TestUtils.endSession(true);
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
 
-    
-    /**
-     * Test ability to remove a user with a full set of data.
-     */
-    public void testRemoveLoadedUser() throws Exception {
-        // TODO: implement testRemoveLoadedUser
-    }
-    
 }

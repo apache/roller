@@ -14,57 +14,47 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
-
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Test Weblog Page related business operations.
  */
-public class WeblogPageTest extends TestCase {
-    
+public class WeblogPageTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(WeblogPageTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
     WeblogTemplate testPage = null;
-    
-    
-    public WeblogPageTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(WeblogPageTest.class);
-    }
-    
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @Before
     public void setUp() throws Exception {
-        
-        // setup weblogger
-        TestUtils.setupWeblogger();
+        super.setUp();
         
         try {
-            testUser = TestUtils.setupUser("wtTestUser");
-            testWeblog = TestUtils.setupWeblog("wtTestWeblog", testUser);
-            TestUtils.endSession(true);
+            testUser = setupUser("wtTestUser");
+            testWeblog = setupWeblog("wtTestWeblog", testUser);
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
@@ -76,15 +66,16 @@ public class WeblogPageTest extends TestCase {
         testPage.setDescription("Test Weblog Template");
         testPage.setLink("testTemp");
         testPage.setLastModified(new java.util.Date());
-        testPage.setWeblog(TestUtils.getManagedWebsite(testWeblog));
+        testPage.setWeblog(getManagedWeblog(testWeblog));
     }
     
+    @After
     public void tearDown() throws Exception {
         
         try {
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
+            teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);
@@ -97,37 +88,36 @@ public class WeblogPageTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete
      */
+    @Test
     public void testTemplateCRUD() throws Exception {
-        
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogTemplate template;
         
         // create template
-        mgr.saveTemplate(testPage);
-        TestUtils.endSession(true);
+        weblogManager.saveTemplate(testPage);
+        endSession(true);
         
         // check that create was successful
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        template = mgr.getTemplateByName(testWeblog, testPage.getName());
+        testWeblog = getManagedWeblog(testWeblog);
+        template = weblogManager.getTemplateByName(testWeblog, testPage.getName());
         assertNotNull(template);
 
         // update template
         template.setName("testtesttest");
-        mgr.saveTemplate(template);
-        TestUtils.endSession(true);
+        weblogManager.saveTemplate(template);
+        endSession(true);
         
         // check that update was successful
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        template = mgr.getTemplateByName(testWeblog, "testtesttest");
+        testWeblog = getManagedWeblog(testWeblog);
+        template = weblogManager.getTemplateByName(testWeblog, "testtesttest");
         assertNotNull(template);
 
         // delete template
-        mgr.removeTemplate(template);
-        TestUtils.endSession(true);
+        weblogManager.removeTemplate(template);
+        endSession(true);
         
         // check that delete was successful
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        template = mgr.getTemplateByName(testWeblog, testPage.getName());
+        testWeblog = getManagedWeblog(testWeblog);
+        template = weblogManager.getTemplateByName(testWeblog, testPage.getName());
         assertNull(template);
     }
     
@@ -135,41 +125,40 @@ public class WeblogPageTest extends TestCase {
     /**
      * Test lookup mechanisms ... id, name, link, weblog
      */
+    @Test
     public void testPermissionsLookups() throws Exception {
-        
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogTemplate page;
         
         // create page
-        mgr.saveTemplate(testPage);
+        weblogManager.saveTemplate(testPage);
         String id = testPage.getId();
-        TestUtils.endSession(true);
+        endSession(true);
         
         // lookup by id
-        page = mgr.getTemplate(id);
+        page = weblogManager.getTemplate(id);
         assertNotNull(page);
 
         // lookup by action
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        page = mgr.getTemplateByAction(testWeblog, testPage.getAction());
+        testWeblog = getManagedWeblog(testWeblog);
+        page = weblogManager.getTemplateByAction(testWeblog, testPage.getAction());
         assertNotNull(page);
 
         // lookup by name
-        page = mgr.getTemplateByName(testWeblog, testPage.getName());
+        page = weblogManager.getTemplateByName(testWeblog, testPage.getName());
         assertNotNull(page);
 
         // lookup by link
-        page = mgr.getTemplateByLink(testWeblog, testPage.getLink());
+        page = weblogManager.getTemplateByLink(testWeblog, testPage.getLink());
         assertNotNull(page);
 
         // lookup all pages for weblog
-        List pages = mgr.getTemplates(testWeblog);
+        List pages = weblogManager.getTemplates(testWeblog);
         assertNotNull(pages);
         assertEquals(1, pages.size());
         
         // delete page
-        mgr.removeTemplate(page);
-        TestUtils.endSession(true);
+        weblogManager.removeTemplate(page);
+        endSession(true);
     }
     
 }

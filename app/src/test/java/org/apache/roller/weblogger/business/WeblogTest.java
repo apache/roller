@@ -14,54 +14,42 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.StatCount;
+import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Test Weblog related business operations.
  */
-public class WeblogTest extends TestCase {
-    
+public class WeblogTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(WeblogTest.class);
     
     User testUser = null;
     
-    
-    public WeblogTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(WeblogTest.class);
-    }
-    
-    
     /**
      * All tests in this suite require a user.
      */
+    @Before
     public void setUp() throws Exception {
-        
-        log.info("BEGIN");
-        
-        // setup weblogger
-        TestUtils.setupWeblogger();
+        super.setUp();
         
         try {
-            testUser = TestUtils.setupUser("weblogTestUser");
-            TestUtils.endSession(true);
+            testUser = setupUser("weblogTestUser");
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
@@ -69,14 +57,15 @@ public class WeblogTest extends TestCase {
         
         log.info("END");
     }
-    
+
+    @After
     public void tearDown() throws Exception {
         
         log.info("BEGIN");
         
         try {
-            TestUtils.teardownUser(testUser.getUserName());
-            TestUtils.endSession(true);
+            teardownUser(testUser.getUserName());
+            endSession(true);
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);
@@ -89,18 +78,13 @@ public class WeblogTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testWeblogCRUD() throws Exception {
-        
-        log.info("BEGIN");
-        
         try {
-        
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
-            Weblog weblog = null;
+            Weblog weblog;
 
             Weblog testWeblog = new Weblog();
-            testUser = TestUtils.getManagedUser(testUser);
+            testUser = getManagedUser(testUser);
             testWeblog.setName("Test Weblog");
             testWeblog.setTagline("Test Weblog");
             testWeblog.setHandle("testweblog");
@@ -114,121 +98,114 @@ public class WeblogTest extends TestCase {
             testWeblog.setCreatorUserName(testUser.getUserName());
 
             // make sure test weblog does not exist
-            weblog = mgr.getWeblogByHandle(testWeblog.getHandle());
+            weblog = weblogManager.getWeblogByHandle(testWeblog.getHandle());
             assertNull(weblog);
 
             // add test weblog
-            mgr.addWeblog(testWeblog);
+            weblogManager.addWeblog(testWeblog);
             String id = testWeblog.getId();
-            TestUtils.endSession(true);
+            endSession(true);
 
             // make sure test weblog exists
-            weblog = null;
-            weblog = mgr.getWeblog(id);
+            weblog = weblogManager.getWeblog(id);
             assertNotNull(weblog);
             assertEquals(testWeblog, weblog);
 
             // modify weblog and save
             weblog.setName("testtesttest");
-            mgr.saveWeblog(weblog);
-            TestUtils.endSession(true);
+            weblogManager.saveWeblog(weblog);
+            endSession(true);
 
             // make sure changes were saved
-            weblog = null;
-            weblog = mgr.getWeblog(id);
+            weblog = weblogManager.getWeblog(id);
             assertNotNull(weblog);
             assertEquals("testtesttest", weblog.getName());
 
             // remove test weblog
-            mgr.removeWeblog(weblog);
-            TestUtils.endSession(true);
+            weblogManager.removeWeblog(weblog);
+            endSession(true);
 
             // make sure weblog no longer exists
-            weblog = null;
-            weblog = mgr.getWeblog(id);
+            weblog = weblogManager.getWeblog(id);
             assertNull(weblog);
         
-        } catch(Throwable t) {
+        } catch(Exception t) {
             log.error("Exception running test", t);
-            throw (Exception) t;
+            fail();
         }
-        log.info("END");
     }
     
     
     /**
      * Test lookup mechanisms.
      */
+    @Test
     public void testWeblogLookups() throws Exception {
-        
-        log.info("BEGIN");
         Weblog testWeblog1 = null;
         Weblog testWeblog2 = null;
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
-            Weblog weblog = null;
+            Weblog weblog;
             
             // add test weblogs
-            testWeblog1 = TestUtils.setupWeblog("testWeblog1", testUser);
-            testWeblog2 = TestUtils.setupWeblog("testWeblog2", testUser);
-            TestUtils.endSession(true);
+            testWeblog1 = setupWeblog("testWeblog1", testUser);
+            testWeblog2 = setupWeblog("testWeblog2", testUser);
+            endSession(true);
             
             // lookup by id
-            weblog = mgr.getWeblog(testWeblog1.getId());
+            weblog = weblogManager.getWeblog(testWeblog1.getId());
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // lookup by weblog handle
-            weblog = null;
-            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle());
+            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle());
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // make sure disabled weblogs are not returned
             weblog.setVisible(Boolean.FALSE);
-            mgr.saveWeblog(weblog);
-            TestUtils.endSession(true);
-            weblog = null;
-            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle());
+            weblogManager.saveWeblog(weblog);
+            endSession(true);
+            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle());
             assertNull(weblog);
             
             // restore visible state
-            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle(), Boolean.FALSE);
+            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle(), Boolean.FALSE);
             weblog.setVisible(Boolean.TRUE);
-            mgr.saveWeblog(weblog);
-            TestUtils.endSession(true);
-            weblog = null;
-            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle());
+            weblogManager.saveWeblog(weblog);
+            endSession(true);
+            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle());
             assertNotNull(weblog);
             
             // get all weblogs for user
-            weblog = null;
-            List weblogs1 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
+            List weblogs1 = weblogManager.getUserWeblogs(getManagedUser(testUser), true);
             assertEquals(2, weblogs1.size());
             weblog = (Weblog) weblogs1.get(0);
             assertNotNull(weblog);           
             
             // make sure disabled weblogs are not returned
             weblog.setVisible(Boolean.FALSE);
-            mgr.saveWeblog(weblog);
-            TestUtils.endSession(true);
-            List weblogs2 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
+            weblogManager.saveWeblog(weblog);
+            endSession(true);
+            List weblogs2 = weblogManager.getUserWeblogs(getManagedUser(testUser), true);
             assertEquals(1, weblogs2.size());
             weblog = (Weblog) weblogs2.get(0);
             assertNotNull(weblog);
             
             // make sure inactive weblogs are not returned
             weblog.setActive(Boolean.FALSE);
-            mgr.saveWeblog(weblog);
-            TestUtils.endSession(true);
-            List weblogs3 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
+            weblogManager.saveWeblog(weblog);
+            endSession(true);
+            List weblogs3 = weblogManager.getUserWeblogs(getManagedUser(testUser), true);
             assertEquals(0, weblogs3.size());
             
         } finally {
-            TestUtils.teardownWeblog(testWeblog1.getId());
-            TestUtils.teardownWeblog(testWeblog2.getId());
-            TestUtils.endSession(true);
+            if (testWeblog1 != null) {
+                teardownWeblog(testWeblog1.getId());
+            }
+            if (testWeblog2 != null) {
+                teardownWeblog(testWeblog2.getId());
+            }
+            endSession(true);
         }
         
         log.info("END");

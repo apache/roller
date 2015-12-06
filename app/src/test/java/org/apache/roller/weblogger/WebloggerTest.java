@@ -43,9 +43,6 @@ import javax.annotation.Resource;
 @ContextConfiguration("classpath*:spring-beans.xml")
 abstract public class WebloggerTest {
 
-    // Username prefix we are using (simplifies local testing)
-    public static final String JUNIT_PREFIX = "junit_";
-
     @Resource
     protected WeblogManager weblogManager;
 
@@ -129,10 +126,6 @@ abstract public class WebloggerTest {
     }
 
     protected User setupUser(String userName) throws Exception {
-
-        // Set local name
-        userName = JUNIT_PREFIX + userName;
-
         User testUser = new User();
         testUser.setId(WebloggerCommon.generateUUID());
         testUser.setUserName(userName);
