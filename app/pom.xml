@@ -317,6 +317,20 @@
             <version>1.10</version>
         </dependency>
 
+        <!-- WebJars deps -->
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-servlet-2.x</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>angular</artifactId>
+            <version>1.2.29</version>
+        </dependency>
+
         <!-- test deps -->
 
         <dependency>
