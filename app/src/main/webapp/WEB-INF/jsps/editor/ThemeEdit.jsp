@@ -123,7 +123,7 @@ function updateThemeChooser(selected) {
 
         <p>{{ selectedTheme.description }}</p>
         <p>
-            <img src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
+            <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
         </p>
         <p>
             <s:text name="themeEditor.previewDescription" />

@@ -96,7 +96,7 @@ function handlePreview(handle) {
         <br />
         <p>{{ selectedTheme.description }}</p>
         <br />
-        <img src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
+        <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
     </td>
     <td class="description"><s:text name="createWebsite.tip.theme" /></td>
 </tr>
