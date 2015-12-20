@@ -160,12 +160,11 @@
     </tr>
 
     <%-- ***** Plugins "formatting" settings ***** --%>
-
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.formatting" /></h2></td>
-    </tr>
-
     <s:if test="!pluginsList.isEmpty">
+        <tr>
+            <td colspan="3"><h2><s:text name="websiteSettings.formatting" /></h2></td>
+        </tr>
+
         <tr>
             <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
             <td class="field">
