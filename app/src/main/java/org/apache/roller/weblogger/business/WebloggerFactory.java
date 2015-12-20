@@ -97,8 +97,7 @@ public final class WebloggerFactory {
      * Bootstrap the Roller Weblogger business tier.
      *
      * There are two possible application contexts, the web-level defined in web.xml
-     * (activated when running the WAR) and the unit tests which use the spring.unittests.context
-     * file in roller.properties.
+     * (activated when running the WAR) and the unit tests configured in WebloggerTest
      *
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws RuntimeException If the app cannot be bootstrapped.

@@ -21,8 +21,8 @@ package org.apache.roller.weblogger.pojos.wrapper;
 import java.sql.Timestamp;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.util.Utilities;
@@ -112,8 +112,8 @@ public final class WeblogEntryCommentWrapper {
         }
         
         // apply plugins
-        PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
-        content = pmgr.applyCommentPlugins(this.pojo, content);
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        content = mgr.applyCommentPlugins(this.pojo, content);
         
         // always add rel=nofollow for links
         content = Utilities.addNofollow(content);

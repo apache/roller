@@ -20,43 +20,36 @@
  */
 package org.apache.roller.weblogger.business.plugins.entry;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
+import javax.annotation.PostConstruct;
 
 /**
- * Interface for Roller weblog entry plugins.
- *
- * Weblog entry plugins are used to make transformations to the entry text.
- * These plugins affect both the entry summary and entry body.
+ * Temporary Test plugin for debugging...
  */
-public interface WeblogEntryPlugin {
-    
-    /**
-     * Returns the display name of this Plugin.
-     */
-    String getName();
-    
-    
-    /**
-     * Briefly describes the function of the Plugin.  May contain HTML.
-     */
-    String getDescription();
-    
-    
-    /**
-     * Give plugin a chance to initialize and add objects to its rendering model.
-     */
-    void init() throws WebloggerException;
-    
-    
-    /**
-     * Apply plugin to the specified text.
-     *
-     * @param entry       Entry being rendered.
-     * @param str         String to which plugin should be applied.
-     * @return            Results of applying plugin to entry.
-     */
-    String render(WeblogEntry entry, String str);
-    
+public class TestPlugin implements WeblogEntryPlugin {
+
+    protected String name = "Test Plugin";
+
+    protected String description = "Does Something";
+
+    public TestPlugin() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return StringEscapeUtils.escapeEcmaScript(description);
+    }
+
+    @PostConstruct
+    public void init() throws WebloggerException {}
+
+    public String render(WeblogEntry entry, String str) {
+        return str;
+    }
 }

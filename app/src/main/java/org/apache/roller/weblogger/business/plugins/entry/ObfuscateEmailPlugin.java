@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins.entry;
 
 import org.apache.commons.codec.binary.Hex;
@@ -27,11 +26,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
 
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.PostConstruct;
 
 
 /**
@@ -68,9 +67,9 @@ public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(Weblog website) throws WebloggerException {}
-    
-    
+    @PostConstruct
+    public void init() throws WebloggerException {}
+
     public String render(WeblogEntry entry, String str) {
         return encodeEmail(str);
     }

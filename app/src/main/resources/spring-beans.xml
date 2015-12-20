@@ -27,7 +27,6 @@
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="pingTargetManager"/>
-        <beans:constructor-arg ref="pluginManager"/>
         <beans:constructor-arg ref="propertiesManager"/>
         <beans:constructor-arg ref="themeManager"/>
         <beans:constructor-arg ref="userManager"/>
@@ -58,8 +57,6 @@
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
-    <beans:bean id="pluginManager" class="org.apache.roller.weblogger.business.plugins.PluginManagerImpl"/>
-
     <beans:bean id="propertiesManager" class="org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
@@ -85,13 +82,14 @@
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
+        <beans:property name="commentPlugins" ref="commentPlugins"/>
+        <beans:property name="weblogEntryPlugins" ref="weblogEntryPlugins"/>
     </beans:bean>
 
     <beans:bean id="feedProcessor" class="org.apache.roller.weblogger.business.FeedProcessorImpl">
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="pluginManager" ref="pluginManager"/>
         <beans:property name="planetManager" ref="planetManager"/>
         <beans:property name="strategy" ref="jpaPersistenceStrategy"/>
     </beans:bean>
@@ -218,6 +216,27 @@
             <beans:set>
                 <beans:ref bean="siteModel"/>
                 <beans:ref bean="planetModel"/>
+            </beans:set>
+        </beans:property>
+    </beans:bean>
+
+    <!-- Weblog Entry Plugins -->
+    <beans:bean id="weblogEntryPlugins" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <beans:property name="sourceList">
+            <beans:set>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.entry.ObfuscateEmailPlugin"/>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.entry.TestPlugin"/>
+            </beans:set>
+        </beans:property>
+    </beans:bean>
+
+    <!-- Comment Plugins -->
+    <beans:bean id="commentPlugins" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <beans:property name="sourceList">
+            <beans:set>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin"/>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin"/>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin"/>
             </beans:set>
         </beans:property>
     </beans:bean>

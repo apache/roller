@@ -52,7 +52,6 @@ import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -64,7 +63,6 @@ public class FeedProcessorImpl implements FeedProcessor {
 
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
-    private PluginManager pluginManager;
     private PlanetManager planetManager;
     private URLStrategy urlStrategy;
     private JPAPersistenceStrategy strategy;
@@ -81,10 +79,6 @@ public class FeedProcessorImpl implements FeedProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
     }
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
@@ -279,7 +273,6 @@ public class FeedProcessorImpl implements FeedProcessor {
             log.debug("Found " + entries.size());
 
             // Populate subscription object with new entries
-            Map pagePlugins = pluginManager.getWeblogEntryPlugins(localWeblog);
             for ( WeblogEntry rollerEntry : entries ) {
                 SubscriptionEntry entry = new SubscriptionEntry();
                 String content = "";
@@ -288,7 +281,7 @@ public class FeedProcessorImpl implements FeedProcessor {
                 } else {
                     content = rollerEntry.getSummary();
                 }
-                content = pluginManager.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
+                content = weblogEntryManager.applyWeblogEntryPlugins(rollerEntry, content);
                 
                 entry.setAuthor(rollerEntry.getCreator().getScreenName());
                 entry.setTitle(rollerEntry.getTitle());

@@ -20,10 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.admin;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -32,7 +29,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.config.RuntimeConfigDefs;
@@ -63,12 +59,6 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         this.propertiesManager = propertiesManager;
     }
 
-    private PluginManager pluginManager;
-
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
-
     // the request parameters
     private Map<String, String[]> params = Collections.emptyMap();
     
@@ -79,10 +69,10 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     private RuntimeConfigDefs globalConfigDef = null;
     
     // list of comment plugins
-    private List<WeblogEntryCommentPlugin> pluginsList = Collections.emptyList();
-    
-    // comment plugins that are enabled.  this is what the html form submits to
-    private String[] commentPlugins = new String[0];
+    private List<WeblogEntryCommentPlugin> commentPlugins = Collections.emptyList();
+
+    // comment plugins that are enabled.  This is what the html form submits to
+    private String[] enabledCommentPlugins = new String[0];
 
     // work around checkbox issue in cases where user inadvertently does a
     // GET on the GlobalConfig!save URL and thus sets all checkboxes to false
@@ -125,9 +115,6 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         }
 
         globalConfigDef = WebloggerRuntimeConfig.getRuntimeConfigDefs();
-
-        // load plugins list
-        setPluginsList(pluginManager.getCommentPlugins());
     }
     
     
@@ -139,7 +126,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         
         // setup array of configured plugins
         if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("enabled.comment.plugins"))) {
-            setCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("enabled.comment.plugins"), ","));
+            setEnabledCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("enabled.comment.plugins"), ","));
         }
         
         return SUCCESS;
@@ -191,8 +178,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         
         // special handling for comment plugins
         String enabledPlugins = "";
-        if(getCommentPlugins().length > 0) {
-            enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
+        if(getEnabledCommentPlugins().length > 0) {
+            enabledPlugins = StringUtils.join(getEnabledCommentPlugins(), ",");
         }
         RuntimeConfigProperty prop = getProperties().get("enabled.comment.plugins");
         prop.setValue(enabledPlugins);
@@ -253,20 +240,20 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         this.globalConfigDef = def;
     }
     
-    public List<WeblogEntryCommentPlugin> getPluginsList() {
-        return pluginsList;
+    public List<WeblogEntryCommentPlugin> getCommentPlugins() {
+        return commentPlugins;
     }
 
-    public void setPluginsList(List<WeblogEntryCommentPlugin> pluginsList) {
-        this.pluginsList = pluginsList;
+    public void setCommentPlugins(List<WeblogEntryCommentPlugin> commentPlugins) {
+        this.commentPlugins = commentPlugins;
     }
     
-    public String[] getCommentPlugins() {
-        return commentPlugins.clone();
+    public String[] getEnabledCommentPlugins() {
+        return enabledCommentPlugins.clone();
     }
 
-    public void setCommentPlugins(String[] commentPlugins) {
-        this.commentPlugins = commentPlugins.clone();
+    public void setEnabledCommentPlugins(String[] commentPlugins) {
+        this.enabledCommentPlugins = commentPlugins.clone();
     }
 
     public void setServletRequest(HttpServletRequest req) {
