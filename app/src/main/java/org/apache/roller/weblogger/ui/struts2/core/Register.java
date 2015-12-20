@@ -23,6 +23,9 @@ package org.apache.roller.weblogger.ui.struts2.core;
 import java.util.TimeZone;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+
+import com.opensymphony.xwork2.validator.annotations.EmailValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -283,10 +286,12 @@ public class Register extends UIAction implements ServletRequestAware {
             
         return SUCCESS;
     }
-    
-    
+
+
+    @Validations(
+            emails = { @EmailValidator(fieldName="bean.emailAddress", key="Register.error.emailAddressBad")}
+    )
     public void myValidate() {
-        
         // if using external auth, we don't want to error on empty password/username from HTML form.
         if (authMethod == AuthMethod.LDAP) {
             // store an unused marker in the Roller DB for the passphrase in
@@ -316,7 +321,11 @@ public class Register extends UIAction implements ServletRequestAware {
         if (!safe.equals(bean.getUserName()) ) {
             addError("error.add.user.badUserName");
         }
-        
+
+        if (StringUtils.isEmpty(bean.getEmailAddress())) {
+            addError("Register.error.emailAddressNull");
+        }
+
         if (AuthMethod.ROLLERDB.name().equals(getAuthMethod())
                 && StringUtils.isEmpty(bean.getPasswordText())) {
                 addError("error.add.user.passwordEmpty");

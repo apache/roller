@@ -49,7 +49,7 @@
                     <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
-                    <s:textfield name="bean.name" size="50"/>
+                    <s:textfield name="bean.name" size="50" maxlength="255"/>
                 </s:else>
             </td>
             <td class="description"></td>
@@ -67,8 +67,8 @@
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
-                    <s:textfield name="bean.link" size="50" onkeyup="updatePageURLDisplay()" />
-                    <br />
+                    <s:textfield name="bean.link" size="50" maxlength="255" onkeyup="updatePageURLDisplay()" />
+                    <br/>
                     <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red"><s:property value="bean.link" /></span>
                     <s:if test="template.link != null">
                         [<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]
@@ -79,14 +79,14 @@
         </s:if>
         <tr>
             <td class="label" valign="top" style="padding-top: 4px">
-                <s:text name="generic.description" />&nbsp;</td>
+                <s:text name="generic.description"/>&nbsp;</td>
             <td class="field">
                 <s:if test="template.required">
                     <s:textarea name="bean.description" cols="50" rows="2" 
                         readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
-                    <s:textarea name="bean.description" cols="50" rows="2" />
+                    <s:textarea name="bean.description" cols="50" rows="2" maxlength="255"/>
                 </s:else>
             </td>
             <td class="description"></td>

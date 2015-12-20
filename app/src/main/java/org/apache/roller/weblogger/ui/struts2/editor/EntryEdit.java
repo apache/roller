@@ -311,6 +311,8 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     private String save() {
+        myValidate();
+
         if (!hasActionErrors()) {
             try {
                 WeblogEntry weblogEntry = getEntry();
@@ -419,6 +421,18 @@ public final class EntryEdit extends UIAction {
             getBean().setStatus(null);
         }
         return INPUT;
+    }
+
+    public void myValidate() {
+        if (StringUtils.isEmpty(bean.getTitle())) {
+            addError("Entry.error.titleNull");
+        }
+        if (StringUtils.isEmpty(bean.getCategoryId())) {
+            addError("Entry.error.categoryNull");
+        }
+        if (StringUtils.isEmpty(bean.getText())) {
+            addError("Entry.error.textNull");
+        }
     }
 
     public WeblogEntry getBean() {
@@ -552,7 +566,7 @@ public final class EntryEdit extends UIAction {
                     .getWeblogEntryPlugins(getActionWeblog());
 
             if (plugins.size() > 0) {
-                availablePlugins = new ArrayList<WeblogEntryPlugin>();
+                availablePlugins = new ArrayList<>();
                 for (WeblogEntryPlugin plugin : plugins.values()) {
                     availablePlugins.add(plugin);
                 }

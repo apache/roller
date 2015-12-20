@@ -20,6 +20,8 @@
 */
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import com.opensymphony.xwork2.validator.annotations.EmailValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -175,22 +177,30 @@ public class CreateWeblog extends UIAction {
         
         return INPUT;
     }
-    
-    
+
+    @Validations(
+            emails = { @EmailValidator(fieldName="bean.emailAddress", key="Register.error.emailAddressBad")}
+    )
     public void myValidate()  {
-        
+        if (StringUtils.isEmpty(bean.getName())) {
+            addError("CreateWeblog.error.nameNull");
+        }
+        if (StringUtils.isEmpty(bean.getHandle())) {
+            addError("CreateWeblog.error.handleNull");
+        }
+        if (StringUtils.isEmpty(bean.getEmailAddress())) {
+            addError("Register.error.emailAddressNull");
+        }
+
+        // make sure handle only contains safe characters
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }
-        
-        // make sure handle only contains safe characters
         String safe = CharSetUtils.keep(getBean().getHandle(), allowed);
         if (!safe.equals(getBean().getHandle()) ) {
             addError("createWeblog.error.invalidHandle");
         }
-        
-        // make sure theme was specified and is a valid value
         
         // make sure handle isn't already taken
         if(!StringUtils.isEmpty(getBean().getHandle())) {

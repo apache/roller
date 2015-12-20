@@ -21,6 +21,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import com.opensymphony.xwork2.validator.annotations.UrlValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -134,7 +136,16 @@ public class BookmarkEdit extends UIAction {
         return INPUT;
     }
 
+    @Validations(
+            urls ={ @UrlValidator(fieldName="formBean.url", key="Bookmark.error.urlBad")}
+    )
     public void myValidate() {
+        if (StringUtils.isEmpty(formBean.getName())) {
+            addError("Bookmark.error.nameNull");
+        }
+        if (StringUtils.isEmpty(formBean.getUrl())) {
+            addError("Bookmark.error.urlNull");
+        }
         // if name new or changed, check new name doesn't already exist
         if ((isAdd() || !getFormBean().getName().equals(bookmark.getName()))
                 && bookmark.getWeblog().hasBookmark(getFormBean().getName())) {
