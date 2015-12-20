@@ -36,15 +36,15 @@
         </span>
     </h3>
     <div>
-        <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
+        <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5" onBlur="this.value=this.value.trim()"/>
     </div>
     <h3><s:text name="weblogEdit.summary"/><tags:help key="weblogEdit.summary.tooltip"/></h3>
     <div>
-        <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6"/>
+        <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6" onBlur="this.value=this.value.trim()"/>
     </div>
     <h3><s:text name="weblogEdit.notes"/><tags:help key="weblogEdit.notes.tooltip"/></h3>
     <div>
-        <s:textarea id="edit_notes" name="bean.notes" cols="75" rows="10" cssStyle="width: 100%" tabindex="7"/>
+        <s:textarea id="edit_notes" name="bean.notes" cols="75" rows="10" cssStyle="width: 100%" tabindex="7" onBlur="this.value=this.value.trim()"/>
     </div>
 </div>
 

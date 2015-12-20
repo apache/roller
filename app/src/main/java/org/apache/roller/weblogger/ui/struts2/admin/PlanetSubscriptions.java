@@ -101,14 +101,16 @@ public class PlanetSubscriptions extends UIAction {
         
         if(!hasActionErrors()) {
             try {
+                subUrl = subUrl.trim();
+
                 // check if this subscription already exists before adding it
-                Subscription sub = planetManager.getSubscription(planet, getSubUrl());
+                Subscription sub = planetManager.getSubscription(planet, subUrl);
 
                 if (sub == null) {
-                    LOGGER.debug("Adding New Subscription - " + getSubUrl());
+                    LOGGER.debug("Adding New Subscription - " + subUrl);
 
                     // sub doesn't exist yet, so we need to fetch it
-                    sub = feedProcessor.fetchSubscription(getSubUrl());
+                    sub = feedProcessor.fetchSubscription(subUrl);
                     sub.setPlanet(planet);
 
                     // save new sub
@@ -122,7 +124,7 @@ public class PlanetSubscriptions extends UIAction {
                     WebloggerFactory.flush();
 
                     // clear field after success
-                    setSubUrl(null);
+                    subUrl = null;
 
                     addMessage("planetSubscription.success.saved");
                 } else {

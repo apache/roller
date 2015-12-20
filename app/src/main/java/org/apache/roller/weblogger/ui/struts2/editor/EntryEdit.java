@@ -320,14 +320,14 @@ public final class EntryEdit extends UIAction {
                 weblogEntry.setPubTime(calculatePubTime());
 
                 // copy data to pojo
-                weblogEntry.setTitle(bean.getTitle());
+                weblogEntry.setTitle(bean.getTitle().trim());
                 weblogEntry.setStatus(bean.getStatus());
-                weblogEntry.setText(bean.getText());
-                weblogEntry.setSummary(bean.getSummary());
-                weblogEntry.setNotes(bean.getNotes());
-                weblogEntry.setTagsAsString(bean.getTagsAsString());
-                weblogEntry.setSearchDescription(bean.getSearchDescription());
-                weblogEntry.setEnclosureUrl(bean.getEnclosureUrl());
+                weblogEntry.setText(bean.getText().trim());
+                weblogEntry.setSummary(bean.getSummary().trim());
+                weblogEntry.setNotes(bean.getNotes().trim());
+                weblogEntry.setTagsAsString(bean.getTagsAsString().trim());
+                weblogEntry.setSearchDescription(bean.getSearchDescription().trim());
+                weblogEntry.setEnclosureUrl(bean.getEnclosureUrl().trim());
                 weblogEntry.setEnclosureType(bean.getEnclosureType());
                 weblogEntry.setEnclosureLength(bean.getEnclosureLength());
                 weblogEntry.setCategory(bean.getCategory());

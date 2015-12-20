@@ -37,13 +37,13 @@
     
     <div class="formrow">
         <label for="title" class="formrow" /><s:text name="planets.title" /></label>
-        <s:textfield name="bean.title" size="40" maxlength="255" />
+        <s:textfield name="bean.title" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/>
         <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planets.tip.title" />' />
     </div>
     
     <div class="formrow">
         <label for="handle" class="formrow" /><s:text name="planets.handle" /></label>
-        <s:textfield name="bean.handle" size="40" maxlength="255" />
+        <s:textfield name="bean.handle" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/>
         <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planets.tip.handle" />' />
     </div>
     

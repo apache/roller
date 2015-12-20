@@ -46,20 +46,20 @@ function handlePreview(handle) {
 
 <tr>
     <td class="label"><label for="name" /><s:text name="generic.name" /></label></td>
-    <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" /></td>
+    <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/></td>
     <td class="description"><s:text name="createWebsite.tip.name" /></td>
 </tr>
 
 <tr>
         <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
-    <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" /></td>
+    <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
     <td class="description"><s:text name="createWebsite.tip.description" /></td>
 </tr>
 
 <tr>
     <td class="label"><label for="handle" /><s:text name="createWebsite.handle" /></label></td>
     <td class="field">
-        <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" /><br />
+        <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" onBlur="this.value=this.value.trim()"/><br />
         <span style="text-size:70%">
             <s:text name="createWebsite.weblogUrl" />:&nbsp;
             <s:property value="absoluteSiteURL" />/<span id="handlePreview" style="color:red"><s:if test="bean.handle != null"><s:property value="bean.handle"/></s:if><s:else>handle</s:else></span>
@@ -70,7 +70,7 @@ function handlePreview(handle) {
 
 <tr>
     <td class="label"><label for="emailAddress" /><s:text name="createWebsite.emailAddress" /></label></td>
-    <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="50" /></td>
+    <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="50" onBlur="this.value=this.value.trim()"/></td>
     <td class="description"><s:text name="createWebsite.tip.email" /></td>
 </tr>
 
@@ -99,7 +99,7 @@ function handlePreview(handle) {
         <br />
         <p>{{ selectedTheme.description }}</p>
         <br />
-        <img src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
+        <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
     </td>
     <td class="description"><s:text name="createWebsite.tip.theme" /></td>
 </tr>

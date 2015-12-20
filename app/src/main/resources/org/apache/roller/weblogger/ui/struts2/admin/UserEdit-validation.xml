@@ -55,11 +55,11 @@
         <field-validator type="requiredstring">
             <message key="Register.error.timeZoneNull">unspecified key</message>
         </field-validator>
-        
+
         <field-validator type="stringlength">
             <param name="maxLength">20</param>
             <message key="Register.error.timeZoneSize">unspecified key</message>
         </field-validator>
     </field>
-    
+
 </validators>

@@ -78,9 +78,6 @@ public class MediaFileView extends UIAction {
     // Sort options for search results.
     private static List<Pair<String, String>> SORT_OPTIONS = null;
 
-    // Path of new directory to be created.
-    private String newDirectoryPath;
-
     // a new directory the user wishes to view
     private String viewDirectoryId = null;
 
@@ -128,6 +125,7 @@ public class MediaFileView extends UIAction {
             addError("mediaFile.error.view.dirNameInvalid");
         } else {
             try {
+                this.newDirectoryName = this.newDirectoryName.trim();
                 log.debug("Creating new directory - " + this.newDirectoryName);
                 if (!getActionWeblog().hasMediaDirectory(this.newDirectoryName)) {
                     // Create
@@ -395,14 +393,6 @@ public class MediaFileView extends UIAction {
 
     public List<Pair<String, String>> getSortOptions() {
         return SORT_OPTIONS;
-    }
-
-    public String getNewDirectoryPath() {
-        return newDirectoryPath;
-    }
-
-    public void setNewDirectoryPath(String newDirectoryPath) {
-        this.newDirectoryPath = newDirectoryPath;
     }
 
     public String getViewDirectoryId() {

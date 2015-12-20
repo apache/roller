@@ -160,12 +160,12 @@ public class Register extends UIAction implements ServletRequestAware {
                 // copy form data into new user pojo
                 User ud = new User();
                 ud.setId(WebloggerCommon.generateUUID());
-                ud.setScreenName(bean.getScreenName());
-                ud.setFullName(bean.getFullName());
-                ud.setEmailAddress(bean.getEmailAddress());
+                ud.setUserName(bean.getUserName().trim());
+                ud.setScreenName(bean.getScreenName().trim());
+                ud.setFullName(bean.getFullName().trim());
+                ud.setEmailAddress(bean.getEmailAddress().trim());
                 ud.setLocale(bean.getLocale());
                 ud.setTimeZone(bean.getTimeZone());
-                ud.setUserName(bean.getUserName());
                 ud.setDateCreated(new java.util.Date());
                 ud.setEnabled(Boolean.TRUE);
                 ud.setGlobalRole(GlobalRole.BLOGGER);
@@ -173,7 +173,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 // If user set both password and passwordConfirm then reset password
                 if (!StringUtils.isEmpty(bean.getPasswordText()) &&
                         !StringUtils.isEmpty(bean.getPasswordConfirm())) {
-                    ud.resetPassword(bean.getPasswordText());
+                    ud.resetPassword(bean.getPasswordText().trim());
                     bean.setPasswordText(null);
                     bean.setPasswordConfirm(null);
                 }

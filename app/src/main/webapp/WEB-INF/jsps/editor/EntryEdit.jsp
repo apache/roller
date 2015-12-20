@@ -66,7 +66,7 @@
                 <label for="title"><s:text name="weblogEdit.title" /></label>
             </td>
             <td>
-                <s:textfield name="bean.title" size="70" maxlength="255" tabindex="1" style="width:60%"/>
+                <s:textfield name="bean.title" size="70" maxlength="255" tabindex="1" onBlur="this.value=this.value.trim()" style="width:60%"/>
             </td>
         </tr>
 
@@ -140,7 +140,8 @@
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" style="width:30%"/>
+                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70"
+                maxlength="255" tabindex="3" style="width:30%" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
     </table>
@@ -221,11 +222,11 @@
 		<table>
 			<tr>
 				<td><s:text name="weblogEdit.searchDescription" />:<tags:help key="weblogEdit.searchDescription.tooltip"/></td>
-				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" style="width:100%"/> </td>
+				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/> </td>
 			</tr>
             <tr>
 				<td><s:text name="weblogEdit.enclosureURL" />:<tags:help key="weblogEdit.enclosureURL.tooltip"/></td>
-				<td><s:textfield name="bean.enclosureUrl" size="40" maxlength="255" style="width:100%"/></td>
+				<td><s:textfield name="bean.enclosureUrl" size="40" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/></td>
 			</tr>
             <s:if test="actionName == 'entryEdit'">
                 <tr>
@@ -283,7 +284,7 @@
         <h2><s:text name="weblogEdit.trackback" /></h2>
         <s:text name="weblogEdit.trackbackUrl" />
         <br />
-        <s:textfield name="trackbackUrl" size="80" maxlength="255" style="width:35%"/>
+        <s:textfield name="trackbackUrl" size="80" maxlength="255" style="width:35%" onBlur="this.value=this.value.trim()"/>
 
         <s:submit value="%{getText('weblogEdit.sendTrackback')}" action="entryEdit!trackback" />
     </s:if>

@@ -117,7 +117,7 @@ public class CategoryEdit extends UIAction {
         if(!hasActionErrors()) {
             try {
                 // copy updated attributes
-                category.setName(formBean.getName());
+                category.setName(formBean.getName().trim());
                 // save changes
                 if (isAdd()) {
                     category.calculatePosition();

@@ -61,7 +61,7 @@
                   <%-- "string" type means use a simple textbox --%>
                   <s:elseif test="#pd.type == 'string'">
                     <td class="field"><input type="text" name='<s:property value="#pd.name"/>'
-                        value='<s:property value="properties[#pd.name].value"/>' size="35" /></td>
+                        value='<s:property value="properties[#pd.name].value"/>' size="35" onBlur="this.value=this.value.trim()"/></td>
                   </s:elseif>
                   
                   <%-- "text" type means use a full textarea --%>
@@ -69,7 +69,8 @@
                     <td class="field">
                       <textarea name='<s:property value="#pd.name"/>'
                                 rows="<s:property value="#pd.rows"/>"
-                                cols="<s:property value="#pd.cols"/>"><s:property value="properties[#pd.name].value"/>
+                                cols="<s:property value="#pd.cols"/>" onBlur="this.value=this.value.trim()">
+                                <s:property value="properties[#pd.name].value"/>
                       </textarea>
                     </td>
                   </s:elseif>
@@ -89,7 +90,7 @@
                   <%-- if it's something we don't understand then use textbox --%>
                   <s:else>
                     <td class="field"><input type="text"
-                        name='<s:property value="#pd.name"/>' size="50" /></td>
+                        name='<s:property value="#pd.name"/>' size="50" onBlur="this.value=this.value.trim()"/></td>
                   </s:else>
                 
                 <td class="description"><%-- <s:text name="" /> --%></td>

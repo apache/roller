@@ -102,8 +102,8 @@ public class Planets extends UIAction {
                 }
 
                 // copy in submitted data
-                aPlanet.setTitle(bean.getTitle());
-                aPlanet.setHandle(bean.getHandle());
+                aPlanet.setTitle(bean.getTitle().trim());
+                aPlanet.setHandle(bean.getHandle().trim());
 
                 // save and flush
                 planetManager.savePlanet(aPlanet);

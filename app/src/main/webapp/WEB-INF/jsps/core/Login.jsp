@@ -39,14 +39,14 @@ String securityCheckUrl = "/roller_j_security_check";
         <tr>
             <td width="20%" align="right"><s:text name="loginPage.userName" /></td>
             <td width="80%">
-                <input type="text" name="username" id="j_username" size="25" />
+                <input type="text" name="username" id="j_username" size="25" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 
         <tr>
             <td width="20%" align="right"><s:text name="loginPage.password" /></td>
             <td width="80%">
-                <input type="password" name="password" id="j_password" size="20" />
+                <input type="password" name="password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 

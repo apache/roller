@@ -110,9 +110,9 @@ public class BookmarkEdit extends UIAction {
 
         if(!hasActionErrors()) {
             try {
-                bookmark.setName(formBean.getName());
-                bookmark.setDescription(formBean.getDescription());
-                bookmark.setUrl(formBean.getUrl());
+                bookmark.setName(formBean.getName().trim());
+                bookmark.setDescription(formBean.getDescription().trim());
+                bookmark.setUrl(formBean.getUrl().trim());
                 if (isAdd()) {
                     bookmark.calculatePosition();
                     getActionWeblog().addBookmark(bookmark);

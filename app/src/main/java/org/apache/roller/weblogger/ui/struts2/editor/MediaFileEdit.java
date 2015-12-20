@@ -183,11 +183,11 @@ public class MediaFileEdit extends UIAction {
             try {
                 if (isAdd()) {
                     MediaFile mediaFile = new MediaFile();
-                    mediaFile.setName(bean.getName());
-                    mediaFile.setAltText(bean.getAltText());
-                    mediaFile.setTitleText(bean.getTitleText());
-                    mediaFile.setAnchor(bean.getAnchor());
-                    mediaFile.setNotes(bean.getNotes());
+                    mediaFile.setName(bean.getName().trim());
+                    mediaFile.setAltText(bean.getAltText().trim());
+                    mediaFile.setTitleText(bean.getTitleText().trim());
+                    mediaFile.setAnchor(bean.getAnchor().trim());
+                    mediaFile.setNotes(bean.getNotes().trim());
                     String fileName = getUploadedFileFileName();
 
                     // make sure fileName is valid

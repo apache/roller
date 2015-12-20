@@ -101,8 +101,8 @@ public class PingTargetEdit extends UIAction {
         if (!hasActionErrors()) {
             try {
                 // copy data from form into ping target
-                pingTarget.setName(bean.getName());
-                pingTarget.setPingUrl(bean.getPingUrl());
+                pingTarget.setName(bean.getName().trim());
+                pingTarget.setPingUrl(bean.getPingUrl().trim());
 
                 pingTargetManager.savePingTarget(pingTarget);
                 WebloggerFactory.flush();

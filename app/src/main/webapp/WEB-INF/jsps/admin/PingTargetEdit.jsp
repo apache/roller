@@ -39,13 +39,13 @@
     </s:if>
 
     <div class="formrow">
-       <label for="name" class="formrow"><s:text name="generic.name" /></label>
-       <s:textfield name="bean.name" size="30" maxlength="30" style="width:50%"/>
+       <label for="name" class="formrow"><s:text name="generic.name"/></label>
+       <s:textfield name="bean.name" size="30" maxlength="30" style="width:50%" onBlur="this.value=this.value.trim()"/>
     </div>
 
     <div class="formrow">
-       <label for="pingUrl" class="formrow"><s:text name="pingTarget.pingUrl" /></label>
-       <s:textfield name="bean.pingUrl" size="100" maxlength="255" style="width:50%"/>
+       <label for="pingUrl" class="formrow"><s:text name="pingTarget.pingUrl"/></label>
+       <s:textfield name="bean.pingUrl" size="100" maxlength="255" style="width:50%" onBlur="this.value=this.value.trim()"/>
     </div>
 
     <p/>
