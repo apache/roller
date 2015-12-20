@@ -48,7 +48,7 @@
     
     <div class="sideformrow">
         <label for="searchString" class="sideformrow"><s:text name="commentManagement.searchString" />:</label>   
-        <s:textfield name="bean.searchString" size="15" />
+        <s:textfield name="bean.searchString" size="15" onBlur="this.value=this.value.trim()"/>
     </div>
     <br />
     <br />

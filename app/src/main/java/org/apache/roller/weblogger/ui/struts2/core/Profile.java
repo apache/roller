@@ -87,9 +87,9 @@ public class Profile extends UIAction {
             User existingUser = getAuthenticatedUser();
 
             // copy updated attributes
-            existingUser.setScreenName(bean.getScreenName());
-            existingUser.setFullName(bean.getFullName());
-            existingUser.setEmailAddress(bean.getEmailAddress());
+            existingUser.setScreenName(bean.getScreenName().trim());
+            existingUser.setFullName(bean.getFullName().trim());
+            existingUser.setEmailAddress(bean.getEmailAddress().trim());
             existingUser.setLocale(bean.getLocale());
             existingUser.setTimeZone(bean.getTimeZone());
 
@@ -97,7 +97,7 @@ public class Profile extends UIAction {
             if (!StringUtils.isEmpty(bean.getPasswordText()) &&
                     !StringUtils.isEmpty(bean.getPasswordConfirm())) {
                 try {
-                    existingUser.resetPassword(bean.getPasswordText());
+                    existingUser.resetPassword(bean.getPasswordText().trim());
                     bean.setPasswordText(null);
                     bean.setPasswordConfirm(null);
                 } catch (WebloggerException e) {

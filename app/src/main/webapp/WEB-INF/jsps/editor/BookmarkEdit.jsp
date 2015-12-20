@@ -56,17 +56,17 @@
         
         <tr>
             <td><s:text name="generic.name" /></td>
-            <td><s:textfield name="formBean.name" maxlength="255" size="70" style="width:50%"/></td>
+            <td><s:textfield name="formBean.name" maxlength="255" size="70" style="width:50%" onBlur="this.value=this.value.trim()"/></td>
         </tr>
         
         <tr>
             <td><s:text name="bookmarkForm.url" /></td>
-            <td><s:textfield name="formBean.url" maxlength="255" size="70" style="width:50%"/></td>
+            <td><s:textfield name="formBean.url" maxlength="255" size="70" style="width:50%" onBlur="this.value=this.value.trim()"/></td>
         </tr>
         
         <tr>
             <td><s:text name="generic.description" /></td>
-            <td><s:textfield name="formBean.description" maxlength="255" size="70" style="width:50%"/></td>
+            <td><s:textfield name="formBean.description" maxlength="255" size="70" style="width:50%" onBlur="this.value=this.value.trim()"/></td>
         </tr>
 
     </table>

@@ -56,7 +56,7 @@
                     <div class="sideformrow">
                         <label for="tags" class="sideformrow">
                         <s:text name="weblogEntryQuery.label.tags" /></label>
-                        <s:textfield name="bean.tagsAsString" size="14" />
+                        <s:textfield name="bean.tagsAsString" onBlur="this.value=this.value.trim()" size="14" />
                     </div>
                     <br />
                     <br />
@@ -66,8 +66,8 @@
 
                     <div class="sideformrow">
                         <label for="text" class="sideformrow">
-                        <s:text name="weblogEntryQuery.label.text" /></label>
-                        <s:textfield name="bean.text" size="14" />
+                        <s:text name="weblogEntryQuery.label.text"/></label>
+                        <s:textfield name="bean.text" size="14" onBlur="this.value=this.value.trim()"/>
                     </div>
                     <br />
                     <br />

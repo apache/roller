@@ -57,7 +57,7 @@
                     <s:textfield name="bean.userName" size="30" maxlength="30" readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
-                    <s:textfield name="bean.userName" size="30" maxlength="30" />
+                    <s:textfield name="bean.userName" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/>
                 </s:else>
             </td>
             <td class="description">
@@ -72,27 +72,27 @@
 
         <tr>
             <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-            <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
+            <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/></td>
             <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
         </tr>
         
         <tr>
             <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-            <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
+            <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/></td>
             <td class="description"><s:text name="userAdmin.tip.fullName" /></td>
         </tr>
         
         <s:if test="authMethod == 'ROLLERDB'">
             <tr>
                 <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-                <td class="field"><s:password name="bean.password" size="20" maxlength="20" /></td>
+                <td class="field"><s:password name="bean.password" size="20" maxlength="20" onBlur="this.value=this.value.trim()"/></td>
                 <td class="description"><s:text name="userAdmin.tip.password" /></td>
             </tr>
         </s:if>
 
         <tr>
             <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" /></td>
+            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" onBlur="this.value=this.value.trim()"/></td>
             <td class="description"><s:text name="userAdmin.tip.email" /></td>
         </tr>
         

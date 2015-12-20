@@ -100,7 +100,7 @@
                 <label for="status"><s:text name="generic.name" /></label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="50" maxlength="255" style="width:30%"/>
+                <s:textfield name="bean.name" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
             </td>
         </tr>
 
@@ -109,7 +109,7 @@
                 <label for="status"><s:text name="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
             </td>
             <td>
-                <s:textfield name="bean.altText" size="50" maxlength="255" style="width:30%"/>
+                <s:textfield name="bean.altText" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
             </td>
         </tr>
 
@@ -118,7 +118,7 @@
                 <label for="status"><s:text name="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
             </td>
             <td>
-                <s:textfield name="bean.titleText" size="50" maxlength="255" style="width:30%"/>
+                <s:textfield name="bean.titleText" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
             </td>
         </tr>
 
@@ -127,7 +127,7 @@
                 <label for="status"><s:text name="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
             </td>
             <td>
-                <s:textfield name="bean.anchor" size="50" maxlength="255" style="width:30%"/>
+                <s:textfield name="bean.anchor" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
             </td>
         </tr>
 
@@ -136,7 +136,7 @@
                 <label for="status"><s:text name="generic.notes"/></label>
             </td>
             <td>
-                <s:textarea name="bean.notes" cols="50" rows="5" maxlength="255" style="width:30%"/>
+                <s:textarea name="bean.notes" cols="50" rows="5" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
             </td>
        </tr>
 <s:if test="actionName == 'mediaFileEdit'">

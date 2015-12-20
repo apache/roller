@@ -52,7 +52,7 @@
         
         <tr>
             <td><s:text name="generic.name" /></td>
-            <td><s:textfield name="formBean.name" size="70" maxlength="255" style="width:50%"/></td>
+            <td><s:textfield name="formBean.name" size="70" maxlength="255" style="width:50%" onBlur="this.value=this.value.trim()"/></td>
         </tr>
         
     </table>

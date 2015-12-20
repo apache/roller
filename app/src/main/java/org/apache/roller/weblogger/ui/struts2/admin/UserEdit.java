@@ -145,9 +145,9 @@ public class UserEdit extends UIAction {
         myValidate();
         
         if (!hasActionErrors()) {
-            user.setScreenName(bean.getScreenName());
-            user.setFullName(bean.getFullName());
-            user.setEmailAddress(bean.getEmailAddress());
+            user.setScreenName(bean.getScreenName().trim());
+            user.setFullName(bean.getFullName().trim());
+            user.setEmailAddress(bean.getEmailAddress().trim());
             user.setLocale(bean.getLocale());
             user.setTimeZone(bean.getTimeZone());
             user.setEnabled(bean.getEnabled());
@@ -156,7 +156,7 @@ public class UserEdit extends UIAction {
             // reset password if set
             if (!StringUtils.isEmpty(bean.getPassword())) {
                 try {
-                    user.resetPassword(bean.getPassword());
+                    user.resetPassword(bean.getPassword().trim());
                 } catch (WebloggerException e) {
                     addMessage("yourProfile.passwordResetError");
                 }
@@ -165,7 +165,7 @@ public class UserEdit extends UIAction {
             try {
                 if (isAdd()) {
                     // fields not copied over from above copyTo():
-                    user.setUserName(bean.getUserName());
+                    user.setUserName(bean.getUserName().trim());
                     user.setDateCreated(new java.util.Date());
                     user.setGlobalRole(bean.getGlobalRole());
                     // save new user
@@ -215,8 +215,7 @@ public class UserEdit extends UIAction {
             } else if (!safe.equals(bean.getUserName()) ) {
                 addError("error.add.user.badUserName");
             }
-            if (authMethod == AuthMethod.ROLLERDB
-                    && StringUtils.isEmpty(bean.getPassword())) {
+            if (authMethod == AuthMethod.ROLLERDB && StringUtils.isEmpty(bean.getPassword())) {
                 addError("error.add.user.missingPassword");
             }
         }

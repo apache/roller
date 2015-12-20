@@ -46,7 +46,7 @@
                     <s:text name="mediaFileView.addDirectory" /><br />
                     <div style="padding-left:2em; padding-top:1em">
                         <s:text name="mediaFileView.directoryName" />
-                        <input type="text" id="newDirectoryName" name="newDirectoryName" size="10" maxlength="25" />
+                        <input type="text" id="newDirectoryName" name="newDirectoryName" size="10" maxlength="25" onBlur="this.value=this.value.trim()"/>
                         <input type="button" id="newDirectoryButton"
                             value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
                     </div>
