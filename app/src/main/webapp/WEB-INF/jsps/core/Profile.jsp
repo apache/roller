@@ -47,7 +47,7 @@
         
         <tr>
             <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" onBlur="this.value=this.value.trim()"/></td>
+            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="50" onBlur="this.value=this.value.trim()"/></td>
             <td class="description"><s:text name="userRegister.tip.email" /></td>
         </tr>
         

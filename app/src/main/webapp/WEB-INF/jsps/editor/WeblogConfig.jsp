@@ -40,7 +40,7 @@
     
     <tr>
         <td class="label"><s:text name="websiteSettings.websiteTitle" />
-        <td class="field"><s:textfield name="bean.name" size="40"/></td>
+        <td class="field"><s:textfield name="bean.name" size="40" maxlength="255"/></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
 
@@ -58,7 +58,7 @@
     
     <tr>
         <td class="label"><s:text name="websiteSettings.about" /></td>
-        <td class="field"><s:textarea name="bean.about" rows="3" cols="40"/></td>
+        <td class="field"><s:textarea name="bean.about" rows="3" cols="40" maxlength="255"/></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
@@ -201,7 +201,7 @@
 
         <tr>
             <td class="label"><s:text name="websiteSettings.analyticsTrackingCode" /></td>
-            <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70"/></td>
+            <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70" maxlength="1200"/></td>
         </tr>
     </s:if>
 

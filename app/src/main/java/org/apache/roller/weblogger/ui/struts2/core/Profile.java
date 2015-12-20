@@ -20,6 +20,8 @@
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import com.opensymphony.xwork2.validator.annotations.EmailValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -119,7 +121,19 @@ public class Profile extends UIAction {
         return INPUT;
     }
 
+    @Validations(
+            emails = { @EmailValidator(fieldName="bean.emailAddress", key="Register.error.emailAddressBad")}
+    )
     public void myValidate() {
+        if (StringUtils.isEmpty(bean.getScreenName())) {
+            addError("Register.error.screenNameNull");
+        }
+        if (StringUtils.isEmpty(bean.getFullName())) {
+            addError("Register.error.fullNameNull");
+        }
+        if (StringUtils.isEmpty(bean.getEmailAddress())) {
+            addError("Register.error.emailAddressNull");
+        }
         // check that passwords match if they were specified (w/StringUtils.equals, null == null)
         if (!StringUtils.equals(bean.getPasswordText(), bean.getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");

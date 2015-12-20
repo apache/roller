@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -217,9 +218,11 @@ public class WeblogConfig extends UIAction {
     }
     
     
-    // validation
     private void myValidate() {
-        
+        if (StringUtils.isEmpty(bean.getName())) {
+            addError("WeblogConfig.error.nameNull");
+        }
+
         // make sure user didn't enter an invalid entry display count
         int maxEntries = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
         if(bean.getEntryDisplayCount() > maxEntries) {

@@ -144,6 +144,9 @@ public class CategoryEdit extends UIAction {
     }
 
     public void myValidate() {
+        if (StringUtils.isEmpty(formBean.getName())) {
+            addError("Category.error.nameNull");
+        }
         // make sure new name is not a duplicate of an existing category
         if ((isAdd() || !category.getName().equals(formBean.getName())) &&
             category.getWeblog().hasCategory(formBean.getName())) {

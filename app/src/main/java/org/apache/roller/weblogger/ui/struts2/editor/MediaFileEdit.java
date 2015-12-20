@@ -125,19 +125,22 @@ public class MediaFileEdit extends UIAction {
      * Validates media file to be added.
      */
     public void myValidate() {
-        if (isAdd()) {
-            // make sure uploads are enabled
-            if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
-                addError("error.upload.disabled");
-            }
-            if (uploadedFile == null || !uploadedFile.exists()) {
-                addError("error.upload.nofile");
-            }
+        if (StringUtils.isEmpty(bean.getName())) {
+            addError("MediaFile.error.nameNull");
         } else {
-            MediaFile fileWithSameName = getDirectory().getMediaFile(getBean().getName());
-            if (fileWithSameName != null
-                    && !fileWithSameName.getId().equals(getMediaFileId())) {
-                addError("MediaFile.error.duplicateName", getBean().getName());
+            if (isAdd()) {
+                // make sure uploads are enabled
+                if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
+                    addError("error.upload.disabled");
+                }
+                if (uploadedFile == null || !uploadedFile.exists()) {
+                    addError("error.upload.nofile");
+                }
+            } else {
+                MediaFile fileWithSameName = getDirectory().getMediaFile(getBean().getName());
+                if (fileWithSameName != null && !fileWithSameName.getId().equals(getMediaFileId())) {
+                    addError("MediaFile.error.duplicateName", getBean().getName());
+                }
             }
         }
     }

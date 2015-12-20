@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import com.opensymphony.xwork2.validator.annotations.EmailValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -202,26 +204,33 @@ public class UserEdit extends UIAction {
         return actionName.equals("createUser");
     }
 
+    @Validations(
+            emails = { @EmailValidator(fieldName="bean.emailAddress", key="Register.error.emailAddressBad")}
+    )
     private void myValidate() {
+        if (StringUtils.isEmpty(bean.getUserName())) {
+            addError("error.add.user.missingUserName");
+        }
+        if (StringUtils.isEmpty(bean.getScreenName())) {
+            addError("Register.error.screenNameNull");
+        }
+        if (StringUtils.isEmpty(bean.getFullName())) {
+            addError("Register.error.fullNameNull");
+        }
+        if (StringUtils.isEmpty(bean.getEmailAddress())) {
+            addError("Register.error.emailAddressNull");
+        }
         if (isAdd()) {
             String allowed = WebloggerConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.trim().length() == 0) {
                 allowed = Register.DEFAULT_ALLOWED_CHARS;
             }
             String safe = CharSetUtils.keep(bean.getUserName(), allowed);
-
-            if (StringUtils.isEmpty(bean.getUserName())) {
-                addError("error.add.user.missingUserName");
-            } else if (!safe.equals(bean.getUserName()) ) {
+            if (!safe.equals(bean.getUserName()) ) {
                 addError("error.add.user.badUserName");
             }
             if (authMethod == AuthMethod.ROLLERDB && StringUtils.isEmpty(bean.getPassword())) {
                 addError("error.add.user.missingPassword");
-            }
-        }
-        else {
-            if (user.getUserName() == null) {
-                addError("userAdmin.error.userNotFound");
             }
         }
     }
