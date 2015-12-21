@@ -18,26 +18,52 @@
 <%-- This page is designed to be included in EntryEdit.jsp --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+
 <%-- ********************************************************************* --%>
-<%-- Text editors --%>
+<%-- HTML text areas for editing content and summary --%>
 
-<p class="toplabel">
+<div class="panel panel-default" id="panel-content">
+    <div class="panel-heading">
 
-</p>
-
-<div id="accordion">
-    <h3>
-        <s:text name="weblogEdit.content" />
-        <span style="font-weight:normal;float:right;">
-            <a href="#" onClick="onClickAddImage();"><s:text name="weblogEdit.insertMediaFile" /></a>
-        </span>
-    </h3>
-    <div>
-        <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
+        <h4 class="panel-title">
+        <a data-toggle="collapse" data-target="#collapseContentEditor" href="#collapseContentEditor">
+            <s:text name="weblogEdit.content"/> </a>
+        </h4>
+        
     </div>
-    <h3><s:text name="weblogEdit.summary"/><tags:help key="weblogEdit.summary.tooltip"/></h3>
-    <div>
-        <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6"/>
+    <div id="collapseContentEditor" class="panel-collapse collapse in">
+        <div class="panel-body">
+
+            <span style="font-weight:normal;float:right;">
+                <a href="#" onClick="onClickAddImage();"><s:text name="weblogEdit.insertMediaFile"/></a>
+            </span>
+                
+            <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" tabindex="5"/>
+
+        </div>
+    </div>
+</div>
+
+<%-- summary --%>
+
+<div class="panel panel-default" id="panel-summary">
+    <div class="panel-heading">
+
+        <h4 class="panel-title">
+            <a href="#collapseSummaryEditor"
+               aria-controls="collapseSummaryEditor" aria-expanded="false"
+               data-toggle="collapse" data-target="#collapseSummaryEditor" >
+               <s:text name="weblogEdit.summary"/>
+            </a>
+        </h4>
+        
+    </div>
+    <div id="collapseSummaryEditor" class="panel-collapse collapse in">
+        <div class="panel-body">
+
+            <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" tabindex="6"/>
+
+        </div>
     </div>
 </div>
 
@@ -54,6 +80,7 @@
             scrolling="auto">
     </iframe>
 </div>
+
 
 <%-- ********************************************************************* --%>
 <%-- Editor event handling, on close, on add image, etc. --%>
@@ -79,9 +106,9 @@
 
     function onSelectMediaFile(name, url, isImage) {
         $("#mediafile_edit_lightbox").dialog("close");
-        $("#mediaFileEditor").attr('src','about:blank');
+        $("#mediaFileEditor").attr('src', 'about:blank');
         if (isImage == "true") {
-            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
+            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name + '"></img></a>');
         } else {
             insertMediaFile('<a href="' + url + '">' + name + '</a>');
         }
@@ -89,13 +116,10 @@
 </script>
 
 <s:if test="editor.id == 'editor-text.jsp'">
-    <%-- Plain text editor (raw HTML entry) --%>
+
+    <%-- Media insertion for plain textarea editor --%>
 
     <script>
-        $(function() {
-            $( "#accordion" ).accordion({
-            });
-        });
         function insertMediaFile(anchorTag) {
             insertAtCursor(document.getElementById('edit_content'), anchorTag);
         }
@@ -126,9 +150,11 @@
             }
         }
     </script>
+    
 </s:if>
 <s:else>
-    <%-- Rich text editor (Xinha, see: http://trac.xinha.org/wiki/NewbieGuide) --%>
+    
+    <%-- Include the Rich text editor (Xinha, see: http://trac.xinha.org/wiki/NewbieGuide) --%>
 
     <s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-0.96.1"></s:url>
     <script>
@@ -137,6 +163,7 @@
         _editor_lang = "en";        // And the language we need to use in the editor.
         _editor_skin = "blue-look"; // If you want use a skin, add the name (of the folder) here
     </script>
+    
     <script src="<s:property value="xinhaHome" />/XinhaCore.js"></script>
 
     <script>
@@ -153,6 +180,8 @@
             });
         });
 
+        <%-- Media insertion for Xinha editor --%>
+        
         function insertMediaFile(anchorTag) {
             xinha_editors.edit_content.insertHTML(anchorTag);
         }
@@ -199,4 +228,5 @@
 
         Xinha._addEvent(window,'load', xinha_init);
     </script>
+    
 </s:else>

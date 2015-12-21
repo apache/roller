@@ -18,47 +18,49 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
-        <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle" /></title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
+    <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
 
-        <tiles:insertAttribute name="head" />     
-        <style>
-            <tiles:insertAttribute name="styles" />
-        </style>
-    </head>
-    <body>
-        
-        <div id="banner">
-            <tiles:insertAttribute name="bannerStatus" />
-        </div>
-        
-        <div id="content">
-            <div id="leftcontent_wrap">
-                <div id="leftcontent"> 
-                </div>
-            </div>
-            
-            <div id="centercontent_wrap">
-                <div id="centercontent">   
-                    <h1><s:property value="pageTitle" /></h1>
-                    <tiles:insertAttribute name="messages" /> 
-                    <tiles:insertAttribute name="content" />    
-                </div>
-            </div>
-            
-            <div id="rightcontent_wrap">
-                <div id="rightcontent"> 
-                    <tiles:insertAttribute name="sidebar" />
-                </div>
+    <tiles:insertAttribute name="head"/>
+    <style>
+        <tiles:insertAttribute name="styles" />
+    </style>
+</head>
+<body>
+
+<tiles:insertAttribute name="bannerStatus"/>
+
+<div class="row">
+    
+    <div class="col-md-3 roller-column-left">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <tiles:insertAttribute name="sidebar"/>
             </div>
         </div>
-        
-        <div id="footer">
-            <tiles:insertAttribute name="footer" />
+    </div>
+    
+    <div class="col-md-9 roller-column-right">
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h1><s:property value="pageTitle"/></h1>
+                <tiles:insertAttribute name="messages"/>
+                <tiles:insertAttribute name="content"/>
+            </div>
         </div>
-        
-    </body>
+
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <tiles:insertAttribute name="footer"/>
+    </div>
+</footer>
+
+</body>
 </html>

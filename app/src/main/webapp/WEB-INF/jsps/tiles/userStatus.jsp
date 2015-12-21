@@ -15,27 +15,24 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
+
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
-    <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
-    <tiles:insertAttribute name="head"/>
-    <style> <tiles:insertAttribute name="styles" /> </style>
-</head>
-<body>
 
-<tiles:insertAttribute name="banner"/>
-<tiles:insertAttribute name="bannerStatus"/>
+<s:if test="authenticatedUser != null">
+    <p>
+    <s:text name="mainPage.loggedInAs" />:
+    <a href="<s:url action="menu" namespace="/roller-ui" />">
+        <s:property value="authenticatedUser.userName"/>
+    </a>
+    </p>
+</s:if>
 
-<h1 class="roller-page-title"><s:property value="pageTitle"/></h1>
-<tiles:insertAttribute name="messages"/>
+<s:if test="actionWeblog != null">
+    <p>
+    <s:text name="mainPage.currentWebsite" />:
+    <a href='<s:property value="actionWeblog.absoluteURL" />'>
+        <s:property value="actionWeblog.handle" />
+    </a>
+    </p>
+</s:if>
     
-<tiles:insertAttribute name="content"/>
-
-</body>
-</html>
