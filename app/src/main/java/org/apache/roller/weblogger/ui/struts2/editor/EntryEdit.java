@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -65,14 +64,12 @@ import javax.servlet.ServletException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Edit a new or existing entry.
@@ -108,11 +105,7 @@ public final class EntryEdit extends UIAction {
         this.indexManager = indexManager;
     }
 
-    private PluginManager pluginManager;
-
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
+    private List<WeblogEntryPlugin> weblogEntryPlugins;
 
     private URLStrategy urlStrategy;
 
@@ -335,7 +328,7 @@ public final class EntryEdit extends UIAction {
                 weblogEntry.setCategory(bean.getCategory());
 
                 // join values from all plugins into a single string
-                weblogEntry.setPlugins(StringUtils.join(bean.getPlugins(), ","));
+                weblogEntry.setPlugins(bean.getPlugins());
 
                 // comment settings & right-to-left option
                 weblogEntry.setAllowComments(bean.getAllowComments());
@@ -559,24 +552,6 @@ public final class EntryEdit extends UIAction {
         }
     }
 
-    public List<WeblogEntryPlugin> getEntryPlugins() {
-        List<WeblogEntryPlugin> availablePlugins = Collections.emptyList();
-        try {
-            Map<String, WeblogEntryPlugin> plugins = pluginManager
-                    .getWeblogEntryPlugins(getActionWeblog());
-
-            if (plugins.size() > 0) {
-                availablePlugins = new ArrayList<>();
-                for (WeblogEntryPlugin plugin : plugins.values()) {
-                    availablePlugins.add(plugin);
-                }
-            }
-        } catch (Exception ex) {
-            log.error("Error getting plugins list", ex);
-        }
-        return availablePlugins;
-    }
-
     public String getEditor() {
         return getActionWeblog().getEditorPage();
     }
@@ -615,6 +590,14 @@ public final class EntryEdit extends UIAction {
      */
     public List<WeblogEntry> getRecentPendingEntries() {
         return getRecentEntries(PubStatus.PENDING, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
+    }
+
+    public List<WeblogEntryPlugin> getWeblogEntryPlugins() {
+        return weblogEntryPlugins;
+    }
+
+    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
+        this.weblogEntryPlugins = weblogEntryPlugins;
     }
 
     private List<WeblogEntry> getRecentEntries(PubStatus pubStatus, WeblogEntrySearchCriteria.SortBy sortBy) {

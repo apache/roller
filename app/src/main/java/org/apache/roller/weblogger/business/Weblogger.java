@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
@@ -35,7 +34,6 @@ public class Weblogger {
     private final IndexManager         indexManager;
     private final MediaFileManager     mediaFileManager;
     private final PingTargetManager    pingTargetManager;
-    private final PluginManager        pluginManager;
     private final PropertiesManager    propertiesManager;
     private final ThemeManager         themeManager;
     private final UserManager          userManager;
@@ -54,7 +52,6 @@ public class Weblogger {
             IndexManager         indexManager,
             MediaFileManager     mediaFileManager,
             PingTargetManager    pingTargetManager,
-            PluginManager        pluginManager,
             PropertiesManager    propertiesManager,
             ThemeManager         themeManager,
             UserManager          userManager,
@@ -66,7 +63,6 @@ public class Weblogger {
         this.indexManager        = indexManager;
         this.mediaFileManager    = mediaFileManager;
         this.pingTargetManager   = pingTargetManager;
-        this.pluginManager       = pluginManager;
         this.propertiesManager   = propertiesManager;
         this.themeManager        = themeManager;
         this.userManager         = userManager;
@@ -106,10 +102,6 @@ public class Weblogger {
 
     public PingTargetManager getPingTargetManager() {
         return pingTargetManager;
-    }
-
-    public PluginManager getPluginManager() {
-        return pluginManager;
     }
 
     public URLStrategy getUrlStrategy() {

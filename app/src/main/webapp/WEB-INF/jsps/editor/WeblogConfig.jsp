@@ -160,7 +160,7 @@
     </tr>
 
     <%-- ***** Plugins "formatting" settings ***** --%>
-    <s:if test="!pluginsList.isEmpty">
+    <s:if test="!weblogEntryPlugins.isEmpty">
         <tr>
             <td colspan="3"><h2><s:text name="websiteSettings.formatting" /></h2></td>
         </tr>
@@ -168,7 +168,7 @@
         <tr>
             <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
             <td class="field">
-                <s:checkboxlist theme="strutsoverride" list="pluginsList" name="bean.defaultPluginsArray" listKey="name" listValue="name" />
+                <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" name="bean.defaultPluginsArray" listKey="name" listValue="name" />
             
             </td>
             <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>

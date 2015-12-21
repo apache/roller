@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.business.plugins;
 
 import org.apache.roller.weblogger.WebloggerTest;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,10 +37,10 @@ import static org.junit.Assert.*;
 public class CommentPluginsTest extends WebloggerTest {
 
     @Resource
-    private PluginManager pluginManager;
+    private WeblogEntryManager weblogEntryManager;
 
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
+    public void setWeblogEntryManager(WeblogEntryManager manager) {
+        this.weblogEntryManager = manager;
     }
 
     @Before
@@ -58,7 +59,7 @@ public class CommentPluginsTest extends WebloggerTest {
         comment.setPlugins("AutoFormat Plugin");
         
         // reformat
-        String output = pluginManager.applyCommentPlugins(comment, comment.getContent());
+        String output = weblogEntryManager.applyCommentPlugins(comment, comment.getContent());
         
         // make sure it turned out how we planned
         assertEquals(convertLinesFormatted, output);        

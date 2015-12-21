@@ -245,5 +245,28 @@ public interface WeblogEntryManager {
      */    
     long getEntryCount(Weblog websiteData) throws WebloggerException;
 
+
+    /**
+     * Apply a set of weblog entry plugins to the specified string and
+     * return the results.  This method must *NOT* alter the contents of
+     * the original entry object.
+     *
+     * @param entry       Original weblog entry
+     * @param str         String to which to apply plugins
+     * @return        the transformed text
+     */
+    String applyWeblogEntryPlugins(WeblogEntry entry, String str);
+
+
+    /**
+     * Apply comment plugins.
+     *
+     * @param comment The comment to apply plugins for.
+     * @param text The text to apply the plugins to.
+     * @return String The transformed comment text.
+     */
+    String applyCommentPlugins(WeblogEntryComment comment, String text);
+
 }
+
 

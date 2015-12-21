@@ -30,6 +30,8 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -41,6 +43,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -73,6 +76,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
+
+    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<>();
+
+    private List<WeblogEntryPlugin> weblogEntryPlugins = new ArrayList<>();
 
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = new HashMap<>();
@@ -925,5 +932,48 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         return whereClause.append(expression);
     }
-    
+
+    @Override
+    public String applyWeblogEntryPlugins(WeblogEntry entry, String str) {
+        String ret = str;
+        WeblogEntry copy = new WeblogEntry(entry);
+        List<String> entryPlugins = copy.getPluginsList();
+        if (entryPlugins != null) {
+            for (WeblogEntryPlugin inPlugin : weblogEntryPlugins) {
+                if (entryPlugins.contains(inPlugin.getName())) {
+                    try {
+                        ret = inPlugin.render(entry, ret);
+                    } catch (Exception e) {
+                        LOG.error("ERROR from plugin: " + inPlugin.getName());
+                    }
+                }
+            }
+        }
+        return HTMLSanitizer.conditionallySanitize(ret);
+    }
+
+    @Override
+    public String applyCommentPlugins(WeblogEntryComment comment, String text) {
+        if(comment == null || text == null) {
+            throw new IllegalArgumentException("comment cannot be null");
+        }
+        String content = text;
+        if (commentPlugins.size() > 0) {
+            for (WeblogEntryCommentPlugin plugin : commentPlugins) {
+                if(comment.getPlugins() != null && comment.getPlugins().contains(plugin.getId())) {
+                    LOG.debug("Invoking comment plugin "+plugin.getId());
+                    content = plugin.render(comment, content);
+                }
+            }
+        }
+        return content;
+    }
+
+    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
+        this.weblogEntryPlugins = weblogEntryPlugins;
+    }
+
+    public void setCommentPlugins(List<WeblogEntryCommentPlugin> commentPlugins) {
+        this.commentPlugins = commentPlugins;
+    }
 }

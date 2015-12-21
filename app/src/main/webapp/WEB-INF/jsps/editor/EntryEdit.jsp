@@ -156,14 +156,14 @@
     <%-- ================================================================== --%>
     <%-- plugin chooser --%>
 
-    <s:if test="!entryPlugins.isEmpty">
+    <s:if test="!weblogEntryPlugins.isEmpty">
         <div id="pluginControlToggle" class="controlToggle">
             <span id="ipluginControl">+</span>
             <a class="controlToggle" onclick="javascript:toggleControl('pluginControlToggle','pluginControl')">
             <s:text name="weblogEdit.pluginsToApply" /></a>
         </div>
         <div id="pluginControl" class="miscControl" style="display:none">
-            <s:checkboxlist theme="strutsoverride" name="bean.plugins" list="entryPlugins" listKey="name" listValue="name" />
+            <s:checkboxlist theme="strutsoverride" name="bean.plugins" list="weblogEntryPlugins" listKey="name" listValue="name" />
         </div>
     </s:if>
 

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
@@ -64,12 +62,6 @@ public class WeblogConfig extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private PluginManager pluginManager;
-
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
-
     // bean for managing submitted data
     private Weblog bean = new Weblog();
     
@@ -77,7 +69,7 @@ public class WeblogConfig extends UIAction {
     private List weblogCategories = Collections.emptyList();
     
     // list of available plugins
-    private List pluginsList = Collections.emptyList();
+    private List<WeblogEntryPlugin> weblogEntryPlugins;
 
     // list of available editors
     private static List<Pair<String, String>> editorsList = new ArrayList<>(2);
@@ -100,21 +92,9 @@ public class WeblogConfig extends UIAction {
     }
 
     public void prepare() {
-        
         try {
             // set categories list
             setWeblogCategories(weblogManager.getWeblogCategories(getActionWeblog()));
-            
-            // set plugins list
-            Map<String, WeblogEntryPlugin> pluginsMap = pluginManager.getWeblogEntryPlugins(getActionWeblog());
-            List<WeblogEntryPlugin> plugins = new ArrayList<>();
-            for (WeblogEntryPlugin entryPlugin : pluginsMap.values()) {
-                plugins.add(entryPlugin);
-            }
-
-            // sort
-            setPluginsList(plugins);
-
         } catch (Exception ex) {
             log.error("Error preparing weblog config action", ex);
         }
@@ -263,12 +243,11 @@ public class WeblogConfig extends UIAction {
         return editorsList;
     }
     
-    public List getPluginsList() {
-        return pluginsList;
+    public List<WeblogEntryPlugin> getWeblogEntryPlugins() {
+        return weblogEntryPlugins;
     }
 
-    public void setPluginsList(List pluginsList) {
-        this.pluginsList = pluginsList;
+    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
+        this.weblogEntryPlugins = weblogEntryPlugins;
     }
-    
 }

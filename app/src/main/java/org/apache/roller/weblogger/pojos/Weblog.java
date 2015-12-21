@@ -29,12 +29,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -116,8 +114,6 @@ public class Weblog implements Serializable {
     private boolean applyCommentDefaults = false;
 
     // Associated objects
-    private Map<String, WeblogEntryPlugin> initializedPlugins = null;
-
     private List<WeblogCategory> weblogCategories = new ArrayList<>();
 
     private List<WeblogBookmark> bookmarks = new ArrayList<>();
@@ -544,23 +540,6 @@ public class Weblog implements Serializable {
     
     
     /**
-     * Get initialized plugins for use during rendering process.
-     */
-    @Transient
-    public Map<String, WeblogEntryPlugin> getInitializedPlugins() {
-        if (initializedPlugins == null) {
-            try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                PluginManager ppmgr = roller.getPluginManager();
-                initializedPlugins = ppmgr.getWeblogEntryPlugins(this);
-            } catch (Exception e) {
-                log.error("ERROR: initializing plugins");
-            }
-        }
-        return initializedPlugins;
-    }
-    
-    /** 
      * Get weblog entry specified by anchor or null if no such entry exists.
      * @param anchor Weblog entry anchor
      * @return Weblog entry specified by anchor
