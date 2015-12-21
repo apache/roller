@@ -887,6 +887,16 @@ public class WeblogEntry implements Serializable {
         return new ArrayList<String>();
     }
 
+    // Struts Checkboxlist control needs a String[] to specify selected values
+    @Transient
+    public String[] getPluginsArray() {
+        return StringUtils.split(plugins, ",");
+    }
+
+    public void setPluginsArray(String[] strings) {
+        plugins = StringUtils.join(strings, ",");
+    }
+
     /** Convenience method for checking status */
     @Transient
     public boolean isDraft() {

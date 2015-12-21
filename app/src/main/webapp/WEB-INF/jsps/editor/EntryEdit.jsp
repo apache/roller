@@ -163,7 +163,7 @@
             <s:text name="weblogEdit.pluginsToApply" /></a>
         </div>
         <div id="pluginControl" class="miscControl" style="display:none">
-            <s:checkboxlist theme="strutsoverride" name="bean.plugins" list="weblogEntryPlugins" listKey="name" listValue="name" />
+            <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" name="bean.pluginsArray"/>
         </div>
     </s:if>
 

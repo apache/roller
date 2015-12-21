@@ -168,8 +168,7 @@
         <tr>
             <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
             <td class="field">
-                <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" name="bean.defaultPluginsArray" listKey="name" listValue="name" />
-            
+                <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" name="bean.defaultPluginsArray"/>
             </td>
             <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
         </tr>
