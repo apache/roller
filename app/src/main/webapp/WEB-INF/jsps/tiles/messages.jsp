@@ -19,14 +19,14 @@
 
 <%-- Success Messages --%>
 <s:if test="!actionMessages.isEmpty">
-    <div id="messages" class="messages">
+    <div id="messages" class="alert alert-success">
         <s:actionmessage />
     </div>
 </s:if>
 
 <%-- Error Messages --%>
 <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-    <div id="errors" class="errors">
+    <div id="errors" class="alert alert-danger">
         <ul>
             <s:iterator id="actionError" value="actionErrors">
                 <li><s:property value="#actionError" escape="false" /></li>

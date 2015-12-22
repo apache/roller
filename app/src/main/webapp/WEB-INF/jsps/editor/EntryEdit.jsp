@@ -57,81 +57,92 @@
     <%-- Title, category, dates and other metadata --%>
 
     <%-- title --%>
-    <s:textfield label="%{getText('weblogEdit.title')}" name="bean.title" maxlength="255" tabindex="1"/>
+    <s:textfield label="%{getText('weblogEdit.title')}" name="bean.title" maxlength="255" tabindex="1" />
+
+    <%-- permalink --%>
+    <s:if test="actionName == 'entryEdit'">
+        <div class="form-group">
+            
+            <label class="col-sm-3 control-label" for="entry_bean_permalink">
+                <s:text name="weblogEdit.permaLink"/>
+            </label>
+           
+            <div class="col-sm-9 controls">
+                <p class="form-control-static">
+                    <s:if test="bean.published">
+                        <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
+                            <s:property value="entry.permalink"/>
+                        </a>
+                        <img src='<s:url value="/images/launch-link.png"/>'/>
+                    </s:if>
+                    <s:else>
+                        <s:property value="entry.permalink"/>
+                    </s:else>
+                </p>
+            </div>
+        
+        </div>
+    </s:if>
+
+    <%-- tags --%>
+    <s:textfield label="%{getText('weblogEdit.tags')}" id="tagAutoComplete" name="bean.tagsAsString"
+                 maxlength="255" tabindex="2"/>
+
+    <%-- category --%>
+    <s:select label="%{getText('weblogEdit.category')}" name="bean.categoryId"
+              list="categories" listKey="id" listValue="name" tabindex="3" />
+
+    <s:if test="actionWeblog.enableMultiLang">
+        <%-- locale --%>
+        <s:select label="%{getText('weblogEdit.locale')}" name="bean.locale" size="1"
+                  list="localesList" listValue="displayName" tabindex="4"/>
+    </s:if>
+    <s:else>
+        <s:hidden name="bean.locale"/>
+    </s:else>
 
     <%-- status --%>
     <div class="form-group">
         <label class="col-sm-3 control-label" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
 
         <div class="col-sm-9 controls">
-            <s:if test="bean.published">
-                <span class="label label-success">
-                    <s:text name="weblogEdit.published"/>
-                    (<s:text name="weblogEdit.updateTime"/>
-                    <s:date name="entry.updateTime"/>)
-                </span>
-            </s:if>
-            <s:elseif test="bean.draft">
-                <span class="label label-info">
-                    <s:text name="weblogEdit.draft"/>
-                    (<s:text name="weblogEdit.updateTime"/>
-                    <s:date name="entry.updateTime"/>)
-                </span>
-            </s:elseif>
-            <s:elseif test="bean.pending">
-                <span class="label label-warning">
-                    <s:text name="weblogEdit.pending"/>
-                    (<s:text name="weblogEdit.updateTime"/>
-                    <s:date name="entry.updateTime"/>)
-                </span>
-            </s:elseif>
-            <s:elseif test="bean.scheduled">
-                <span class="label label-info">
-                    <s:text name="weblogEdit.scheduled"/>
-                    (<s:text name="weblogEdit.updateTime"/>
-                    <s:date name="entry.updateTime"/>)
-                </span>
-            </s:elseif>
-            <s:else>
-                <span class="label label-danger"><s:text name="weblogEdit.unsaved"/></span>
-            </s:else>
+            <p class="form-control-static">
+                <s:if test="bean.published">
+                    <span class="label label-success">
+                        <s:text name="weblogEdit.published"/>
+                        (<s:text name="weblogEdit.updateTime"/>
+                        <s:date name="entry.updateTime"/>)
+                    </span>
+                </s:if>
+                <s:elseif test="bean.draft">
+                    <span class="label label-info">
+                        <s:text name="weblogEdit.draft"/>
+                        (<s:text name="weblogEdit.updateTime"/>
+                        <s:date name="entry.updateTime"/>)
+                    </span>
+                </s:elseif>
+                <s:elseif test="bean.pending">
+                    <span class="label label-warning">
+                        <s:text name="weblogEdit.pending"/>
+                        (<s:text name="weblogEdit.updateTime"/>
+                        <s:date name="entry.updateTime"/>)
+                    </span>
+                </s:elseif>
+                <s:elseif test="bean.scheduled">
+                    <span class="label label-info">
+                        <s:text name="weblogEdit.scheduled"/>
+                        (<s:text name="weblogEdit.updateTime"/>
+                        <s:date name="entry.updateTime"/>)
+                    </span>
+                </s:elseif>
+                <s:else>
+                    <span class="label label-danger"><s:text name="weblogEdit.unsaved"/></span>
+                </s:else>
+            </p>
         </div>
 
     </div>
-
-    <%-- permalink --%>
-    <s:if test="actionName == 'entryEdit'">
-        <div class="form-group">
-            <label for="entry_bean_permalink"><s:text name="weblogEdit.permaLink"/></label>
-            <s:if test="bean.published">
-                <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
-                    <s:property value="entry.permalink"/>
-                </a>
-                <img src='<s:url value="/images/launch-link.png"/>'/>
-            </s:if>
-            <s:else>
-                <s:property value="entry.permalink"/>
-            </s:else>
-        </div>
-    </s:if>
-
-    <%-- tags --%>
-    <s:textfield label="%{getText('weblogEdit.tags')}" id="tagAutoComplete" name="bean.tagsAsString"
-                 maxlength="255" tabindex="3"/>
-
-    <%-- category --%>
-    <s:select label="%{getText('weblogEdit.category')}" name="bean.categoryId"
-              list="categories" listKey="id" listValue="name"/>
-
-    <s:if test="actionWeblog.enableMultiLang">
-        <s:select label="%{getText('weblogEdit.locale')}" name="bean.locale" size="1"
-                  list="localesList" listValue="displayName"/>
-    </s:if>
-
-    <s:else>
-        <s:hidden name="bean.locale"/>
-    </s:else>
-
+    
 
     <div class="panel-group" id="accordion">
 
@@ -147,13 +158,13 @@
                 <div class="panel-heading">
 
                     <h4 class="panel-title">
-                        <a aria-expanded="false"
-                           data-toggle="collapse" data-target="#collapsePlugins" href="#collapsePlugins">
+                        <a class="collapsed" data-toggle="collapse" data-target="#collapsePlugins" 
+                            href="#collapsePlugins">
                             <s:text name="weblogEdit.pluginsToApply"/> </a>
                     </h4>
 
                 </div>
-                <div id="collapsePlugins" class="panel-collapse collapse in">
+                <div id="collapsePlugins" class="panel-collapse collapse">
                     <div class="panel-body">
 
                         <s:checkboxlist name="bean.plugins" list="entryPlugins" listKey="name" listValue="name"/>
@@ -170,13 +181,13 @@
             <div class="panel-heading">
 
                 <h4 class="panel-title">
-                    <a class="accordion-toggle" aria-expanded="false"
-                       data-toggle="collapse" data-parent="#collapseAdvanced" href="#collapseAdvanced">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#collapseAdvanced" 
+                        href="#collapseAdvanced">
                         <s:text name="weblogEdit.miscSettings"/> </a>
                 </h4>
 
             </div>
-            <div id="collapseAdvanced" class="panel-collapse collapse in">
+            <div id="collapseAdvanced" class="panel-collapse collapse">
                 <div class="panel-body">
 
                     <div class="form-group">
@@ -327,8 +338,7 @@
 
 
     <%-- ================================================================== --%>
-    <%-- Trackback control --%>
-
+    <%-- Trackback control 
     <s:if test="actionName == 'entryEdit' && userAnAuthor">
         <br/>
         <h2><s:text name="weblogEdit.trackback"/></h2>
@@ -338,6 +348,7 @@
 
         <s:submit value="%{getText('weblogEdit.sendTrackback')}" action="entryEdit!trackback"/>
     </s:if>
+    --%>
 
 </s:form>
 

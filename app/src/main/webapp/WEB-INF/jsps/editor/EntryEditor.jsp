@@ -34,11 +34,13 @@
     <div id="collapseContentEditor" class="panel-collapse collapse in">
         <div class="panel-body">
 
-            <span style="font-weight:normal;float:right;">
+            <s:textarea id="edit_content" name="bean.text" 
+                        tabindex="5" rows="18" cssClass="col-sm-12" theme="simple" 
+            />
+
+            <span> 
                 <a href="#" onClick="onClickAddImage();"><s:text name="weblogEdit.insertMediaFile"/></a>
             </span>
-                
-            <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" tabindex="5"/>
 
         </div>
     </div>
@@ -50,18 +52,18 @@
     <div class="panel-heading">
 
         <h4 class="panel-title">
-            <a href="#collapseSummaryEditor"
-               aria-controls="collapseSummaryEditor" aria-expanded="false"
+            <a href="#collapseSummaryEditor" class="collapsed"
                data-toggle="collapse" data-target="#collapseSummaryEditor" >
                <s:text name="weblogEdit.summary"/>
             </a>
         </h4>
         
     </div>
-    <div id="collapseSummaryEditor" class="panel-collapse collapse in">
+    <div id="collapseSummaryEditor" class="panel-collapse collapse">
         <div class="panel-body">
 
-            <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" tabindex="6"/>
+            <s:textarea id="edit_summary" name="bean.summary" 
+                        tabindex="6" rows="10" cssClass="col-sm-12" theme="simple" />
 
         </div>
     </div>

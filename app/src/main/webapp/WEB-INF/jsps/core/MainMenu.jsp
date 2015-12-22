@@ -122,35 +122,24 @@
 
                     <%-- And only show theme option if custom themes are enabled --%>
                     <s:if test="getProp('themes.customtheme.allowed')">
-
                         <s:if test="#perms.weblog.editorTheme == 'custom'">
-
-                            <%-- Templates button --%>
-                            <button type="button" class="btn btn-default">
-                                <s:url action="templates" namespace="/roller-ui/authoring" id="weblogTheme">
-                                    <s:param name="weblog" value="#perms.weblog.handle"/>
-                                </s:url>
-                            </button>
-
+                            <s:url action="templates" namespace="/roller-ui/authoring" id="weblogTheme">
+                                <s:param name="weblog" value="#perms.weblog.handle" />
+                            </s:url>
                         </s:if>
                         <s:else>
-
-                            <%-- Theme edit button --%>
-                            <button type="button" class="btn btn-default">
-                                <s:url action="themeEdit" namespace="/roller-ui/authoring" id="weblogTheme">
-                                    <s:param name="weblog" value="#perms.weblog.handle"/>
-                                </s:url>
-                                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-                                <a href='<s:property value="weblogTheme" />'>
-                                    <s:text name="yourWebsites.theme"/></a>
-                            </button>
-
+                            <s:url action="themeEdit" namespace="/roller-ui/authoring" id="weblogTheme">
+                                <s:param name="weblog" value="#perms.weblog.handle" />
+                            </s:url>
                         </s:else>
-
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                            <a href='<s:property value="weblogTheme" />'>
+                                <s:text name="yourWebsites.theme" /></a>
+                        </button>
                     </s:if>
-
-
-                    <%-- Resign button --%>
+                    
+                    <%-- settings button --%>
                     <button type="button" class="btn btn-default">
                         <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
                             <s:param name="weblog" value="#perms.weblog.handle"/>
@@ -162,7 +151,7 @@
 
                 </s:if>
 
-                    <%-- don't allow last admin to resign from blog --%>
+                <%-- don't allow last admin to resign from blog --%>
                 <s:if test='!(#perms.hasAction("admin") && #perms.weblog.adminUserCount == 1)'>
 
                     <button type="button" class="btn btn-default">

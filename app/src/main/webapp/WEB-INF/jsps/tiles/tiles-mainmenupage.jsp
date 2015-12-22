@@ -47,7 +47,7 @@
 
         <div class="panel panel-default">
             <div class="panel-body">
-                <h1><s:property value="pageTitle"/></h1>
+                <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
                 <tiles:insertAttribute name="messages"/>
                 <tiles:insertAttribute name="content"/>
             </div>

@@ -23,7 +23,8 @@ table {
 }
 
 .roller-page-title {
-    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 5px;
 }
 
 .roller-column-right {
@@ -35,6 +36,8 @@ table {
     padding-left: 2em;
     padding-right: 1em;
 }
+
+.date-form { margin: 10px; }
 
 /* main menu */
 
@@ -78,6 +81,32 @@ table.mm_table_actions td {
     z-index: 10000 !important;
 }
 
+/* entries page */
+
+.scheduledEntryBox {
+    background: #EEEEE0;
+    border: 1px gray solid;
+}
+
+.pendingEntryBox {
+    background: #ffcccc;
+    border: 1px gray solid;
+}
+
+.draftEntryBox {
+    background: #ffffcc;
+    border: 1px gray solid;
+}
+
+td.pendingentry, tr.pendingentry {
+    background: #ffcccc;
+}
+td.draftentry, tr.draftentry {
+    background: #ffffcc;
+}
+td.scheduledentry, tr.scheduledentry {
+    background: #EEEEE0;
+}
 
 /* sign-in */
 

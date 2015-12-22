@@ -23,7 +23,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
     <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
-
     <tiles:insertAttribute name="head"/>
     <style> <tiles:insertAttribute name="styles" /> </style>
 </head>
@@ -32,16 +31,16 @@
 <tiles:insertAttribute name="bannerStatus"/>
 
 <div class="row">
-    <div class="col-md-9 roller-column-left">
+    <div class="col-md-8 roller-column-left">
         <div class="panel panel-default">
             <div class="panel-body">
-                <h2><s:property value="pageTitle"/></h2>
                 <tiles:insertAttribute name="messages"/>
+                <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
                 <tiles:insertAttribute name="content"/>
             </div>
         </div>
     </div>
-    <div class="col-md-3 roller-column-right">
+    <div class="col-md-4 roller-column-right">
         <div class="panel panel-default">
             <div class="panel-body">
                 <s:if test="authenticatedUser != null || actionWeblog != null">
