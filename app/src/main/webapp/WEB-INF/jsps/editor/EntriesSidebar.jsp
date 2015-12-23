@@ -20,114 +20,105 @@
 <link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>'/>
 <script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
 
-            <div class="sidebarInner">
+<h3><s:text name="weblogEntryQuery.sidebarTitle"/></h3>
+<hr size="1" noshade="noshade"/>
 
-                <h3><s:text name="weblogEntryQuery.sidebarTitle"/></h3>
-                <hr size="1" noshade="noshade"/>
+<p><s:text name="weblogEntryQuery.sidebarDescription"/></p>
 
-                <p><s:text name="weblogEntryQuery.sidebarDescription"/></p>
+<s:form action="entries" theme="bootstrap" cssClass="form-vertical">
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog"/>
 
-                <s:form action="entries" theme="bootstrap" cssClass="form-vertical">
-                    <s:hidden name="salt"/>
-                    <s:hidden name="weblog"/>
+    <%-- ========================================================= --%>
+    <%-- filter by category --%>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by category --%>
+    <s:select name="bean.categoryName"
+              label="%{getText('weblogEntryQuery.label.category')}"
+              list="categories" listKey="name" listValue="name" size="1"/>
 
-                    <s:select name="bean.categoryName"
-                              label="%{getText('weblogEntryQuery.label.category')}"
-                              list="categories" listKey="name" listValue="name" size="1"/>
+    <%-- ========================================================= --%>
+    <%-- filter by tag --%>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by tag --%>
+    <s:textfield name="bean.tagsAsString" size="14"
+                 label="%{getText('weblogEntryQuery.label.tags')}"/>
 
-                    <s:textfield name="bean.tagsAsString" size="14"
-                                 label="%{getText('weblogEntryQuery.label.tags')}"/>
+    <%-- ========================================================= --%>
+    <%-- filter by text --%>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by text --%>
+    <s:textfield name="bean.text" size="14"
+                 label="%{getText('weblogEntryQuery.label.text')}"/>
 
-                    <s:textfield name="bean.text" size="14"
-                                 label="%{getText('weblogEntryQuery.label.text')}"/>
+    <%-- ========================================================= --%>
+    <%-- filter by date --%>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by date --%>
+    <script>
+        $(function () {
+            $("#entries_bean_startDateString").datepicker();
+        });
+    </script>
 
-                    <script>
-                        $(function () {
-                            $("#entries_bean_startDateString").datepicker();
-                        });
-                    </script>
+    <div class="control-group">
+        <label for="bean.startDateString" class="control-label">
+            <s:text name="weblogEntryQuery.label.startDate"/>
+        </label>
+        <div class="controls">
+            <div class="input-group">
 
-                    <div class="control-group">
-                        <label for="bean.startDateString" class="control-label">
-                            <s:text name="weblogEntryQuery.label.startDate" />
-                        </label>
-                        <div class="controls">
-                            <div class="input-group">
-                                
-                                <s:textfield name="bean.startDateString" readonly="true"
-                                             theme="simple" cssClass="date-picker form-control" />
-                                <label for="bean.startDateString" class="input-group-addon btn">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </label>
-                                
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <script>
-                        $(function () {
-                            $("#entries_bean_endDateString").datepicker();
-                        });
-                    </script>
+                <s:textfield name="bean.startDateString" readonly="true"
+                             theme="simple" cssClass="date-picker form-control"/>
+                <label for="bean.startDateString" class="input-group-addon btn">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </label>
 
-                    <div class="control-group">
-                        <label for="bean.endDateString" class="control-label">
-                            <s:text name="weblogEntryQuery.label.endDate" />
-                        </label>
-                        <div class="controls">
-                            <div class="input-group">
-
-                                <s:textfield name="bean.endDateString" readonly="true"
-                                             theme="simple" cssClass="date-picker form-control" />
-                                <label for="bean.endDateString" class="input-group-addon btn">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </label>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <br/>
-                    
-                    <%-- ========================================================= --%>
-                    <%-- filter by status --%>
-
-                    <s:radio name="bean.status"
-                             label="%{getText('weblogEntryQuery.label.status')}"
-                             list="statusOptions" listKey="key" listValue="value"/>
-
-                    <%-- ========================================================= --%>
-                    <%-- sort by --%>
-
-                    <s:radio name="bean.sortBy"
-                             label="%{getText('weblogEntryQuery.label.sortby')}"
-                             list="sortByOptions" listKey="key" listValue="value"/>
-
-                    <%-- ========================================================= --%>
-                    <%-- search button --%>
-
-                    <s:submit cssClass="btn" value="%{getText('weblogEntryQuery.button.query')}"/>
-
-                </s:form>
-
-            </div> <!-- sidebarInner -->
-
+            </div>
         </div>
     </div>
-</div>
+
+    <script>
+        $(function () {
+            $("#entries_bean_endDateString").datepicker();
+        });
+    </script>
+
+    <div class="control-group">
+        <label for="bean.endDateString" class="control-label">
+            <s:text name="weblogEntryQuery.label.endDate"/>
+        </label>
+        <div class="controls">
+            <div class="input-group">
+
+                <s:textfield name="bean.endDateString" readonly="true"
+                             theme="simple" cssClass="date-picker form-control"/>
+                <label for="bean.endDateString" class="input-group-addon btn">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </label>
+
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <%-- ========================================================= --%>
+    <%-- filter by status --%>
+
+    <s:radio name="bean.status"
+             label="%{getText('weblogEntryQuery.label.status')}"
+             list="statusOptions" listKey="key" listValue="value"/>
+
+    <%-- ========================================================= --%>
+    <%-- sort by --%>
+
+    <s:radio name="bean.sortBy"
+             label="%{getText('weblogEntryQuery.label.sortby')}"
+             list="sortByOptions" listKey="key" listValue="value"/>
+
+    
+    <%-- ========================================================= --%>
+    <%-- filter button --%>
+
+    <s:submit cssClass="btn" value="%{getText('weblogEntryQuery.button.query')}"/>
+
+</s:form>
+

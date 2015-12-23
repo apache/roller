@@ -108,6 +108,51 @@ td.scheduledentry, tr.scheduledentry {
     background: #EEEEE0;
 }
 
+/* comments */
+
+td.spamcomment {
+    background: #ffcccc;
+}
+td.pendingcomment {
+    background: #ffffcc;
+}
+.approvedCommentBox {
+    background: #ffffff;
+    border: 1px gray solid;
+}
+.pendingCommentBox {
+    background: #ffffcc;
+    border: 1px gray solid;
+}
+.spamCommentBox {
+    background: #ffcccc;
+    border: 1px gray solid;
+}
+.rollertable label.checkboxLabel {
+    display: none;
+}
+table.innertable {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0;
+}
+table.innertable tbody td {
+    padding: 0;
+}
+table.rollertable .innertable td {
+    border: none;
+}
+table.innertable td.viewbody {
+    padding: 5px;
+}
+table.innertable tr .bot {
+    margin-bottom: 5px;
+}
+table.innertable tr .viewbody .bot {
+    padding-bottom: 10px;
+}
+
+
 /* sign-in */
 
 body {
