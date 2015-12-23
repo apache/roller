@@ -1,17 +1,26 @@
-Rollarcus
+Rollarcus: bootstrap-ui branch
 ===
 
-This is Rollarcus: an __experimental fork of [Apache Roller](https://github.com/apache/roller)__.
-So far, there are two experiments here, each in its own branch:
+This is Rollarcus: my experimental fork of [Apache Roller](https://github.com/apache/roller).
 
-1) [shiro_not_spring](https://github.com/snoopdave/rollarcus/tree/shiro_not_spring): is a
-branch of Roller's trunk that has been modified to use Apache Shiro for security instead of Spring. 
-Also, all Spring depdenencies have been removed.
+This branch __bootstrap-ui__ rewrites the Roller editor/admin user-interface (UI) using Bootstrap.
 
-2) [jaxrs_not_struts](https://github.com/snoopdave/rollarcus/tree/jaxrs_not_struts): is a branch of Roller's
-trunk that has been modified to add a REST API, powered by Apache CXF, Apache Shiro and includes Arquillian-powered
-tests for the REST API. Someday this REST API could power a new JavaScript based web interface for Roller
-and allow the project to move on from Struts.
+Status
+---
+The Edit-Entry and Entries pages have been converted over and you can see screen-shots of what they look like below. 
 
+That's all
+---
+Want to contribute? Shoot me a PR.
 
+Screen-shots
+---
+Here's what the Edit-Entry and Entries pages look like with Bootstrap.
 
+Edit-Entry:
+
+![Entry-Edit page](/docs/readme-images/edit-entry.jpg "Edit-Entry page")
+
+Entries:
+
+![Entries page](/docs/readme-images/entries.jpg "Entries page")
