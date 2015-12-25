@@ -25,8 +25,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
@@ -47,9 +45,11 @@ public class UsersPager extends AbstractPager {
     
     // are there more items?
     private boolean more = false;
-    
+
+    private UserManager userManager;
     
     public UsersPager(
+            UserManager userManager,
             URLStrategy    strat,
             String         baseUrl,
             String         locale,
@@ -58,6 +58,7 @@ public class UsersPager extends AbstractPager {
             int            length) {
         
         super(strat, baseUrl, page);
+        this.userManager = userManager;
         
         this.length = length;
         
@@ -67,6 +68,7 @@ public class UsersPager extends AbstractPager {
     
     
     public UsersPager(
+            UserManager userManager,
             URLStrategy    strat,
             String         baseUrl,
             String         letter,
@@ -127,13 +129,11 @@ public class UsersPager extends AbstractPager {
             
             List<UserWrapper> results = new ArrayList<UserWrapper>();
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                UserManager umgr = roller.getUserManager();
                 List<User> rawUsers;
                 if (letter == null) {
-                    rawUsers = umgr.getUsers(Boolean.TRUE, null, null, offset, length + 1);
+                    rawUsers = userManager.getUsers(Boolean.TRUE, null, null, offset, length + 1);
                 } else {
-                    rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length + 1);
+                    rawUsers = userManager.getUsersByLetter(letter.charAt(0), offset, length + 1);
                 }
                 
                 // wrap the results

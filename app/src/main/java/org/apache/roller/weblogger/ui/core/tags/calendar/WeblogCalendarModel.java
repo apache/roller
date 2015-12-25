@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
 */
-
 package org.apache.roller.weblogger.ui.core.tags.calendar;
 
 import java.text.ParsePosition;
@@ -37,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -53,7 +52,7 @@ public class WeblogCalendarModel implements CalendarModel {
     
     private static Log log = LogFactory.getLog(WeblogCalendarModel.class);
     
-    protected Map               monthMap;
+    private Map<Date, String>   monthMap;
     protected Date              day;
     protected String            cat = null;
     protected String            pageLink = null;
@@ -62,10 +61,13 @@ public class WeblogCalendarModel implements CalendarModel {
     protected Date              prevMonth = null;
     protected Date              nextMonth = null;
     protected WeblogPageRequest pageRequest = null;
-    
-    
-    public WeblogCalendarModel(WeblogPageRequest pRequest, String catArgument) {
-        
+    protected WeblogEntryManager weblogEntryManager;
+    protected URLStrategy urlStrategy;
+
+    public WeblogCalendarModel(WeblogPageRequest pRequest, String catArgument, WeblogEntryManager wem, URLStrategy urlStrategy) {
+        this.weblogEntryManager = wem;
+        this.urlStrategy = urlStrategy;
+
         this.pageRequest = pRequest;
         try {
             this.weblog = pageRequest.getWeblog();            
@@ -108,7 +110,6 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries before startDate, using category restriction limit 1
         // Use entry's date as previous month
         try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(weblog);
             // since we need an entry.pubTime < startDate, but the method uses endDate
@@ -117,7 +118,7 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
             wesc.setMaxResults(1);
-            List prevEntries = mgr.getWeblogEntries(wesc);
+            List prevEntries = weblogEntryManager.getWeblogEntries(wesc);
 
             if (prevEntries.size() > 0) {
                 WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
@@ -133,7 +134,6 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries after endDate, using category restriction limit 1
         // Use entry's date as next month
         try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(weblog);
             // since we need an entry.pubTime > endDate, but the method uses startDate
@@ -142,7 +142,7 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
             wesc.setMaxResults(1);
-            List nextEntries = mgr.getWeblogEntries(wesc);
+            List nextEntries = weblogEntryManager.getWeblogEntries(wesc);
             if (nextEntries.size() > 0) {
                 WeblogEntry nextEntry = (WeblogEntry)nextEntries.get(0);
                 Calendar calNext = getCalendar();
@@ -165,14 +165,13 @@ public class WeblogCalendarModel implements CalendarModel {
     
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(weblog);
             wesc.setStartDate(startDate);
             wesc.setEndDate(endDate);
             wesc.setCatName(catName);
             wesc.setStatus(PubStatus.PUBLISHED);
-            monthMap = mgr.getWeblogEntryStringMap(wesc);
+            monthMap = weblogEntryManager.getWeblogEntryStringMap(wesc);
         } catch (WebloggerException e) {
             log.error(e);
             monthMap = new HashMap<>();
@@ -237,7 +236,7 @@ public class WeblogCalendarModel implements CalendarModel {
     public String computeUrl(Date day, boolean monthURL, boolean alwaysURL) {
         String url = null;
         // get the 8 char YYYYMMDD datestring for day
-        String dateString = (String) monthMap.get(day);
+        String dateString = monthMap.get(day);
         if (dateString == null && !alwaysURL) {
             return null;
         }
@@ -249,10 +248,10 @@ public class WeblogCalendarModel implements CalendarModel {
         try {
             if (pageLink == null) {
                 // create date URL
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
+                url = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
             } else {
                 // create page URL
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
+                url = urlStrategy.getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             log.error("ERROR: creating URL",e);
@@ -288,10 +287,10 @@ public class WeblogCalendarModel implements CalendarModel {
     	String url;
         if (pageLink == null) {
             // create default URL
-            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, null, null, -1, false);
+            url = urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false);
         } else {
             // create page URL
-            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, pageLink, null, cat, null, null, -1, false);
+            url = urlStrategy.getWeblogPageURL(weblog, pageLink, null, cat, null, null, -1, false);
         }
     	return url;
     }

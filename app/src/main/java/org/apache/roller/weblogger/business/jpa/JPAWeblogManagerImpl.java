@@ -170,7 +170,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // remove permissions
         for (UserWeblogRole role : userManager.getWeblogRolesIncludingPending(weblog)) {
-            userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
+            userManager.revokeWeblogRole(role.getUserName(), role.getWeblogId());
         }
 
         // remove indexing
@@ -215,7 +215,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(
-                newWeblog.getCreator(), newWeblog, WeblogRole.OWNER);
+                newWeblog.getCreator().getUserName(), newWeblog.getId(), WeblogRole.OWNER);
         
         String cats = WebloggerConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = null;
@@ -396,9 +396,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (user == null) {
             return weblogs;
         }
-        List<UserWeblogRole> perms = userManager.getWeblogRoles(user);
-        for (UserWeblogRole perm : perms) {
-            Weblog weblog = perm.getWeblog();
+        List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+        for (UserWeblogRole role : roles) {
+            Weblog weblog = getWeblog(role.getWeblogId());
             if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.isActive())) {
                 weblogs.add(weblog);
             }
@@ -408,11 +408,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
         List<User> users = new ArrayList<>();
-        List<UserWeblogRole> perms = userManager.getWeblogRoles(weblog);
-        for (UserWeblogRole perm : perms) {
-            User user = perm.getUser();
+        List<UserWeblogRole> roles = userManager.getWeblogRoles(weblog);
+        for (UserWeblogRole role : roles) {
+            User user = userManager.getUserByUserName(role.getUserName());
             if (user == null) {
-                log.error("ERROR user is null, userName:" + perm.getUserName());
+                log.error("ERROR user is null, userName:" + role.getUserName());
                 continue;
             }
             if (!enabledOnly || user.getEnabled()) {
@@ -875,8 +875,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public boolean isWeblogCategoryInUse(WeblogCategory cat)
-            throws WebloggerException {
+    public boolean isWeblogCategoryInUse(WeblogCategory cat) {
         TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByCategory", WeblogEntry.class);
         q.setParameter(1, cat);
         int entryCount = q.getResultList().size();

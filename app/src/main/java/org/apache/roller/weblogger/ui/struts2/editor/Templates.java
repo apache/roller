@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 import java.util.ArrayList;
@@ -87,17 +86,6 @@ public class Templates extends UIAction {
 			List<WeblogTemplate> raw = weblogManager.getTemplates(getActionWeblog());
 			List<WeblogTemplate> pages = new ArrayList<>();
 			pages.addAll(raw);
-			// Remove style sheet from list so not to show when theme is
-			// selected in shared theme mode
-/*			if (getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
-				pages.remove(WebloggerFactory
-						.getWeblogger()
-						.getWeblogManager()
-						.getTemplateByLink(
-								getActionWeblog(),
-								getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET)
-										.getLink()));
-			} */
 			setTemplates(pages);
 
 			// build list of action types that may be added

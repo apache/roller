@@ -26,7 +26,6 @@
     <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.Weblogger">
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
-        <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="propertiesManager"/>
         <beans:constructor-arg ref="themeManager"/>
         <beans:constructor-arg ref="userManager"/>
@@ -106,10 +105,14 @@
     <!-- page models -->
     <beans:bean id="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
+        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
     <beans:bean id="configModel" class="org.apache.roller.weblogger.ui.rendering.model.ConfigModel" scope="prototype"/>
-    <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype"/>
+
+    <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype">
+        <beans:property name="userManager" ref="userManager"/>
+    </beans:bean>
 
     <beans:bean id="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
@@ -117,7 +120,11 @@
     </beans:bean>
 
     <beans:bean id="messageModel" class="org.apache.roller.weblogger.ui.rendering.model.MessageModel" scope="prototype"/>
-    <beans:bean id="calendarModel" class="org.apache.roller.weblogger.ui.rendering.model.CalendarModel" scope="prototype"/>
+
+    <beans:bean id="calendarModel" class="org.apache.roller.weblogger.ui.rendering.model.CalendarModel" scope="prototype">
+        <beans:property name="urlStrategy" ref="urlStrategy"/>
+        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
+    </beans:bean>
 
     <beans:bean id="planetModel" class="org.apache.roller.weblogger.ui.rendering.model.PlanetModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
@@ -126,6 +133,7 @@
 
     <beans:bean id="feedModel" class="org.apache.roller.weblogger.ui.rendering.model.FeedModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
+        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
     <beans:bean id="searchFeedModel" class="org.apache.roller.weblogger.ui.rendering.model.SearchResultsFeedModel" scope="prototype">
@@ -140,7 +148,11 @@
         <beans:property name="indexManager" ref="indexManager"/>
     </beans:bean>
 
-    <beans:bean id="previewPageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype"/>
+    <beans:bean id="previewPageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype">
+        <beans:property name="urlStrategy" ref="urlStrategy"/>
+        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
+    </beans:bean>
+
     <beans:bean id="previewUrlModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel" scope="prototype"/>
 
     <beans:bean id="siteModel" class="org.apache.roller.weblogger.ui.rendering.model.SiteModel" scope="prototype">

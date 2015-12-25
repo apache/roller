@@ -50,20 +50,16 @@ public final class WebloggerRuntimeConfig {
     // special case for our context urls
     private static String relativeContextURL = null;
     private static String absoluteContextURL = null;
-    
-    
+
     // prevent instantiations
     private WebloggerRuntimeConfig() {}
-    
-    
+
     /**
      * Retrieve a single property from the PropertiesManager ... returns null
      * if there is an error
      **/
     public static String getProperty(String name) {
-        
         String value = null;
-        
         try {
             PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             RuntimeConfigProperty prop = pmgr.getProperty(name);
@@ -73,47 +69,37 @@ public final class WebloggerRuntimeConfig {
         } catch(Exception e) {
             log.warn("Trouble accessing property: "+name, e);
         }
-        
         log.debug("fetched property ["+name+"="+value+"]");
-
         return value;
     }
-    
-    
+
     /**
      * Retrieve a property as a boolean ... defaults to false if there is an error
      **/
     public static boolean getBooleanProperty(String name) {
-        
         // get the value first, then convert
         String value = WebloggerRuntimeConfig.getProperty(name);
-        
         if (value == null) {
             return false;
         }
-
         return Boolean.valueOf(value);
     }
-    
-    
+
     /**
      * Retrieve a property as an int ... defaults to -1 if there is an error
      **/
     public static int getIntProperty(String name) {
         // get the value first, then convert
         String value = WebloggerRuntimeConfig.getProperty(name);
-        
         if (value == null || value.isEmpty()) {
             return -1;
         }
-        
         int intval = -1;
         try {
             intval = Integer.parseInt(value);
         } catch(Exception e) {
             log.warn("Trouble converting to int: "+name, e);
         }
-        
         return intval;
     }
     
@@ -151,17 +137,14 @@ public final class WebloggerRuntimeConfig {
      * value which is set by the InitFilter.
      */
     public static String getAbsoluteContextURL() {
-        
         // db prop takes priority if it exists
         String absURL = getProperty("site.absoluteurl");
         if(absURL != null && absURL.trim().length() > 0) {
             return absURL;
         }
-        
         return absoluteContextURL;
     }
-    
-    
+
     /**
      * Special method which sets the non-persisted relative url to this site.
      *
@@ -170,24 +153,19 @@ public final class WebloggerRuntimeConfig {
     public static void setRelativeContextURL(String url) {
         relativeContextURL = url;
     }
-    
-    
+
     public static String getRelativeContextURL() {
         return relativeContextURL;
     }
-    
-    
+
     /**
      * Convenience method for Roller classes trying to determine if a given
      * weblog handle represents the front page blog.
      */
     public static boolean isFrontPageWeblog(String weblogHandle) {
-        
         String frontPageHandle = getProperty("site.frontpage.weblog.handle");
-        
         return (frontPageHandle.equals(weblogHandle));
     }
-    
     
     /**
      * Convenience method for Roller classes trying to determine if a given
@@ -195,9 +173,7 @@ public final class WebloggerRuntimeConfig {
      * site-wide data.
      */
     public static boolean isSiteWideWeblog(String weblogHandle) {
-        
         boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
-        
         return (isFrontPageWeblog(weblogHandle) && siteWide);
     }
     

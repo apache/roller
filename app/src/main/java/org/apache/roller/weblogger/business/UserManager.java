@@ -180,17 +180,19 @@ public interface UserManager {
      * @param role    Minimum WeblogRole being checked for
      * @return true if user has WeblogRole or a more powerful one
      */
-    boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role)
-            throws WebloggerException;
+    boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role);
     
     
     /**
-     * Grant user specific WeblogRole for a weblog
-     * @param user    User to grant weblog role to
-     * @param weblog  Weblog being granted access to
+     * Grant user specific WeblogRole for a weblog.  Optimized to use IDs
+     * instead of actual User and Weblog objects, as the latter are not always
+     * available without an additional DB call.
+     *
+     * @param userName  Username to grant weblog role to
+     * @param weblogId  Weblog Id being granted access to
      * @param role    WeblogRole to grant
      */
-    void grantWeblogRole(User user, Weblog weblog, WeblogRole role)
+    void grantWeblogRole(String userId, String weblogId, WeblogRole role)
             throws WebloggerException;
 
     
@@ -226,10 +228,10 @@ public interface UserManager {
     
     /**
      * Revoke from user his WeblogRole for a given weblog.
-     * @param user    User to remove WeblogRole from
-     * @param weblog  Weblog to revoke WeblogRole from
+     * @param userName  Username to remove WeblogRole from
+     * @param weblogId  Weblog ID to revoke WeblogRole from
      */
-    void revokeWeblogRole(User user, Weblog weblog)
+    void revokeWeblogRole(String userName, String weblogId)
             throws WebloggerException;
 
     

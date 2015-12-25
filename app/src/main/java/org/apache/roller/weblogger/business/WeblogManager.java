@@ -343,7 +343,6 @@ public interface WeblogManager {
     /**
      * Check if weblog category is in use.
      */
-    boolean isWeblogCategoryInUse(WeblogCategory data)
-            throws WebloggerException;
+    boolean isWeblogCategoryInUse(WeblogCategory data);
 
 }

@@ -130,7 +130,6 @@ public class MainMenu extends UIAction {
         }
     }
     
-
     public String getWebsiteId() {
         return websiteId;
     }

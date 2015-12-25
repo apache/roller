@@ -58,7 +58,7 @@
 </s:else>
 
 <%-- if we have weblogs, then loop through and list them --%>
-<s:if test="! existingPermissions.isEmpty">
+<s:if test="!existingPermissions.isEmpty">
     
     <s:iterator id="perms" value="existingPermissions">
 

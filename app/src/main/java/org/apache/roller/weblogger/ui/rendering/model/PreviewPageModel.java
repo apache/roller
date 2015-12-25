@@ -92,6 +92,7 @@ public class PreviewPageModel extends PageModel {
         
         if (anchor != null) {
             return new WeblogEntriesPreviewPager(
+                    weblogEntryManager,
                     urlStrategy,
                     previewRequest.getWeblog(),
                     previewRequest.getWeblogPageName(),
@@ -102,6 +103,7 @@ public class PreviewPageModel extends PageModel {
                     previewRequest.getPageNum());
         } else {
             return new WeblogEntriesLatestPager(
+                    weblogEntryManager,
                     urlStrategy,
                     previewRequest.getWeblog(),
                     previewRequest.getWeblogPageName(),

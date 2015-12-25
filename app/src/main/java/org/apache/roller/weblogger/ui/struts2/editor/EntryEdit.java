@@ -247,8 +247,7 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String publish() {
-        if (getActionWeblog().userHasWeblogRole(
-                getAuthenticatedUser(), WeblogRole.POST)) {
+        if (userManager.checkWeblogRole(getAuthenticatedUser(), getActionWeblog(), WeblogRole.POST)) {
             Timestamp pubTime = calculatePubTime();
 
             if (pubTime != null && pubTime.after(
@@ -557,7 +556,7 @@ public final class EntryEdit extends UIAction {
     }
 
     public boolean isUserAnAuthor() {
-        return getActionWeblog().userHasWeblogRole(getAuthenticatedUser(), WeblogRole.POST);
+        return userManager.checkWeblogRole(getAuthenticatedUser(), getActionWeblog(), WeblogRole.POST);
     }
 
     /**

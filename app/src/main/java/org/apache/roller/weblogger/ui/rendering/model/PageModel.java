@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
@@ -55,14 +56,21 @@ public class PageModel implements Model {
     private static Log log = LogFactory.getLog(PageModel.class);
     
     private WeblogPageRequest pageRequest = null;
-    protected URLStrategy urlStrategy = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
     private Weblog weblog = null;
     private DeviceType deviceType = null;
 
+    protected URLStrategy urlStrategy = null;
+
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
+    }
+
+    protected WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     /**
@@ -255,6 +263,7 @@ public class PageModel implements Model {
         // determine which mode to use
         if (pageRequest.getWeblogAnchor() != null) {
             return new WeblogEntriesPermalinkPager(
+                    weblogEntryManager,
                     urlStrategy,
                     weblog,
                     pageRequest.getWeblogPageName(),
@@ -265,6 +274,7 @@ public class PageModel implements Model {
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 8) {
             return new WeblogEntriesDayPager(
+                    weblogEntryManager,
                     urlStrategy,
                     weblog,
                     pageRequest.getWeblogPageName(),
@@ -275,6 +285,7 @@ public class PageModel implements Model {
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 6) {
             return new WeblogEntriesMonthPager(
+                    weblogEntryManager,
                     urlStrategy,
                     weblog,
                     pageRequest.getWeblogPageName(),
@@ -286,6 +297,7 @@ public class PageModel implements Model {
           
         } else {
             return new WeblogEntriesLatestPager(
+                    weblogEntryManager,
                     urlStrategy,
                     weblog,
                     pageRequest.getWeblogPageName(),

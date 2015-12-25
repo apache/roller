@@ -27,8 +27,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
@@ -50,9 +48,11 @@ public class WeblogsPager extends AbstractPager {
     
     // are there more items?
     private boolean more = false;
-    
-    
+
+    private WeblogManager weblogManager;
+
     public WeblogsPager(
+            WeblogManager  weblogManager,
             URLStrategy    strat,
             String         baseUrl,
             String         locale,
@@ -61,7 +61,8 @@ public class WeblogsPager extends AbstractPager {
             int            length) {
         
         super(strat, baseUrl, page);
-        
+
+        this.weblogManager = weblogManager;
         this.sinceDays = sinceDays;
         this.length = length;
         
@@ -139,13 +140,11 @@ public class WeblogsPager extends AbstractPager {
                 startDate = cal.getTime();
             }
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogManager wmgr = roller.getWeblogManager();
                 List<Weblog> rawWeblogs;
                 if (letter == null) {
-                    rawWeblogs = wmgr.getWeblogs(Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
+                    rawWeblogs = weblogManager.getWeblogs(Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
                 } else {
-                    rawWeblogs = wmgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
+                    rawWeblogs = weblogManager.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }
                 
                 // wrap the results

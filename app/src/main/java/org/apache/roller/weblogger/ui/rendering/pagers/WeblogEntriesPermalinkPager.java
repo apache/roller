@@ -18,8 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.Collections;
@@ -31,8 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -40,10 +36,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.util.Utilities;
 
-
-/**
- *
- */
 public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     private static Log log = LogFactory.getLog(WeblogEntriesPermalinkPager.class);
@@ -54,9 +46,9 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     // collection for the pager
     Map<Date, List<WeblogEntryWrapper>> entries = null;
-    
-    
+
     public WeblogEntriesPermalinkPager(
+            WeblogEntryManager weblogEntryManager,
             URLStrategy        strat,
             Weblog             weblog,
             String             pageLink,
@@ -66,8 +58,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             List<String>       tags,
             int                page) {
         
-        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
-        
+        super(weblogEntryManager, strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
         getEntries();
     }
     
@@ -75,9 +66,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     public Map getEntries() {
         if (entries == null) {
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
+                currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
                 if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     entries = new TreeMap<>();
                     entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
@@ -140,9 +129,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) {
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                nextEntry = wmgr.getNextEntry(currEntry, null);
+                nextEntry = weblogEntryManager.getNextEntry(currEntry, null);
                 // make sure that entry is published and not to future
                 if (nextEntry != null && nextEntry.getPubTime().after(new Date())
                         && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
@@ -160,9 +147,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     private WeblogEntry getPrevEntry() {
         if (prevEntry == null) {
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                prevEntry = wmgr.getPreviousEntry(currEntry, null);
+                prevEntry = weblogEntryManager.getPreviousEntry(currEntry, null);
                 // make sure that entry is published and not to future
                 if (prevEntry != null && prevEntry.getPubTime().after(new Date())
                         && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {

@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.sql.Timestamp;
@@ -29,8 +28,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -58,8 +55,11 @@ public class CommentsPager extends AbstractPager {
     
     // most recent update time of current set of entries
     private Date lastUpdated = null;        
-    
+
+    private WeblogEntryManager weblogEntryManager;
+
     public CommentsPager(
+            WeblogEntryManager weblogEntryManager,
             URLStrategy    strat,
             String         baseUrl,
             Weblog         weblog,
@@ -68,7 +68,8 @@ public class CommentsPager extends AbstractPager {
             int            length) {
         
         super(strat, baseUrl, page);
-        
+
+        this.weblogEntryManager = weblogEntryManager;
         this.weblog = weblog;
         this.sinceDays = sinceDays;
         this.length = length;
@@ -95,9 +96,6 @@ public class CommentsPager extends AbstractPager {
             }
             
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-
                 CommentSearchCriteria csc = new CommentSearchCriteria();
                 csc.setWeblog(weblog);
                 csc.setStartDate(startDate);
@@ -105,7 +103,7 @@ public class CommentsPager extends AbstractPager {
                 csc.setOffset(offset);
                 csc.setMaxResults(length + 1);
 
-                List<WeblogEntryComment> commentsList = wmgr.getComments(csc);
+                List<WeblogEntryComment> commentsList = weblogEntryManager.getComments(csc);
                 
                 // wrap the results
                 int count = 0;

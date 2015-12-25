@@ -18,20 +18,16 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.core.tags.calendar;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
@@ -45,11 +41,12 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
 
+    private Map<Date, List<WeblogEntry>> monthMap;
     private FastDateFormat starDateFormat;
     private FastDateFormat singleDayFormat;
 
-    public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat) {
-        super(pRequest, cat);
+    public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat, WeblogEntryManager wem, URLStrategy urlStrategy) {
+        super(pRequest, cat, wem, urlStrategy);
         TimeZone tz = weblog.getTimeZoneInstance();
         starDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, tz);
         singleDayFormat = FastDateFormat.getInstance("dd", tz);
@@ -58,17 +55,16 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(weblog);
             wesc.setStartDate(startDate);
             wesc.setEndDate(endDate);
             wesc.setCatName(catName);
             wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-            monthMap = mgr.getWeblogEntryObjectMap(wesc);
+            monthMap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
         } catch (WebloggerException e) {
             mLogger.error(e);
-            monthMap = new HashMap();
+            monthMap = new HashMap<>();
         }
     }
     
@@ -81,13 +77,12 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             // get the 8 char YYYYMMDD datestring for day, returns null
             // if no weblog entry on that day
             String dateString;
-            List entries = (List)monthMap.get(day);
+            List<WeblogEntry> entries = monthMap.get(day);
             if ( entries != null ) {
-                dateString = starDateFormat.format(
-                        ((WeblogEntry)entries.get(0)).getPubTime());
+                dateString = starDateFormat.format(entries.get(0).getPubTime());
                 
                 // append 8 char date string on end of selfurl
-                String dayUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
+                String dayUrl = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
                               
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append("<a href=\"");
@@ -96,15 +91,15 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 sb.append(singleDayFormat.format(day));
                 sb.append("</a></div>");
                 
-                for ( int i=0; i<entries.size(); i++ ) {
+                for (WeblogEntry entry : entries) {
                     sb.append("<div class=\"bCalendarDayContentBig\">");
                     sb.append("<a href=\"");
-                    sb.append(((WeblogEntry)entries.get(i)).getPermalink());
+                    sb.append(entry.getPermalink());
                     sb.append("\">");
                     
-                    String title = ((WeblogEntry)entries.get(i)).getTitle().trim();
+                    String title = entry.getTitle().trim();
                     if ( title.length()==0 ) {
-                        title = ((WeblogEntry)entries.get(i)).getAnchor();
+                        title = entry.getAnchor();
                     }
                     if ( title.length() > 20 ) {
                         title = title.substring(0,20)+"...";
@@ -139,9 +134,9 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         // get the 8 char YYYYMMDD datestring for day, returns null
         // if no weblog entry on that day
         String dateString = null;
-        List entries = (List)monthMap.get( day );
-        if ( entries != null && day != null ) {
-            WeblogEntry entry = (WeblogEntry)entries.get(0);
+        List<WeblogEntry> entries = monthMap.get(day);
+        if (entries != null && day != null) {
+            WeblogEntry entry = entries.get(0);
             dateString = starDateFormat.format(entry.getPubTime());
         }
         if (dateString == null && !alwaysURL) {
@@ -155,10 +150,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         try {
             if (nextPrevMonthURL && pageLink != null) { 
                 // next/prev month URLs point to current page
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
+                url = urlStrategy.getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
             } else { 
                 // all other URLs point back to main weblog page
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
+                url = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             mLogger.error("ERROR: creating URL",e);

@@ -31,6 +31,7 @@ import java.util.Locale;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -50,7 +51,9 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     // url strategy for building urls
     URLStrategy urlStrategy = null;
-    
+
+    protected WeblogEntryManager weblogEntryManager;
+
     Weblog weblog = null;
     String pageLink = null;
     String entryAnchor = null;
@@ -61,8 +64,9 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     int page = 0;
     int length = 0;
     
-    
+
     public AbstractWeblogEntriesPager(
+            WeblogEntryManager weblogEntryManager,
             URLStrategy        strat,
             Weblog             weblog,
             String             pageLink,
@@ -73,7 +77,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             int                page) {
         
         this.urlStrategy = strat;
-        
+        this.weblogEntryManager = weblogEntryManager;
         this.weblog = weblog;
         this.pageLink = pageLink;
         this.entryAnchor = entryAnchor;

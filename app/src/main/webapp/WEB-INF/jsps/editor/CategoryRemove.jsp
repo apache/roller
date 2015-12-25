@@ -27,7 +27,7 @@
     <s:hidden name="weblog" />
     <s:hidden name="removeId" />
 
-    <s:if test="category.inUse" >
+    <s:if test="categoryInUse" >
         <br />
         <span class="warning">
             <s:text name="categoryDeleteOK.warningCatInUse" />

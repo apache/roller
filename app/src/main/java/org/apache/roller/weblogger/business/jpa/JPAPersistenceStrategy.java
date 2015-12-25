@@ -269,10 +269,8 @@ public class JPAPersistenceStrategy {
      * Get named TypedQuery that won't commit changes to DB first (FlushModeType.COMMIT)
      * @param queryName the name of the query
      * @param resultClass return type of query
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public <T> TypedQuery<T> getNamedQuery(String queryName, Class<T> resultClass)
-            throws WebloggerException {
+    public <T> TypedQuery<T> getNamedQuery(String queryName, Class<T> resultClass) {
         EntityManager em = getEntityManager(false);
         TypedQuery<T> q = em.createNamedQuery(queryName, resultClass);
         // For performance, never flush/commit prior to running queries.

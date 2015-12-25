@@ -46,7 +46,7 @@ public class JPAUserManagerImpl implements UserManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of userNames -> userIds
-    private Map<String, String> userNameToIdMap = new HashMap<String, String>();
+    private Map<String, String> userNameToIdMap = new HashMap<>();
     
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA User Manager");
@@ -305,24 +305,24 @@ public class JPAUserManagerImpl implements UserManager {
     
     //-------------------------------------------------------- permissions CRUD
  
-    public boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role) throws WebloggerException {
+    public boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role) {
 
         // if user has specified permission in weblog return true
         try {
-            UserWeblogRole existingPerm = getWeblogRole(user, weblog);
-            if (existingPerm != null && existingPerm.hasEffectiveWeblogRole(role)) {
+            UserWeblogRole existingRole = getWeblogRole(user, weblog);
+            if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
                 return true;
             }
         } catch (WebloggerException ignored) {
         }
 
-        // if Blog Server admin would still have weblog permission above
+        // if Blog Server admin would still have any weblog role
         if (user.isGlobalAdmin()) {
             return true;
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("PERM CHECK FAILED: user " + user.getUserName() + " does not have " + role.name()
+            log.debug("ROLE CHECK FAILED: user " + user.getUserName() + " does not have " + role.name()
                     + " or greater rights on weblog " + weblog.getHandle());
         }
         return false;
@@ -353,13 +353,13 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
 
-    public void grantWeblogRole(User user, Weblog weblog, WeblogRole role) throws WebloggerException {
+    public void grantWeblogRole(String userName, String weblogId, WeblogRole role) throws WebloggerException {
 
         // first, see if user already has a permission for the specified object
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
-        q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getId());
+        q.setParameter(1, userName);
+        q.setParameter(2, weblogId);
         UserWeblogRole existingPerm = null;
         try {
             existingPerm = q.getSingleResult();
@@ -372,7 +372,7 @@ public class JPAUserManagerImpl implements UserManager {
             this.strategy.store(existingPerm);
         } else {
             // it's a new permission, so store it
-            UserWeblogRole perm = new UserWeblogRole(weblog, user, role);
+            UserWeblogRole perm = new UserWeblogRole(userName, weblogId, role);
             this.strategy.store(perm);
         }
     }
@@ -395,7 +395,7 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("User already has permissions for this weblog.");
         } else {
             // it's a new permission, so store it
-            UserWeblogRole perm = new UserWeblogRole(weblog, user, role);
+            UserWeblogRole perm = new UserWeblogRole(user.getUserName(), weblog.getId(), role);
             perm.setPending(true);
             this.strategy.store(perm);
         }
@@ -440,12 +440,12 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public void revokeWeblogRole(User user, Weblog weblog) throws WebloggerException {
+    public void revokeWeblogRole(String userName, String weblogId) throws WebloggerException {
         // get specified permission
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
-        q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getId());
+        q.setParameter(1, userName);
+        q.setParameter(2, weblogId);
         UserWeblogRole oldperm;
         try {
             oldperm = q.getSingleResult();

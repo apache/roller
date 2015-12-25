@@ -36,7 +36,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
@@ -59,12 +59,13 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     // collection for the pager
     private Map<Date, List<WeblogEntryWrapper>> entries = null;
-    
+
     // are there more pages?
     private boolean more = false;
     
     
     public WeblogEntriesDayPager(
+            WeblogEntryManager weblogEntryManager,
             URLStrategy        strat,
             Weblog             weblog,
             String             pageLink,
@@ -74,8 +75,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
             List<String>       tags,
             int                page) {
         
-        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
-
+        super(weblogEntryManager, strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
         TimeZone tz = weblog.getTimeZoneInstance();
 
         dayFormat = new SimpleDateFormat(
@@ -132,8 +132,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);
-                Map<Date, List<WeblogEntry>> mmap =
-                        WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(wesc);
+                Map<Date, List<WeblogEntry>> mmap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
 
                 // need to wrap pojos
                 int count = 0;

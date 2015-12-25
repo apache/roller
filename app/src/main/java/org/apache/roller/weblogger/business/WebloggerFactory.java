@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
@@ -113,9 +114,12 @@ public final class WebloggerFactory {
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
             strategy = context.getBean("jpaPersistenceStrategy", JPAPersistenceStrategy.class);
             // TODO:  Move below to @PostConstruct in IndexManagerImpl (presently requires webloggerInstance to be active)
-            webloggerInstance.getPropertiesManager().initialize();
-            webloggerInstance.getIndexManager().initialize();
-            webloggerInstance.getPingTargetManager().initialize();
+            PropertiesManager propertiesManager = context.getBean("propertiesManager", PropertiesManager.class);
+            propertiesManager.initialize();
+            IndexManager indexManager = context.getBean("indexManager", IndexManager.class);
+            indexManager.initialize();
+            PingTargetManager pingTargetManager = context.getBean("pingTargetManager", PingTargetManager.class);
+            pingTargetManager.initialize();
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }

@@ -33,7 +33,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -412,21 +411,6 @@ public class Weblog implements Serializable {
         return TimeZone.getTimeZone(getTimeZone());
     }
 
-    /**
-     * Returns true if user has all permissions actions specified in the weblog.
-     */
-    public boolean userHasWeblogRole(User user, WeblogRole weblogRole) {
-        try {
-            // look for user in website's permissions
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            return umgr.checkWeblogRole(user, this, weblogRole);
-        } catch (WebloggerException ex) {
-            // something is going seriously wrong, not much we can do here
-            log.error("ERROR checking user permssion", ex);
-        }
-        return false;
-    }
-
     @Column(name="displaycnt", nullable=false)
     public int getEntryDisplayCount() {
         return entryDisplayCount;
@@ -547,8 +531,7 @@ public class Weblog implements Serializable {
     public WeblogEntry getWeblogEntry(String anchor) {
         WeblogEntry entry = null;
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             entry = wmgr.getWeblogEntryByAnchor(this, anchor);
         } catch (WebloggerException e) {
             log.error("ERROR: getting entry by anchor");
@@ -559,8 +542,7 @@ public class Weblog implements Serializable {
     public WeblogCategory getWeblogCategory(String categoryName) {
         WeblogCategory category = null;
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             if (categoryName != null && !categoryName.equals("nil")) {
                 category = wmgr.getWeblogCategoryByName(this, categoryName);
             } else {
@@ -674,8 +656,7 @@ public class Weblog implements Serializable {
     public List<TagStat> getPopularTags(int length) {
         List<TagStat> results = new ArrayList<>();
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             results = wmgr.getPopularTags(this, 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
@@ -687,8 +668,7 @@ public class Weblog implements Serializable {
     public long getCommentCount() {
         long count = 0;
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager mgr = roller.getWeblogEntryManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             count = mgr.getCommentCount(this);            
         } catch (WebloggerException e) {
             log.error("Error getting comment count for weblog " + this.getName(), e);
@@ -700,8 +680,7 @@ public class Weblog implements Serializable {
     public long getEntryCount() {
         long count = 0;
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager mgr = roller.getWeblogEntryManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             count = mgr.getEntryCount(this);            
         } catch (WebloggerException e) {
             log.error("Error getting entry count for weblog " + this.getName(), e);

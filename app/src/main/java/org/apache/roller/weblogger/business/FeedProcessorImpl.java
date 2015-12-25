@@ -568,7 +568,7 @@ public class FeedProcessorImpl implements FeedProcessor {
     }
 
 
-    // upate proxy settings for jvm based on planet configuration
+    // update proxy settings for jvm based on planet configuration
     private void updateProxySettings() {
         String proxyHost = WebloggerRuntimeConfig.getProperty("planet.site.proxyhost");
         int proxyPort = WebloggerRuntimeConfig.getIntProperty("planet.site.proxyport");

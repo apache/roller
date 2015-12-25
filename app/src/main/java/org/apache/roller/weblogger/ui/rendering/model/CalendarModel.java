@@ -23,6 +23,8 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
@@ -42,8 +44,19 @@ public class CalendarModel implements Model {
     
     private PageContext pageContext = null;
     private WeblogPageRequest pageRequest = null;
-    
-    
+
+    protected WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    protected URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
     /** Template context name to be used for model */
     public String getModelName() {
         return "calendarModel";
@@ -90,11 +103,11 @@ public class CalendarModel implements Model {
         }
         String ret = null;
         try {
-            org.apache.roller.weblogger.ui.core.tags.calendar.CalendarModel model = null;
+            org.apache.roller.weblogger.ui.core.tags.calendar.CalendarModel model;
             if (big) {
-                model = new BigWeblogCalendarModel(pageRequest, catArgument);
+                model = new BigWeblogCalendarModel(pageRequest, catArgument, weblogEntryManager, urlStrategy);
             } else {
-                model = new WeblogCalendarModel(pageRequest, catArgument);
+                model = new WeblogCalendarModel(pageRequest, catArgument, weblogEntryManager, urlStrategy);
             }
             
             // save model in JSP page context so CalendarTag can find it

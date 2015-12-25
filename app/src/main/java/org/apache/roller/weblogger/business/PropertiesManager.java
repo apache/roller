@@ -24,7 +24,9 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
 /**
- * Manages global properties for Roller.
+ * Manages global runtime properties for Roller (those which may be altered
+ * and put into effect while Weblogger is running, as opposed to the static
+ * configuration read only when Weblogger restarts).
  */
 public interface PropertiesManager {
     
