@@ -70,9 +70,7 @@ public class SiteModel implements Model {
     private int pageNum = 0;
     
     private URLStrategy urlStrategy;
-    private UserManager userManager;
     private WeblogManager weblogManager;
-    private WeblogEntryManager weblogEntryManager;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
@@ -82,9 +80,13 @@ public class SiteModel implements Model {
         this.weblogManager = weblogManager;
     }
 
+    private WeblogEntryManager weblogEntryManager;
+
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
+
+    private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
@@ -139,7 +141,7 @@ public class SiteModel implements Model {
         }
         
         return new WeblogEntriesListPager(
-            urlStrategy,
+            weblogEntryManager, urlStrategy,
             pagerUrl, null, null, null,
             tags,
             sinceDays,
@@ -195,7 +197,7 @@ public class SiteModel implements Model {
         }
        
         return new WeblogEntriesListPager(
-            urlStrategy,
+            weblogEntryManager, urlStrategy,
             pagerUrl, queryWeblog.getPojo(), user, cat,
             tags,
             sinceDays,
@@ -225,6 +227,7 @@ public class SiteModel implements Model {
         }
         
         return new CommentsPager(
+            weblogEntryManager,
             urlStrategy,
             pagerUrl,
             null,
@@ -252,7 +255,7 @@ public class SiteModel implements Model {
             letter = null;
         }
         
-        return new UsersPager(
+        return new UsersPager(userManager,
             urlStrategy,
             pagerUrl,
             letter,
@@ -273,7 +276,7 @@ public class SiteModel implements Model {
             letter = null;
         }
         
-        return new WeblogsPager(
+        return new WeblogsPager(weblogManager,
             urlStrategy,
             pagerUrl,
             letter,
@@ -323,9 +326,9 @@ public class SiteModel implements Model {
         List results = new ArrayList();
         try {            
             User user = userManager.getUserByUserName(userName);
-            List<UserWeblogRole> perms = userManager.getWeblogRoles(user);
-            for (UserWeblogRole perm : perms) {
-                results.add(WeblogWrapper.wrap(perm.getWeblog(), urlStrategy));
+            List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+            for (UserWeblogRole role : roles) {
+                results.add(WeblogWrapper.wrap(weblogManager.getWeblog(role.getWeblogId()), urlStrategy));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -341,9 +344,9 @@ public class SiteModel implements Model {
         List results = new ArrayList();
         try {            
             Weblog website = weblogManager.getWeblogByHandle(handle);
-            List<UserWeblogRole> perms = userManager.getWeblogRoles(website);
-            for (UserWeblogRole perm : perms) {
-                results.add(UserWrapper.wrap(perm.getUser()));
+            List<UserWeblogRole> roles = userManager.getWeblogRoles(website);
+            for (UserWeblogRole role : roles) {
+                results.add(UserWrapper.wrap(userManager.getUserByUserName(role.getUserName())));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);

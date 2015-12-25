@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
@@ -32,8 +31,6 @@ import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-
 
 /**
  * Paging through a collection of planet entries.
@@ -52,9 +49,11 @@ public class PlanetEntriesPager extends AbstractPager {
     
     // are there more items?
     private boolean more = false;
-    
+
+    private PlanetManager planetManager;
     
     public PlanetEntriesPager(
+            PlanetManager planetManager,
             URLStrategy    strat,
             String         feedURL,
             String         groupHandle,
@@ -64,7 +63,8 @@ public class PlanetEntriesPager extends AbstractPager {
             int            length) {
         
         super(strat, baseUrl, page);
-        
+
+        this.planetManager = planetManager;
         this.feedURL = feedURL;
         this.groupHandle = groupHandle;
         this.sinceDays = sinceDays;
@@ -91,8 +91,6 @@ public class PlanetEntriesPager extends AbstractPager {
             
             List<SubscriptionEntry> results = new ArrayList<SubscriptionEntry>();
             try {
-                PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-
                 List<SubscriptionEntry> subEntries;
                 if (groupHandle != null && feedURL != null) {
                     Planet planet = planetManager.getPlanet(groupHandle);

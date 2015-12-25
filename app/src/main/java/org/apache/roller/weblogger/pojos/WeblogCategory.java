@@ -24,9 +24,7 @@ package org.apache.roller.weblogger.pojos;
 import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -36,8 +34,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 
 /**
  * Weblog Category.
@@ -132,18 +128,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
      */
     public int compareTo(WeblogCategory other) {
         return getName().compareTo(other.getName());
-    }
-
-    /**
-     * Returns true if category is in use.
-     */
-    @Transient
-    public boolean isInUse() {
-        try {
-            return WebloggerFactory.getWeblogger().getWeblogManager().isWeblogCategoryInUse(this);
-        } catch (WebloggerException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public String toString() {

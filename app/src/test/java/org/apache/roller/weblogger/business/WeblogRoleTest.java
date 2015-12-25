@@ -75,45 +75,45 @@ public class WeblogRoleTest extends WebloggerTest {
      */
     @Test
     public void testUserWeblogRoleCRUD() throws Exception {
-        UserWeblogRole p1 = new UserWeblogRole(testWeblog, testUser, WeblogRole.POST);
+        UserWeblogRole p1 = new UserWeblogRole(testUser.getUserName(), testWeblog.getId(), WeblogRole.POST);
         assertTrue(p1.getWeblogRole() == WeblogRole.POST);
 
-        UserWeblogRole perm;
+        UserWeblogRole role;
          
         // delete weblog roles
         testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
-        perm = userManager.getWeblogRole(testUser, testWeblog);
-        assertNotNull(perm);
-        userManager.revokeWeblogRole(testUser, testWeblog);
+        role = userManager.getWeblogRole(testUser, testWeblog);
+        assertNotNull(role);
+        userManager.revokeWeblogRole(testUser.getUserName(), testWeblog.getId());
         endSession(true);
         
         // check that delete was successful
-        perm = userManager.getWeblogRole(testUser, testWeblog);
-        assertNull(perm);
+        role = userManager.getWeblogRole(testUser, testWeblog);
+        assertNull(role);
         
         // create weblog roles
-        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.OWNER);
+        userManager.grantWeblogRole(testUser.getUserName(), testWeblog.getId(), WeblogRole.OWNER);
         endSession(true);
         
         // check that create was successful
-        perm = userManager.getWeblogRole(testUser, testWeblog);
-        assertNotNull(perm);
-        assertTrue(perm.getWeblogRole() == WeblogRole.OWNER);
+        role = userManager.getWeblogRole(testUser, testWeblog);
+        assertNotNull(role);
+        assertTrue(role.getWeblogRole() == WeblogRole.OWNER);
         endSession(true);
         
         // revoke role
-        userManager.revokeWeblogRole(perm.getUser(), perm.getWeblog());
+        userManager.revokeWeblogRole(role.getUserName(), role.getWeblogId());
         endSession(true);
         
         // add only draft role
-        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT);
+        userManager.grantWeblogRole(testUser.getUserName(), testWeblog.getId(), WeblogRole.EDIT_DRAFT);
         endSession(true);
 
         // check that user has draft weblog role only
-        perm = userManager.getWeblogRole(testUser, testWeblog);
-        assertNotNull(perm);
-        assertTrue(perm.getWeblogRole() == WeblogRole.EDIT_DRAFT);
+        role = userManager.getWeblogRole(testUser, testWeblog);
+        assertNotNull(role);
+        assertTrue(role.getWeblogRole() == WeblogRole.EDIT_DRAFT);
     }
     
     
@@ -212,7 +212,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        userManager.revokeWeblogRole(user, testWeblog);
+        userManager.revokeWeblogRole(user.getUserName(), testWeblog.getId());
         endSession(true);
 
         //user = userManager.getUser(user.getId());

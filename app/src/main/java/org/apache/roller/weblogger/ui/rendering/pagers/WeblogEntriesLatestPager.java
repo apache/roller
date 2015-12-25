@@ -30,7 +30,7 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
@@ -49,9 +49,9 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     
     // are there more pages?
     private boolean more = false;
-    
-    
+
     public WeblogEntriesLatestPager(
+            WeblogEntryManager weblogEntryManager,
             URLStrategy        strat,
             Weblog             weblog,
             String             pageLink,
@@ -61,7 +61,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             List               tags,
             int                page) {
         
-        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
+        super(weblogEntryManager, strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
         
         // initialize the pager collection
         getEntries();
@@ -81,7 +81,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);
-                Map<Date, List<WeblogEntry>> mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(wesc);
+                Map<Date, List<WeblogEntry>> mmap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
 
                 // need to wrap pojos
                 int count = 0;

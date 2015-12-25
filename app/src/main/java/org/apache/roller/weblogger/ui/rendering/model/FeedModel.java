@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
@@ -45,11 +46,18 @@ public class FeedModel implements Model {
     private static int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
     
     private WeblogFeedRequest feedRequest = null;
-    private URLStrategy urlStrategy = null;
     private Weblog weblog = null;
+
+    private URLStrategy urlStrategy = null;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
+    }
+
+    protected WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     public void init(Map initData) throws WebloggerException {
@@ -132,7 +140,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getType(),
                     feedRequest.getFormat(), null, null, null, false, true),
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
@@ -165,7 +173,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
-            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);

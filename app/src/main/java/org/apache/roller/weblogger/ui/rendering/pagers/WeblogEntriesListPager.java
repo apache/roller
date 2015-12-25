@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -59,10 +59,12 @@ public class WeblogEntriesListPager extends AbstractPager {
     private boolean more = false;
     
     // most recent update time of current set of entries
-    private Date lastUpdated = null;    
-    
-    
+    private Date lastUpdated = null;
+
+    private WeblogEntryManager weblogEntryManager;
+
     public WeblogEntriesListPager(
+            WeblogEntryManager weblogEntryManager,
             URLStrategy    strat,
             String         baseUrl,
             Weblog         queryWeblog,
@@ -74,7 +76,8 @@ public class WeblogEntriesListPager extends AbstractPager {
             int            length) {
         
         super(strat, baseUrl, pageNum);
-        
+        this.weblogEntryManager = weblogEntryManager;
+
         // store the data
         this.queryWeblog = queryWeblog;
         this.queryUser = queryUser;
@@ -114,8 +117,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);
-                List<WeblogEntry> rawEntries = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager().getWeblogEntries(wesc);
+                List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(wesc);
 
                 // wrap the results
                 int count = 0;

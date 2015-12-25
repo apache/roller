@@ -60,9 +60,14 @@ public class CategoryRemove extends UIAction {
     private String targetCategoryId = null;
 
     // all categories from the action weblog
-    private List<WeblogCategory> allCategories = new ArrayList<WeblogCategory>();
-    
-    
+    private List<WeblogCategory> allCategories = new ArrayList<>();
+
+    private boolean categoryInUse;
+
+    public boolean isCategoryInUse() {
+        return weblogManager.isWeblogCategoryInUse(category);
+    }
+
     public CategoryRemove() {
         this.actionName = "categoryRemove";
         this.desiredMenu = "editor";

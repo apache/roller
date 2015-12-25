@@ -938,36 +938,6 @@ public class WeblogEntry implements Serializable {
     }
 
     /**
-     * Determine if the specified user has permissions to edit this entry.
-     */
-    public boolean hasWritePermissions(User user) throws WebloggerException {
-        
-        // global admins can hack whatever they want
-        boolean isAdmin = WebloggerFactory.getWeblogger().getUserManager()
-            .isGlobalAdmin(user);
-        if (isAdmin) {
-            return true;
-        }
-        
-        UserWeblogRole perm = null;
-        try {
-            // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            perm = umgr.getWeblogRole(user, getWeblog());
-            
-        } catch (WebloggerException ex) {
-            // security interceptor should ensure this never happens
-            mLogger.error("ERROR retrieving user's permission", ex);
-            return false;
-        }
-
-        boolean author = perm.hasEffectiveWeblogRole(WeblogRole.POST);
-        boolean limited = perm.getWeblogRole().equals(WeblogRole.EDIT_DRAFT);
-        
-        return author || (limited && (status == PubStatus.DRAFT || status == PubStatus.PENDING));
-    }
-    
-    /**
      * Transform string based on plugins enabled for this weblog entry.
      */
     private String render(String str) {

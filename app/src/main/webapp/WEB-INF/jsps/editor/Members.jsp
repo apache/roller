@@ -71,8 +71,8 @@ function save() {
                <s:text name="memberPermissions.remove" />
            </th>
         </tr>
-        <s:iterator id="perm" value="weblogRoles" status="rowstatus">
-            <s:if test="#perm.pending">
+        <s:iterator id="role" value="weblogRoles" status="rowstatus">
+            <s:if test="#role.pending">
                 <tr class="rollertable_pending">
             </s:if>
             <s:elseif test="#rowstatus.odd == true">
@@ -84,26 +84,26 @@ function save() {
             
                 <td class="rollertable">
                     <img src='<s:url value="/images/user.png"/>' border="0" alt="icon" />
-	                <s:property value="#perm.user.userName" />
+	                <s:property value="#role.user.userName" />
                 </td>               
                 <td class="rollertable">
                     <input type="radio" 
-                        <s:if test='#perm.weblogRole.name() == "OWNER"'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="OWNER" />
+                        <s:if test='#role.weblogRole.name() == "OWNER"'>checked</s:if>
+                        name='role-<s:property value="#role.userName" />' value="OWNER" />
                 </td>
                 <td class="rollertable">
 	                <input type="radio" 
-                        <s:if test='#perm.weblogRole.name() == "POST"'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="POST" />
+                        <s:if test='#role.weblogRole.name() == "POST"'>checked</s:if>
+                        name='role-<s:property value="#role.userName" />' value="POST" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 
-                        <s:if test='#perm.weblogRole.name() == "EDIT_DRAFT"'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="EDIT_DRAFT" />
+                        <s:if test='#role.weblogRole.name() == "EDIT_DRAFT"'>checked</s:if>
+                        name='role-<s:property value="#role.userName" />' value="EDIT_DRAFT" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 
-                        name='perm-<s:property value="#perm.user.id" />' value="-1" />
+                        name='role-<s:property value="#role.userName" />' value="-1" />
                 </td>
            </tr>
        </s:iterator>

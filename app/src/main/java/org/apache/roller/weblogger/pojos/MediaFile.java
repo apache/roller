@@ -261,18 +261,6 @@ public class MediaFile implements Serializable {
         this.creatorUserName = creatorUserName;
     }
 
-    @Transient
-    public User getCreator() {
-        try {
-            return WebloggerFactory.getWeblogger().getUserManager()
-                    .getUserByUserName(getCreatorUserName());
-        } catch (Exception e) {
-            log.error("ERROR fetching user object for username: "
-                    + getCreatorUserName(), e);
-        }
-        return null;
-    }
-
     public int getWidth() {
         return width;
     }

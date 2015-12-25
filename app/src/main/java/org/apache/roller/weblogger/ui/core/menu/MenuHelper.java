@@ -28,7 +28,9 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTab;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTabItem;
 import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTab;
@@ -128,7 +130,12 @@ public final class MenuHelper {
             throws WebloggerException {
 
         Menu tabMenu = new Menu();
-        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+        UserWeblogRole userWeblogRole = null;
+
+        if (weblog != null) {
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            userWeblogRole = umgr.getWeblogRole(user, weblog);
+        }
 
         // iterate over tabs from parsed config
         for (ParsedTab configTab : menuConfig.getTabs()) {
@@ -142,7 +149,7 @@ public final class MenuHelper {
 
             if (!includeTab
                || !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole())
-               || (weblog != null && !umgr.checkWeblogRole(user, weblog, configTab.getRequiredWeblogRole()))
+               || (weblog != null && !checkWeblogRole(userWeblogRole, configTab.getRequiredWeblogRole()))
                ) {
                 continue;
             }
@@ -175,7 +182,7 @@ public final class MenuHelper {
                 // weblog role check
                 if (weblog != null
                         && (tabItem.getRequiredWeblogRole() != null
-                            && !umgr.checkWeblogRole(user, weblog, tabItem.getRequiredWeblogRole()))) {
+                            && !checkWeblogRole(userWeblogRole, tabItem.getRequiredWeblogRole()))) {
                     continue;
                 }
 
@@ -207,6 +214,10 @@ public final class MenuHelper {
         }
 
         return tabMenu;
+    }
+
+    private static boolean checkWeblogRole(UserWeblogRole uwr, WeblogRole requiredRole) {
+        return uwr != null && uwr.hasEffectiveWeblogRole(requiredRole);
     }
 
     /**

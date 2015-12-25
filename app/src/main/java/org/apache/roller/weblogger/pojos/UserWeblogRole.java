@@ -25,8 +25,8 @@ import java.io.Serializable;
 import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import javax.persistence.Basic;
@@ -78,10 +78,10 @@ public class UserWeblogRole implements Serializable {
     public UserWeblogRole() {
     }
 
-    public UserWeblogRole(Weblog weblog, User user, WeblogRole weblogRole) {
+    public UserWeblogRole(String userName, String weblogId, WeblogRole weblogRole) {
         setWeblogRole(weblogRole);
-        weblogId = weblog.getId();
-        userName = user.getUserName();
+        this.userName = userName;
+        this.weblogId = weblogId;
     }
 
     public boolean hasEffectiveWeblogRole(WeblogRole roleToCheck) {

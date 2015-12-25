@@ -29,8 +29,6 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -47,9 +45,9 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
     
     private static Log log = LogFactory.getLog(WeblogEntriesPreviewPager.class);
-    
-    
+
     public WeblogEntriesPreviewPager(
+            WeblogEntryManager weblogEntryManager,
             URLStrategy        strat,
             Weblog             weblog,
             String             pageLink,
@@ -59,16 +57,14 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
             List<String>       tags,
             int                page) {
         
-        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
+        super(weblogEntryManager, strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
     }
     
     
     public Map getEntries() {
         if (entries == null) {
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
+                currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
                 if (currEntry != null) {
 
                     // clone the entry since we don't want to work with the real pojo

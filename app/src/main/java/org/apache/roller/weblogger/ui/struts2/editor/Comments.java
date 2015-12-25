@@ -28,10 +28,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
@@ -93,6 +90,12 @@ public class Comments extends UIAction {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    protected URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
     }
 
     // number of comments to show per page
@@ -203,10 +206,7 @@ public class Comments extends UIAction {
             params.put("bean.approvedString", getBean().getApprovedString());
         }
 
-        return WebloggerFactory
-                .getWeblogger()
-                .getUrlStrategy()
-                .getActionURL(actionName,
+        return urlStrategy.getActionURL(actionName,
                         isGlobalCommentManagement() ? "/roller-ui/admin" : "/roller-ui/authoring",
                         isGlobalCommentManagement() ? null : getActionWeblog().getHandle(),
                         params, false);
@@ -544,7 +544,7 @@ public class Comments extends UIAction {
                 // need post permission to view comments
                 User authenticatedUser = userManager.getUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
-                if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
+                if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     CommentData cd = new CommentData();
                     cd.id = id;
                     cd.content = Utilities.escapeHTML(c.getContent());
@@ -573,7 +573,7 @@ public class Comments extends UIAction {
                 // need post permission to edit comments
                 User authenticatedUser = userManager.getUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
-                if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
+                if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);
                     // don't update the posttime when updating the comment

@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MailProvider;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
@@ -89,7 +90,8 @@ public class MailUtil {
         
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+
             String userName = entry.getCreator().getUserName();
             String from = entry.getCreator().getEmailAddress();
             String cc[] = new String[] {from};
@@ -104,8 +106,7 @@ public class MailUtil {
             
             // build list of reviewers (website users with author permission)
             for (User websiteUser : websiteUsers) {
-                if (entry.getWeblog().userHasWeblogRole(
-                        websiteUser, WeblogRole.POST)
+                if (umgr.checkWeblogRole(websiteUser, entry.getWeblog(), WeblogRole.POST)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());
                 }

@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.List;

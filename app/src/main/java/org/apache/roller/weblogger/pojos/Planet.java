@@ -19,14 +19,11 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import javax.persistence.Basic;
@@ -159,21 +156,7 @@ public class Planet implements Serializable, Comparable<Planet> {
         this.subscriptions = subscriptions;
     }
     
-    
-    /**
-     * Return a list of the most recent 10 entries from this planet.
-     */
-    @Transient
-    public List<SubscriptionEntry> getRecentEntries() {
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        try {
-            return mgr.getEntries(this, 0, 10);
-        } catch(Exception e) {
-            return Collections.emptyList();
-        }
-    }
-    
-    
+
     /**
      * Returns true if entry is qualified for inclusion in this planet.
      */
@@ -189,8 +172,8 @@ public class Planet implements Serializable, Comparable<Planet> {
         }
         return false;
     }
-    
-    
+
+
     private String[] createCategoryRestrictionAsArray() {
         if (catArray == null && getCategoryRestriction() != null) {
             StringTokenizer toker = new StringTokenizer(getCategoryRestriction(),",");
