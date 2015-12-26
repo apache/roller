@@ -46,7 +46,7 @@
         </s:if>
     </ul>
 </nav>
-    
+
 
 <%-- ============================================================= --%>
 <%-- Entry table--%>
@@ -103,10 +103,6 @@
     </td>
 
     <td>
-        <s:url var="deleteUrl" action="entryRemoveViaList">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="removeId" value="#post.id" />
-        </s:url>
         <s:set name="postId" value="#post.id" />
         <s:set name="postTitle" value="#post.title" />
         <a href="#" 
@@ -184,7 +180,7 @@
 
             <s:set var="deleteAction">entryRemoveViaList!remove</s:set>
             
-            <s:form action="%{#deleteAction}" theme="bootstrap">
+            <s:form action="%{#deleteAction}" theme="bootstrap" cssClass="form-horizontal">
                 <s:hidden name="salt"/>
                 <s:hidden name="weblog"/>
                 <s:hidden name="removeId" id="removeId"/>
@@ -196,7 +192,7 @@
                     </div>
                 </div>
                 
-                <div class="modal-header">
+                <div class="modal-body">
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -241,5 +237,3 @@
         $('#delete-entry-modal').modal({show: true});
     }
 </script>
-
-

@@ -17,26 +17,77 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            
-            <div class="sidebarInner">
-                <h3><s:text name="mainPage.actions" /></h3>
-                <hr size="1" noshade="noshade" />
-                
-                <p>
-                    <%-- Add Category link --%>
-                    <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-                    <s:url var="addCategory" action="categoryAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    <s:a href="%{addCategory}"><s:text name="categoriesForm.addCategory" /></s:a>
-                </p>
-                
-                <br />
+<h3><s:text name="mainPage.actions"/></h3>
+<hr size="1" noshade="noshade"/>
+
+<p>
+    <s:set name="categoryId" value="#bean.id"/>
+    <s:set name="categoryName" value="#post.name"/>
+    <s:set name="categoryDesc" value="#post.description"/>
+    <s:set name="categoryImage" value="#post.image"/>
+    <a href="#" onclick="showCategoryAddModal()">
+        <span class="glyphicon glyphicon-plus"></span>
+        <s:text name="categoriesForm.addCategory"/>
+    </a>
+</p>
+
+
+<div id="category-add-modal" class="modal fade category-add-modal" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3> <s:text name="categoryForm.add.title"/> </h3>
             </div>
-            
+
+            <div class="modal-body">
+                <s:form id="categoryAddForm" theme="bootstrap" cssClass="form-horizontal">
+                    <s:hidden name="salt"/>
+                    <s:hidden name="weblog"/>
+                    <s:textfield name="bean.name"        label="%{getText('generic.name')}" maxlength="255"/>
+                    <s:textfield name="bean.description" label="%{getText('generic.description')}"/>
+                    <s:textfield name="bean.image"       label="%{getText('categoryForm.image')}"/>
+                </s:form>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="submitNewCategory()" class="btn btn-primary">
+                    <s:text name="generic.save" />
+                </button>
+                <button type="button" class="btn" data-dismiss="modal">
+                    <s:text name="generic.cancel" />
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
+
+<script>
+    function showCategoryAddModal( postId, postTitle ) {
+        $('#category-add-modal').modal({show: true});
+    }
+    function submitNewCategory() {
+
+        // if name is empty reject and show error message
+        if ( $("#categoryAdd_bean_name").val().trim() == "" ) {
+            alert("Name is required");
+            return;
+        }
+        
+        // post category via Ajax
+        $.ajax({
+            url: "categoryAdd!save",
+            data: $("#categoryAddForm").serialize(),
+            context: document.body
+        }).done(function(data) {
+            alert("Done");
+        });
+        
+        // if post failed, then show error messages
+        
+        // else dismiss modal
+    }
+</script>
