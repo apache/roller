@@ -96,7 +96,10 @@ public abstract class UIAction extends ActionSupport
     
     // the weblog this action is intended to work on, or null if no weblog specified
     private Weblog actionWeblog = null;
-    
+
+    // the role the user has with this weblog
+    private WeblogRole actionWeblogRole = null;
+
     // the weblog handle of the action weblog
     private String weblog = null;
     
@@ -300,6 +303,14 @@ public abstract class UIAction extends ActionSupport
         this.actionWeblog = workingWeblog;
     }
 
+    public WeblogRole getActionWeblogRole() {
+        return actionWeblogRole;
+    }
+
+    public void setActionWeblogRole(WeblogRole actionWeblogRole) {
+        this.actionWeblogRole = actionWeblogRole;
+    }
+
     public String getWeblog() {
         return weblog;
     }
@@ -336,7 +347,8 @@ public abstract class UIAction extends ActionSupport
     }
     
     public Menu getMenu() {
-        return MenuHelper.generateMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(), getActionWeblog());
+        return MenuHelper.generateMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(),
+                getActionWeblog(), getActionWeblogRole());
     }
     
     

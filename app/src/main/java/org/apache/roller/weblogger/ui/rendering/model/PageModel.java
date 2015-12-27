@@ -29,7 +29,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
@@ -71,6 +73,12 @@ public class PageModel implements Model {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     /**
@@ -341,9 +349,16 @@ public class PageModel implements Model {
      * currently logged in.
      */
     public Menu getEditorMenu() {
-        if(pageRequest.isLoggedIn()) {
-            return MenuHelper.generateMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog());
+        try {
+            if (pageRequest.isLoggedIn()) {
+                UserWeblogRole uwr = userManager.getWeblogRole(pageRequest.getUser(), weblog);
+                return MenuHelper.generateMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog(), uwr.getWeblogRole());
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("GetWeblogRole() failed for user: " + pageRequest.getUser() + " and weblog: " + pageRequest.getWeblog());
+            return null;
         }
-        return null;
     }
 }

@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 
@@ -69,7 +70,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                 }
 
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                if (!umgr.hasEffectiveGlobalRole(authenticatedUser, theAction.requiredGlobalRole())) {
+                if (!authenticatedUser.hasEffectiveGlobalRole(theAction.requiredGlobalRole())) {
                     if (log.isDebugEnabled()) {
                         log.debug("DENIED: user " + authenticatedUser.getUserName() + " does not have "
                                         + theAction.requiredGlobalRole().name() + " role");
@@ -91,12 +92,15 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                     }
 
                     // are we also enforcing a specific weblog permission?
-                    if (!umgr.checkWeblogRole(authenticatedUser, actionWeblog, theAction.requiredWeblogRole())) {
+                    UserWeblogRole uwr = umgr.getWeblogRole(authenticatedUser, actionWeblog);
+                    if (uwr == null || !uwr.hasEffectiveWeblogRole(theAction.requiredWeblogRole())) {
                         if (log.isDebugEnabled()) {
                             log.debug("DENIED: user " + authenticatedUser + " does not have "
                                     + theAction.requiredWeblogRole() + " on weblog " + actionWeblog.getHandle());
                         }
                         return "access-denied";
+                    } else {
+                        ((UIAction) theAction).setActionWeblogRole(uwr.getWeblogRole());
                     }
                 }
 

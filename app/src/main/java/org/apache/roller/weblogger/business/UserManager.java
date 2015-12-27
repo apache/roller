@@ -22,7 +22,6 @@
 package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -192,7 +191,7 @@ public interface UserManager {
      * @param weblogId  Weblog Id being granted access to
      * @param role    WeblogRole to grant
      */
-    void grantWeblogRole(String userId, String weblogId, WeblogRole role)
+    void grantWeblogRole(String userName, String weblogId, WeblogRole role)
             throws WebloggerException;
 
     
@@ -241,12 +240,6 @@ public interface UserManager {
     List<UserWeblogRole> getWeblogRoles(User user)
             throws WebloggerException;
     
-    
-    /**
-     * Get all of user's pending WeblogRoles.
-     */
-    List<UserWeblogRole> getPendingWeblogRoles(User user)
-            throws WebloggerException;
 
     List<UserWeblogRole> getWeblogRolesIncludingPending(User user) throws WebloggerException;
 
@@ -280,26 +273,5 @@ public interface UserManager {
      */
     UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog)
             throws WebloggerException;
-
-
-    //--------------------------------------------------------------- role CRUD
-
-    /**
-     * Returns GlobalRole assigned to a user.  Useful if wish to retrieve
-     * the latest DB-stored role value prior to allowing a certain
-     * action.
-     */
-    GlobalRole getGlobalRole(User user) throws WebloggerException;
-
-    /**
-     * Convenience method to check if a user has a role of GlobalRole.ADMIN
-     */
-    boolean isGlobalAdmin(User user) throws WebloggerException;
-
-    /**
-     * Convenience method to check if a user has a role equal to or more
-     * powerful than a specified one
-     */
-    boolean hasEffectiveGlobalRole(User user, GlobalRole roleToCheck) throws WebloggerException;
 
 }

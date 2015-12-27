@@ -131,10 +131,11 @@ public class WeblogRoleTest extends WebloggerTest {
         List<UserWeblogRole> perms;
 
         // get all weblog roles for a user
-        perms = userManager.getWeblogRoles(getManagedUser(user));
+        perms = userManager.getWeblogRolesIncludingPending(getManagedUser(user));
         assertEquals(0, perms.size());
         perms = userManager.getWeblogRoles(getManagedUser(testUser));
         assertEquals(1, perms.size());
+        assertFalse(perms.get(0).isPending());
 
         // get all weblog roles for a weblog
         perms = userManager.getWeblogRoles(getManagedWeblog(testWeblog));
@@ -143,13 +144,9 @@ public class WeblogRoleTest extends WebloggerTest {
         userManager.grantPendingWeblogRole(user, testWeblog, WeblogRole.POST);
         endSession(true);
 
+        // confirm weblog role is pending
         user = getManagedUser(user);
-
-        // get pending weblog roles for a user
-        perms = userManager.getPendingWeblogRoles(getManagedUser(testUser));
-        assertEquals(0, perms.size());
-        perms = userManager.getPendingWeblogRoles(getManagedUser(user));
-        assertEquals(1, perms.size());
+        assertTrue(userManager.getWeblogRolesIncludingPending(user).get(0).isPending());
 
         // get pending weblog roles for a weblog
         perms = userManager.getPendingWeblogRoles(getManagedWeblog(testWeblog));
@@ -186,6 +183,7 @@ public class WeblogRoleTest extends WebloggerTest {
         // invite user to weblog
         userManager.grantPendingWeblogRole(user, testWeblog, WeblogRole.EDIT_DRAFT);
         endSession(true);
+        assertTrue(userManager.getWeblogRolesIncludingPending(user).get(0).isPending());
 
         // accept invitation
         userManager.acceptWeblogInvitation(user, testWeblog);
@@ -197,8 +195,7 @@ public class WeblogRoleTest extends WebloggerTest {
 
         // assert that invitation list is empty
         testWeblog = getManagedWeblog(testWeblog);
-        user = getManagedUser(user);
-        assertTrue(userManager.getPendingWeblogRoles(user).isEmpty());
+        assertFalse(userManager.getWeblogRoles(user).get(0).isPending());
         assertTrue(userManager.getPendingWeblogRoles(testWeblog).isEmpty());
 
         // assert that user is member of weblog

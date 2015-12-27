@@ -247,7 +247,7 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String publish() {
-        if (userManager.checkWeblogRole(getAuthenticatedUser(), getActionWeblog(), WeblogRole.POST)) {
+        if (getActionWeblogRole().hasEffectiveRole(WeblogRole.POST)) {
             Timestamp pubTime = calculatePubTime();
 
             if (pubTime != null && pubTime.after(
@@ -341,7 +341,7 @@ public final class EntryEdit extends UIAction {
                 }
 
                 // if user is an admin then apply pinned to main value as well
-                if (userManager.isGlobalAdmin(getAuthenticatedUser())) {
+                if (getAuthenticatedUser().isGlobalAdmin()) {
                     weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
@@ -556,7 +556,7 @@ public final class EntryEdit extends UIAction {
     }
 
     public boolean isUserAnAuthor() {
-        return userManager.checkWeblogRole(getAuthenticatedUser(), getActionWeblog(), WeblogRole.POST);
+        return getActionWeblogRole().hasEffectiveRole(WeblogRole.POST);
     }
 
     /**

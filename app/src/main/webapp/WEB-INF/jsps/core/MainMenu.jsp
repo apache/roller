@@ -27,7 +27,7 @@
 </s:if>    
 
 <%-- PROMPT: You have invitation(s) --%>
-<s:elseif test="! pendingPermissions.isEmpty">
+<s:elseif test="!pendingPermissions.isEmpty">
     <p><s:text name="yourWebsites.invitationsPrompt" /></p>
     
     <s:iterator id="invite" value="pendingPermissions">

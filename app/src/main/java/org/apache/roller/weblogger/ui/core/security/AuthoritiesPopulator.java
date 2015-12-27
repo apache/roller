@@ -60,7 +60,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             user = umgr.getUserByUserName(username, Boolean.TRUE);
             if (user != null) {
-                role = umgr.getGlobalRole(user);
+                role = user.getGlobalRole();
             } else {
                 role = defaultRole;
             }

@@ -23,12 +23,9 @@ package org.apache.roller.weblogger.ui.core.menu;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTab;
@@ -100,14 +97,14 @@ public final class MenuHelper {
      *
      * @return Menu object
      */
-    public static Menu generateMenu(String menuId, String currentAction, User user, Weblog weblog) {
+    public static Menu generateMenu(String menuId, String currentAction, User user, Weblog weblog, WeblogRole weblogRole) {
         Menu menu = null;
 
         // do we know the specified menu config?
         ParsedMenu menuConfig = menuMap.get(menuId);
         if (menuConfig != null) {
             try {
-                menu = buildMenu(menuConfig, currentAction, user, weblog);
+                menu = buildMenu(menuConfig, currentAction, user, weblog, weblogRole);
             } catch (WebloggerException ex) {
                 log.error("ERROR: fetching user roles", ex);
             }
@@ -126,16 +123,10 @@ public final class MenuHelper {
      * @throws WebloggerException the weblogger exception
      */
     private static Menu buildMenu(ParsedMenu menuConfig,
-            String currentAction, User user, Weblog weblog)
+            String currentAction, User user, Weblog weblog, WeblogRole weblogRole)
             throws WebloggerException {
 
         Menu tabMenu = new Menu();
-        UserWeblogRole userWeblogRole = null;
-
-        if (weblog != null) {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            userWeblogRole = umgr.getWeblogRole(user, weblog);
-        }
 
         // iterate over tabs from parsed config
         for (ParsedTab configTab : menuConfig.getTabs()) {
@@ -149,7 +140,7 @@ public final class MenuHelper {
 
             if (!includeTab
                || !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole())
-               || (weblog != null && !checkWeblogRole(userWeblogRole, configTab.getRequiredWeblogRole()))
+               || (weblog != null && !checkWeblogRole(weblogRole, configTab.getRequiredWeblogRole()))
                ) {
                 continue;
             }
@@ -182,7 +173,7 @@ public final class MenuHelper {
                 // weblog role check
                 if (weblog != null
                         && (tabItem.getRequiredWeblogRole() != null
-                            && !checkWeblogRole(userWeblogRole, tabItem.getRequiredWeblogRole()))) {
+                            && !checkWeblogRole(weblogRole, tabItem.getRequiredWeblogRole()))) {
                     continue;
                 }
 
@@ -216,8 +207,8 @@ public final class MenuHelper {
         return tabMenu;
     }
 
-    private static boolean checkWeblogRole(UserWeblogRole uwr, WeblogRole requiredRole) {
-        return uwr != null && uwr.hasEffectiveWeblogRole(requiredRole);
+    private static boolean checkWeblogRole(WeblogRole wr, WeblogRole requiredRole) {
+        return wr != null && wr.hasEffectiveRole(requiredRole);
     }
 
     /**
@@ -227,7 +218,7 @@ public final class MenuHelper {
      * @return the boolean property
      */
     private static boolean getBooleanProperty(String propertyName) {
-        if (WebloggerRuntimeConfig.getProperty(propertyName) != null) {
+        if (WebloggerRuntimeConfig.getRuntimeConfigDefs().hasPropertyDef(propertyName)) {
             return WebloggerRuntimeConfig.getBooleanProperty(propertyName);
         }
         return WebloggerConfig.getBooleanProperty(propertyName);

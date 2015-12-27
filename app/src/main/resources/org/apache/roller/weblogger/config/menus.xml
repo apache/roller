@@ -79,7 +79,7 @@ Defines the menus provided with Weblogger
                 </subactions>
             </tabItem>
         </tab>
-        <tab titleKey="tabbedmenu.design" weblogRole="OWNER" globalRole="LOGIN" enabledProperty="themes.customtheme.allowed">
+        <tab titleKey="tabbedmenu.design" weblogRole="OWNER" globalRole="BLOGGER" enabledProperty="themes.customtheme.allowed">
             <tabItem action="themeEdit"
                      titleKey="tabbedmenu.website.themes"/>
             <tabItem action="templates"

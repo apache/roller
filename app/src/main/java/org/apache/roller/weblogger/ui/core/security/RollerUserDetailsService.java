@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,7 +33,6 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**
@@ -56,31 +54,22 @@ public class RollerUserDetailsService implements UserDetailsService {
             // Thowing a "soft" exception here allows setup to proceed
             throw new UsernameNotFoundException("User info not available yet.");
         }
+
+        UserManager umgr = roller.getUserManager();
+        User userData;
+        // standard username/password auth
         try {
-            UserManager umgr = roller.getUserManager();
-            User userData;
-            // standard username/password auth
-            try {
-                userData = umgr.getUserByUserName(userName);
-            } catch (WebloggerException ex) {
-                throw new DataRetrievalFailureException("ERROR in user lookup", ex);
-            }
-            if (userData == null) {
-                throw new UsernameNotFoundException("ERROR no user: " + userName);
-            }
-            List<SimpleGrantedAuthority> authorities =  getAuthorities(userData, umgr);
-            return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
-                    true, true, true, true, authorities);
+            userData = umgr.getUserByUserName(userName);
         } catch (WebloggerException ex) {
-            throw new DataAccessResourceFailureException("ERROR: fetching roles", ex);
+            throw new DataRetrievalFailureException("ERROR in user lookup", ex);
         }
+        if (userData == null) {
+            throw new UsernameNotFoundException("ERROR no user: " + userName);
+        }
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>(1);
+        authorities.add(new SimpleGrantedAuthority(userData.getGlobalRole().name()));
+        return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
+                true, true, true, true, authorities);
     }
         
-     private List<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
-         GlobalRole role = umgr.getGlobalRole(userData);
-         List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(1);
-         authorities.add(new SimpleGrantedAuthority(role.name()));
-         return authorities;
-     }
-    
 }
