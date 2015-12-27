@@ -183,9 +183,9 @@ public interface UserManager {
     
     
     /**
-     * Grant user specific WeblogRole for a weblog.  Optimized to use IDs
-     * instead of actual User and Weblog objects, as the latter are not always
-     * available without an additional DB call.
+     * Grant user specific WeblogRole for a weblog.  Optimized to use unique identifiers
+     * instead of User and Weblog objects, as the latter not always available without an
+     * additional DB call.
      *
      * @param userName  Username to grant weblog role to
      * @param weblogId  Weblog Id being granted access to
@@ -226,7 +226,9 @@ public interface UserManager {
 
     
     /**
-     * Revoke from user his WeblogRole for a given weblog.
+     * Revoke from user his WeblogRole for a given weblog.  Optimized to use unique identifiers
+     * instead of User and Weblog objects, as the latter not always available without an
+     * additional DB call.
      * @param userName  Username to remove WeblogRole from
      * @param weblogId  Weblog ID to revoke WeblogRole from
      */
