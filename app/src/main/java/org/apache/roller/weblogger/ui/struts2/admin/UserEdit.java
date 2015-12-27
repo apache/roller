@@ -166,7 +166,6 @@ public class UserEdit extends UIAction {
 
             try {
                 if (isAdd()) {
-                    // fields not copied over from above copyTo():
                     user.setUserName(bean.getUserName().trim());
                     user.setDateCreated(new java.util.Date());
                     user.setGlobalRole(bean.getGlobalRole());
@@ -175,7 +174,7 @@ public class UserEdit extends UIAction {
                 } else {
                     if (!isUserEditingSelf()) {
                         user.setGlobalRole(bean.getGlobalRole());
-                    } else if (userManager.getGlobalRole(user) != bean.getGlobalRole()) {
+                    } else if (user.getGlobalRole() != bean.getGlobalRole()) {
                         addError("userAdmin.cantChangeOwnRole");
                     }
                     userManager.saveUser(user);

@@ -485,40 +485,11 @@ public class JPAUserManagerImpl implements UserManager {
         return q.getResultList();
     }
 
-    public List<UserWeblogRole> getPendingWeblogRoles(User user) throws WebloggerException {
-        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&Pending",
-                UserWeblogRole.class);
-        q.setParameter(1, user.getUserName());
-        return q.getResultList();
-    }
-
     public List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog) throws WebloggerException {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogId&Pending",
                 UserWeblogRole.class);
         q.setParameter(1, weblog.getId());
         return q.getResultList();
-    }
-
-    @Override
-    public GlobalRole getGlobalRole(User user) throws WebloggerException {
-        TypedQuery<GlobalRole> q = strategy.getNamedQuery("User.getGlobalRole", GlobalRole.class);
-        q.setParameter(1, user.getUserName());
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            // TODO: Log something.
-            return GlobalRole.LOGIN;
-        }
-    }
-
-    @Override
-    public boolean isGlobalAdmin(User user) throws WebloggerException {
-        return getGlobalRole(user) == GlobalRole.ADMIN;
-    }
-
-    @Override
-    public boolean hasEffectiveGlobalRole(User user, GlobalRole roleToCheck) throws WebloggerException {
-        return getGlobalRole(user).getWeight() >= roleToCheck.getWeight();
     }
 
 }

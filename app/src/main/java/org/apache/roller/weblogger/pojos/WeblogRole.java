@@ -33,6 +33,10 @@ public enum WeblogRole {
         return weight;
     }
 
+    public boolean hasEffectiveRole(WeblogRole roleToCheck) {
+        return weight >= roleToCheck.getWeight();
+    }
+
     WeblogRole(int weight) {
         this.weight = weight;
     }

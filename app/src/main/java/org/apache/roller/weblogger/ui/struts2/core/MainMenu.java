@@ -21,7 +21,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,7 +62,10 @@ public class MainMenu extends UIAction {
         this.pageTitle = "yourWebsites.title";
     }
 
-    
+    List<UserWeblogRole> existingPermissions = new ArrayList<>();
+
+    List<UserWeblogRole> pendingPermissions = new ArrayList<>();
+
     @Override
     public WeblogRole requiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
@@ -73,14 +76,26 @@ public class MainMenu extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
+    public void prepare() {
+        try {
+            List<UserWeblogRole> allRoles = userManager.getWeblogRolesIncludingPending(getAuthenticatedUser());
+            for (UserWeblogRole role : allRoles) {
+                if (role.isPending()) {
+                    pendingPermissions.add(role);
+                } else {
+                    existingPermissions.add(role);
+                }
+            }
+        } catch(Exception e) {
+            log.error("Can't retrieve permissions for " + getAuthenticatedUser().getUserName());
+        }
+    }
+
     public String execute() {
-        
         return SUCCESS;
     }
-    
-    
+
     public String accept() {
-        
         try {
             Weblog weblog = weblogManager.getWeblog(getInviteId());
             userManager.acceptWeblogInvitation(getAuthenticatedUser(), weblog);
@@ -90,44 +105,30 @@ public class MainMenu extends UIAction {
             log.error("Error handling invitation accept weblog id - "+getInviteId(), ex);
             addError("yourWebsites.permNotFound");
         }
-        
         return SUCCESS;
     }
-    
-    
+
     public String decline() {
-        
         try {
             Weblog weblog = weblogManager.getWeblog(getInviteId());
             String handle = weblog.getHandle();                       
-            // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
-            // TODO EXCEPTIONS: better exception handling here
+            // TODO: notify inviter that invitee has accepted/declined invitation
             userManager.declineWeblogInvitation(getAuthenticatedUser(), weblog);
             WebloggerFactory.flush();
             addMessage("yourWebsites.declined", handle);
-
         } catch (WebloggerException ex) {
             log.error("Error handling invitation decline weblog id - "+getInviteId(), ex);
             addError("yourWebsites.permNotFound");
         }
-        
         return SUCCESS;
     }
 
     public List<UserWeblogRole> getExistingPermissions() {
-        try {
-            return userManager.getWeblogRoles(getAuthenticatedUser());
-        } catch(Exception e) {
-            return Collections.emptyList();
-        }
+        return existingPermissions;
     }
     
     public List<UserWeblogRole> getPendingPermissions() {
-        try {
-            return userManager.getPendingWeblogRoles(getAuthenticatedUser());
-        } catch(Exception e) {
-            return Collections.emptyList();
-        }
+        return pendingPermissions;
     }
     
     public String getWebsiteId() {
@@ -147,9 +148,6 @@ public class MainMenu extends UIAction {
     }
 
     public boolean isUserIsAdmin() {
-        try {
-            return userManager.isGlobalAdmin(getAuthenticatedUser());
-        } catch (Exception e) {}
-        return false;
+        return getAuthenticatedUser().isGlobalAdmin();
     }
 }

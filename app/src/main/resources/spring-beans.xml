@@ -106,6 +106,7 @@
     <beans:bean id="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
+        <beans:property name="userManager" ref="userManager"/>
     </beans:bean>
 
     <beans:bean id="configModel" class="org.apache.roller.weblogger.ui.rendering.model.ConfigModel" scope="prototype"/>
@@ -148,10 +149,7 @@
         <beans:property name="indexManager" ref="indexManager"/>
     </beans:bean>
 
-    <beans:bean id="previewPageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-    </beans:bean>
+    <beans:bean id="previewPageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype"/>
 
     <beans:bean id="previewUrlModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel" scope="prototype"/>
 

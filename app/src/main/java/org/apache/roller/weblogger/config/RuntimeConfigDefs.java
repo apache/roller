@@ -25,6 +25,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @XmlRootElement(name="runtime-configs")
 public class RuntimeConfigDefs {
@@ -39,9 +42,20 @@ public class RuntimeConfigDefs {
         return displayGroups;
     }
 
+    private Set<String> propertyDefNames = new TreeSet<>();
+
+    public boolean hasPropertyDef(String propertyName) {
+        return propertyDefNames.contains(propertyName);
+    }
+
     @XmlElement(name="display-group")
     public void setDisplayGroups(List<DisplayGroup> displayGroups) {
         this.displayGroups = displayGroups;
+        for (DisplayGroup group : displayGroups) {
+            propertyDefNames.addAll(group.getPropertyDefs().stream()
+                    .map(PropertyDef::getName)
+                    .collect(Collectors.toCollection(TreeSet::new)));
+        }
     }
 
     public static class DisplayGroup {

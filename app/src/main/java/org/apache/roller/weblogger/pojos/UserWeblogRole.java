@@ -51,8 +51,6 @@ import javax.persistence.Transient;
 @NamedQueries({
         @NamedQuery(name="UserWeblogRole.getByUserName",
                 query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.pending <> TRUE"),
-        @NamedQuery(name="UserWeblogRole.getByUserName&Pending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.pending = TRUE"),
         @NamedQuery(name="UserWeblogRole.getByUserNameIncludingPending",
                 query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1"),
         @NamedQuery(name="UserWeblogRole.getByWeblogId",
