@@ -25,6 +25,7 @@
     <s:set name="categoryName" value="#post.name"/>
     <s:set name="categoryDesc" value="#post.description"/>
     <s:set name="categoryImage" value="#post.image"/>
+
     <a href="#" onclick="showCategoryAddModal()">
         <span class="glyphicon glyphicon-plus"></span>
         <s:text name="categoriesForm.addCategory"/>
@@ -32,6 +33,7 @@
 </p>
 
 
+<%--
 <div id="category-add-modal" class="modal fade category-add-modal" tabindex="-1" role="dialog">
 
     <div class="modal-dialog modal-lg">
@@ -39,55 +41,93 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h3> <s:text name="categoryForm.add.title"/> </h3>
+                <h3><s:text name="categoryForm.add.title"/></h3>
             </div>
 
             <div class="modal-body">
                 <s:form id="categoryAddForm" theme="bootstrap" cssClass="form-horizontal">
                     <s:hidden name="salt"/>
                     <s:hidden name="weblog"/>
-                    <s:textfield name="bean.name"        label="%{getText('generic.name')}" maxlength="255"/>
+
+                    <s:hidden name="action:categoryAdd!save" value="save"/>
+
+                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"/>
                     <s:textfield name="bean.description" label="%{getText('generic.description')}"/>
-                    <s:textfield name="bean.image"       label="%{getText('categoryForm.image')}"/>
+                    <s:textfield name="bean.image" label="%{getText('categoryForm.image')}"/>
                 </s:form>
             </div>
 
             <div class="modal-footer">
+                <p id="feedback-area"></p>
                 <button onclick="submitNewCategory()" class="btn btn-primary">
-                    <s:text name="generic.save" />
+                    <s:text name="generic.save"/>
                 </button>
                 <button type="button" class="btn" data-dismiss="modal">
-                    <s:text name="generic.cancel" />
+                    <s:text name="generic.cancel"/>
                 </button>
             </div>
 
         </div>
     </div>
 </div>
+--%>
 
 <script>
-    function showCategoryAddModal( postId, postTitle ) {
-        $('#category-add-modal').modal({show: true});
+
+    var feedbackArea = $("#feedback-area");
+
+    function showCategoryAddModal() {
+
+        feedbackAreaEdit.html("");
+        $('#category-edit-title').html('<s:text name="categoryForm.add.title" />');
+
+        $('#categoryEditForm_bean_id').val("");
+        $('#categoryEditForm_bean_name').val("");
+        $('#categoryEditForm_bean_description').val("");
+        $('#categoryEditForm_bean_image').val("");
+
+        $('#category-edit-modal').modal({show: true});
     }
+
+</script>
+
+    <%--
     function submitNewCategory() {
 
         // if name is empty reject and show error message
-        if ( $("#categoryAdd_bean_name").val().trim() == "" ) {
-            alert("Name is required");
+        if ( $("#categoryAddForm_bean_name").val().trim() == "" ) {
+            feedbackArea.html('<s:text name="categoryForm.requiredFields" />');
+            feedbackArea.css("color", "red");
             return;
         }
-        
-        // post category via Ajax
+
+
+        // post category via AJAX
         $.ajax({
-            url: "categoryAdd!save",
+            method: 'post',
+            url: "categoryEdit!save.rol",
             data: $("#categoryAddForm").serialize(),
             context: document.body
+
         }).done(function(data) {
-            alert("Done");
+
+            // kludge: scrape response status from HTML returned by Struts
+            var alertEnd = data.indexOf("ALERT_END");
+            if ( data.indexOf( '<s:text name="categoryForm.error.duplicateName" />' ) < alertEnd ) {
+                feedbackArea.css("color", "red");
+                feedbackArea.html('<s:text name="categoryForm.error.duplicateName" />');
+
+            } else {
+                feedbackArea.css("color", "green");
+                feedbackArea.html('<s:text name="categoryForm.created" />');
+                $('#category-add-modal').modal("hide");
+            }
+
+        }).error(function(data) {
+            feedbackArea.html('<s:text name="generic.error.check.logs" />');
+            feedbackArea.css("color", "red");
         });
-        
-        // if post failed, then show error messages
-        
-        // else dismiss modal
     }
+
 </script>
+--%>

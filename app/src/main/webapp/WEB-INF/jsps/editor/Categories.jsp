@@ -84,7 +84,7 @@
                             <a href="#" onclick="showCategoryDeleteModal(
                                     '<s:property value="categoryId" />',
                                     '<s:property value="categoryName" />',
-                                    '<s:property value="categoryInUse"/>' )" >
+                                    <s:property value="categoryInUse"/> )" >
                                 <span class="glyphicon glyphicon-trash"></span>
                             </a>
                             
@@ -116,70 +116,92 @@
 
         <div class="modal-content">
 
-            <s:set var="mainAction">categoryEdit</s:set>
-            
             <div class="modal-header">
-                <h3><s:text name="categoryForm.edit.title" /></h3>
-                <p class="pagetip">
-                    <s:text name="categoryForm.requiredFields">
-                        <s:param><s:text name="generic.name"/></s:param>
-                    </s:text>
-                </p>
+                <h3 id="category-edit-title"></h3>
             </div>
-            
-            <s:form action="categoryEdit!save" theme="bootstrap" cssClass="form-horizontal">
-                <s:hidden name="salt"/>
-                <s:hidden name="weblog"/>
-                <s:hidden name="bean.id"/>
 
-                <div class="modal-body">
-                    <s:textfield name="bean.name"        label="%{getText('generic.name')}" maxlength="255"/>
+            <div class="modal-body">
+                <s:form action="#" id="categoryEditForm" theme="bootstrap" cssClass="form-horizontal">
+                    <s:hidden name="salt"/>
+                    <s:hidden name="weblog"/>
+                    <s:hidden name="bean.id"/>
+
+                    <%-- action needed here because we are using AJAX to post this form --%>
+                    <s:hidden name="action:categoryEdit!save" value="save"/>
+
+                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"/>
                     <s:textfield name="bean.description" label="%{getText('generic.description')}"/>
-                    <s:textfield name="bean.image"       label="%{getText('categoryForm.image')}"/>
-                </div>
+                    <s:textfield name="bean.image" label="%{getText('categoryForm.image')}"/>
+                </s:form>
+            </div>
 
-                <div class="modal-footer">
-                    <s:submit cssClass="btn btn-primary" 
-                              value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
-                    <button type="button" class="btn" data-dismiss="modal">
-                        <s:text name="generic.cancel" />
-                    </button>
-                </div>
-            </s:form>
+            <div class="modal-footer">
+                <p id="feedback-area-edit"></p>
+                <button onclick="submitEditedCategory()" class="btn btn-primary">
+                    <s:text name="generic.save"/>
+                </button>
+                <button type="button" class="btn" data-dismiss="modal">
+                    <s:text name="generic.cancel"/>
+                </button>
+            </div>
 
         </div>
     </div>
 </div>
 
 <script>
+
+    var feedbackAreaEdit = $("#feedback-area-edit");
+
     function showCategoryEditModal( id, name, desc, image ) {
-        $('#categoryEdit_bean_id').val(id);
-        $('#categoryEdit_bean_name').val(name);
-        $('#categoryEdit_bean_description').val(desc);
-        $('#categoryEdit_bean_image').val(image);
+        feedbackAreaEdit.html("");
+        $('#category-edit-title').html('<s:text name="categoryForm.edit.title" />');
+
+        $('#categoryEditForm_bean_id').val(id);
+        $('#categoryEditForm_bean_name').val(name);
+        $('#categoryEditForm_bean_description').val(desc);
+        $('#categoryEditForm_bean_image').val(image);
+
         $('#category-edit-modal').modal({show: true});
     }
 
-    <%--
-    (function() {
-        $('form > input').keyup(function() {
+    function submitEditedCategory() {
 
-            var empty = false;
-            $('form > input').each(function() {
-                if ($(this).val() == '') {
-                    empty = true;
-                }
-            });
+        // if name is empty reject and show error message
+        if ($("#categoryEditForm_bean_name").val().trim() == "") {
+            feedbackAreaEdit.html('<s:text name="categoryForm.requiredFields" />');
+            feedbackAreaEdit.css("color", "red");
+            return;
+        }
 
-            if (empty) {
-                $('#register').attr('disabled', 'disabled'); 
+        // post category via AJAX
+        $.ajax({
+            method: 'post',
+            url: "categoryEdit!save.rol",
+            data: $("#categoryEditForm").serialize(),
+            context: document.body
+
+        }).done(function (data) {
+
+            // kludge: scrape response status from HTML returned by Struts
+            var alertEnd = data.indexOf("ALERT_END");
+            if (data.indexOf('<s:text name="categoryForm.error.duplicateName" />') < alertEnd) {
+                feedbackAreaEdit.css("color", "red");
+                feedbackAreaEdit.html('<s:text name="categoryForm.error.duplicateName" />');
+
             } else {
-                $('#register').removeAttr('disabled'); 
+                feedbackAreaEdit.css("color", "green");
+                feedbackAreaEdit.html('<s:text name="generic.success" />');
+                $('#category-edit-modal').modal("hide");
+                location.reload(true);
             }
+
+        }).error(function (data) {
+            feedbackAreaEdit.html('<s:text name="generic.error.check.logs" />');
+            feedbackAreaEdit.css("color", "red");
         });
-    })()
-    --%>
-    
+    }
+
 </script>
 
 

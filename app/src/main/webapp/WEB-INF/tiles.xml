@@ -90,6 +90,7 @@
     <!-- core pages (and associates) -->
     <definition name=".Login" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
+        <put-attribute name="styles"  value="/WEB-INF/jsps/core/Login-css.jsp" />
     </definition>
     
     <definition name=".Register" extends=".tiles-simplepage" >

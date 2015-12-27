@@ -37,7 +37,18 @@ table {
     padding-right: 1em;
 }
 
-.date-form { margin: 10px; }
+.date-form {
+    margin: 10px;
+}
+
+.fade {
+    opacity: 0;
+    -webkit-transition: opacity 1.25s linear;
+    -moz-transition: opacity 1.25s linear;
+    -ms-transition: opacity 1.25s linear;
+    -o-transition: opacity 1.25s linear;
+    transition: opacity 1.25s linear;
+}
 
 /* main menu */
 
@@ -152,6 +163,11 @@ table.innertable tr .viewbody .bot {
     padding-bottom: 10px;
 }
 
+/* categories */
+
+#feedback-area {
+    float: left;
+}
 
 /* sign-in */
 

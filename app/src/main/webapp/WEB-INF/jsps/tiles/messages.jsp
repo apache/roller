@@ -39,3 +39,5 @@
         </ul>
     </div>
 </s:if>
+
+<!-- ALERT_END: this comment needed for CategoriesSidebar.jsp -->
