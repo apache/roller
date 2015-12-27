@@ -25,14 +25,15 @@
                 
                 <h3><s:text name="weblogEdit.comments" /></h3>
 
-                <s:if test="bean.commentCount > 0">
+                <s:set name="localCommentCount" value="bean.commentCount"/>
+                <s:if test="localCommentCount > 0">
                     <s:url action="comments" id="commentsURL">
                        <s:param name="bean.entryId" value="bean.id" />
                        <s:param name="weblog" value="weblog" />
                     </s:url>
                     <s:text name="weblogEdit.hasComments">
                         <s:param value="%{commentsURL}" />
-                        <s:param value="bean.commentCount" />
+                        <s:param value="localCommentCount" />
                     </s:text>
                 </s:if>
                 <s:else>

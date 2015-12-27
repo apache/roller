@@ -62,7 +62,10 @@ public class PlanetSubscriptions extends UIAction {
     
     // the subscription to deal with
     private String subUrl = null;
-    
+
+    // full list of subscriptions for the planet
+    private List<Subscription> subscriptions = new ArrayList<>();
+
     public PlanetSubscriptions() {
         this.actionName = "planetSubscriptions";
         this.desiredMenu = "admin";
@@ -77,9 +80,21 @@ public class PlanetSubscriptions extends UIAction {
     @Override
     public void prepare() {
         try {
-            setPlanet(planetManager.getPlanet(getPlanetHandle()));
+            planet = planetManager.getPlanet(getPlanetHandle());
         } catch (WebloggerException ex) {
             LOGGER.error("Error looking up planet group - " + getPlanetHandle(), ex);
+        }
+
+        if (planet != null) {
+            Set<Subscription> subsSet = planet.getSubscriptions();
+
+            // iterate over list and build display list
+            for (Subscription sub : subsSet) {
+                // only include external subs for display
+                if(!sub.getFeedURL().startsWith("weblogger:")) {
+                    subscriptions.add(sub);
+                }
+            }
         }
     }
     
@@ -118,6 +133,7 @@ public class PlanetSubscriptions extends UIAction {
 
                     // add the sub to the group
                     planet.getSubscriptions().add(sub);
+                    subscriptions.add(sub);
                     planetManager.savePlanet(planet);
 
                     // flush changes
@@ -153,6 +169,7 @@ public class PlanetSubscriptions extends UIAction {
                 Subscription sub = planetManager.getSubscription(getPlanet(), getSubUrl());
                 getPlanet().getSubscriptions().remove(sub);
                 planetManager.deleteSubscription(sub);
+                subscriptions.remove(sub);
                 planetManager.savePlanet(getPlanet());
                 WebloggerFactory.flush();
 
@@ -183,22 +200,7 @@ public class PlanetSubscriptions extends UIAction {
     
     
     public List<Subscription> getSubscriptions() {
-        
-        List<Subscription> subs = Collections.emptyList();
-        if(getPlanet() != null) {
-            Set<Subscription> subsSet = planet.getSubscriptions();
-            
-            // iterate over list and build display list
-            subs = new ArrayList<>();
-            for (Subscription sub : subsSet) {
-                // only include external subs for display
-                if(!sub.getFeedURL().startsWith("weblogger:")) {
-                    subs.add(sub);
-                }
-            }
-        }
-        
-        return subs;
+        return subscriptions;
     }
     
     

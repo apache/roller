@@ -71,8 +71,6 @@ public class MediaFileView extends UIAction {
     private String selectedDirectory;
     private String[] selectedMediaFiles;
 
-    private List<MediaDirectory> allDirectories;
-
     private String mediaFileId;
 
     // Sort options for search results.
@@ -107,12 +105,6 @@ public class MediaFileView extends UIAction {
                     Pair.of("date_uploaded", getText("mediaFileView.date")),
                     Pair.of("type", getText("mediaFileView.type")));
         }
-
-        try {
-            allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
-        } catch (WebloggerException ex) {
-            log.error("Error getting directory list", ex);
-        }
     }
 
     /**
@@ -138,7 +130,6 @@ public class MediaFileView extends UIAction {
 
                     // Switch to folder
                     setDirectoryId(dir.getId());
-                    allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
                 } else {
                     // already exists
                     addError("mediaFile.directoryCreate.error.exists", this.newDirectoryName);
@@ -168,7 +159,6 @@ public class MediaFileView extends UIAction {
             } else if (StringUtils.isNotEmpty(this.directoryName)) {
                 directory = mediaFileManager.getMediaDirectoryByName(
                         getActionWeblog(), this.directoryName);
-
             } else {
                 directory = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
             }
@@ -191,11 +181,7 @@ public class MediaFileView extends UIAction {
             }
 
             this.currentDirectory = directory;
-
-            // set current directory if valid
-            if (directory != null) {
-                setViewDirectoryId(directory.getId());
-            }
+            setViewDirectoryId(directory.getId());
 
             return SUCCESS;
 
@@ -284,7 +270,6 @@ public class MediaFileView extends UIAction {
                         + directoryName + ")");
                 MediaDirectory mediaFileDir = mediaFileManager.getMediaDirectory(directoryId);
                 mediaFileManager.removeMediaDirectory(mediaFileDir);
-                allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
                 weblogManager.saveWeblog(this.getActionWeblog());
 
                 // flush changes
@@ -420,7 +405,7 @@ public class MediaFileView extends UIAction {
     }
 
     public List<MediaDirectory> getAllDirectories() {
-        return allDirectories;
+        return getActionWeblog().getMediaDirectories();
     }
 
     public String getMediaFileId() {

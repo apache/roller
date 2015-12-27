@@ -20,7 +20,10 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +49,9 @@ public class Planets extends UIAction {
 
     private PlanetManager planetManager;
 
+    // full list of planets
+    private List<Planet> planets = new ArrayList<>();
+
     public void setPlanetManager(PlanetManager planetManager) {
         this.planetManager = planetManager;
     }
@@ -63,6 +69,18 @@ public class Planets extends UIAction {
 
     @Override
     public void prepare() {
+        try {
+            for (Planet planet : planetManager.getPlanets()) {
+                // The "all" planet is considered a special planet and cannot be
+                // managed independently
+                if (!planet.getHandle().equals("all")) {
+                    planets.add(planet);
+                }
+            }
+        } catch(Exception ex) {
+            log.error("Error getting planets - " + getBean().getId(), ex);
+        }
+
         if(getBean().getId() != null) {
             try {
                 setPlanet(planetManager.getPlanetById(getBean().getId()));
@@ -107,6 +125,7 @@ public class Planets extends UIAction {
 
                 // save and flush
                 planetManager.savePlanet(aPlanet);
+                planets.add(aPlanet);
                 WebloggerFactory.flush();
 
                 addMessage("planets.success.saved");
@@ -128,6 +147,7 @@ public class Planets extends UIAction {
         if(getPlanet() != null) {
             try {
                 planetManager.deletePlanet(getPlanet());
+                planets.remove(getPlanet());
                 WebloggerFactory.flush();
                 addMessage("planets.success.deleted");
             } catch(Exception ex) {
@@ -162,24 +182,9 @@ public class Planets extends UIAction {
     
     
     public List<Planet> getPlanets() {
-        List<Planet> displayPlanets = new ArrayList<Planet>();
-
-        try {
-            for (Planet planet : planetManager.getPlanets()) {
-                // The "all" planet is considered a special planet and cannot be
-                // managed independently
-                if (!planet.getHandle().equals("all")) {
-                    displayPlanets.add(planet);
-                }
-            }
-        } catch(Exception ex) {
-            log.error("Error getting planets - " + getBean().getId());
-            addError("Error getting planets");
-        }
-        return displayPlanets;
+        return planets;
     }
-    
-    
+
     public Planet getBean() {
         return bean;
     }
