@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -84,12 +83,6 @@ public final class EntryEdit extends UIAction {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
     }
 
     @Autowired
@@ -355,7 +348,7 @@ public final class EntryEdit extends UIAction {
                         // set mediacast attributes
                         weblogEntry.setEnclosureUrl(mediacast.getUrl());
                         weblogEntry.setEnclosureType(mediacast.getContentType());
-                        weblogEntry.setEnclosureLength(new Long(mediacast.getLength()));
+                        weblogEntry.setEnclosureLength(mediacast.getLength());
 
                     } catch (MediacastException ex) {
                         addMessage(getText(ex.getErrorKey()));
@@ -541,14 +534,7 @@ public final class EntryEdit extends UIAction {
      * Get the list of all categories for the action weblog
      */
     public List<WeblogCategory> getCategories() {
-        try {
-            return weblogManager.getWeblogCategories(getActionWeblog());
-        } catch (WebloggerException ex) {
-            log.error(
-                    "Error getting category list for weblog - " + getWeblog(),
-                    ex);
-            return Collections.emptyList();
-        }
+        return getActionWeblog().getWeblogCategories();
     }
 
     public String getEditor() {

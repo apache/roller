@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
@@ -589,9 +590,9 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
 
         entry = weblogEntryManager.getWeblogEntry(id);
-        HashSet<String> tagNames = entry.getTags().stream()
+        Set<String> tagNames = entry.getTags().stream()
                 .map(WeblogEntryTag::getName)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(HashSet<String>::new));
 
         assertEquals(3, entry.getTags().size());
         assertEquals(3, tagNames.size());

@@ -18,11 +18,9 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,23 +30,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
-
 /**
- * A list view of entries in a weblog.
+ * A list view of entries of a weblog.
  */
 public class Entries extends UIAction {
-
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
 
     private WeblogEntryManager weblogEntryManager;
 
@@ -119,7 +109,7 @@ public class Entries extends UIAction {
             wesc.setOffset(getBean().getPage() * COUNT);
             wesc.setMaxResults(COUNT + 1);
             List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(wesc);
-            entries = new ArrayList<WeblogEntry>();
+            entries = new ArrayList<>();
             entries.addAll(rawEntries);
             if (entries.size() > 0) {
                 log.debug("query found "+rawEntries.size()+" results");
@@ -148,7 +138,7 @@ public class Entries extends UIAction {
     // use the action data to build a url representing this action, including query data
     private String buildBaseUrl() {
         
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         
         if(!StringUtils.isEmpty(getBean().getCategoryName())) {
             params.put("bean.categoryPath", getBean().getCategoryName());
@@ -182,22 +172,12 @@ public class Entries extends UIAction {
      */
     public List<WeblogCategory> getCategories() {
         // make list of categories with first option being being a transient
-        // category just meant to represent the default option of any category
+        // category just meant to represent the "any" category default
         List<WeblogCategory> cats = new ArrayList<>();
-        
         WeblogCategory tmpCat = new WeblogCategory();
         tmpCat.setName("Any");
         cats.add(tmpCat);
-        
-        List<WeblogCategory> weblogCats = Collections.emptyList();
-        try {
-            weblogCats = weblogManager.getWeblogCategories(getActionWeblog());
-        } catch (WebloggerException ex) {
-            log.error("Error getting category list for weblog - " + getWeblog(), ex);
-        }
-        
-        cats.addAll(weblogCats);
-        
+        cats.addAll(getActionWeblog().getWeblogCategories());
         return cats;
     }
 

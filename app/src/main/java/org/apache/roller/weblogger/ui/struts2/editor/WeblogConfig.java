@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -65,9 +64,6 @@ public class WeblogConfig extends UIAction {
     // bean for managing submitted data
     private Weblog bean = new Weblog();
     
-    // categories list
-    private List weblogCategories = Collections.emptyList();
-    
     // list of available plugins
     private List<WeblogEntryPlugin> weblogEntryPlugins;
 
@@ -91,16 +87,6 @@ public class WeblogConfig extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
-    public void prepare() {
-        try {
-            // set categories list
-            setWeblogCategories(weblogManager.getWeblogCategories(getActionWeblog()));
-        } catch (Exception ex) {
-            log.error("Error preparing weblog config action", ex);
-        }
-    }
-    
-    
     @SkipValidation
     public String execute() {
         
@@ -229,14 +215,6 @@ public class WeblogConfig extends UIAction {
 
     public void setBean(Weblog bean) {
         this.bean = bean;
-    }
-
-    public List getWeblogCategories() {
-        return weblogCategories;
-    }
-
-    public void setWeblogCategories(List weblogCategories) {
-        this.weblogCategories = weblogCategories;
     }
 
     public List getEditorsList() {

@@ -64,7 +64,7 @@ public class WeblogRequestMapper implements RequestMapper {
     
     public WeblogRequestMapper() {
         
-        this.restricted = new HashSet<String>();
+        this.restricted = new HashSet<>();
         
         // build roller restricted list
         String restrictList = 
@@ -108,9 +108,14 @@ public class WeblogRequestMapper implements RequestMapper {
                 servlet = servlet.substring(request.getContextPath().length());
             }
             
-            // strip off the leading slash
-            servlet = servlet.substring(1);
-            
+            if (servlet.length() == 0) {
+                // rely on defined front-page blog
+                return false;
+            } else {
+                // strip off the leading slash
+                servlet = servlet.substring(1);
+            }
+
             // strip off trailing slash if needed
             if(servlet.endsWith("/")) {
                 servlet = servlet.substring(0, servlet.length() - 1);

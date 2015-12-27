@@ -324,7 +324,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaDirectory getDefaultMediaDirectory(Weblog weblog)
             throws WebloggerException {
-        return getMediaDirectoryByName(weblog, "default");
+        MediaDirectory temp = getMediaDirectoryByName(weblog, "default");
+        if (temp == null) {
+            throw new WebloggerException("Required default Media Directory for Weblog: " + weblog.getHandle() + " is missing.");
+        }
+        return temp;
     }
 
     /**
