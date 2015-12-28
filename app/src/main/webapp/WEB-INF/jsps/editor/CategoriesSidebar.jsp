@@ -32,46 +32,6 @@
     </a>
 </p>
 
-
-<%--
-<div id="category-add-modal" class="modal fade category-add-modal" tabindex="-1" role="dialog">
-
-    <div class="modal-dialog modal-lg">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h3><s:text name="categoryForm.add.title"/></h3>
-            </div>
-
-            <div class="modal-body">
-                <s:form id="categoryAddForm" theme="bootstrap" cssClass="form-horizontal">
-                    <s:hidden name="salt"/>
-                    <s:hidden name="weblog"/>
-
-                    <s:hidden name="action:categoryAdd!save" value="save"/>
-
-                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"/>
-                    <s:textfield name="bean.description" label="%{getText('generic.description')}"/>
-                    <s:textfield name="bean.image" label="%{getText('categoryForm.image')}"/>
-                </s:form>
-            </div>
-
-            <div class="modal-footer">
-                <p id="feedback-area"></p>
-                <button onclick="submitNewCategory()" class="btn btn-primary">
-                    <s:text name="generic.save"/>
-                </button>
-                <button type="button" class="btn" data-dismiss="modal">
-                    <s:text name="generic.cancel"/>
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
---%>
-
 <script>
 
     var feedbackArea = $("#feedback-area");
@@ -91,43 +51,3 @@
 
 </script>
 
-    <%--
-    function submitNewCategory() {
-
-        // if name is empty reject and show error message
-        if ( $("#categoryAddForm_bean_name").val().trim() == "" ) {
-            feedbackArea.html('<s:text name="categoryForm.requiredFields" />');
-            feedbackArea.css("color", "red");
-            return;
-        }
-
-
-        // post category via AJAX
-        $.ajax({
-            method: 'post',
-            url: "categoryEdit!save.rol",
-            data: $("#categoryAddForm").serialize(),
-            context: document.body
-
-        }).done(function(data) {
-
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            if ( data.indexOf( '<s:text name="categoryForm.error.duplicateName" />' ) < alertEnd ) {
-                feedbackArea.css("color", "red");
-                feedbackArea.html('<s:text name="categoryForm.error.duplicateName" />');
-
-            } else {
-                feedbackArea.css("color", "green");
-                feedbackArea.html('<s:text name="categoryForm.created" />');
-                $('#category-add-modal').modal("hide");
-            }
-
-        }).error(function(data) {
-            feedbackArea.html('<s:text name="generic.error.check.logs" />');
-            feedbackArea.css("color", "red");
-        });
-    }
-
-</script>
---%>
