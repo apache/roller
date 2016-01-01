@@ -250,4 +250,17 @@
         </beans:property>
     </beans:bean>
 
+    <!-- Comment Validators -->
+    <beans:bean id="commentValidators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <beans:property name="sourceList">
+            <beans:set>
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator"/>
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator"/>
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator"/>
+                <!--Akismet requires user-specific configuration -->
+                <!--beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.AkismetCommentValidator"/-->
+            </beans:set>
+        </beans:property>
+    </beans:bean>
+
 </beans:beans>

@@ -24,15 +24,12 @@
 <%@ page import="org.apache.roller.weblogger.WebloggerCommon.AuthMethod" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-
-<%!
-String securityCheckUrl = "/roller_j_security_check";
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <p><s:text name="loginPage.prompt" /></p>
 
 <form method="post" id="loginForm"
-      action="<c:url value="<%= securityCheckUrl %>"/>"
+      action="<c:url value='/roller_j_security_check'/>"
       onsubmit="saveUsername(this)">
 
     <table width="80%">
