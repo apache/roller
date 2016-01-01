@@ -177,12 +177,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>CommentServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentServlet</servlet-class>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>TrackbackServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.TrackbackServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
@@ -191,12 +185,6 @@
     <servlet>
         <servlet-name>PlanetFeedServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PlanetFeedServlet</servlet-class>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>CommentAuthenticatorServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentAuthenticatorServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
     </servlet>
 
@@ -226,11 +214,6 @@
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>CommentServlet</servlet-name>
-        <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>TrackbackServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
     </servlet-mapping>
@@ -245,12 +228,6 @@
         <url-pattern>/planetrss/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>CommentAuthenticatorServlet</servlet-name>
-        <url-pattern>/CommentAuthenticatorServlet</url-pattern>
-    </servlet-mapping>
-
-
     <!-- Preview Servlets -->
     <servlet-mapping>
         <servlet-name>PreviewServlet</servlet-name>
@@ -260,7 +237,9 @@
     <servlet-mapping>
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/rest/*</url-pattern>
+        <url-pattern>/CommentAuthenticatorServlet</url-pattern>
         <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+        <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +44,7 @@ import java.util.Map;
 /**
  * Represents a request for a Roller weblog page.
  * 
- * any url from ... /roller-ui/rendering/page/*
+ * any url from WeblogRequestMapper.PAGE_PROCESSOR value
  * 
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
@@ -51,8 +52,6 @@ import java.util.Map;
 public class WeblogPageRequest extends WeblogRequest {
 
     private static Log log = LogFactory.getLog(WeblogPageRequest.class);
-
-    private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
 
     // lightweight attributes
     private String context = null;
@@ -96,9 +95,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
         // was this request bound for the right servlet?
         if (!isValidDestination(servlet)) {
-            throw new InvalidRequestException(
-                    "invalid destination for request, "
-                            + request.getRequestURL());
+            throw new InvalidRequestException("invalid destination for request, " + request.getRequestURL());
         }
 
         /*
@@ -183,8 +180,7 @@ public class WeblogPageRequest extends WeblogRequest {
             } else {
                 // empty data is only allowed for the tags section
                 if (!"tags".equals(this.context)) {
-                    throw new InvalidRequestException("invalid index page, "
-                            + request.getRequestURL());
+                    throw new InvalidRequestException("invalid index page, " + request.getRequestURL());
                 }
             }
         } else {
@@ -270,7 +266,7 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     boolean isValidDestination(String servlet) {
-        return (servlet != null && PAGE_SERVLET.equals(servlet));
+        return (servlet != null && WeblogRequestMapper.PAGE_PROCESSOR.equals(servlet));
     }
 
     private boolean isValidDateString(String dateString) {

@@ -51,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -74,7 +73,8 @@ import java.util.regex.Pattern;
  * <li>Call most appropriate renderer to render content</li>
  * </ul>
  */
-@RestController(value="/roller-ui/rendering/page/*")
+@RestController
+@RequestMapping(path="/roller-ui/rendering/page/**")
 public class PageProcessor {
 
     private static Log log = LogFactory.getLog(PageProcessor.class);
@@ -97,7 +97,7 @@ public class PageProcessor {
      * Init method for this servlet
      */
     @PostConstruct
-    public void init() throws ServletException {
+    public void init() {
         log.info("Initializing PageProcessor");
 
         this.excludeOwnerPages = WebloggerConfig
@@ -137,10 +137,7 @@ public class PageProcessor {
      * Handle GET requests for weblog pages.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        log.debug("Entering");
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // do referrer processing, if it's enabled
         // NOTE: this *must* be done first because it triggers a hibernate flush
@@ -492,8 +489,7 @@ public class PageProcessor {
      * a different way, but for now this is the easy way.
      */
     @RequestMapping(method = RequestMethod.POST)
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // make sure caching is disabled
         request.setAttribute("skipCache", "true");
