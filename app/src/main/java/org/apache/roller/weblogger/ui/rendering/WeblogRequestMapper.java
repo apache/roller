@@ -47,7 +47,7 @@ public class WeblogRequestMapper implements RequestMapper {
     
     private static Log log = LogFactory.getLog(WeblogRequestMapper.class);
     
-    private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
+    private static final String PAGE_PROCESSOR = "/roller-ui/rendering/page";
     private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
     private static final String RESOURCE_SERVLET = "/roller-ui/rendering/resources";
     private static final String MEDIA_SERVLET = "/roller-ui/rendering/media-resources";
@@ -301,7 +301,7 @@ public class WeblogRequestMapper implements RequestMapper {
             // no context means weblog homepage
             if(context == null) {
                 
-                forwardUrl.append(PAGE_SERVLET);
+                forwardUrl.append(PAGE_PROCESSOR);
                 forwardUrl.append("/");
                 forwardUrl.append(handle);
                 if(locale != null) {
@@ -309,12 +309,12 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append(locale);
                 }
                 
-                // requests handled by PageServlet
+                // requests handled by PageProcesor
             } else if(context.equals("page") || context.equals("entry") ||
                     context.equals("date") || context.equals("category")
                     || context.equals("tags")) {
                 
-                forwardUrl.append(PAGE_SERVLET);
+                forwardUrl.append(PAGE_PROCESSOR);
                 forwardUrl.append("/");
                 forwardUrl.append(handle);
                 if(locale != null) {

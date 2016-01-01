@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -46,14 +45,15 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletConfig;
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,9 +63,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Rendering servlet that provides access to weblog pages.
+ * Rendering processor that provides access to weblog pages.
  *
- * General approach of most rendering servlets, including this one:
+ * General approach of most rendering processor, including this one:
  * <ul>
  * <li>Create a request object to parse the request</li>
  * <li>Determine last modified time, return not-modified (HTTP 304) if possible</li>
@@ -74,9 +74,10 @@ import java.util.regex.Pattern;
  * <li>Call most appropriate renderer to render content</li>
  * </ul>
  */
-public class PageServlet extends HttpServlet {
+@RestController(value="/roller-ui/rendering/page/*")
+public class PageProcessor {
 
-    private static Log log = LogFactory.getLog(PageServlet.class);
+    private static Log log = LogFactory.getLog(PageProcessor.class);
     // for referrer processing
     private boolean processReferrers = true;
     private static Pattern robotPattern = null;
@@ -85,14 +86,19 @@ public class PageServlet extends HttpServlet {
     private WeblogPageCache weblogPageCache = null;
     private SiteWideCache siteWideCache = null;
 
+    @Autowired
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
     /**
      * Init method for this servlet
      */
-    public void init(ServletConfig servletConfig) throws ServletException {
-
-        super.init(servletConfig);
-
-        log.info("Initializing PageServlet");
+    @PostConstruct
+    public void init() throws ServletException {
+        log.info("Initializing PageProcessor");
 
         this.excludeOwnerPages = WebloggerConfig
                 .getBooleanProperty("cache.excludeOwnerEditPages");
@@ -130,6 +136,7 @@ public class PageServlet extends HttpServlet {
     /**
      * Handle GET requests for weblog pages.
      */
+    @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -335,9 +342,7 @@ public class PageServlet extends HttpServlet {
 
             try {
                 // tags specified. make sure they exist.
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager();
-                invalid = !wmgr.getTagComboExists(pageRequest.getTags(),
+                invalid = !weblogEntryManager.getTagComboExists(pageRequest.getTags(),
                         (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
@@ -383,10 +388,6 @@ public class PageServlet extends HttpServlet {
 
         Map<String, Object> model;
         try {
-            PageContext pageContext = JspFactory.getDefaultFactory()
-                    .getPageContext(this, request, response, "", false,
-                            WebloggerCommon.EIGHT_KB_IN_BYTES, true);
-
             // special hack for menu tag
             request.setAttribute("pageRequest", pageRequest);
 
@@ -394,7 +395,6 @@ public class PageServlet extends HttpServlet {
             Map<String, Object> initData = new HashMap<>();
             initData.put("requestParameters", request.getParameterMap());
             initData.put("parsedRequest", pageRequest);
-            initData.put("pageContext", pageContext);
 
             // if this was a comment posting, check for comment form
             WeblogEntryCommentForm commentForm = (WeblogEntryCommentForm) request
@@ -487,10 +487,11 @@ public class PageServlet extends HttpServlet {
      * Handle POST requests.
      * 
      * We have this here because the comment servlet actually forwards some of
-     * its requests on to us to render some pages with cusom messaging. We may
+     * its requests on to us to render some pages with custom messaging. We may
      * want to revisit this approach in the future and see if we can do this in
      * a different way, but for now this is the easy way.
      */
+    @RequestMapping(method = RequestMethod.POST)
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -505,7 +506,6 @@ public class PageServlet extends HttpServlet {
      * Notify the hit tracker that it has an incoming page hit.
      */
     private void processHit(Weblog weblog) {
-
         HitCountQueue counter = HitCountQueue.getInstance();
         counter.processHit(weblog);
     }

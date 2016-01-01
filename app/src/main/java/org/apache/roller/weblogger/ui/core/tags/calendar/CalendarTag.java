@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.core.tags.calendar;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
@@ -48,6 +46,16 @@ public class CalendarTag extends TagSupport {
             LogFactory.getFactory().getInstance(CalendarTag.class);
 
     private Locale mLocale = Locale.getDefault();
+
+    private CalendarModel calendarModel;
+
+    public CalendarModel getCalendarModel() {
+        return calendarModel;
+    }
+
+    public void setCalendarModel(CalendarModel calendarModel) {
+        this.calendarModel = calendarModel;
+    }
 
     // JSP Attributes
     
@@ -116,16 +124,8 @@ public class CalendarTag extends TagSupport {
             // ---------------------------------
             
             // check for parameter map and target url
-            StringTokenizer toker = new StringTokenizer(mModelName,".");
-            String tok1 = toker.nextToken();
-            if (toker.hasMoreTokens()) {
-                String tok2 = toker.nextToken();
-                Object bean = pageContext.findAttribute(tok1);
-                model = (CalendarModel)PropertyUtils.getProperty(bean, tok2);
-            } else {
-                model = (CalendarModel)pageContext.findAttribute( mModelName );
-            }
-            
+            model = calendarModel;
+
             // no model specified, nothing to generate
             if (model == null) {
                 return SKIP_BODY;

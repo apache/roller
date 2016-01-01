@@ -158,14 +158,6 @@
         <listener-class>org.apache.struts2.tiles.StrutsTilesListener</listener-class>
     </listener>
 
-
-    <!-- Servlet Definitions -->
-    <servlet>
-        <servlet-name>PageServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PageServlet</servlet-class>
-        <load-on-startup>5</load-on-startup>
-    </servlet>
-
     <servlet>
         <servlet-name>FeedServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.FeedServlet</servlet-class>
@@ -223,12 +215,6 @@
         </init-param>
     </servlet>
 
-    <!-- Rendering Servlets -->
-    <servlet-mapping>
-        <servlet-name>PageServlet</servlet-name>
-        <url-pattern>/roller-ui/rendering/page/*</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>FeedServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
@@ -274,6 +260,7 @@
     <servlet-mapping>
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/rest/*</url-pattern>
+        <url-pattern>/roller-ui/rendering/page/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

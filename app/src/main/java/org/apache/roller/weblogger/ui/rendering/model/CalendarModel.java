@@ -111,13 +111,14 @@ public class CalendarModel implements Model {
             }
             
             // save model in JSP page context so CalendarTag can find it
-            pageContext.setAttribute("calendarModel", model);
+//            pageContext.setAttribute("calendarModel", model);
             
             CalendarTag calTag = new CalendarTag();
             calTag.setPageContext(pageContext);
             calTag.setName("calendar");
             calTag.setModel("calendarModel");
             calTag.setLocale(websiteWrapper.getLocaleInstance());
+            calTag.setCalendarModel(model);
             if (big) {
                 calTag.setClassSuffix("Big");
             }
