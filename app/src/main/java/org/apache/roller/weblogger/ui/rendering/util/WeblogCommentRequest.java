@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -36,8 +37,6 @@ import org.apache.roller.weblogger.util.Utilities;
 public class WeblogCommentRequest extends WeblogRequest {
     
     private static Log log = LogFactory.getLog(WeblogCommentRequest.class);
-    
-    private static final String COMMENT_SERVLET = "/roller-ui/rendering/comment";
     
     // lightweight attributes
     private String name = null;
@@ -67,7 +66,7 @@ public class WeblogCommentRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
         
         // was this request bound for the comment servlet?
-        if(servlet == null || !COMMENT_SERVLET.equals(servlet)) {
+        if(servlet == null || !WeblogRequestMapper.COMMENT_PROCESSOR.equals(servlet)) {
             throw new InvalidRequestException("not a weblog comment request, "+
                     request.getRequestURL());
         }

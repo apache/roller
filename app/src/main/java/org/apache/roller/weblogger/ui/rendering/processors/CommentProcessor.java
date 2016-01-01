@@ -18,17 +18,15 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Iterator;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -48,9 +47,9 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
-import org.apache.roller.weblogger.ui.rendering.plugins.comments.DefaultCommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogCommentRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.util.GenericThrottle;
@@ -61,89 +60,64 @@ import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The CommentServlet handles all incoming weblog entry comment posts.
- * 
+ * Handles all incoming weblog entry comment posts.
+ *
  * We validate each incoming comment based on various comment settings and if
  * all checks are passed then the comment is saved.
- * 
+ *
  * Incoming comments are tested against any site and/or weblog-defined blacklist values. If they
  * are found to be spam, then they are marked as spam and hidden from view.
- * 
+ *
  * If email notification is turned on, each new comment will result in an email
  * sent to the blog owner and all who have commented on the same post.
  */
-public class CommentServlet extends HttpServlet {
+@RestController
+@RequestMapping(path="/roller-ui/rendering/comment/**")
+public class CommentProcessor {
 
-    private static Log log = LogFactory.getLog(CommentServlet.class);
+    private static Log log = LogFactory.getLog(CommentProcessor.class);
 
-    private CommentAuthenticator authenticator = null;
     private CommentValidationManager commentValidationManager = null;
     private GenericThrottle commentThrottle = null;
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    @Autowired
+    private CommentAuthenticator commentAuthenticator = null;
+
+    public void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
+        this.commentAuthenticator = commentAuthenticator;
+    }
 
     /**
      * Initialization.
      */
-    @Override
-    public void init(ServletConfig servletConfig) throws ServletException {
-
-        super.init(servletConfig);
-
-        log.info("Initializing CommentServlet");
-
-        // lookup the authenticator we are going to use and instantiate it
-        try {
-            String name = WebloggerConfig
-                    .getProperty("comment.authenticator.classname");
-            Class clazz = Class.forName(name);
-            this.authenticator = (CommentAuthenticator) clazz.newInstance();
-        } catch (Exception e) {
-            log.error(e);
-            this.authenticator = new DefaultCommentAuthenticator();
-        }
+    @PostConstruct
+    public void init() {
+        log.info("Initializing CommentProcessor");
 
         // instantiate a comment validation manager for comment spam checking
         commentValidationManager = new CommentValidationManager();
 
         // are we doing throttling?
         if (WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
+            int threshold = WebloggerConfig.getIntProperty("comment.throttle.threshold", 25);
+            int maxEntries = WebloggerConfig.getIntProperty("comment.throttle.maxentries", 250);
+            int interval = WebloggerConfig.getIntProperty("comment.throttle.interval", 60)
+                    * new Long(DateUtils.MILLIS_PER_SECOND).intValue();
 
-            int threshold = 25;
-            try {
-                threshold = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.threshold"));
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.threshold",
-                        e);
-            }
-
-            long interval = DateUtils.MILLIS_PER_MINUTE;
-            try {
-                interval = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.interval"));
-                // convert from seconds to milliseconds
-                interval = interval * DateUtils.MILLIS_PER_SECOND;
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.interval",
-                        e);
-            }
-
-            int maxEntries = 250;
-            try {
-                maxEntries = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.maxentries"));
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.maxentries",
-                        e);
-            }
-
-            commentThrottle = new GenericThrottle(threshold, new Long(interval).intValue(),
-                    maxEntries);
-
+            commentThrottle = new GenericThrottle(threshold, interval, maxEntries);
             log.info("Comment Throttling ENABLED");
         } else {
             log.info("Comment Throttling DISABLED");
@@ -151,24 +125,12 @@ public class CommentServlet extends HttpServlet {
     }
 
     /**
-     * Handle incoming http GET requests.
-     * 
-     * The CommentServlet does not support GET requests, it's a 404.
-     */
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-
-    /**
      * Service incoming POST requests.
-     * 
+     *
      * Here we handle incoming comment postings.
      */
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    @RequestMapping(method = RequestMethod.POST)
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         String error = null;
         String dispatch_url;
@@ -192,8 +154,7 @@ public class CommentServlet extends HttpServlet {
         }
 
         // throttling protection against spammers
-        if (commentThrottle != null
-                && commentThrottle.processHit(request.getRemoteAddr())) {
+        if (commentThrottle != null && commentThrottle.processHit(request.getRemoteAddr())) {
 
             log.debug("ABUSIVE " + request.getRemoteAddr());
             IPBanList.getInstance().addBannedIp(request.getRemoteAddr());
@@ -206,25 +167,21 @@ public class CommentServlet extends HttpServlet {
             commentRequest = new WeblogCommentRequest(request);
 
             // lookup weblog specified by comment request
-            weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWeblogByHandle(commentRequest.getWeblogHandle());
+            weblog = weblogManager.getWeblogByHandle(commentRequest.getWeblogHandle());
 
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "
-                        + commentRequest.getWeblogHandle());
+                throw new WebloggerException("unable to lookup weblog: " + commentRequest.getWeblogHandle());
             }
 
             // lookup entry specified by comment request
             entry = commentRequest.getWeblogEntry();
             if (entry == null) {
-                throw new WebloggerException("unable to lookup entry: "
-                        + commentRequest.getWeblogAnchor());
+                throw new WebloggerException("unable to lookup entry: " + commentRequest.getWeblogAnchor());
             }
 
             // we know what the weblog entry is, so setup our urls
-            dispatch_url = "/roller-ui/rendering/page/" + weblog.getHandle();
-            dispatch_url += "/entry/"
-                    + Utilities.encode(commentRequest.getWeblogAnchor());
+            dispatch_url = WeblogRequestMapper.PAGE_PROCESSOR + "/" + weblog.getHandle();
+            dispatch_url += "/entry/" + Utilities.encode(commentRequest.getWeblogAnchor());
 
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
@@ -241,7 +198,7 @@ public class CommentServlet extends HttpServlet {
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName(commentRequest.getName());
         comment.setEmail(commentRequest.getEmail());
-        
+
         // Validate url
         if (StringUtils.isNotEmpty(commentRequest.getUrl())) {
             String theUrl = commentRequest.getUrl().trim().toLowerCase();
@@ -257,7 +214,7 @@ public class CommentServlet extends HttpServlet {
         } else {
             comment.setUrl("");
         }
-        
+
         comment.setContent(commentRequest.getContent());
         comment.setNotify(commentRequest.isNotify());
         comment.setWeblogEntry(entry);
@@ -301,11 +258,11 @@ public class CommentServlet extends HttpServlet {
             // if there is an URL it must be valid
         } else if (StringUtils.isNotEmpty(comment.getUrl())
                 && !new UrlValidator(new String[] { "http", "https" })
-                        .isValid(comment.getUrl())) {
-                error = messageUtils.getString("error.commentPostFailedURL");
-                log.debug("URL is invalid : " + comment.getUrl());
+                .isValid(comment.getUrl())) {
+            error = messageUtils.getString("error.commentPostFailedURL");
+            log.debug("URL is invalid : " + comment.getUrl());
             // if this is a real comment post then authenticate request
-        } else if (!preview && !this.authenticator.authenticate(request)) {
+        } else if (!preview && !this.commentAuthenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
             error = messageUtils.getString("error.commentAuthFailed", msg);
             log.debug("Comment failed authentication");
@@ -315,35 +272,29 @@ public class CommentServlet extends HttpServlet {
         if (error != null) {
             cf.setError(error);
             request.setAttribute("commentForm", cf);
-            RequestDispatcher dispatcher = request
-                    .getRequestDispatcher(dispatch_url);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
             dispatcher.forward(request, response);
             return;
         }
 
-        int validationScore = commentValidationManager.validateComment(comment,
-                messages);
+        int validationScore = commentValidationManager.validateComment(comment, messages);
         log.debug("Comment Validation score: " + validationScore);
 
         if (!preview) {
-
             if (validationScore == WebloggerCommon.PERCENT_100
                     && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
                 comment.setStatus(ApprovalStatus.PENDING);
-                message = messageUtils
-                        .getString("commentServlet.submittedToModerator");
+                message = messageUtils.getString("commentServlet.submittedToModerator");
             } else if (validationScore == WebloggerCommon.PERCENT_100) {
                 // else they're approved
                 comment.setStatus(ApprovalStatus.APPROVED);
-                message = messageUtils
-                        .getString("commentServlet.commentAccepted");
+                message = messageUtils.getString("commentServlet.commentAccepted");
             } else {
                 // Invalid comments are marked as spam
                 log.debug("Comment marked as spam");
                 comment.setStatus(ApprovalStatus.SPAM);
-                error = messageUtils
-                        .getString("commentServlet.commentMarkedAsSpam");
+                error = messageUtils.getString("commentServlet.commentMarkedAsSpam");
 
                 // add specific error messages if they exist
                 if (messages.getErrorCount() > 0) {
@@ -357,8 +308,7 @@ public class CommentServlet extends HttpServlet {
 
                         buf.append("<li>");
                         if (errorKey.getArgs() != null) {
-                            buf.append(messageUtils.getString(
-                                    errorKey.getKey(), errorKey.getArgs()));
+                            buf.append(messageUtils.getString(errorKey.getKey(), errorKey.getArgs()));
                         } else {
                             buf.append(messageUtils.getString(errorKey.getKey()));
                         }
@@ -372,26 +322,22 @@ public class CommentServlet extends HttpServlet {
             }
 
             try {
-                if (!ApprovalStatus.SPAM.equals(comment.getStatus())
-                        || !WebloggerRuntimeConfig
-                                .getBooleanProperty("comments.ignoreSpam.enabled")) {
+                if (!ApprovalStatus.SPAM.equals(comment.getStatus()) || !WebloggerRuntimeConfig
+                        .getBooleanProperty("comments.ignoreSpam.enabled")) {
 
-                    WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
-                            .getWeblogEntryManager();
+                    WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                     mgr.saveComment(comment);
                     WebloggerFactory.flush();
 
                     // Send email notifications only to subscribers if comment
                     // is 100% valid
                     boolean notifySubscribers = (validationScore == WebloggerCommon.PERCENT_100);
-                    MailUtil.sendEmailNotification(comment, messages,
-                            messageUtils, notifySubscribers);
+                    MailUtil.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
 
                     // only re-index/invalidate the cache if comment isn't
                     // moderated
                     if (!weblog.getCommentModerationRequired()) {
-                        IndexManager manager = WebloggerFactory.getWeblogger()
-                                .getIndexManager();
+                        IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
 
                         // remove entry before (re)adding it, or in case it
                         // isn't Published
@@ -426,8 +372,7 @@ public class CommentServlet extends HttpServlet {
         request.setAttribute("commentForm", cf);
 
         log.debug("comment processed, forwarding to " + dispatch_url);
-        RequestDispatcher dispatcher = request
-                .getRequestDispatcher(dispatch_url);
+        RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
         dispatcher.forward(request, response);
     }
 

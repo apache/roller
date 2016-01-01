@@ -600,7 +600,7 @@ public final class EntryEdit extends UIAction {
         return entries;
     }
 
-    @RequestMapping(value = "/tagdata/{handle}", method = RequestMethod.GET)
+    @RequestMapping(value = "/roller-ui/authoring/rest/tagdata/{handle}", method = RequestMethod.GET)
     public WeblogTagData getWeblogTagData(@PathVariable String handle, @RequestParam("prefix") String prefix)
             throws ServletException {
 

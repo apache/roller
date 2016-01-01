@@ -46,6 +46,7 @@ import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,6 +75,7 @@ public class Comments extends UIAction {
 
     private static Log log = LogFactory.getLog(Comments.class);
 
+    @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
@@ -86,6 +88,7 @@ public class Comments extends UIAction {
         this.indexManager = indexManager;
     }
 
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
@@ -533,7 +536,7 @@ public class Comments extends UIAction {
         this.queryEntry = queryEntry;
     }
 
-    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/roller-ui/authoring/rest/comment/{id}", method = RequestMethod.GET)
     public CommentData getComment(@PathVariable String id, Principal p, HttpServletResponse response)
     throws ServletException {
         try {
@@ -561,7 +564,7 @@ public class Comments extends UIAction {
         }
     }
 
-    @RequestMapping(value = "/comment/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/roller-ui/authoring/rest/comment/{id}", method = RequestMethod.PUT)
     public CommentData updateComment(@PathVariable String id, Principal p, HttpServletRequest request,
                                      HttpServletResponse response)
             throws ServletException {

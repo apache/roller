@@ -47,14 +47,13 @@ public class WeblogRequestMapper implements RequestMapper {
     
     private static Log log = LogFactory.getLog(WeblogRequestMapper.class);
     
-    private static final String PAGE_PROCESSOR = "/roller-ui/rendering/page";
+    public static final String PAGE_PROCESSOR = "/roller-ui/rendering/page";
+    public static final String COMMENT_PROCESSOR = "/roller-ui/rendering/comment";
     private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
     private static final String RESOURCE_SERVLET = "/roller-ui/rendering/resources";
     private static final String MEDIA_SERVLET = "/roller-ui/rendering/media-resources";
     private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
     private static final String RSD_SERVLET = "/roller-ui/rendering/rsd";
-    
-    private static final String COMMENT_SERVLET = "/roller-ui/rendering/comment";
     private static final String TRACKBACK_SERVLET = "/roller-ui/rendering/trackback";
     
     
@@ -277,7 +276,7 @@ public class WeblogRequestMapper implements RequestMapper {
                 // comment requests are required to have a "content" param
                 } else if(request.getParameter("content") != null) {
                     
-                    forwardUrl.append(COMMENT_SERVLET);
+                    forwardUrl.append(COMMENT_PROCESSOR);
                     forwardUrl.append("/");
                     forwardUrl.append(handle);
                     if(locale != null) {

@@ -139,7 +139,8 @@ public final class MenuHelper {
             }
 
             if (!includeTab
-               || !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole())
+               || (configTab.getRequiredGlobalRole() != null
+                    && !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole()))
                || (weblog != null && !checkWeblogRole(weblogRole, configTab.getRequiredWeblogRole()))
                ) {
                 continue;
@@ -165,8 +166,8 @@ public final class MenuHelper {
 
                 // disabled and global role check
                 if (!includeItem ||
-                        tabItem.getRequiredGlobalRole() != null
-                        && !user.hasEffectiveGlobalRole(tabItem.getRequiredGlobalRole())) {
+                        (tabItem.getRequiredGlobalRole() != null
+                        && !user.hasEffectiveGlobalRole(tabItem.getRequiredGlobalRole()))) {
                     continue;
                 }
 

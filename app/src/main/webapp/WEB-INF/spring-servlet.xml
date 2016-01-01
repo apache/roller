@@ -26,6 +26,10 @@
           http://www.springframework.org/schema/mvc
           http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
 
+    <beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <beans:property name="alwaysUseFullPath" value="true"/>
+    </beans:bean>
+
     <context:component-scan base-package="org.apache.roller.weblogger.ui.struts2.editor,
                                           org.apache.roller.weblogger.ui.rendering.processors"/>
     <mvc:annotation-driven/>
