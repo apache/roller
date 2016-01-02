@@ -18,22 +18,23 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
-import javax.servlet.ServletConfig;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -42,117 +43,128 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
-import org.apache.roller.weblogger.ui.rendering.plugins.comments.TrackbackLinkbackCommentValidator;
+import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogTrackbackRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
- * Roller's Trackback server implementation. POSTing to this Servlet will add a
- * Trackback to a Weblog Entry. For more info on Trackback, read the spec:
+ * Receives incoming trackbacks to blogs hosted by the weblogger. POSTs will add a
+ * For more info on Trackback see
  * <a href="http://www.movabletype.org/documentation/trackback/specification.html">MT Trackback</a>.
  */
-public class TrackbackServlet extends HttpServlet { 
-    
-    private static Log logger = LogFactory.getLog(TrackbackServlet.class);
-    
-    private CommentValidationManager commentValidationManager = null;
-    
+@RestController
+@RequestMapping(path="/roller-ui/rendering/trackback/**")
+public class IncomingTrackbackProcessor {
 
-    public void init(ServletConfig config) throws ServletException {
-        commentValidationManager = new CommentValidationManager();
-        
-        // add trackback verification validator just for trackbacks
-        commentValidationManager.addCommentValidator(new TrackbackLinkbackCommentValidator());
+    private static Log logger = LogFactory.getLog(IncomingTrackbackProcessor.class);
+
+    private CommentValidationManager commentValidationManager = null;
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
-    
-    
-    /**
-     * Handle incoming http GET requests.
-     *
-     * The TrackbackServlet does not support GET requests, it's a 404.
-     */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+
+    @Autowired
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
     }
-    
-    
+
+    @Resource(name="trackbackValidatorList")
+    private List<CommentValidator> trackbackValidators;
+
+    public void setTrackbackValidators(List<CommentValidator> trackbackValidators) {
+        this.trackbackValidators = trackbackValidators;
+    }
+
+    @PostConstruct
+    public void init() throws ServletException {
+        logger.info("Initializing IncomingTrackbackProcessor");
+        commentValidationManager = new CommentValidationManager(trackbackValidators);
+    }
+
     /**
      * Service incoming POST requests.
      *
      * Here we handle incoming trackback posts.
      */
+    @RequestMapping(method = RequestMethod.POST)
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String error = null;
         PrintWriter pw = response.getWriter();
-        
+
         Weblog weblog = null;
         WeblogEntry entry = null;
-        
+
         RollerMessages messages = new RollerMessages();
-        
+
         WeblogTrackbackRequest trackbackRequest = null;
         if (!WebloggerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
             error = "Trackbacks are disabled for this site";
         } else {
-            
+
             try {
                 trackbackRequest = new WeblogTrackbackRequest(request);
-                
+
                 if ((trackbackRequest.getTitle() == null) ||
                         "".equals(trackbackRequest.getTitle())) {
                     trackbackRequest.setTitle(trackbackRequest.getUrl());
                 }
-                
+
                 if (trackbackRequest.getExcerpt() == null) {
                     trackbackRequest.setExcerpt("");
                 } else if (trackbackRequest.getExcerpt().length() >= WebloggerCommon.TEXTWIDTH_255) {
                     trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0,
                             WebloggerCommon.TEXTWIDTH_255 - 3)+"...");
                 }
-                
+
                 // lookup weblog specified by comment request
-                weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getWeblogByHandle(trackbackRequest.getWeblogHandle());
-                
+                weblog = weblogManager.getWeblogByHandle(trackbackRequest.getWeblogHandle());
+
                 if (weblog == null) {
                     throw new WebloggerException("unable to lookup weblog: "+
                             trackbackRequest.getWeblogHandle());
                 }
-                
+
                 // lookup entry specified by comment request
-                WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                entry = weblogMgr.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
-                
+                entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
+
                 if (entry == null) {
                     throw new WebloggerException("unable to lookup entry: "+
                             trackbackRequest.getWeblogAnchor());
                 }
-                
+
             } catch (Exception e) {
                 // some kind of error parsing the request or looking up weblog
                 logger.debug("error creating trackback request", e);
                 error = e.getMessage();
             }
         }
-        
+
         if (error != null) {
             pw.println(this.getErrorResponse(error));
             return;
         }
-        
-        try {            
+
+        try {
             // check if trackbacks are allowed for this entry
             // this checks site-wide settings, weblog settings, and entry settings
             if (entry != null && entry.getCommentsStillAllowed() && entry.isPublished()) {
-                
+
                 // Track trackbacks as comments
                 WeblogEntryComment comment = new WeblogEntryComment();
                 comment.setContent("[Trackback] "+trackbackRequest.getExcerpt());
@@ -162,11 +174,11 @@ public class TrackbackServlet extends HttpServlet {
                 comment.setRemoteHost(request.getRemoteHost());
                 comment.setNotify(Boolean.FALSE);
                 comment.setPostTime(new Timestamp(new Date().getTime()));
-                
+
                 // run new trackback through validators
                 int validationScore = commentValidationManager.validateComment(comment, messages);
                 logger.debug("Comment Validation score: " + validationScore);
-                
+
                 if (validationScore == WebloggerCommon.PERCENT_100 && weblog.getCommentModerationRequired()) {
                     // Valid comments go into moderation if required
                     comment.setStatus(ApprovalStatus.PENDING);
@@ -177,82 +189,63 @@ public class TrackbackServlet extends HttpServlet {
                     // Invalid comments are marked as spam
                     comment.setStatus(ApprovalStatus.SPAM);
                 }
-                
+
                 // save, commit, send response
                 if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
                         !WebloggerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
-                    
-                    WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                    mgr.saveComment(comment);
+
+                    weblogEntryManager.saveComment(comment);
                     WebloggerFactory.flush();
-                    
+
                     // only invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {
                         // Clear all caches associated with comment
                         CacheManager.invalidate(comment);
                     }
-                    
+
                     // Send email notifications
-                    MailUtil.sendEmailNotification(comment, messages, 
+                    MailUtil.sendEmailNotification(comment, messages,
                             I18nMessages.getMessages(trackbackRequest.getLocaleInstance()),
                             validationScore == WebloggerCommon.PERCENT_100);
-                    
+
                     if (ApprovalStatus.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));
                     } else {
                         pw.println(this.getSuccessResponse("Trackback accepted"));
                     }
                 }
-                
+
             } else if (entry!=null) {
                 error = "Comments and Trackbacks are disabled for the entry specified.";
             } else {
                 error = "Entry not specified.";
             }
-            
+
         } catch (Exception e) {
             error = e.getMessage();
             if ( error == null ) {
                 error = e.getClass().getName();
             }
         }
-        
+
         if(error!= null) {
             pw.println(this.getErrorResponse(error));
         }
-        
+
     }
-    
-    
+
     private String getSuccessResponse(String message) {
-        
-        StringBuilder output = new StringBuilder();
-        
-        output.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
-        output.append("<response>");
-        output.append("<error>0</error>");
-        output.append("<message>");
-        output.append(message);
-        output.append("</message>");
-        output.append("</response>");
-            
-        return output.toString();
+        String output = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>";
+        output += "<response><error>0</error><message>\"";
+        output += message;
+        return output;
     }
-    
-    
+
     private String getErrorResponse(String message) {
-        
-        StringBuilder output = new StringBuilder();
-        
-        output.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
-        output.append("<response>");
-        output.append("<error>1</error>");
-        output.append("<message>ERROR: ");
-        output.append(message);
-        output.append("</message>");
-        output.append("</response>");
-            
-        return output.toString();
+        String output = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>";
+        output += "<response><error>1</error><message>\"";
+        output += "ERROR: " + message;
+        output += "</message></response>";
+        return output;
     }
-    
 }

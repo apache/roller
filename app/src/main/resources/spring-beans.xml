@@ -233,33 +233,42 @@
     <!-- Weblog Entry Plugins -->
     <beans:bean id="weblogEntryPlugins" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
-            <beans:set>
+            <beans:list>
                 <beans:bean class="org.apache.roller.weblogger.business.plugins.entry.ObfuscateEmailPlugin"/>
-            </beans:set>
+            </beans:list>
         </beans:property>
     </beans:bean>
 
     <!-- Comment Plugins -->
     <beans:bean id="commentPlugins" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
-            <beans:set>
+            <beans:list>
                 <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin"/>
                 <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin"/>
                 <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin"/>
-            </beans:set>
+            </beans:list>
         </beans:property>
     </beans:bean>
 
     <!-- Comment Validators -->
-    <beans:bean id="commentValidators" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <beans:bean name="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <!-- qualifier added as DI tends to otherwise merge objects of a given type -->
         <beans:property name="sourceList">
-            <beans:set>
+            <beans:list>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator"/>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator"/>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator"/>
                 <!--Akismet requires user-specific configuration -->
                 <!--beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.AkismetCommentValidator"/-->
-            </beans:set>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean id="trackbackValidatorList" parent="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <beans:property name="sourceList">
+            <beans:list merge="true">
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.TrackbackLinkbackCommentValidator"/>
+            </beans:list>
         </beans:property>
     </beans:bean>
 

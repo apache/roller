@@ -29,11 +29,16 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
+import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidator;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import javax.annotation.Resource;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class CommentValidatorTest extends WebloggerTest {
@@ -41,11 +46,18 @@ public class CommentValidatorTest extends WebloggerTest {
     Weblog        weblog = null;
     User           user = null;
     WeblogEntry    entry = null;
-    
+
+    @Resource(name="commentValidatorList")
+    private List<CommentValidator> commentValidators;
+
+    public void setCommentValidators(List<CommentValidator> commentValidators) {
+        this.commentValidators = commentValidators;
+    }
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        mgr = new CommentValidationManager();
+        mgr = new CommentValidationManager(commentValidators);
         user = setupUser("johndoe");
         weblog = setupWeblog("doeblog", user);
         entry = setupWeblogEntry("anchor1", weblog, user);
@@ -110,7 +122,7 @@ public class CommentValidatorTest extends WebloggerTest {
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
     
-    // To run this test add the Akismet validator to comment.validator.classnames
+    // To run this test add the Akismet validator to Spring commentValidators
     // and put your Akismet key in comment.validator.akismet.apikey
     @Ignore
     public void testAkismetCommentValidator() {

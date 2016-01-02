@@ -177,12 +177,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>TrackbackServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.TrackbackServlet</servlet-class>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>PlanetFeedServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PlanetFeedServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
@@ -214,11 +208,6 @@
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>TrackbackServlet</servlet-name>
-        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>SearchServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/search/*</url-pattern>
     </servlet-mapping>
@@ -240,6 +229,7 @@
         <url-pattern>/CommentAuthenticatorServlet</url-pattern>
         <url-pattern>/roller-ui/rendering/page/*</url-pattern>
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
+        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

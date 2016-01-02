@@ -201,7 +201,7 @@ public class RollerContext extends ContextLoaderListener
         context.setAttribute("rememberMeEnabled", rememberMe);
         
         if (!rememberMeEnabled) {
-            ProviderManager provider = (ProviderManager) ctx.getBean("_authenticationManager");
+            ProviderManager provider = ctx.getBean("_authenticationManager", ProviderManager.class);
             for (AuthenticationProvider authProvider : provider.getProviders()) {
                 if (authProvider instanceof RememberMeAuthenticationProvider) {
                     provider.getProviders().remove(authProvider);
@@ -234,7 +234,7 @@ public class RollerContext extends ContextLoaderListener
 
         if (WebloggerConfig.getBooleanProperty("securelogin.enabled")) {
             LoginUrlAuthenticationEntryPoint entryPoint =
-                (LoginUrlAuthenticationEntryPoint) ctx.getBean("_formLoginEntryPoint");
+                ctx.getBean("_formLoginEntryPoint", LoginUrlAuthenticationEntryPoint.class);
             entryPoint.setForceHttps(true);
         }
     }
@@ -247,7 +247,7 @@ public class RollerContext extends ContextLoaderListener
         ApplicationContext ctx = 
             WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
 		try {
-			UserCache userCache = (UserCache) ctx.getBean("userCache");
+			UserCache userCache = ctx.getBean("userCache", UserCache.class);
 			if (userCache != null) {
 				userCache.removeUserFromCache(userName);
 			}

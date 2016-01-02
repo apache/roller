@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.ui.core.menu;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.RuntimeConfigDefs;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
@@ -42,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A helper class for dealing with UI menus.
@@ -49,8 +51,13 @@ import java.util.Set;
 public final class MenuHelper {
     private static Log log = LogFactory.getLog(MenuHelper.class);
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
+    private static Set<String> propertyDefNames = new TreeSet<>();
 
     private MenuHelper() {}
+
+    private static boolean hasPropertyDef(String propertyName) {
+        return propertyDefNames.contains(propertyName);
+    }
 
     @XmlRootElement(name="menus")
     private static class MenuListHolder {
@@ -80,6 +87,16 @@ public final class MenuHelper {
             }
         } catch (Exception ex) {
             log.error("Error parsing menu configs", ex);
+        }
+
+        // Cache runtime configurable property names
+        RuntimeConfigDefs rcd = WebloggerRuntimeConfig.getRuntimeConfigDefs();
+        if (rcd != null) {
+            for (RuntimeConfigDefs.DisplayGroup group : rcd.getDisplayGroups()) {
+                for (RuntimeConfigDefs.PropertyDef def : group.getPropertyDefs()) {
+                    propertyDefNames.add(def.getName());
+                }
+            }
         }
     }
 
@@ -219,7 +236,7 @@ public final class MenuHelper {
      * @return the boolean property
      */
     private static boolean getBooleanProperty(String propertyName) {
-        if (WebloggerRuntimeConfig.getRuntimeConfigDefs().hasPropertyDef(propertyName)) {
+        if (hasPropertyDef(propertyName)) {
             return WebloggerRuntimeConfig.getBooleanProperty(propertyName);
         }
         return WebloggerConfig.getBooleanProperty(propertyName);

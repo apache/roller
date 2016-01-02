@@ -391,7 +391,7 @@ public class SiteModel implements Model {
      * @param len      Max number of results to return
      */
     public List<WeblogWrapper> getNewWeblogs(int sinceDays, int length) {
-        List<WeblogWrapper> results = new ArrayList<WeblogWrapper>();
+        List<WeblogWrapper> results = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1 * sinceDays);

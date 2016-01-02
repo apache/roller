@@ -594,7 +594,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // Original query ordered by desc # comments.
         // JPA QL doesn't allow queries to be ordered by aggregates; do it in memory
         Collections.sort(results, StatCount.CountComparator);
-        
+
         return results;
     }
     

@@ -23,8 +23,10 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +52,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
+import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogCommentRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.util.GenericThrottle;
@@ -100,6 +103,27 @@ public class CommentProcessor {
         this.commentAuthenticator = commentAuthenticator;
     }
 
+    @Autowired
+    private IndexManager indexManager;
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
+    @Autowired
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Resource(name="commentValidatorList")
+    private List<CommentValidator> commentValidators;
+
+    public void setCommentValidators(List<CommentValidator> commentValidators) {
+        this.commentValidators = commentValidators;
+    }
+
     /**
      * Initialization.
      */
@@ -108,7 +132,7 @@ public class CommentProcessor {
         log.info("Initializing CommentProcessor");
 
         // instantiate a comment validation manager for comment spam checking
-        commentValidationManager = new CommentValidationManager();
+        commentValidationManager = new CommentValidationManager(commentValidators);
 
         // are we doing throttling?
         if (WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
@@ -325,8 +349,7 @@ public class CommentProcessor {
                 if (!ApprovalStatus.SPAM.equals(comment.getStatus()) || !WebloggerRuntimeConfig
                         .getBooleanProperty("comments.ignoreSpam.enabled")) {
 
-                    WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                    mgr.saveComment(comment);
+                    weblogEntryManager.saveComment(comment);
                     WebloggerFactory.flush();
 
                     // Send email notifications only to subscribers if comment
@@ -337,15 +360,14 @@ public class CommentProcessor {
                     // only re-index/invalidate the cache if comment isn't
                     // moderated
                     if (!weblog.getCommentModerationRequired()) {
-                        IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
 
                         // remove entry before (re)adding it, or in case it
                         // isn't Published
-                        manager.removeEntryIndexOperation(entry);
+                        indexManager.removeEntryIndexOperation(entry);
 
                         // if published, index the entry
                         if (entry.isPublished()) {
-                            manager.addEntryIndexOperation(entry);
+                            indexManager.addEntryIndexOperation(entry);
                         }
 
                         // Clear all caches associated with comment
