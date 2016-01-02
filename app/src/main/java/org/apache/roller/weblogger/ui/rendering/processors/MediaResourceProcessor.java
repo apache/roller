@@ -18,16 +18,13 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,37 +33,41 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogMediaResourceRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Serves media files uploaded by users.
- * 
+ *
  * Since we keep resources in a location outside of the webapp context we need a
  * way to serve them up.
  */
-public class MediaResourceServlet extends HttpServlet {
+@RestController
+@RequestMapping(path="/roller-ui/rendering/media-resources/**")
+public class MediaResourceProcessor {
 
-    private static Log log = LogFactory.getLog(MediaResourceServlet.class);
+    private static Log log = LogFactory.getLog(MediaResourceProcessor.class);
 
-    public void init(ServletConfig config) throws ServletException {
+    @Autowired
+    private MediaFileManager mediaFileManager;
 
-        super.init(config);
-        log.info("Initializing ResourceServlet");
-
+    public void setMediaFileManager(MediaFileManager mediaFileManager) {
+        this.mediaFileManager = mediaFileManager;
     }
 
-    /**
-     * Handles requests for user uploaded media file resources.
-     */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @PostConstruct
+    public void init() {
+        log.info("Initializing MediaResourceProcessor...");
+    }
 
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
+    @RequestMapping(method = RequestMethod.GET)
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         Weblog weblog;
 
@@ -93,8 +94,7 @@ public class MediaResourceServlet extends HttpServlet {
         MediaFile mediaFile;
 
         try {
-            mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(),
-                    true);
+            mediaFile = mediaFileManager.getMediaFile(resourceRequest.getResourceId(), true);
             resourceLastMod = mediaFile.getLastModified();
 
         } catch (Exception ex) {

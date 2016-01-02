@@ -40,8 +40,8 @@ import static org.junit.Assert.*;
 /**
  * Test custom weblogger feed fetcher.
  */
-public class FeedProcessorImplTest  extends WebloggerTest {
-    public static Log log = LogFactory.getLog(FeedProcessorImplTest.class);
+public class FeedManagerImplTest extends WebloggerTest {
+    public static Log log = LogFactory.getLog(FeedManagerImplTest.class);
     
     String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
     String expectedTitle = "Slashdot";
@@ -53,10 +53,10 @@ public class FeedProcessorImplTest  extends WebloggerTest {
     private Weblog testWeblog = null;
 
     @Resource
-    protected FeedProcessor feedProcessor;
+    protected FeedManager feedManager;
 
-    public void setFeedProcessor(FeedProcessor feedProcessor) {
-        this.feedProcessor = feedProcessor;
+    public void setFeedManager(FeedManager feedManager) {
+        this.feedManager = feedManager;
     }
 
     /**
@@ -94,7 +94,7 @@ public class FeedProcessorImplTest  extends WebloggerTest {
     public void testFetchFeed() throws WebloggerException {
         try {
             // fetch feed
-            Subscription sub = feedProcessor.fetchSubscription(externalFeedUrl);
+            Subscription sub = feedManager.fetchSubscription(externalFeedUrl);
             assertNotNull(sub);
             assertEquals(externalFeedUrl, sub.getFeedURL());
             assertEquals(expectedSiteUrl, sub.getSiteURL());
@@ -112,7 +112,7 @@ public class FeedProcessorImplTest  extends WebloggerTest {
     public void testFetchFeedConditionally() throws WebloggerException {
         try {
             // fetch feed
-            Subscription sub = feedProcessor.fetchSubscription(externalFeedUrl);
+            Subscription sub = feedManager.fetchSubscription(externalFeedUrl);
             assertNotNull(sub);
             assertEquals(externalFeedUrl, sub.getFeedURL());
             assertEquals(expectedSiteUrl, sub.getSiteURL());
@@ -121,7 +121,7 @@ public class FeedProcessorImplTest  extends WebloggerTest {
             assertTrue(sub.getEntries().size() > 0);
 
             // now do a conditional fetch and we should get back null
-            Subscription updatedSub = feedProcessor.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
+            Subscription updatedSub = feedManager.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
             assertNull(updatedSub);
 
         } catch (WebloggerException ex) {
@@ -134,13 +134,13 @@ public class FeedProcessorImplTest  extends WebloggerTest {
     public void testFetchInternalSubscription() throws Exception {
         try {
             // first fetch non-conditionally so we know we should get a Sub
-            Subscription sub = feedProcessor.fetchSubscription(rollerFeedUrl);
+            Subscription sub = feedManager.fetchSubscription(rollerFeedUrl);
             assertNotNull(sub);
             assertEquals(rollerFeedUrl, sub.getFeedURL());
             assertNotNull(sub.getLastUpdated());
 
             // now do a conditional fetch and we should get back null
-            Subscription updatedSub = feedProcessor.fetchSubscription(rollerFeedUrl, sub.getLastUpdated());
+            Subscription updatedSub = feedManager.fetchSubscription(rollerFeedUrl, sub.getLastUpdated());
             assertNull(updatedSub);
 
         } catch (Throwable e) {
@@ -155,7 +155,7 @@ public class FeedProcessorImplTest  extends WebloggerTest {
         // update the subscription
         Set<Subscription> subscriptionSet = new HashSet<>();
         subscriptionSet.add(sub);
-        feedProcessor.updateSubscriptions(subscriptionSet);
+        feedManager.updateSubscriptions(subscriptionSet);
         endSession(true);
 
         // verify the results

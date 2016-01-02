@@ -85,7 +85,7 @@
         <beans:property name="weblogEntryPlugins" ref="weblogEntryPlugins"/>
     </beans:bean>
 
-    <beans:bean id="feedProcessor" class="org.apache.roller.weblogger.business.FeedProcessorImpl">
+    <beans:bean id="feedManager" class="org.apache.roller.weblogger.business.FeedManagerImpl">
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="urlStrategy" ref="urlStrategy"/>
@@ -96,7 +96,7 @@
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="feedProcessor" ref="feedProcessor"/>
+        <beans:property name="feedManager" ref="feedManager"/>
         <beans:property name="strategy" ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
@@ -149,9 +149,9 @@
         <beans:property name="indexManager" ref="indexManager"/>
     </beans:bean>
 
-    <beans:bean id="previewPageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype"/>
+    <beans:bean id="previewPageModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype"/>
 
-    <beans:bean id="previewUrlModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel" scope="prototype"/>
+    <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel" scope="prototype"/>
 
     <beans:bean id="siteModel" class="org.apache.roller.weblogger.ui.rendering.model.SiteModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
@@ -170,6 +170,20 @@
                 <beans:ref bean="messageModel"/>
                 <beans:ref bean="calendarModel"/>
                 <beans:ref bean="planetModel"/>
+            </beans:set>
+        </beans:property>
+    </beans:bean>
+
+    <!-- For weblog page preview rendering -->
+    <beans:bean id="previewModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
+        <beans:property name="sourceSet">
+            <beans:set>
+                <beans:ref bean="previewPageModel"/>
+                <beans:ref bean="configModel"/>
+                <beans:ref bean="utilitiesModel"/>
+                <beans:ref bean="previewUrlModel"/>
+                <beans:ref bean="messageModel"/>
+                <beans:ref bean="calendarModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>
@@ -201,20 +215,6 @@
                 <beans:ref bean="configModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
-                <beans:ref bean="messageModel"/>
-                <beans:ref bean="calendarModel"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
-    <!-- For weblog page preview rendering -->
-    <beans:bean id="previewModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="previewPageModel"/>
-                <beans:ref bean="configModel"/>
-                <beans:ref bean="utilitiesModel"/>
-                <beans:ref bean="previewUrlModel"/>
                 <beans:ref bean="messageModel"/>
                 <beans:ref bean="calendarModel"/>
             </beans:set>

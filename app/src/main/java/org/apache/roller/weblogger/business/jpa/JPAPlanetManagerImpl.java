@@ -37,8 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.FeedProcessor;
-import org.apache.roller.weblogger.business.FeedProcessorImpl;
+import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -57,7 +56,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
 
     private WeblogManager weblogManager;
     private URLStrategy urlStrategy;
-    private FeedProcessor feedProcessor;
+    private FeedManager feedManager;
     private JPAPersistenceStrategy strategy;
 
     protected JPAPlanetManagerImpl() {}
@@ -70,8 +69,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         this.weblogManager = weblogManager;
     }
 
-    public void setFeedProcessor(FeedProcessor feedProcessor) {
-        this.feedProcessor = feedProcessor;
+    public void setFeedManager(FeedManager feedManager) {
+        this.feedManager = feedManager;
     }
 
     public void setStrategy(JPAPersistenceStrategy strategy) {
@@ -290,7 +289,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         log.debug("--- BEGIN --- Updating all subscriptions");
         long startTime = System.currentTimeMillis();
 
-        feedProcessor.updateSubscriptions(getSubscriptions());
+        feedManager.updateSubscriptions(getSubscriptions());
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
                 + ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");

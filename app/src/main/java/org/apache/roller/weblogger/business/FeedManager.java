@@ -30,11 +30,11 @@ import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
- * A FeedProcessor is responsible for actually pulling subscriptions from
+ * A FeedManager is responsible for actually pulling subscriptions from
  * their source and transforming them into Roller Planet Subscriptions and Entries,
  * as well as saving them to the DB.
  */
-public interface FeedProcessor {
+public interface FeedManager {
     
     /**
      * Fetch a single subscription.

@@ -42,7 +42,6 @@ public class CalendarModel implements Model {
     
     private static Log log = LogFactory.getLog(CalendarModel.class);
     
-    private PageContext pageContext = null;
     private WeblogPageRequest pageRequest = null;
 
     protected WeblogEntryManager weblogEntryManager;
@@ -65,9 +64,6 @@ public class CalendarModel implements Model {
     
     /** Init page model based on request */
     public void init(Map initData) throws WebloggerException {
-        
-        // extract page context
-        this.pageContext = (PageContext) initData.get("pageContext");
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -114,7 +110,6 @@ public class CalendarModel implements Model {
 //            pageContext.setAttribute("calendarModel", model);
             
             CalendarTag calTag = new CalendarTag();
-            calTag.setPageContext(pageContext);
             calTag.setName("calendar");
             calTag.setModel("calendarModel");
             calTag.setLocale(websiteWrapper.getLocaleInstance());

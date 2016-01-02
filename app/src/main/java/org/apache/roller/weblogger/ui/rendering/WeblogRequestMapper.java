@@ -49,14 +49,11 @@ public class WeblogRequestMapper implements RequestMapper {
     
     public static final String PAGE_PROCESSOR = "/roller-ui/rendering/page";
     public static final String COMMENT_PROCESSOR = "/roller-ui/rendering/comment";
-    private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
-    private static final String RESOURCE_SERVLET = "/roller-ui/rendering/resources";
-    private static final String MEDIA_SERVLET = "/roller-ui/rendering/media-resources";
-    private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
-    private static final String RSD_SERVLET = "/roller-ui/rendering/rsd";
-    private static final String TRACKBACK_SERVLET = "/roller-ui/rendering/trackback";
-    
-    
+    public static final String TRACKBACK_PROCESSOR = "/roller-ui/rendering/trackback";
+    public static final String FEED_PROCESSOR = "/roller-ui/rendering/feed";
+    public static final String MEDIA_PROCESSOR = "/roller-ui/rendering/media-resources";
+    public static final String SEARCH_PROCESSOR = "/roller-ui/rendering/search";
+
     // url patterns that are not allowed to be considered weblog handles
     Set<String> restricted = null;
     
@@ -101,6 +98,7 @@ public class WeblogRequestMapper implements RequestMapper {
         String servlet = request.getRequestURI();
         String pathInfo = null;
                 
+
         if(servlet != null && servlet.trim().length() > 1) {
             
             if(request.getContextPath() != null) {
@@ -259,7 +257,7 @@ public class WeblogRequestMapper implements RequestMapper {
                 // trackback requests are required to have an "excerpt" param
                 if(request.getParameter("excerpt") != null) {
                     
-                    forwardUrl.append(TRACKBACK_SERVLET);
+                    forwardUrl.append(TRACKBACK_PROCESSOR);
                     forwardUrl.append("/");
                     forwardUrl.append(handle);
                     if(locale != null) {
@@ -308,7 +306,7 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append(locale);
                 }
                 
-                // requests handled by PageProcesor
+                // requests handled by PageProcessor
             } else if(context.equals("page") || context.equals("entry") ||
                     context.equals("date") || context.equals("category")
                     || context.equals("tags")) {
@@ -327,10 +325,10 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append(data);
                 }
                 
-                // requests handled by FeedServlet
+                // requests handled by FeedProcessor
             } else if(context.equals("feed")) {
                 
-                forwardUrl.append(FEED_SERVLET);
+                forwardUrl.append(FEED_PROCESSOR);
                 forwardUrl.append("/");
                 forwardUrl.append(handle);
                 if(locale != null) {
@@ -342,21 +340,10 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append(data);
                 }
                 
-                // requests handled by ResourceServlet
-            } else if(context.equals("resource")) {
-
-                forwardUrl.append(RESOURCE_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                if(data != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(data);
-                }
-
-                // requests handled by MediaResourceServlet
+                // requests handled by MediaResourceProcessor
             } else if(context.equals("mediaresource")) {
 
-                forwardUrl.append(MEDIA_SERVLET);
+                forwardUrl.append(MEDIA_PROCESSOR);
                 forwardUrl.append("/");
                 forwardUrl.append(handle);
                 if(data != null) {
@@ -364,24 +351,16 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append(data);
                 }
 
-                // requests handled by SearchServlet
+                // requests handled by SearchProcessor
             } else if(context.equals("search")) {
                 
-                forwardUrl.append(SEARCH_SERVLET);
+                forwardUrl.append(SEARCH_PROCESSOR);
                 forwardUrl.append("/");
                 forwardUrl.append(handle);
                 if(locale != null) {
                     forwardUrl.append("/");
                     forwardUrl.append(locale);
                 }
-                // requests handled by RSDServlet
-            } else if(context.equals("rsd")) {
-                
-                forwardUrl.append(RSD_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                
-                // unsupported url
             } else {
                 return null;
             }

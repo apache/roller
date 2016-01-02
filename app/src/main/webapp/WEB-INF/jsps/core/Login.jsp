@@ -22,14 +22,13 @@
 <%-- Body of the login page, invoked from login.jsp --%>
 <%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 <%@ page import="org.apache.roller.weblogger.WebloggerCommon.AuthMethod" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <p><s:text name="loginPage.prompt" /></p>
 
 <form method="post" id="loginForm"
-      action="<c:url value='/roller_j_security_check'/>"
+      action="<s:url value='/roller_j_security_check'/>"
       onsubmit="saveUsername(this)">
 
     <table width="80%">

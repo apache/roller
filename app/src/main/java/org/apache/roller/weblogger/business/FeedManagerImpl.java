@@ -30,7 +30,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.rometools.fetcher.impl.DiskFeedInfoCache;
@@ -59,7 +58,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 
-public class FeedProcessorImpl implements FeedProcessor {
+public class FeedManagerImpl implements FeedManager {
 
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
@@ -67,9 +66,9 @@ public class FeedProcessorImpl implements FeedProcessor {
     private URLStrategy urlStrategy;
     private JPAPersistenceStrategy strategy;
 
-    private static Log log = LogFactory.getLog(FeedProcessorImpl.class);
+    private static Log log = LogFactory.getLog(FeedManagerImpl.class);
     
-    public FeedProcessorImpl() {
+    public FeedManagerImpl() {
         // no-op
     }
 

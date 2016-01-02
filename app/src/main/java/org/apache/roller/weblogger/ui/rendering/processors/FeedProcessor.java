@@ -18,21 +18,18 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -48,27 +45,34 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
  * Responsible for rendering weblog feeds.
  */
-public class FeedServlet extends HttpServlet {
+@RestController
+@RequestMapping(path="/roller-ui/rendering/feed/**")
+public class FeedProcessor {
 
-    private static Log log = LogFactory.getLog(FeedServlet.class);
+    private static Log log = LogFactory.getLog(FeedProcessor.class);
 
     private WeblogFeedCache weblogFeedCache = null;
     private SiteWideCache siteWideCache = null;
 
+    @Autowired
+    private WeblogEntryManager weblogEntryManager;
 
-    /**
-     * Init method for this servlet
-     */
-    public void init(ServletConfig servletConfig) throws ServletException {
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
 
-        super.init(servletConfig);
-
-        log.info("Initializing FeedServlet");
+    @PostConstruct
+    public void init() {
+        log.info("Initializing FeedProcessor...");
 
         // get a reference to the weblog feed cache
         this.weblogFeedCache = WeblogFeedCache.getInstance();
@@ -78,11 +82,8 @@ public class FeedServlet extends HttpServlet {
     }
 
 
-    /**
-     * Handle GET requests for weblog feeds.
-     */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @RequestMapping(method = RequestMethod.GET)
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         log.debug("Entering");
 
@@ -190,9 +191,7 @@ public class FeedServlet extends HttpServlet {
 
             try {
                 // tags specified. make sure they exist.
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager();
-                invalid = !wmgr.getTagComboExists(feedRequest.getTags(),
+                invalid = !weblogEntryManager.getTagComboExists(feedRequest.getTags(),
                         (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;

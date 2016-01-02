@@ -182,7 +182,7 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
             
             <h1>RSS newsfeed</h1>
 
-            <p>This page is an <a href="http://blogs.law.harvard.edu/tech/rss">RSS</a> 
+            <p>This page is an RSS
             newsfeed, an XML data representation of the latest entries
             from a Roller weblog. If you have a newsfeed reader or aggregator, you can 
             subscribe to this newsfeed. To subscribe, copy the URL from your browser's 
@@ -200,7 +200,6 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
             </ol>
             <br />      
             <hr />
-            <p>To learn more about RSS visit <a href="http://blogs.law.harvard.edu/tech/rss">http://blogs.law.harvard.edu/tech/rss</a></p>
 
         </div>
     </div>

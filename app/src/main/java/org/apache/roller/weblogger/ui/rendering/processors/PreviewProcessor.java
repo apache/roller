@@ -18,12 +18,11 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.commons.logging.Log;
@@ -37,17 +36,16 @@ import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
@@ -57,32 +55,24 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
  * of what a weblog will look like with a given theme.  It is not available
  * outside of the authoring interface.
  */
-public class PreviewServlet extends HttpServlet {
-    
-    private static Log log = LogFactory.getLog(PreviewServlet.class);
-    
-    
-    /**
-     * Init method for this servlet
-     */
-    public void init(ServletConfig servletConfig) throws ServletException {
-        
-        super.init(servletConfig);
-        
-        log.info("Initializing PreviewServlet");
+@RestController
+@RequestMapping(path="/roller-ui/authoring/preview/**")
+public class PreviewProcessor {
+
+    private static Log log = LogFactory.getLog(PreviewProcessor.class);
+
+    @PostConstruct
+    public void init() {
+        log.info("Initializing PreviewProcessor...");
     }
-    
-    
-    /**
-     * Handle GET requests for weblog pages.
-     */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
+
+    @RequestMapping(method = RequestMethod.GET)
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
         log.debug("Entering");
-        
+
         Weblog weblog;
-        
+
         WeblogPreviewRequest previewRequest;
 
         try {
@@ -100,19 +90,19 @@ public class PreviewServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // Get the deviceType from user agent
         MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
 
         // for previews we explicitly set the deviceType attribute
         if (request.getParameter("type") != null) {
-            deviceType = request.getParameter("type").equals("standard") 
-				? MobileDeviceRepository.DeviceType.standard
-				: MobileDeviceRepository.DeviceType.mobile;
+            deviceType = request.getParameter("type").equals("standard")
+                    ? MobileDeviceRepository.DeviceType.standard
+                    : MobileDeviceRepository.DeviceType.mobile;
         }
 
-		Weblog tmpWebsite = weblog;
-        
+        Weblog tmpWebsite = weblog;
+
         if (previewRequest.getThemeName() != null) {
             // only create temporary weblog object if theme name was specified
             // in request, which indicates we're doing a theme preview
@@ -133,12 +123,12 @@ public class PreviewServlet extends HttpServlet {
             // the object that gets referenced during rendering operations
             previewRequest.setWeblog(tmpWebsite);
         }
-        
+
         Template page = null;
         if("page".equals(previewRequest.getContext())) {
             page = previewRequest.getWeblogPage();
-            
-        // If request specified tags section index, then look for custom template
+
+            // If request specified tags section index, then look for custom template
         } else if("tags".equals(previewRequest.getContext()) &&
                 previewRequest.getTags() == null) {
             try {
@@ -146,7 +136,7 @@ public class PreviewServlet extends HttpServlet {
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
-            
+
             // if we don't have a custom tags page then 404, we don't let
             // this one fall through to the default template
             if(page == null) {
@@ -156,8 +146,8 @@ public class PreviewServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            
-        // If this is a permalink then look for a permalink template
+
+            // If this is a permalink then look for a permalink template
         } else if(previewRequest.getWeblogAnchor() != null) {
             try {
                 page = weblog.getTheme().getTemplateByAction(ComponentType.PERMALINK);
@@ -165,7 +155,7 @@ public class PreviewServlet extends HttpServlet {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }
         }
-        
+
         if(page == null) {
             try {
                 page = tmpWebsite.getTheme().getDefaultTemplate();
@@ -173,7 +163,7 @@ public class PreviewServlet extends HttpServlet {
                 log.error("Error getting default page for preview", re);
             }
         }
-        
+
         // Still no page?  Then that is a 404
         if (page == null) {
             if (!response.isCommitted()) {
@@ -182,13 +172,13 @@ public class PreviewServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         log.debug("preview page found, dealing with it");
-        
+
         // set the content type
         String pageLink = previewRequest.getWeblogPageName();
-        String mimeType = pageLink !=  null ? RollerContext.getServletContext().getMimeType(pageLink) : null;        
+        String mimeType = pageLink !=  null ? RollerContext.getServletContext().getMimeType(pageLink) : null;
         String contentType = "text/html; charset=utf-8";
         if(mimeType != null) {
             // we found a match ... set the content type
@@ -197,21 +187,17 @@ public class PreviewServlet extends HttpServlet {
             // TODO: store content-type for each page so this hack is unnecessary
             contentType = "text/css; charset=utf-8";
         }
-        
+
         // looks like we need to render content
         Map<String, Object> model;
         try {
-            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", false, WebloggerCommon.EIGHT_KB_IN_BYTES, true);
-            
             // special hack for menu tag
             request.setAttribute("pageRequest", previewRequest);
-            
+
             // populate the rendering model
             Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", previewRequest);
-            initData.put("pageContext", pageContext);
-            
+
             // Load models for page previewing
             model = Model.getModelMap("previewModelSet", initData);
 
@@ -222,15 +208,15 @@ public class PreviewServlet extends HttpServlet {
 
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
-            
+
             if (!response.isCommitted()) {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
-        
-        
+
+
         // lookup Renderer we are going to use
         Renderer renderer;
         try {
@@ -239,44 +225,44 @@ public class PreviewServlet extends HttpServlet {
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);
-            
+
             if (!response.isCommitted()) {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // render content
         CachedContent rendererOutput = new CachedContent(WebloggerCommon.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());
-            
+
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
         } catch(Exception e) {
             // bummer, error during rendering
             log.error("Error during rendering for page "+page.getId(), e);
-            
+
             if (!response.isCommitted()) {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         // post rendering process
-        
+
         // flush rendered content to response
         log.debug("Flushing response output");
         response.setContentType(contentType);
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
-        
+
         log.debug("Exiting");
     }
-    
+
 }
