@@ -44,7 +44,7 @@ public interface Model {
 
     static Map<String, Object> getModelMap(String modelBean, Map<String, Object> initData) throws WebloggerException {
         HashMap<String, Object> modelMap = new HashMap<>();
-        Set modelSet = (Set) WebloggerFactory.getContext().getBean(modelBean);
+        Set modelSet = WebloggerFactory.getContext().getBean(modelBean, Set.class);
         for (Object obj : modelSet) {
             Model m = (Model) obj;
             m.init(initData);
