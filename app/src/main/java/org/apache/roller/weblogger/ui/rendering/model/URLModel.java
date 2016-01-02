@@ -54,6 +54,7 @@ public class URLModel implements Model {
     protected Weblog weblog;
 
     private WeblogEntryManager weblogEntryManager;
+
     protected URLStrategy urlStrategy;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {

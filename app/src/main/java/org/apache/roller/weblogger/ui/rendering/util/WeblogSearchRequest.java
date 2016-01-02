@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -34,8 +35,6 @@ import org.apache.roller.weblogger.util.Utilities;
 public class WeblogSearchRequest extends WeblogRequest {
     
     private static Log log = LogFactory.getLog(WeblogSearchRequest.class);
-    
-    private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
     
     // lightweight attributes
     private String query = null;
@@ -62,7 +61,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
         
         // was this request bound for the search servlet?
-        if(servlet == null || !SEARCH_SERVLET.equals(servlet)) {
+        if(servlet == null || !WeblogRequestMapper.SEARCH_PROCESSOR.equals(servlet)) {
             throw new InvalidRequestException("not a weblog search request, "+
                     request.getRequestURL());
         }

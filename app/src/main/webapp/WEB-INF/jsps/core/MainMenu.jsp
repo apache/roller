@@ -64,7 +64,7 @@
 
         <div class="yourWeblogBox">  
 
-            <span class="mm_weblog_name"><img src='<c:url value="/images/folder.png"/>' />&nbsp;<s:property value="#perms.weblog.name" /></span>
+            <span class="mm_weblog_name"><img src='<s:url value="/images/folder.png"/>' />&nbsp;<s:property value="#perms.weblog.name" /></span>
                 
             <table class="mm_table" width="100%" cellpadding="0" cellspacing="0">
                <tr>
@@ -166,7 +166,7 @@
 
                        <%-- don't allow last admin to resign from blog --%>
                        <s:if test='!(#perms.weblogRole.name() == "OWNER")'>
-                          <img src='<c:url value="/images/delete.png"/>' />
+                          <img src='<s:url value="/images/delete.png"/>' />
                           <s:url action="memberResign" namespace="/roller-ui/authoring" id="resignWeblog">
                               <s:param name="weblog" value="#perms.weblog.handle" />
                           </s:url>

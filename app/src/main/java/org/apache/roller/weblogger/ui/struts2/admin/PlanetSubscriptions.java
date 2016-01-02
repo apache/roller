@@ -20,14 +20,13 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FeedProcessor;
+import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -48,10 +47,10 @@ public class PlanetSubscriptions extends UIAction {
         this.planetManager = planetManager;
     }
 
-    private FeedProcessor feedProcessor;
+    private FeedManager feedManager;
 
-    public void setFeedProcessor(FeedProcessor feedProcessor) {
-        this.feedProcessor = feedProcessor;
+    public void setFeedManager(FeedManager feedManager) {
+        this.feedManager = feedManager;
     }
 
     // planet handle we are working in
@@ -125,7 +124,7 @@ public class PlanetSubscriptions extends UIAction {
                     LOGGER.debug("Adding New Subscription - " + subUrl);
 
                     // sub doesn't exist yet, so we need to fetch it
-                    sub = feedProcessor.fetchSubscription(subUrl);
+                    sub = feedManager.fetchSubscription(subUrl);
                     sub.setPlanet(planet);
 
                     // save new sub

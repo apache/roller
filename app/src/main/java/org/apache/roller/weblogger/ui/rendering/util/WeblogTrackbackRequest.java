@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 
 
 /**
@@ -35,8 +36,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 public class WeblogTrackbackRequest extends WeblogRequest {
     
     private static Log log = LogFactory.getLog(WeblogTrackbackRequest.class);
-    
-    private static final String TRACKBACK_SERVLET = "/roller-ui/rendering/trackback";
     
     // lightweight attributes
     private String blogName = null;
@@ -65,7 +64,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
         
         // was this request bound for the comment servlet?
-        if(servlet == null || !TRACKBACK_SERVLET.equals(servlet)) {
+        if(servlet == null || !WeblogRequestMapper.TRACKBACK_PROCESSOR.equals(servlet)) {
             throw new InvalidRequestException("not a weblog trackback request, "+
                     request.getRequestURL());
         }

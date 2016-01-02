@@ -18,25 +18,21 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -47,29 +43,34 @@ import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Handles search queries for weblogs.
  */
-public class SearchServlet extends HttpServlet {
+@RestController
+@RequestMapping(path="/roller-ui/rendering/search/**")
+public class SearchProcessor {
 
-    private static final long serialVersionUID = 6246730804167411636L;
+    private static Log log = LogFactory.getLog(SearchProcessor.class);
 
-    private static Log log = LogFactory.getLog(SearchServlet.class);
+    @Autowired
+    private WeblogManager weblogManager;
 
-    /**
-     * Init method for this servlet
-     */
-    public void init(ServletConfig servletConfig) throws ServletException {
-        super.init(servletConfig);
-        log.info("Initializing SearchServlet");
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
-    /**
-     * Handle GET requests for weblog pages.
-     */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @PostConstruct
+    public void init() {
+        log.info("Initializing SearchProcessor...");
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         log.debug("Entering");
 
@@ -81,10 +82,7 @@ public class SearchServlet extends HttpServlet {
             searchRequest = new WeblogSearchRequest(request);
 
             // now make sure the specified weblog really exists
-            weblog = WebloggerFactory
-                    .getWeblogger()
-                    .getWeblogManager()
-                    .getWeblogByHandle(searchRequest.getWeblogHandle(),
+            weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(),
                             Boolean.TRUE);
 
         } catch (Exception e) {
@@ -134,14 +132,9 @@ public class SearchServlet extends HttpServlet {
         // looks like we need to render content
         Map<String, Object> model;
         try {
-            PageContext pageContext = JspFactory.getDefaultFactory()
-                    .getPageContext(this, request, response, "", false, WebloggerCommon.EIGHT_KB_IN_BYTES,
-                            true);
-
             // populate the rendering model
             Map<String, Object> initData = new HashMap<>();
             initData.put("request", request);
-            initData.put("pageContext", pageContext);
 
             // this is a little hacky, but nothing we can do about it
             // we need the 'weblogRequest' to be a pageRequest so other models
@@ -177,7 +170,7 @@ public class SearchServlet extends HttpServlet {
         }
 
         // lookup Renderer we are going to use
-        Renderer renderer = null;
+        Renderer renderer;
         try {
             log.debug("Looking up renderer");
             renderer = RendererManager.getRenderer(page, deviceType);
