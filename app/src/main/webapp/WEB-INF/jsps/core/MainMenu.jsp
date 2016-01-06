@@ -80,40 +80,40 @@
             <div class="btn-group" role="group" aria-label="...">
 
                 <%-- New entry button --%>
-                <button type="button" class="btn btn-default">
-                    <s:url action="entryAdd" namespace="/roller-ui/authoring" id="newEntry">
-                        <s:param name="weblog" value="#perms.weblog.handle"/>
-                    </s:url>
+                <s:url action="entryAdd" namespace="/roller-ui/authoring" id="newEntry">
+                    <s:param name="weblog" value="#perms.weblog.handle"/>
+                </s:url>
+                <s:a href="%{newEntry}" cssClass="btn btn-default">
                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                    <s:a href="%{newEntry}"><s:text name="yourWebsites.newEntry"/></s:a>
-                </button>
+                    <s:text name="yourWebsites.newEntry"/>
+                </s:a>
 
                 <s:if test='!(#perms.hasAction("edit_draft"))'>
                     
                     <%-- Show Entries button with count for users above LIMITED permission --%>
-                    <button type="button" class="btn btn-default">
-                        <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
-                            <s:param name="weblog" value="#perms.weblog.handle"/>
-                        </s:url>
+                    <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
+                        <s:param name="weblog" value="#perms.weblog.handle"/>
+                    </s:url>
+                    <s:a href="%{editEntries}" cssClass="btn btn-default">
                         <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-                        <s:a href="%{editEntries}"><s:text name="yourWebsites.editEntries"/></s:a>
+                        <s:text name="yourWebsites.editEntries"/>
                         <span class="badge"><s:property value="#perms.weblog.entryCount"/></span>
-                    </button>
-                    
+                    </s:a>
+
                 </s:if>
 
                 <s:if test='!(#perms.hasAction("edit_draft"))'>
                     
                     <%-- Show Comments button with count for users above LIMITED permission --%>
-                    <button type="button" class="btn btn-default">
-                        <s:url action="comments" namespace="/roller-ui/authoring" id="manageComments">
-                            <s:param name="weblog" value="#perms.weblog.handle"/>
-                        </s:url>
+                    <s:url action="comments" namespace="/roller-ui/authoring" id="manageComments">
+                        <s:param name="weblog" value="#perms.weblog.handle"/>
+                    </s:url>
+                    <s:a href="%{manageComments}" cssClass="btn btn-default">
                         <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-                        <s:a href="%{manageComments}"><s:text name="yourWebsites.manageComments"/></s:a>
+                        <s:text name="yourWebsites.manageComments"/>
                         <span class="badge"><s:property value="#perms.weblog.commentCount"/></span>
-                    </button>
-                    
+                    </s:a>
+
                 </s:if>
 
 
@@ -132,22 +132,20 @@
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                         </s:else>
-                        <button type="button" class="btn btn-default">
+                        <a href='<s:property value="weblogTheme" />' class="btn btn-default">
                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                            <a href='<s:property value="weblogTheme" />'>
-                                <s:text name="yourWebsites.theme" /></a>
-                        </button>
+                            <s:text name="yourWebsites.theme" />
+                        </a>
                     </s:if>
                     
                     <%-- settings button --%>
-                    <button type="button" class="btn btn-default">
-                        <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
-                            <s:param name="weblog" value="#perms.weblog.handle"/>
-                        </s:url>
+                    <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
+                        <s:param name="weblog" value="#perms.weblog.handle"/>
+                    </s:url>
+                    <a href='<s:property value="manageWeblog" />' class="btn btn-default">
                         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                        <a href='<s:property value="manageWeblog" />'>
-                            <s:text name="yourWebsites.manage"/></a>
-                    </button>
+                        <s:text name="yourWebsites.manage"/>
+                    </a>
 
                 </s:if>
 
