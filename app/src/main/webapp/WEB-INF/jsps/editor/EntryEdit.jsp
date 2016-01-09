@@ -22,6 +22,15 @@
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 <script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
+<%-- Prevent annoying scrolling. taken from http://stackoverflow.com/a/10548809/3591946 --%>
+<script type="text/javascript">
+    $().ready(function () {
+        $("a[href='#'][data-toggle='collapse']").click(function (e) {
+            e.preventDefault();
+        });
+    });
+</script>
+
 <style>
     #tagAutoCompleteWrapper {
         width: 40em; /* set width here or else widget will expand to fit its container */
@@ -159,7 +168,7 @@
 
                     <h4 class="panel-title">
                         <a class="collapsed" data-toggle="collapse" data-target="#collapsePlugins" 
-                            href="#collapsePlugins">
+                            href="#">
                             <s:text name="weblogEdit.pluginsToApply"/> </a>
                     </h4>
 

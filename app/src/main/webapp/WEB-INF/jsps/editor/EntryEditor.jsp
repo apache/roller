@@ -26,7 +26,7 @@
     <div class="panel-heading">
 
         <h4 class="panel-title">
-        <a data-toggle="collapse" data-target="#collapseContentEditor" href="#collapseContentEditor">
+        <a data-toggle="collapse" data-target="#collapseContentEditor" href="#">
             <s:text name="weblogEdit.content"/> </a>
         </h4>
         
@@ -52,7 +52,7 @@
     <div class="panel-heading">
 
         <h4 class="panel-title">
-            <a href="#collapseSummaryEditor" class="collapsed"
+            <a href="#" class="collapsed"
                data-toggle="collapse" data-target="#collapseSummaryEditor" >
                <s:text name="weblogEdit.summary"/>
             </a>
