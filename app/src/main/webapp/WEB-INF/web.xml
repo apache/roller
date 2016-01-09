@@ -42,7 +42,7 @@
 
     <filter>
         <filter-name>RequestMappingFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.rendering.filters.RequestMappingFilter</filter-class>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
     <filter>

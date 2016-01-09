@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.struts2.StrutsStatics;
 
@@ -39,6 +39,18 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
 
     private static final long serialVersionUID = -6452966127207525616L;
     private static Log log = LogFactory.getLog(UIActionInterceptor.class);
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
 
     public String doIntercept(ActionInvocation invocation) throws Exception {
 
@@ -61,17 +73,15 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
             // exception: no user on initial install
             if (!"install".equals(theAction.actionName)) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 String name = auth.getName();
-                theAction.setAuthenticatedUser(mgr.getUserByUserName(name));
+                theAction.setAuthenticatedUser(userManager.getUserByUserName(name));
             }
 
             // extract the work weblog and set it
             String weblogHandle = theAction.getWeblog();
             if (!StringUtils.isEmpty(weblogHandle)) {
                 try {
-                    Weblog weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                            .getWeblogByHandle(weblogHandle);
+                    Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
                     if (weblog != null) {
                         theAction.setActionWeblog(weblog);
                     }

@@ -32,7 +32,6 @@ public class Weblogger {
 
     // managers
     private final IndexManager         indexManager;
-    private final MediaFileManager     mediaFileManager;
     private final PropertiesManager    propertiesManager;
     private final ThemeManager         themeManager;
     private final UserManager          userManager;
@@ -49,7 +48,6 @@ public class Weblogger {
      */
     protected Weblogger(
             IndexManager         indexManager,
-            MediaFileManager     mediaFileManager,
             PropertiesManager    propertiesManager,
             ThemeManager         themeManager,
             UserManager          userManager,
@@ -59,7 +57,6 @@ public class Weblogger {
             URLStrategy          urlStrategy) throws WebloggerException {
 
         this.indexManager        = indexManager;
-        this.mediaFileManager    = mediaFileManager;
         this.propertiesManager   = propertiesManager;
         this.themeManager        = themeManager;
         this.userManager         = userManager;
@@ -79,10 +76,6 @@ public class Weblogger {
 
     public UserManager getUserManager() {
         return userManager;
-    }
-
-    public MediaFileManager getMediaFileManager() {
-        return mediaFileManager;
     }
 
     public WeblogEntryManager getWeblogEntryManager() {

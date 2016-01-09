@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.filters;
 
 import java.io.IOException;
@@ -31,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.RequestMapper;
 
 /**
@@ -39,80 +40,30 @@ import org.apache.roller.weblogger.ui.rendering.RequestMapper;
  *
  * Incoming requests can be inspected by a series of RequestMappers and can
  * potentially be re-routed to different places within the application.
- *
- * @web.filter name="RequestMappingFilter"
  */
 public class RequestMappingFilter implements Filter {
     
     private static Log log = LogFactory.getLog(RequestMappingFilter.class);
     
-    // list of RequestMappers that want to inspect the request
-    private final List<RequestMapper> requestMappers = new ArrayList<RequestMapper>();
-    
-    public void init(FilterConfig filterConfig) {
-        
-        // lookup set of request mappers we are going to use
-        String rollerMappers = WebloggerConfig.getProperty("rendering.rollerRequestMappers");
-        String userMappers = WebloggerConfig.getProperty("rendering.userRequestMappers");
-        
-        // instantiate user defined request mapper classes
-        if(userMappers != null && userMappers.trim().length() > 0) {
-            RequestMapper requestMapper;
-            String[] uMappers = userMappers.split(",");
-            for (String uMapper : uMappers) {
-                try {
-                    Class mapperClass = Class.forName(uMapper);
-                    requestMapper = (RequestMapper) mapperClass.newInstance();
-                    requestMappers.add(requestMapper);
-                } catch(ClassCastException cce) {
-                    log.error("It appears that your mapper does not implement "+
-                            "the RequestMapper interface", cce);
-                } catch(Exception e) {
-                    log.error("Unable to instantiate request mapper ["+uMapper+"]", e);
-                }
-            }
-        }
-        
-        // instantiate roller standard request mapper classes
-        if(rollerMappers != null && rollerMappers.trim().length() > 0) {
-            RequestMapper requestMapper;
-            String[] rMappers = rollerMappers.split(",");
-            for (String rMapper : rMappers) {
-                try {
-                    Class mapperClass = Class.forName(rMapper);
-                    requestMapper = (RequestMapper) mapperClass.newInstance();
-                    requestMappers.add(requestMapper);
-                } catch(ClassCastException cce) {
-                    log.error("It appears that your mapper does not implement "+
-                            "the RequestMapper interface", cce);
-                } catch(Exception e) {
-                    log.error("Unable to instantiate request mapper ["+rMapper+"]", e);
-                }
-            }
-        }
-        
-        if(requestMappers.size() < 1) {
-            // hmm ... failed to load any request mappers?
-            log.warn("Failed to load any request mappers.  "+
-                    "Weblog urls probably won't function as you expect.");
-        }
-        
-        log.info("Request mapping filter initialized, "+requestMappers.size()+
-                " mappers configured.");
+    // list of RequestMappers that will be inspecting the request
+    private List<RequestMapper> requestMappers = new ArrayList<>();
+
+    public void setRequestMappers(List<RequestMapper> requestMappers) {
+        this.requestMappers = requestMappers;
     }
-    
-    
+
+    public void init(FilterConfig filterConfig) {}
+
     /**
      * Inspect incoming urls and see if they should be routed.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         
         log.debug("entering");
-        
         // give each mapper a chance to handle the request
         for (RequestMapper mapper : requestMappers) {
             log.debug("trying mapper " + mapper.getClass().getName());
@@ -125,16 +76,11 @@ public class RequestMappingFilter implements Filter {
                 return;
             }
         }
-
-        log.debug("request not mapped");
-        
+        log.debug("request not mapped, exiting");
         // nobody handled the request, so let it continue as usual
         chain.doFilter(request, response);
-        
-        log.debug("exiting");
     }
-    
-    
+
     public void destroy() {}
     
 }
