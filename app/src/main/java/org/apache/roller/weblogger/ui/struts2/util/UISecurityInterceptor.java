@@ -26,7 +26,6 @@ import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -40,6 +39,12 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
 
     private static final long serialVersionUID = -7787813271277874462L;
     private static Log log = LogFactory.getLog(UISecurityInterceptor.class);
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
 
     public String doIntercept(ActionInvocation invocation) throws Exception {
 
@@ -69,7 +74,6 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                     return "access-denied";
                 }
 
-                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 if (!authenticatedUser.hasEffectiveGlobalRole(theAction.requiredGlobalRole())) {
                     if (log.isDebugEnabled()) {
                         log.debug("DENIED: user " + authenticatedUser.getUserName() + " does not have "
@@ -92,7 +96,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                     }
 
                     // are we also enforcing a specific weblog permission?
-                    UserWeblogRole uwr = umgr.getWeblogRole(authenticatedUser, actionWeblog);
+                    UserWeblogRole uwr = userManager.getWeblogRole(authenticatedUser, actionWeblog);
                     if (uwr == null || !uwr.hasEffectiveWeblogRole(theAction.requiredWeblogRole())) {
                         if (log.isDebugEnabled()) {
                             log.debug("DENIED: user " + authenticatedUser + " does not have "
