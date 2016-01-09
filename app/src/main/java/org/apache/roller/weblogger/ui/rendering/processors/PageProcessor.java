@@ -37,7 +37,6 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
-import org.apache.roller.weblogger.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -68,9 +67,8 @@ import java.util.regex.Pattern;
  * <ul>
  * <li>Create a request object to parse the request</li>
  * <li>Determine last modified time, return not-modified (HTTP 304) if possible</li>
- * <li>Return content from cache if possible</li>
- * <li>Load model objects into a map suitable for renderer</li>
- * <li>Call most appropriate renderer to render content</li>
+ * <li>If not, return content from cache if possible</li>
+ * <li>If not, load model objects into a map suitable for renderer & call renderer to create content</li>
  * </ul>
  */
 @RestController
@@ -78,11 +76,9 @@ import java.util.regex.Pattern;
 public class PageProcessor {
 
     private static Log log = LogFactory.getLog(PageProcessor.class);
-    // for referrer processing
-    private boolean processReferrers = true;
-    private static Pattern robotPattern = null;
-    // for caching
+
     private boolean excludeOwnerPages = false;
+    private boolean processReferrers = true;
     private WeblogPageCache weblogPageCache = null;
     private SiteWideCache siteWideCache = null;
 
@@ -93,44 +89,13 @@ public class PageProcessor {
         this.weblogEntryManager = weblogEntryManager;
     }
 
-    /**
-     * Init method for this servlet
-     */
     @PostConstruct
     public void init() {
-        log.info("Initializing PageProcessor");
-
-        this.excludeOwnerPages = WebloggerConfig
-                .getBooleanProperty("cache.excludeOwnerEditPages");
-
-        // get a reference to the weblog page cache
+        this.excludeOwnerPages = WebloggerConfig.getBooleanProperty("cache.excludeOwnerEditPages");
         this.weblogPageCache = WeblogPageCache.getInstance();
-
-        // get a reference to the site wide cache
         this.siteWideCache = SiteWideCache.getInstance();
-
-        // see if built-in referrer spam check is enabled
-        this.processReferrers = WebloggerConfig
-                .getBooleanProperty("site.blacklist.check.referrers");
-
-        log.info("Referrer spam check enabled = " + this.processReferrers);
-
-        // check for possible robot pattern
-        String robotPatternStr = WebloggerConfig
-                .getProperty("referrer.robotCheck.userAgentPattern");
-        if (robotPatternStr != null && robotPatternStr.length() > 0) {
-            // Parse the pattern, and store the compiled form.
-            try {
-                robotPattern = Pattern.compile(robotPatternStr);
-            } catch (Exception e) {
-                // Most likely a PatternSyntaxException; log and continue as if
-                // it is not set.
-                log.error(
-                        "Error parsing referrer.robotCheck.userAgentPattern value '"
-                                + robotPatternStr
-                                + "'.  Robots will not be filtered. ", e);
-            }
-        }
+        this.processReferrers = WebloggerConfig.getBooleanProperty("site.blacklist.check.referrers");
+        log.info("PageProcessor: Referrer spam check enabled = " + this.processReferrers);
     }
 
     /**
@@ -138,23 +103,6 @@ public class PageProcessor {
      */
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        // do referrer processing, if it's enabled
-        // NOTE: this *must* be done first because it triggers a hibernate flush
-        // which will close the active session and cause lazy init exceptions
-        // otherwise
-        if (this.processReferrers) {
-            boolean spam = this.processReferrer(request);
-            if (spam) {
-                log.debug("spammer, giving 'em a 403");
-                if (!response.isCommitted()) {
-                    response.reset();
-                }
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-        }
-
         Weblog weblog;
         boolean isSiteWide;
 
@@ -164,13 +112,24 @@ public class PageProcessor {
 
             weblog = pageRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "
-                        + pageRequest.getWeblogHandle());
+                throw new WebloggerException("unable to lookup weblog: " + pageRequest.getWeblogHandle());
             }
 
             // is this the site-wide weblog?
-            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(pageRequest
-                    .getWeblogHandle());
+            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle());
+
+            if (this.processReferrers && !isSiteWide) {
+                boolean spam = processReferrer(request, pageRequest);
+                if (spam) {
+                    log.debug("evaluated to be a spammer, returning a 403");
+                    if (!response.isCommitted()) {
+                        response.reset();
+                    }
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+                }
+            }
+
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
             log.debug("error creating page request", e);
@@ -187,7 +146,7 @@ public class PageProcessor {
         }
 
         // 304 Not Modified handling.
-        // We skip this for logged in users to avoid the scenerio where a user
+        // We skip this for logged in users to avoid the scenario where a user
         // views their weblog, logs in, then gets a 304 without the 'edit' links
         if (!pageRequest.isLoggedIn()) {
             if (ModDateHeaderUtil.respondIfNotModified(request, response,
@@ -512,36 +471,8 @@ public class PageProcessor {
      * 
      * @return true if referrer was spam, false otherwise
      */
-    private boolean processReferrer(HttpServletRequest request) {
-
+    private boolean processReferrer(HttpServletRequest request, WeblogPageRequest pageRequest) {
         log.debug("processing referrer for " + request.getRequestURI());
-
-        // bleh! because ref processing does a flush it will close
-        // our hibernate session and cause lazy init exceptions on
-        // objects we have fetched, so we need to use a separate
-        // page request object for this
-        WeblogPageRequest pageRequest;
-        try {
-            pageRequest = new WeblogPageRequest(request);
-        } catch (InvalidRequestException ex) {
-            return false;
-        }
-
-        // if this came from site-wide frontpage then skip it
-        if (WebloggerRuntimeConfig.isSiteWideWeblog(pageRequest
-                .getWeblogHandle())) {
-            return false;
-        }
-
-        // if this came from a robot then don't process it
-        if (robotPattern != null) {
-            String userAgent = request.getHeader("User-Agent");
-            if (userAgent != null && userAgent.length() > 0
-                    && robotPattern.matcher(userAgent).matches()) {
-                log.debug("skipping referrer from robot");
-                return false;
-            }
-        }
 
         String referrerUrl = request.getHeader("Referer");
         StringBuffer reqsb = request.getRequestURL();
@@ -550,7 +481,6 @@ public class PageProcessor {
             reqsb.append(request.getQueryString());
         }
         String requestUrl = reqsb.toString();
-
         log.debug("referrer = " + referrerUrl);
 
         // if this came from persons own blog then don't process it
@@ -560,43 +490,32 @@ public class PageProcessor {
             return false;
         }
 
-        // validate the referrer
-        if (pageRequest.getWeblogHandle() != null) {
+        // Base page URLs, with and without www.
+        String basePageUrlWWW = WebloggerRuntimeConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
+        String basePageUrl = basePageUrlWWW;
+        if (basePageUrlWWW.startsWith("http://www.")) {
+            // chop off the http://www.
+            basePageUrl = "http://" + basePageUrlWWW.substring(11);
+        }
 
-            // Base page URLs, with and without www.
-            String basePageUrlWWW = WebloggerRuntimeConfig
-                    .getAbsoluteContextURL()
-                    + "/"
-                    + pageRequest.getWeblogHandle();
-            String basePageUrl = basePageUrlWWW;
-            if (basePageUrlWWW.startsWith("http://www.")) {
-                // chop off the http://www.
-                basePageUrl = "http://" + basePageUrlWWW.substring(11);
+        // ignore referrers coming from users own blog
+        if (referrerUrl != null && !referrerUrl.startsWith(basePageUrl)
+                && !referrerUrl.startsWith(basePageUrlWWW)) {
+
+            // treat editor referral as direct
+            int lastSlash = requestUrl.indexOf('/', 8);
+            if (lastSlash == -1) {
+                lastSlash = requestUrl.length();
             }
+            String requestSite = requestUrl.substring(0, lastSlash);
 
-            // ignore referrers coming from users own blog
-            if (referrerUrl == null
-                    || (!referrerUrl.startsWith(basePageUrl) && !referrerUrl
-                            .startsWith(basePageUrlWWW))) {
-
-                // validate the referrer
-                if (referrerUrl != null) {
-                    // treat editor referral as direct
-                    int lastSlash = requestUrl.indexOf('/', 8);
-                    if (lastSlash == -1) {
-                        lastSlash = requestUrl.length();
-                    }
-                    String requestSite = requestUrl.substring(0, lastSlash);
-
-                    if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
-                            checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
-                        return true;
-                    }
-                }
-            } else {
-                log.debug("Ignoring referer = " + referrerUrl);
-                return false;
+            if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
+                    checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
+                return true;
             }
+        } else {
+            log.debug("Ignoring referer = " + referrerUrl);
+            return false;
         }
 
         return false;

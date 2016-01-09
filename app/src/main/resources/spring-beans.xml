@@ -326,6 +326,7 @@
         <beans:property name="sourceList">
             <beans:list>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper">
+                    <beans:constructor-arg ref="weblogManager"/>
                     <beans:constructor-arg ref="customProtectedUrls"/>
                 </beans:bean>
             </beans:list>

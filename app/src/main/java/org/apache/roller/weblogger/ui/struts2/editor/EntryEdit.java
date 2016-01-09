@@ -200,6 +200,8 @@ public final class EntryEdit extends UIAction {
                     bean.setHours(cal.get(Calendar.HOUR_OF_DAY));
                     bean.setMinutes(cal.get(Calendar.MINUTE));
                     bean.setSeconds(cal.get(Calendar.SECOND));
+                    DateFormat df = new SimpleDateFormat("M/d/yy");
+                    bean.setDateString(df.format(cal.getTime()));
 
                     log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", " + bean.getMinutes() + ", " + bean.getSeconds());
                 }

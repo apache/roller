@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
@@ -51,8 +51,11 @@ public class WeblogRequestMapper implements RequestMapper {
 
     // url patterns that are not allowed to be considered weblog handles
     Set restricted;
-    
-    public WeblogRequestMapper(Set restrictedUrls) {
+
+    private WeblogManager weblogManager;
+
+    public WeblogRequestMapper(WeblogManager weblogManager, Set restrictedUrls) {
+        this.weblogManager = weblogManager;
         restricted = restrictedUrls;
     }
 
@@ -226,7 +229,7 @@ public class WeblogRequestMapper implements RequestMapper {
     private boolean isWeblog(String potentialHandle) {
         boolean isWeblog = false;
         try {
-            Weblog weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(potentialHandle);
+            Weblog weblog = weblogManager.getWeblogByHandle(potentialHandle);
             if(weblog != null) {
                 isWeblog = true;
             }

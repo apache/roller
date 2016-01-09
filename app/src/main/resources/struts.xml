@@ -300,7 +300,10 @@
             <param name="actionName">entryRemove</param>
             <result name="input" type="tiles">.EntryRemove</result>
             <result name="error" type="chain">menu</result>
-            <result name="success" type="chain">entryAdd</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">entryAdd</param>
+                <param name="weblog">${weblog}</param>
+            </result>
         </action>
 
         <!-- Below activated by Entries.jsp and EntryRemove.jsp, kept separate from
@@ -333,7 +336,7 @@
             <param name="desiredMenu">editor</param>
             <result name="success" type="redirectAction">
                 <param name="actionName">comments!updateMade</param>
-                <param name="bean.id">${bean.id}</param>
+                <param name="bean.entryId">${bean.entryId}</param>
                 <param name="weblog">${weblog}</param>
             </result>
         </action>
