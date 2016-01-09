@@ -297,7 +297,7 @@
     <%-- The button box --%>
 
         <%-- save draft --%>
-        <s:submit cssClass="btn btn-default" 
+        <s:submit cssClass="btn btn-warning"
                   value="%{getText('weblogEdit.save')}" 
                   action="%{#mainAction}!saveDraft"/>
 
@@ -311,14 +311,14 @@
         <s:if test="userAnAuthor">
             
             <%-- publish --%>
-            <s:submit cssClass="btn btn-default" 
+            <s:submit cssClass="btn btn-success"
                       value="%{getText('weblogEdit.post')}" 
                       action="%{#mainAction}!publish"/>
         </s:if>
         <s:else>
             
             <%-- submit for review --%>
-            <s:submit cssClass="btn btn-default" 
+            <s:submit cssClass="btn btn-info"
                       value="%{getText('weblogEdit.submitForReview')}" 
                       action="%{#mainAction}!publish" />
         </s:else>
@@ -330,7 +330,7 @@
                     <s:param name="weblog" value="actionWeblog.handle"/>
                     <s:param name="removeId" value="%{entry.id}"/>
                 </s:url>
-                <input class="btn btn-default" type="button" 
+                <input class="btn btn-danger" type="button"
                        value="<s:text name='weblogEdit.deleteEntry'/>"
                        onclick="window.location='<s:property value="removeUrl" escape="false"/>'"/>
             </span>
