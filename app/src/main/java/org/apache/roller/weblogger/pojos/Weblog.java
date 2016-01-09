@@ -688,6 +688,10 @@ public class Weblog implements Serializable {
         return count;
     }
 
+    public void invalidateCache() {
+        // update weblog LMD so weblog cache will refresh, allowing users to see new categories, bookmarks, etc.
+        setLastModified(new java.util.Date());
+    }
 
     /**
      * Add a category as a child of this category.

@@ -90,12 +90,6 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
         this.resourceId = resourceId;
     }
             
-    protected boolean isLocale(String potentialLocale) {
-        // We don't support locales in the resource Servlet so we've got to 
-        // keep parent from treating upload sub-directory name as a locale.
-        return false;
-    }
-
     /**
      * @return the thumbnail
      */

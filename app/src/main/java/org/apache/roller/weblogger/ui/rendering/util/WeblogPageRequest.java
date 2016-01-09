@@ -82,7 +82,7 @@ public class WeblogPageRequest extends WeblogRequest {
             throws InvalidRequestException {
 
         // let our parent take care of their business first
-        // parent determines weblog handle and locale if specified
+        // parent determines weblog handle
         super(request);
 
         String servlet = request.getServletPath();

@@ -45,7 +45,6 @@ public interface WeblogManager {
      */
     void addWeblog(Weblog newWebsite) throws WebloggerException;
     
-    
     /**
      * Store a single weblog.
      */

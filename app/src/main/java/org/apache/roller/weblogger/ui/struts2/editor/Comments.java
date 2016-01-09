@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
@@ -255,65 +254,6 @@ public class Comments extends UIAction {
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
             addError("commentManagement.lookupError");
-        }
-
-        return LIST;
-    }
-
-    /**
-     * Bulk delete all comments matching query criteria.
-     */
-    public String delete() {
-
-        try {
-            int deleted = weblogEntryManager.removeMatchingComments(
-                    isGlobalCommentManagement() ? null : getActionWeblog(),
-                    null,
-                    getBean().getSearchString(),
-                    getBean().getStartDate(),
-                    getBean().getEndDate(),
-                    getBean().getStatus());
-
-            // if search is enabled, we will need to re-index all entries with
-            // comments that have been deleted, so build a list of those entries
-            // Global can manually do system-wide indexing if desired.
-            if (!isGlobalCommentManagement()) {
-                Set<WeblogEntry> reindexEntries = new HashSet<>();
-                if (WebloggerConfig.getBooleanProperty("search.enabled")) {
-
-                    CommentSearchCriteria csc = new CommentSearchCriteria();
-                    csc.setWeblog(getActionWeblog());
-                    csc.setEntry(getQueryEntry());
-                    csc.setSearchText(getBean().getSearchString());
-                    csc.setStartDate(getBean().getStartDate());
-                    csc.setEndDate(getBean().getEndDate());
-                    csc.setStatus(getBean().getStatus());
-
-                    List<WeblogEntryComment> targetted = weblogEntryManager.getComments(csc);
-                    for (WeblogEntryComment comment : targetted) {
-                        reindexEntries.add(comment.getWeblogEntry());
-                    }
-                }
-
-                // if we've got entries to reindex then do so
-                if (!reindexEntries.isEmpty()) {
-                    for (WeblogEntry entry : reindexEntries) {
-                        indexManager.addEntryReIndexOperation(entry);
-                    }
-                }
-            }
-
-            addMessage("commentManagement.deleteSuccess",
-                    Integer.toString(deleted));
-
-            // reset form and load fresh comments list
-            setBean(new CommentsBean());
-
-            return execute();
-
-        } catch (WebloggerException ex) {
-            log.error("Error doing bulk delete", ex);
-            addError("commentManagement.deleteError");
         }
 
         return LIST;

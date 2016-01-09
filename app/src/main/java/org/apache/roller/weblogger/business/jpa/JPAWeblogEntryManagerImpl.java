@@ -94,6 +94,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     public void saveComment(WeblogEntryComment comment) throws WebloggerException {
+        comment.getWeblogEntry().getWeblog().invalidateCache();
         this.strategy.store(comment);
     }
     
@@ -101,6 +102,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     public void removeComment(WeblogEntryComment comment) throws WebloggerException {
+        comment.getWeblogEntry().getWeblog().invalidateCache();
         this.strategy.remove(comment);
     }
     
@@ -136,10 +138,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         entry.setUpdateTime(new Timestamp(new Date().getTime()));
         
         this.strategy.store(entry);
-        
-        // update weblog last modified date.
+        entry.getWeblog().invalidateCache();
+
         if(entry.isPublished()) {
-            entry.getWeblog().setLastModified(new java.util.Date());
             strategy.store(entry.getWeblog());
         }
         
@@ -171,6 +172,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         // remove entry
         this.strategy.remove(entry);
+        entry.getWeblog().invalidateCache();
         
         // remove entry from cache mapping
         this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());

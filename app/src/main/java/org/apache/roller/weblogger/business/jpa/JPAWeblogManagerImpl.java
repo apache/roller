@@ -89,11 +89,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy = strat;
     }
 
-    /**
-     * Update existing weblog.
-     */
     public void saveWeblog(Weblog weblog) throws WebloggerException {
-        
         weblog.setLastModified(new java.util.Date());
         strategy.merge(weblog);
     }
@@ -671,6 +667,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
+        bookmark.getWeblog().invalidateCache();
         this.strategy.store(bookmark);
     }
 
@@ -680,6 +677,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
         bookmark.getWeblog().getBookmarks().remove(bookmark);
+        bookmark.getWeblog().invalidateCache();
         this.strategy.remove(bookmark);
     }
 
@@ -782,6 +780,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (!exists && isDuplicateWeblogCategoryName(cat)) {
             throw new WebloggerException("Duplicate category name, cannot save category");
         }
+        cat.getWeblog().invalidateCache();
         this.strategy.store(cat);
     }
 
@@ -800,6 +799,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
 
         cat.getWeblog().getWeblogCategories().remove(cat);
+        cat.getWeblog().invalidateCache();
         this.strategy.remove(cat);
     }
 
