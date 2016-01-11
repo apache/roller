@@ -153,6 +153,10 @@ drop table if exists $tableName;
 alter table $tableName modify $columnName $columnType;
 #elseif ($db.DBTYPE == "POSTGRESQL")
 alter table $tableName alter column $columnName type $columnType;
+#elseif ($db.DBTYPE == "DB2")
+alter table $tableName alter column $columnName set data type $columnType;
+#elseif ($db.DBTYPE == "HSQLDB" || $db.DBTYPE == "MSSQL")
+alter table $tableName alter column $columnName $columnType;
 #else
 -- You should alter type of column $columnName of table $tableName to $columnType
 #end
