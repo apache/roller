@@ -19,27 +19,21 @@
 
 <%-- JavaScript for bookmarks table --%>
 <script>
-function onDelete()
-{
-    if ( confirm("<s:text name='bookmarksForm.delete.confirm' />") ) 
-    {
+function onDelete() {
+    if ( confirm("<s:text name='bookmarksForm.delete.confirm' />") ) {
         document.bookmarks.submit();
     }
 }
 
-function onDeleteFolder()
-{
-    if ( confirm("<s:text name='bookmarksForm.deleteFolder.confirm' />") )
-    {
+function onDeleteFolder() {
+    if ( confirm("<s:text name='bookmarksForm.deleteFolder.confirm' />") ) {
         document.bookmarks.action='<s:url action="bookmarks!deleteFolder" />';
         document.bookmarks.submit();
     }
 }
 
-function onMove()
-{
-    if ( confirm("<s:text name='bookmarksForm.move.confirm' />") ) 
-    {
+function onMove() {
+    if ( confirm("<s:text name='bookmarksForm.move.confirm' />") ) {
         document.bookmarks.action='<s:url action="bookmarks!move" />';
         document.bookmarks.submit();
     }
@@ -64,12 +58,11 @@ function onMove()
         <s:param name="bean.id" value="%{folder.id}" />
         <s:param name="folderId" value="%{folder.id}" />
     </s:url>
-    <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" /
-        title="<s:text name='bookmarksForm.folder.edit.tip' />" /></s:a>
+    <s:a href="%{editUrl}"> <span class="glyphicon glyphicon-play-circle"></span> </s:a>
 </s:else>
 
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
-<s:form action="bookmarks!delete">
+<s:form action="bookmarks!delete" theme="bootstrap" cssClass="form-horizontal">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="folderId" /> 
@@ -79,18 +72,19 @@ function onMove()
         <s:submit type="button" action="bookmarks!view" key="bookmarksForm.viewFolder" />
 
         <%-- Folder to View combo-box --%>
-        <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" />
+        <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" onchange="" />
 
         <br /><br />
     </s:if>
-    <table class="rollertable">
+    <table class="rollertable table table-striped">
 
         <tr class="rHeaderTr">
-            <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
-                title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
+            <th width="5%">
+                <input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
+                title="<s:text name="bookmarksForm.selectAllLabel"/>"/>
+            </th>
             <th class="rollertable" width="25%"><s:text name="generic.name" /></th>
             <th class="rollertable" width="25%"><s:text name="bookmarksForm.url" /></th>
-            <th class="rollertable" width="35%"><s:text name="bookmarksForm.feedurl" /></th>
             <th class="rollertable" width="5%"><s:text name="generic.edit" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
@@ -112,32 +106,27 @@ function onMove()
                     value="<s:property value="#bookmark.id"/>" />
                 </td>
                 
-                <td class="rollertable">
+                <td>
                     <str:truncateNicely lower="25" upper="30" ><s:property value="#bookmark.name" /></str:truncateNicely>
                 </td>
                 
-                <td class="rollertable">
+                <td>
                     <str:truncateNicely lower="40" upper="50" ><s:property value="#bookmark.url" /></str:truncateNicely>
                 </td>
                 
-                <td class="rollertable">
-                    <str:truncateNicely lower="60" upper="70" ><s:property value="#bookmark.feedUrl" /></str:truncateNicely>
-                </td>
-
-                <td class="rollertable" align="center">
+                <td align="center">
                     <s:url var="editUrl" action="bookmarkEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                         <s:param name="bean.id" value="#bookmark.id" />
                         <s:param name="folderId" value="%{folderId}" suppressEmptyParameters="true"/>
                     </s:url>
-                    <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
-                             title="<s:text name='bookmarksForm.edit.tip' />" /></s:a>
+                    <s:a href="%{editUrl}"> <span class="glyphicon glyphicon-edit"></span> </s:a>
                 </td>
                 
-                <td class="rollertable" align="center">
+                <td align="center">
                     <s:if test="#bookmark.url != null" >
                         <a href="<s:property value="#bookmark.url" />">
-                            <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon" title="<s:text name='bookmarksForm.visitLink.tip' />" />
+                            <span class="glyphicon glyphicon-play-circle"></span>
                         </a>
                     </s:if>
                 </td>
@@ -169,7 +158,8 @@ function onMove()
 
         <s:if test="folder.name != 'default'">
             <span style="float:right">
-                <s:submit value="%{getText('bookmarksForm.deleteFolder')}" action="bookmarks!deleteFolder" onclick="onDeleteFolder();return false;"/>
+                <s:submit value="%{getText('bookmarksForm.deleteFolder')}"
+                          action="bookmarks!deleteFolder" onclick="onDeleteFolder();return false;"/>
             </span>
         </s:if>
     </div>
