@@ -174,7 +174,7 @@ public final class WebloggerRuntimeConfig {
      */
     public static boolean isSiteWideWeblog(String weblogHandle) {
         boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
-        return (isFrontPageWeblog(weblogHandle) && siteWide);
+        return (siteWide && isFrontPageWeblog(weblogHandle));
     }
     
 }

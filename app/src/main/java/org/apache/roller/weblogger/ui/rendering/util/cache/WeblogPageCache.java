@@ -171,7 +171,7 @@ public final class WeblogPageCache {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(CACHE_ID).append(":");
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {
@@ -210,7 +210,7 @@ public final class WeblogPageCache {
             if("tags".equals(pageRequest.getContext())) {
                 key.append("/tags/");
                 if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
-                    Set ordered = new TreeSet(pageRequest.getTags());
+                    Set ordered = new TreeSet<>(pageRequest.getTags());
                     String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
                     key.append(Utilities.stringArrayToString(tags,"+"));
                 }

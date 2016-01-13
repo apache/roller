@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.util;
 
 import java.io.UnsupportedEncodingException;
@@ -27,8 +29,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
-
+import org.apache.roller.weblogger.ui.rendering.processors.IncomingTrackbackProcessor;
 
 /**
  * Represents a request to post a weblog entry trackback.
@@ -64,7 +65,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
         
         // was this request bound for the comment servlet?
-        if(servlet == null || !WeblogRequestMapper.TRACKBACK_PROCESSOR.equals(servlet)) {
+        if(servlet == null || !IncomingTrackbackProcessor.PATH.equals(servlet)) {
             throw new InvalidRequestException("not a weblog trackback request, "+
                     request.getRequestURL());
         }

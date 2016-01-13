@@ -60,6 +60,8 @@ public class FeedProcessor {
 
     private static Log log = LogFactory.getLog(FeedProcessor.class);
 
+    public static final String PATH = "/roller-ui/rendering/feed";
+
     private WeblogFeedCache weblogFeedCache = null;
     private SiteWideCache siteWideCache = null;
 
@@ -97,13 +99,11 @@ public class FeedProcessor {
 
             weblog = feedRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "
-                        + feedRequest.getWeblogHandle());
+                throw new WebloggerException("unable to lookup weblog: " + feedRequest.getWeblogHandle());
             }
 
             // is this the site-wide weblog?
-            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest
-                    .getWeblogHandle());
+            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle());
 
         } catch (Exception e) {
             // invalid feed request format or weblog doesn't exist
@@ -210,34 +210,23 @@ public class FeedProcessor {
         Map<String, Object> model;
         String pageId;
         try {
-            // determine what template to render with
-            boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog
-                    .getHandle());
-            if (siteWide) {
-                pageId = "site-" + feedRequest.getType() + "-"
-                        + feedRequest.getFormat() + ".vm";
-
-            } else {
-                pageId = "weblog-" + feedRequest.getType() + "-"
-                        + feedRequest.getFormat() + ".vm";
-            }
-
             // populate the rendering model
-            Map<String, Object> initData = new HashMap<String, Object>();
+            Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", feedRequest);
-
             model = Model.getModelMap("feedModelSet", initData);
 
-            // Load special models for site-wide blog
-            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if (isSiteWide) {
+                pageId = "site-" + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
+                // Load special models for site-wide blog
                 model.putAll(Model.getModelMap("siteModelSet", initData));
+            } else {
+                pageId = "weblog-" + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
             }
 
             // Load search models if search feed
             if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
                 model.putAll(Model.getModelMap("searchFeedModelSet", initData));
             }
-
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
 

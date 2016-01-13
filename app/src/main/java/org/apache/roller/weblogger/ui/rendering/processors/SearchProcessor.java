@@ -57,6 +57,8 @@ public class SearchProcessor {
 
     private static Log log = LogFactory.getLog(SearchProcessor.class);
 
+    public static final String PATH = "/roller-ui/rendering/search";
+
     @Autowired
     private WeblogManager weblogManager;
 

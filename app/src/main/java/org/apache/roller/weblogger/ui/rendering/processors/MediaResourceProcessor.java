@@ -54,6 +54,8 @@ public class MediaResourceProcessor {
 
     private static Log log = LogFactory.getLog(MediaResourceProcessor.class);
 
+    public static final String PATH = "/roller-ui/rendering/media-resources";
+
     @Autowired
     private MediaFileManager mediaFileManager;
 

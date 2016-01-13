@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
+import org.apache.roller.weblogger.ui.rendering.processors.PageProcessor;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ import java.util.Map;
 /**
  * Represents a request for a Roller weblog page.
  * 
- * any url from WeblogRequestMapper.PAGE_PROCESSOR value
+ * any url from PageProcessor.PATH value
  * 
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
@@ -266,7 +266,7 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     boolean isValidDestination(String servlet) {
-        return (servlet != null && WeblogRequestMapper.PAGE_PROCESSOR.equals(servlet));
+        return (servlet != null && PageProcessor.PATH.equals(servlet));
     }
 
     private boolean isValidDateString(String dateString) {

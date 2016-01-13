@@ -72,28 +72,25 @@ public final class SiteWideCache implements CacheHandler {
     // reference to our singleton instance
     private static SiteWideCache singletonInstance = new SiteWideCache();
     
-    
     private SiteWideCache() {
+        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID + ".enabled");
         
-        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
-        
-        Map<String, String> cacheProps = new HashMap<String, String>();
+        Map<String, String> cacheProps = new HashMap<>();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
+        String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
             
             // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        WebloggerConfig.getProperty(prop));
+            if (prop.startsWith(CACHE_ID + ".")) {
+                cacheProps.put(prop.substring(CACHE_ID.length()+1), WebloggerConfig.getProperty(prop));
             }
         }
         
         log.info(cacheProps);
         
-        if(cacheEnabled) {
+        if (cacheEnabled) {
             contentCache = CacheManager.constructCache(this, cacheProps);
         } else {
             log.warn("Caching has been DISABLED");
@@ -199,7 +196,6 @@ public final class SiteWideCache implements CacheHandler {
         StringBuilder key = new StringBuilder();
         
         key.append(CACHE_ID).append(":");
-        key.append("page/");
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {

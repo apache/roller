@@ -138,8 +138,7 @@ public class SearchResultsFeedModel implements Model {
 		SearchOperation search = new SearchOperation(indexManager);
 		search.setTerm(feedRequest.getTerm());
 
-		if (WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest
-				.getWeblogHandle())) {
+		if (WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest.getWeblogHandle())) {
 			this.websiteSpecificSearch = false;
 		} else {
 			search.setWebsiteHandle(feedRequest.getWeblogHandle());

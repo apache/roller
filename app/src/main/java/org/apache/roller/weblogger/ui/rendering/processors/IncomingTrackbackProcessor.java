@@ -66,6 +66,8 @@ public class IncomingTrackbackProcessor {
 
     private static Log logger = LogFactory.getLog(IncomingTrackbackProcessor.class);
 
+    public static final String PATH = "/roller-ui/rendering/trackback";
+
     private CommentValidationManager commentValidationManager = null;
 
     @Autowired

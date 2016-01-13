@@ -284,9 +284,9 @@
     -->
     <beans:bean id="commentAuthenticator" class="org.apache.roller.weblogger.ui.rendering.plugins.comments.MathCommentAuthenticator"/>
 
-    <!-- Restricted URLs that may not represent blogs:  Used by the WeblogRequestMapper to quickly toss-out non-blog URLs.
-         be kept as-is.  To add to this list, override and add to the subsequent customProtectedUrls element which merges in this
-         one. -->
+    <!-- Restricted URLs that may not represent blogs:  Used by the RequestMappingFilter to quickly toss-out non-blog URLs.
+         Should be kept as-is.  To add items to this list, override and add to the subsequent customProtectedUrls element
+         which merges in this one. -->
     <beans:bean id="tightblogProtectedUrls" class="org.springframework.beans.factory.config.SetFactoryBean">
         <beans:property name="sourceSet">
             <beans:set>
@@ -318,23 +318,9 @@
         </beans:property>
     </beans:bean>
 
-    <!-- Request mappers are activated by the RequestMappingFilter.  They parse the incoming URL and route it to the appropriate
-         org.apache.roller.weblogger.ui.rendering.processors object.  If you wish to route additional URLs add your mapper(s)
-         either before (to override default Tightblog behavior) and/or after (to add to them).  You may also wish to add the new
-         URLs to the customProtectedUrls above to ensure the default mapper will not process them. -->
-    <beans:bean id="requestMappers" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <beans:property name="sourceList">
-            <beans:list>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper">
-                    <beans:constructor-arg ref="weblogManager"/>
-                    <beans:constructor-arg ref="customProtectedUrls"/>
-                </beans:bean>
-            </beans:list>
-        </beans:property>
-    </beans:bean>
-
     <beans:bean id="RequestMappingFilter" class="org.apache.roller.weblogger.ui.rendering.filters.RequestMappingFilter">
-        <beans:property name="requestMappers" ref="requestMappers"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
+        <beans:property name="restrictedUrls" ref="customProtectedUrls"/>
     </beans:bean>
 
 </beans:beans>

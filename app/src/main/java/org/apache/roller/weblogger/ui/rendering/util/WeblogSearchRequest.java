@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +27,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
+import org.apache.roller.weblogger.ui.rendering.processors.SearchProcessor;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -61,7 +63,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
         
         // was this request bound for the search servlet?
-        if(servlet == null || !WeblogRequestMapper.SEARCH_PROCESSOR.equals(servlet)) {
+        if(servlet == null || !SearchProcessor.PATH.equals(servlet)) {
             throw new InvalidRequestException("not a weblog search request, "+
                     request.getRequestURL());
         }

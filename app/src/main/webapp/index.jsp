@@ -23,7 +23,7 @@ String frontpageBlog =
 if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
     // dispatch to frontpage blog
     RequestDispatcher homepage =
-            request.getRequestDispatcher(org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper.PAGE_PROCESSOR + '/' + frontpageBlog);
+            request.getRequestDispatcher(org.apache.roller.weblogger.ui.rendering.processors.PageProcessor.PATH + '/' + frontpageBlog);
     homepage.forward(request, response);
 } else {
     // dispatch to setup page
