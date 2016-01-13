@@ -49,7 +49,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidator;
@@ -85,6 +84,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentProcessor {
 
     private static Log log = LogFactory.getLog(CommentProcessor.class);
+
+    public static final String PATH = "/roller-ui/rendering/comment";
 
     private CommentValidationManager commentValidationManager = null;
     private GenericThrottle commentThrottle = null;
@@ -204,7 +205,7 @@ public class CommentProcessor {
             }
 
             // we know what the weblog entry is, so setup our urls
-            dispatch_url = WeblogRequestMapper.PAGE_PROCESSOR + "/" + weblog.getHandle();
+            dispatch_url = PageProcessor.PATH + "/" + weblog.getHandle();
             dispatch_url += "/entry/" + Utilities.encode(commentRequest.getWeblogAnchor());
 
         } catch (Exception e) {

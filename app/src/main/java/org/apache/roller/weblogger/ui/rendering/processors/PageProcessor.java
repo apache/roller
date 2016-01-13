@@ -77,6 +77,8 @@ public class PageProcessor {
 
     private static Log log = LogFactory.getLog(PageProcessor.class);
 
+    public static final String PATH = "/roller-ui/rendering/page";
+
     private boolean excludeOwnerPages = false;
     private boolean processReferrers = true;
     private WeblogPageCache weblogPageCache = null;
@@ -362,7 +364,7 @@ public class PageProcessor {
             model = Model.getModelMap("pageModelSet", initData);
 
             // Load special models for site-wide blog
-            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if (isSiteWide) {
                 model.putAll(Model.getModelMap("siteModelSet", initData));
             }
 

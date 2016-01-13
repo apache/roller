@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
+import org.apache.roller.weblogger.ui.rendering.processors.FeedProcessor;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -82,7 +82,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         log.debug("parsing path "+pathInfo);
         
         // was this request bound for the feed servlet?
-        if(servlet == null || !WeblogRequestMapper.FEED_PROCESSOR.equals(servlet)) {
+        if(servlet == null || !FeedProcessor.PATH.equals(servlet)) {
             throw new InvalidRequestException("not a weblog feed request, "+
                     request.getRequestURL());
         }
