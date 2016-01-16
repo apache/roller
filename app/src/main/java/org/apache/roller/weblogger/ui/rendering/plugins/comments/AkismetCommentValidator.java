@@ -17,11 +17,7 @@
  *
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
- *
- * Source file modified from the original ASF source; all changes made
- * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.io.BufferedReader;
@@ -33,11 +29,10 @@ import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
-
 
 /**
  * Check against Akismet service. Expects to a valid Akismet API key in the
@@ -49,7 +44,13 @@ public class AkismetCommentValidator implements CommentValidator {
     private static Log log = LogFactory.getLog(AkismetCommentValidator.class);    
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private String apikey;
-    
+
+    private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
     /** Creates a new instance of AkismetCommentValidator */
     public AkismetCommentValidator() {
         apikey = WebloggerConfig.getProperty("comment.validator.akismet.apikey");
@@ -62,7 +63,7 @@ public class AkismetCommentValidator implements CommentValidator {
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         StringBuilder sb = new StringBuilder();
         sb.append("blog=").append(
-            WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(comment.getWeblogEntry().getWeblog(), true)).append("&");
+            urlStrategy.getWeblogURL(comment.getWeblogEntry().getWeblog(), true)).append("&");
         sb.append("user_ip="        ).append(comment.getRemoteHost()).append("&");
         sb.append("user_agent="     ).append(comment.getUserAgent()).append("&");
         sb.append("referrer="       ).append(comment.getReferrer()).append("&");
@@ -103,6 +104,3 @@ public class AkismetCommentValidator implements CommentValidator {
         return 0;
     }
 }
-
-
-

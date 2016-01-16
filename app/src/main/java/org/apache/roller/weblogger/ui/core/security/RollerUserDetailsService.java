@@ -22,14 +22,11 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -39,27 +36,27 @@ import org.springframework.dao.DataRetrievalFailureException;
  * Spring Security UserDetailsService implemented using Weblogger API.
  */
 public class RollerUserDetailsService implements UserDetailsService {
-    private static Log log = LogFactory.getLog(RollerUserDetailsService.class);
-    
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     /**
      * @throws UsernameNotFoundException, DataAccessException
      */
     public UserDetails loadUserByUsername(String userName) {
-        Weblogger roller;
-        try {
-            roller = WebloggerFactory.getWeblogger();
-        } catch (Exception e) {
+
+        if (!WebloggerFactory.isBootstrapped()) {
             // Should only happen in case of 1st time startup, setup required
-            log.debug("Ignorable error getting Roller instance", e);
             // Thowing a "soft" exception here allows setup to proceed
             throw new UsernameNotFoundException("User info not available yet.");
         }
 
-        UserManager umgr = roller.getUserManager();
         User userData;
         // standard username/password auth
         try {
-            userData = umgr.getUserByUserName(userName);
+            userData = userManager.getUserByUserName(userName);
         } catch (WebloggerException ex) {
             throw new DataRetrievalFailureException("ERROR in user lookup", ex);
         }

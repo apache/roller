@@ -18,15 +18,13 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ResourceBundle;
 
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.LinkbackExtractor;
@@ -39,7 +37,13 @@ import org.apache.roller.weblogger.util.RollerMessages;
 public class TrackbackLinkbackCommentValidator implements CommentValidator {
     
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
-    
+
+    private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
     public String getName() {
         return bundle.getString("comment.validator.trackbackLinkbackName");
     }
@@ -55,14 +59,10 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
         int ret = 0;
         LinkbackExtractor linkback = null;
         try {
-            linkback = new LinkbackExtractor(
-                    comment.getUrl(),
-                    WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(
-                    comment.getWeblogEntry().getWeblog(),
-                    comment.getWeblogEntry().getAnchor(),
-                    true));
-        } catch (MalformedURLException ignored1) {
-        } catch (IOException ignored2) {}
+            linkback = new LinkbackExtractor(comment.getUrl(), urlStrategy.getWeblogEntryURL(
+                    comment.getWeblogEntry().getWeblog(), comment.getWeblogEntry().getAnchor(), true));
+        } catch (IOException ignored) {
+        }
         
         if (linkback != null && linkback.getExcerpt() != null) {
             ret = WebloggerCommon.PERCENT_100;
