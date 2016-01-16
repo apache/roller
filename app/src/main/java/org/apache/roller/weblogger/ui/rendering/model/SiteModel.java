@@ -68,13 +68,13 @@ public class SiteModel implements Model {
     private List tags = new ArrayList();
     private String pageLink = null;
     private int pageNum = 0;
-    
     private URLStrategy urlStrategy;
-    private WeblogManager weblogManager;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
     }
+
+    private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;

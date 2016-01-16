@@ -75,8 +75,9 @@
         <!--authentication-provider ref="ldapAuthProvider"/-->
     </authentication-manager>
 
-    <beans:bean id="rollerUserService"
-                class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService"/>
+    <beans:bean id="rollerUserService" class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService">
+        <beans:property name="userManager" ref="userManager"/>
+    </beans:bean>
 
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
@@ -100,7 +101,9 @@
             </beans:bean>
         </beans:constructor-arg>
         <beans:constructor-arg>
-            <beans:bean class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator"/>
+            <beans:bean class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
+                <beans:property name="userManager" ref="userManager"/>
+            </beans:bean>
         </beans:constructor-arg>
     </beans:bean>
 

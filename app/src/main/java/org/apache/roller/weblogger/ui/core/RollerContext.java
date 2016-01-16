@@ -44,7 +44,6 @@ import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -255,39 +254,5 @@ public class RollerContext extends ContextLoaderListener
 			log.debug("No userCache bean in context", exc);
 		}
     }
- 
-    
-    /**
-     * Get an instance of AutoProvision, if available in roller.properties
-     * @return AutoProvision
-     */
-    public static AutoProvision getAutoProvision() {        
-        String clazzName = WebloggerConfig.getProperty("users.ldap.autoProvision.className");
-        
-        if (null == clazzName) {
-            return null;
-        }
-        
-        Class clazz;
-        try {
-            clazz = Class.forName(clazzName);
-        } catch (ClassNotFoundException e) {
-            log.warn("Unable to found specified Auto Provision class.", e);
-            return null;
-        }
-        
-        Class[] interfaces = clazz.getInterfaces();
-        for (Class clazz2 : interfaces) {
-            if (clazz2.equals(AutoProvision.class)) {
-                try {
-                    return (AutoProvision) clazz.newInstance();
-                } catch (InstantiationException e) {
-                    log.warn("InstantiationException while creating: " + clazzName, e);
-                } catch (IllegalAccessException e) {
-                    log.warn("IllegalAccessException while creating: " + clazzName, e);
-                }
-            }
-        }        
-        return null;        
-    }   
+
 }

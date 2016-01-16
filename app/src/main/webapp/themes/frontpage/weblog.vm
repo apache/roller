@@ -54,7 +54,7 @@
                                         $utils.truncateNicely($utils.removeHTML($pinnedEntry.title), 50, 50, "...")
                                     </a><br /> 
                                     <p class="entryDetails">
-                                        <a href="$utils.escapeHTML($pinnedEntry.website.URL)">$pinnedEntry.website.name</a>
+                                        <a href="$utils.escapeHTML($pinnedEntry.weblog.URL)">$pinnedEntry.weblog.name</a>
                                         #if($pinnedEntry.category.name)| $pinnedEntry.category.name #end
                                         #if($pinnedEntry.pubTime) | $utils.formatDate($pinnedEntry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
                                         #if($pinnedEntry.creator.screenName)| By $pinnedEntry.creator.screenName #end

@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -44,6 +43,12 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
      */
     private GlobalRole defaultRole = GlobalRole.BLOGGER;
 
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     /* (non-Javadoc)
      * @see org.springframework.security.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.springframework.ldap.core.DirContextOperations, String)
      */
@@ -57,8 +62,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         User user;
         GlobalRole role;
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            user = umgr.getUserByUserName(username, Boolean.TRUE);
+            user = userManager.getUserByUserName(username, Boolean.TRUE);
             if (user != null) {
                 role = user.getGlobalRole();
             } else {
