@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -43,9 +42,8 @@ import java.util.Map;
 public class ExpiringLRUCacheImpl implements Cache {
     private static Log log = LogFactory.getLog(ExpiringLRUCacheImpl.class);
 
-    private String id = null;
     private Map<String, Object> cache = null;
-    private long timeout = 0;
+    private long timeoutInMS = 0;
 
     // for metrics
     protected double hits = 0;
@@ -54,14 +52,9 @@ public class ExpiringLRUCacheImpl implements Cache {
     protected double removes = 0;
     protected Date startTime = new Date();
 
-    public ExpiringLRUCacheImpl(String id, int maxsize, long timeout) {
-        this.id = id;
+    public ExpiringLRUCacheImpl(int maxsize, long timeoutInMS) {
         this.cache = Collections.synchronizedMap(new LRULinkedHashMap<>(maxsize));
-        this.timeout = timeout * DateUtils.MILLIS_PER_SECOND;
-    }
-
-    public String getId() {
-        return this.id;
+        this.timeoutInMS = timeoutInMS;
     }
 
     public synchronized void remove(String key) {
@@ -105,7 +98,7 @@ public class ExpiringLRUCacheImpl implements Cache {
      */
     @Override
     public synchronized void put(String key, Object value) {
-        ExpiringCacheEntry entry = new ExpiringCacheEntry(value, this.timeout);
+        ExpiringCacheEntry entry = new ExpiringCacheEntry(value, this.timeoutInMS);
         this.cache.put(key, entry);
         puts++;
     }

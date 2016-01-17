@@ -27,12 +27,6 @@ import java.util.Map;
 public interface Cache {
     
     /**
-     * a unique identifier for the cache.
-     */
-    String getId();
-    
-    
-    /**
      * put an item in the cache.
      */
     void put(String key, Object value);

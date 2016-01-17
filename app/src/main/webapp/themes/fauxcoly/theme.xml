@@ -11,8 +11,6 @@
     <!-- theme preview image -->
     <previewImagePath>images/fauxcoly-preview.png</previewImagePath>
 
-    <pickles/>
-
     <!-- templates -->
     <template action="stylesheet">
         <name>custom.css</name>

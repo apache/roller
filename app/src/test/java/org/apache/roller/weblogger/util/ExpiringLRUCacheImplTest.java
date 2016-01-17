@@ -38,7 +38,7 @@ public class ExpiringLRUCacheImplTest extends WebloggerTest {
     @Test
     public void testLRU() {
         // Create cache with 3 item limit and 15 second timeout
-        Cache cache = new ExpiringLRUCacheImpl("test", 3, 15000);
+        Cache cache = new ExpiringLRUCacheImpl(3, 15000);
         
         cache.put("key1", "string1");
         cache.put("key2", "string2");
@@ -61,7 +61,7 @@ public class ExpiringLRUCacheImplTest extends WebloggerTest {
     @Test
     public void testRemove() {
         // Create cache with 100 item limit and 15 second timeout
-        Cache cache = new ExpiringLRUCacheImpl("test", 100, 15000);
+        Cache cache = new ExpiringLRUCacheImpl(100, 15000);
 
         cache.put("key1", "string1");
         cache.put("key2", "string2");

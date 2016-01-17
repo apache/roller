@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
-
 
 /**
  * A tool used to provide throttling support.
@@ -32,18 +31,16 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
  * considered to be abusive.
  */
 public class GenericThrottle {
-    
     private static Log log = LogFactory.getLog(GenericThrottle.class);
     
     // threshold and interval to determine who is abusive
     private int threshold = 1;
-    private int interval = 0;
+    private long interval = 0;
     
     // a cache to maintain the data
     Cache clientHistoryCache = null;
-    
-    
-    public GenericThrottle(int thresh, int inter, int maxEntries) {
+
+    public GenericThrottle(int thresh, int interSec, int maxEntries) {
         
         // threshold can't be negative, that would mean everyone is abusive
         if(thresh > -1) {
@@ -51,8 +48,8 @@ public class GenericThrottle {
         }
         
         // interval must be a positive value
-        if(inter > 0) {
-            this.interval = inter;
+        if(interSec > 0) {
+            this.interval = interSec * 1000;
         }
         
         // max entries must be a positive value
@@ -61,7 +58,7 @@ public class GenericThrottle {
         }
 
         // get cache instance.  handler is null cuz we don't want to register it
-        this.clientHistoryCache = CacheManager.constructCache(null, "throttle", maxEntries, interval);
+        this.clientHistoryCache = CacheManager.constructCache("throttle", maxEntries, interval);
     }
     
     
@@ -81,19 +78,13 @@ public class GenericThrottle {
         }
         
         // see if we have any info about this client yet
-        ClientInfo client = null;
-        ExpiringCacheEntry cacheEntry = (ExpiringCacheEntry) this.clientHistoryCache.get(clientId);
-        if(cacheEntry != null) {
-            log.debug("HIT "+clientId);
-            client = (ClientInfo) cacheEntry.getValue();
-            
-            // this means entry had expired
-            if(client == null) {
-                log.debug("EXPIRED "+clientId);
-                this.clientHistoryCache.remove(clientId);
-            }
+        ClientInfo client = (ClientInfo) this.clientHistoryCache.get(clientId);
+        if(client != null) {
+            log.debug("HIT " + clientId);
+        } else {
+            log.debug("MISS " + clientId);
         }
-        
+
         // if we already know this client then update their hit count and 
         // see if they have surpassed the threshold
         if(client != null) {
@@ -113,8 +104,7 @@ public class GenericThrottle {
             ClientInfo newClient = new ClientInfo();
             newClient.hits = 1;
 
-            ExpiringCacheEntry newEntry = new ExpiringCacheEntry(newClient, this.interval);
-            this.clientHistoryCache.put(clientId, newEntry);
+            this.clientHistoryCache.put(clientId, newClient);
         }
         
         return false;
@@ -135,17 +125,12 @@ public class GenericThrottle {
         }
         
         // see if we have any info about this client
-        ClientInfo client = null;
-        ExpiringCacheEntry cacheEntry = (ExpiringCacheEntry) this.clientHistoryCache.get(clientId);
-        if(cacheEntry != null) {
-            log.debug("HIT "+clientId);
-            client = (ClientInfo) cacheEntry.getValue();
-            
-            // this means entry had expired
-            if (client == null) {
-                log.debug("EXPIRED "+clientId);
-                this.clientHistoryCache.remove(clientId);
-            }
+        ClientInfo client = (ClientInfo) this.clientHistoryCache.get(clientId);
+
+        if(client != null) {
+            log.debug("HIT " + clientId);
+        } else {
+            log.debug("MISS " + clientId);
         }
 
         return client != null && client.hits > this.threshold;

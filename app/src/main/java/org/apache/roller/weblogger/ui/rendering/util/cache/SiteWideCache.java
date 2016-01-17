@@ -22,9 +22,6 @@ package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.util.Date;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -33,99 +30,30 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.cache.Cache;
-import org.apache.roller.weblogger.util.cache.CacheHandler;
+import org.apache.roller.weblogger.util.cache.BlogEventListener;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
 
 /**
  * Cache for site-wide weblog content.
  */
-public final class SiteWideCache implements CacheHandler {
-    
-    private static Log log = LogFactory.getLog(SiteWideCache.class);
-    
-    public static final String CACHE_ID = "cache.sitewide";
-    
-    private boolean enabled = true;
+public final class SiteWideCache extends ExpiringCache implements BlogEventListener {
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    private int size = 50;
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    private int timeoutSec = 1800;
-
-    public void setTimeoutSec(int timeoutSec) {
-        this.timeoutSec = timeoutSec;
-    }
-
-    private Cache contentCache = null;
-    
-    // keep a cached version of last expired time
+    // keep a cached version of cache last refresh time for 304 Not Modified calculations
     private ExpiringCacheEntry lastUpdateTime = null;
 
     private SiteWideCache() {
-        if (enabled) {
-            contentCache = CacheManager.constructCache(this, CACHE_ID, size, timeoutSec);
-        } else {
-            log.warn("Site-wide cache has been DISABLED");
-        }
+        super();
+        CacheManager.registerHandler(this);
     }
 
-    public Object get(String key) {
-        if (!enabled) {
-            return null;
-        }
-        
-        Object entry = contentCache.get(key);
-        
-        if(entry == null) {
-            log.debug("MISS "+key);
-        } else {
-            log.debug("HIT "+key);
-        }
-        
-        return entry;
-    }
-    
-    
-    public void put(String key, Object value) {
-        if (!enabled) {
-            return;
-        }
-        
-        contentCache.put(key, value);
-        log.debug("PUT "+key);
-    }
-
-    
-    public void remove(String key) {
-        if (!enabled) {
-            return;
-        }
-        
-        contentCache.remove(key);
-        log.debug("REMOVE "+key);
-    }
-    
-    
     public void clear() {
-        if (!enabled) {
-            return;
+        if (enabled) {
+            super.clear();
+            this.lastUpdateTime = null;
         }
-        
-        contentCache.clear();
-        this.lastUpdateTime = null;
-        log.debug("CLEAR");
     }
-    
-    
+
     public Date getLastModified() {
         Date lastModified = null;
         
@@ -137,7 +65,7 @@ public final class SiteWideCache implements CacheHandler {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             lastModified = new Date();
-            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, 15 * DateUtils.MILLIS_PER_MINUTE);
+            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, timeoutInMS);
         }
         
         return lastModified;
@@ -147,44 +75,38 @@ public final class SiteWideCache implements CacheHandler {
      * A weblog entry has changed.
      */
     public void invalidate(WeblogEntry entry) {
-        
-        if (!enabled) {
-            return;
+        if (enabled) {
+            this.contentCache.clear();
+            this.lastUpdateTime = null;
         }
-        
-        this.contentCache.clear();
-        this.lastUpdateTime = null;
     }
-    
-    
+
+
     /**
      * A weblog has changed.
      */
     public void invalidate(Weblog website) {
-        
-        if (!enabled) {
-            return;
+        if (enabled) {
+            this.contentCache.clear();
+            this.lastUpdateTime = null;
         }
-        
-        this.contentCache.clear();
-        this.lastUpdateTime = null;
     }
-    
-    
+
+
     /**
-     * A bookmark has changed.
+     * A bookmark has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogBookmark bookmark) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWeblog().getHandle())) {
+        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWeblog().getHandle())) {
             invalidate(bookmark.getWeblog());
         }
     }
 
     /**
-     * A comment has changed.
+     * A comment has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogEntryComment comment) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWeblog().getHandle())) {
+        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWeblog().getHandle())) {
             invalidate(comment.getWeblogEntry().getWeblog());
         }
     }
@@ -199,22 +121,20 @@ public final class SiteWideCache implements CacheHandler {
     
     
     /**
-     * A category has changed.
+     * A category has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogCategory category) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
+        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
             invalidate(category.getWeblog());
         }
     }
-    
-    
+
     /**
-     * A weblog template has changed.
+     * A weblog template has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogTemplate template) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(template.getWeblog().getHandle())) {
+        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(template.getWeblog().getHandle())) {
             invalidate(template.getWeblog());
         }
     }
-    
 }

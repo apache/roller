@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.util.cache;
 
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -26,20 +25,19 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
 /**
- * Represents someone that wants to receive notifications about cache
- * invalidation events.
+ * Represents someone that wants to receive notifications about changed
+ * items.
  *
- * A CacheHandler can be registered with the CacheManager and then will
+ * A BlogEventListener can be registered with the CacheManager and then will
  * receive all the various object invalidation events happening in the
- * system.  Typically classes which are using a cache will want to implement
- * this interface so that they can know when to remove items from their cache.
+ * system.
  */
-public interface CacheHandler {
+public interface BlogEventListener {
     
     void invalidate(WeblogEntry entry);
     
@@ -54,5 +52,4 @@ public interface CacheHandler {
     void invalidate(WeblogCategory category);
 
     void invalidate(WeblogTemplate template);
-    
 }

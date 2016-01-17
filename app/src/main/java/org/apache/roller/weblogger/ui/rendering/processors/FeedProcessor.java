@@ -21,8 +21,12 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
@@ -37,12 +41,13 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
+import org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
-import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,9 +67,9 @@ public class FeedProcessor {
     public static final String PATH = "/roller-ui/rendering/feed";
 
     @Autowired
-    private WeblogFeedCache weblogFeedCache = null;
+    private LazyExpiringCache weblogFeedCache = null;
 
-    public void setWeblogFeedCache(WeblogFeedCache weblogFeedCache) {
+    public void setWeblogFeedCache(LazyExpiringCache weblogFeedCache) {
         this.weblogFeedCache = weblogFeedCache;
     }
 
@@ -147,7 +152,7 @@ public class FeedProcessor {
         }
 
         // generate cache key
-        String cacheKey = weblogFeedCache.generateKey(feedRequest);
+        String cacheKey = generateKey(feedRequest);
 
         // cached content checking
         CachedContent cachedContent;
@@ -294,4 +299,54 @@ public class FeedProcessor {
         log.debug("Exiting");
     }
 
+    /**
+     * Generate a cache key from a parsed weblog feed request.
+     * This generates a key of the form ...
+     *
+     * <handle>/<type>/<format>/<term>[/category][/language][/excerpts]
+     *
+     * examples ...
+     *
+     * foo/entries/rss/en
+     * foo/comments/rss/MyCategory/en
+     * foo/entries/atom/en/excerpts
+     *
+     */
+    public String generateKey(WeblogFeedRequest feedRequest) {
+
+        StringBuilder key = new StringBuilder();
+
+        key.append("weblogfeed.key").append(":");
+        key.append(feedRequest.getWeblogHandle());
+
+        key.append("/").append(feedRequest.getType());
+        key.append("/").append(feedRequest.getFormat());
+
+        if (feedRequest.getTerm() != null) {
+            key.append("/search/").append(feedRequest.getTerm());
+        }
+
+        if(feedRequest.getWeblogCategoryName() != null) {
+            String cat = feedRequest.getWeblogCategoryName();
+            try {
+                cat = URLEncoder.encode(cat, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                // should never happen, utf-8 is always supported
+            }
+
+            key.append("/").append(cat);
+        }
+
+        if(feedRequest.isExcerpts()) {
+            key.append("/excerpts");
+        }
+
+        if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+            Set<String> ordered = new TreeSet<>(feedRequest.getTags());
+            String[] tags = ordered.toArray(new String[ordered.size()]);
+            key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+        }
+
+        return key.toString();
+    }
 }

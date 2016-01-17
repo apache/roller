@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -49,9 +49,9 @@ public class ValidateSaltFilter implements Filter {
     private Set<String> ignored = new HashSet<String>();
 
     @Autowired
-    private SaltCache saltCache = null;
+    private ExpiringCache saltCache = null;
 
-    public void setSaltCache(SaltCache saltCache) {
+    public void setSaltCache(ExpiringCache saltCache) {
         this.saltCache = saltCache;
     }
 
