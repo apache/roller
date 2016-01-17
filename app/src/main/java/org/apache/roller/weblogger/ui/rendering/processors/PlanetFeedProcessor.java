@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -58,7 +57,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlanetFeedProcessor {
 
     private static Log log = LogFactory.getLog(PlanetFeedProcessor.class);
-    private PlanetCache planetCache = null;
+
+    @Autowired
+    private PlanetCache planetCache;
+
+    public void setPlanetCache(PlanetCache planetCache) {
+        this.planetCache = planetCache;
+    }
 
     @Autowired
     private PlanetManager planetManager;
@@ -67,15 +72,8 @@ public class PlanetFeedProcessor {
         this.planetManager = planetManager;
     }
 
-    @PostConstruct
-    public void init() {
-        log.info("Initializing PlanetProcessor...");
-        this.planetCache = PlanetCache.getInstance();
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         log.debug("Entering");
 
         PlanetRequest planetRequest;

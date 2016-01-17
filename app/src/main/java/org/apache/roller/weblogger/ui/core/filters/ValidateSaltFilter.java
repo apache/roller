@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Filter checks all POST request for presence of valid salt value and rejects
@@ -47,6 +48,13 @@ public class ValidateSaltFilter implements Filter {
 
     private Set<String> ignored = new HashSet<String>();
 
+    @Autowired
+    private SaltCache saltCache = null;
+
+    public void setSaltCache(SaltCache saltCache) {
+        this.saltCache = saltCache;
+    }
+
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
@@ -58,7 +66,6 @@ public class ValidateSaltFilter implements Filter {
                 && !isIgnoredURL(httpReq.getServletPath())) {
 
             String salt = httpReq.getParameter("salt");
-            SaltCache saltCache = SaltCache.getInstance();
             if (salt == null || saltCache.get(salt) == null
                     || saltCache.get(salt).equals(false)) {
 

@@ -54,51 +54,13 @@ public final class CacheManager {
     
     private static Log log = LogFactory.getLog(CacheManager.class);
     
-    private static final String DEFAULT_FACTORY = 
-            "org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl";
-    
-    // a reference to the cache factory in use
-    private static CacheFactory cacheFactory = null;
-    
     // a set of all registered cache handlers
     private static Set<CacheHandler> cacheHandlers = new HashSet<>();
     
     // a map of all registered caches
     private static Map<String, Cache> caches = new HashMap<>();
     
-    
     static {
-        // lookup what cache factory we want to use
-        String classname = WebloggerConfig.getProperty("cache.defaultFactory");
-        
-        // use reflection to instantiate our factory class
-        try {
-            Class factoryClass = Class.forName(classname);
-            cacheFactory = (CacheFactory) factoryClass.newInstance();
-        } catch(ClassCastException cce) {
-            log.error("It appears that your factory does not implement "+
-                    "the CacheFactory interface",cce);
-        } catch(Exception e) {
-            log.error("Unable to instantiate cache factory ["+classname+"]"+
-                    " falling back on default", e);
-        }
-        
-        if(cacheFactory == null) {
-            try {
-                // hmm ... failed to load the specified cache factory
-                // lets try our default
-                Class factoryClass = Class.forName(DEFAULT_FACTORY);
-                cacheFactory = (CacheFactory) factoryClass.newInstance();
-            } catch(Exception e) {
-                log.fatal("Failed to instantiate a cache factory", e);
-                throw new RuntimeException(e);
-            }
-        }
-        
-        log.info("Cache Manager Initialized.");
-        log.info("Cache Factory = "+cacheFactory.getClass().getName());
-        
-        
         // add custom handlers
         String customHandlers = WebloggerConfig.getProperty("cache.customHandlers");
         if(customHandlers != null && customHandlers.trim().length() > 0) {
@@ -121,74 +83,22 @@ public final class CacheManager {
             }
         }
     }
-    
-    
+
     // a non-instantiable class
     private CacheManager() {}
-    
-    
-    /**
-     * Ask the CacheManager to construct a cache.
-     *
-     * Normally the CacheManager will use whatever CacheFactory has been
-     * chosen for the system via the cache.defaultFactory property.
-     * However, it is possible to override the use of the default factory by
-     * supplying a "factory" property to this method.  The value should
-     * be the full classname for the factory you want to use for constructing
-     * the cache.
-     *
-     * example:
-     *   factory -> org.apache.roller.weblogger.util.cache.LRUCacheFactoryImpl
-     *
-     * This allows Roller admins the ability to choose a caching strategy to
-     * use for the whole system, but override it in certain places where they
-     * see fit.  It also allows users to write their own caching modifications
-     * and have them used only by specific caches.
-     */
-    public static Cache constructCache(CacheHandler handler, Map properties) {
-        
-        log.debug("Constructing new cache with props "+properties);
-        
-        Cache cache = null;
-        
-        if(properties != null && properties.containsKey("factory")) {
-            // someone wants a custom cache instance
-            String classname = (String) properties.get("factory");
-            
-            try {
-                // use reflection to instantiate the factory class
-                Class factoryClass = Class.forName(classname);
-                CacheFactory factory = (CacheFactory) factoryClass.newInstance();
-                
-                // now ask for a new cache
-                cache = factory.constructCache(properties);
-            } catch(ClassCastException cce) {
-                log.error("It appears that your factory ["+classname+
-                        "] does not implement the CacheFactory interface",cce);
-            } catch(Exception e) {
-                log.error("Unable to instantiate cache factory ["+classname+
-                        "] falling back on default", e);
-            }
-        }
-        
-        if(cache == null) {
-            // ask our default cache factory for a new cache instance
-            cache = cacheFactory.constructCache(properties);
-        }
-        
-        if(cache != null) {
-            caches.put(cache.getId(), cache);
-            
-            // register the handler for this new cache
-            if(handler != null) {
-                cacheHandlers.add(handler);
-            }
+
+    public static Cache constructCache(CacheHandler handler, String id, int size, int timeoutSec) {
+        Cache cache = new ExpiringLRUCacheImpl(id, size, timeoutSec);
+        caches.put(cache.getId(), cache);
+
+        // register the handler for this new cache
+        if(handler != null) {
+            cacheHandlers.add(handler);
         }
 
         return cache;
     }
-    
-    
+
     /**
      * Register a CacheHandler to listen for object invalidations.
      *

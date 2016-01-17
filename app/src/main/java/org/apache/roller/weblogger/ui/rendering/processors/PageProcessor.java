@@ -81,8 +81,20 @@ public class PageProcessor {
 
     private boolean excludeOwnerPages = false;
     private boolean processReferrers = true;
+
+    @Autowired
     private WeblogPageCache weblogPageCache = null;
+
+    public void setWeblogPageCache(WeblogPageCache weblogPageCache) {
+        this.weblogPageCache = weblogPageCache;
+    }
+
+    @Autowired
     private SiteWideCache siteWideCache = null;
+
+    public void setSiteWideCache(SiteWideCache siteWideCache) {
+        this.siteWideCache = siteWideCache;
+    }
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
@@ -94,8 +106,6 @@ public class PageProcessor {
     @PostConstruct
     public void init() {
         this.excludeOwnerPages = WebloggerConfig.getBooleanProperty("cache.excludeOwnerEditPages");
-        this.weblogPageCache = WeblogPageCache.getInstance();
-        this.siteWideCache = SiteWideCache.getInstance();
         this.processReferrers = WebloggerConfig.getBooleanProperty("site.blacklist.check.referrers");
         log.info("PageProcessor: Referrer spam check enabled = " + this.processReferrers);
     }
@@ -162,12 +172,7 @@ public class PageProcessor {
         }
 
         // generate cache key
-        String cacheKey;
-        if (isSiteWide) {
-            cacheKey = siteWideCache.generateKey(pageRequest);
-        } else {
-            cacheKey = weblogPageCache.generateKey(pageRequest);
-        }
+        String cacheKey = weblogPageCache.generateKey(pageRequest);
 
         // cached content checking
         if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())

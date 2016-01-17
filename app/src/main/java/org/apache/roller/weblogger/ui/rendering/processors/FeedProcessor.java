@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
@@ -62,8 +61,19 @@ public class FeedProcessor {
 
     public static final String PATH = "/roller-ui/rendering/feed";
 
+    @Autowired
     private WeblogFeedCache weblogFeedCache = null;
+
+    public void setWeblogFeedCache(WeblogFeedCache weblogFeedCache) {
+        this.weblogFeedCache = weblogFeedCache;
+    }
+
+    @Autowired
     private SiteWideCache siteWideCache = null;
+
+    public void setSiteWideCache(SiteWideCache siteWideCache) {
+        this.siteWideCache = siteWideCache;
+    }
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
@@ -71,18 +81,6 @@ public class FeedProcessor {
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
-
-    @PostConstruct
-    public void init() {
-        log.info("Initializing FeedProcessor...");
-
-        // get a reference to the weblog feed cache
-        this.weblogFeedCache = WeblogFeedCache.getInstance();
-
-        // get a reference to the site wide cache
-        this.siteWideCache = SiteWideCache.getInstance();
-    }
-
 
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -149,12 +147,7 @@ public class FeedProcessor {
         }
 
         // generate cache key
-        String cacheKey;
-        if (isSiteWide) {
-            cacheKey = siteWideCache.generateKey(feedRequest);
-        } else {
-            cacheKey = weblogFeedCache.generateKey(feedRequest);
-        }
+        String cacheKey = weblogFeedCache.generateKey(feedRequest);
 
         // cached content checking
         CachedContent cachedContent;

@@ -21,14 +21,9 @@
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
@@ -42,44 +37,27 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
 public final class SaltCache {
     private static Log log = LogFactory.getLog(SaltCache.class);
     
-    // a unique identifier for this cache, this is used as the prefix for
-    // roller config properties that apply to this cache
     public static final String CACHE_ID = "cache.salt";
-    
+
+    private int size = 5000;
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    private int timeoutSec = 3600;
+
+    public void setTimeoutSec(int timeoutSec) {
+        this.timeoutSec = timeoutSec;
+    }
+
     private Cache contentCache = null;
     
-    // reference to our singleton instance
-    private static SaltCache singletonInstance = new SaltCache();
+    private SaltCache() {
+        contentCache = CacheManager.constructCache(null, CACHE_ID, size, timeoutSec);
+    }
 
-	    private SaltCache() {
-        
-        Map cacheProps = new HashMap();
-        cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
-        while(allProps.hasMoreElements()) {
-            prop = (String) allProps.nextElement();
-            
-            // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        WebloggerConfig.getProperty(prop));
-            }
-        }
-        
-        log.info(cacheProps);
-        
-        contentCache = CacheManager.constructCache(null, cacheProps);
-    }
-    
-    
-    public static SaltCache getInstance() {
-        return singletonInstance;
-    }
-    
-    
     public Object get(String key) {
-        
         Object entry = null;
         
         ExpiringCacheEntry lazyEntry =
@@ -98,24 +76,20 @@ public final class SaltCache {
         
         return entry;
     }
-    
-    
+
     public void put(String key, Object value) {
 		// expire after 60 minutes
         contentCache.put(key, new ExpiringCacheEntry(value, DateUtils.MILLIS_PER_HOUR));
         log.debug("PUT "+key);
     }
-    
-    
+
     public void remove(String key) {
         contentCache.remove(key);
         log.debug("REMOVE "+key);
     }
-    
-    
+
     public void clear() {
         contentCache.clear();
         log.debug("CLEAR");
     }
-
 }

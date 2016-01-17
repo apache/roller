@@ -17,8 +17,6 @@
 
 package org.apache.roller.weblogger.util;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.cache.Cache;
@@ -61,15 +59,9 @@ public class GenericThrottle {
         if(maxEntries < 0) {
             maxEntries = 1;
         }
-        
-        // cache props
-        Map<String,String> cacheProps = new HashMap<String,String>();
-        cacheProps.put("id", "throttle");
-        cacheProps.put("size", ""+maxEntries);
-        cacheProps.put("timeout", ""+this.interval);
-        
+
         // get cache instance.  handler is null cuz we don't want to register it
-        this.clientHistoryCache = CacheManager.constructCache(null, cacheProps);
+        this.clientHistoryCache = CacheManager.constructCache(null, "throttle", maxEntries, interval);
     }
     
     

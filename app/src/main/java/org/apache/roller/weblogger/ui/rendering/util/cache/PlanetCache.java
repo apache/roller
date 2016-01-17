@@ -18,23 +18,17 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
-
 
 /**
  * Cache for planet content.
@@ -43,66 +37,45 @@ public final class PlanetCache {
     
     private static Log log = LogFactory.getLog(PlanetCache.class);
     
-    // a unique identifier for this cache, this is used as the prefix for
-    // roller config properties that apply to this cache
     public static final String CACHE_ID = "cache.planet";
     
-    // keep cached content
-    private boolean cacheEnabled = true;
+    private boolean enabled = true;
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    private int size = 10;
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    private int timeoutSec = 1800;
+
+    public void setTimeoutSec(int timeoutSec) {
+        this.timeoutSec = timeoutSec;
+    }
+
     private Cache contentCache = null;
     
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
+
     private long timeout = 15 * DateUtils.MILLIS_PER_MINUTE;
     
-    // reference to our singleton instance
-    private static PlanetCache singletonInstance = new PlanetCache();
-
     private PlanetCache() {
-        
-        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID + ".enabled");
-        
-        Map<String, String> cacheProps = new HashMap<String, String>();
-        cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop;
-        while(allProps.hasMoreElements()) {
-            prop = (String) allProps.nextElement();
-            
-            // we are only interested in props for this cache
-            if (prop.startsWith(CACHE_ID + ".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        WebloggerConfig.getProperty(prop));
-            }
-        }
-        
-        log.info("Planet cache = "+cacheProps);
-        
-        if (cacheEnabled) {
-            contentCache = CacheManager.constructCache(null, cacheProps);
+        if (enabled) {
+            contentCache = CacheManager.constructCache(null, CACHE_ID, size, timeoutSec);
         } else {
-            log.warn("Caching has been DISABLED");
+            log.warn("Planet cache has been DISABLED");
         }
         
-        // lookup our timeout value
-        String timeoutString = WebloggerConfig.getProperty("cache.planet.timeout");
-        try {
-            long timeoutSecs = Long.parseLong(timeoutString);
-            this.timeout = timeoutSecs * DateUtils.MILLIS_PER_SECOND;
-        } catch(Exception e) {
-            // ignored ... illegal value
-        }
+        this.timeout = timeoutSec * DateUtils.MILLIS_PER_SECOND;
     }
-    
-    
-    public static PlanetCache getInstance() {
-        return singletonInstance;
-    }
-    
-    
+
     public Object get(String key) {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return null;
         }
         
@@ -119,8 +92,7 @@ public final class PlanetCache {
     
     
     public void put(String key, Object value) {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -130,8 +102,7 @@ public final class PlanetCache {
     
     
     public void remove(String key) {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -139,10 +110,8 @@ public final class PlanetCache {
         log.debug("REMOVE "+key);
     }
     
-    
     public void clear() {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -153,7 +122,6 @@ public final class PlanetCache {
     
     
     public Date getLastModified() {
-        
         Date lastModified = null;
         
         // first try our cached version
@@ -163,15 +131,8 @@ public final class PlanetCache {
         
         // still null, we need to get a fresh value
         if(lastModified == null) {
-            
-            // TODO: create a WeblogManager.getLastUpdated() method to use below
-            lastModified = null;
-            
-            if (lastModified == null) {
-                lastModified = new Date();
-                log.warn("Can't get lastUpdate time, using current time instead");
-            }
-            
+            lastModified = new Date();
+            log.warn("Can't get lastUpdate time, using current time instead");
             this.lastUpdateTime = new ExpiringCacheEntry(lastModified, this.timeout);
         }
         
