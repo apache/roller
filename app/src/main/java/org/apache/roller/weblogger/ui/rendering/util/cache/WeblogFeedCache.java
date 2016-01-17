@@ -18,25 +18,19 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.LazyExpiringCacheEntry;
-
 
 /**
  * Cache for weblog feed content.
@@ -45,54 +39,40 @@ public final class WeblogFeedCache {
     
     private static Log log = LogFactory.getLog(WeblogFeedCache.class);
     
-    // a unique identifier for this cache, this is used as the prefix for
-    // roller config properties that apply to this cache
+    // a unique identifier for this cache
     public static final String CACHE_ID = "cache.weblogfeed";
     
-    // keep cached content
-    private boolean cacheEnabled = true;
+    private boolean enabled = true;
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    private int size = 200;
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    private int timeoutSec = 3600;
+
+    public void setTimeoutSec(int timeoutSec) {
+        this.timeoutSec = timeoutSec;
+    }
+
     private Cache contentCache = null;
     
-    // reference to our singleton instance
-    private static WeblogFeedCache singletonInstance = new WeblogFeedCache();
-    
-    
     private WeblogFeedCache() {
-        
-        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
-        
-        Map<String, String> cacheProps = new HashMap<>();
-        cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop;
-        while(allProps.hasMoreElements()) {
-            prop = (String) allProps.nextElement();
-            
-            // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        WebloggerConfig.getProperty(prop));
-            }
-        }
-        
-        log.info(cacheProps);
-        
-        if(cacheEnabled) {
-            contentCache = CacheManager.constructCache(null, cacheProps);
+        if (enabled) {
+            contentCache = CacheManager.constructCache(null, CACHE_ID, size, timeoutSec);
         } else {
-            log.warn("Caching has been DISABLED");
+            log.warn("Weblog feed caching has been DISABLED");
         }
     }
-    
-    
-    public static WeblogFeedCache getInstance() {
-        return singletonInstance;
-    }
-    
-    
+
     public Object get(String key, long lastModified) {
         
-        if (!cacheEnabled) {
+        if (!enabled) {
             return null;
         }
         
@@ -119,7 +99,7 @@ public final class WeblogFeedCache {
     
     public void put(String key, Object value) {
         
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -130,7 +110,7 @@ public final class WeblogFeedCache {
     
     public void remove(String key) {
         
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -141,7 +121,7 @@ public final class WeblogFeedCache {
     
     public void clear() {
         
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -187,17 +167,17 @@ public final class WeblogFeedCache {
             
             key.append("/").append(cat);
         }
-        
+
+        if(feedRequest.isExcerpts()) {
+            key.append("/excerpts");
+        }
+
         if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
           Set<String> ordered = new TreeSet<>(feedRequest.getTags());
           String[] tags = ordered.toArray(new String[ordered.size()]);
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }        
-        
-        if(feedRequest.isExcerpts()) {
-            key.append("/excerpts");
-        }
-        
+
         return key.toString();
     }
     

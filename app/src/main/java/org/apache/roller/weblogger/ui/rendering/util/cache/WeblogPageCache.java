@@ -18,25 +18,20 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.LazyExpiringCacheEntry;
-
 
 /**
  * Cache for weblog page content.
@@ -45,61 +40,44 @@ public final class WeblogPageCache {
     
     private static Log log = LogFactory.getLog(WeblogPageCache.class);
     
-    // a unique identifier for this cache, this is used as the prefix for
-    // roller config properties that apply to this cache
     public static final String CACHE_ID = "cache.weblogpage";
     
-    // keep cached content
-    private boolean cacheEnabled = true;
+    private boolean enabled = true;
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    private int size = 400;
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    private int timeoutSec = 3600;
+
+    public void setTimeoutSec(int timeoutSec) {
+        this.timeoutSec = timeoutSec;
+    }
+
     private Cache contentCache = null;
     
-    // reference to our singleton instance
-    private static WeblogPageCache singletonInstance = new WeblogPageCache();
-    
-    
     private WeblogPageCache() {
-        
-        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
-        
-        Map cacheProps = new HashMap();
-        cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
-        while(allProps.hasMoreElements()) {
-            prop = (String) allProps.nextElement();
-            
-            // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        WebloggerConfig.getProperty(prop));
-            }
-        }
-        
-        log.info(cacheProps);
-        
-        if (cacheEnabled) {
-            contentCache = CacheManager.constructCache(null, cacheProps);
+        if (enabled) {
+            contentCache = CacheManager.constructCache(null, CACHE_ID, size, timeoutSec);
         } else {
-            log.warn("Caching has been DISABLED");
+            log.warn("Weblog page caching has been DISABLED");
         }
     }
-    
-    
-    public static WeblogPageCache getInstance() {
-        return singletonInstance;
-    }
-    
-    
+
     public Object get(String key, long lastModified) {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return null;
         }
         
         Object entry = null;
         
-        LazyExpiringCacheEntry lazyEntry =
-                (LazyExpiringCacheEntry) this.contentCache.get(key);
+        LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.get(key);
         if(lazyEntry != null) {
             entry = lazyEntry.getValue(lastModified);
             
@@ -118,8 +96,7 @@ public final class WeblogPageCache {
     
     
     public void put(String key, Object value) {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -129,8 +106,7 @@ public final class WeblogPageCache {
     
     
     public void remove(String key) {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -140,8 +116,7 @@ public final class WeblogPageCache {
     
     
     public void clear() {
-        
-        if (!cacheEnabled) {
+        if (!enabled) {
             return;
         }
         
@@ -175,7 +150,6 @@ public final class WeblogPageCache {
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {
-            
             String anchor = null;
             try {
                 // may contain spaces or other bad chars
@@ -226,9 +200,9 @@ public final class WeblogPageCache {
         if(pageRequest.getAuthenticUser() != null) {
             key.append("/user=").append(pageRequest.getAuthenticUser());
         }
-        
+
         key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
-        
+
         // we allow for arbitrary query params for custom pages
         if(pageRequest.getWeblogPageName() != null &&
                 pageRequest.getCustomParams().size() > 0) {
@@ -236,12 +210,11 @@ public final class WeblogPageCache {
             
             key.append("/qp=").append(queryString);
         }
-        
+
         return key.toString();
     }
     
     private String paramsToString(Map<String, String[]> map) {
-
         if (map == null) {
             return null;
         }

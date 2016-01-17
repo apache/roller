@@ -327,4 +327,23 @@
         <beans:property name="restrictedUrls" ref="customProtectedUrls"/>
     </beans:bean>
 
+    <!-- Caches -->
+    <beans:bean id="weblogPageCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache"/>
+
+    <beans:bean id="weblogFeedCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache"/>
+
+    <beans:bean id="siteWideCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache"/>
+
+    <beans:bean id="planetCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.PlanetCache"/>
+
+    <beans:bean id="saltCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache"/>
+
+    <beans:bean id="LoadSaltFilter" class="org.apache.roller.weblogger.ui.core.filters.LoadSaltFilter">
+        <beans:property name="saltCache" ref="saltCache"/>
+    </beans:bean>
+
+    <beans:bean id="ValidateSaltFilter" class="org.apache.roller.weblogger.ui.core.filters.ValidateSaltFilter">
+        <beans:property name="saltCache" ref="saltCache"/>
+    </beans:bean>
+
 </beans:beans>
