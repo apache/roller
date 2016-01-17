@@ -41,8 +41,9 @@ import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
-import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache;
 import org.apache.roller.weblogger.util.Blacklist;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,11 +54,15 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /**
@@ -83,9 +88,9 @@ public class PageProcessor {
     private boolean processReferrers = true;
 
     @Autowired
-    private WeblogPageCache weblogPageCache = null;
+    private LazyExpiringCache weblogPageCache = null;
 
-    public void setWeblogPageCache(WeblogPageCache weblogPageCache) {
+    public void setWeblogPageCache(LazyExpiringCache weblogPageCache) {
         this.weblogPageCache = weblogPageCache;
     }
 
@@ -172,7 +177,7 @@ public class PageProcessor {
         }
 
         // generate cache key
-        String cacheKey = weblogPageCache.generateKey(pageRequest);
+        String cacheKey = generateKey(pageRequest);
 
         // cached content checking
         if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())
@@ -534,6 +539,108 @@ public class PageProcessor {
         Blacklist.populateSpamRules(
                 weblog.getBlacklist(), WebloggerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules);
         return Blacklist.isBlacklisted(referrerURL, stringRules, regexRules);
+    }
+
+    /**
+     * Generate a cache key from a parsed weblog page request.
+     * This generates a key of the form ...
+     *
+     * <handle>/<ctx>[/anchor][/language][/user]
+     *   or
+     * <handle>/<ctx>[/weblogPage][/date][/category][/language][/user]
+     *
+     * Examples:
+     * foo/en
+     * foo/entry_anchor
+     * foo/20051110/en
+     * foo/MyCategory/en/user=myname
+     */
+    public String generateKey(WeblogPageRequest pageRequest) {
+
+        StringBuilder key = new StringBuilder();
+
+        key.append("weblogpage.key").append(":");
+        key.append(pageRequest.getWeblogHandle());
+
+        if(pageRequest.getWeblogAnchor() != null) {
+            String anchor = null;
+            try {
+                // may contain spaces or other bad chars
+                anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
+            } catch(UnsupportedEncodingException ex) {
+                // ignored
+            }
+
+            key.append("/entry/").append(anchor);
+        } else {
+
+            if(pageRequest.getWeblogPageName() != null) {
+                key.append("/page/").append(pageRequest.getWeblogPageName());
+            }
+
+            if(pageRequest.getWeblogDate() != null) {
+                key.append("/").append(pageRequest.getWeblogDate());
+            }
+
+            if(pageRequest.getWeblogCategoryName() != null) {
+                String cat = null;
+                try {
+                    // may contain spaces or other bad chars
+                    cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), "UTF-8");
+                } catch(UnsupportedEncodingException ex) {
+                    // ignored
+                }
+
+                key.append("/").append(cat);
+            }
+
+            if("tags".equals(pageRequest.getContext())) {
+                key.append("/tags/");
+                if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+                    Set ordered = new TreeSet<>(pageRequest.getTags());
+                    String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
+                    key.append(Utilities.stringArrayToString(tags,"+"));
+                }
+            }
+        }
+
+        // add page number when applicable
+        if(pageRequest.getWeblogAnchor() == null) {
+            key.append("/page=").append(pageRequest.getPageNum());
+        }
+
+        // add login state
+        if(pageRequest.getAuthenticUser() != null) {
+            key.append("/user=").append(pageRequest.getAuthenticUser());
+        }
+
+        key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
+
+        // we allow for arbitrary query params for custom pages
+        if(pageRequest.getWeblogPageName() != null &&
+                pageRequest.getCustomParams().size() > 0) {
+            String queryString = paramsToString(pageRequest.getCustomParams());
+
+            key.append("/qp=").append(queryString);
+        }
+
+        return key.toString();
+    }
+
+    private String paramsToString(Map<String, String[]> map) {
+        if (map == null) {
+            return null;
+        }
+
+        StringBuilder string = new StringBuilder();
+
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+            if(entry.getKey() != null) {
+                string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
+            }
+        }
+
+        return Utilities.toBase64(string.toString().substring(1).getBytes());
     }
 
 }

@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -191,4 +192,16 @@ public class Planet implements Serializable, Comparable<Planet> {
     public String getAbsoluteURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getPlanetURL(getHandle());
     }
+
+    @Transient
+    public Date getLastUpdated() {
+        Date lastUpdated = new Date(0);
+        for (Subscription sub : getSubscriptions()) {
+            if (sub.getLastUpdated().after(lastUpdated)) {
+                lastUpdated = sub.getLastUpdated();
+            }
+        }
+        return lastUpdated;
+    }
+
 }

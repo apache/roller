@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.util.cache;
 
 import java.util.HashMap;
@@ -33,8 +32,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
 /**
@@ -55,7 +54,7 @@ public final class CacheManager {
     private static Log log = LogFactory.getLog(CacheManager.class);
     
     // a set of all registered cache handlers
-    private static Set<CacheHandler> cacheHandlers = new HashSet<>();
+    private static Set<BlogEventListener> cacheHandlers = new HashSet<>();
     
     // a map of all registered caches
     private static Map<String, Cache> caches = new HashMap<>();
@@ -70,13 +69,13 @@ public final class CacheManager {
                 // use reflection to instantiate the handler class
                 try {
                     Class handlerClass = Class.forName(cHandler);
-                    CacheHandler customHandler = 
-                            (CacheHandler) handlerClass.newInstance();
+                    BlogEventListener customHandler =
+                            (BlogEventListener) handlerClass.newInstance();
                     
                     cacheHandlers.add(customHandler);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your handler does not implement "+
-                            "the CacheHandler interface",cce);
+                            "the BlogEventListener interface",cce);
                 } catch(Exception e) {
                     log.error("Unable to instantiate cache handler ["+cHandler+"]", e);
                 }
@@ -87,20 +86,14 @@ public final class CacheManager {
     // a non-instantiable class
     private CacheManager() {}
 
-    public static Cache constructCache(CacheHandler handler, String id, int size, int timeoutSec) {
-        Cache cache = new ExpiringLRUCacheImpl(id, size, timeoutSec);
-        caches.put(cache.getId(), cache);
-
-        // register the handler for this new cache
-        if(handler != null) {
-            cacheHandlers.add(handler);
-        }
-
+    public static Cache constructCache(String id, int size, long timeoutInMS) {
+        Cache cache = new ExpiringLRUCacheImpl(size, timeoutInMS);
+        caches.put(id, cache);
         return cache;
     }
 
     /**
-     * Register a CacheHandler to listen for object invalidations.
+     * Register a BlogEventListener to listen for object invalidations.
      *
      * This is here so that it's possible to add classes which would respond
      * to object invalidations without necessarily having to create a cache.
@@ -110,7 +103,7 @@ public final class CacheManager {
      * index management classes are interested in knowing when objects are
      * invalidated.
      */
-    public static void registerHandler(CacheHandler handler) {
+    public static void registerHandler(BlogEventListener handler) {
 
         log.debug("Registering handler "+handler);
 
@@ -123,7 +116,7 @@ public final class CacheManager {
     public static void invalidate(WeblogEntry entry) {
         
         log.debug("invalidating entry = "+entry.getAnchor());
-        for (CacheHandler handler : cacheHandlers) {
+        for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(entry);
         }
     }
@@ -132,7 +125,7 @@ public final class CacheManager {
     public static void invalidate(Weblog website) {
         
         log.debug("invalidating website = "+website.getHandle());
-        for (CacheHandler handler : cacheHandlers) {
+        for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(website);
         }
     }
@@ -141,7 +134,7 @@ public final class CacheManager {
     public static void invalidate(WeblogBookmark bookmark) {
         
         log.debug("invalidating bookmark = "+bookmark.getId());
-        for (CacheHandler handler : cacheHandlers) {
+        for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(bookmark);
         }
     }
@@ -150,7 +143,7 @@ public final class CacheManager {
     public static void invalidate(WeblogEntryComment comment) {
         
         log.debug("invalidating comment = "+comment.getId());
-        for (CacheHandler handler : cacheHandlers) {
+        for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(comment);
         }
     }
@@ -159,7 +152,7 @@ public final class CacheManager {
     public static void invalidate(User user) {
         
         log.debug("invalidating user = "+user.getUserName());
-        for (CacheHandler handler : cacheHandlers) {
+        for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(user);
         }
     }
@@ -168,7 +161,7 @@ public final class CacheManager {
     public static void invalidate(WeblogCategory category) {
         
         log.debug("invalidating category = " + category.getId());
-        for (CacheHandler handler : cacheHandlers) {
+        for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(category);
         }
     }
@@ -176,7 +169,7 @@ public final class CacheManager {
     
     public static void invalidate(WeblogTemplate template) {
         log.debug("invalidating template = " + template.getId());
-        for (CacheHandler handler : cacheHandlers) {
+        for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(template);
         }
     }
@@ -213,8 +206,8 @@ public final class CacheManager {
      */
     public static Map<String, Map<String, Object>> getStats() {
         Map<String, Map<String, Object>> allStats = new HashMap<>();
-        for (Cache cache : caches.values()) {
-            allStats.put(cache.getId(), cache.getStats());
+        for (Map.Entry<String, Cache> cache : caches.entrySet()) {
+            allStats.put(cache.getKey(), cache.getValue().getStats());
         }
         return allStats;
     }

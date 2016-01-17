@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
@@ -40,9 +41,9 @@ import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
-import org.apache.roller.weblogger.ui.rendering.util.cache.PlanetCache;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
+import org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,9 +60,9 @@ public class PlanetFeedProcessor {
     private static Log log = LogFactory.getLog(PlanetFeedProcessor.class);
 
     @Autowired
-    private PlanetCache planetCache;
+    private ExpiringCache planetCache;
 
-    public void setPlanetCache(PlanetCache planetCache) {
+    public void setPlanetCache(ExpiringCache planetCache) {
         this.planetCache = planetCache;
     }
 
@@ -77,8 +78,16 @@ public class PlanetFeedProcessor {
         log.debug("Entering");
 
         PlanetRequest planetRequest;
+        Planet planet;
+
         try {
             planetRequest = new PlanetRequest(request);
+            planet = planetManager.getPlanet(planetRequest.getPlanet());
+            if (planet == null) {
+                log.debug("Planet not found: " + planetRequest.getPlanet());
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
         } catch (Exception e) {
             // some kind of error parsing the request
             log.debug("error creating planet request", e);
@@ -87,7 +96,7 @@ public class PlanetFeedProcessor {
         }
 
         // figure planet last modified date
-        Date lastModified = planetCache.getLastModified();
+        Date lastModified = planet.getLastUpdated();
 
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response,
@@ -114,8 +123,7 @@ public class PlanetFeedProcessor {
                 lastModified.getTime(), planetRequest.getDeviceType());
 
         // cached content checking
-        String cacheKey = PlanetCache.CACHE_ID + ":"
-                + this.generateKey(planetRequest);
+        String cacheKey = generateKey(planetRequest);
         CachedContent entry = (CachedContent) planetCache.get(cacheKey);
         if (entry != null) {
             response.setContentLength(entry.getContent().length);
@@ -235,15 +243,14 @@ public class PlanetFeedProcessor {
      * <context>/<type>/<language>[/user] or
      * <context>/<type>[/flavor]/<language>[/excerpts]
      *
-     *
-     * examples ...
-     *
-     * planet/page/en planet/feed/rss/en/excerpts
-     *
+     * examples:
+     * planet/page/en
+     * planet/feed/rss/en/excerpts
      */
     private String generateKey(PlanetRequest planetRequest) {
 
         StringBuilder key = new StringBuilder();
+        key.append("planet.key").append(":");
         key.append(planetRequest.getContext());
         key.append("/");
         key.append(planetRequest.getType());

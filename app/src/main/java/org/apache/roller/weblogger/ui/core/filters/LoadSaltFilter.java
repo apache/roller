@@ -23,7 +23,7 @@ import java.security.SecureRandom;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -33,9 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LoadSaltFilter implements Filter {
 
     @Autowired
-    private SaltCache saltCache = null;
+    private ExpiringCache saltCache = null;
 
-    public void setSaltCache(SaltCache saltCache) {
+    public void setSaltCache(ExpiringCache saltCache) {
         this.saltCache = saltCache;
     }
 
