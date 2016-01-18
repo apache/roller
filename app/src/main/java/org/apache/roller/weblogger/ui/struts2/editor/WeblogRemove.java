@@ -24,10 +24,9 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 
 
 /**
@@ -41,6 +40,12 @@ public class WeblogRemove extends UIAction {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private JPAPersistenceStrategy strategy = null;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     public WeblogRemove() {
@@ -69,12 +74,8 @@ public class WeblogRemove extends UIAction {
         try {
             // remove website
             weblogManager.removeWeblog(getActionWeblog());
-            WebloggerFactory.flush();
-
-            CacheManager.invalidate(getActionWeblog());
-
+            strategy.flushAndInvalidateWeblog(getActionWeblog());
             addMessage("websiteRemove.success", getActionWeblog().getName());
-
             return SUCCESS;
         } catch (Exception ex) {
             log.error("Error removing weblog - " + getActionWeblog().getHandle(), ex);

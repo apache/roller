@@ -36,7 +36,13 @@ public class GenericThrottle {
     // threshold and interval to determine who is abusive
     private int threshold = 1;
     private long interval = 0;
-    
+
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     // a cache to maintain the data
     Cache clientHistoryCache = null;
 
@@ -58,7 +64,7 @@ public class GenericThrottle {
         }
 
         // get cache instance.  handler is null cuz we don't want to register it
-        this.clientHistoryCache = CacheManager.constructCache("throttle", maxEntries, interval);
+        this.clientHistoryCache = cacheManager.constructCache("throttle", maxEntries, interval);
     }
     
     

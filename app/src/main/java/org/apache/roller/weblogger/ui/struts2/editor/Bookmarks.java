@@ -25,13 +25,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 
 /**
  * List bookmarks and allow for moving them around and deleting them.
@@ -44,6 +43,12 @@ public class Bookmarks extends UIAction {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private JPAPersistenceStrategy strategy = null;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     // the weblog being viewed
@@ -105,10 +110,7 @@ public class Bookmarks extends UIAction {
             }
 
             // flush changes
-            WebloggerFactory.flush();
-
-            // notify caches
-            CacheManager.invalidate(getActionWeblog());
+            strategy.flushAndInvalidateWeblog(getActionWeblog());
 
         } catch (WebloggerException ex) {
             log.error("Error doing bookmark deletes", ex);

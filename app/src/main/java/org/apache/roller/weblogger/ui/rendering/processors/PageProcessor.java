@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
@@ -46,6 +45,7 @@ import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -84,8 +84,21 @@ public class PageProcessor {
 
     public static final String PATH = "/roller-ui/rendering/page";
 
+    // set "true" to NOT cache the custom pages for users who are logged in
     private boolean excludeOwnerPages = false;
-    private boolean processReferrers = true;
+
+    // use site & weblog blacklists to check incoming referrers, returning a 403 if a match.
+    private boolean processReferrers = false;
+
+    @Autowired(required=false)
+    public void setExcludeOwnerPages(@Qualifier("cache.excludeOwnerEditPages") boolean boolVal) {
+        excludeOwnerPages = boolVal;
+    }
+
+    @Autowired(required=false)
+    public void setProcessReferrers(@Qualifier("site.blacklist.check.referrers") boolean boolVal) {
+        excludeOwnerPages = boolVal;
+    }
 
     @Autowired
     private LazyExpiringCache weblogPageCache = null;
@@ -110,9 +123,7 @@ public class PageProcessor {
 
     @PostConstruct
     public void init() {
-        this.excludeOwnerPages = WebloggerConfig.getBooleanProperty("cache.excludeOwnerEditPages");
-        this.processReferrers = WebloggerConfig.getBooleanProperty("site.blacklist.check.referrers");
-        log.info("PageProcessor: Referrer spam check enabled = " + this.processReferrers);
+        log.debug("PageProcessor: Referrer spam check enabled = " + this.processReferrers);
     }
 
     /**

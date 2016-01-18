@@ -4,7 +4,7 @@ Welcome to TightBlog, which started off as a fork of Apache Roller in May 2015. 
 
 Check my blog at https://web-gmazza.rhcloud.com/blog/category/Blogs+%26+Wikis for recent status updates.
 
-As of 15 January 2016, Tightblog uses 18 database tables compared to Roller's 33, and has slimmed down to 269 Java source files from the 493 in Roller.
+As of 18 January 2016, Tightblog uses 18 database tables compared to Roller's 33, and has slimmed down to 268 Java source files from the 493 in Roller.
 
 Differences between TightBlog and Roller can be seen from the closed issues page:
   https://github.com/gmazza/tightblog/issues?q=is%3Aissue+is%3Aclosed
@@ -29,5 +29,4 @@ To build the application (app/target/roller.war):
 
 To deploy the application, follow the instructions in the Roller install guide
   http://svn.apache.org/viewvc/roller/trunk/docs/
-
 

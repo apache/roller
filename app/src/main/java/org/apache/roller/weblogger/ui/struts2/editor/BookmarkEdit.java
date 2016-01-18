@@ -51,6 +51,12 @@ public class BookmarkEdit extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     // bean for managing form data
     private WeblogBookmark formBean = new WeblogBookmark();
 
@@ -121,8 +127,7 @@ public class BookmarkEdit extends UIAction {
                 }
                 weblogManager.saveBookmark(bookmark);
                 WebloggerFactory.flush();
-                CacheManager.invalidate(bookmark);
-                CacheManager.invalidate(bookmark.getWeblog());
+                cacheManager.invalidate(bookmark);
                 addMessage(isAdd() ? "bookmarkForm.created" : "bookmarkForm.updated",
                         getBookmark().getName());
                 return SUCCESS;

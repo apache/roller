@@ -21,18 +21,15 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 
 /**
  * Allows user to perform maintenance operations such as flushing the page cache
@@ -52,6 +49,12 @@ public class Maintenance extends UIAction {
 
     public void setIndexManager(IndexManager indexManager) {
         this.indexManager = indexManager;
+    }
+
+    private JPAPersistenceStrategy strategy = null;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     public Maintenance() {
@@ -98,18 +101,9 @@ public class Maintenance extends UIAction {
 
         try {
             Weblog weblog = getActionWeblog();
-
-            // some caches are based on weblog last-modified, so update it
-            weblog.setLastModified(new Date());
-
             weblogManager.saveWeblog(weblog);
-            WebloggerFactory.flush();
-
-            // also notify cache manager
-            CacheManager.invalidate(weblog);
-
+            strategy.flushAndInvalidateWeblog(weblog);
             addMessage("maintenance.message.flushed");
-
         } catch (Exception ex) {
             log.error("Error saving weblog - " + getActionWeblog().getHandle(),
                     ex);
@@ -127,18 +121,9 @@ public class Maintenance extends UIAction {
         try {
             Weblog weblog = getActionWeblog();
             weblogManager.resetHitCount(weblog);
-
-            // some caches are based on weblog last-modified, so update it
-            weblog.setLastModified(new Date());
-
             weblogManager.saveWeblog(weblog);
-            WebloggerFactory.flush();
-
-            // also notify cache manager
-            CacheManager.invalidate(weblog);
-
+            strategy.flushAndInvalidateWeblog(weblog);
             addMessage("maintenance.message.reset");
-
         } catch (Exception ex) {
             log.error("Error saving weblog - " + getActionWeblog().getHandle(),
                     ex);

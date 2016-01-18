@@ -50,6 +50,12 @@ public class CategoryRemove extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     // id of category to remove
     private String removeId = null;
     
@@ -128,7 +134,7 @@ public class CategoryRemove extends UIAction {
                 }
 
                 // notify cache
-                CacheManager.invalidate(getCategory());
+                cacheManager.invalidate(getCategory());
 
                 weblogManager.removeWeblogCategory(getCategory());
                 WebloggerFactory.flush();

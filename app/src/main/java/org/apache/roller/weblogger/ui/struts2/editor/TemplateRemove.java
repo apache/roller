@@ -58,6 +58,12 @@ public class TemplateRemove extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     @Override
     public GlobalRole requiredGlobalRole() {
         return GlobalRole.BLOGGER;
@@ -112,10 +118,9 @@ public class TemplateRemove extends UIAction {
                     }
                 }
 
-                // notify cache
-                CacheManager.invalidate(getTemplate());
                 weblogManager.removeTemplate(getTemplate());
                 WebloggerFactory.flush();
+                cacheManager.invalidate(getTemplate());
 
                 return SUCCESS;
 

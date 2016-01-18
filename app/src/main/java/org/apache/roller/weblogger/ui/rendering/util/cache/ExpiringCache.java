@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
@@ -57,10 +58,17 @@ public class ExpiringCache {
 
     protected Cache contentCache = null;
 
+    @Autowired
+    protected CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     @PostConstruct
     public void init() {
         if (enabled) {
-            contentCache = CacheManager.constructCache(cacheHandlerId, size, timeoutInMS);
+            contentCache = cacheManager.constructCache(cacheHandlerId, size, timeoutInMS);
         } else {
             log.warn("Cache " + cacheHandlerId + " has been DISABLED");
         }

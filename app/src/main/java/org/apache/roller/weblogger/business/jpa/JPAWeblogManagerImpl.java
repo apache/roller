@@ -74,12 +74,14 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final IndexManager indexManager;
     private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
+    private final CacheManager cacheManager;
     
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
 
     protected JPAWeblogManagerImpl(UserManager um, WeblogEntryManager wem, MediaFileManager mfm,
-                                   IndexManager im, PingTargetManager ptm, JPAPersistenceStrategy strat) {
+                                   IndexManager im, PingTargetManager ptm, JPAPersistenceStrategy strat,
+                                   CacheManager cacheManager) {
         log.debug("Instantiating JPA Weblog Manager");
         this.userManager = um;
         this.weblogEntryManager = wem;
@@ -87,6 +89,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.indexManager = im;
         this.pingTargetManager = ptm;
         this.strategy = strat;
+        this.cacheManager = cacheManager;
     }
 
     public void saveWeblog(Weblog weblog) throws WebloggerException {
@@ -710,7 +713,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             // this is because we need the updated entries flushed first
             for (WeblogEntry entry : scheduledEntries) {
                 // trigger a cache invalidation
-                CacheManager.invalidate(entry);
+                cacheManager.invalidate(entry);
                 // trigger search index on entry
                 indexManager.addEntryReIndexOperation(entry);
             }

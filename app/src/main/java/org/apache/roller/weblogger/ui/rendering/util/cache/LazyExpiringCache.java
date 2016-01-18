@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.util.cache.LazyExpiringCacheEntry;
 /**
  * Cache for weblog page content.
  */
-public final class LazyExpiringCache extends ExpiringCache {
+public class LazyExpiringCache extends ExpiringCache {
 
     public Object get(String key, long lastModified) {
         if (enabled) {

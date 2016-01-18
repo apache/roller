@@ -98,6 +98,13 @@ public class CommentProcessor {
     }
 
     @Autowired
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
+    @Autowired
     private CommentAuthenticator commentAuthenticator = null;
 
     public void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
@@ -372,7 +379,7 @@ public class CommentProcessor {
                         }
 
                         // Clear all caches associated with comment
-                        CacheManager.invalidate(comment);
+                        cacheManager.invalidate(comment);
                     }
 
                     // comment was successful, clear the comment form
