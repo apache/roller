@@ -30,15 +30,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Blacklist;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -59,6 +58,12 @@ public class WeblogConfig extends UIAction {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private JPAPersistenceStrategy strategy = null;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     // bean for managing submitted data
@@ -166,13 +171,9 @@ public class WeblogConfig extends UIAction {
                     weblogEntryManager.applyCommentDefaultsToEntries(weblog);
                 }
 
-                // flush
-                WebloggerFactory.flush();
-
+                // flush and clear cache
+                strategy.flushAndInvalidateWeblog(weblog);
                 addMessage("websiteSettings.savedChanges");
-
-                // Clear cache entries associated with website
-                CacheManager.invalidate(weblog);
 
             } catch (Exception ex) {
                 log.error("Error updating weblog config", ex);

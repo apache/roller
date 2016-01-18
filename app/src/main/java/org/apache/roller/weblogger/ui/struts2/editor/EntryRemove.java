@@ -52,6 +52,12 @@ public class EntryRemove extends UIAction {
         this.weblogEntryManager = weblogEntryManager;
     }
 
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     // id of entry to remove
     private String removeId = null;
 
@@ -90,7 +96,7 @@ public class EntryRemove extends UIAction {
                 }
 
                 // flush caches
-                CacheManager.invalidate(entry);
+                cacheManager.invalidate(entry);
 
                 // remove entry itself
                 weblogEntryManager.removeWeblogEntry(entry);

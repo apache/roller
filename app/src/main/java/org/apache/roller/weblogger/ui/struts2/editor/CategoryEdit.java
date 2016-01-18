@@ -55,6 +55,12 @@ public class CategoryEdit extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     public CategoryEdit() {
         this.desiredMenu = "editor";
     }
@@ -127,7 +133,7 @@ public class CategoryEdit extends UIAction {
                 WebloggerFactory.flush();
 
                 // notify caches
-                CacheManager.invalidate(getActionWeblog());
+                cacheManager.invalidate(category);
 
                 addMessage(isAdd()? "categoryForm.created"
                         : "categoryForm.changesSaved",

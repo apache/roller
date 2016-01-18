@@ -274,9 +274,9 @@ public class PlanetFeedProcessor {
             }
         }
 
-        // add group
+        // add planet name
         if (planetRequest.getPlanet() != null) {
-            key.append("/group=").append(planetRequest.getPlanet());
+            key.append("/planet=").append(planetRequest.getPlanet());
         }
 
         return key.toString();

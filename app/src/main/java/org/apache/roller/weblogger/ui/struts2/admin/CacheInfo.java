@@ -22,9 +22,7 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -40,8 +38,13 @@ public class CacheInfo extends UIAction {
     
     // cache which we would clear when clear() is called
     private String cache = null;
-    
-    
+
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     public CacheInfo() {
         this.actionName = "cacheInfo";
         this.desiredMenu = "admin";
@@ -54,7 +57,7 @@ public class CacheInfo extends UIAction {
     }
     
     public void prepare() {
-        Map cacheStats = CacheManager.getStats();
+        Map cacheStats = cacheManager.getStats();
         setStats(cacheStats);
     }
     
@@ -75,9 +78,9 @@ public class CacheInfo extends UIAction {
         // see if a specific cache was specified
         String handlerClass = getCache();
         if(handlerClass != null && handlerClass.length() > 0) {
-            CacheManager.clear(handlerClass);
+            cacheManager.clear(handlerClass);
         } else {
-            CacheManager.clear();
+            cacheManager.clear();
         }
         
         // update stats after clear

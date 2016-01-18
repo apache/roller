@@ -94,6 +94,13 @@ public class Comments extends UIAction {
         this.weblogEntryManager = weblogEntryManager;
     }
 
+    @Autowired
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     protected URLStrategy urlStrategy;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
@@ -369,12 +376,12 @@ public class Comments extends UIAction {
             if (isGlobalCommentManagement()) {
                 // notify caches of changes, flush weblogs affected by changes
                 for (Weblog weblog : flushWeblogSet) {
-                    CacheManager.invalidate(weblog);
+                    cacheManager.invalidate(weblog);
                 }
             } else {
                 // notify caches of changes by flushing whole weblog because we can't
                 // invalidate deleted comment objects (JPA nulls the fields out).
-                CacheManager.invalidate(getActionWeblog());
+                cacheManager.invalidate(getActionWeblog());
 
                 // if required, send notification for all comments changed
                 if (MailUtil.isMailConfigured()) {

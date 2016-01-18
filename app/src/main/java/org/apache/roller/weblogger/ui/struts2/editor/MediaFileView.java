@@ -33,12 +33,12 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -53,6 +53,12 @@ public class MediaFileView extends UIAction {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private JPAPersistenceStrategy strategy = null;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     private MediaFileManager mediaFileManager;
@@ -270,14 +276,9 @@ public class MediaFileView extends UIAction {
                         + directoryName + ")");
                 MediaDirectory mediaFileDir = mediaFileManager.getMediaDirectory(directoryId);
                 mediaFileManager.removeMediaDirectory(mediaFileDir);
-                weblogManager.saveWeblog(this.getActionWeblog());
-
-                // flush changes
-                WebloggerFactory.flush();
+                weblogManager.saveWeblog(getActionWeblog());
+                strategy.flushAndInvalidateWeblog(getActionWeblog());
                 addMessage("mediaFile.deleteFolder.success");
-
-                // notify caches
-                CacheManager.invalidate(getActionWeblog());
 
                 // re-route to default folder
                 mediaFileDir = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());

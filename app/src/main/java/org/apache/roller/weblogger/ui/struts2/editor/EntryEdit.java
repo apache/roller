@@ -92,6 +92,12 @@ public final class EntryEdit extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     private IndexManager indexManager;
 
     public void setIndexManager(IndexManager indexManager) {
@@ -381,7 +387,7 @@ public final class EntryEdit extends UIAction {
                 }
 
                 // notify caches
-                CacheManager.invalidate(weblogEntry);
+                cacheManager.invalidate(weblogEntry);
 
                 if (weblogEntry.isPending() && MailUtil.isMailConfigured()) {
                     MailUtil.sendPendingEntryNotice(weblogEntry);

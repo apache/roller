@@ -63,6 +63,12 @@ public class TemplateEdit extends UIAction {
         this.themeManager = themeManager;
     }
 
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     // form bean for collection all template properties
     private WeblogTemplate bean = new WeblogTemplate();
 
@@ -193,7 +199,7 @@ public class TemplateEdit extends UIAction {
                 WebloggerFactory.flush();
 
                 // notify caches
-                CacheManager.invalidate(templateToSave);
+                cacheManager.invalidate(templateToSave);
 
                 // success message
                 addMessage("pageForm.save.success", templateToSave.getName());
@@ -284,7 +290,7 @@ public class TemplateEdit extends UIAction {
                 WebloggerFactory.flush();
 
                 // notify caches
-                CacheManager.invalidate(templateToRevert);
+                cacheManager.invalidate(templateToRevert);
 
                 // success message
                 addMessage("templateEdit.revert.success",
@@ -315,11 +321,11 @@ public class TemplateEdit extends UIAction {
                 // save updated weblog and flush
                 weblogManager.saveWeblog(weblog);
 
-                // notify caches
-                CacheManager.invalidate(template);
-
                 // Flush for operation
                 WebloggerFactory.flush();
+
+                // notify caches
+                cacheManager.invalidate(template);
 
                 // success message
                 addMessage("templateEdit.default.success", template.getName());

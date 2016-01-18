@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -85,6 +84,12 @@ public class ThemeEdit extends UIAction {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private JPAPersistenceStrategy strategy = null;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     public ThemeEdit() {
@@ -161,10 +166,7 @@ public class ThemeEdit extends UIAction {
                         weblog.setEditorTheme(t.getId());
                     }
                     weblogManager.saveWeblog(weblog);
-                    WebloggerFactory.flush();
-
-                    // make sure to flush the page cache so ppl can see the change
-                    CacheManager.invalidate(weblog);
+                    strategy.flushAndInvalidateWeblog(weblog);
 
                     addMessage("themeEditor.setTheme.success", t != null ? t.getName() : "custom");
                     addMessage("themeEditor.setCustomTheme.instructions");
@@ -210,10 +212,7 @@ public class ThemeEdit extends UIAction {
 
                     // save updated weblog and flush
                     weblogManager.saveWeblog(weblog);
-                    WebloggerFactory.flush();
-
-                    // make sure to flush the page cache so ppl can see the change
-                    CacheManager.invalidate(weblog);
+                    strategy.flushAndInvalidateWeblog(weblog);
 
                     // Theme set to..
                     if (!originalTheme.equals(selectedThemeId)) {

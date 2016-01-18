@@ -34,17 +34,20 @@ import org.apache.roller.weblogger.util.cache.BlogEventListener;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Cache for site-wide weblog content.
  */
-public final class SiteWideCache extends ExpiringCache implements BlogEventListener {
+public class SiteWideCache extends ExpiringCache implements BlogEventListener {
 
     // keep a cached version of cache last refresh time for 304 Not Modified calculations
     private ExpiringCacheEntry lastUpdateTime = null;
 
-    private SiteWideCache() {
-        super();
-        CacheManager.registerHandler(this);
+    @PostConstruct
+    public void init() {
+        super.init();
+        cacheManager.registerHandler(this);
     }
 
     public void clear() {

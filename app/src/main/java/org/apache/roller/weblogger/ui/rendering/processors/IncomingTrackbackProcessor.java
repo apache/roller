@@ -78,6 +78,13 @@ public class IncomingTrackbackProcessor {
     }
 
     @Autowired
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
@@ -202,7 +209,7 @@ public class IncomingTrackbackProcessor {
                     // only invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {
                         // Clear all caches associated with comment
-                        CacheManager.invalidate(comment);
+                        cacheManager.invalidate(comment);
                     }
 
                     // Send email notifications

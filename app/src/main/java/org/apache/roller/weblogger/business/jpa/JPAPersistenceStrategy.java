@@ -41,6 +41,8 @@ import javax.naming.NamingException;
 import javax.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 
 
 /**
@@ -60,14 +62,16 @@ public class JPAPersistenceStrategy {
      * The EntityManagerFactory for this Roller instance.
      */
     private EntityManagerFactory emf = null;
-    
-            
+
+    private CacheManager cacheManager;
+
     /**
      * Construct by finding JPA EntityManagerFactory.
      * @param dbProvider database configuration information for manual configuration.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    protected JPAPersistenceStrategy(DatabaseProvider dbProvider) throws WebloggerException {
+    protected JPAPersistenceStrategy(DatabaseProvider dbProvider, CacheManager cacheManager) throws WebloggerException {
+        this.cacheManager = cacheManager;
         String jpaConfigurationType = WebloggerConfig.getProperty("jpa.configurationType");
         if ("jndi".equals(jpaConfigurationType)) {
             // Lookup EMF via JNDI: added for Geronimo
@@ -140,7 +144,12 @@ public class JPAPersistenceStrategy {
             throw new WebloggerException(pe);
         }
     }
-    
+
+    public void flushAndInvalidateWeblog(Weblog weblog) throws WebloggerException {
+        flush();
+        cacheManager.invalidate(weblog);
+    }
+
     /**
      * Store object using an existing transaction.
      * @param obj the object to persist
