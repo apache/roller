@@ -63,6 +63,7 @@ public class PageModel implements Model {
     private Weblog weblog = null;
     private DeviceType deviceType = null;
 
+    protected boolean isPreview = false;
     protected URLStrategy urlStrategy = null;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
@@ -82,7 +83,6 @@ public class PageModel implements Model {
     }
 
     /**
-     * 
      * Creates an un-initialized new instance, Weblogger calls init() to complete
      * construction.
      */
@@ -152,8 +152,14 @@ public class PageModel implements Model {
     public boolean isPermalink() {
         return (pageRequest.getWeblogAnchor() != null);
     }
-    
-    
+
+    /**
+     * Is page in preview mode?
+     */
+    public boolean isPreview() {
+        return isPreview;
+    }
+
     /**
      * Is this page showing search results?
      */

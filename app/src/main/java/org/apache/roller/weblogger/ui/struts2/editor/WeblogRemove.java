@@ -42,10 +42,10 @@ public class WeblogRemove extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private JPAPersistenceStrategy strategy = null;
+    private JPAPersistenceStrategy persistenceStrategy = null;
 
-    public void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     public WeblogRemove() {
@@ -74,7 +74,7 @@ public class WeblogRemove extends UIAction {
         try {
             // remove website
             weblogManager.removeWeblog(getActionWeblog());
-            strategy.flushAndInvalidateWeblog(getActionWeblog());
+            persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
             addMessage("websiteRemove.success", getActionWeblog().getName());
             return SUCCESS;
         } catch (Exception ex) {

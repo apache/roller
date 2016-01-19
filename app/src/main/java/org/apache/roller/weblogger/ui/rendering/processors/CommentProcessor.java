@@ -32,7 +32,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +39,6 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -63,6 +61,7 @@ import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -88,7 +87,14 @@ public class CommentProcessor {
     public static final String PATH = "/roller-ui/rendering/comment";
 
     private CommentValidationManager commentValidationManager = null;
+
+    @Autowired(required=false)
     private GenericThrottle commentThrottle = null;
+
+    // See GenericThrottle class for activation information
+    public void setCommentThrottle(@Qualifier("commentThrottle") GenericThrottle commentThrottle) {
+        this.commentThrottle = commentThrottle;
+    }
 
     @Autowired
     private WeblogManager weblogManager;
@@ -137,23 +143,8 @@ public class CommentProcessor {
      */
     @PostConstruct
     public void init() {
-        log.info("Initializing CommentProcessor");
-
         // instantiate a comment validation manager for comment spam checking
         commentValidationManager = new CommentValidationManager(commentValidators);
-
-        // are we doing throttling?
-        if (WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
-            int threshold = WebloggerConfig.getIntProperty("comment.throttle.threshold", 25);
-            int maxEntries = WebloggerConfig.getIntProperty("comment.throttle.maxentries", 250);
-            int interval = WebloggerConfig.getIntProperty("comment.throttle.interval", 60)
-                    * new Long(DateUtils.MILLIS_PER_SECOND).intValue();
-
-            commentThrottle = new GenericThrottle(threshold, interval, maxEntries);
-            log.info("Comment Throttling ENABLED");
-        } else {
-            log.info("Comment Throttling DISABLED");
-        }
     }
 
     /**

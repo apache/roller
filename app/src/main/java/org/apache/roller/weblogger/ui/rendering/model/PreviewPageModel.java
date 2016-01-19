@@ -38,7 +38,11 @@ public class PreviewPageModel extends PageModel {
     
     private WeblogPreviewRequest previewRequest = null;
 
-    /** 
+    public PreviewPageModel() {
+        isPreview = true;
+    }
+
+    /**
      * Init model.
      */
     public void init(Map initData) throws WebloggerException {

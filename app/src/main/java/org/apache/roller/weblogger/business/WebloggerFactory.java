@@ -114,7 +114,7 @@ public final class WebloggerFactory {
         try {
             context = inContext;
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
-            strategy = context.getBean("jpaPersistenceStrategy", JPAPersistenceStrategy.class);
+            strategy = context.getBean("persistenceStrategy", JPAPersistenceStrategy.class);
             // TODO:  Move below to @PostConstruct in IndexManagerImpl (presently requires webloggerInstance to be active)
             PropertiesManager propertiesManager = context.getBean("propertiesManager", PropertiesManager.class);
             propertiesManager.initialize();

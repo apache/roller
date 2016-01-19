@@ -18,10 +18,13 @@
  */
 package org.apache.roller.weblogger.util;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+
+import javax.annotation.PostConstruct;
 
 /**
  * A tool used to provide throttling support.
@@ -29,14 +32,23 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * The basic idea is that if the # of hits from a client within a certain
  * interval of time is greater than the threshold value then the client is
  * considered to be abusive.
+ *
+ * To activate in the CommentProcessor, insert with desired config params
+ * in your spring-beans.xml override file:
+ *
+ <beans:bean id="commentThrottle" class="org.apache.roller.weblogger.util.GenericThrottle">
+     <beans:constructor-arg name="threshold" value="??"/>
+     <beans:constructor-arg name="intervalMin" value="??"/>
+     <beans:constructor-arg name="maxEntries" value="??"/>
+     <beans:property name="cacheManager" ref="cacheManager"/>
+ </beans:bean>
+ *
+ * Upon declaration, Spring will configure the CommentProcessor with this object,
+ * activating throttling in the process.
  */
 public class GenericThrottle {
     private static Log log = LogFactory.getLog(GenericThrottle.class);
     
-    // threshold and interval to determine who is abusive
-    private int threshold = 1;
-    private long interval = 0;
-
     private CacheManager cacheManager;
 
     public void setCacheManager(CacheManager cacheManager) {
@@ -46,28 +58,24 @@ public class GenericThrottle {
     // a cache to maintain the data
     Cache clientHistoryCache = null;
 
-    public GenericThrottle(int thresh, int interSec, int maxEntries) {
-        
-        // threshold can't be negative, that would mean everyone is abusive
-        if(thresh > -1) {
-            this.threshold = thresh;
-        }
-        
-        // interval must be a positive value
-        if(interSec > 0) {
-            this.interval = interSec * 1000;
-        }
-        
-        // max entries must be a positive value
-        if(maxEntries < 0) {
-            maxEntries = 1;
-        }
+    // threshold and interval to determine who is abusive
+    private int threshold = 25;
 
-        // get cache instance.  handler is null cuz we don't want to register it
-        this.clientHistoryCache = cacheManager.constructCache("throttle", maxEntries, interval);
+    private long intervalMS = 60 * DateUtils.MILLIS_PER_MINUTE;
+
+    private int maxEntries = 250;
+
+    public GenericThrottle(int threshold, int intervalMin, int maxEntries) {
+        this.threshold = Math.max(threshold, 0);
+        this.intervalMS = Math.max(intervalMin * DateUtils.MILLIS_PER_MINUTE, 0);
+        this.maxEntries = Math.max(maxEntries, 1);
     }
-    
-    
+
+    @PostConstruct
+    public void init() {
+        this.clientHistoryCache = cacheManager.constructCache("throttle", maxEntries, intervalMS);
+    }
+
     /**
      * Process a new hit from the client.
      *
@@ -125,7 +133,6 @@ public class GenericThrottle {
      * @return true if client is abusive, false otherwise.
      */
     public boolean isAbusive(String clientId) {
-        
         if(clientId == null) {
             return false;
         }
@@ -145,10 +152,8 @@ public class GenericThrottle {
     
     // just something to keep a few properties in
     private class ClientInfo {
-        
         public int hits = 0;
         public java.util.Date start = new java.util.Date();
-        
     }
     
 }
