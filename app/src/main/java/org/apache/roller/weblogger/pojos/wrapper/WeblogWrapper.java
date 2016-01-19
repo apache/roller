@@ -64,35 +64,33 @@ public final class WeblogWrapper {
     }
 
 
-    public ThemeTemplateWrapper getTemplateByAction(ComponentType action)
+    public ThemeTemplate getTemplateByAction(ComponentType action)
             throws WebloggerException {
         ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByAction(action);
-        return ThemeTemplateWrapper.wrap(templateToWrap);
+        return templateToWrap.templateCopy();
     }
     
     
-    public ThemeTemplateWrapper getTemplateByName(String name)
+    public ThemeTemplate getTemplateByName(String name)
             throws WebloggerException {
        ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByName(name);
-        return ThemeTemplateWrapper.wrap(templateToWrap);
+        return templateToWrap.templateCopy();
     }
     
     
-    public ThemeTemplateWrapper getTemplateByLink(String link)
+    public ThemeTemplate getTemplateByLink(String link)
             throws WebloggerException {
         ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByLink(link);
-        return ThemeTemplateWrapper.wrap(templateToWrap);
+        return templateToWrap.templateCopy();
     }
     
     
-    public List<ThemeTemplateWrapper> getTemplates() throws WebloggerException {
+    public List<ThemeTemplate> getTemplates() throws WebloggerException {
         List<? extends ThemeTemplate> unwrapped = this.pojo.getTheme().getTemplates();
-        List<ThemeTemplateWrapper> wrapped = new ArrayList<>(unwrapped.size());
+        List<ThemeTemplate> wrapped = new ArrayList<>(unwrapped.size());
 
-        int i = 0;
         for (ThemeTemplate template : unwrapped) {
-            wrapped.add(i,ThemeTemplateWrapper.wrap(template));
-            i++;
+            wrapped.add(template.templateCopy());
         }
         return wrapped;
     }
@@ -261,20 +259,18 @@ public final class WeblogWrapper {
     }
 
 
-    public List<WeblogCategoryWrapper> getWeblogCategories() {
+    public List<WeblogCategory> getWeblogCategories() {
         List<WeblogCategory> unwrapped = this.pojo.getWeblogCategories();
-        List<WeblogCategoryWrapper> wrapped = new ArrayList<WeblogCategoryWrapper>(unwrapped.size());
+        List<WeblogCategory> wrapped = new ArrayList<>(unwrapped.size());
 
-        int i = 0;
         for (WeblogCategory category : unwrapped) {
-            wrapped.add(i,WeblogCategoryWrapper.wrap(category, urlStrategy));
-            i++;
+            wrapped.add(category.templateCopy());
         }
         return wrapped;
     }
 
-    public WeblogCategoryWrapper getWeblogCategory(String categoryName) {
-        return WeblogCategoryWrapper.wrap(this.pojo.getWeblogCategory(categoryName), urlStrategy);
+    public WeblogCategory getWeblogCategory(String categoryName) {
+        return this.pojo.getWeblogCategory(categoryName).templateCopy();
     }
 
     
@@ -316,11 +312,11 @@ public final class WeblogWrapper {
         return wrapped;
     }
 
-    public List<WeblogBookmarkWrapper> getBookmarks() {
+    public List<WeblogBookmark> getBookmarks() {
         // iterate through and wrap
-        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<WeblogBookmarkWrapper>(this.pojo.getBookmarks().size());
+        List<WeblogBookmark> wrappedCollection = new ArrayList<>(this.pojo.getBookmarks().size());
         for (WeblogBookmark bookmark : this.pojo.getBookmarks()) {
-            wrappedCollection.add(WeblogBookmarkWrapper.wrap(bookmark));
+            wrappedCollection.add(bookmark.templateCopy());
         }
         return wrappedCollection;
     }

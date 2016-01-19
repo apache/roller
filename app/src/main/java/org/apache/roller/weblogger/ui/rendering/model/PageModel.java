@@ -31,10 +31,10 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
@@ -183,12 +183,12 @@ public class PageModel implements Model {
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
-    public ThemeTemplateWrapper getWeblogPage() {
+    public ThemeTemplate getWeblogPage() {
         if(pageRequest.getWeblogPageName() != null) {
-            return ThemeTemplateWrapper.wrap(pageRequest.getWeblogPage());
+            return pageRequest.getWeblogPage().templateCopy();
         } else {
             try {
-                return ThemeTemplateWrapper.wrap(weblog.getTheme().getDefaultTemplate());
+                return weblog.getTheme().getDefaultTemplate().templateCopy();
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
@@ -201,9 +201,9 @@ public class PageModel implements Model {
      * Get weblog category specified by request, or null if the category name
      * found in the request does not exist in the current weblog.
      */
-    public WeblogCategoryWrapper getWeblogCategory() {
+    public WeblogCategory getWeblogCategory() {
         if(pageRequest.getWeblogCategory() != null) {
-            return WeblogCategoryWrapper.wrap(pageRequest.getWeblogCategory(), urlStrategy);
+            return pageRequest.getWeblogCategory().templateCopy();
         }
         return null;
     }

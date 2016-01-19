@@ -125,6 +125,20 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         return contentType;
     }
 
+    @Override
+    public ThemeTemplate templateCopy() {
+        SharedThemeTemplate copy = new SharedThemeTemplate();
+        copy.setId(id);
+        copy.setName(name);
+        copy.setDescription(description);
+        copy.setLink(link);
+        copy.setLastModified(lastModified);
+        copy.setHidden(hidden);
+        copy.setNavbar(navbar);
+        copy.setOutputContentType(contentType);
+        return copy;
+    }
+
     @XmlElement(name="contentType")
     public void setOutputContentType(String contentType) {
         this.contentType = contentType;
