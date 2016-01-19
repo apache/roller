@@ -124,6 +124,17 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     }
 
     /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    public WeblogCategory templateCopy() {
+        WeblogCategory copy = new WeblogCategory();
+        copy.setName(name);
+        copy.setPosition(position);
+        return copy;
+    }
+
+    /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(WeblogCategory other) {

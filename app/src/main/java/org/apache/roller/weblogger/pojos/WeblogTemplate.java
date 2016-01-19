@@ -261,6 +261,20 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         return false;
     }
 
+    @Override
+    public ThemeTemplate templateCopy() {
+        WeblogTemplate copy = new WeblogTemplate();
+        copy.setId(id);
+        copy.setName(name);
+        copy.setDescription(description);
+        copy.setLink(link);
+        copy.setLastModified(lastModified);
+        copy.setHidden(hidden);
+        copy.setNavbar(navbar);
+        copy.setOutputContentType(outputContentType);
+        return copy;
+    }
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {

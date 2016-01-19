@@ -65,7 +65,18 @@ public class WeblogEntryTag implements Serializable {
         this.weblogEntry = weblogEntry;
         this.name = name;
     }
-    
+
+    /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    public WeblogEntryTag templateCopy() {
+        WeblogEntryTag copy = new WeblogEntryTag();
+        copy.setId(null);
+        copy.setName(this.name);
+        return copy;
+    }
+
     //------------------------------------------------------- Simple properties
     
     /**

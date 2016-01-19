@@ -93,6 +93,19 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         }
     }
 
+    /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    public WeblogBookmark templateCopy() {
+        WeblogBookmark copy = new WeblogBookmark();
+        copy.setName(name);
+        copy.setDescription(description);
+        copy.setUrl(url);
+        copy.setPosition(position);
+        return copy;
+    }
+
     @Basic(optional=false)
     public String getName() {
         return this.name;

@@ -53,6 +53,12 @@ public interface ThemeTemplate extends Template {
     }
 
     /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    ThemeTemplate templateCopy();
+
+    /**
      * The action this template is defined for.
      */
     ComponentType getAction();

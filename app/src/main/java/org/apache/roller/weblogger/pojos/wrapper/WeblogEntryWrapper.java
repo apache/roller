@@ -72,25 +72,18 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public WeblogCategoryWrapper getCategory() {
-        return WeblogCategoryWrapper.wrap(this.pojo.getCategory(), urlStrategy);
+    public WeblogCategory getCategory() {
+        return this.pojo.getCategory().templateCopy();
     }
     
     
-    public List getCategories() {
-        List initialCollection = this.pojo.getCategories();
+    public List<WeblogCategory> getCategories() {
+        List<WeblogCategory> initialCollection = this.pojo.getCategories();
         
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
-            i++;
+        ArrayList<WeblogCategory> wrappedCollection = new ArrayList<>(initialCollection.size());
+        for (WeblogCategory category : initialCollection) {
+            wrappedCollection.add(category.templateCopy());
         }
-        
         return wrappedCollection;
     }
     
@@ -178,22 +171,16 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public List getTags() {
+    public List<WeblogEntryTag> getTags() {
         // Sort by name
         Set<WeblogEntryTag> initialCollection = new TreeSet<>(WeblogEntryTag.Comparator);
         initialCollection.addAll(this.pojo.getTags());
         
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList<WeblogEntryTagWrapper> wrappedCollection = new ArrayList<>(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryTagWrapper.wrap((WeblogEntryTag) it.next()));
-            i++;
+        ArrayList<WeblogEntryTag> wrappedCollection = new ArrayList<>(initialCollection.size());
+        for (WeblogEntryTag tag : initialCollection) {
+            wrappedCollection.add(tag);
         }
-        
+
         return wrappedCollection;
     }
     

@@ -42,8 +42,8 @@ import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -279,10 +279,9 @@ public class SearchResultsModel extends PageModel {
 		return searchRequest.getWeblogCategoryName();
 	}
 
-	public WeblogCategoryWrapper getWeblogCategory() {
+	public WeblogCategory getWeblogCategory() {
 		if (searchRequest.getWeblogCategory() != null) {
-			return WeblogCategoryWrapper.wrap(
-					searchRequest.getWeblogCategory(), urlStrategy);
+			return searchRequest.getWeblogCategory().templateCopy();
 		}
 		return null;
 	}
