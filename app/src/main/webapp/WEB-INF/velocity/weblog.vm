@@ -149,10 +149,12 @@ tracking code if defined and permitted by the installation, else the server-defi
 code if defined will be used.
 *#
 #macro(showAnalyticsTrackingCode $weblog)
-    #if ($config.analyticsOverrideAllowed && $utils.isNotEmpty($weblog.analyticsCode))
-        $weblog.analyticsCode
-    #elseif ($utils.isNotEmpty($config.defaultAnalyticsTrackingCode))
-        $config.defaultAnalyticsTrackingCode
+    #if (!$model.preview)
+        #if ($config.analyticsOverrideAllowed && $utils.isNotEmpty($weblog.analyticsCode))
+            $weblog.analyticsCode
+        #elseif ($utils.isNotEmpty($config.defaultAnalyticsTrackingCode))
+            $config.defaultAnalyticsTrackingCode
+        #end
     #end
 #end
 

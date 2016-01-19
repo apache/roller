@@ -86,10 +86,10 @@ public class ThemeEdit extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private JPAPersistenceStrategy strategy = null;
+    private JPAPersistenceStrategy persistenceStrategy = null;
 
-    public void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     public ThemeEdit() {
@@ -166,7 +166,7 @@ public class ThemeEdit extends UIAction {
                         weblog.setEditorTheme(t.getId());
                     }
                     weblogManager.saveWeblog(weblog);
-                    strategy.flushAndInvalidateWeblog(weblog);
+                    persistenceStrategy.flushAndInvalidateWeblog(weblog);
 
                     addMessage("themeEditor.setTheme.success", t != null ? t.getName() : "custom");
                     addMessage("themeEditor.setCustomTheme.instructions");
@@ -212,7 +212,7 @@ public class ThemeEdit extends UIAction {
 
                     // save updated weblog and flush
                     weblogManager.saveWeblog(weblog);
-                    strategy.flushAndInvalidateWeblog(weblog);
+                    persistenceStrategy.flushAndInvalidateWeblog(weblog);
 
                     // Theme set to..
                     if (!originalTheme.equals(selectedThemeId)) {

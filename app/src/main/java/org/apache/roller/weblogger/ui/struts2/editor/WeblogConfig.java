@@ -60,10 +60,10 @@ public class WeblogConfig extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private JPAPersistenceStrategy strategy = null;
+    private JPAPersistenceStrategy persistenceStrategy = null;
 
-    public void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
     }
 
     // bean for managing submitted data
@@ -172,7 +172,7 @@ public class WeblogConfig extends UIAction {
                 }
 
                 // flush and clear cache
-                strategy.flushAndInvalidateWeblog(weblog);
+                persistenceStrategy.flushAndInvalidateWeblog(weblog);
                 addMessage("websiteSettings.savedChanges");
 
             } catch (Exception ex) {

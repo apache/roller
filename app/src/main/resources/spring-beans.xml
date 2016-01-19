@@ -36,7 +36,7 @@
 
     <beans:bean id="cacheManager" class="org.apache.roller.weblogger.util.cache.CacheManager"/>
 
-    <beans:bean id="jpaPersistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
+    <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
         <beans:constructor-arg>
             <beans:bean class="org.apache.roller.weblogger.business.DatabaseProvider"/>
         </beans:constructor-arg>
@@ -49,17 +49,17 @@
 
     <beans:bean id="mediaFileManager" class="org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl">
         <beans:constructor-arg ref="fileContentManager"/>
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg ref="persistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="fileContentManager" class="org.apache.roller.weblogger.business.FileContentManagerImpl"/>
 
     <beans:bean id="pingTargetManager" class="org.apache.roller.weblogger.business.jpa.JPAPingTargetManagerImpl">
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg ref="persistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="propertiesManager" class="org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl">
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg ref="persistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="themeManager" class="org.apache.roller.weblogger.business.themes.ThemeManagerImpl">
@@ -67,7 +67,7 @@
     </beans:bean>
 
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg ref="persistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="weblogManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl">
@@ -76,13 +76,13 @@
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="pingTargetManager"/>
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:constructor-arg ref="cacheManager"/>
     </beans:bean>
 
     <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
         <beans:constructor-arg ref="pingTargetManager"/>
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="commentPlugins" ref="commentPlugins"/>
         <beans:property name="weblogEntryPlugins" ref="weblogEntryPlugins"/>
@@ -93,14 +93,14 @@
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="planetManager" ref="planetManager"/>
-        <beans:property name="strategy" ref="jpaPersistenceStrategy"/>
+        <beans:property name="strategy" ref="persistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="feedManager" ref="feedManager"/>
-        <beans:property name="strategy" ref="jpaPersistenceStrategy"/>
+        <beans:property name="strategy" ref="persistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>

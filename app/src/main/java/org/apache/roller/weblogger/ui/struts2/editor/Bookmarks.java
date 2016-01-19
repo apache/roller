@@ -45,10 +45,10 @@ public class Bookmarks extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private JPAPersistenceStrategy strategy = null;
+    private JPAPersistenceStrategy persistenceStrategy = null;
 
-    public void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     // the weblog being viewed
@@ -110,7 +110,7 @@ public class Bookmarks extends UIAction {
             }
 
             // flush changes
-            strategy.flushAndInvalidateWeblog(getActionWeblog());
+            persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
 
         } catch (WebloggerException ex) {
             log.error("Error doing bookmark deletes", ex);

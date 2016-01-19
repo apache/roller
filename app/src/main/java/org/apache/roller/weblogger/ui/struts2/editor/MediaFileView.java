@@ -55,10 +55,10 @@ public class MediaFileView extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private JPAPersistenceStrategy strategy = null;
+    private JPAPersistenceStrategy persistenceStrategy = null;
 
-    public void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     private MediaFileManager mediaFileManager;
@@ -277,7 +277,7 @@ public class MediaFileView extends UIAction {
                 MediaDirectory mediaFileDir = mediaFileManager.getMediaDirectory(directoryId);
                 mediaFileManager.removeMediaDirectory(mediaFileDir);
                 weblogManager.saveWeblog(getActionWeblog());
-                strategy.flushAndInvalidateWeblog(getActionWeblog());
+                persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
                 addMessage("mediaFile.deleteFolder.success");
 
                 // re-route to default folder

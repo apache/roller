@@ -61,10 +61,10 @@ public class TemplatesRemove extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    private JPAPersistenceStrategy strategy = null;
+    private JPAPersistenceStrategy persistenceStrategy = null;
 
-    public void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     public TemplatesRemove() {
@@ -185,7 +185,7 @@ public class TemplatesRemove extends UIAction {
 
                     // Save for changes
                     weblogManager.saveWeblog(weblog);
-                    strategy.flushAndInvalidateWeblog(weblog);
+                    persistenceStrategy.flushAndInvalidateWeblog(weblog);
                 }
 
                 return SUCCESS;
