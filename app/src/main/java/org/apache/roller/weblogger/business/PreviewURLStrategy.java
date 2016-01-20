@@ -35,7 +35,11 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     
     private final String previewTheme;
     private static final String PREVIEW_URL_SEGMENT = "/roller-ui/authoring/preview/";
-    
+
+    public PreviewURLStrategy() {
+        previewTheme = null;
+    }
+
     public PreviewURLStrategy(String theme) {
         previewTheme = theme;
     }

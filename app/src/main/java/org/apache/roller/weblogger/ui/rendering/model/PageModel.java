@@ -35,8 +35,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
@@ -141,11 +140,21 @@ public class PageModel implements Model {
     /**
      * Get weblog being displayed.
      */
-    public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog, urlStrategy);
+    public Weblog getWeblog() {
+        return weblog.templateCopy();
     }
-    
-    
+
+    /**
+     * Get main stylesheet for weblog.
+     */
+    public String getStylesheet() throws WebloggerException {
+        ThemeTemplate stylesheet = this.weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.STYLESHEET);
+        if(stylesheet != null) {
+            return urlStrategy.getWeblogPageURL(weblog, stylesheet.getLink(), null, null, null, null, 0, false);
+        }
+        return null;
+    }
+
     /**
      * Is this page considered a permalink?
      */
@@ -172,9 +181,9 @@ public class PageModel implements Model {
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
-    public WeblogEntryWrapper getWeblogEntry() {
+    public WeblogEntry getWeblogEntry() {
         if(pageRequest.getWeblogEntry() != null) {
-            return WeblogEntryWrapper.wrap(pageRequest.getWeblogEntry(), urlStrategy);
+            return pageRequest.getWeblogEntry().templateCopy();
         }
         return null;
     }

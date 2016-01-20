@@ -34,8 +34,6 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-
 
 /**
  * Simple pager for list of weblog entries.
@@ -53,7 +51,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     private List<String> queryTags = null;
     
     // entries for the pager
-    private List<WeblogEntryWrapper> entries;
+    private List<WeblogEntry> entries;
     
     // are there more entries?
     private boolean more = false;
@@ -91,13 +89,13 @@ public class WeblogEntriesListPager extends AbstractPager {
     }
     
     
-    public List<WeblogEntryWrapper> getItems() {
+    public List<WeblogEntry> getItems() {
         
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
 
-            List<WeblogEntryWrapper> results = new ArrayList<>();
+            List<WeblogEntry> results = new ArrayList<>();
             
             Date startDate = null;
             if(sinceDays > 0) {
@@ -123,7 +121,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                 int count = 0;
                 for (WeblogEntry entry : rawEntries) {
                     if (count++ < length) {
-                        results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
+                        results.add(entry.templateCopy());
                     }
                 }
                 if (rawEntries.size() > length) {
@@ -149,10 +147,10 @@ public class WeblogEntriesListPager extends AbstractPager {
     public Date getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
-            List<WeblogEntryWrapper> items = getItems();
+            List<WeblogEntry> items = getItems();
             if (getItems() != null && getItems().size() > 0) {
                 Timestamp newest = (getItems().get(0)).getUpdateTime();
-                for (WeblogEntryWrapper e : items) {
+                for (WeblogEntry e : items) {
                     if (e.getUpdateTime().after(newest)) {
                         newest = e.getPubTime();
                     }

@@ -152,9 +152,15 @@
         <beans:property name="indexManager" ref="indexManager"/>
     </beans:bean>
 
-    <beans:bean id="previewPageModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype"/>
+    <beans:bean id="previewUrlStrategy" class="org.apache.roller.weblogger.business.PreviewURLStrategy"/>
 
-    <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel" scope="prototype"/>
+    <beans:bean id="previewPageModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype">
+        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel" scope="prototype">
+        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
+    </beans:bean>
 
     <beans:bean id="siteModel" class="org.apache.roller.weblogger.ui.rendering.model.SiteModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>

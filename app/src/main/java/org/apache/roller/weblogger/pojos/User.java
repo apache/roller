@@ -29,6 +29,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
@@ -282,6 +283,23 @@ public class User implements Serializable {
     
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
+    }
+
+    /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    public User templateCopy() {
+        User copy = new User();
+        copy.setId(null);
+        copy.setUserName(null);
+        copy.setScreenName(HTMLSanitizer.conditionallySanitize(this.screenName));
+        copy.setFullName(HTMLSanitizer.conditionallySanitize(this.fullName));
+        copy.setEmailAddress(emailAddress);
+        copy.setDateCreated(dateCreated);
+        copy.setLocale(locale);
+        copy.setTimeZone(timeZone);
+        return copy;
     }
 
     //------------------------------------------------------- Good citizenship

@@ -18,12 +18,11 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPreviewPager;
@@ -72,11 +71,11 @@ public class PreviewPageModel extends PageModel {
     }
     
     
-    public WeblogEntryWrapper getWeblogEntry() {
+    public WeblogEntry getWeblogEntry() {
         
         if(previewRequest.getPreviewEntry() != null ||
                 previewRequest.getWeblogAnchor() != null) {
-            return WeblogEntryWrapper.wrap(previewRequest.getWeblogEntry(), urlStrategy);
+            return previewRequest.getWeblogEntry().templateCopy();
         }
         return null;
     }

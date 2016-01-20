@@ -1,5 +1,5 @@
 ## $model here is a PageModel
-## $entry here is a WeblogEntryWrapper
+## $entry here is a WeblogEntry
 <!-- _day-mobile -->
 <ul data-role="listview" data-divider-theme="b" data-inset="true">
   <li data-role="list-divider">$utils.formatDate($day, $text.get("macro.weblog.date.toStringFormat"))</li>

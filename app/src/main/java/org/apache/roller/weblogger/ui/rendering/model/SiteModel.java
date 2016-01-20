@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.ArrayList;
@@ -42,9 +41,6 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.UsersPager;
@@ -157,7 +153,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, null, null, sinceDays, length);
     }
 
@@ -169,7 +165,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, user, null, sinceDays, length);
     }
 
@@ -182,7 +178,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, String cat, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, String cat, int sinceDays, int length) {
         
         String pagerUrl;
         if (feedRequest != null) {
@@ -198,7 +194,7 @@ public class SiteModel implements Model {
        
         return new WeblogEntriesListPager(
             weblogEntryManager, urlStrategy,
-            pagerUrl, queryWeblog.getPojo(), user, cat,
+            pagerUrl, queryWeblog.templateCopy(), user, cat,
             tags,
             sinceDays,
             pageNum, 
@@ -328,7 +324,7 @@ public class SiteModel implements Model {
             User user = userManager.getUserByUserName(userName);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
             for (UserWeblogRole role : roles) {
-                results.add(WeblogWrapper.wrap(weblogManager.getWeblog(role.getWeblogId()), urlStrategy));
+                results.add(weblogManager.getWeblog(role.getWeblogId()).templateCopy());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -340,28 +336,26 @@ public class SiteModel implements Model {
     /** 
      * Return list of users that belong to website.
      */
-    public List getWeblogsUsers(String handle) {
-        List results = new ArrayList();
+    public List<User> getWeblogsUsers(String handle) {
+        List<User> results = new ArrayList<>();
         try {            
             Weblog website = weblogManager.getWeblogByHandle(handle);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(website);
             for (UserWeblogRole role : roles) {
-                results.add(UserWrapper.wrap(userManager.getUserByUserName(role.getUserName())));
+                results.add(userManager.getUserByUserName(role.getUserName()).templateCopy());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
         }
         return results;
     }
-    
-    
-    
+
     /** Get User object by username */
-    public UserWrapper getUser(String username) {
-        UserWrapper wrappedUser = null;
+    public User getUser(String username) {
+        User wrappedUser = null;
         try {            
             User user = userManager.getUserByUserName(username, Boolean.TRUE);
-            wrappedUser = UserWrapper.wrap(user);
+            wrappedUser = user.templateCopy();
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
         }
@@ -370,11 +364,11 @@ public class SiteModel implements Model {
     
     
     /** Get Website object by handle */
-    public WeblogWrapper getWeblog(String handle) {
-        WeblogWrapper wrappedWebsite = null;
+    public Weblog getWeblog(String handle) {
+        Weblog wrappedWebsite = null;
         try {            
-            Weblog website = weblogManager.getWeblogByHandle(handle);
-            wrappedWebsite = WeblogWrapper.wrap(website, urlStrategy);
+            Weblog weblog = weblogManager.getWeblogByHandle(handle);
+            wrappedWebsite = weblog.templateCopy();
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
         }
@@ -390,8 +384,8 @@ public class SiteModel implements Model {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List<WeblogWrapper> getNewWeblogs(int sinceDays, int length) {
-        List<WeblogWrapper> results = new ArrayList<>();
+    public List<Weblog> getNewWeblogs(int sinceDays, int length) {
+        List<Weblog> results = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1 * sinceDays);
@@ -399,8 +393,8 @@ public class SiteModel implements Model {
         try {            
             List<Weblog> weblogs = weblogManager.getWeblogs(
                 Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
-            for (Weblog website : weblogs) {
-                results.add(WeblogWrapper.wrap(website, urlStrategy));
+            for (Weblog weblog : weblogs) {
+                results.add(weblog.templateCopy());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -414,12 +408,12 @@ public class SiteModel implements Model {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List<UserWrapper> getNewUsers(int sinceDays, int length) {
-        List<UserWrapper> results = new ArrayList<UserWrapper>();
+    public List<User> getNewUsers(int sinceDays, int length) {
+        List<User> results = new ArrayList<>();
         try {            
             List<User> users = userManager.getUsers(Boolean.TRUE, null, null, 0, length);
             for (User user : users) {
-                results.add(UserWrapper.wrap(user));
+                results.add(user.templateCopy());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -503,12 +497,12 @@ public class SiteModel implements Model {
      * Get pinned entries.
      * @param length    Max number of results to return
      */
-    public List<WeblogEntryWrapper> getPinnedWeblogEntries(int length) {
-        List<WeblogEntryWrapper> results = new ArrayList<WeblogEntryWrapper>();
+    public List<WeblogEntry> getPinnedWeblogEntries(int length) {
+        List<WeblogEntry> results = new ArrayList<>();
         try {            
             List<WeblogEntry> weblogEntries = weblogEntryManager.getWeblogEntriesPinnedToMain(length);
             for (WeblogEntry entry : weblogEntries) {
-                results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
+                results.add(entry.templateCopy());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching pinned weblog entries", e);

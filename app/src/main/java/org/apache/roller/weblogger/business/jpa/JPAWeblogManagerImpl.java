@@ -214,7 +214,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(
-                newWeblog.getCreator().getUserName(), newWeblog.getId(), WeblogRole.OWNER);
+                newWeblog.getCreatorUserName(), newWeblog.getId(), WeblogRole.OWNER);
         
         String cats = WebloggerConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = null;

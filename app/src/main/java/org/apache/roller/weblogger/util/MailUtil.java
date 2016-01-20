@@ -92,8 +92,8 @@ public class MailUtil {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
 
-            String userName = entry.getCreator().getUserName();
-            String from = entry.getCreator().getEmailAddress();
+            String userName = entry.getCreatorUserName();
+            String from = umgr.getUserByUserName(userName).getEmailAddress();
             String cc[] = new String[] {from};
             String bcc[] = new String[0];
             String to[];
@@ -263,10 +263,11 @@ public class MailUtil {
             throws WebloggerException {
 
         // TODO: Factor out email notification from moderate message to owner.
+        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        User user = entry.getCreator();
+        User user = umgr.getUserByUserName(entry.getCreatorUserName());
         
         // Only send email if email notification is enabled, or a pending message that needs moderation.
         if (!commentObject.getPending()) {
@@ -524,7 +525,8 @@ public class MailUtil {
         
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        User user = entry.getCreator();
+        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+        User user = umgr.getUserByUserName(entry.getCreatorUserName());
         
         // use either the weblog configured from address or the site configured from address
         String from = weblog.getEmailAddress();

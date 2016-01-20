@@ -44,7 +44,6 @@ import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
@@ -63,8 +62,8 @@ public class SearchResultsModel extends PageModel {
 	WeblogSearchRequest searchRequest = null;
 
 	// the actual search results mapped by Day -> Set of entries
-    private Map<Date, TreeSet<WeblogEntryWrapper>> results
-            = new TreeMap<Date, TreeSet<WeblogEntryWrapper>>(Collections.reverseOrder());
+    private Map<Date, TreeSet<WeblogEntry>> results
+            = new TreeMap<>(Collections.reverseOrder());
 
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsPager pager = null;
@@ -209,8 +208,7 @@ public class SearchResultsModel extends PageModel {
 				// or entry's user is not the requested user.
 				// but don't return future posts
 				if (entry != null && entry.getPubTime().before(now)) {
-					addEntryToResults(WeblogEntryWrapper.wrap(entry,
-							urlStrategy));
+					addEntryToResults(entry.templateCopy());
 				}
 			}
 
@@ -222,7 +220,7 @@ public class SearchResultsModel extends PageModel {
 		}
 	}
 
-	private void addEntryToResults(WeblogEntryWrapper entry) {
+	private void addEntryToResults(WeblogEntry entry) {
         Calendar cal = Calendar.getInstance(entry.getWeblog().getTimeZoneInstance());
         cal.setTime(entry.getPubTime());
 
@@ -231,10 +229,10 @@ public class SearchResultsModel extends PageModel {
 
 		// ensure we do not get duplicates from Lucene by
 		// using a Set Collection. Entries sorted by pubTime.
-		TreeSet<WeblogEntryWrapper> set = this.results.get(midnight);
+		TreeSet<WeblogEntry> set = this.results.get(midnight);
 		if (set == null) {
 			// date is not mapped yet, so we need a new Set
-			set = new TreeSet<>(WeblogEntryWrapper.Comparator);
+			set = new TreeSet<>(WeblogEntry.Comparator);
 			this.results.put(midnight, set);
 		}
 		set.add(entry);

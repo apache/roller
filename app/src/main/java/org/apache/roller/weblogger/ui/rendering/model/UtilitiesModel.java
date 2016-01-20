@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.text.SimpleDateFormat;
@@ -34,11 +33,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -126,10 +124,10 @@ public class UtilitiesModel implements Model {
     
     //---------------------------------------------------- Authentication utils 
     
-    public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
+    public boolean isUserAuthorizedToAuthor(Weblog weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog.getPojo(), WeblogRole.POST);
+                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog, WeblogRole.POST);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -137,10 +135,10 @@ public class UtilitiesModel implements Model {
         return false;
     }
     
-    public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
+    public boolean isUserAuthorizedToAdmin(Weblog weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog.getPojo(), WeblogRole.OWNER);
+                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog, WeblogRole.OWNER);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -152,9 +150,9 @@ public class UtilitiesModel implements Model {
         return (parsedRequest.getAuthenticUser() != null);
     }
        
-    public UserWrapper getAuthenticatedUser() {
+    public User getAuthenticatedUser() {
         return parsedRequest.getAuthenticUser() != null 
-                ? UserWrapper.wrap(parsedRequest.getUser()) : null;
+                ? parsedRequest.getUser().templateCopy() : null;
     }
              
     //-------------------------------------------------------------- Date utils

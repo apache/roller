@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
@@ -219,7 +220,7 @@ public class Weblog implements Serializable {
     @Transient
     public org.apache.roller.weblogger.pojos.User getCreator() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(creator);
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(creator).templateCopy();
         } catch (Exception e) {
             log.error("ERROR fetching user object for username: " + creator, e);
         }
@@ -837,6 +838,43 @@ public class Weblog implements Serializable {
                 .toHashCode();
     }
 
+    /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    public Weblog templateCopy() {
+        Weblog copy = new Weblog();
+        copy.setId(null);
+        copy.setName(name);
+        copy.setHandle(handle);
+        copy.setTagline(tagline);
+        copy.setAnalyticsCode(analyticsCode);
+        copy.setIconPath(iconPath);
+        copy.setAbout(HTMLSanitizer.conditionallySanitize(about));
+        copy.setLocale(locale);
+        copy.setTimeZone(timeZone);
+        copy.setDateCreated(dateCreated);
+        copy.setLastModified(lastModified);
+        copy.setEditorTheme(editorTheme);
+        return copy;
+    }
+
+    public ThemeTemplate getTemplateByName(String name)
+            throws WebloggerException {
+        ThemeTemplate templateToWrap = getTheme().getTemplateByName(name);
+        return templateToWrap.templateCopy();
+    }
+
+    public List<ThemeTemplate> getTemplates() throws WebloggerException {
+        List<? extends ThemeTemplate> unwrapped = getTheme().getTemplates();
+        List<ThemeTemplate> wrapped = new ArrayList<>(unwrapped.size());
+
+        for (ThemeTemplate template : unwrapped) {
+            wrapped.add(template.templateCopy());
+        }
+        return wrapped;
+    }
+
     // convenience methods for populating fields from forms
 
     @Transient
@@ -865,4 +903,5 @@ public class Weblog implements Serializable {
     public void setApplyCommentDefaults(boolean applyCommentDefaults) {
         this.applyCommentDefaults = applyCommentDefaults;
     }
+
 }

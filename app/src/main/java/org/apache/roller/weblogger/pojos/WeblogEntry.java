@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -287,7 +288,7 @@ public class WeblogEntry implements Serializable {
     @Transient
     public User getCreator() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName()).templateCopy();
         } catch (Exception e) {
             mLogger.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
         }
@@ -528,10 +529,10 @@ public class WeblogEntry implements Serializable {
     }
 
     @SuppressWarnings("unused")
-    private void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException {
+    private void setTags(Set<WeblogEntryTag> tagSet) {
          this.tagSet = tagSet;
-         this.removedTags = new HashSet<WeblogEntryTag>();
-         this.addedTags = new HashSet<WeblogEntryTag>();
+         this.removedTags = new HashSet<>();
+         this.addedTags = new HashSet<>();
     }
      
     /**
@@ -1057,4 +1058,52 @@ public class WeblogEntry implements Serializable {
     public void setDateString(String dateString) {
         this.dateString = dateString;
     }
+
+    /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    public WeblogEntry templateCopy() {
+        WeblogEntry copy = new WeblogEntry();
+        copy.setId(null);
+        copy.setCategory(category.templateCopy());
+        copy.setCreatorUserName(creatorUserName);
+        copy.setWeblog(weblog.templateCopy());
+        copy.setTitle(title);
+        copy.setSummary(summary);
+        copy.setText(text);
+        copy.setEnclosureUrl(enclosureUrl);
+        copy.setEnclosureType(enclosureType);
+        copy.setEnclosureLength(enclosureLength);
+        copy.setAnchor(anchor);
+        copy.setPubTime(pubTime);
+        copy.setUpdateTime(updateTime);
+        copy.setStatus(status);
+        copy.setPlugins(plugins);
+        copy.setAllowComments(allowComments);
+        copy.setCommentDays(commentDays);
+        copy.setRightToLeft(rightToLeft);
+        copy.setPinnedToMain(pinnedToMain);
+        copy.setTags(tagSet);
+        copy.setSearchDescription(HTMLSanitizer.conditionallySanitize(searchDescription));
+        return copy;
+    }
+
+    public static java.util.Comparator<WeblogEntry> Comparator = new Comparator<WeblogEntry>() {
+        public int compare(WeblogEntry val1, WeblogEntry val2) {
+
+            long pubTime1 = val1.getPubTime().getTime();
+            long pubTime2 = val2.getPubTime().getTime();
+
+            if (pubTime1 > pubTime2) {
+                return -1;
+            }
+            else if (pubTime1 < pubTime2) {
+                return 1;
+            }
+
+            // if pubTimes are the same, return results of String.compareTo() on Title
+            return val1.getTitle().compareTo(val2.getTitle());
+        }
+    };
 }
