@@ -15,7 +15,6 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
@@ -27,8 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
-
 
 /**
  * Paging through a collection of users.
@@ -41,7 +38,7 @@ public class UsersPager extends AbstractPager {
     private int length = 0;
     
     // collection for the pager
-    private List<UserWrapper> users;
+    private List<User> users;
     
     // are there more items?
     private boolean more = false;
@@ -121,13 +118,13 @@ public class UsersPager extends AbstractPager {
     }
     
     
-    public List<UserWrapper> getItems() {
+    public List<User> getItems() {
         
         if (users == null) {
             // calculate offset
             int offset = getPage() * length;
             
-            List<UserWrapper> results = new ArrayList<UserWrapper>();
+            List<User> results = new ArrayList<>();
             try {
                 List<User> rawUsers;
                 if (letter == null) {
@@ -140,7 +137,7 @@ public class UsersPager extends AbstractPager {
                 int count = 0;
                 for (User user : rawUsers) {
                     if (count++ < length) {
-                        results.add(UserWrapper.wrap(user));
+                        results.add(user.templateCopy());
                     } else {
                         more = true;
                     }

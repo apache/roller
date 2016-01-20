@@ -1,5 +1,5 @@
 ## $model here is a PageModel
-## $entry here is a WeblogEntryWrapper
+## $entry here is a WeblogEntry
 <!-- _day -->
 <div class="dayBox">
 

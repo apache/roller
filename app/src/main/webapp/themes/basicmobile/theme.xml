@@ -15,7 +15,7 @@
     <!-- templates -->
     <template action="stylesheet">
         <name>basic-custom.css</name>
-        <description>Stylesheet for Basic theme</description>
+        <description>Stylesheet for Basic Mobile theme</description>
         <navbar>false</navbar>
         <hidden>false</hidden>
         <link>basic-custom.css</link>

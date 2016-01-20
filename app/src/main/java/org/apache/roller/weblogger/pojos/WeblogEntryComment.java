@@ -23,9 +23,14 @@ package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -301,5 +306,44 @@ public class WeblogEntryComment implements Serializable {
             .append(getWeblogEntry())
             .toHashCode();
     }
-    
+
+    /**
+     * A read-only copy for usage within templates, with fields limited
+     * to just those we wish to provide to those templates.
+     */
+    public WeblogEntryComment templateCopy() {
+        WeblogEntryComment copy = new WeblogEntryComment();
+        copy.setId(null);
+        copy.setName(name);
+        copy.setWeblogEntry(weblogEntry.templateCopy());
+        copy.setEmail(email);
+        copy.setUrl(url);
+        copy.setContent(processContent());
+        copy.setContentType(contentType);
+        copy.setPostTime(postTime);
+        copy.setStatus(status);
+        copy.setNotify(notify);
+        copy.setRemoteHost(remoteHost);
+        copy.setReferrer(StringEscapeUtils.escapeHtml4(referrer));
+        copy.setUserAgent(userAgent);
+        return copy;
+    }
+
+    public String processContent() {
+        // escape content (e.g., " -> &quot;) if content-type is text/plain
+        // html content has to remain as-is so the HTML subset plugin can render it.
+        if ("text/plain".equals(contentType)) {
+            content = StringEscapeUtils.escapeHtml4(content);
+        }
+
+        // apply plugins
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        content = mgr.applyCommentPlugins(this, content);
+
+        // always add rel=nofollow for links
+        content = Utilities.addNofollow(content);
+
+        return content;
+    }
+
 }

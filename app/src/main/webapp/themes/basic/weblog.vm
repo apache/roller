@@ -6,7 +6,7 @@
     <title>$model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
-    <link rel="stylesheet" href="$model.weblog.stylesheet">
+    <link rel="stylesheet" href="$model.stylesheet">
     #showMetaDescription()
 </head>
 <!-- weblog -->

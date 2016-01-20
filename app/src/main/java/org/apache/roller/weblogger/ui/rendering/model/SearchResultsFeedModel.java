@@ -44,8 +44,6 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsFeedPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
@@ -69,7 +67,7 @@ public class SearchResultsFeedModel implements Model {
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsFeedPager pager = null;
 
-	private List<WeblogEntryWrapper> results = new LinkedList<>();
+	private List<WeblogEntry> results = new LinkedList<>();
 
 	private Set categories = new TreeSet();
 
@@ -220,7 +218,7 @@ public class SearchResultsFeedModel implements Model {
 				// or entry's user is not the requested user.
 				// but don't return future posts
 				if (entry != null && entry.getPubTime().before(now)) {
-					results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
+					results.add(entry.templateCopy());
 				}
 			}
 
@@ -235,8 +233,8 @@ public class SearchResultsFeedModel implements Model {
 	/**
 	 * Get weblog being displayed.
 	 */
-	public WeblogWrapper getWeblog() {
-		return WeblogWrapper.wrap(weblog, urlStrategy);
+	public Weblog getWeblog() {
+		return weblog.templateCopy();
 	}
 
 	public String getTerm() {

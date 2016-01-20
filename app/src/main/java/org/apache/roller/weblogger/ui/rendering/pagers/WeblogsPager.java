@@ -29,8 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
-
 
 /**
  * Paging through a collection of weblogs.
@@ -44,7 +42,7 @@ public class WeblogsPager extends AbstractPager {
     private int length = 0;
     
     // collection for the pager
-    private List<WeblogWrapper> weblogs;
+    private List<Weblog> weblogs;
     
     // are there more items?
     private boolean more = false;
@@ -125,13 +123,13 @@ public class WeblogsPager extends AbstractPager {
     }
     
     
-    public List<WeblogWrapper> getItems() {
+    public List<Weblog> getItems() {
         
         if (weblogs == null) {
             // calculate offset
             int offset = getPage() * length;
             
-            List<WeblogWrapper> results = new ArrayList<WeblogWrapper>();
+            List<Weblog> results = new ArrayList<Weblog>();
             Date startDate = null;
             if (sinceDays != -1) {
                 Calendar cal = Calendar.getInstance();
@@ -149,9 +147,9 @@ public class WeblogsPager extends AbstractPager {
                 
                 // wrap the results
                 int count = 0;
-                for (Weblog website : rawWeblogs) {
+                for (Weblog weblog : rawWeblogs) {
                     if (count++ < length) {
-                        results.add(WeblogWrapper.wrap(website, urlStrategy));
+                        results.add(weblog.templateCopy());
                     } else {
                         more = true;
                     }

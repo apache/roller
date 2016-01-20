@@ -33,7 +33,6 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.util.Utilities;
 
 public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
@@ -45,7 +44,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     WeblogEntry prevEntry = null;
     
     // collection for the pager
-    Map<Date, List<WeblogEntryWrapper>> entries = null;
+    Map<Date, List<WeblogEntry>> entries = null;
 
     public WeblogEntriesPermalinkPager(
             WeblogEntryManager weblogEntryManager,
@@ -69,7 +68,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
                 currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
                 if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     entries = new TreeMap<>();
-                    entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
+                    entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(currEntry.templateCopy()));
                 }
             } catch (Exception e) {
                 log.error("ERROR: fetching entry");

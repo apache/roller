@@ -20,8 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.util;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
-
 
 /**
  * A simple class to represent the comment form displayed on a weblog entry
@@ -62,9 +60,8 @@ public class WeblogEntryCommentForm {
         this.message = errorMessage;
     }
     
-    public WeblogEntryCommentWrapper getPreviewComment() {
-        // NOTE: no need for url strategy when wrapping preview comment
-        return WeblogEntryCommentWrapper.wrap(previewComment, null);
+    public WeblogEntryComment getPreviewComment() {
+        return previewComment.templateCopy();
     }
     
     public boolean isPreview() {

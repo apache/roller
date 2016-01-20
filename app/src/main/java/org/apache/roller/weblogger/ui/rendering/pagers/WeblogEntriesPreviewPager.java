@@ -32,8 +32,6 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-
 
 /**
  * A special pager for showing entries in preview mode.
@@ -78,7 +76,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
 
                     // store the entry in the collection
                     entries = new TreeMap<>();
-                    entries.put(tmpEntry.getPubTime(),Collections.singletonList(WeblogEntryWrapper.wrap(tmpEntry, urlStrategy)));
+                    entries.put(tmpEntry.getPubTime(),Collections.singletonList(tmpEntry.templateCopy()));
                 }
             } catch (Exception e) {
                 log.error("ERROR: fetching entry", e);

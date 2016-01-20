@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesListPager;
@@ -90,8 +89,8 @@ public class FeedModel implements Model {
     /**
      * Get weblog being displayed.
      */
-    public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog, urlStrategy);
+    public Weblog getWeblog() {
+        return weblog.templateCopy();
     }
     
     

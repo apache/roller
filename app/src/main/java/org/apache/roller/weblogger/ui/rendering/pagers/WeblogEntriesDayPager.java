@@ -40,7 +40,6 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.business.URLStrategy;
 
 
@@ -58,7 +57,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     private Date prevDay;
     
     // collection for the pager
-    private Map<Date, List<WeblogEntryWrapper>> entries = null;
+    private Map<Date, List<WeblogEntry>> entries = null;
 
     // are there more pages?
     private boolean more = false;
@@ -113,7 +112,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     }
     
     
-    public Map<Date, List<WeblogEntryWrapper>> getEntries() {
+    public Map<Date, List<WeblogEntry>> getEntries() {
         Date date = parseDate(dateString);
         Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance());
         cal.setTime(date);
@@ -138,11 +137,11 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                 int count = 0;
                 for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {
                     // now we need to go through each entry in a day and wrap
-                    List<WeblogEntryWrapper> wrapped = new ArrayList<>();
+                    List<WeblogEntry> wrapped = new ArrayList<>();
                     List<WeblogEntry> unwrapped = entry.getValue();
                     for (int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,WeblogEntryWrapper.wrap(unwrapped.get(i), urlStrategy));
+                            wrapped.add(i, unwrapped.get(i).templateCopy());
                         } else {
                             more = true;
                         }
