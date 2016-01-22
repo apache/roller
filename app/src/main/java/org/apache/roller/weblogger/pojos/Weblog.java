@@ -364,7 +364,6 @@ public class Weblog implements Serializable {
      * Set bean properties based on other bean.
      */
     public void setData(Weblog other) {
-        
         this.setId(other.getId());
         this.setName(other.getName());
         this.setHandle(other.getHandle());
@@ -384,6 +383,8 @@ public class Weblog implements Serializable {
         this.setActive(other.isActive());
         this.setLastModified(other.getLastModified());
         this.setWeblogCategories(other.getWeblogCategories());
+        this.setAnalyticsCode(other.getAnalyticsCode());
+        this.setIconPath(other.getIconPath());
     }
     
     
@@ -844,18 +845,9 @@ public class Weblog implements Serializable {
      */
     public Weblog templateCopy() {
         Weblog copy = new Weblog();
+        copy.setData(this);
         copy.setId(null);
-        copy.setName(name);
-        copy.setHandle(handle);
-        copy.setTagline(tagline);
-        copy.setAnalyticsCode(analyticsCode);
-        copy.setIconPath(iconPath);
         copy.setAbout(HTMLSanitizer.conditionallySanitize(about));
-        copy.setLocale(locale);
-        copy.setTimeZone(timeZone);
-        copy.setDateCreated(dateCreated);
-        copy.setLastModified(lastModified);
-        copy.setEditorTheme(editorTheme);
         return copy;
     }
 

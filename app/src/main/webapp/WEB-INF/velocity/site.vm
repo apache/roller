@@ -19,7 +19,7 @@
 #** macros for use with SitePageModel
 
    Contents
-      #showEnriesPager($pager)
+      #showEntriesPager($pager)
       #showWeblogProfile($weblog)
       #showWeblogDirectory()
       #showUserProfile($user)

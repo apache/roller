@@ -27,6 +27,8 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -79,7 +81,9 @@ import javax.persistence.Transient;
 public class WeblogEntryComment implements Serializable {
     
     public static final long serialVersionUID = -6668122596726478462L;
-    
+
+    private static Log log = LogFactory.getLog(WeblogEntryComment.class);
+
     // approval status states
     public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
 
@@ -100,6 +104,7 @@ public class WeblogEntryComment implements Serializable {
 
     // associations
     private WeblogEntry weblogEntry = null;
+    private WeblogEntry wrappedWeblogEntry = null;
 
     public WeblogEntryComment() {}
 
@@ -315,7 +320,7 @@ public class WeblogEntryComment implements Serializable {
         WeblogEntryComment copy = new WeblogEntryComment();
         copy.setId(null);
         copy.setName(name);
-        copy.setWeblogEntry(weblogEntry.templateCopy());
+        copy.setWeblogEntry(getWrappedWeblogEntry());
         copy.setEmail(email);
         copy.setUrl(url);
         copy.setContent(processContent());
@@ -327,6 +332,17 @@ public class WeblogEntryComment implements Serializable {
         copy.setReferrer(StringEscapeUtils.escapeHtml4(referrer));
         copy.setUserAgent(userAgent);
         return copy;
+    }
+
+    @Transient
+    public WeblogEntry getWrappedWeblogEntry() {
+        if (wrappedWeblogEntry == null) {
+            wrappedWeblogEntry = weblogEntry.templateCopy();
+            log.info("Weblog Entry: miss on " + weblogEntry.getTitle());
+        } else {
+            log.info("Weblog Entry: hit on " + weblogEntry.getTitle());
+        }
+        return wrappedWeblogEntry;
     }
 
     public String processContent() {

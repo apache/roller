@@ -217,15 +217,6 @@ public class Templates extends UIAction {
 
 	}
 
-	/**
-	 * Checks if is custom theme.
-	 * 
-	 * @return true, if is custom theme
-	 */
-	public boolean isCustomTheme() {
-		return true;
-	}
-
 	public List<WeblogTemplate> getTemplates() {
 		return templates;
 	}

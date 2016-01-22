@@ -122,7 +122,6 @@ public class PlanetManagerLocalTest extends WebloggerTest {
     }
     
     @Test
-    @Ignore("Will research soon")
     public void testRefreshEntries() {
         try {      
             // run sync task to fill aggregator with websites created by super

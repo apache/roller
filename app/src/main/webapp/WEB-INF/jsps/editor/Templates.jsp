@@ -55,7 +55,7 @@
         </s:else>
 
             <td style="vertical-align:middle">
-                <s:if test="! #p.hidden">
+                <s:if test="!#p.hidden">
                     <img src='<s:url value="/images/page_white.png"/>' border="0" alt="icon" />
                 </s:if>
                 <s:else>
@@ -73,25 +73,14 @@
             <td style="vertical-align:middle"><s:property value="#p.description" /></td>
 
             <td class="center" style="vertical-align:middle">
-                 <s:if test="(!#p.required && #p.action.readableName != 'Stylesheet') || !customTheme" >
-                     <s:url var="removeUrl" action="templateRemove">
-                         <s:param name="weblog" value="actionWeblog.handle"/>
-                         <s:param name="removeId" value="#p.id"/>
-                     </s:url>
-                     <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' /></s:a>
-                 </s:if>
-                 <s:else>
-                    <img src='<s:url value="/images/lock.png"/>' border="0" alt="icon" 
-                        title='<s:text name="pagesForm.required"/>' />
-                 </s:else>
+                 <s:url var="removeUrl" action="templateRemove">
+                     <s:param name="weblog" value="actionWeblog.handle"/>
+                     <s:param name="removeId" value="#p.id"/>
+                 </s:url>
+                 <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' /></s:a>
             </td>
             <td class="center" style="vertical-align:middle">
-                <s:if test="!#p.required || !customTheme" >
-                    <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" />
-                </s:if>
-                 <s:else>
-                    <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" disabled="disabled"/>
-                 </s:else>
+                <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" />
             </td>
         </tr>
     </s:iterator>
