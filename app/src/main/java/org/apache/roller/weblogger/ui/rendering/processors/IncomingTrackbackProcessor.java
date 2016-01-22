@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidati
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogTrackbackRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +89,13 @@ public class IncomingTrackbackProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
     }
 
     @Resource(name="trackbackValidatorList")
@@ -213,7 +220,7 @@ public class IncomingTrackbackProcessor {
                     }
 
                     // Send email notifications
-                    MailUtil.sendEmailNotification(comment, messages,
+                    mailManager.sendEmailNotification(comment, messages,
                             I18nMessages.getMessages(trackbackRequest.getLocaleInstance()),
                             validationScore == WebloggerCommon.PERCENT_100);
 

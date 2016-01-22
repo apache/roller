@@ -21,8 +21,6 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -755,30 +753,6 @@ public class WeblogEntry implements Serializable {
     @Transient
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), getAnchor(), true);
-    }
-    
-    /**
-     * Returns entry permalink, relative to Roller context.
-     * @deprecated Use getPermalink() instead.
-     */
-    @Transient
-    public String getPermaLink() {
-        String lAnchor = this.getAnchor();        
-        try {
-            lAnchor = URLEncoder.encode(getAnchor(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // go with the "no encoding" version
-        }        
-        return "/" + getWeblog().getHandle() + "/entry/" + lAnchor;
-    }
-    
-    /**
-     * Get relative URL to comments page.
-     * @deprecated Use commentLink() instead
-     */
-    @Transient
-    public String getCommentsLink() {
-        return getPermaLink() + "#comments";
     }
     
     /**

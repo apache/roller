@@ -112,7 +112,7 @@
         <s:if test="actionName == 'entryEdit'">
             <tr>
                 <td class="entryEditFormLabel">
-                    <label for="permalink"><s:text name="weblogEdit.permaLink" /></label>
+                    <label for="permalink"><s:text name="weblogEdit.permalink" /></label>
                 </td>
                 <td>
                     <s:if test="bean.published">

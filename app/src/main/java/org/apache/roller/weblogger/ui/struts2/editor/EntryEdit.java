@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.MediacastException;
 import org.apache.roller.weblogger.util.MediacastResource;
 import org.apache.roller.weblogger.util.MediacastUtil;
@@ -96,6 +96,12 @@ public final class EntryEdit extends UIAction {
 
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
+    }
+
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
     }
 
     private IndexManager indexManager;
@@ -389,8 +395,8 @@ public final class EntryEdit extends UIAction {
                 // notify caches
                 cacheManager.invalidate(weblogEntry);
 
-                if (weblogEntry.isPending() && MailUtil.isMailConfigured()) {
-                    MailUtil.sendPendingEntryNotice(weblogEntry);
+                if (weblogEntry.isPending() && mailManager.isMailConfigured()) {
+                    mailManager.sendPendingEntryNotice(weblogEntry);
                 }
                 if ("entryEdit".equals(actionName)) {
                     addStatusMessage(getEntry().getStatus());

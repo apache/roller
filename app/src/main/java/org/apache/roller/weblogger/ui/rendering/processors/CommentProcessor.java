@@ -54,7 +54,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogCommentRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.util.GenericThrottle;
 import org.apache.roller.weblogger.util.IPBanList;
-import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
@@ -129,6 +129,13 @@ public class CommentProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
     }
 
     @Resource(name="commentValidatorList")
@@ -354,7 +361,7 @@ public class CommentProcessor {
                     // Send email notifications only to subscribers if comment
                     // is 100% valid
                     boolean notifySubscribers = (validationScore == WebloggerCommon.PERCENT_100);
-                    MailUtil.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
+                    mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
 
                     // only re-index/invalidate the cache if comment isn't
                     // moderated

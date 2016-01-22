@@ -42,7 +42,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -65,6 +65,12 @@ public class Register extends UIAction implements ServletRequestAware {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
     }
 
     // this is a no-no, we should not need this
@@ -221,7 +227,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 if (activationEnabled && ud.getActivationCode() != null) {
                     try {
                         // send activation mail to the user
-                        MailUtil.sendUserActivationEmail(ud);
+                        mailManager.sendUserActivationEmail(ud);
                     } catch (WebloggerException ex) {
                         log.error("Error sending activation email to - " + ud.getEmailAddress(), ex);
                     }

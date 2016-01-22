@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -85,6 +85,12 @@ public class Comments extends UIAction {
 
     public void setIndexManager(IndexManager indexManager) {
         this.indexManager = indexManager;
+    }
+
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
     }
 
     @Autowired
@@ -384,10 +390,10 @@ public class Comments extends UIAction {
                 cacheManager.invalidate(getActionWeblog());
 
                 // if required, send notification for all comments changed
-                if (MailUtil.isMailConfigured()) {
+                if (mailManager.isMailConfigured()) {
                     I18nMessages resources = I18nMessages
                             .getMessages(getActionWeblog().getLocaleInstance());
-                    MailUtil.sendEmailApprovalNotifications(approvedComments,
+                    mailManager.sendEmailApprovalNotifications(approvedComments,
                             resources);
                 }
             }
