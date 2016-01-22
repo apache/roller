@@ -47,7 +47,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -97,6 +96,7 @@ import javax.persistence.Transient;
                 query="UPDATE WeblogEntry e SET e.allowComments = ?1, e.commentDays = ?2 WHERE e.weblog = ?3")
 })
 public class WeblogEntry implements Serializable {
+
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WeblogEntry.class);
     
@@ -135,7 +135,9 @@ public class WeblogEntry implements Serializable {
 
     // Associated objects
     private Weblog weblog;
+    private Weblog wrappedWeblog;
     private WeblogCategory category;
+    private WeblogCategory wrappedCategory;
     
     private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
     private Set<WeblogEntryTag> removedTags = new HashSet<WeblogEntryTag>();
@@ -202,6 +204,10 @@ public class WeblogEntry implements Serializable {
         this.setCommentDays(other.getCommentDays());
         this.setRightToLeft(other.getRightToLeft());
         this.setPinnedToMain(other.getPinnedToMain());
+        this.setEnclosureUrl(other.getEnclosureUrl());
+        this.setEnclosureType(other.getEnclosureType());
+        this.setEnclosureLength(other.getEnclosureLength());
+        this.setTags(other.getTags());
     }
     
     //------------------------------------------------------- Good citizenship
@@ -270,7 +276,7 @@ public class WeblogEntry implements Serializable {
      */
     @Transient
     public List<WeblogCategory> getCategories() {
-        List<WeblogCategory> cats = new ArrayList<WeblogCategory>();
+        List<WeblogCategory> cats = new ArrayList<>();
         cats.add(getCategory());
         return cats;
     }
@@ -1065,28 +1071,34 @@ public class WeblogEntry implements Serializable {
      */
     public WeblogEntry templateCopy() {
         WeblogEntry copy = new WeblogEntry();
+        copy.setData(this);
         copy.setId(null);
-        copy.setCategory(category.templateCopy());
-        copy.setCreatorUserName(creatorUserName);
-        copy.setWeblog(weblog.templateCopy());
-        copy.setTitle(title);
-        copy.setSummary(summary);
-        copy.setText(text);
-        copy.setEnclosureUrl(enclosureUrl);
-        copy.setEnclosureType(enclosureType);
-        copy.setEnclosureLength(enclosureLength);
-        copy.setAnchor(anchor);
-        copy.setPubTime(pubTime);
-        copy.setUpdateTime(updateTime);
-        copy.setStatus(status);
-        copy.setPlugins(plugins);
-        copy.setAllowComments(allowComments);
-        copy.setCommentDays(commentDays);
-        copy.setRightToLeft(rightToLeft);
-        copy.setPinnedToMain(pinnedToMain);
-        copy.setTags(tagSet);
+        copy.setCategory(getWrappedCategory());
+        copy.setWeblog(getWrappedWeblog());
         copy.setSearchDescription(HTMLSanitizer.conditionallySanitize(searchDescription));
         return copy;
+    }
+
+    @Transient
+    public Weblog getWrappedWeblog() {
+        if (wrappedWeblog == null) {
+            wrappedWeblog = weblog.templateCopy();
+            mLogger.info("Weblog: miss on " + weblog.getHandle());
+        } else {
+            mLogger.info("Weblog: hit on " + weblog.getHandle());
+        }
+        return wrappedWeblog;
+    }
+
+    @Transient
+    public WeblogCategory getWrappedCategory() {
+        if (wrappedCategory == null) {
+            wrappedCategory = category.templateCopy();
+            mLogger.info("Weblog Category: miss on " + weblog.getHandle());
+        } else {
+            mLogger.info("Weblog Category: hit on " + weblog.getHandle());
+        }
+        return wrappedCategory;
     }
 
     public static java.util.Comparator<WeblogEntry> Comparator = new Comparator<WeblogEntry>() {

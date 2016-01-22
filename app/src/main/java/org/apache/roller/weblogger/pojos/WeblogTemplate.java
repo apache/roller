@@ -94,7 +94,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private Weblog weblog = null;
 
     static {
-        requiredTemplates = new HashSet<String>();
+        requiredTemplates = new HashSet<>();
         requiredTemplates.add("Weblog");
         requiredTemplates.add("_day");
     }
