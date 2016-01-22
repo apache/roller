@@ -105,6 +105,12 @@
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
 
+    <beans:bean id="mailManager" class="org.apache.roller.weblogger.business.MailManager">
+        <beans:constructor-arg ref="userManager"/>
+        <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg ref="urlStrategy"/>
+    </beans:bean>
+
     <!-- page models -->
     <beans:bean id="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>

@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.business.MailManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,6 +59,12 @@ public class MembersInvite extends UIAction {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
     }
 
     // user being invited
@@ -149,9 +155,9 @@ public class MembersInvite extends UIAction {
 
                 addMessage("inviteMember.userInvited");
 
-                if (MailUtil.isMailConfigured()) {
+                if (mailManager.isMailConfigured()) {
                     try {
-                        MailUtil.sendWeblogInvitation(getActionWeblog(), user);
+                        mailManager.sendWeblogInvitation(getActionWeblog(), user);
                     } catch (WebloggerException e) {
                         // TODO: this should be an error except that struts2 misbehaves
                         // when we chain this action to the next one thinking that an error

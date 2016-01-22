@@ -139,7 +139,7 @@ Show weblog profile for specified weblog
             <tr>
                 <td>$entry.creator.userName</td>
                 <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
-                <td><a href="$utils.escapeHTML($entry.permaLink)">
+                <td><a href="$utils.escapeHTML($entry.permalink)">
                     $utils.removeHTML($entry.title)</a></td>
             </tr>
         #end
@@ -294,7 +294,7 @@ Show user profile of specified user.
             <tr>
                 <td><a href="$entry.website.url">$entry.website.handle</a></td>
                 <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
-                <td><a href="$utils.textToHTML($entry.permaLink)">
+                <td><a href="$utils.textToHTML($entry.permalink)">
                     $utils.removeHTML($entry.title)</a></td>
             </tr>
         #end
@@ -400,7 +400,7 @@ Show pager and next/prev control for a collection of comments
     #foreach($comment in $commentsPager.items)
             <div class="entry">
                 <span class="entryDetails">
-                    <a href="${baseURL}$utils.escapeHTML($comment.weblogEntry.permaLink)">
+                    <a href="${baseURL}$utils.escapeHTML($comment.weblogEntry.permalink)">
                         <b>Re: $utils.removeHTML($comment.weblogEntry.title)</b></a><br /> 
                     Posted on <a href="$baseURL/$comment.weblogEntry.website.handle">
                         $utils.removeHTML($comment.weblogEntry.website.name)</a> 
