@@ -109,12 +109,11 @@ public class SearchProcessor {
         try {
 
             // try looking for a specific search page
-            page = weblog.getTheme().getTemplateByAction(
-                    ThemeTemplate.ComponentType.SEARCH);
+            page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.SEARCH);
 
             // if not found then fall back on default page
             if (page == null) {
-                page = weblog.getTheme().getDefaultTemplate();
+                page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG);
             }
 
             // if still null then that's a problem

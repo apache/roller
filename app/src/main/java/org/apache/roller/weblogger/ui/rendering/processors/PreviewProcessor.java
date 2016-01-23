@@ -108,7 +108,7 @@ public class PreviewProcessor {
             // in request, which indicates we're doing a theme preview
 
             // try getting the preview theme
-            log.debug("preview theme = "+previewRequest.getThemeName());
+            log.debug("preview theme = " + previewRequest.getThemeName());
             Theme previewTheme = previewRequest.getTheme();
 
             // construct a temporary Website object for this request
@@ -117,11 +117,13 @@ public class PreviewProcessor {
             tmpWebsite.setData(weblog);
             if (previewTheme != null && previewTheme.isEnabled()) {
                 tmpWebsite.setEditorTheme(previewTheme.getId());
+                tmpWebsite.setTempPreviewWeblog(true);
             }
 
             // we've got to set the weblog in our previewRequest because that's
             // the object that gets referenced during rendering operations
             previewRequest.setWeblog(tmpWebsite);
+            weblog = tmpWebsite;
         }
 
         Template page = null;
@@ -158,7 +160,7 @@ public class PreviewProcessor {
 
         if(page == null) {
             try {
-                page = tmpWebsite.getTheme().getDefaultTemplate();
+                page = weblog.getTheme().getTemplateByAction(ComponentType.WEBLOG);
             } catch(WebloggerException re) {
                 log.error("Error getting default page for preview", re);
             }

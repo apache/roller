@@ -124,7 +124,7 @@ public class ThemeEdit extends UIAction {
 
     public String execute() {
         // set theme to current value
-        setThemeId(getActionWeblog().getTheme().getId());
+        setThemeId(getActionWeblog().getEditorTheme());
         setSelectedThemeId(getThemeId());
         return INPUT;
     }

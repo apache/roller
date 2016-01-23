@@ -241,13 +241,12 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogSearchURL(weblog, query, catName, pageNum, true);
     }        
     
-    public String page(String pageLink) {
-        return urlStrategy.getWeblogPageURL(weblog, pageLink, null, null, null, null, -1, true);
+    public String page(String theme, String pageLink) {
+        return urlStrategy.getWeblogPageURL(weblog, theme, pageLink, null, null, null, null, -1, true);
     }
-    
-    
+
     public String page(String pageLink, String dateString, String catName, int pageNum) {
-        return urlStrategy.getWeblogPageURL(weblog, pageLink, null, catName, dateString, null, pageNum, true);
+        return urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, catName, dateString, null, pageNum, true);
     }
     
     

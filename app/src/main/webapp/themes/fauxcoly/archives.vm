@@ -62,7 +62,7 @@
         margin: 0 0 0 0;
     }
     </style>
-    <link rel="stylesheet" href='$url.page("custom.css")' />
+    <link rel="stylesheet" href='$url.page("fauxcoly", "custom.css")' />
 </head>
 <body>
 

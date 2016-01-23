@@ -28,12 +28,14 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.Theme;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
- * Represents a request for a weblog preview.
+ * Represents a request for a weblog preview, either that of testing a new
+ * theme or previewing an unpublished blog entry.
  */
 public class WeblogPreviewRequest extends WeblogPageRequest {
     
@@ -42,6 +44,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     private static final String PREVIEW_SERVLET = "/roller-ui/authoring/preview";
     
     // lightweight attributes
+    // theme name provided only for theme (not blog entry) previews.
     private String themeName = null;
     private String previewEntry = null;
     private String type = "standard";

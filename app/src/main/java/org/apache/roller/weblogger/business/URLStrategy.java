@@ -117,7 +117,7 @@ public interface URLStrategy {
     /**
      * Get url for a custom page on a given weblog.
      */
-    String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
+    String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
                             String dateString, List tags, int pageNum, boolean absolute);
 
     /**

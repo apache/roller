@@ -132,7 +132,7 @@ public class SiteModel implements Model {
                     feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
                     feedRequest.getTags(), feedRequest.isExcerpts(), true);
         } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, pageLink,
+            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,pageLink,
                 null, null, null, tags, 0, false);
         }
         
@@ -187,7 +187,7 @@ public class SiteModel implements Model {
                     feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
                     feedRequest.getTags(), feedRequest.isExcerpts(), true);
         } else {
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
+            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
                 pageLink,
                 null, null, null, tags, 0, false);
         }
@@ -217,7 +217,7 @@ public class SiteModel implements Model {
                     feedRequest.getFormat(), null, null, null,
                     feedRequest.isExcerpts(), true);
         } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
+            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
                 pageLink,
                 null, null, null, null, 0, false);
         }
@@ -242,7 +242,7 @@ public class SiteModel implements Model {
                     feedRequest.getType(),
                     feedRequest.getFormat(), null, null, null, feedRequest.isExcerpts(), true);
         } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
+            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
                 pageLink,
                 null, null, null, null, 0, false);
         }        
@@ -264,7 +264,7 @@ public class SiteModel implements Model {
     /** Get pager of weblogs whose handles begin with specified letter */
     public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
                 pageLink,
                 null, null, null, null, 0, false);
         

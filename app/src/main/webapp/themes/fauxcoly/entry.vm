@@ -142,7 +142,7 @@
 	   width:40em;
 	}
     </style>
-    <link rel="stylesheet" href='$url.page("custom.css")' />
+    <link rel="stylesheet" href='$url.page("fauxcoly", "custom.css")' />
     #showMetaDescription()
     #showAnalyticsTrackingCode($model.weblog)
 </head>
