@@ -14,7 +14,7 @@
         searchhi_config = {ignore_site : '$url.absoluteSite'};
     //]]>
     </script>
-    <script type="application/x-javascript" src="$url.page('searchhi.js')"></script>
+    <script type="application/x-javascript" src="$url.page("fauxcoly", 'searchhi.js')"></script>
     <script>
     //<![CDATA[
     function loadSearchHighlight() {
@@ -23,7 +23,7 @@
     //]]>
     </script>
     #end
-    <link rel="stylesheet" href='$url.page("custom.css")' />
+    <link rel="stylesheet" href='$url.page("fauxcoly", "custom.css")' />
 </head>
 <body onload="loadSearchHighlight()">
 

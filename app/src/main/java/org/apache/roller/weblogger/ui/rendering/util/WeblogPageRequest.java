@@ -56,7 +56,7 @@ public class WeblogPageRequest extends WeblogRequest {
     // lightweight attributes
     private String context = null;
     private String weblogAnchor = null;
-    private String weblogPageName = null;
+    protected String weblogPageName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
     private List<String> tags = null;
@@ -65,7 +65,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
-    private ThemeTemplate weblogPage = null;
+    protected ThemeTemplate weblogPage = null;
     private WeblogCategory weblogCategory = null;
 
     // Page hits
@@ -363,8 +363,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
         if (weblogPage == null && weblogPageName != null) {
             try {
-                weblogPage = getWeblog().getTheme().getTemplateByLink(
-                        weblogPageName);
+                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog page " + weblogPageName, ex);
             }

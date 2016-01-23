@@ -150,7 +150,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         try {
             if (nextPrevMonthURL && pageLink != null) { 
                 // next/prev month URLs point to current page
-                url = urlStrategy.getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
+                url = urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, cat, dateString, null, -1, false);
             } else { 
                 // all other URLs point back to main weblog page
                 url = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);

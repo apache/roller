@@ -48,28 +48,24 @@ public class WeblogTheme {
 
     protected WeblogManager weblogManager;
     protected Weblog weblog = null;
-    private SharedTheme theme = null;
+    private SharedTheme sharedTheme = null;
 
-    public WeblogTheme(WeblogManager manager, Weblog weblog, SharedTheme theme) {
+    public WeblogTheme(WeblogManager manager, Weblog weblog, SharedTheme sharedTheme) {
         this.weblogManager = manager;
         this.weblog = weblog;
-        this.theme = theme;
-    }
-
-    public Weblog getWeblog() {
-        return this.weblog;
+        this.sharedTheme = sharedTheme;
     }
 
     public String getId() {
-        return this.theme.getId();
+        return this.sharedTheme.getId();
     }
 
     public String getName() {
-        return this.theme.getName();
+        return this.sharedTheme.getName();
     }
 
     public String getDescription() {
-        return this.theme.getDescription();
+        return this.sharedTheme.getDescription();
     }
 
     public String getAuthor() {
@@ -77,15 +73,15 @@ public class WeblogTheme {
     }
 
     public Date getLastModified() {
-        return this.theme.getLastModified();
+        return this.sharedTheme.getLastModified();
     }
 
     public boolean isEnabled() {
-        return this.theme.isEnabled();
+        return this.sharedTheme.isEnabled();
     }
 
     public int compareTo(Theme other) {
-        return theme.compareTo(other);
+        return sharedTheme.compareTo(other);
     }
 
     /**
@@ -96,7 +92,7 @@ public class WeblogTheme {
 
         // first get shared theme pages (non-db)
         try {
-            for (ThemeTemplate template : this.theme.getTemplates()) {
+            for (ThemeTemplate template : this.sharedTheme.getTemplates()) {
                 // note that this will put theme pages over custom
                 // pages in the pages list, which is what we want
                 pages.put(template.getName(), template);
@@ -106,49 +102,36 @@ public class WeblogTheme {
             log.error(e);
         }
 
-        // now get templates from the database
-        try {
-            for (ThemeTemplate template : weblogManager.getTemplates(this.weblog)) {
-                // note that this will replace shared templates with any overrides
-                // from the db, which is what we want
-                pages.put(template.getName(), template);
+        // now get templates from the database (non-preview only)
+        if (!weblog.isTempPreviewWeblog()) {
+            try {
+                for (ThemeTemplate template : weblogManager.getTemplates(this.weblog)) {
+                    // note that this will replace shared templates with any overrides
+                    // from the db, which is what we want
+                    pages.put(template.getName(), template);
+                }
+            } catch (Exception e) {
+                // db error
+                log.error(e);
             }
-        } catch(Exception e) {
-            // db error
-            log.error(e);
         }
 
         return new ArrayList<>(pages.values());
     }
-    
-
-    /**
-     * Lookup the default template.
-     * Returns null if the template cannot be found.
-     */
-    public ThemeTemplate getDefaultTemplate() throws WebloggerException {
-        ThemeTemplate defaultTemplate = weblogManager.getTemplateByAction(this.weblog, ComponentType.WEBLOG);
-        if (defaultTemplate == null) {
-            defaultTemplate = this.theme.getDefaultTemplate();
-        }
-
-        return defaultTemplate;
-    }
-    
     
     /**
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
-        if (action == null) {
-            return null;
-        }
-        ThemeTemplate template = weblogManager.getTemplateByAction(this.weblog, action);
-        if (template == null) {
-            template = theme.getTemplateByAction(action);
-        }
+        ThemeTemplate template = null;
 
+        if (!weblog.isTempPreviewWeblog()) {
+            template = weblogManager.getTemplateByAction(this.weblog, action);
+        }
+        if (template == null) {
+            template = sharedTheme.getTemplateByAction(action);
+        }
         return template;
     }
     
@@ -158,14 +141,14 @@ public class WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
-        if (name == null) {
-            return null;
-        }
-        ThemeTemplate template = weblogManager.getTemplateByName(this.weblog, name);
-        if (template == null) {
-            template = theme.getTemplateByName(name);
-        }
+        ThemeTemplate template = null;
 
+        if (!weblog.isTempPreviewWeblog()) {
+            template = weblogManager.getTemplateByName(this.weblog, name);
+        }
+        if (template == null) {
+            template = sharedTheme.getTemplateByName(name);
+        }
         return template;
     }
     
@@ -175,14 +158,14 @@ public class WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
-        if (link == null) {
-            return null;
-        }
-        ThemeTemplate template = weblogManager.getTemplateByLink(this.weblog, link);
-        if (template == null) {
-            template = theme.getTemplateByLink(link);
-        }
+        ThemeTemplate template = null;
 
+        if (!weblog.isTempPreviewWeblog()) {
+            template = weblogManager.getTemplateByLink(this.weblog, link);
+        }
+        if (template == null) {
+            template = sharedTheme.getTemplateByLink(link);
+        }
         return template;
     }
 

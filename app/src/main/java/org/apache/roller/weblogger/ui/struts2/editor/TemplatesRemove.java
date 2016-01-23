@@ -151,8 +151,7 @@ public class TemplatesRemove extends UIAction {
                             template = weblogManager.getTemplate(id);
 
                             // if weblog template remove custom style sheet
-                            if (template.getName().equals(
-                                    WeblogTemplate.DEFAULT_PAGE)) {
+                            if (template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
 
                                 ThemeTemplate stylesheet = getActionWeblog()
                                         .getTheme().getTemplateByAction(ComponentType.STYLESHEET);

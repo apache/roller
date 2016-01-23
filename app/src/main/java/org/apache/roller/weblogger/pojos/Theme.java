@@ -60,19 +60,11 @@ public interface Theme extends Comparable<Theme> {
      * Is the Theme enable for use?
      */
     boolean isEnabled();
-    
-    
+
     /**
      * Get the list of all templates associated with this Theme.
      */
     List<? extends ThemeTemplate> getTemplates() throws WebloggerException;
-    
-    
-    /**
-     * Lookup the default template for the Theme.
-     */
-    ThemeTemplate getDefaultTemplate() throws WebloggerException;
-    
     
     /**
      * Lookup a template by action.

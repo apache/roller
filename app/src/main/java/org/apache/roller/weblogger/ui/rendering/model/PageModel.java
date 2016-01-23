@@ -59,7 +59,7 @@ public class PageModel implements Model {
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
-    private Weblog weblog = null;
+    protected Weblog weblog = null;
     private DeviceType deviceType = null;
 
     protected boolean isPreview = false;
@@ -150,7 +150,7 @@ public class PageModel implements Model {
     public String getStylesheet() throws WebloggerException {
         ThemeTemplate stylesheet = this.weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.STYLESHEET);
         if(stylesheet != null) {
-            return urlStrategy.getWeblogPageURL(weblog, stylesheet.getLink(), null, null, null, null, 0, false);
+            return urlStrategy.getWeblogPageURL(weblog, null, stylesheet.getLink(), null, null, null, null, 0, false);
         }
         return null;
     }
@@ -197,7 +197,7 @@ public class PageModel implements Model {
             return pageRequest.getWeblogPage().templateCopy();
         } else {
             try {
-                return weblog.getTheme().getDefaultTemplate().templateCopy();
+                return weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG).templateCopy();
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
@@ -216,8 +216,8 @@ public class PageModel implements Model {
         }
         return null;
     }
-    
-    
+
+
     /**
      * Returns the list of tags specified in the request /tags/foo+bar
      */

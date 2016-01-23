@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -79,8 +80,8 @@ public class PreviewPageModel extends PageModel {
         }
         return null;
     }
-    
-    
+
+
     /**
      * Override method that returns pager so that we can introduce a custom
      * pager for preview pages which can display things that we don't want

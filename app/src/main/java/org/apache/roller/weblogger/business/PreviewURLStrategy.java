@@ -113,14 +113,16 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
      * Get url for a custom page on a given weblog.
      */
     @Override
-    public String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
+    public String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
                             String dateString, List tags, int pageNum, boolean absolute) {
 
         String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
 
-        if(previewTheme != null) {
+        if (previewTheme != null) {
             params.put("theme", Utilities.encode(previewTheme));
+        } else if (theme != null) {
+            params.put("theme", Utilities.encode(theme));
         }
         
         if(pageLink != null) {

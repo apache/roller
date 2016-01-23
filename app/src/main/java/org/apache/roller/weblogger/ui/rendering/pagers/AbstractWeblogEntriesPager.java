@@ -238,7 +238,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         int pageNum = page + pageAdd;
         
         if (pageLink != null) {
-            return urlStrategy.getWeblogPageURL(website, pageLink, entryAnchor, catName, dateString, tags, pageNum, false);
+            return urlStrategy.getWeblogPageURL(website, null, pageLink, entryAnchor, catName, dateString, tags, pageNum, false);
         } else if (entryAnchor != null) {
             return urlStrategy.getWeblogEntryURL(website, entryAnchor, true);
         }

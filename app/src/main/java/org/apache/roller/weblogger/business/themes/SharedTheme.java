@@ -163,14 +163,6 @@ public class SharedTheme implements Theme, Serializable {
     }
 
     /**
-     * Looup the default template, action = weblog. Returns null if the template
-     * cannot be found.
-     */
-    public ThemeTemplate getDefaultTemplate() {
-        return this.templatesByAction.get(ComponentType.WEBLOG);
-    }
-
-    /**
      * Lookup the specified template by name. Returns null if the template
      * cannot be found.
      */

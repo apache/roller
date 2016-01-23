@@ -20,7 +20,7 @@
                <td class="menuTabSelected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a href='$url.page("blogs")'>Weblog Directory</a>&nbsp;&nbsp; 
+                        &nbsp;&nbsp;<a href='$url.page("frontpage", "blogs")'>Weblog Directory</a>&nbsp;&nbsp;
                      </div>
                   </div>
                </td>	    

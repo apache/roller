@@ -245,8 +245,7 @@ public class PageProcessor {
         } else if ("tags".equals(pageRequest.getContext())
                 && pageRequest.getTags() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(
-                        ComponentType.TAGSINDEX);
+                page = weblog.getTheme().getTemplateByAction(ComponentType.TAGSINDEX);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
@@ -264,8 +263,7 @@ public class PageProcessor {
             // If this is a permalink then look for a permalink template
         } else if (pageRequest.getWeblogAnchor() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(
-                        ComponentType.PERMALINK);
+                page = weblog.getTheme().getTemplateByAction(ComponentType.PERMALINK);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }
@@ -274,7 +272,7 @@ public class PageProcessor {
         // if we haven't found a page yet then try our default page
         if (page == null) {
             try {
-                page = weblog.getTheme().getDefaultTemplate();
+                page = weblog.getTheme().getTemplateByAction(ComponentType.WEBLOG);
             } catch (Exception e) {
                 log.error(
                         "Error getting default page for weblog = "

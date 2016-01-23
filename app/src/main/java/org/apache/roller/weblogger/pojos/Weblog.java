@@ -112,6 +112,7 @@ public class Weblog implements Serializable {
     private String  analyticsCode    = null;
     private int     hitsToday        = 0;
     private boolean applyCommentDefaults = false;
+    private boolean tempPreviewWeblog = false;
 
     // Associated objects
     private List<WeblogCategory> weblogCategories = new ArrayList<>();
@@ -385,6 +386,7 @@ public class Weblog implements Serializable {
         this.setWeblogCategories(other.getWeblogCategories());
         this.setAnalyticsCode(other.getAnalyticsCode());
         this.setIconPath(other.getIconPath());
+        this.setTempPreviewWeblog(other.isTempPreviewWeblog());
     }
     
     
@@ -837,6 +839,15 @@ public class Weblog implements Serializable {
         return new HashCodeBuilder()
                 .append(getHandle())
                 .toHashCode();
+    }
+
+    @Transient
+    public boolean isTempPreviewWeblog() {
+        return tempPreviewWeblog;
+    }
+
+    public void setTempPreviewWeblog(boolean tempPreviewWeblog) {
+        this.tempPreviewWeblog = tempPreviewWeblog;
     }
 
     /**

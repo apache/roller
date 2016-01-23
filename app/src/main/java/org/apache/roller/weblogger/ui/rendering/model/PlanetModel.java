@@ -98,7 +98,7 @@ public class PlanetModel implements Model {
      */
     public Pager getAggregationPager(int sinceDays, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
                 pageLink,
                 null, null, null, null, 0, false);
         
@@ -121,7 +121,7 @@ public class PlanetModel implements Model {
      */
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
                 pageLink,
                 null, null, null, null, 0, false);
         
@@ -144,7 +144,7 @@ public class PlanetModel implements Model {
      */
     public Pager getFeedPager(String feedURL, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
                 pageLink,
                 null, null, null, null, 0, false);
         
