@@ -71,7 +71,7 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         sub = mgr.getSubscription(feed_url);
         assertNotNull(sub);
         assertEquals(feed_url, sub.getFeedURL());
-        assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
+        assertEquals("https://rollerweblogger.org/roller/", sub.getSiteURL());
         assertEquals("Blogging Roller", sub.getTitle());
         assertNotNull(sub.getLastUpdated());
         assertTrue(sub.getEntries().size() > 0);
