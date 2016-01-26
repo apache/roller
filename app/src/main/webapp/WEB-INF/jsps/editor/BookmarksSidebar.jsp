@@ -22,10 +22,10 @@
         <div class="menu-tl">
             
             <div class="sidebarInner">
-                
+
                 <h3><s:text name="mainPage.actions" /></h3>
                 <hr size="1" noshade="noshade" />
-                
+
                 <p>
                     <%-- Add Bookmark link --%>
                     <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />
@@ -35,7 +35,7 @@
                     </s:url>
                     <s:a href="%{addBookmark}"><s:text name="bookmarksForm.addBookmark" /></s:a>
                 </p>
-                
+
                 <p>
                     <%-- Add Folder link --%>
                     <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
@@ -45,7 +45,7 @@
                     </s:url>
                     <s:a href="%{addFolder}"><s:text name="bookmarksForm.addFolder" /></s:a>
                 </p>
-                
+
                 <%-- Import bookmarks --%>
                 <p>
                     <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />

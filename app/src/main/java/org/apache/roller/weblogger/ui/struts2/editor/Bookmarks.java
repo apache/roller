@@ -67,8 +67,7 @@ public class Bookmarks extends UIAction {
 
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger()
-                    .getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if (!StringUtils.isEmpty(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
             } else {

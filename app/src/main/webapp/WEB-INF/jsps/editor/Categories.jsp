@@ -249,6 +249,7 @@
 </div>
 
 <script>
+
     function showCategoryDeleteModal( id, name, inUse ) {
         $('#categoryRemove_removeId').val(id);
         $('#categoryEdit_bean_name').val(name);
@@ -262,4 +263,5 @@
         }
         $('#delete-category-modal').modal({show: true});
     }
+
 </script>
