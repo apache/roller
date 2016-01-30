@@ -123,7 +123,7 @@ public class WeblogEntry implements Serializable {
     private Boolean rightToLeft = Boolean.FALSE;
     private Boolean pinnedToMain = Boolean.FALSE;
     private PubStatus status;
-    private String creatorUserName;
+    private User creator;
     private String searchDescription;
 
     // set to true when switching between pending/draft/scheduled and published
@@ -165,7 +165,7 @@ public class WeblogEntry implements Serializable {
         this.id = WebloggerCommon.generateUUID();
         this.category = category;
         this.weblog = weblog;
-        this.creatorUserName = creator.getUserName();
+        this.creator = creator;
         this.title = title;
         this.text = text;
         this.anchor = anchor;
@@ -187,7 +187,7 @@ public class WeblogEntry implements Serializable {
         this.setId(other.getId());
         this.setCategory(other.getCategory());
         this.setWeblog(other.getWeblog());
-        this.setCreatorUserName(other.getCreatorUserName());
+        this.setCreator(other.getCreator());
         this.setTitle(other.getTitle());
         this.setText(other.getText());
         this.setSummary(other.getSummary());
@@ -289,23 +289,14 @@ public class WeblogEntry implements Serializable {
         this.weblog = weblog;
     }
 
-    @Transient
+    @ManyToOne
+    @JoinColumn(name="creatorid",nullable=false)
     public User getCreator() {
-        try {
-            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName()).templateCopy();
-        } catch (Exception e) {
-            mLogger.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
-        }
-        return null;
+        return creator;
     }
 
-    @Column(name="creator", nullable=false)
-    public String getCreatorUserName() {
-        return creatorUserName;
-    }
-
-    public void setCreatorUserName(String creatorUserName) {
-        this.creatorUserName = creatorUserName;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     @Basic(optional=false)

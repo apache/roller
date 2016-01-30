@@ -27,8 +27,6 @@ import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -52,9 +50,6 @@ public class MediaFile implements Serializable {
 
     private static final long serialVersionUID = -6704258422169734004L;
 
-    private static Log log = LogFactory.getFactory().getInstance(
-            MediaFile.class);
-
     private String id = WebloggerCommon.generateUUID();
     private String name;
     private String altText;
@@ -69,7 +64,7 @@ public class MediaFile implements Serializable {
     private String contentType;
     private Timestamp dateUploaded = new Timestamp(System.currentTimeMillis());
     private Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
-    private String creatorUserName;
+    private User creator;
 
     private InputStream is;
     private MediaDirectory directory;
@@ -252,13 +247,14 @@ public class MediaFile implements Serializable {
                 .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId(), true);
     }
 
-    @Column(name="creator")
-    public String getCreatorUserName() {
-        return creatorUserName;
+    @ManyToOne
+    @JoinColumn(name="creatorid", nullable=false)
+    public User getCreator() {
+        return creator;
     }
 
-    public void setCreatorUserName(String creatorUserName) {
-        this.creatorUserName = creatorUserName;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public int getWidth() {

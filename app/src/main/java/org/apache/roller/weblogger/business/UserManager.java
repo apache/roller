@@ -183,15 +183,12 @@ public interface UserManager {
     
     
     /**
-     * Grant user specific WeblogRole for a weblog.  Optimized to use unique identifiers
-     * instead of User and Weblog objects, as the latter not always available without an
-     * additional DB call.
-     *
-     * @param userName  Username to grant weblog role to
-     * @param weblogId  Weblog Id being granted access to
+     * Grant user specific WeblogRole for a weblog.
+     * @param user    User to grant weblog role to
+     * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
      */
-    void grantWeblogRole(String userName, String weblogId, WeblogRole role)
+    void grantWeblogRole(User user, Weblog weblog, WeblogRole role)
             throws WebloggerException;
 
     
@@ -226,13 +223,11 @@ public interface UserManager {
 
     
     /**
-     * Revoke from user his WeblogRole for a given weblog.  Optimized to use unique identifiers
-     * instead of User and Weblog objects, as the latter not always available without an
-     * additional DB call.
-     * @param userName  Username to remove WeblogRole from
-     * @param weblogId  Weblog ID to revoke WeblogRole from
+     * Revoke from user his WeblogRole for a given weblog.
+     * @param user  User to remove WeblogRole from
+     * @param weblog  Weblog to revoke WeblogRole from
      */
-    void revokeWeblogRole(String userName, String weblogId)
+    void revokeWeblogRole(User user, Weblog weblog)
             throws WebloggerException;
 
     

@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -45,6 +44,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -108,7 +109,7 @@ public class Weblog implements Serializable {
     private Date    lastModified     = new Date();
     private String  iconPath         = null;
     private String  about            = null;
-    private String  creator          = null;
+    private User    creator          = null;
     private String  analyticsCode    = null;
     private int     hitsToday        = 0;
     private boolean applyCommentDefaults = false;
@@ -126,7 +127,7 @@ public class Weblog implements Serializable {
     
     public Weblog(
             String handle,
-            String creator,
+            User creator,
             String name,
             String desc,
             String email,
@@ -214,28 +215,15 @@ public class Weblog implements Serializable {
     public void setTagline(String tagline) {
         this.tagline = tagline;
     }
-    
-    /**
-     * Original creator of website.
-     */
-    @Transient
-    public org.apache.roller.weblogger.pojos.User getCreator() {
-        try {
-            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(creator).templateCopy();
-        } catch (Exception e) {
-            log.error("ERROR fetching user object for username: " + creator, e);
-        }
-        return null;
-    }
 
-
-    @Column(name="creator")
-    public String getCreatorUserName() {
+    @ManyToOne
+    @JoinColumn(name="creatorid",nullable=false)
+    public User getCreator() {
         return creator;
     }
-    
-    public void setCreatorUserName(String creatorUserName) {
-        creator = creatorUserName;
+
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public String getEditorPage() {
@@ -369,7 +357,7 @@ public class Weblog implements Serializable {
         this.setName(other.getName());
         this.setHandle(other.getHandle());
         this.setTagline(other.getTagline());
-        this.setCreatorUserName(other.getCreatorUserName());
+        this.setCreator(other.getCreator());
         this.setEditorPage(other.getEditorPage());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());

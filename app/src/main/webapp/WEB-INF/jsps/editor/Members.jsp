@@ -89,21 +89,21 @@ function save() {
                 <td class="rollertable">
                     <input type="radio" 
                         <s:if test='#role.weblogRole.name() == "OWNER"'>checked</s:if>
-                        name='role-<s:property value="#role.userName" />' value="OWNER" />
+                        name='role-<s:property value="#role.user.id" />' value="OWNER" />
                 </td>
                 <td class="rollertable">
 	                <input type="radio" 
                         <s:if test='#role.weblogRole.name() == "POST"'>checked</s:if>
-                        name='role-<s:property value="#role.userName" />' value="POST" />
+                        name='role-<s:property value="#role.user.id" />' value="POST" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 
                         <s:if test='#role.weblogRole.name() == "EDIT_DRAFT"'>checked</s:if>
-                        name='role-<s:property value="#role.userName" />' value="EDIT_DRAFT" />
+                        name='role-<s:property value="#role.user.id" />' value="EDIT_DRAFT" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 
-                        name='role-<s:property value="#role.userName" />' value="-1" />
+                        name='role-<s:property value="#role.user.id" />' value="-1" />
                 </td>
            </tr>
        </s:iterator>

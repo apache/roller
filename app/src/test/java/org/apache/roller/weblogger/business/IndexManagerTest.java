@@ -99,7 +99,7 @@ public class IndexManagerTest extends WebloggerTest {
         +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
         +"begin to lose power, and Spock reports strange sensor readings.");
         wd1.setAnchor("dummy1");
-        wd1.setCreatorUserName(testUser.getUserName());
+        wd1.setCreator(testUser);
         wd1.setStatus(PubStatus.PUBLISHED);
         wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
@@ -124,7 +124,7 @@ public class IndexManagerTest extends WebloggerTest {
           +"in communication with Boss Oxmyx.");
         wd2.setAnchor("dummy2");
         wd2.setStatus(PubStatus.PUBLISHED);
-        wd2.setCreatorUserName(testUser.getUserName());
+        wd2.setCreator(testUser);
         wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd2.setWeblog(getManagedWeblog(testWeblog));

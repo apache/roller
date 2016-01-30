@@ -180,7 +180,7 @@ abstract public class WebloggerTest {
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
         testWeblog.setDateCreated(new java.util.Date());
-        testWeblog.setCreatorUserName(creator.getUserName());
+        testWeblog.setCreator(creator);
 
         // add weblog
         weblogManager.addWeblog(testWeblog);
@@ -225,7 +225,7 @@ abstract public class WebloggerTest {
                 .getTime()));
         testEntry.setStatus(status);
         testEntry.setWeblog(getManagedWeblog(weblog));
-        testEntry.setCreatorUserName(getManagedUser(user).getUserName());
+        testEntry.setCreator(getManagedUser(user));
         testEntry.setCategory(cat);
 
         // store entry

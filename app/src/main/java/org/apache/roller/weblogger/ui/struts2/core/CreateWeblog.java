@@ -145,7 +145,7 @@ public class CreateWeblog extends UIAction {
             
             Weblog wd = new Weblog(
                     getBean().getHandle().trim(),
-                    user.getUserName(),
+                    user,
                     getBean().getName().trim(),
                     getBean().getTagline().trim(),
                     getBean().getEmailAddress().trim(),

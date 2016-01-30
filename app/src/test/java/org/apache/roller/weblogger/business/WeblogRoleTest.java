@@ -60,8 +60,8 @@ public class WeblogRoleTest extends WebloggerTest {
     @After
     public void tearDown() throws Exception {
         try {
-            teardownUser(testUser.getUserName());
             teardownWeblog(testWeblog.getId());
+            teardownUser(testUser.getUserName());
             endSession(true);
         } catch (Exception ex) {
             log.error("ERROR in tear down", ex);
@@ -75,7 +75,7 @@ public class WeblogRoleTest extends WebloggerTest {
      */
     @Test
     public void testUserWeblogRoleCRUD() throws Exception {
-        UserWeblogRole p1 = new UserWeblogRole(testUser.getUserName(), testWeblog.getId(), WeblogRole.POST);
+        UserWeblogRole p1 = new UserWeblogRole(testUser, testWeblog, WeblogRole.POST);
         assertTrue(p1.getWeblogRole() == WeblogRole.POST);
 
         UserWeblogRole role;
@@ -85,7 +85,7 @@ public class WeblogRoleTest extends WebloggerTest {
         testUser = getManagedUser(testUser);
         role = userManager.getWeblogRole(testUser, testWeblog);
         assertNotNull(role);
-        userManager.revokeWeblogRole(testUser.getUserName(), testWeblog.getId());
+        userManager.revokeWeblogRole(testUser, testWeblog);
         endSession(true);
         
         // check that delete was successful
@@ -93,7 +93,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertNull(role);
         
         // create weblog roles
-        userManager.grantWeblogRole(testUser.getUserName(), testWeblog.getId(), WeblogRole.OWNER);
+        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.OWNER);
         endSession(true);
         
         // check that create was successful
@@ -103,11 +103,11 @@ public class WeblogRoleTest extends WebloggerTest {
         endSession(true);
         
         // revoke role
-        userManager.revokeWeblogRole(role.getUserName(), role.getWeblogId());
+        userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
         endSession(true);
         
         // add only draft role
-        userManager.grantWeblogRole(testUser.getUserName(), testWeblog.getId(), WeblogRole.EDIT_DRAFT);
+        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT);
         endSession(true);
 
         // check that user has draft weblog role only
@@ -209,7 +209,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        userManager.revokeWeblogRole(user.getUserName(), testWeblog.getId());
+        userManager.revokeWeblogRole(user, testWeblog);
         endSession(true);
 
         //user = userManager.getUser(user.getId());

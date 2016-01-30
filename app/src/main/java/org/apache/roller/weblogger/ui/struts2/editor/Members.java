@@ -99,15 +99,15 @@ public class Members extends UIAction implements ParameterAware {
              *
              * Also checking here to make sure an Admin is not demoting or removing himself.
              */
-            User user = getAuthenticatedUser();
+            User loggedInUser = getAuthenticatedUser();
             boolean error = false;
             for (UserWeblogRole role : roleList) {
-                String sval = getParameter("role-" + role.getUserName());
+                String sval = getParameter("role-" + role.getUser().getId());
                 if (sval != null) {
                     if (sval.equals(WeblogRole.OWNER.name()) && !role.isPending()) {
                         numAdmins++;
                     }
-                    if (role.getUserName().equals(user.getUserName())) {
+                    if (role.getUser().getId().equals(loggedInUser.getId())) {
                         // can't modify self
                         if (!sval.equals(WeblogRole.OWNER.name())) {
                             error = true;
@@ -123,18 +123,18 @@ public class Members extends UIAction implements ParameterAware {
             // one iteration for each line (user) in the members table
             for (UserWeblogRole role : roleList) {
 
-                String sval = getParameter("perm-" + role.getUserName());
+                String sval = getParameter("role-" + role.getUser().getId());
                 if (sval != null) {
                     if (!error && !role.getWeblogRole().name().equals(sval)) {
                         if ("-1".equals(sval)) {
                             userManager.revokeWeblogRole(
-                                     role.getUserName(), role.getWeblogId());
+                                     role.getUser(), role.getWeblog());
                             removed++;
                         } else {
                             userManager.revokeWeblogRole(
-                                    role.getUserName(), role.getWeblogId());
+                                    role.getUser(), role.getWeblog());
                             userManager.grantWeblogRole(
-                                    role.getUserName(), role.getWeblogId(), WeblogRole.valueOf(sval));
+                                    role.getUser(), role.getWeblog(), WeblogRole.valueOf(sval));
                             changed++;
                         }
                     }
