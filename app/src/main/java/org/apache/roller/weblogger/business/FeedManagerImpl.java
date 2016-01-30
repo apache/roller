@@ -64,7 +64,6 @@ public class FeedManagerImpl implements FeedManager {
     private WeblogEntryManager weblogEntryManager;
     private PlanetManager planetManager;
     private URLStrategy urlStrategy;
-    private UserManager userManager;
     private JPAPersistenceStrategy strategy;
 
     private static Log log = LogFactory.getLog(FeedManagerImpl.class);
@@ -91,10 +90,6 @@ public class FeedManagerImpl implements FeedManager {
 
     public void setStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
-    }
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
     }
 
     /**
@@ -287,7 +282,7 @@ public class FeedManagerImpl implements FeedManager {
                 }
                 content = weblogEntryManager.applyWeblogEntryPlugins(rollerEntry, content);
 
-                entry.setAuthor(userManager.getUserByUserName(rollerEntry.getCreatorUserName()).getScreenName());
+                entry.setAuthor(rollerEntry.getCreator().getScreenName());
                 entry.setTitle(rollerEntry.getTitle());
                 entry.setPubTime(rollerEntry.getPubTime());
                 entry.setText(content);

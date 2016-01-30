@@ -91,7 +91,6 @@
     <beans:bean id="feedManager" class="org.apache.roller.weblogger.business.FeedManagerImpl">
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
-        <beans:property name="userManager" ref="userManager"/>
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="planetManager" ref="planetManager"/>
         <beans:property name="strategy" ref="persistenceStrategy"/>

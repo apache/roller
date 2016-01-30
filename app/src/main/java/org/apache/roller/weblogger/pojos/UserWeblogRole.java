@@ -26,8 +26,6 @@ import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -35,13 +33,13 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
 
 /**
  * WeblogRole that a user has for a specific weblog
@@ -49,37 +47,37 @@ import javax.persistence.Transient;
 @Entity(name="UserWeblogRole")
 @Table(name="user_weblog_role")
 @NamedQueries({
-        @NamedQuery(name="UserWeblogRole.getByUserName",
-                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.pending <> TRUE"),
-        @NamedQuery(name="UserWeblogRole.getByUserNameIncludingPending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1"),
+        @NamedQuery(name="UserWeblogRole.getByUserId",
+                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.pending <> TRUE"),
+        @NamedQuery(name="UserWeblogRole.getByUserIdIncludingPending",
+                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1"),
         @NamedQuery(name="UserWeblogRole.getByWeblogId",
-                query="SELECT p FROM UserWeblogRole p WHERE p.weblogId = ?1 AND p.pending <> TRUE"),
+                query="SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending <> TRUE"),
         @NamedQuery(name="UserWeblogRole.getByWeblogId&Pending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.weblogId = ?1 AND p.pending = TRUE"),
+                query="SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending = TRUE"),
         @NamedQuery(name="UserWeblogRole.getByWeblogIdIncludingPending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.weblogId = ?1"),
-        @NamedQuery(name="UserWeblogRole.getByUserName&WeblogId",
-                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.weblogId = ?2 AND p.pending <> true"),
-        @NamedQuery(name="UserWeblogRole.getByUserName&WeblogIdIncludingPending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.weblogId = ?2")
+                query="SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1"),
+        @NamedQuery(name="UserWeblogRole.getByUserId&WeblogId",
+                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2 AND p.pending <> true"),
+        @NamedQuery(name="UserWeblogRole.getByUserId&WeblogIdIncludingPending",
+                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2")
 })
 public class UserWeblogRole implements Serializable {
 
-    protected String  id = WebloggerCommon.generateUUID();
-    protected String  userName;
-    protected String  weblogId;
-    protected boolean pending = false;
-    protected Date dateCreated = new Date();
-    protected WeblogRole weblogRole;
+    private String  id = WebloggerCommon.generateUUID();
+    private User user;
+    private Weblog weblog;
+    private boolean pending = false;
+    private Date dateCreated = new Date();
+    private WeblogRole weblogRole;
 
     public UserWeblogRole() {
     }
 
-    public UserWeblogRole(String userName, String weblogId, WeblogRole weblogRole) {
+    public UserWeblogRole(User user, Weblog weblog, WeblogRole weblogRole) {
         setWeblogRole(weblogRole);
-        this.userName = userName;
-        this.weblogId = weblogId;
+        this.user = user;
+        this.weblog = weblog;
     }
 
     public boolean hasEffectiveWeblogRole(WeblogRole roleToCheck) {
@@ -95,6 +93,26 @@ public class UserWeblogRole implements Serializable {
         this.id = id;
     }
 
+    @ManyToOne
+    @JoinColumn(name="userid",nullable=false)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
+    public Weblog getWeblog() {
+        return weblog;
+    }
+
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
+    }
+
     @Column(name="weblog_role", nullable=false)
     @Enumerated(EnumType.STRING)
     public WeblogRole getWeblogRole() {
@@ -103,24 +121,6 @@ public class UserWeblogRole implements Serializable {
 
     public void setWeblogRole(WeblogRole weblogRole) {
         this.weblogRole = weblogRole;
-    }
-
-    @Basic(optional=false)
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String username) {
-        this.userName = username;
-    }
-
-    @Basic(optional=false)
-    public String getWeblogId() {
-        return weblogId;
-    }
-
-    public void setWeblogId(String weblogId) {
-        this.weblogId = weblogId;
     }
 
     @Temporal(TemporalType.DATE)
@@ -141,26 +141,11 @@ public class UserWeblogRole implements Serializable {
         this.pending = pending;
     }
 
-    @Transient
-    public Weblog getWeblog() throws WebloggerException {
-        if (weblogId != null) {
-            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblog(weblogId);
-        }
-        return null;
-    }
-
-    @Transient
-    public User getUser() throws WebloggerException {
-        if (userName != null) {
-            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(userName);
-        }
-        return null;
-    }
 
     public String toString() {
         String sb = "UserWeblogRole: ";
-        sb += "Weblog ID = " + getWeblogId();
-        sb += "; User Name = " + getUserName();
+        sb += "Weblog Handle = " + getWeblog().getHandle();
+        sb += "; User Name = " + getUser().getUserName();
         sb += "; WeblogRole = " + getWeblogRole().name();
         return sb;
     }
@@ -174,16 +159,16 @@ public class UserWeblogRole implements Serializable {
         }
         UserWeblogRole o = (UserWeblogRole)other;
         return new EqualsBuilder()
-                .append(getUserName(), o.getUserName())
-                .append(getWeblogId(), o.getWeblogId())
+                .append(getUser().getId(), o.getUser().getId())
+                .append(getWeblog().getId(), o.getWeblog().getId())
                 .append(getWeblogRole(), o.getWeblogRole())
                 .isEquals();
     }
 
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getUserName())
-                .append(getWeblogId())
+                .append(getUser().getId())
+                .append(getWeblog().getId())
                 .append(getWeblogRole())
                 .toHashCode();
     }

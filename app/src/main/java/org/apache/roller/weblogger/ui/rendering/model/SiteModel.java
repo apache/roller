@@ -324,7 +324,7 @@ public class SiteModel implements Model {
             User user = userManager.getUserByUserName(userName);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
             for (UserWeblogRole role : roles) {
-                results.add(weblogManager.getWeblog(role.getWeblogId()).templateCopy());
+                results.add(role.getWeblog().templateCopy());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -342,7 +342,7 @@ public class SiteModel implements Model {
             Weblog website = weblogManager.getWeblogByHandle(handle);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(website);
             for (UserWeblogRole role : roles) {
-                results.add(userManager.getUserByUserName(role.getUserName()).templateCopy());
+                results.add(role.getUser().templateCopy());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);

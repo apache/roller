@@ -71,7 +71,7 @@ public class MemberResign extends UIAction {
      */
     public String resign() {
         try {
-            userManager.revokeWeblogRole(getAuthenticatedUser().getUserName(), getActionWeblog().getId());
+            userManager.revokeWeblogRole(getAuthenticatedUser(), getActionWeblog());
             WebloggerFactory.flush();
             addMessage("yourWebsites.resigned", getWeblog());
         } catch (WebloggerException ex) {

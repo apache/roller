@@ -34,6 +34,11 @@
 #dropColumn("user_weblog_role", "objecttype")
 #renameColumn("user_weblog_role", "objectid", "weblogid", "varchar(48)")
 #renameColumn("user_weblog_role", "actions", "weblog_role", "varchar(48)")
+-- manual changes recommended: make userid column below not-null after running
+#addColumnNull("user_weblog_role" "userid"  "varchar(48)")
+update user_weblog_role uwr set userid = (select id from weblogger_user wu where uwr.username = wu.username);
+#dropColumn("user_weblog_role", "username")
+
 
 update user_weblog_role uwr set weblogid = (select id
 from weblog w where w.handle = uwr.weblogid)
@@ -42,7 +47,7 @@ alter table user_weblog_role add constraint uwr_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 
 alter table user_weblog_role add constraint uwr_userid_fk
-    foreign key ( username ) references weblogger_user( username ) ;
+    foreign key ( userid ) references weblogger_user( id ) ;
 
 -- weblog entry tag changes
 #dropIndex("weblog_entry_tag" "wet_entryid_idx")
@@ -82,6 +87,11 @@ group by weblogid, name;
 #addColumnNull("media_file" "alt_attr"  "varchar(255)")
 #addColumnNull("media_file" "title_attr"  "varchar(255)")
 
+-- manual changes recommended: if possible, make creatorid column below not-null after running
+#addColumnNull("media_file" "creatorid"  "varchar(48)")
+update media_file mf set creatorid = (select id from weblogger_user wu where mf.creator = wu.username);
+#dropColumn("media_file", "creator")
+
 -- AtomPub gone
 
 #dropTableIfExists("roller_oauthconsumer")
@@ -108,6 +118,17 @@ group by weblogid, name;
 
 #dropIndex("weblog_entry", "we_locale_idx")
 #dropColumn("weblog_entry", "locale")
+
+-- weblog and weblog_entry now use userid instead of username
+-- manual changes recommended: make creatorid columns below not-null after running
+
+#addColumnNull("weblog" "creatorid"  "varchar(48)")
+update weblog set creatorid = (select id from weblogger_user wu where weblog.creator = wu.username);
+#dropColumn("weblog", "username")
+
+#addColumnNull("weblog_entry" "creatorid" "varchar(48)")
+update weblog_entry we set creatorid = (select id from weblogger_user wu where we.creator = wu.username);
+#dropColumn("weblog_entry", "username")
 
 
 -- bookmark folders removed

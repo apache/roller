@@ -101,8 +101,8 @@ public class MailManager {
         }
         
         try {
-            String userName = entry.getCreatorUserName();
-            String from = userManager.getUserByUserName(userName).getEmailAddress();
+            String userName = entry.getCreator().getUserName();
+            String from = entry.getCreator().getEmailAddress();
             String cc[] = new String[] {from};
             String bcc[] = new String[0];
             String to[];
@@ -270,7 +270,7 @@ public class MailManager {
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        User user = userManager.getUserByUserName(entry.getCreatorUserName());
+        User user = entry.getCreator();
         
         // Only send email if email notification is enabled, or a pending message that needs moderation.
         if (!commentObject.getPending()) {
@@ -527,7 +527,7 @@ public class MailManager {
         
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        User user = userManager.getUserByUserName(entry.getCreatorUserName());
+        User user = entry.getCreator();
         
         // use either the weblog configured from address or the site configured from address
         String from = weblog.getEmailAddress();

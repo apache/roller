@@ -169,7 +169,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // remove permissions
         for (UserWeblogRole role : userManager.getWeblogRolesIncludingPending(weblog)) {
-            userManager.revokeWeblogRole(role.getUserName(), role.getWeblogId());
+            userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
         }
 
         // remove indexing
@@ -214,7 +214,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(
-                newWeblog.getCreatorUserName(), newWeblog.getId(), WeblogRole.OWNER);
+                newWeblog.getCreator(), newWeblog, WeblogRole.OWNER);
         
         String cats = WebloggerConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = null;
@@ -397,7 +397,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
         for (UserWeblogRole role : roles) {
-            Weblog weblog = getWeblog(role.getWeblogId());
+            Weblog weblog = role.getWeblog();
             if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.isActive())) {
                 weblogs.add(weblog);
             }
@@ -409,9 +409,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<User> users = new ArrayList<>();
         List<UserWeblogRole> roles = userManager.getWeblogRoles(weblog);
         for (UserWeblogRole role : roles) {
-            User user = userManager.getUserByUserName(role.getUserName());
+            User user = role.getUser();
             if (user == null) {
-                log.error("ERROR user is null, userName:" + role.getUserName());
+                log.error("ERROR user is null, userId:" + role.getUser().getId());
                 continue;
             }
             if (!enabledOnly || user.getEnabled()) {
