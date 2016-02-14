@@ -48,7 +48,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -101,9 +100,6 @@ public class WeblogEntry implements Serializable {
     public static final long serialVersionUID = 2341505386843044125L;
 
     public enum PubStatus {DRAFT, PUBLISHED, PENDING, SCHEDULED}
-
-    private static final char TITLE_SEPARATOR =
-        WebloggerConfig.getBooleanProperty("weblogentry.title.useUnderscoreSeparator") ? '_' : '-';
 
     // Simple properies
     private String id;
@@ -806,7 +802,7 @@ public class WeblogEntry implements Serializable {
             while (toker.hasMoreTokens() && count < 5) {
                 String s = toker.nextToken();
                 s = s.toLowerCase();
-                tmp = (tmp == null) ? s : tmp + TITLE_SEPARATOR + s;
+                tmp = (tmp == null) ? s : tmp + "-" + s;
                 count++;
             }
             base = tmp;

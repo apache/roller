@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -30,12 +31,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Filter checks all POST request for presence of valid salt value and rejects
@@ -46,13 +44,26 @@ public class ValidateSaltFilter implements Filter {
 
     private static Log log = LogFactory.getLog(ValidateSaltFilter.class);
 
-    private Set<String> ignored = new HashSet<String>();
+    private Set<String> ignoredActions = null;
 
-    @Autowired
+    public void setIgnoredActions(Set<String> ignoredActions) {
+        this.ignoredActions = ignoredActions;
+    }
+
     private ExpiringCache saltCache = null;
 
     public void setSaltCache(ExpiringCache saltCache) {
         this.saltCache = saltCache;
+    }
+
+    @PostConstruct
+    public void init() {
+        // Construct our list of ignored urls
+        if (ignoredActions == null) {
+            ignoredActions = new HashSet<>();
+            ignoredActions.add("mediaFileAdd!save.rol");
+            ignoredActions.add("mediaFileEdit!save.rol");
+        }
     }
 
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -82,13 +93,6 @@ public class ValidateSaltFilter implements Filter {
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
-
-        // Construct our list of ignored urls
-        String urls = WebloggerConfig.getProperty("salt.ignored.urls");
-        String[] urlsArray = StringUtils.stripAll(StringUtils.split(urls, ","));
-        for (int i = 0; i < urlsArray.length; i++) {
-            this.ignored.add(urlsArray[i]);
-        }
     }
 
     public void destroy() {
@@ -110,6 +114,6 @@ public class ValidateSaltFilter implements Filter {
         if (i <= 0 || i == theUrl.length() - 1) {
             return false;
         }
-        return ignored.contains(theUrl.substring(i + 1));
+        return ignoredActions.contains(theUrl.substring(i + 1));
     }
 }

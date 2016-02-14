@@ -62,6 +62,10 @@ public interface IndexManager
     /** Return directory used by Lucene index */
     Directory getIndexDirectory();
 
+    boolean isSearchEnabled();
+
+    boolean isIndexComments();
+
     /**
      * Initialize the search system.
      *

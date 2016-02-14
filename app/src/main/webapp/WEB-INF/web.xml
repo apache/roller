@@ -8,7 +8,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:spring-app.xml, /WEB-INF/security.xml</param-value>
+        <param-value>classpath:spring-app.xml, /WEB-INF/security.xml, classpath*:tightblog-custom.xml</param-value>
     </context-param>
 
     <context-param>
