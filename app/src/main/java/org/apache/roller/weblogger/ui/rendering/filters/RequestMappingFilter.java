@@ -51,11 +51,11 @@ public class RequestMappingFilter implements Filter {
     private static Log log = LogFactory.getLog(RequestMappingFilter.class);
 
     // url patterns that are not allowed to be considered weblog handles
-    Set restrictedUrls;
+    Set<String> restrictedUrls;
 
     private WeblogManager weblogManager;
 
-    public void setRestrictedUrls(Set restrictedUrls) {
+    public void setRestrictedUrls(Set<String> restrictedUrls) {
         this.restrictedUrls = restrictedUrls;
     }
 

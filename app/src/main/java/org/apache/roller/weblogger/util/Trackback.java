@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.HttpClient;
@@ -40,7 +41,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -56,22 +56,27 @@ public class Trackback {
     private static final Log LOG = LogFactory.getLog(Trackback.class);
     
     private final WeblogEntry entry;
+
     private final String trackbackURL;
-    
-    
+
+    // if set, target URLs that trackbacks are restricted to; if not set, all trackbacks are permitted
+    Set allowedUrls = null;
+
+    public void setAllowedUrls(Set allowedUrls) {
+        this.allowedUrls = allowedUrls;
+    }
+
     public Trackback(WeblogEntry tEntry, String tURL)
             throws IllegalArgumentException, WebloggerException {
         
         // Make sure trackback to URL is allowed
         boolean allowTrackback = true;
-        String allowedURLs = WebloggerConfig.getProperty("trackback.allowedURLs");
-        if (!StringUtils.isEmpty(allowedURLs)) {
+        if (allowedUrls != null) {
             // in the case that the administrator has enabled trackbacks
             // for only specific URLs, set it to false by default
             allowTrackback = false;
-            String[] splitURLs = allowedURLs.split("\\|\\|");
-            for (String urlEntry : splitURLs) {
-                Matcher m = Pattern.compile(urlEntry).matcher(tURL);
+            for (Object urlEntry : allowedUrls) {
+                Matcher m = Pattern.compile((String) urlEntry).matcher(tURL);
                 if (m.matches()) {
                     allowTrackback = true;
                     break;

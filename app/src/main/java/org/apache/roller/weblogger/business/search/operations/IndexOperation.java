@@ -70,16 +70,10 @@ public abstract class IndexOperation implements Runnable {
     // ================================================================
     protected Document getDocument(WeblogEntry data) {
 
-        // Actual comment content is indexed only if search.index.comments
-        // is true or absent from the (static) configuration properties.
-        // If false in the configuration, comments are treated as if empty.
-        boolean indexComments = WebloggerConfig.getBooleanProperty(
-                "search.index.comments", true);
-
         String commentContent = "";
         String commentEmail = "";
         String commentName = "";
-        if (indexComments) {
+        if (manager.isIndexComments()) {
             List<WeblogEntryComment> comments = data.getComments();
             if (comments != null) {
                 StringBuilder commentEmailBld = new StringBuilder();

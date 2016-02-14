@@ -29,35 +29,39 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.springframework.util.StringUtils;
 
 /**
- * Requires the commenter to authenticate to a central LDAP server.  Here are the roller.properties that need to 
- * be present for this {@link CommentAuthenticator} to work correctly:
- * <br/>
- * <pre>
- * 		# default port is 389
- * 		comment.authenticator.ldap.port=389
- * 		# fully qualified host
- * 		comment.authenticator.ldap.host=
- * 		# name of dc to check against 
- * 		comment.authenticator.ldap.dc=
- * 		# csv list of dc names, ex: example,com
- * 		comment.authenticator.ldap.ou=
- * 		# options are "none" "simple" "strong", not required
- * 		comment.authenticator.ldap.securityLevel=
- * </pre>
- * <br/>
- * You can add these properties to the roller-custom.properties to ensure correct operations.  The property "securityLevel
- * is not required, will use the settings from the registered service provider; sets this property {@link Context#SECURITY_AUTHENTICATION}.
- * @author Nicholas Padilla (<a href="mailto:nicholas@monstersoftwarellc.com">nicholas@monstersoftwarellc.com</a>)
- *
+ * Requires the commenter to authenticate to a central LDAP server.  The property "securityLevel"
+ * which sets this property {@link Context#SECURITY_AUTHENTICATION} is not required, will use
+ * the settings from the registered service provider if not provided
  */
 public class LdapCommentAuthenticator implements CommentAuthenticator {
 
 	private static Log LOG = LogFactory.getLog(LdapCommentAuthenticator.class);
+
+	private String ldapPort;
+
+	private String ldapHost;
+
+	private String ldapDc;
+
+	private String ldapOu;
+
+	// options are "none" "simple" "strong", not required
+	private String securityLevel;
+
+	public void setSecurityLevel(String securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+
+	public LdapCommentAuthenticator(String host, String port, String dc, String ou) {
+		this.ldapHost = host;
+		this.ldapPort = port;
+		this.ldapDc = dc;
+		this.ldapOu = ou;
+	}
 
 	public String getHtml(HttpServletRequest request) {
 		String ldapUser = "";
@@ -100,29 +104,23 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 		boolean validUser = false;
 		LdapContext context = null;
 
-		String ldapDc = WebloggerConfig.getProperty("comment.authenticator.ldap.dc");
-		String ldapOu = WebloggerConfig.getProperty("comment.authenticator.ldap.ou");
-		String ldapPort = WebloggerConfig.getProperty("comment.authenticator.ldap.port");
-		String ldapHost = WebloggerConfig.getProperty("comment.authenticator.ldap.host");
-		String ldapSecurityLevel = WebloggerConfig.getProperty("comment.authenticator.ldap.securityLevel");
-		
-		boolean rollerPropertiesValid = validateRollerProperties(ldapDc, ldapOu, ldapPort, ldapHost);
+		boolean propertiesValid = validateLdapProperties(ldapDc, ldapOu, ldapPort, ldapHost);
 		
 		String ldapUser = request.getParameter("ldapUser");
 		String ldapPass = request.getParameter("ldapPass");
 		
 		boolean userDataValid = validateUsernamePass(ldapUser, ldapPass);
 		
-		if(rollerPropertiesValid && userDataValid){
+		if (propertiesValid && userDataValid) {
 			try {
 				Hashtable<String,String> env = new Hashtable<String,String>();
 				env.put(Context.INITIAL_CONTEXT_FACTORY,  
 						"com.sun.jndi.ldap.LdapCtxFactory"); 
-				if(ldapSecurityLevel != null 
-						&& (ldapSecurityLevel.equalsIgnoreCase("none")
-								|| ldapSecurityLevel.equalsIgnoreCase("simple")
-								|| ldapSecurityLevel.equalsIgnoreCase("strong"))){
-					env.put(Context.SECURITY_AUTHENTICATION, ldapSecurityLevel);	
+				if(securityLevel != null
+						&& (securityLevel.equalsIgnoreCase("none")
+								|| securityLevel.equalsIgnoreCase("simple")
+								|| securityLevel.equalsIgnoreCase("strong"))){
+					env.put(Context.SECURITY_AUTHENTICATION, securityLevel);
 				}  
 				env.put(Context.SECURITY_PRINCIPAL,  getQualifedDc(ldapDc, ldapOu, ldapUser));  
 				env.put(Context.SECURITY_CREDENTIALS, ldapPass);
@@ -148,10 +146,6 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 
 	/**
 	 * Get the qualified username string LDAP expects.
-	 * @param ldapDc
-	 * @param ldapOu
-	 * @param ldapUser
-	 * @return
 	 */
 	private String getQualifedDc(String ldapDc, String ldapOu, String ldapUser) {
 		String qualifedDc = "";
@@ -167,9 +161,6 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 
 	/**
 	 * Validate user provided data.
-	 * @param ldapUser
-	 * @param ldapPass
-	 * @return
 	 */
 	private boolean validateUsernamePass(String ldapUser, String ldapPass) {
 		boolean ret = false;
@@ -183,14 +174,9 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 	}
 
 	/**
-	 * Validate required roller.properties, specified in custom-roller.properties.
-	 * @param ldapDc
-	 * @param ldapOu
-	 * @param ldapPort
-	 * @param ldapHost
-	 * @return
+	 * Validate required properties, specified in custom-roller.properties.
 	 */
-	private boolean validateRollerProperties(String ldapDc, String ldapOu, String ldapPort, String ldapHost) {
+	private boolean validateLdapProperties(String ldapDc, String ldapOu, String ldapPort, String ldapHost) {
 		boolean ret = false;
 		
 		if((ldapDc != null && !ldapDc.isEmpty())

@@ -67,6 +67,10 @@ public class Maintenance extends UIAction {
         return SUCCESS;
     }
 
+    public Boolean isSearchEnabled() {
+        return indexManager.isSearchEnabled();
+    }
+
 
     @Override
     public GlobalRole requiredGlobalRole() {

@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 
@@ -33,12 +32,12 @@ import org.apache.roller.weblogger.util.RollerMessages;
 public class ExcessLinksCommentValidator implements CommentValidator {
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");  
     private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");    
-    private int threshold;
-        
-    public ExcessLinksCommentValidator() {
-        threshold = WebloggerConfig.getIntProperty("comment.validator.excessLinks.threshold");
+    private int threshold = 3;
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
     }
-        
+
     public String getName() {
         return bundle.getString("comment.validator.excessLinksName");
     }

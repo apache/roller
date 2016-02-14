@@ -53,6 +53,8 @@ import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperat
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PreDestroy;
 
@@ -78,6 +80,8 @@ public class IndexManagerImpl implements IndexManager {
 
     private boolean searchEnabled = true;
 
+    private boolean indexComments = true;
+
     File indexConsistencyMarker;
 
     private boolean useRAMIndex = false;
@@ -102,12 +106,6 @@ public class IndexManagerImpl implements IndexManager {
     protected IndexManagerImpl() {
         serviceScheduler = Executors.newCachedThreadPool();
 
-        // check config to see if the internal search is enabled
-        String enabled = WebloggerConfig.getProperty("search.enabled");
-        if ("false".equalsIgnoreCase(enabled)) {
-            this.searchEnabled = false;
-        }
-
         // we also need to know what our index directory is
         // Note: system property expansion is now handled by WebloggerConfig
         String searchIndexDir = WebloggerConfig.getProperty("search.index.dir");
@@ -119,6 +117,24 @@ public class IndexManagerImpl implements IndexManager {
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
+    }
+
+    @Override
+    public boolean isSearchEnabled() {
+        return searchEnabled;
+    }
+
+    public void setSearchEnabled(boolean searchEnabled) {
+        this.searchEnabled = searchEnabled;
+    }
+
+    @Override
+    public boolean isIndexComments() {
+        return indexComments;
+    }
+
+    public void setIndexComments(boolean indexComments) {
+        this.indexComments = indexComments;
     }
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {

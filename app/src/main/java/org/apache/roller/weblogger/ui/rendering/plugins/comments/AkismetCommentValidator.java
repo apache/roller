@@ -52,8 +52,8 @@ public class AkismetCommentValidator implements CommentValidator {
     }
 
     /** Creates a new instance of AkismetCommentValidator */
-    public AkismetCommentValidator() {
-        apikey = WebloggerConfig.getProperty("comment.validator.akismet.apikey");
+    public AkismetCommentValidator(String apikey) {
+        this.apikey = apikey;
     }
 
     public String getName() {
