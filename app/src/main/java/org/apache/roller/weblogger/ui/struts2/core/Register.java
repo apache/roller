@@ -67,6 +67,12 @@ public class Register extends UIAction implements ServletRequestAware {
         this.userManager = userManager;
     }
 
+    private CustomUserRegistry customUserRegistry;
+
+    public void setCustomUserRegistry(CustomUserRegistry customUserRegistry) {
+        this.customUserRegistry = customUserRegistry;
+    }
+
     private MailManager mailManager;
 
     public void setMailManager(MailManager manager) {
@@ -127,7 +133,7 @@ public class Register extends UIAction implements ServletRequestAware {
         try {
             if (WebloggerConfig.getAuthMethod() == AuthMethod.LDAP) {
                 // See if user is already logged in via Spring Security
-                User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+                User fromSSOUser = customUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
                 if (fromSSOUser != null) {
                     // Copy user details from Spring Security, including LDAP attributes
                     bean.setId(fromSSOUser.getId());
@@ -305,7 +311,7 @@ public class Register extends UIAction implements ServletRequestAware {
             String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
             
             // Preserve username and password, Spring Security case
-            User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+            User fromSSOUser = customUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
             if (fromSSOUser != null) {
                 bean.setPasswordText(unusedPassword);
                 bean.setPasswordConfirm(unusedPassword);

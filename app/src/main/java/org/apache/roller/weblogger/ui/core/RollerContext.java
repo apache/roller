@@ -22,8 +22,6 @@
 package org.apache.roller.weblogger.ui.core;
 
 import java.io.File;
-import java.io.InputStream;
-import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -36,7 +34,6 @@ import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.authentication.RememberMeAuthenticationProvider;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -44,7 +41,6 @@ import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
@@ -132,14 +128,10 @@ public class RollerContext extends ContextLoaderListener
             }
 		}
             
-        // do a small amount of work to initialize the web tier
         try {
             // Initialize Spring Security based on Roller configuration
             initializeSecurityFeatures(servletContext);
-            
-            // Setup Velocity template engine
-            setupVelocity();
-        } catch (WebloggerException ex) {
+        } catch (Exception ex) {
             log.fatal("Error initializing Roller Weblogger web tier", ex);
         }
         
@@ -153,33 +145,7 @@ public class RollerContext extends ContextLoaderListener
         log.info("Shutting down");
         closeWebApplicationContext(servletContext);
     }
-    
-    
-    /**
-     * Initialize the Velocity rendering engine.
-     */
-    private void setupVelocity() throws WebloggerException {        
-        log.info("Initializing Velocity");
-        
-        // initialize the Velocity engine
-        Properties velocityProps = new Properties();
-        
-        try {
-            InputStream instream = servletContext.getResourceAsStream("/WEB-INF/velocity.properties");
-            
-            velocityProps.load(instream);
-            
-            log.debug("Velocity props = "+velocityProps);
-            
-            // init velocity
-            RuntimeSingleton.init(velocityProps);
-            
-        } catch (Exception e) {
-            throw new WebloggerException(e);
-        }
-        
-    }
-         
+
     /**
      * Setup Spring Security security features.
      */
@@ -218,24 +184,17 @@ public class RollerContext extends ContextLoaderListener
             DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
             String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
             PasswordEncoder encoder = null;
-            if (algorithm.equalsIgnoreCase("SHA")) {
+            if ("SHA".equalsIgnoreCase(algorithm)) {
                 encoder = new ShaPasswordEncoder();
-            } else if (algorithm.equalsIgnoreCase("MD5")) {
+            } else if ("MD5".equalsIgnoreCase(algorithm)) {
                 encoder = new Md5PasswordEncoder();
             } else {
-                log.error("Encryption algorithm '" + algorithm + "' not supported, disabling encryption.");
+                throw new IllegalArgumentException("Encryption algorithm '" + algorithm + "' not supported, choose SHA or MD5.");
             }
-            if (encoder != null) {
-                provider.setPasswordEncoder(encoder);
-                log.info("Password Encryption Algorithm set to '" + algorithm + "'");
-            }
+            provider.setPasswordEncoder(encoder);
+            log.info("Password Encryption Algorithm set to '" + algorithm + "'");
         }
 
-        if (WebloggerConfig.getBooleanProperty("securelogin.enabled")) {
-            LoginUrlAuthenticationEntryPoint entryPoint =
-                ctx.getBean("_formLoginEntryPoint", LoginUrlAuthenticationEntryPoint.class);
-            entryPoint.setForceHttps(true);
-        }
     }
     
     

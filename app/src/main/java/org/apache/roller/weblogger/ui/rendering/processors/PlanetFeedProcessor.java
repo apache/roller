@@ -73,6 +73,13 @@ public class PlanetFeedProcessor {
         this.planetManager = planetManager;
     }
 
+    @Autowired
+    private RendererManager rendererManager = null;
+
+    public void setRendererManager(RendererManager rendererManager) {
+        this.rendererManager = rendererManager;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entering");
@@ -192,7 +199,7 @@ public class PlanetFeedProcessor {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate(
                     "templates/planet/planetrss.vm", TemplateLanguage.VELOCITY);
-            renderer = RendererManager.getRenderer(template, DeviceType.mobile);
+            renderer = rendererManager.getRenderer(template, DeviceType.mobile);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for planet rss", e);

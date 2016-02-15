@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.core.security;
 
@@ -36,31 +39,51 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 
 /**
- * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
- *
+ * // TODO: Unsure if useful (LDAP not being brought in), see ROL-2042
  */
 public class CustomUserRegistry {
     
     private static final Log LOG = LogFactory.getLog(CustomUserRegistry.class);
 
-    private static final String DEFAULT_SNAME_LDAP_ATTRIBUTE = "screenname";
-    private static final String DEFAULT_UID_LDAP_ATTRIBUTE = "uid";
-    private static final String DEFAULT_NAME_LDAP_ATTRIBUTE = "cn";
-    private static final String DEFAULT_EMAIL_LDAP_ATTRIBUTE = "mail";
-    private static final String DEFAULT_LOCALE_LDAP_ATTRIBUTE = "locale";
-    private static final String DEFAULT_TIMEZONE_LDAP_ATTRIBUTE = "timezone";
-    
-    private static final String SNAME_LDAP_PROPERTY = "users.ldap.registry.attributes.screenname";
-    private static final String UID_LDAP_PROPERTY = "users.ldap.registry.attributes.uid";
-    private static final String NAME_LDAP_PROPERTY = "users.ldap.registry.attributes.name";
-    private static final String EMAIL_LDAP_PROPERTY = "users.ldap.registry.attributes.email";
-    private static final String LOCALE_LDAP_PROPERTY = "users.ldap.registry.attributes.locale";
-    private static final String TIMEZONE_LDAP_PROPERTY = "users.ldap.registry.attributes.timezone";
+    private String ldapUidAttribute = "uid";
 
-    public static User getUserDetailsFromAuthentication(HttpServletRequest request) {
+    public void setLdapUidAttribute(String ldapUidAttribute) {
+        this.ldapUidAttribute = ldapUidAttribute;
+    }
 
-        boolean usingLDAP = WebloggerConfig.getAuthMethod() == AuthMethod.LDAP;
-        if (!usingLDAP) {
+    private String ldapNameAttribute = "cn";
+
+    public void setLdapNameAttribute(String ldapNameAttribute) {
+        this.ldapNameAttribute = ldapNameAttribute;
+    }
+
+    private String ldapScreennameAttribute = "screenname";
+
+    public void setLdapScreennameAttribute(String ldapScreennameAttribute) {
+        this.ldapScreennameAttribute = ldapScreennameAttribute;
+    }
+
+    private String ldapEmailAttribute = "mail";
+
+    public void setLdapEmailAttribute(String ldapEmailAttribute) {
+        this.ldapEmailAttribute = ldapEmailAttribute;
+    }
+
+    private String ldapLocaleAttribute = "locale";
+
+    public void setLdapLocaleAttribute(String ldapLocaleAttribute) {
+        this.ldapLocaleAttribute = ldapLocaleAttribute;
+    }
+
+    private String ldapTimezoneAttribute = "timezone";
+
+    public void setLdapTimezoneAttribute(String ldapTimezoneAttribute) {
+        this.ldapTimezoneAttribute = ldapTimezoneAttribute;
+    }
+
+    public User getUserDetailsFromAuthentication(HttpServletRequest request) {
+
+        if (!(WebloggerConfig.getAuthMethod() == AuthMethod.LDAP)) {
             LOG.info("LDAP is not enabled. Skipping CustomUserRegistry functionality.");
             return null;
         }
@@ -85,19 +108,13 @@ public class CustomUserRegistry {
 
         if(authentication == null) {
             // Try to get SSO data from HttpServletRequest
-            userName = getRequestAttribute(request, WebloggerConfig.getProperty(UID_LDAP_PROPERTY, DEFAULT_UID_LDAP_ATTRIBUTE));
+            userName = getRequestAttribute(request, ldapUidAttribute);
+            screenName = getRequestAttribute(request, ldapScreennameAttribute);
+            fullName = getRequestAttribute(request, ldapNameAttribute);
+            email = getRequestAttribute(request, ldapEmailAttribute);
+            locale = getRequestAttribute(request, ldapLocaleAttribute);
+            timezone = getRequestAttribute(request, ldapTimezoneAttribute);
 
-            screenName = getRequestAttribute(request, WebloggerConfig.getProperty(SNAME_LDAP_PROPERTY, DEFAULT_SNAME_LDAP_ATTRIBUTE));
-
-            fullName = getRequestAttribute(request, WebloggerConfig.getProperty(NAME_LDAP_PROPERTY, DEFAULT_NAME_LDAP_ATTRIBUTE));
-
-            email = getRequestAttribute(request, WebloggerConfig.getProperty(EMAIL_LDAP_PROPERTY, DEFAULT_EMAIL_LDAP_ATTRIBUTE));
-
-            locale = getRequestAttribute(request, WebloggerConfig.getProperty(LOCALE_LDAP_PROPERTY, DEFAULT_LOCALE_LDAP_ATTRIBUTE));
-
-            timezone = getRequestAttribute(request, WebloggerConfig.getProperty(TIMEZONE_LDAP_PROPERTY, DEFAULT_TIMEZONE_LDAP_ATTRIBUTE));
-
- 
             if (userName == null && fullName == null && screenName == null &&
                     email == null && locale == null && timezone == null) {
 
@@ -127,7 +144,7 @@ public class CustomUserRegistry {
             enabled = userDetails.isEnabled();
         
         
-            if(userDetails instanceof RollerUserDetails) {
+            if (userDetails instanceof RollerUserDetails) {
                 RollerUserDetails rollerDetails = (RollerUserDetails) userDetails;
 
                 screenName = rollerDetails.getScreenName();
@@ -135,20 +152,7 @@ public class CustomUserRegistry {
                 email = rollerDetails.getEmailAddress();
                 locale = rollerDetails.getLocale();
                 timezone = rollerDetails.getTimeZone();
-            
-            } /* Deprecated in Spring Security 2.0.x: http://static.springsource.org/spring-security/site/docs/2.0.x/apidocs/
-                 unsure if can be returned in Spring Security 3.1
-                else if(userDetails instanceof LdapUserDetails) {
-                LdapUserDetails ldapDetails = (LdapUserDetails) userDetails;
-
-                Attributes attributes = ldapDetails.getAttributes();
-                screenName = getLdapAttribute(attributes, WebloggerConfig.getProperty(SNAME_LDAP_PROPERTY, DEFAULT_SNAME_LDAP_ATTRIBUTE));
-                fullName = getLdapAttribute(attributes, WebloggerConfig.getProperty(NAME_LDAP_PROPERTY, DEFAULT_NAME_LDAP_ATTRIBUTE));
-                email = getLdapAttribute(attributes, WebloggerConfig.getProperty(EMAIL_LDAP_PROPERTY, DEFAULT_EMAIL_LDAP_ATTRIBUTE));
-                locale = getLdapAttribute(attributes, WebloggerConfig.getProperty(LOCALE_LDAP_PROPERTY, DEFAULT_LOCALE_LDAP_ATTRIBUTE));
-                timezone = getLdapAttribute(attributes, WebloggerConfig.getProperty(TIMEZONE_LDAP_PROPERTY, DEFAULT_TIMEZONE_LDAP_ATTRIBUTE));
-            
-            } */
+            } // Future: bring in fields from LDAP, see ROL-2042
         }
 
         // for LDAP we don't store its password in the roller_users table,
@@ -171,7 +175,7 @@ public class CustomUserRegistry {
         return ud;
     }
     
-    private static String getLdapAttribute(Attributes attributes, String name) {
+    private String getLdapAttribute(Attributes attributes, String name) {
         if(attributes == null) {
             return null;
         }
@@ -196,7 +200,7 @@ public class CustomUserRegistry {
         return oValue.toString();
     }
 
-    private static String getRequestAttribute(HttpServletRequest request, String attributeName) {
+    private String getRequestAttribute(HttpServletRequest request, String attributeName) {
 
         String attr = null;
         Object attrObj = request.getAttribute(attributeName);

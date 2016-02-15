@@ -87,6 +87,13 @@ public class FeedProcessor {
         this.weblogEntryManager = weblogEntryManager;
     }
 
+    @Autowired
+    private RendererManager rendererManager = null;
+
+    public void setRendererManager(RendererManager rendererManager) {
+        this.rendererManager = rendererManager;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -240,7 +247,7 @@ public class FeedProcessor {
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate(pageId, TemplateLanguage.VELOCITY);
-            renderer = RendererManager.getRenderer(template,
+            renderer = rendererManager.getRenderer(template,
                     MobileDeviceRepository.DeviceType.standard);
         } catch (Exception e) {
             // nobody wants to render my content :(

@@ -14,13 +14,13 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.rendering;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
 
 import java.util.HashSet;
@@ -37,64 +37,11 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
  */
 public final class RendererManager {
 
-    private static Log log = LogFactory.getLog(RendererManager.class);
     // a set of all renderer factories we are consulting
-    private static Set<RendererFactory> rendererFactories = new HashSet<>();
+    private Set<RendererFactory> rendererFactories = new HashSet<>();
 
-    static {
-        // lookup set of renderer factories we are going to use
-        String rollerFactories = WebloggerConfig.getProperty("rendering.rollerRendererFactories");
-        String userFactories = WebloggerConfig.getProperty("rendering.userRendererFactories");
-
-        // instantiate user defined renderer factory classes
-        if (userFactories != null && userFactories.trim().length() > 0) {
-
-            RendererFactory rendererFactory;
-            String[] uFactories = userFactories.split(",");
-            for (String uFactory :uFactories) {
-                try {
-                    Class factoryClass = Class.forName(uFactory);
-                    rendererFactory = (RendererFactory) factoryClass.newInstance();
-                    rendererFactories.add(rendererFactory);
-                } catch (ClassCastException cce) {
-                    log.error("It appears that your factory does not implement "
-                            + "the RendererFactory interface", cce);
-                } catch (Exception e) {
-                    log.error("Unable to instantiate renderer factory [" + uFactory + "]", e);
-                }
-            }
-        }
-
-        // instantiate roller standard renderer factory classes
-        if (rollerFactories != null && rollerFactories.trim().length() > 0) {
-
-            RendererFactory rendererFactory;
-            String[] rFactories = rollerFactories.split(",");
-            for (String rFactory : rFactories) {
-                try {
-                    Class factoryClass = Class.forName(rFactory);
-                    rendererFactory = (RendererFactory) factoryClass.newInstance();
-                    rendererFactories.add(rendererFactory);
-                } catch (ClassCastException cce) {
-                    log.error("It appears that your factory does not implement "
-                            + "the RendererFactory interface", cce);
-                } catch (Exception e) {
-                    log.error("Unable to instantiate renderer factory [" + rFactory + "]", e);
-                }
-            }
-        }
-
-        if (rendererFactories.size() < 1) {
-            // hmm ... failed to load any renderer factories?
-            log.warn("Failed to load any renderer factories.  "
-                    + "Rendering probably won't function as you expect.");
-        }
-
-        log.info("Renderer Manager Initialized.");
-    }
-
-    // this class is non-instantiable
-    private RendererManager() {
+    public void setRendererFactories(Set<RendererFactory> rendererFactories) {
+        this.rendererFactories = rendererFactories;
     }
 
     /**
@@ -104,13 +51,12 @@ public final class RendererManager {
      * instance and tries to find a Renderer for the content.  If no Renderer
      * can be found then we throw an exception.
      */
-    public static Renderer getRenderer(Template template, MobileDeviceRepository.DeviceType deviceType)
+    public Renderer getRenderer(Template template, MobileDeviceRepository.DeviceType deviceType)
             throws WebloggerException {
 
         Renderer renderer;
 
-        // iterate over our renderer factories and see if one of them
-        // wants to handle this content
+        // iterate over our renderer factories and see if one of them wants to handle this content
         for (RendererFactory rendererFactory : rendererFactories) {
             renderer = rendererFactory.getRenderer(template, deviceType);
             if (renderer != null) {
@@ -118,7 +64,6 @@ public final class RendererManager {
             }
         }
 
-        throw new WebloggerException("No renderer found for template "
-                + template.getId() + "!");
+        throw new WebloggerException("No renderer found for template " + template.getId() + "!");
     }
 }

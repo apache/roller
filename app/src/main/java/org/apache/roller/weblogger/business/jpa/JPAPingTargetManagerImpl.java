@@ -57,6 +57,13 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     private final JPAPersistenceStrategy strategy;
     private static final Log logger = LogFactory.getLog(JPAPingTargetManagerImpl.class);
 
+    // for debugging, will log but not send ping out.
+    private boolean logPingsOnly = false;
+
+    public void setLogPingsOnly(boolean boolVal) {
+        logPingsOnly = boolVal;
+    }
+
     protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
     }
@@ -295,9 +302,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             return;
         }
 
-        Boolean logOnly = WebloggerConfig.getBooleanProperty("pings.logOnly", false);
-
-        if (logOnly) {
+        if (logPingsOnly) {
             logger.info("pings.logOnly set to true in properties file so no actual pinging will occur." +
                     " To see logged pings, make sure logging at DEBUG for this class.");
         }
@@ -306,7 +311,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         Boolean hadDateUpdate = false;
         for (AutoPing ping : pings) {
             try {
-                if (logOnly) {
+                if (logPingsOnly) {
                     logger.debug("Would have pinged:" + ping);
                 } else {
                     PingTarget pingTarget = ping.getPingTarget();
