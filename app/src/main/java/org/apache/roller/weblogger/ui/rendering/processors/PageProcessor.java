@@ -84,22 +84,6 @@ public class PageProcessor {
 
     public static final String PATH = "/roller-ui/rendering/page";
 
-    // set "true" to NOT cache the custom pages for users who are logged in
-    private boolean excludeOwnerPages = false;
-
-    // use site & weblog blacklists to check incoming referrers, returning a 403 if a match.
-    private boolean processReferrers = false;
-
-    @Autowired(required=false)
-    public void setExcludeOwnerPages(@Qualifier("cache.excludeOwnerEditPages") boolean boolVal) {
-        excludeOwnerPages = boolVal;
-    }
-
-    @Autowired(required=false)
-    public void setProcessReferrers(@Qualifier("site.blacklist.check.referrers") boolean boolVal) {
-        excludeOwnerPages = boolVal;
-    }
-
     @Autowired
     private LazyExpiringCache weblogPageCache = null;
 
@@ -119,6 +103,29 @@ public class PageProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private RendererManager rendererManager = null;
+
+    public void setRendererManager(RendererManager rendererManager) {
+        this.rendererManager = rendererManager;
+    }
+
+    // set "true" to NOT cache the custom pages for users who are logged in
+    private boolean excludeOwnerPages = false;
+
+    @Autowired(required=false)
+    public void setExcludeOwnerPages(@Qualifier("cache.excludeOwnerEditPages") boolean boolVal) {
+        excludeOwnerPages = boolVal;
+    }
+
+    // use site & weblog blacklists to check incoming referrers, returning a 403 if a match.
+    private boolean processReferrers = false;
+
+    @Autowired(required=false)
+    public void setProcessReferrers(@Qualifier("site.blacklist.check.referrers") boolean boolVal) {
+        excludeOwnerPages = boolVal;
     }
 
     @PostConstruct
@@ -401,7 +408,7 @@ public class PageProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page,
+            renderer = rendererManager.getRenderer(page,
                     pageRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(

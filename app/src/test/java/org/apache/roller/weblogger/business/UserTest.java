@@ -162,12 +162,8 @@ public class UserTest extends WebloggerTest {
         user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         
-        if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
-            assertTrue(user.getGlobalRole() == GlobalRole.ADMIN);
-        } else {
-            assertTrue(user.getGlobalRole() == GlobalRole.BLOGGER);
-        }
-        
+        assertTrue(user.getGlobalRole() == GlobalRole.ADMIN);
+
         // change role to NOAUTHNEEDED
         user.setGlobalRole(GlobalRole.LOGIN);
         userManager.saveUser(user);

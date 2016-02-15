@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,6 +61,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PreviewProcessor {
 
     private static Log log = LogFactory.getLog(PreviewProcessor.class);
+
+    @Autowired
+    private RendererManager rendererManager = null;
+
+    public void setRendererManager(RendererManager rendererManager) {
+        this.rendererManager = rendererManager;
+    }
 
     @PostConstruct
     public void init() {
@@ -223,7 +231,7 @@ public class PreviewProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page, deviceType);
+            renderer = rendererManager.getRenderer(page, deviceType);
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);

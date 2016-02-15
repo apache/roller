@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -48,6 +47,12 @@ public class JPAUserManagerImpl implements UserManager {
     // cached mapping of userNames -> userIds
     private Map<String, String> userNameToIdMap = new HashMap<>();
     
+    private Boolean makeFirstUserAdmin = true;
+
+    public void setMakeFirstUserAdmin(Boolean makeFirstUserAdmin) {
+        this.makeFirstUserAdmin = makeFirstUserAdmin;
+    }
+
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA User Manager");
         this.strategy = strat;
@@ -81,9 +86,8 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         List existingUsers = this.getUsers(Boolean.TRUE, null, null, 0, 1);
-        boolean firstUserAdmin = WebloggerConfig.getBooleanProperty("users.firstUserAdmin");
 
-        if (existingUsers.size() == 0 && firstUserAdmin) {
+        if (existingUsers.size() == 0 && makeFirstUserAdmin) {
             // Make first user an admin
             newUser.setGlobalRole(GlobalRole.ADMIN);
 

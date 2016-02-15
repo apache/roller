@@ -66,6 +66,13 @@ public class SearchProcessor {
         this.weblogManager = weblogManager;
     }
 
+    @Autowired
+    private RendererManager rendererManager = null;
+
+    public void setRendererManager(RendererManager rendererManager) {
+        this.rendererManager = rendererManager;
+    }
+
     @PostConstruct
     public void init() {
         log.info("Initializing SearchProcessor...");
@@ -174,7 +181,7 @@ public class SearchProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page, deviceType);
+            renderer = rendererManager.getRenderer(page, deviceType);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
