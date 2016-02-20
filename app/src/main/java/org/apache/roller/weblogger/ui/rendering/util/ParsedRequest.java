@@ -96,7 +96,7 @@ public abstract class ParsedRequest {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 user = umgr.getUserByUserName(authenticUser);
             } catch (WebloggerException ex) {
-                log.error("Error looking up user "+authenticUser, ex);
+                log.error("Error looking up user " + authenticUser, ex);
             }
         }
         

@@ -14,11 +14,12 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
-import java.util.Locale;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -59,22 +60,13 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
 
-        Locale locale = CommentAuthenticatorUtils.getLocale(request);
-        I18nMessages messages = I18nMessages.getMessages(locale);
-        StringBuilder sb = new StringBuilder();
-        
-        sb.append("<p>");
-        sb.append(messages.getString("comments.mathAuthenticatorQuestion"));
-        sb.append("</p><p>");
-        sb.append(value1o);
-        sb.append(" + ");
-        sb.append(value2o);
-        sb.append(" = ");
-        sb.append("<input name=\"answer\" value=\"");
-        sb.append(answer);
-        sb.append("\" /></p>");
-        
-        return sb.toString();
+        I18nMessages messages = I18nMessages.getMessages(request.getLocale());
+        String str = "<p>";
+        str += messages.getString("comments.mathAuthenticatorQuestion");
+        str += "</p><p>" + value1o + " + " + value2o;
+        str += " = <input name=\"answer\" value=\"";
+        str += answer + "\" /></p>";
+        return str;
     }
     
     

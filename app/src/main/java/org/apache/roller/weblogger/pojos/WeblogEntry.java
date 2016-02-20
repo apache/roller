@@ -33,14 +33,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -588,7 +585,7 @@ public class WeblogEntry implements Serializable {
         }
 
         List<String> updatedTags = Utilities.splitStringAsTags(tags);
-        Set<String> newTags = new HashSet<String>(updatedTags.size());
+        Set<String> newTags = new HashSet<>(updatedTags.size());
         Locale localeObject = getWeblog() != null ? getWeblog().getLocaleInstance() : Locale.getDefault();
 
         for (String name : updatedTags) {
@@ -654,11 +651,7 @@ public class WeblogEntry implements Serializable {
         }
         return ret;
     }
-    public void setCommentsStillAllowed(boolean ignored) {
-        // no-op
-    }
-    
-    
+
     //------------------------------------------------------------------------
     
     /**
@@ -754,66 +747,6 @@ public class WeblogEntry implements Serializable {
             return StringUtils.left(Utilities.removeHTML(getText()), WebloggerCommon.TEXTWIDTH_255);
         }
         return Utilities.removeHTML(getTitle());
-    }
-    
-    /**
-     * Return RSS 09x style description (escaped HTML version of entry text)
-     */
-    @Transient
-    public String getRss09xDescription() {
-        return getRss09xDescription(-1);
-    }
-    
-    /**
-     * Return RSS 09x style description (escaped HTML version of entry text)
-     */
-    public String getRss09xDescription(int maxLength) {
-        String ret = StringEscapeUtils.escapeHtml3(getText());
-        if (maxLength != -1 && ret.length() > maxLength) {
-            ret = ret.substring(0,maxLength-3)+"...";
-        }
-        return ret;
-    }
-    
-    /** Create anchor for weblog entry, based on title or text */
-    protected String createAnchor() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogEntryManager().createAnchor(this);
-    }
-    
-    /** Create anchor for weblog entry, based on title or text */
-    public String createAnchorBase() {
-        
-        // Use title (minus non-alphanumeric characters)
-        String base = null;
-        if (!StringUtils.isEmpty(getTitle())) {
-            base = Utilities.replaceNonAlphanumeric(getTitle(), ' ').trim();    
-        }
-        // If we still have no base, then try text (minus non-alphanumerics)
-        if (StringUtils.isEmpty(base) && !StringUtils.isEmpty(getText())) {
-            base = Utilities.replaceNonAlphanumeric(getText(), ' ').trim();  
-        }
-        
-        if (!StringUtils.isEmpty(base)) {
-            
-            // Use only the first 4 words
-            StringTokenizer toker = new StringTokenizer(base);
-            String tmp = null;
-            int count = 0;
-            while (toker.hasMoreTokens() && count < 5) {
-                String s = toker.nextToken();
-                s = s.toLowerCase();
-                tmp = (tmp == null) ? s : tmp + "-" + s;
-                count++;
-            }
-            base = tmp;
-        }
-        // No title or text, so instead we will use the items date
-        // in YYYYMMDD format as the base anchor
-        else {
-            base = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(getPubTime());
-        }
-        
-        return base;
     }
     
     /**
