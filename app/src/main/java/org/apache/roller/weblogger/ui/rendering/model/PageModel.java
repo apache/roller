@@ -39,9 +39,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesDayPager;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesMonthPager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager.PagingInterval;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
@@ -291,48 +290,33 @@ public class PageModel implements Model {
                     weblog,
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
-                    pageRequest.getWeblogDate(),
                     cat,
                     tags,
-                    pageRequest.getPageNum());
-        } else if (dateString != null && dateString.length() == 8) {
-            return new WeblogEntriesDayPager(
-                    weblogEntryManager,
-                    urlStrategy,
-                    weblog,
-                    pageRequest.getWeblogPageName(),
-                    pageRequest.getWeblogAnchor(),
-                    pageRequest.getWeblogDate(),
-                    cat,
-                    tags,
-                    pageRequest.getPageNum());
-        } else if (dateString != null && dateString.length() == 6) {
-            return new WeblogEntriesMonthPager(
-                    weblogEntryManager,
-                    urlStrategy,
-                    weblog,
-                    pageRequest.getWeblogPageName(),
-                    pageRequest.getWeblogAnchor(),
-                    pageRequest.getWeblogDate(),
-                    cat,
-                    tags,
-                    pageRequest.getPageNum());
-          
+                    true);
         } else {
-            return new WeblogEntriesLatestPager(
+            PagingInterval interval = PagingInterval.LATEST;
+
+            if (dateString != null) {
+                int len = dateString.length();
+                if (len == 8) {
+                    interval = PagingInterval.DAY;
+                } else if (len == 6) {
+                    interval = PagingInterval.MONTH;
+                }
+            }
+
+            return new WeblogEntriesTimePager(
+                    interval,
                     weblogEntryManager,
                     urlStrategy,
                     weblog,
-                    pageRequest.getWeblogPageName(),
-                    pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
                     tags,
                     pageRequest.getPageNum());
         }
     }
-        
-    
+
     /**
      * Get comment form to be displayed, may contain preview data.
      *

@@ -22,11 +22,10 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPreviewPager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 
@@ -95,23 +94,21 @@ public class PreviewPageModel extends PageModel {
         }
         
         if (anchor != null) {
-            return new WeblogEntriesPreviewPager(
+            return new WeblogEntriesPermalinkPager(
                     weblogEntryManager,
                     urlStrategy,
                     previewRequest.getWeblog(),
                     previewRequest.getWeblogPageName(),
                     anchor,
-                    previewRequest.getWeblogDate(),
                     null,
                     previewRequest.getTags(),
-                    previewRequest.getPageNum());
+                    false);
         } else {
-            return new WeblogEntriesLatestPager(
+            return new WeblogEntriesTimePager(
+                    WeblogEntriesTimePager.PagingInterval.LATEST,
                     weblogEntryManager,
                     urlStrategy,
                     previewRequest.getWeblog(),
-                    previewRequest.getWeblogPageName(),
-                    previewRequest.getWeblogAnchor(),
                     previewRequest.getWeblogDate(),
                     null,
                     previewRequest.getTags(),
