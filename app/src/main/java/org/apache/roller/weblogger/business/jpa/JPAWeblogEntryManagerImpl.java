@@ -44,6 +44,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -56,6 +57,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TimeZone;
 
@@ -251,7 +253,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         StringBuilder queryString = new StringBuilder();
         
         if (wesc.getTags() == null || wesc.getTags().size()==0) {
-            queryString.append("SELECT e FROM WeblogEntry e WHERE ");
+            queryString.append("SELECT e FROM WeblogEntry e WHERE 1=1 ");
         } else {
             queryString.append("SELECT e FROM WeblogEntry e JOIN e.tags t WHERE ");
             queryString.append("(");
@@ -262,17 +264,17 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 params.add(size++, wesc.getTags().get(i));
                 queryString.append(" t.name = ?").append(size);                
             }
-            queryString.append(") AND ");
+            queryString.append(") ");
         }
         
         if (wesc.getWeblog() != null) {
             params.add(size++, wesc.getWeblog().getId());
-            queryString.append("e.weblog.id = ?").append(size);
-        } else {
-            params.add(size++, Boolean.TRUE);
-            queryString.append("e.weblog.visible = ?").append(size);
+            queryString.append("AND e.weblog.id = ?").append(size);
         }
-        
+
+        params.add(size++, Boolean.TRUE);
+        queryString.append(" AND e.weblog.visible = ?").append(size);
+
         if (wesc.getUser() != null) {
             params.add(size++, wesc.getUser().getUserName());
             queryString.append(" AND e.creatorUserName = ?").append(size);
@@ -411,7 +413,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public String createAnchor(WeblogEntry entry) throws WebloggerException {
         // Check for uniqueness of anchor
-        String base = entry.createAnchorBase();
+        String base = createAnchorBase(entry);
         String name = base;
         int count = 0;
         
@@ -433,6 +435,43 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             }
         }
         return name;
+    }
+
+    /** Create anchor for weblog entry, based on title or text */
+    private String createAnchorBase(WeblogEntry entry) {
+
+        // Use title (minus non-alphanumeric characters)
+        String base = null;
+        if (!StringUtils.isEmpty(entry.getTitle())) {
+            base = Utilities.replaceNonAlphanumeric(entry.getTitle(), ' ').trim();
+        }
+        // If we still have no base, then try text (minus non-alphanumerics)
+        if (StringUtils.isEmpty(base) && !StringUtils.isEmpty(entry.getText())) {
+            base = Utilities.replaceNonAlphanumeric(entry.getText(), ' ').trim();
+        }
+
+        if (!StringUtils.isEmpty(base)) {
+
+            // Use only the first 4 words
+            StringTokenizer toker = new StringTokenizer(base);
+            String tmp = null;
+            int count = 0;
+            while (toker.hasMoreTokens() && count < 5) {
+                String s = toker.nextToken();
+                s = s.toLowerCase();
+                tmp = (tmp == null) ? s : tmp + "-" + s;
+                count++;
+            }
+            base = tmp;
+        }
+        // No title or text, so instead we will use the items date
+        // in YYYYMMDD format as the base anchor
+        else {
+            base = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS,
+                    entry.getWeblog().getTimeZoneInstance()).format(entry.getPubTime());
+        }
+
+        return base;
     }
 
     /**

@@ -343,8 +343,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
         if (weblogEntry == null && weblogAnchor != null) {
             try {
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(),
                         weblogAnchor);
             } catch (WebloggerException ex) {
@@ -380,8 +379,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
         if (weblogCategory == null && weblogCategoryName != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger()
-                        .getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(),
                         weblogCategoryName);
             } catch (WebloggerException ex) {

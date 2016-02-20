@@ -14,11 +14,13 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.Hashtable;
-import java.util.Locale;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -78,26 +80,12 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 			ldapPass = ldapPassTemp != null ? ldapPassTemp : "";
 		}
 
-		Locale locale = CommentAuthenticatorUtils.getLocale(request);
-		I18nMessages messages = I18nMessages.getMessages(locale);
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("<p>");
-		sb.append(messages.getString("comments.ldapAuthenticatorUserName"));
-		sb.append("</p>");
-		sb.append("<p>");
-		sb.append("<input name=\"ldapUser\" value=\"");
-		sb.append(ldapUser + "\">");
-		sb.append("</p>");
-		sb.append("<p>");
-		sb.append(messages.getString("comments.ldapAuthenticatorPassword"));
-		sb.append("</p>");
-		sb.append("<p>");
-		sb.append("<input type=\"password\" name=\"ldapPass\" value=\"");
-		sb.append(ldapPass + "\">");
-		sb.append("</p>");
-
-		return sb.toString();
+		I18nMessages messages = I18nMessages.getMessages(request.getLocale());
+		String str = "<p>" + messages.getString("comments.ldapAuthenticatorUserName") + "</p>";
+		str += "<p><input name=\"ldapUser\" value=\"" + ldapUser + "\"></p>";
+		str += "<p>" + messages.getString("comments.ldapAuthenticatorPassword") + "</p>";
+		str += "<p><input type=\"password\" name=\"ldapPass\" value=\"" + ldapPass + "\"></p>";
+		return str;
 	}
 
 	public boolean authenticate(HttpServletRequest request) {
@@ -113,7 +101,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 		
 		if (propertiesValid && userDataValid) {
 			try {
-				Hashtable<String,String> env = new Hashtable<String,String>();
+				Hashtable<String,String> env = new Hashtable<>();
 				env.put(Context.INITIAL_CONTEXT_FACTORY,  
 						"com.sun.jndi.ldap.LdapCtxFactory"); 
 				if(securityLevel != null
