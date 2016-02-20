@@ -20,9 +20,12 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.logging.Log;
@@ -33,12 +36,32 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
-public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
+/**
+ *  Pager for viewing one entry at a time, e.g.:
+ *  http://server/tightblog/myblog/entry/my-blog-article
+ */
+public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     
     private static Log log = LogFactory.getLog(WeblogEntriesPermalinkPager.class);
-    
+
+    // message utils for doing i18n messages
+    I18nMessages messageUtils = null;
+
+    // url strategy for building urls
+    URLStrategy urlStrategy = null;
+
+    protected WeblogEntryManager weblogEntryManager;
+
+    Weblog weblog = null;
+    String pageLink = null;
+    String entryAnchor = null;
+    String catName = null;
+    List<String> tags = new ArrayList<>();
+    Boolean publishedOnly = true;
+
     WeblogEntry currEntry = null;
     WeblogEntry nextEntry = null;
     WeblogEntry prevEntry = null;
@@ -52,12 +75,26 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             Weblog             weblog,
             String             pageLink,
             String             entryAnchor,
-            String             dateString,
             String             catName,
             List<String>       tags,
-            int                page) {
-        
-        super(weblogEntryManager, strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
+            Boolean            publishedOnly) {
+
+        this.urlStrategy = strat;
+        this.weblogEntryManager = weblogEntryManager;
+        this.weblog = weblog;
+        this.pageLink = pageLink;
+        this.entryAnchor = entryAnchor;
+        this.catName = catName;
+        this.publishedOnly = publishedOnly;
+
+        if (tags != null) {
+            this.tags = tags;
+        }
+
+        // get a message utils instance to handle i18n of messages
+        Locale viewLocale = weblog.getLocaleInstance();
+        this.messageUtils = I18nMessages.getMessages(viewLocale);
+
         getEntries();
     }
     
@@ -66,23 +103,39 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
         if (entries == null) {
             try {
                 currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
-                if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
-                    entries = new TreeMap<>();
-                    entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(currEntry.templateCopy()));
+                if (publishedOnly) {
+                    if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
+                        entries = new TreeMap<>();
+                        entries.put(currEntry.getPubTime(), Collections.singletonList(currEntry.templateCopy()));
+                    }
+                } else {
+                    // for weblog entry previews, here we allow unpublished entries to be shown
+                    if (currEntry != null) {
+
+                        // clone the entry since we don't want to work with the real pojo
+                        WeblogEntry tmpEntry = new WeblogEntry();
+                        tmpEntry.setData(currEntry);
+
+                        // for display, set the pubtime to the current time if it is not set
+                        if(tmpEntry.getPubTime() == null) {
+                            tmpEntry.setPubTime(new Timestamp(System.currentTimeMillis()));
+                        }
+
+                        // store the entry in the collection
+                        entries = new TreeMap<>();
+                        entries.put(tmpEntry.getPubTime(), Collections.singletonList(tmpEntry.templateCopy()));
+                    }
                 }
             } catch (Exception e) {
                 log.error("ERROR: fetching entry");
             }
         }
-
-
-        
         return entries;
     }
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, pageLink, null, dateString, catName, tags);
+        return createURL(weblog, pageLink, null, catName, tags);
     }
     
     
@@ -93,7 +146,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getNextLink() {
         if (getNextEntry() != null) {
-            return createURL(0, 0, weblog, pageLink, nextEntry.getAnchor(), dateString, catName, tags);
+            return createURL(weblog, pageLink, nextEntry.getAnchor(), catName, tags);
         }
         return null;
     }
@@ -110,7 +163,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getPrevLink() {
         if (getPrevEntry() != null) {
-            return createURL(0, 0, weblog, pageLink, prevEntry.getAnchor(), dateString, catName, tags);
+            return createURL(weblog, pageLink, prevEntry.getAnchor(), catName, tags);
         }
         return null;
     }
@@ -123,8 +176,28 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
+
+    public String getNextCollectionLink() {
+        return null;
+    }
+
+
+    public String getNextCollectionName() {
+        return null;
+    }
+
+
+    public String getPrevCollectionLink() {
+        return null;
+    }
+
+
+    public String getPrevCollectionName() {
+        return null;
+    }
+
+
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) {
             try {
@@ -159,5 +232,23 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
 
         return prevEntry;
     }
-    
+
+    /**
+     * Create URL that encodes pager state using most appropriate form of URL.
+     */
+    protected String createURL(
+            Weblog website,
+            String pageLink,
+            String entryAnchor,
+            String catName,
+            List tags) {
+
+        if (pageLink != null) {
+            return urlStrategy.getWeblogPageURL(website, null, pageLink, entryAnchor, catName, null, tags, 0, false);
+        } else if (entryAnchor != null) {
+            return urlStrategy.getWeblogEntryURL(website, entryAnchor, true);
+        }
+        // home page URL
+        return urlStrategy.getWeblogCollectionURL(website, catName, null, tags, 0, false);
+    }
 }
