@@ -18,6 +18,10 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +29,7 @@ import java.util.Map;
  * Collection returned is a list of lists of entries, where each list of 
  * entries represents one day.
  */
-public interface WeblogEntriesPager {  
+public interface WeblogEntriesPager extends Pager {
         
     /**
      * A map of entries representing this collection.
@@ -33,39 +37,9 @@ public interface WeblogEntriesPager {
      * The collection is grouped by days of entries.  Each value is a list of
      * entry objects keyed by the date they were published.
      */
-    Map getEntries();
+    Map<Date, List<WeblogEntry>> getEntries();
         
     /**
-     * Link value for returning to pager home
-     */
-    String getHomeLink();
-
-    /**
-     * Name of pager home.
-     */
-    String getHomeName();
-
-    /**
-     * Link value for next page in current collection view
-     */
-    String getNextLink();
-
-    /**
-     * Name for next page in current collection view
-     */
-    String getNextName();
-
-    /**
-     * Link value for prev page in current collection view
-     */
-    String getPrevLink();
-
-    /**
-     * Link value for prev page in current collection view
-     */
-    String getPrevName();
-    
-        /**
      * Link value for next collection view
      */
     String getNextCollectionLink();

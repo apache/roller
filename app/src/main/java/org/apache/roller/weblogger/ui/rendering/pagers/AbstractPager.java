@@ -97,7 +97,7 @@ public abstract class AbstractPager implements Pager {
     }
     
     
-    protected String createURL(String url, Map params) {
+    protected String createURL(String url, Map<String, String> params) {
         
         return url + Utilities.getQueryString(params);
     }

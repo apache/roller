@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.UsersPager;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesListPager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogsPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -123,55 +123,10 @@ public class SiteModel implements Model {
      * @param length    Max number of results to return
      */
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
-        
-        String pagerUrl;
-        
-        if (feedRequest != null) {
-            pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
-                    feedRequest.getType(),
-                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
-                    feedRequest.getTags(), feedRequest.isExcerpts(), true);
-        } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,pageLink,
-                null, null, null, tags, 0, false);
-        }
-        
-        return new WeblogEntriesListPager(
-            weblogEntryManager, urlStrategy,
-            pagerUrl, null, null, null,
-            tags,
-            sinceDays,
-            pageNum, 
-            length);
+        return getWeblogEntriesPager(null, null, null, sinceDays, length);
     }
     
-       
     /**
-     * Get pager ofWeblogEntry objects across all weblogs,
-     * in reverse chrono order by pubTime.
-     * @param queryWeblog Restrict to this weblog
-     * @param sinceDays   Limit to past X days in past (or -1 for no limit)
-     * @param length      Max number of results to return
-     */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, int sinceDays, int length) {
-        return getWeblogEntriesPager(queryWeblog, null, null, sinceDays, length);
-    }
-
-    /**
-     * Get pager ofWeblogEntry objects across all weblogs,
-     * in reverse chrono order by pubTime.
-     * @param queryWeblog Restrict to this weblog
-     * @param user        Restrict to this user
-     * @param sinceDays   Limit to past X days in past (or -1 for no limit)
-     * @param length      Max number of results to return
-     */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, int sinceDays, int length) {
-        return getWeblogEntriesPager(queryWeblog, user, null, sinceDays, length);
-    }
-
-    /**
-     * Get pager ofWeblogEntry objects across all weblogs,
-     * in reverse chrono order by pubTime.
      * @param queryWeblog Restrict to this weblog
      * @param user        Restrict to this user
      * @param cat         Restrict to this category
@@ -179,27 +134,18 @@ public class SiteModel implements Model {
      * @param length      Max number of results to return
      */   
     public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, String cat, int sinceDays, int length) {
-        
-        String pagerUrl;
-        if (feedRequest != null) {
-            pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
-                    feedRequest.getType(),
-                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
-                    feedRequest.getTags(), feedRequest.isExcerpts(), true);
-        } else {
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
-                pageLink,
-                null, null, null, tags, 0, false);
-        }
-       
-        return new WeblogEntriesListPager(
-            weblogEntryManager, urlStrategy,
-            pagerUrl, queryWeblog.templateCopy(), user, cat,
-            tags,
-            sinceDays,
-            pageNum, 
-            length);
-    }    
+        return new WeblogEntriesTimePager(
+                weblogEntryManager,
+                urlStrategy,
+                queryWeblog,
+                user,
+                cat,
+                tags,
+                pageNum,
+                length,
+                sinceDays,
+                weblog);
+    }
     
     
     /*

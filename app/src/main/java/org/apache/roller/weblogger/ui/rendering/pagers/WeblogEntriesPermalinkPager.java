@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -97,9 +99,12 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
         getEntries();
     }
-    
-    
-    public Map getEntries() {
+
+    public List<WeblogEntry> getItems() {
+        return entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    public Map<Date, List<WeblogEntry>> getEntries() {
         if (entries == null) {
             try {
                 currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);

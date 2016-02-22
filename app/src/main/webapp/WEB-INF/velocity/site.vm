@@ -125,7 +125,7 @@ Show weblog profile for specified weblog
     </table>
 
     <h2 class="pageTitle">Recent posts</h2>
-    #set($entriesPager = $site.getWeblogEntriesPager($weblog, $null, $null, 90, 5)) 
+    #set($entriesPager = $site.getWeblogEntriesPager($weblog, $null, $null, 90, 5))
     #if($entriesPager.items.size() > 0)  
         <table class="rollertable"> 
         <thead>

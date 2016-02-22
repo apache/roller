@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesListPager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.util.Utilities;
@@ -134,20 +134,24 @@ public class FeedModel implements Model {
         return feedRequest.getTags();
     }    
 
-    public class FeedEntriesPager extends WeblogEntriesListPager {
+    public class FeedEntriesPager extends WeblogEntriesTimePager {
         
         private WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
-                    feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null, false, true),
+            super(weblogEntryManager, urlStrategy,
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
-                    -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+                    feedRequest.getPage(), DEFAULT_ENTRIES, -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;
         }
-        
-        protected String createURL(String url, Map params) {
+
+        @Override
+        public String getHomeLink() {
+            return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), feedRequest.getType(),
+                    feedRequest.getFormat(), null, null, null, false, true);
+        }
+
+        protected String createURL(String url, Map<String, String> params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
                 params.put("tags", Utilities.getEncodedTagsString(tags));
@@ -159,11 +163,11 @@ public class FeedModel implements Model {
             if(feedRequest.isExcerpts()) {
                 params.put("excerpts", "true");
             }            
-            return super.createURL(url, params);
+            return url + Utilities.getQueryString(params);
         }
         
         public String getUrl() {
-            return createURL(super.getUrl(), new HashMap());
+            return getHomeLink();
         }
     }
     
@@ -179,7 +183,7 @@ public class FeedModel implements Model {
             this.feedRequest = feedRequest;
         }
         
-        protected String createURL(String url, Map params) {
+        protected String createURL(String url, Map<String, String> params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
                 params.put("tags", Utilities.getEncodedTagsString(tags));
@@ -195,7 +199,7 @@ public class FeedModel implements Model {
         }
         
         public String getUrl() {
-            return createURL(super.getUrl(), new HashMap());
+            return createURL(super.getUrl(), new HashMap<>());
         }
     }      
 

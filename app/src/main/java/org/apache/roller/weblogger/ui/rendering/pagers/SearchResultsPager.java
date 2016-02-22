@@ -21,10 +21,15 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
@@ -39,7 +44,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     // url strategy
     URLStrategy urlStrategy = null;
     
-    private Map entries = null;
+    private Map<Date, List<WeblogEntry>> entries = null;
     
     private Weblog weblog = null;
     private String      query = null;
@@ -73,11 +78,14 @@ public class SearchResultsPager implements WeblogEntriesPager {
     }
     
     
-    public Map getEntries() {
+    public Map<Date, List<WeblogEntry>> getEntries() {
         return entries;
     }
-    
-    
+
+    public List<WeblogEntry> getItems() {
+        return entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
+    }
+
     public String getHomeLink() {
         return urlStrategy.getWeblogURL(weblog, false);
     }
