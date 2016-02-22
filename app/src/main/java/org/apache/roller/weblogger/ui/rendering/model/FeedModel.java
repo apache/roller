@@ -151,24 +151,6 @@ public class FeedModel implements Model {
                     feedRequest.getFormat(), null, null, null, false, true);
         }
 
-        protected String createURL(String url, Map<String, String> params) {
-            List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
-                params.put("tags", Utilities.getEncodedTagsString(tags));
-            }
-            String category = feedRequest.getWeblogCategoryName();
-            if(category != null && category.trim().length() > 0) {
-                params.put("cat", Utilities.encode(category));
-            }  
-            if(feedRequest.isExcerpts()) {
-                params.put("excerpts", "true");
-            }            
-            return url + Utilities.getQueryString(params);
-        }
-        
-        public String getUrl() {
-            return getHomeLink();
-        }
     }
     
     public class FeedCommentsPager extends CommentsPager {

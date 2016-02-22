@@ -165,7 +165,7 @@ public class SearchResultsFeedModel implements Model {
 				(hits > (offset + limit)));
 	}
 
-	public Pager getSearchResultsPager() {
+	public Pager getWeblogEntriesPager() {
 		return pager;
 	}
 
