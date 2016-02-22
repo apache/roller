@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
@@ -89,7 +90,7 @@ public class SearchResultsFeedPager extends AbstractPager {
         return messageUtils.getString("searchPager.home");
     }  
     
-    protected String createURL(String url, Map params) {
+    protected String createURL(String url, Map<String, String> params) {
         String category = feedRequest.getWeblogCategoryName();
         if(category != null && category.trim().length() > 0) {
             params.put("cat", Utilities.encode(category));
@@ -109,6 +110,6 @@ public class SearchResultsFeedPager extends AbstractPager {
     }
     
     public String getUrl() {
-        return createURL(url, new HashMap());
+        return createURL(url, new HashMap<>());
     }
 }
