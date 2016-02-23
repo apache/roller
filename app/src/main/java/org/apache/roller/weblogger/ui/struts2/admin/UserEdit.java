@@ -228,7 +228,7 @@ public class UserEdit extends UIAction {
             if (!safe.equals(bean.getUserName()) ) {
                 addError("error.add.user.badUserName");
             }
-            if (authMethod == AuthMethod.ROLLERDB && StringUtils.isEmpty(bean.getPassword())) {
+            if (authMethod == AuthMethod.DATABASE && StringUtils.isEmpty(bean.getPassword())) {
                 addError("error.add.user.missingPassword");
             }
         }

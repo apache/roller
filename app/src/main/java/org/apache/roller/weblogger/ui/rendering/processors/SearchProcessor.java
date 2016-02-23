@@ -52,12 +52,12 @@ import org.springframework.web.bind.annotation.RestController;
  * Handles search queries for weblogs.
  */
 @RestController
-@RequestMapping(path="/roller-ui/rendering/search/**")
+@RequestMapping(path="/tb-ui/rendering/search/**")
 public class SearchProcessor {
 
     private static Log log = LogFactory.getLog(SearchProcessor.class);
 
-    public static final String PATH = "/roller-ui/rendering/search";
+    public static final String PATH = "/tb-ui/rendering/search";
 
     @Autowired
     private WeblogManager weblogManager;

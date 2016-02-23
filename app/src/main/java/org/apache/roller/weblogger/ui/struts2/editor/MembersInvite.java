@@ -206,7 +206,7 @@ public class MembersInvite extends UIAction {
         this.permissionString = permission;
     }
 
-    @RequestMapping(path="/roller-ui/authoring/rest/userlist", method=RequestMethod.GET)
+    @RequestMapping(path="/tb-ui/authoring/rest/userlist", method=RequestMethod.GET)
     public List<UserData> getUserList(Principal p, HttpServletRequest request,
                             HttpServletResponse response) throws ServletException {
         try {

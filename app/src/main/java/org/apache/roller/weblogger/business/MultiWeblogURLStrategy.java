@@ -54,21 +54,21 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Url to login page.
      */
     public String getLoginURL(boolean absolute) {
-        return getRootURL(absolute) + "/roller-ui/login-redirect.rol";
+        return getRootURL(absolute) + "/tb-ui/login-redirect.rol";
     }
 
     /**
      * Url to logout page.
      */
     public String getLogoutURL(boolean absolute) {
-        return getRootURL(absolute) + "/roller-ui/logout.rol";
+        return getRootURL(absolute) + "/tb-ui/logout.rol";
     }
 
     /**
      * Url to register page.
      */
     public String getRegisterURL(boolean absolute) {
-        return getRootURL(absolute) + "/roller-ui/register.rol";
+        return getRootURL(absolute) + "/tb-ui/register.rol";
     }
 
     /**
@@ -95,7 +95,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Get a url to add a new weblog entry.
      */
     public String getEntryAddURL(String weblogHandle, boolean absolute) {
-        String url = getRootURL(absolute) + "/roller-ui/authoring/entryAdd.rol";
+        String url = getRootURL(absolute) + "/tb-ui/authoring/entryAdd.rol";
         Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
         return url + Utilities.getQueryString(params);
@@ -105,7 +105,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Get a url to edit a specific weblog entry.
      */
     public String getEntryEditURL(String weblogHandle, String entryId, boolean absolute) {
-        String url = getRootURL(absolute) + "/roller-ui/authoring/entryEdit.rol";
+        String url = getRootURL(absolute) + "/tb-ui/authoring/entryEdit.rol";
         Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
         params.put("bean.id", entryId);
@@ -116,7 +116,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Get a url to weblog config page.
      */
     public String getWeblogConfigURL(String weblogHandle, boolean absolute) {
-        String url = getRootURL(absolute) + "/roller-ui/authoring/weblogConfig.rol";
+        String url = getRootURL(absolute) + "/tb-ui/authoring/weblogConfig.rol";
         Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
         return url + Utilities.getQueryString(params);

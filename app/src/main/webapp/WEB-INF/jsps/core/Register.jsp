@@ -73,13 +73,13 @@
             <td colspan="3">
                 <h2><s:text name="userRegister.heading.authentication" /></h2>
 
-                <s:if test="authMethod == 'ROLLERDB'">
+                <s:if test="authMethod == 'DATABASE'">
                 <p><s:text name="userRegister.tip.enter.password" /></p>
                 </s:if>
             </td>
         </tr>
         
-        <s:if test="authMethod == 'ROLLERDB'">
+        <s:if test="authMethod == 'DATABASE'">
         <tr>
             <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
             <td class="field">
@@ -152,14 +152,14 @@ function onChange() {
         userName = document.register['bean.userName'].value;
     }
 
-    if (authMethod == "ROLLERDB") {
+    if (authMethod == "DATABASE") {
         passwordText    = document.register['bean.passwordText'].value;
         passwordConfirm = document.register['bean.passwordConfirm'].value;
     }
 
     if (authMethod == "LDAP") {
         if (emailAddress) disabled = false;
-    } else if (authMethod == "ROLLERDB") {
+    } else if (authMethod == "DATABASE") {
         if (emailAddress && userName && passwordText && passwordConfirm) disabled = false;
     }
 

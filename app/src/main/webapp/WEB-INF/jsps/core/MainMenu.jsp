@@ -107,7 +107,7 @@
                
                <td class="mm_table_actions" width="20%" align="left" >
 
-                       <s:url action="entryAdd" namespace="/roller-ui/authoring" id="newEntry">
+                       <s:url action="entryAdd" namespace="/tb-ui/authoring" id="newEntry">
                            <s:param name="weblog" value="#perms.weblog.handle" />
                        </s:url>
                        <img src='<s:url value="/images/table_edit.png"/>' />
@@ -116,7 +116,7 @@
 
                        <%-- Show Entries link with count for users above LIMITED permission --%>
                        <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
-                           <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
+                           <s:url action="entries" namespace="/tb-ui/authoring" id="editEntries">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/table_multiple.png"/>' />
@@ -126,7 +126,7 @@
 
                        <%-- Show Comments link with count for users above LIMITED permission --%>
                        <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
-                           <s:url action="comments" namespace="/roller-ui/authoring" id="manageComments">
+                           <s:url action="comments" namespace="/tb-ui/authoring" id="manageComments">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/page_white_edit.png"/>' />
@@ -140,22 +140,22 @@
                            <%-- And only show theme option if custom themes are enabled --%>
                            <s:if test="getProp('themes.customtheme.allowed')">
                                <s:if test="#perms.weblog.editorTheme == 'custom'">
-                                   <s:url action="templates" namespace="/roller-ui/authoring" id="weblogTheme">
+                                   <s:url action="templates" namespace="/tb-ui/authoring" id="weblogTheme">
                                        <s:param name="weblog" value="#perms.weblog.handle" />
                                    </s:url>
                                </s:if>
                                <s:else>
-                                   <s:url action="themeEdit" namespace="/roller-ui/authoring" id="weblogTheme">
+                                   <s:url action="themeEdit" namespace="/tb-ui/authoring" id="weblogTheme">
                                        <s:param name="weblog" value="#perms.weblog.handle" />
                                    </s:url>
                                </s:else>
-                               <img src='<s:url value="/roller-ui/images/layout.png"/>' />
+                               <img src='<s:url value="/tb-ui/images/layout.png"/>' />
                                <a href='<s:property value="weblogTheme" />'>
                                    <s:text name="yourWebsites.theme" /></a> 
                                <br />
                            </s:if>
                            
-                           <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
+                           <s:url action="weblogConfig" namespace="/tb-ui/authoring" id="manageWeblog">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/cog.png"/>' />
@@ -167,7 +167,7 @@
                        <%-- don't allow last admin to resign from blog --%>
                        <s:if test='!(#perms.weblogRole.name() == "OWNER")'>
                           <img src='<s:url value="/images/delete.png"/>' />
-                          <s:url action="memberResign" namespace="/roller-ui/authoring" id="resignWeblog">
+                          <s:url action="memberResign" namespace="/tb-ui/authoring" id="resignWeblog">
                               <s:param name="weblog" value="#perms.weblog.handle" />
                           </s:url>
                           <a href='<s:property value="resignWeblog" />'>

@@ -288,7 +288,7 @@ public class ThemeEdit extends UIAction {
         return sharedThemeCustomStylesheet;
     }
 
-    @RequestMapping(value = "/roller-ui/authoring/rest/themes", method = RequestMethod.GET)
+    @RequestMapping(value = "/tb-ui/authoring/rest/themes", method = RequestMethod.GET)
     public List<SharedThemeData> getSharedThemes() {
         List<SharedTheme> list = themeManager.getEnabledThemesList();
         List<SharedThemeData> to = new ArrayList<>();

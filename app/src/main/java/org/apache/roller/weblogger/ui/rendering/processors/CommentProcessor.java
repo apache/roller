@@ -79,12 +79,12 @@ import org.springframework.web.bind.annotation.RestController;
  * sent to the blog owner and all who have commented on the same post.
  */
 @RestController
-@RequestMapping(path="/roller-ui/rendering/comment/**")
+@RequestMapping(path="/tb-ui/rendering/comment/**")
 public class CommentProcessor {
 
     private static Log log = LogFactory.getLog(CommentProcessor.class);
 
-    public static final String PATH = "/roller-ui/rendering/comment";
+    public static final String PATH = "/tb-ui/rendering/comment";
 
     private CommentValidationManager commentValidationManager = null;
 

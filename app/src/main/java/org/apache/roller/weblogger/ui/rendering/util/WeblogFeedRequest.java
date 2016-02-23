@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.util.Utilities;
 /**
  * Represents a request for a Roller weblog feed.
  * 
- * /roller-ui/rendering/feeds/*
+ * /tb-ui/rendering/feeds/*
  *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.

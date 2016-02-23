@@ -20,9 +20,9 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
 <s:if test="actionName == 'comments'">
     <s:set var="mainAction">comments</s:set>

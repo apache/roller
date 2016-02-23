@@ -19,7 +19,7 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
 
 <script>
@@ -118,7 +118,7 @@ function handlePreview(handle) {
 
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
-            $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/rest/themes", async:false,
+            $.ajax({ url: "<s:property value='siteURL' />/tb-ui/authoring/rest/themes", async:false,
                 success: function(data) { $scope.themes = data; }
             });
             $scope.selectedTheme = $scope.themes[0];

@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Represents a request for a weblog resource file.
  *
- * /roller-ui/rendering/media-resources/*
+ * /tb-ui/rendering/media-resources/*
  */
 public class WeblogMediaResourceRequest extends WeblogRequest {
     

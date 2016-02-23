@@ -77,12 +77,12 @@ import java.util.regex.Pattern;
  * </ul>
  */
 @RestController
-@RequestMapping(path="/roller-ui/rendering/page/**")
+@RequestMapping(path="/tb-ui/rendering/page/**")
 public class PageProcessor {
 
     private static Log log = LogFactory.getLog(PageProcessor.class);
 
-    public static final String PATH = "/roller-ui/rendering/page";
+    public static final String PATH = "/tb-ui/rendering/page";
 
     @Autowired
     private LazyExpiringCache weblogPageCache = null;

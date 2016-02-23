@@ -18,7 +18,7 @@
   Source file modified from the original ASF source; all changes made
   are also under Apache License.
 *##if($group)<?xml version="1.0" encoding="utf-8"?>
-#if($feedStyle)<?xml-stylesheet type="text/xsl" href="$absoluteSite/roller-ui/styles/rss.xsl" media="screen"?>#end
+#if($feedStyle)<?xml-stylesheet type="text/xsl" href="$absoluteSite/tb-ui/styles/rss.xsl" media="screen"?>#end
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
   <title>$utils.escapeXML($group.title)</title>

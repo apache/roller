@@ -162,7 +162,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 	}
 
 	/**
-	 * Validate required properties, specified in custom-roller.properties.
+	 * Validate required properties, specified in tightblog-custom.properties.
 	 */
 	private boolean validateLdapProperties(String ldapDc, String ldapOu, String ldapPort, String ldapHost) {
 		boolean ret = false;

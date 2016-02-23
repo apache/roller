@@ -88,8 +88,8 @@
     Note: this filter does nothing if an ip ban list is not configured. -->
     <filter-mapping>
         <filter-name>IPBanFilter</filter-name>
-        <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/comment/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/trackback/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
@@ -124,14 +124,14 @@
 
 	<filter-mapping>
 		<filter-name>LoadSaltFilter</filter-name>
-		<url-pattern>/roller-ui/*</url-pattern>
+		<url-pattern>/tb-ui/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>ValidateSaltFilter</filter-name>
-		<url-pattern>/roller-ui/*</url-pattern>
+		<url-pattern>/tb-ui/*</url-pattern>
 	</filter-mapping>
 
     <!-- Request mapping, this is what allows the urls to work -->
@@ -169,15 +169,15 @@
 
     <servlet-mapping>
         <servlet-name>SpringDispatcherServlet</servlet-name>
-        <url-pattern>/roller-ui/authoring/rest/*</url-pattern>
-        <url-pattern>/roller-ui/authoring/preview/*</url-pattern>
+        <url-pattern>/tb-ui/authoring/rest/*</url-pattern>
+        <url-pattern>/tb-ui/authoring/preview/*</url-pattern>
         <url-pattern>/CommentAuthenticatorServlet</url-pattern>
-        <url-pattern>/roller-ui/rendering/page/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/media-resources/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/search/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/page/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/comment/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/trackback/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/feed/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/media-resources/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/search/*</url-pattern>
         <url-pattern>/planetrss/*</url-pattern>
     </servlet-mapping>
 
@@ -193,25 +193,25 @@
 
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
-        <location>/roller-ui/errors/error.jsp</location>
+        <location>/tb-ui/errors/error.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>403</error-code>
-        <location>/roller-ui/errors/403.jsp</location>
+        <location>/tb-ui/errors/403.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>404</error-code>
-        <location>/roller-ui/errors/404.jsp</location>
+        <location>/tb-ui/errors/404.jsp</location>
     </error-page>
 
     <!-- jndi resources -->
     <resource-ref>
-        <res-ref-name>jdbc/rollerdb</res-ref-name>
+        <res-ref-name>jdbc/tightblogdb</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>      
-        <mapped-name>jdbc/roller</mapped-name>
+        <mapped-name>jdbc/tightblog</mapped-name>
     </resource-ref>
 
     <resource-ref>
@@ -239,17 +239,17 @@
         <web-resource-collection>
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/roller_j_security_check</url-pattern>
-            <url-pattern>/roller-ui/login.rol</url-pattern>
-            <url-pattern>/roller-ui/register.rol</url-pattern>
-            <url-pattern>/roller-ui/register!save.rol</url-pattern>
-            <url-pattern>/roller-ui/profile.rol</url-pattern>
-            <url-pattern>/roller-ui/profile!save.rol</url-pattern>
-            <url-pattern>/roller-ui/admin/*</url-pattern>
-            <url-pattern>/roller-ui/login-redirect.jsp</url-pattern>
-            <url-pattern>/roller-ui/login-redirect.rol</url-pattern>
-            <url-pattern>/roller-ui/authoring/userdata</url-pattern>
-            <url-pattern>/roller-ui/authoring/membersInvite.rol</url-pattern>
-            <url-pattern>/roller-ui/authoring/membersInvite!save.rol</url-pattern>
+            <url-pattern>/tb-ui/login.rol</url-pattern>
+            <url-pattern>/tb-ui/register.rol</url-pattern>
+            <url-pattern>/tb-ui/register!save.rol</url-pattern>
+            <url-pattern>/tb-ui/profile.rol</url-pattern>
+            <url-pattern>/tb-ui/profile!save.rol</url-pattern>
+            <url-pattern>/tb-ui/admin/*</url-pattern>
+            <url-pattern>/tb-ui/login-redirect.jsp</url-pattern>
+            <url-pattern>/tb-ui/login-redirect.rol</url-pattern>
+            <url-pattern>/tb-ui/authoring/userdata</url-pattern>
+            <url-pattern>/tb-ui/authoring/membersInvite.rol</url-pattern>
+            <url-pattern>/tb-ui/authoring/membersInvite!save.rol</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

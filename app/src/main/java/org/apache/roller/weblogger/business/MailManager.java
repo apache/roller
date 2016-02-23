@@ -175,7 +175,7 @@ public class MailManager {
             
             // Figure URL to entry edit page
             String rootURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            String url = rootURL + "/roller-ui/menu.rol";
+            String url = rootURL + "/tb-ui/menu.rol";
             
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources",
@@ -239,7 +239,7 @@ public class MailManager {
             
             // activationURL=
             String activationURL = rootURL
-                    + "/roller-ui/register!activate.rol?activationCode="
+                    + "/tb-ui/register!activate.rol?activationCode="
                     + user.getActivationCode();
             sb.append(MessageFormat.format(
                     resources.getString("user.account.activation.mail.content"),
@@ -413,7 +413,7 @@ public class MailManager {
             Map<String, String> parameters = new HashMap<>();
             parameters.put("bean.entryId", entry.getId());
             String deleteURL = urlStrategy.getActionURL(
-                    "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
+                    "comments", "/tb-ui/authoring", weblog.getHandle(), parameters, true);
 
             if (isPlainText) {
                 ownermsg.append(deleteURL);

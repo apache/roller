@@ -661,7 +661,7 @@ Show weblog editor menu with vertical or horizontal orientation.
           #foreach( $menu in $editorMenu.tabs )
             <ul class="rMenu">
             #foreach( $item in $menu.items )
-                <li class="rMenuItem"><a href="$url.action($item.action, '/roller-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a></li>
+                <li class="rMenuItem"><a href="$url.action($item.action, '/tb-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a></li>
             #end
             </ul>
           #end
@@ -670,7 +670,7 @@ Show weblog editor menu with vertical or horizontal orientation.
           #foreach( $menu in $editorMenu.tabs )
             #foreach( $item in $menu.items )
                 #if ($menuCnt > 0)&nbsp;|&nbsp;#end
-                <a href="$url.action($item.action, '/roller-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a>
+                <a href="$url.action($item.action, '/tb-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a>
                 #set($menuCnt = $menuCnt + 1)
             #end
           #end

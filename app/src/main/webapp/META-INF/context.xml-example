@@ -4,16 +4,16 @@ Example Tomcat Context Configuration file for Roller
 Documented in Chapter 7.1-7.2 of Roller Installation Guide
 If you'd like to use Tomcat provided datasource and/or mail sessions then:
 - Uncomment the appropriate database / mail blocks below
-- Set database.connectionType=jndi property in roller-custom.properties
-- Set mail.connectionType=jndi property in roller-custom.properties
+- Set database.connectionType=jndi property in tightblog-custom.properties
+- Set mail.connectionType=jndi property in tightblog-custom.properties
 - Set the correct values for the database and mail server
 - Rename this file to context.xml and deploy Roller WAR to Tomcat.
 -->
 <Context path="/roller" debug="0">
 
-  <!--Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource"
+  <!--Resource name="jdbc/tightblogdb" auth="Container" type="javax.sql.DataSource"
     driverClassName="com.mysql.jdbc.Driver"
-    url="jdbc:mysql://localhost:3306/rollerdb?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf8"
+    url="jdbc:mysql://localhost:3306/tightblogdb?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf8"
     username="scott"
     password="tiger"
     maxActive="20" maxIdle="3" removeAbandoned="true" maxWait="3000" /-->

@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.util.Utilities;
 public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     
     private final String previewTheme;
-    private static final String PREVIEW_URL_SEGMENT = "/roller-ui/authoring/preview/";
+    private static final String PREVIEW_URL_SEGMENT = "/tb-ui/authoring/preview/";
 
     public PreviewURLStrategy() {
         previewTheme = null;

@@ -16,7 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <p class="subtitle">
    <s:text name="pageForm.subtitle" >
@@ -134,8 +134,8 @@
     </table>
 
   
-    <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
-    <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
+    <script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+    <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
     <script>
         function revertTemplate() {
@@ -289,8 +289,8 @@ if (getCookie('control_advancedControl') != null) {
 }
 </script>
 
- <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
- <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
+ <script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+ <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
  <script>
      $(function() {

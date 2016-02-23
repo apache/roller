@@ -8,10 +8,10 @@
         <Arg>
             <Ref id="wac_ds"/>
         </Arg>
-        <Arg>jdbc/rollerdb</Arg>
+        <Arg>jdbc/tightblogdb</Arg>
         <Arg>
             <New class="org.apache.derby.jdbc.EmbeddedDataSource">
-                <Set name="databaseName">rollerdb</Set>
+                <Set name="databaseName">tightblogdb</Set>
                 <Set name="createDatabase">create</Set>
             </New>
         </Arg>

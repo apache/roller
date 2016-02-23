@@ -61,12 +61,12 @@ import org.springframework.web.bind.annotation.RestController;
  * <a href="http://www.movabletype.org/documentation/trackback/specification.html">MT Trackback</a>.
  */
 @RestController
-@RequestMapping(path="/roller-ui/rendering/trackback/**")
+@RequestMapping(path="/tb-ui/rendering/trackback/**")
 public class IncomingTrackbackProcessor {
 
     private static Log logger = LogFactory.getLog(IncomingTrackbackProcessor.class);
 
-    public static final String PATH = "/roller-ui/rendering/trackback";
+    public static final String PATH = "/tb-ui/rendering/trackback";
 
     private CommentValidationManager commentValidationManager = null;
 
