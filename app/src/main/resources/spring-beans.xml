@@ -161,12 +161,6 @@
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
-    <beans:bean id="searchFeedModel" class="org.apache.roller.weblogger.ui.rendering.model.SearchResultsFeedModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-        <beans:property name="indexManager" ref="indexManager"/>
-    </beans:bean>
-
     <beans:bean id="searchResultsModel" class="org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
@@ -226,14 +220,6 @@
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
                 <beans:ref bean="messageModel"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
-    <beans:bean id="searchFeedModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="searchFeedModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>
