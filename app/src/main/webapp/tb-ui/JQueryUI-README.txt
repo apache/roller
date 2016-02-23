@@ -1,4 +1,4 @@
-The JQuery UI folder (roller-ui/jquery-ui-1.11.0) was created by doing the following:
+The JQuery UI folder (tb-ui/jquery-ui-1.11.0) was created by doing the following:
 
 1. Going to the JQuery UI download builder (http://jqueryui.com/download/) and choosing the latest stable version.
 2. Under Components, unselecting "toggle all" to make sure nothing selected.
@@ -7,9 +7,9 @@ The JQuery UI folder (roller-ui/jquery-ui-1.11.0) was created by doing the follo
    Let the Download Builder select whatever additional prerequisites needed.
 4. Selecting theme "Redmond", or a different one if desired.  (How each theme looks can be determined by going
    to: http://jqueryui.com/themeroller/ and selecting the "Gallery" tab.)
-5. For the subsequent download, extract into a new folder under roller-ui and delete all the non-"min" CSS
+5. For the subsequent download, extract into a new folder under tb-ui and delete all the non-"min" CSS
    and JS files within that folder.  Also delete:
-   a) the index.html and external/jquery/jquery.js files. (our JQuery is kept in the roller-ui/scripts folder.)
+   a) the index.html and external/jquery/jquery.js files. (our JQuery is kept in the tb-ui/scripts folder.)
    b) the structure and theme CSS files (they are unused subsets of the jquery-ui.min.css)
 6. Update the Roller UI JSP's to point to the new JQuery UI folder and test all works.
 7. Delete the old JQuery folder after the Roller UI has been updated.

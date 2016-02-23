@@ -23,18 +23,17 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title><fmt:message key="errorPage.title" /></title>
-
-        <link rel="stylesheet" media="all" href='<c:url value="/roller-ui/styles/roller.css"/>' />
+        <title><fmt:message key="error.title.404" /></title>
+        <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/styles/roller.css"/>' />
     </head>
     <body>
+        
         <div style="padding: 15px 25px 25px 25px">
-            <h2 class="error"><fmt:message key="errorPage.title" /></h2>
+            <h2 class="error"><fmt:message key="error.title.404" /></h2>
             
             <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
             <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
             <c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
-            <c:set var="exception"   value="${requestScope['javax.servlet.error.exception']}" />
             
             <table width="80%" border="1px" style="border-collapse: collapse;">
                 <tr>
@@ -51,7 +50,7 @@
                 </tr>
                 <tr>
                     <td width="20%">Exception</td>
-                    <td><fmt:message key="errorPage.message" /></td>
+                    <td><fmt:message key="error.text.404" /></td>
                 </tr>
             </table>
         </div>

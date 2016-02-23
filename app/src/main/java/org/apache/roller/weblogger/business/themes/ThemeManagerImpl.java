@@ -282,7 +282,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		if (themenames == null) {
 			log.warn("No themes found!  Perhaps wrong directory for themes specified?  "
-					+ "(Check themes.dir setting in roller[-custom].properties file.)");
+					+ "(Check themes.dir setting in tightblog[-custom].properties file.)");
 		} else {
             log.info("Loading themes from " + themesdir.getAbsolutePath() + "...");
 

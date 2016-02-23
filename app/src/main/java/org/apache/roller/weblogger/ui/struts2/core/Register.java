@@ -338,7 +338,7 @@ public class Register extends UIAction implements ServletRequestAware {
             addError("Register.error.emailAddressNull");
         }
 
-        if (AuthMethod.ROLLERDB.name().equals(getAuthMethod())
+        if (AuthMethod.DATABASE.name().equals(getAuthMethod())
                 && StringUtils.isEmpty(bean.getPasswordText())) {
                 addError("error.add.user.passwordEmpty");
                 return;

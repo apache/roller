@@ -108,7 +108,7 @@ public class JPAPersistenceStrategy {
             }
 
             try {
-                this.emf = Persistence.createEntityManagerFactory("RollerPU", emfProps);
+                this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
 
             } catch (Exception pe) {
                 logger.error("ERROR: creating entity manager", pe);

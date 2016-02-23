@@ -96,7 +96,7 @@ public class FileContentManagerTest extends WebloggerTest {
         propertiesManager.saveProperties(config);
         endSession(true);
 
-        /* NOTE: upload dir for unit tests is set in roller-custom.properties */
+        /* NOTE: upload dir for unit tests is set in tightblog-custom.properties */
 
         // File should not exist initially
         try {

@@ -30,7 +30,7 @@ function createRequestObject() {
 var http = createRequestObject();
 var init = false;
 var isBusy = false;
-var userURL = "<%= request.getContextPath() %>" + "/roller-ui/authoring/rest/userlist?length=50";
+var userURL = "<%= request.getContextPath() %>" + "/tb-ui/authoring/rest/userlist?length=50";
 
 function onUserNameFocus(enabled) {
     if (!init) {

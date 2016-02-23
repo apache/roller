@@ -222,7 +222,7 @@ public class Comments extends UIAction {
         }
 
         return urlStrategy.getActionURL(actionName,
-                        isGlobalCommentManagement() ? "/roller-ui/admin" : "/roller-ui/authoring",
+                        isGlobalCommentManagement() ? "/tb-ui/admin" : "/tb-ui/authoring",
                         isGlobalCommentManagement() ? null : getActionWeblog().getHandle(),
                         params, false);
     }
@@ -489,7 +489,7 @@ public class Comments extends UIAction {
         this.queryEntry = queryEntry;
     }
 
-    @RequestMapping(value = "/roller-ui/authoring/rest/comment/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/tb-ui/authoring/rest/comment/{id}", method = RequestMethod.GET)
     public CommentData getComment(@PathVariable String id, Principal p, HttpServletResponse response)
     throws ServletException {
         try {
@@ -517,7 +517,7 @@ public class Comments extends UIAction {
         }
     }
 
-    @RequestMapping(value = "/roller-ui/authoring/rest/comment/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/tb-ui/authoring/rest/comment/{id}", method = RequestMethod.PUT)
     public CommentData updateComment(@PathVariable String id, Principal p, HttpServletRequest request,
                                      HttpServletResponse response)
             throws ServletException {

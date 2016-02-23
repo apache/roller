@@ -4,7 +4,7 @@
 <struts>
 
     <!-- Weblogger default package -->
-    <package name="weblogger" namespace="/roller-ui" extends="struts-default">
+    <package name="weblogger" namespace="/tb-ui" extends="struts-default">
         
         <!-- Define Tiles result type -->
         <result-types>
@@ -86,11 +86,11 @@
         </action>
         
         <action name="login-redirect">
-            <result>/roller-ui/login-redirect.jsp</result>
+            <result>/tb-ui/login-redirect.jsp</result>
         </action>
         
         <action name="logout">
-            <result>/roller-ui/logout-redirect.jsp</result>
+            <result>/tb-ui/logout-redirect.jsp</result>
         </action>
         
         <action name="setup"
@@ -134,7 +134,7 @@
     
     
     <!-- Weblogger install/bootstrap actions -->
-    <package name="weblogger-install" namespace="/roller-ui/install" extends="weblogger">
+    <package name="weblogger-install" namespace="/tb-ui/install" extends="weblogger">
     
         <action name="install"
                 class="org.apache.roller.weblogger.ui.struts2.core.Install">
@@ -150,7 +150,7 @@
     
     
     <!-- Weblogger Admin UI (includes planet) -->
-    <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger">
+    <package name="weblogger-admin" namespace="/tb-ui/admin" extends="weblogger">
         
         <action name="globalConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.GlobalConfig">
@@ -238,7 +238,7 @@
     
     
     <!-- Weblogger Authoring UI -->
-    <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
+    <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">
 
         <action name="mediaFileAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">

@@ -59,12 +59,12 @@ import org.springframework.web.bind.annotation.RestController;
  * Responsible for rendering weblog feeds.
  */
 @RestController
-@RequestMapping(path="/roller-ui/rendering/feed/**")
+@RequestMapping(path="/tb-ui/rendering/feed/**")
 public class FeedProcessor {
 
     private static Log log = LogFactory.getLog(FeedProcessor.class);
 
-    public static final String PATH = "/roller-ui/rendering/feed";
+    public static final String PATH = "/tb-ui/rendering/feed";
 
     @Autowired
     private LazyExpiringCache weblogFeedCache = null;

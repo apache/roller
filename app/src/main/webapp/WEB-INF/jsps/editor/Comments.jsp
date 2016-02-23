@@ -16,7 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 <s:if test="actionName == 'comments'">
     <s:set var="mainAction">comments</s:set>
@@ -391,7 +391,7 @@
         var salt = $("#comments_salt").val();
         $.ajax({
             type: "PUT",
-            url: '<%= request.getContextPath()%>/roller-ui/authoring/rest/comment/' + id +'?salt='+salt,
+            url: '<%= request.getContextPath()%>/tb-ui/authoring/rest/comment/' + id +'?salt='+salt,
             data: content,
             dataType: "text",
             processData: "false",
@@ -423,7 +423,7 @@
     function readMoreComment(id, callback) {
         $.ajax({
             type: "GET",
-            url: '<%= request.getContextPath()%>/roller-ui/authoring/rest/comment/' + id,
+            url: '<%= request.getContextPath()%>/tb-ui/authoring/rest/comment/' + id,
             success: function(data) {
                 var cdata = eval("(" + data + ")");
                 $("#comment-" + cdata.id).html(cdata.content);

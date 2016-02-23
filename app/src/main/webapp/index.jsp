@@ -27,7 +27,7 @@ if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
     homepage.forward(request, response);
 } else {
     // dispatch to setup page
-    RequestDispatcher setuppage = request.getRequestDispatcher("/roller-ui/setup.rol");
+    RequestDispatcher setuppage = request.getRequestDispatcher("/tb-ui/setup.rol");
     setuppage.forward(request, response);
 }
 

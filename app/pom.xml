@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.roller</groupId>
-        <artifactId>roller-project</artifactId>
+        <groupId>org.glen.tightblog</groupId>
+        <artifactId>tightblog-project</artifactId>
         <version>5.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Roller webapp</name>
-    <artifactId>roller-webapp</artifactId>
+    <name>TightBlog webapp</name>
+    <artifactId>tightblog-webapp</artifactId>
     <packaging>war</packaging>
 
     <properties>
@@ -25,11 +25,11 @@
     <dependencies>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
-             Roller, comment out this dependency and uncomment Hibernate's
+             TightBlog, comment out this dependency and uncomment Hibernate's
              to use that stack instead.
 
              Logging, other special configuration during JUnit tests can be
-             placed in the src/test/resources/roller-custom.properties
+             placed in the src/test/resources/tightblog-custom.properties
              file.
          -->
         <dependency>
@@ -40,7 +40,7 @@
 
         <!-- Alternative testing with Hibernate (used by default with JBoss)
              Important: set hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
-             in your roller-custom.properties if using Hibernate with Tomcat
+             in your tightblog-custom.properties if using Hibernate with Tomcat
 
              org.javassist:javassist:3.15.0 cannot replace differently named javassist:javassist:3.11.0
              always provided by struts2-spring-plugin so filtering it out; already provided by JBoss anyway
@@ -326,7 +326,7 @@
 
     <build>
 
-        <finalName>roller</finalName>
+        <finalName>tightblog</finalName>
 
         <plugins>
 
@@ -344,13 +344,13 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
                     <webApp>
-                        <contextPath>/roller</contextPath>
+                        <contextPath>/tightblog</contextPath>
                     </webApp>
                     <jettyXml>src/test/resources/jetty.xml</jettyXml>
                     <systemProperties>
                         <systemProperty>
-                            <name>roller.custom.config</name>
-                            <value>${project.build.directory}/test-classes/roller-jettyrun.properties</value>
+                            <name>tightblog.custom.config</name>
+                            <value>${project.build.directory}/test-classes/tightblog-jettyrun.properties</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>
@@ -388,7 +388,7 @@
                         <configuration>
                             <daemon>true</daemon>
                             <type>derby</type>
-                            <database>rollerdb</database>
+                            <database>tightblogdb</database>
                             <username>APP</username>
                             <password>APP</password>
                             <port>4224</port>
@@ -457,7 +457,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/roller/WEB-INF/classes/dbscripts</outputDirectory>
+                            <outputDirectory>${project.build.directory}/tightblog/WEB-INF/classes/dbscripts</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>target/dbscripts</directory>
@@ -564,7 +564,7 @@
                 <directory>${project.basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>org/apache/roller/weblogger/config/roller.properties</include>
+                    <include>org/apache/tightblog/weblogger/config/tightblog.properties</include>
                 </includes>
             </resource>
         </resources>

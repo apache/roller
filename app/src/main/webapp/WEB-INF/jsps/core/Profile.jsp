@@ -51,7 +51,7 @@
             <td class="description"><s:text name="userRegister.tip.email" /></td>
         </tr>
         
-        <s:if test="authMethod == 'ROLLERDB'">
+        <s:if test="authMethod == 'DATABASE'">
             <tr>
                 <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
                 <td class="field">

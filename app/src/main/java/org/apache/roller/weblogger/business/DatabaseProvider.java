@@ -49,7 +49,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * database.configurationType=jndi
  * 
  * # For database configuration type 'jndi',this will be used
- * database.jndi.name=jdbc/rollerdb
+ * database.jndi.name=jdbc/tightblogdb
  * 
  * # For database configuration type of 'jdbc', you MUST override these
  * database.jdbc.driverClass=

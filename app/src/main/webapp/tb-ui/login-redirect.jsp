@@ -28,11 +28,11 @@ User user = mgr.getUserByUserName(auth.getName());
 List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
 
 if (user == null) {
-    response.sendRedirect(request.getContextPath()+"/roller-ui/register.rol");
+    response.sendRedirect(request.getContextPath()+"/tb-ui/register.rol");
 } else if (!user.isGlobalAdmin() && weblogs.size() == 1) {
     Weblog weblog = (Weblog) weblogs.get(0);
-    response.sendRedirect(request.getContextPath()+"/roller-ui/authoring/entryAdd.rol?weblog="+weblog.getHandle());
+    response.sendRedirect(request.getContextPath()+"/tb-ui/authoring/entryAdd.rol?weblog="+weblog.getHandle());
 } else {
-    response.sendRedirect(request.getContextPath()+"/roller-ui/menu.rol");
+    response.sendRedirect(request.getContextPath()+"/tb-ui/menu.rol");
 }
 %>

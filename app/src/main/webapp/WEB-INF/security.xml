@@ -32,12 +32,12 @@
     <http pattern="/styles/**" security="none"/>
 
     <http use-expressions="false" auto-config="false" access-decision-manager-ref="accessDecisionManager">
-        <intercept-url pattern="/roller-ui/login-redirect**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/roller-ui/profile**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/roller-ui/createWeblog**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/roller-ui/menu**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/roller-ui/authoring/**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/roller-ui/admin/**" access="ADMIN"/>
+        <intercept-url pattern="/tb-ui/login-redirect**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/profile**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/createWeblog**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/menu**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
         <intercept-url pattern="/rewrite-status*" access="ADMIN"/>
 
         <!-- CSRF presently handled manually via Roller's salt filters -->
@@ -48,8 +48,8 @@
             <frame-options policy="SAMEORIGIN"/>
         </headers>
 
-        <form-login login-page="/roller-ui/login.rol"
-                    authentication-failure-url="/roller-ui/login.rol?error=true"
+        <form-login login-page="/tb-ui/login.rol"
+                    authentication-failure-url="/tb-ui/login.rol?error=true"
                     login-processing-url="/roller_j_security_check"/>
 
         <remember-me user-service-ref="rollerUserService"

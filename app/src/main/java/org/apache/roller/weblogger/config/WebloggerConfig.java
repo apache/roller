@@ -32,17 +32,17 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 
 /**
- * Class for accessing static configuration properties, those in roller.properties
- * and its roller-custom.properties override file. These properties are
+ * Class for accessing static configuration properties, those in tightblog.properties
+ * and its tightblog-custom.properties override file. These properties are
  * read only at application startup, are not stored in any database table and
  * require an application restart in order to read any changed values.
  */
 public final class WebloggerConfig {
     
-    private static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
-    private static String custom_config = "/roller-custom.properties";
-    private static String junit_config = "/roller-junit.properties";
-    private static String custom_jvm_param = "roller.custom.config";
+    private static String default_config = "/org/apache/roller/weblogger/config/tightblog.properties";
+    private static String custom_config = "/tightblog-custom.properties";
+    private static String junit_config = "/tightblog-junit.properties";
+    private static String custom_jvm_param = "tightblog.custom.config";
     private static File custom_config_file = null;
 
     private static Properties config;

@@ -19,13 +19,13 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js' />"></script>
+<script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js' />"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
 
 <script>
 function fullPreview(selector) {
     selected = selector.selectedIndex;
-    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme=' + selector.options[selected].value);
+    window.open('<s:url value="/tb-ui/authoring/preview/%{actionWeblog.handle}"/>?theme=' + selector.options[selected].value);
 }
 function updateThemeChooser(selected) {
     if (selected[0].value == 'shared') {

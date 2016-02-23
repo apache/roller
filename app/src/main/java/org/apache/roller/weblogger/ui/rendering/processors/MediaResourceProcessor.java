@@ -49,12 +49,12 @@ import org.springframework.web.bind.annotation.RestController;
  * way to serve them up.
  */
 @RestController
-@RequestMapping(path="/roller-ui/rendering/media-resources/**")
+@RequestMapping(path="/tb-ui/rendering/media-resources/**")
 public class MediaResourceProcessor {
 
     private static Log log = LogFactory.getLog(MediaResourceProcessor.class);
 
-    public static final String PATH = "/roller-ui/rendering/media-resources";
+    public static final String PATH = "/tb-ui/rendering/media-resources";
 
     @Autowired
     private MediaFileManager mediaFileManager;

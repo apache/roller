@@ -72,7 +72,7 @@ public class ValidateSaltFilter implements Filter {
 
         // note enctype="multipart/form-data" does not send parameters (see
         // ROL-1956) requests of this type are stored in salt.ignored.urls in
-        // roller.properties
+        // tightblog.properties
         if (httpReq.getMethod().equals("POST")
                 && !isIgnoredURL(httpReq.getServletPath())) {
 

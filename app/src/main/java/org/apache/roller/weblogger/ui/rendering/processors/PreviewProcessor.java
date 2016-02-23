@@ -57,7 +57,7 @@ import org.springframework.web.bind.annotation.RestController;
  * outside of the authoring interface.
  */
 @RestController
-@RequestMapping(path="/roller-ui/authoring/preview/**")
+@RequestMapping(path="/tb-ui/authoring/preview/**")
 public class PreviewProcessor {
 
     private static Log log = LogFactory.getLog(PreviewProcessor.class);

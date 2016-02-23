@@ -22,14 +22,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.roller</groupId>
-        <artifactId>roller-project</artifactId>
+        <groupId>org.glen.tightblog</groupId>
+        <artifactId>tightblog-project</artifactId>
         <version>5.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Roller Selenium tests</name>
-    <artifactId>roller-selenium-tests</artifactId>
+    <name>TightBlog Selenium tests</name>
+    <artifactId>tightblog-selenium-tests</artifactId>
     <packaging>war</packaging>
 
     <properties>
@@ -40,7 +40,7 @@
     <!-- Process to run Selenium tests (actually no tests right now, just a skeleton)
          1. Tests presently require Firefox browser, Chrome on the to-do list.
 
-         2. Run mvn clean install from the roller trunk or app folder, that will install Roller in your
+         2. Run mvn clean install from the tightblog trunk or app folder, that will install TightBlog in your
          local Maven Repository.
 
          3. Navigate to this directory and run mvn integration-test or clean install.  Test results will
@@ -76,8 +76,8 @@
              WAR configuration provided (here, none) going into the new WAR.
         -->
         <dependency>
-            <groupId>org.apache.roller</groupId>
-            <artifactId>roller-webapp</artifactId>
+            <groupId>org.glen.tightblog</groupId>
+            <artifactId>tightblog-webapp</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -113,13 +113,13 @@
                         <configuration>
                             <daemon>true</daemon>
                             <type>derby</type>
-                            <database>rollerdb</database>
+                            <database>tightblogdb</database>
                             <username>APP</username>
                             <password>APP</password>
                             <port>4224</port>
                             <sources>
                                 <script>
-                                    <sourceFile>target/roller-selenium-tests-${project.version}/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
+                                    <sourceFile>target/tightblog-selenium-tests-${project.version}/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
                                 </script>
                             </sources>
                         </configuration>
@@ -135,7 +135,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Activates the Roller application during the integration test phase -->
+            <!-- Activates the TightBlog application during the integration test phase -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -143,14 +143,14 @@
                     <stopKey>selenium</stopKey>
                     <stopPort>9999</stopPort>
                     <webApp>
-                        <contextPath>/roller</contextPath>
+                        <contextPath>/tightblog</contextPath>
                     </webApp>
-                    <webAppSourceDirectory>target/roller-selenium-tests-${project.version}</webAppSourceDirectory>
+                    <webAppSourceDirectory>target/tightblog-selenium-tests-${project.version}</webAppSourceDirectory>
                     <jettyXml>../app/src/test/resources/jetty.xml</jettyXml>
                     <systemProperties>
                         <systemProperty>
-                            <name>roller.custom.config</name>
-                            <value>src/test/resources/roller-jettyrun.properties</value>
+                            <name>tightblog.custom.config</name>
+                            <value>src/test/resources/tightblog-jettyrun.properties</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>

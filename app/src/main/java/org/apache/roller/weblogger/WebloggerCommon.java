@@ -49,7 +49,7 @@ public final class WebloggerCommon {
     }
 
     public enum AuthMethod {
-        ROLLERDB("db"),
+        DATABASE("db"),
         LDAP("ldap");
 
         private final String propertyName;

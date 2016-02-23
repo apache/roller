@@ -41,7 +41,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     
     private static Log log = LogFactory.getLog(WeblogPreviewRequest.class);
     
-    private static final String PREVIEW_SERVLET = "/roller-ui/authoring/preview";
+    private static final String PREVIEW_SERVLET = "/tb-ui/authoring/preview";
     
     // lightweight attributes
     // theme name provided only for theme (not blog entry) previews.

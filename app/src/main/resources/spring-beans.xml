@@ -311,7 +311,7 @@
     <beans:bean id="tightblogProtectedUrls" class="org.springframework.beans.factory.config.SetFactoryBean">
         <beans:property name="sourceSet">
             <beans:set>
-                <beans:value>roller-ui</beans:value>
+                <beans:value>tb-ui</beans:value>
                 <beans:value>roller-services</beans:value>
                 <beans:value>images</beans:value>
                 <beans:value>theme</beans:value>

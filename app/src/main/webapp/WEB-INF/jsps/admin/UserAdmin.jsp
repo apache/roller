@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script>
-<%@ include file="/roller-ui/scripts/ajax-user.js" %>
+<%@ include file="/tb-ui/scripts/ajax-user.js" %>
 </script>
 
 <p class="subtitle"><s:text name="userAdmin.subtitle.searchUser" /></p>

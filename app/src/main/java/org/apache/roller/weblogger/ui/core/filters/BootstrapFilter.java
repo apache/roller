@@ -62,7 +62,7 @@ public class BootstrapFilter implements Filter {
             
             // we doing an install, so forward to installer
             RequestDispatcher rd = context.getRequestDispatcher(
-                "/roller-ui/install/install.rol");
+                "/tb-ui/install/install.rol");
             rd.forward(req, res);
             
         } else {

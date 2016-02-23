@@ -38,7 +38,7 @@
                 </s:if>
 
                 <s:if test="userIsAdmin">               
-                    <h3><a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h3>          
+                    <h3><a href="<s:url action="globalConfig" namespace="/tb-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h3>
                     <p><s:text name="yourWebsites.globalAdmin.desc" /></p>
                 </s:if>
                 
