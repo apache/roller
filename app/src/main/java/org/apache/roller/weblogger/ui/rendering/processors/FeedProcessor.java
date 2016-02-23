@@ -228,10 +228,6 @@ public class FeedProcessor {
                 pageId = "weblog-" + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
             }
 
-            // Load search models if search feed
-            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
-                model.putAll(Model.getModelMap("searchFeedModelSet", initData));
-            }
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
 
@@ -328,10 +324,6 @@ public class FeedProcessor {
 
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
-
-        if (feedRequest.getTerm() != null) {
-            key.append("/search/").append(feedRequest.getTerm());
-        }
 
         if(feedRequest.getWeblogCategoryName() != null) {
             String cat = feedRequest.getWeblogCategoryName();
