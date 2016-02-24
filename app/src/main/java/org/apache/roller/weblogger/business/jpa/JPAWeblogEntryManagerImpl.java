@@ -255,7 +255,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         if (wesc.getTags() == null || wesc.getTags().size()==0) {
             queryString.append("SELECT e FROM WeblogEntry e WHERE 1=1 ");
         } else {
-            queryString.append("SELECT e FROM WeblogEntry e JOIN e.tags t WHERE ");
+            // subquery to avoid this problem with Derby: http://stackoverflow.com/a/480536
+            queryString.append("SELECT e FROM WeblogEntry e WHERE EXISTS ( Select 1 from WeblogEntryTag t " +
+                    "where t.weblogEntry.id = e.id AND ");
             queryString.append("(");
             for (int i = 0; i < wesc.getTags().size(); i++) {
                 if (i != 0) {
@@ -264,7 +266,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 params.add(size++, wesc.getTags().get(i));
                 queryString.append(" t.name = ?").append(size);                
             }
-            queryString.append(") ");
+            queryString.append(")) ");
         }
         
         if (wesc.getWeblog() != null) {
@@ -909,10 +911,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         List<String> results = q.getResultList();
         
-        //TODO: DatamapperPort: Since we are only interested in knowing whether
-        //results.size() == tags.size(). This query can be optimized to just fetch COUNT
-        //instead of objects as done currently
-        return (results != null && results.size() == tags.size());
+        // OK if at least one article matches at least one tag
+        return (results != null && results.size() > 0);
     }
 
 

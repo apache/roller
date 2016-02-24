@@ -49,7 +49,7 @@ public class WeblogEntryTag implements Serializable {
     private static final long serialVersionUID = -2602052289337573384L;
     
     private String id = WebloggerCommon.generateUUID();
-    private Weblog website = null;
+    private Weblog weblog = null;
     private WeblogEntry weblogEntry = null;
     private String name = null;
 
@@ -57,15 +57,6 @@ public class WeblogEntryTag implements Serializable {
     public WeblogEntryTag() {
     }
     
-    public WeblogEntryTag(
-            Weblog website,
-            WeblogEntry weblogEntry,
-            String name) {
-        this.website = website;
-        this.weblogEntry = weblogEntry;
-        this.name = name;
-    }
-
     /**
      * A read-only copy for usage within templates, with fields limited
      * to just those we wish to provide to those templates.
@@ -93,16 +84,16 @@ public class WeblogEntryTag implements Serializable {
     
     
     /**
-     * ID of website that this tag refers to.
+     * ID of weblog that this tag refers to.
      */
     @ManyToOne
     @JoinColumn(name="weblogid",nullable=false)
     public Weblog getWeblog() {
-        return this.website;
+        return this.weblog;
     }
     
     public void setWeblog(Weblog website) {
-        this.website = website;
+        this.weblog = website;
     }
 
 
