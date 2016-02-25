@@ -58,7 +58,7 @@ public class PersistenceSessionFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             if (WebloggerFactory.isBootstrapped()) {
-                log.debug("Releasing Roller Session");
+                log.debug("Releasing TightBlog Session");
                 WebloggerFactory.release();
             }
             

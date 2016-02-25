@@ -98,7 +98,7 @@ public class RollerContext extends ContextLoaderListener
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
         if (ctxPath == null) {
-            log.fatal("Roller requires an exploded WAR file to run.");
+            log.fatal("TightBlog requires an exploded WAR file to run.");
             return;
         }
 
@@ -106,7 +106,7 @@ public class RollerContext extends ContextLoaderListener
         try {
             WebloggerStartup.prepare();
         } catch (StartupException ex) {
-            log.fatal("Roller Weblogger startup failed during app preparation", ex);
+            log.fatal("TightBlog Weblogger startup failed during app preparation", ex);
             return;
         }
         
@@ -117,14 +117,14 @@ public class RollerContext extends ContextLoaderListener
         if (!WebloggerStartup.isPrepared()) {
             StringBuilder buf = new StringBuilder();
             buf.append("\n----------------------------------------------------------------");
-            buf.append("\nRoller Weblogger startup INCOMPLETE, user interaction commencing");
+            buf.append("\nTightBlog Weblogger startup INCOMPLETE, user interaction commencing");
             buf.append("\n----------------------------------------------------------------");
             log.info(buf.toString());
         } else {
             try {
                 WebloggerFactory.bootstrap();
             } catch (WebloggerException ex) {
-                log.fatal("Roller Weblogger initialization failed", ex);
+                log.fatal("TightBlog Weblogger initialization failed", ex);
             }
 		}
             
@@ -132,7 +132,7 @@ public class RollerContext extends ContextLoaderListener
             // Initialize Spring Security based on Roller configuration
             initializeSecurityFeatures(servletContext);
         } catch (Exception ex) {
-            log.fatal("Error initializing Roller Weblogger web tier", ex);
+            log.fatal("Error initializing TightBlog Weblogger web tier", ex);
         }
         
     }

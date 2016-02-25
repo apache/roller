@@ -136,7 +136,7 @@ public class TemplateEdit extends UIAction {
 
         } catch (WebloggerException ex) {
            log.error("Error updating page - " + getBean().getId(), ex);
-           addError("Error saving template - check Roller logs");
+           addError("Error saving template - check TightBlog logs");
         }
 
         return INPUT;
@@ -206,7 +206,7 @@ public class TemplateEdit extends UIAction {
 
             } catch (Exception ex) {
                 log.error("Error updating page - " + getBean().getId(), ex);
-                addError("Error updating template - check Roller logs");
+                addError("Error updating template - check TightBlog logs");
             }
         }
 

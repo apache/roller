@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
- * Encapsulates Roller mail configuration, returns mail sessions.
+ * Encapsulates weblogger mail configuration, returns mail sessions.
  */
 public class MailProvider {
     

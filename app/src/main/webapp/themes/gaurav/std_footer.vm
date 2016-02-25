@@ -5,10 +5,6 @@
             <p>Copyright © $model.weblog.creator.fullName</p>
 		    <p>Licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/2.5/">Attribution-Noncommercial-Share Alike 2.5 Generic</a></p>
         </div>
-        <div class="col-lg-4 text-right">
-            <p><img src='$url.themeResource('gaurav', "icons/asf-logo.png")' border="0" alt="Apache feather"/></p>
-            <p>Powered by <a href="http://roller.apache.org">Apache Roller</a></p>
-        </div>
     </div>
 </div>
 <!-- Placed at the end of the document so the pages load faster -->

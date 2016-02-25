@@ -1,7 +1,4 @@
 <div id="footer">
-
-Powered by <a href="http://roller.apache.org">Apache Roller</a> $config.rollerVersion
-
 </div>
        
 <div id="datetagdiv" 

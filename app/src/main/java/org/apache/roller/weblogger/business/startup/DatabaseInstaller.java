@@ -149,7 +149,7 @@ public class DatabaseInstaller {
      */
     public void createDatabase() throws StartupException {
         
-        log.info("Creating Roller Weblogger database tables.");
+        log.info("Creating weblogger database tables.");
         
         Connection con = null;
         SQLScriptRunner create = null;
@@ -203,12 +203,12 @@ public class DatabaseInstaller {
         try {
             con = db.getConnection();
             if(dbversion < 0) {
-                String msg = "Cannot upgrade database tables, Roller database version cannot be determined";
+                String msg = "Cannot upgrade database tables, TightBlog database version cannot be determined";
                 errorMessage(msg);
                 throw new StartupException(msg);
             } else if (dbversion < 500) {
-                String msg = "Roller " + myVersion + " cannot upgrade from versions older than 5.0; " +
-                        "try first upgrading to an earlier version of Roller.";
+                String msg = "TightBlog " + myVersion + " cannot upgrade from versions older than 5.0; " +
+                        "try first upgrading to an earlier version of TightBlog.";
                 errorMessage(msg);
                 throw new StartupException(msg);
             } else if(dbversion >= myVersion) {

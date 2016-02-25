@@ -184,7 +184,7 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
 
             <p>This page is an RSS
             newsfeed, an XML data representation of the latest entries
-            from a Roller weblog. If you have a newsfeed reader or aggregator, you can 
+            from a TightBlog weblog. If you have a newsfeed reader or aggregator, you can
             subscribe to this newsfeed. To subscribe, copy the URL from your browser's 
             address bar above and paste it into your newsfeed reader.</p>
             

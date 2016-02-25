@@ -211,7 +211,7 @@ public class CreateWeblog extends UIAction {
                 }
             } catch (WebloggerException ex) {
                 log.error("error checking for weblog", ex);
-                addError("Unexpected error validating weblog -- check Roller logs");
+                addError("Unexpected error validating weblog -- check TightBlog logs");
             }
         }
     }

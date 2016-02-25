@@ -22,7 +22,6 @@
 <% request.setAttribute("revision",
       org.apache.roller.weblogger.config.WebloggerConfig.getProperty("weblogger.revision", "Unknown")); %>
 
-<img src='<s:url value="/images/tinyfeather.png"/>' alt="ASF logo" style="vertical-align:middle" />
 <s:text name="footer.productName" >
     <s:param value="#request.version" />
     <s:param value="#request.revision" />

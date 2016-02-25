@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import org.apache.roller.weblogger.WebloggerException;
@@ -25,7 +27,7 @@ import java.util.Date;
 
 /**
  * The Template interface represents the abstract concept of a single unit
- * of templated or non-rendered content.  For Roller we mainly think of
+ * of templated or non-rendered content.  For TightBlog we mainly think of
  * templates as Velocity templates which are meant to be fed into the
  * Velocity rendering engine.
  */

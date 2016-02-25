@@ -73,7 +73,7 @@ public interface PingTargetManager {
     List<PingTarget> getCommonPingTargets() throws WebloggerException;
 
     /**
-     * Check if the ping target name already exists in Roller.
+     * Check if the ping target name already exists in the weblogger instance.
      *
      * @param pingTargetName ping target name to check
      * @return true if there is already a ping target with this name, false otherwise

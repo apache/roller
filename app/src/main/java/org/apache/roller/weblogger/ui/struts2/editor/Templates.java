@@ -108,7 +108,7 @@ public class Templates extends UIAction {
 		} catch (WebloggerException ex) {
 			log.error("Error getting templates for weblog - "
 					+ getActionWeblog().getHandle(), ex);
-			addError("Error getting template list - check Roller logs");
+			addError("Error getting template list - check TightBlog logs");
 		}
 
 		return LIST;
@@ -182,7 +182,7 @@ public class Templates extends UIAction {
             } catch (WebloggerException ex) {
                 log.error("Error adding new template for weblog - "
                         + getActionWeblog().getHandle(), ex);
-                addError("Error adding new template - check Roller logs");
+                addError("Error adding new template - check TightBlog logs");
             }
         }
 

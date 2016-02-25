@@ -1,5 +1,5 @@
 <!-- 
-Example Tomcat Context Configuration file for Roller
+Example Tomcat Context Configuration file for TightBlog
 
 Documented in Chapter 7.1-7.2 of Roller Installation Guide
 If you'd like to use Tomcat provided datasource and/or mail sessions then:
@@ -7,7 +7,7 @@ If you'd like to use Tomcat provided datasource and/or mail sessions then:
 - Set database.connectionType=jndi property in tightblog-custom.properties
 - Set mail.connectionType=jndi property in tightblog-custom.properties
 - Set the correct values for the database and mail server
-- Rename this file to context.xml and deploy Roller WAR to Tomcat.
+- Rename this file to context.xml and deploy TightBlog WAR to Tomcat.
 -->
 <Context path="/roller" debug="0">
 

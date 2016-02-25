@@ -71,7 +71,7 @@ public final class WebloggerFactory {
      */
     public static Weblogger getWeblogger() {
         if (!isBootstrapped()) {
-            throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
+            throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
         }
         
         return webloggerInstance;
@@ -79,7 +79,7 @@ public final class WebloggerFactory {
 
     public static ApplicationContext getContext() {
         if (!isBootstrapped()) {
-            throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
+            throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
         }
 
         return context;
@@ -128,7 +128,7 @@ public final class WebloggerFactory {
 
         strategy.flush();
 
-        LOG.info("Roller Weblogger business tier successfully bootstrapped");
+        LOG.info("TightBlog Weblogger business tier successfully bootstrapped");
         LOG.info("   Version: " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
         LOG.info("   Revision: " + WebloggerConfig.getProperty("weblogger.revision", "Unknown"));
     }

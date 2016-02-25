@@ -4,7 +4,7 @@
     <id>basicmobile</id>
     <name>Basic Mobile</name>
     <description>Offers wide margins for blogging programming language source code and a separate button for mobile viewing.</description>
-    <author>Roller Weblogger</author>
+    <author>TightBlog Weblogger</author>
     <!-- dualTheme: Maintain separate mobile & standard templates and stylesheets, default false,
          not needed with responsive themes or where multi-device support is not a concern. -->
     <dualTheme>true</dualTheme>

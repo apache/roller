@@ -79,7 +79,7 @@ public class AkismetCommentValidator implements CommentValidator {
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
-            conn.setRequestProperty("User_Agent", "Roller " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
+            conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8"); 
             conn.setRequestProperty("Content-length", Integer.toString(sb.length()));
 

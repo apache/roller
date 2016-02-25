@@ -35,7 +35,7 @@
   #set($pager = $site.getWeblogEntriesPager(-1, $config.feedSize))
   <copyright>Copyright $utils.formatDate($pager.lastUpdated, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($pager.lastUpdated)</lastBuildDate>
-  <generator>Apache Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
+  <generator>TightBlog Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
   #showEntriesRSS20($pager.items)
 </channel>
 </rss>

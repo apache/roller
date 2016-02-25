@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.pojos;
 public enum GlobalRole {
     // For pages that don't need authenticated users (initial install, user registration, login, etc.)
     NOAUTHNEEDED(0),
-    // User can log into Roller
+    // User can log into TightBlog
     LOGIN(1),
     // User can leave blog entry comments
     COMMENT(2),

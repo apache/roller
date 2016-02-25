@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
-
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.business;
 
 import java.sql.Connection;
@@ -34,13 +36,13 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
- * Encapsulates Roller database configuration via JDBC properties or JNDI.
+ * Encapsulates database configuration via JDBC properties or JNDI.
  * 
  * <p>To keep the logs from filling up with DB connection errors, will only 
  * attempt to connect once.</p>
  * 
  * <p>Keeps startup exception and log so we can present useful debugging
- * information to whoever is installing Roller.</p>
+ * information to whoever is installing the weblogger.</p>
  * 
  * 
  * <p>Reads configuration properties from WebloggerConfig:</p>

@@ -15,16 +15,19 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 -->
 
 <!--
-  STOP!!!!  This is NOT a Roller configuration file!!
-  Users of Roller should never need to edit this file.  The properties
-  listed here should instead be changed on the Roller Admin Settings page.
+  STOP!!!!  This is NOT a TightBlog configuration file!!
+  Users of TightBlog should never need to edit this file.  The properties
+  listed here should instead be changed on the TightBlog Admin Settings page.
   
   This file defines what properties are made available to get/set
-  during the running of the Roller application (in contrast to the settings
-  in tightblog-custom.properties which are read once before Roller startup).
+  during the running of the TightBlog application (in contrast to the settings
+  in tightblog-custom.properties which are read once before TightBlog startup).
   These runtime properties are stored in the database (weblogger_properties
   table) and the code *must* be able to make use of changed values during
   runtime.
@@ -50,7 +53,7 @@
    
       <property-def  name="site.name"  key="configForm.siteName">
          <type>string</type>
-         <default-value>Roller Site</default-value>
+         <default-value>TightBlog Site</default-value>
       </property-def>
       <property-def  name="site.shortName"  key="configForm.shortName">
          <type>string</type>
@@ -58,7 +61,7 @@
       </property-def>
       <property-def  name="site.description"  key="configForm.siteDescription">
          <type>text</type>
-	     <default-value>A default install of the Roller Weblogger open source blog server</default-value>
+	     <default-value>A default install of the TightBlog Weblogger open source blog server</default-value>
       </property-def>      
       <property-def  name="site.frontpage.weblog.handle"  key="configForm.frontpageWeblogHandle">
          <type>string</type>
