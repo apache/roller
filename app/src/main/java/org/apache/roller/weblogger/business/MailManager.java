@@ -162,7 +162,7 @@ public class MailManager {
 
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
-                    + "Roller's mail session not properly configured");
+                    + "TightBlog's mail session not properly configured");
         }
         
         try {
@@ -201,7 +201,7 @@ public class MailManager {
             sendTextMessage(from, to, cc, bcc, subject, content);
         } catch (MessagingException e) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
-                    + "due to Roller configuration or mail server problem.", e);
+                    + "due to TightBlog configuration or mail server problem.", e);
         }
     }
     
@@ -216,7 +216,7 @@ public class MailManager {
 
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
-                    + "Roller's mail session not properly configured");
+                    + "TightBlog's mail session not properly configured");
         }
         
         try {

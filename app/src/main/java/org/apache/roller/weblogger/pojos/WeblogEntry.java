@@ -393,9 +393,9 @@ public class WeblogEntry implements Serializable {
     
     /**
      * <p>Publish time is the time that an entry is to be (or was) made available
-     * for viewing by newsfeed readers and visitors to the Roller site.</p>
+     * for viewing by newsfeed readers and visitors to the weblogger site.</p>
      *
-     * <p>Roller stores time using the timeZone of the server itself. When
+     * <p>TightBlog stores time using the timezone of the server itself. When
      * times are displayed  in a user's weblog they must be translated
      * to the user's timeZone.</p>
      *
@@ -494,7 +494,7 @@ public class WeblogEntry implements Serializable {
     }
     
     /**
-     * True if story should be pinned to the top of the Roller site main blog.
+     * True if story should be pinned to the top of the site main blog.
      * @return Returns the pinned.
      */
     @Basic(optional=false)
@@ -524,7 +524,7 @@ public class WeblogEntry implements Serializable {
     }
      
     /**
-     * Roller lowercases all tags based on locale because there's not a 1:1 mapping
+     * TightBlog lowercases all tags based on locale because there's not a 1:1 mapping
      * between uppercase/lowercase characters across all languages.  
      * @param name
      * @throws WebloggerException

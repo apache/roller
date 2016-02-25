@@ -2,7 +2,7 @@
 createdb.vm: Velocity template that generates vendor-specific database scripts
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
--- Run this script to create the Roller database tables in your database.
+-- Run this script to create the TightBlog database tables in your database.
 -- *****************************************************
 
 create table weblogger_user (

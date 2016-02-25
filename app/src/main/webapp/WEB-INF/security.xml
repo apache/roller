@@ -40,7 +40,7 @@
         <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
         <intercept-url pattern="/rewrite-status*" access="ADMIN"/>
 
-        <!-- CSRF presently handled manually via Roller's salt filters -->
+        <!-- CSRF presently handled manually via TightBlog's salt filters -->
         <csrf disabled="true"/>
 
         <!-- Needed to allow for popups -->

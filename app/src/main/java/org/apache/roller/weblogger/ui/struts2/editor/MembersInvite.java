@@ -172,7 +172,7 @@ public class MembersInvite extends UIAction {
 
             } catch (Exception ex) {
                 log.error("Error creating user invitation", ex);
-                addError("Error creating user invitation - check Roller logs");
+                addError("Error creating user invitation - check TightBlog logs");
             }
         }
         

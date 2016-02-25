@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
- * Interface for managing contents of the files uploaded to Roller.
+ * Interface for managing contents of the files uploaded to the weblogger.
  */
 public interface FileContentManager {
 

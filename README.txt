@@ -1,6 +1,6 @@
 README.txt
 
-Welcome to TightBlog, which started off as a fork of Apache Roller in May 2015.  (Prior to starting TightBlog I was a volunteer on the Apache Roller team for 2.5 years.)  Tightblog is not yet ready for release, the Milestone 1.0-tagged Issues must all be complete first.
+Welcome to TightBlog, which started off as a fork of Apache Roller in May 2015.  (Prior to starting TightBlog I was a volunteer on that project for 2.5 years.)  Tightblog is not yet ready for release, the Milestone 1.0-tagged Issues must all be complete first.
 
 Check my blog at https://web-gmazza.rhcloud.com/blog/category/Blogs+%26+Wikis for recent status updates.
 

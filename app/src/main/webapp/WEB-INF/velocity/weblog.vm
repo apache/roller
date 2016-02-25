@@ -20,7 +20,7 @@
 *#
 
 #** 
-Set of essential macros needed in Roller velocity templates.
+Set of essential macros needed in TightBlog velocity templates.
 These are the documented macros in order defined in this file:
 
     #includeTemplate($weblog $pageName)
@@ -251,7 +251,7 @@ Shows weblog entries pager via default day template
 
 
 #** 
-Show comments for weblog entry according to Roller configuration.
+Show comments for weblog entry according to TightBlog configuration.
 *#
 #macro(showWeblogEntryComments $entry)
     <a name="comments"></a>
@@ -587,7 +587,7 @@ Show weblog's categories in specified parent category.
 
 
 #**
- * Show Roller Page Navigation Bar, includes links to all pages.
+ * Show TightBlog Page Navigation Bar, includes links to all pages.
  *#
 #macro(showPageMenu $weblog)
     <ul class="rNavigationBar">

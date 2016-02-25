@@ -71,7 +71,7 @@ public final class WebloggerConfig {
 
                 config.load(is);
                 System.out
-                        .println("Roller Weblogger: Successfully loaded junit properties file from classpath");
+                        .println("TightBlog Weblogger: Successfully loaded junit properties file from classpath");
                 System.out.println("File path : "
                         + configClass.getResource(junit_config).getFile());
 
@@ -83,12 +83,12 @@ public final class WebloggerConfig {
                 if (is != null) {
                     config.load(is);
                     System.out
-                            .println("Roller Weblogger: Successfully loaded custom properties file from classpath");
+                            .println("TightBlog Weblogger: Successfully loaded custom properties file from classpath");
                     System.out.println("File path : "
                             + configClass.getResource(custom_config).getFile());
                 } else {
                     System.out
-                            .println("Roller Weblogger: No custom properties file found in classpath");
+                            .println("TightBlog Weblogger: No custom properties file found in classpath");
                 }
             }
 
@@ -101,10 +101,10 @@ public final class WebloggerConfig {
                 if(custom_config_file != null && custom_config_file.exists()) {
                     is = new FileInputStream(custom_config_file);
                     config.load(is);
-                    System.out.println("Roller Weblogger: Successfully loaded custom properties from "+
+                    System.out.println("TightBlog Weblogger: Successfully loaded custom properties from "+
                             custom_config_file.getAbsolutePath());
                 } else {
-                    System.out.println("Roller Weblogger: Failed to load custom properties from "+
+                    System.out.println("TightBlog Weblogger: Failed to load custom properties from "+
                             custom_config_file.getAbsolutePath());
                 }
 

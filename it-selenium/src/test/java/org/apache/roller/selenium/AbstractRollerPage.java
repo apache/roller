@@ -25,7 +25,7 @@ import org.openqa.selenium.support.ui.Select;
 
 /**
  * Abstract class holding functionality common to Selenium Page Objects
- * used in Roller.
+ * used during tests.
  */
 public abstract class AbstractRollerPage {
 

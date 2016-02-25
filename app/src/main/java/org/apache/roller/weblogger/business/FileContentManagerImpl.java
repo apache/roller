@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
- * Manages contents of the file uploaded to Roller weblogs.
+ * Manages contents of the file uploaded to TightBlog.
  * 
  * This base implementation writes file content to a file system.
  */

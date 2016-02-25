@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
 
-    <display-name>Roller Weblogger</display-name>
+    <display-name>TightBlog Weblogger</display-name>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -93,7 +93,7 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- Spring Security filters - controls secure access to different parts of Roller -->
+    <!-- Spring Security filters - controls secure access to different parts of TightBlog -->
     <filter-mapping>
         <filter-name>securityFilter</filter-name>
         <url-pattern>/*</url-pattern>

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.selenium.core;
 
@@ -33,7 +36,7 @@ public class SetupPage extends AbstractRollerPage {
     public SetupPage(WebDriver driver) {
         this.driver = driver;
         this.pageName = "Initial Setup Page";
-        verifyPageTitle("Front Page: Welcome to Roller!");
+        verifyPageTitle("Front Page: Welcome to TightBlog!");
     }
 
     public RegisterPage createNewUser() {

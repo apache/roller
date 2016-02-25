@@ -19,7 +19,7 @@
   are also under Apache License.
 *#
 
-#** macros for use by Roller's built-in feed templates
+#** macros for use by TightBlog's built-in feed templates
 
    Contents
       #showEntriesAtom10()

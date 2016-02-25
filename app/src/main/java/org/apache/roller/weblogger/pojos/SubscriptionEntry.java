@@ -45,7 +45,7 @@ import javax.persistence.Transient;
 
 /**
  * Represents a planet entry, i.e. an entry that was parsed out of an RSS or 
- * Atom newsfeed by Roller's built-in planet aggregator. 
+ * Atom newsfeed by TightBlog's built-in planet aggregator.
  * <p>
  * The model coded in this class simple, perhaps too simple, and in the future 
  * it should be replaced by more complete model that can fully represent all 

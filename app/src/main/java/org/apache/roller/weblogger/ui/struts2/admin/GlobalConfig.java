@@ -104,7 +104,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             setProperties(propertiesManager.getProperties());
         } catch (WebloggerException ex) {
             log.error("Error getting runtime properties map", ex);
-            addError("Unexpected error accessing Roller properties");
+            addError("Unexpected error accessing TightBlog properties");
         }
         
         try {
