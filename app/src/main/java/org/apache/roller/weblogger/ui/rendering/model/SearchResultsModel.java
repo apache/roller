@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesSearchPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -66,7 +66,7 @@ public class SearchResultsModel extends PageModel {
             = new TreeMap<>(Collections.reverseOrder());
 
 	// the pager used by the 3.0+ rendering system
-	private SearchResultsPager pager = null;
+	private WeblogEntriesSearchPager pager = null;
 
 	private int hits = 0;
 	private int offset = 0;
@@ -99,7 +99,7 @@ public class SearchResultsModel extends PageModel {
 
 		// if there is no query, then we are done
 		if (searchRequest.getQuery() == null) {
-			pager = new SearchResultsPager(urlStrategy, searchRequest, results,
+			pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, results,
 					false);
 			return;
 		}
@@ -138,7 +138,7 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		// search completed, setup pager based on results
-		pager = new SearchResultsPager(urlStrategy, searchRequest, results,
+		pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, results,
 				(hits > (offset + limit)));
 	}
 
