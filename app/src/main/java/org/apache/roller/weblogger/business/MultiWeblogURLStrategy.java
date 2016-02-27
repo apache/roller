@@ -293,10 +293,4 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return url + Utilities.getQueryString(params);
     }
     
-    /**
-     * Get url to rsd file on a given weblog.
-     */
-    public String getWeblogRsdURL(Weblog weblog, boolean absolute) {
-        return getWeblogURL(weblog, absolute) + "rsd";
-    }
 }

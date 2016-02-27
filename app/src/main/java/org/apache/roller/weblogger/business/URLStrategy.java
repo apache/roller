@@ -132,11 +132,6 @@ public interface URLStrategy {
     String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute);
     
     /**
-     * Get url to rsd file on a given weblog.
-     */
-    String getWeblogRsdURL(Weblog weblog, boolean absolute);
-    
-    /**
      * Get URL of a planet's newsfeed.
      */
     String getPlanetURL(String planet);

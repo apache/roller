@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.util.I18nMessages;
 /**
  * Pager for navigating through search results.
  */
-public class SearchResultsPager implements WeblogEntriesPager {
+public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
@@ -53,9 +53,9 @@ public class SearchResultsPager implements WeblogEntriesPager {
     private boolean     moreResults = false;
     
     
-    public SearchResultsPager() {}
+    public WeblogEntriesSearchPager() {}
     
-    public SearchResultsPager(URLStrategy strat, WeblogSearchRequest searchRequest, Map entries, boolean more) {
+    public WeblogEntriesSearchPager(URLStrategy strat, WeblogSearchRequest searchRequest, Map entries, boolean more) {
         
         // url strategy for building urls
         this.urlStrategy = strat;
@@ -91,7 +91,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     }
 
     public String getHomeName() {
-        return messageUtils.getString("searchPager.home");
+        return messageUtils.getString("weblogEntriesPager.search.home");
     }
 
     
@@ -104,7 +104,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getNextName() {
         if (getNextLink() != null) {
-            return messageUtils.getString("searchPager.next");
+            return messageUtils.getString("weblogEntriesPager.search.next");
         }
         return null;
     }
@@ -118,7 +118,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getPrevName() {
         if (getPrevLink() != null) {
-            return messageUtils.getString("searchPager.prev");
+            return messageUtils.getString("weblogEntriesPager.search.prev");
         }
         return null;
     }
