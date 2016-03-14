@@ -9,36 +9,6 @@
     Tags needed from the old Jakarta String Taglib, which has been retired.
     </info>
     <tag>
-        <name>wordWrap</name>
-        <tagclass>org.apache.roller.weblogger.ui.tags.WordWrapTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <attribute>
-            <name>var</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>width</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>delimiter</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>split</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>delimiterInside</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-        </attribute>
-    </tag>
-    <tag>
         <name>truncateNicely</name>
         <tagclass>org.apache.roller.weblogger.ui.tags.TruncateNicelyTag</tagclass>
         <bodycontent>JSP</bodycontent>

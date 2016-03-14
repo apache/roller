@@ -25,14 +25,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
@@ -52,15 +49,26 @@ public final class WebloggerFactory {
 
     private static JPAPersistenceStrategy strategy = null;
 
+    private static MailProvider mailProvider = null;
+
     // non-instantiable
     private WebloggerFactory() {
+    }
+
+    /**
+     * Get a reference to the currently configured MailProvider, if available.
+     *
+     * @return MailProvider The configured mail provider, or null if none configured.
+     */
+    public static MailProvider getMailProvider() {
+        return mailProvider;
     }
 
     /**
      * True if bootstrap process has been completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return (webloggerInstance != null);
+        return webloggerInstance != null;
     }
 
     /**
@@ -107,10 +115,6 @@ public final class WebloggerFactory {
      * @throws WebloggerException if any manager cannot be initialized
      */
     public static void bootstrap(ApplicationContext inContext) throws WebloggerException {
-        // if the app hasn't been properly started so far then bail
-        if (!WebloggerStartup.isPrepared()) {
-            throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
-        }
         try {
             context = inContext;
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
@@ -127,6 +131,15 @@ public final class WebloggerFactory {
         }
 
         strategy.flush();
+
+        // setup mail provider, if configured
+        try {
+            mailProvider = new MailProvider();
+        } catch(StartupException ex) {
+            LOG.warn("Failed to setup mail provider, continuing anyways.\n"
+                    + "Reason: " + ex.getMessage());
+            LOG.info("The cause of setting up mail provider error was: ", ex);
+        }
 
         LOG.info("TightBlog Weblogger business tier successfully bootstrapped");
         LOG.info("   Version: " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));

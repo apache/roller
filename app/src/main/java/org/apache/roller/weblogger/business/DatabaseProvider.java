@@ -79,12 +79,12 @@ public class DatabaseProvider  {
     
     
     /**
-     * Reads configuraiton, loads driver or locates data-source and attempts
+     * Reads configuration, loads driver or locates data-source and attempts
      * to get test connecton so that we can fail early.
      */ 
     public DatabaseProvider() throws StartupException {
-        
-        String connectionTypeString = 
+
+        String connectionTypeString =
                 WebloggerConfig.getProperty("database.configurationType"); 
         if ("jdbc".equals(connectionTypeString)) {
             type = ConfigurationType.JDBC_PROPERTIES;

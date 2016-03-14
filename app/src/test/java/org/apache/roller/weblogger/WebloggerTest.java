@@ -22,7 +22,6 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -93,10 +92,6 @@ abstract public class WebloggerTest {
     @Before
     public void setUp() throws Exception {
         if (!WebloggerFactory.isBootstrapped()) {
-            // do core services preparation
-            WebloggerStartup.prepare();
-
-            // do application bootstrapping
             WebloggerFactory.bootstrap(appContext);
         }
     }

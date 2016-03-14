@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -85,7 +84,7 @@ public class MailManager {
      * startup, no need to complain on every attempt to send.
      */
     public boolean isMailConfigured() {
-        return WebloggerStartup.getMailProvider() != null; 
+        return WebloggerFactory.getMailProvider() != null;
     }
     
     /**
@@ -93,8 +92,8 @@ public class MailManager {
      */
     public void sendPendingEntryNotice(WeblogEntry entry) throws WebloggerException {
         
-        Session mailSession = WebloggerStartup.getMailProvider() != null
-                ? WebloggerStartup.getMailProvider().getSession() : null;
+        Session mailSession = WebloggerFactory.getMailProvider() != null
+                ? WebloggerFactory.getMailProvider().getSession() : null;
 
         if (mailSession == null) {
             throw new WebloggerException("Couldn't get mail Session");
@@ -157,8 +156,8 @@ public class MailManager {
     public void sendWeblogInvitation(Weblog website, User user)
             throws WebloggerException {
         
-        Session mailSession = WebloggerStartup.getMailProvider() != null
-                ? WebloggerStartup.getMailProvider().getSession() : null;
+        Session mailSession = WebloggerFactory.getMailProvider() != null
+                ? WebloggerFactory.getMailProvider().getSession() : null;
 
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
@@ -211,8 +210,8 @@ public class MailManager {
      */
     public void sendUserActivationEmail(User user) throws WebloggerException {
         
-        Session mailSession = WebloggerStartup.getMailProvider() != null
-                ? WebloggerStartup.getMailProvider().getSession() : null;
+        Session mailSession = WebloggerFactory.getMailProvider() != null
+                ? WebloggerFactory.getMailProvider().getSession() : null;
 
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
@@ -571,7 +570,7 @@ public class MailManager {
     public void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
             String content, String mimeType) throws MessagingException {
         
-        MailProvider mailProvider = WebloggerStartup.getMailProvider();
+        MailProvider mailProvider = WebloggerFactory.getMailProvider();
         if (mailProvider == null) {
             return;
         }

@@ -24,12 +24,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.annotation.Resource;
+
 import static org.junit.Assert.*;
 
 /**
@@ -43,10 +45,16 @@ public class SQLScriptRunnerTest extends WebloggerTest {
         super.setUp();
     }
 
+    @Resource
+    public DatabaseProvider databaseProvider;
+
+    public void setDatabaseProvider(DatabaseProvider databaseProvider) {
+        this.databaseProvider = databaseProvider;
+    }
+
     @Test
     public void testParseOnly() throws Exception {
-        DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
-        Connection con = dbp.getConnection(); 
+        Connection con = databaseProvider.getConnection();
         
         // normaly tests run against Derby
         String databaseProductName = con.getMetaData().getDatabaseProductName();
@@ -64,8 +72,7 @@ public class SQLScriptRunnerTest extends WebloggerTest {
 
     @Test
     public void testSimpleRun() throws Exception {
-        DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
-        Connection con = dbp.getConnection(); 
+        Connection con = databaseProvider.getConnection();
 
         // normaly tests run against Derby
         String databaseProductName = con.getMetaData().getDatabaseProductName();
