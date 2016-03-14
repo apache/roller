@@ -26,6 +26,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -40,7 +42,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
@@ -103,8 +104,9 @@ public class RollerContext extends ContextLoaderListener
         }
 
         // Now prepare the core services of the app so we can bootstrap
+        boolean autoDatabaseWorkNeeded = false;
         try {
-            WebloggerStartup.prepare();
+            autoDatabaseWorkNeeded = prepare();
         } catch (StartupException ex) {
             log.fatal("TightBlog Weblogger startup failed during app preparation", ex);
             return;
@@ -114,12 +116,11 @@ public class RollerContext extends ContextLoaderListener
         // if preparation incomplete (e.g., database tables need creating)
         // continue on - BootstrapFilter will start the database install/upgrade process
         // otherwise bootstrap the business tier
-        if (!WebloggerStartup.isPrepared()) {
-            StringBuilder buf = new StringBuilder();
-            buf.append("\n----------------------------------------------------------------");
-            buf.append("\nTightBlog Weblogger startup INCOMPLETE, user interaction commencing");
-            buf.append("\n----------------------------------------------------------------");
-            log.info(buf.toString());
+        if (autoDatabaseWorkNeeded) {
+            String output = "\n-------------------------------------------------------------------";
+            output +=       "\nTightBlog Weblogger startup INCOMPLETE, user interaction commencing";
+            output +=       "\n-------------------------------------------------------------------";
+            log.info(output);
         } else {
             try {
                 WebloggerFactory.bootstrap();
@@ -213,5 +214,36 @@ public class RollerContext extends ContextLoaderListener
 			log.debug("No userCache bean in context", exc);
 		}
     }
+
+    /**
+     * Run the weblogger preparation sequence.
+     *
+     * This sequence is what prepares the core services of the application such
+     * as setting up the database and mail providers.
+     *
+     * @return Whether automatic DB install or version upgrade needed
+     */
+    private static boolean prepare() throws StartupException {
+        boolean autoDatabaseWorkNeeded = true;
+        DatabaseProvider dbProvider = new DatabaseProvider();
+
+        // now we need to deal with database install/upgrade logic
+        DatabaseInstaller dbInstaller = new DatabaseInstaller(dbProvider);
+        if("manual".equals(WebloggerConfig.getProperty("installation.type"))) {
+            if (dbInstaller.isUpgradeRequired()) {
+                // if we are doing manual install then all that is needed is the app to
+                // update the version number in weblogger_properties, not run any db scripts
+                dbInstaller.upgradeDatabase(false);
+            }
+            autoDatabaseWorkNeeded = false;
+        } else {
+            // we are in auto install mode, so see if there is any work to do
+            if (!dbInstaller.isCreationRequired() && !dbInstaller.isUpgradeRequired()) {
+                autoDatabaseWorkNeeded = false;
+            }
+        }
+        return autoDatabaseWorkNeeded;
+    }
+
 
 }

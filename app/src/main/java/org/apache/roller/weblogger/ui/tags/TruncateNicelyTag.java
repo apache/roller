@@ -12,11 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.ui.tags;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+
 import org.apache.commons.lang3.math.NumberUtils;
+
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * Code grabbed from retired Jakarta Tablibs project: http://jakarta.apache.org/taglibs/string/
@@ -29,28 +38,25 @@ import org.apache.commons.lang3.math.NumberUtils;
  *
  * <dl>
  * <dt>lower</dt><dd>
- *             Minimum length to truncate at.
- *             Required.
+ *             Minimum length to truncate at, default 10.
  * </dd>
  * <dt>upper</dt><dd>
- *             Maximum length to truncate at.
- *             Required.
+ *             Maximum length to truncate at, -1 (default) for no maximum.
  * </dd>
- * <dt>upper</dt><dd>
- *             String to append to end of truncated string.
+ * <dt>appendToEnd</dt><dd>
+ *             String to append to end of truncated string, default "..."
  * </dd>
  * </dl>
  *
  * @author timster@mac.com
  */
-public class TruncateNicelyTag extends StringTagSupport {
+public class TruncateNicelyTag extends BodyTagSupport {
 
-    private String lower;
-    private String upper;
-    private String appendToEnd;
+    private String lower = "10";
+    private String upper = "-1";
+    private String appendToEnd = "...";
 
     public TruncateNicelyTag() {
-        super();
     }
 
     /**
@@ -103,14 +109,6 @@ public class TruncateNicelyTag extends StringTagSupport {
         int u = NumberUtils.toInt(upper);
 
         return truncateNicely(text, l, u, this.appendToEnd);
-    }
-
-    public void initAttributes() {
-
-        this.lower = "10";
-        this.upper = "-1";
-        this.appendToEnd = "...";
-
     }
 
     /**
@@ -167,6 +165,37 @@ public class TruncateNicelyTag extends StringTagSupport {
         }
 
         return str;
+    }
+
+    /**
+     * Handles the manipulation of the String tag,
+     * evaluating the body of the tag. The evaluation
+     * is delegated to the changeString(String) method
+     */
+    public int doEndTag() throws JspException {
+
+        String text = "";
+        if(bodyContent != null) {
+            StringWriter body = new StringWriter();
+            try {
+                bodyContent.writeOut(body);
+                text = body.toString();
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+
+        // then, try to transform it
+        text = changeString(text);
+
+        JspWriter writer = pageContext.getOut();
+        try {
+            writer.print(text);
+        } catch (IOException e) {
+            throw new JspException(e.toString());
+        }
+
+        return (EVAL_PAGE);
     }
 
     /**

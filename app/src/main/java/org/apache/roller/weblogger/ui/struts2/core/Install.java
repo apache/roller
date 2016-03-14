@@ -28,14 +28,17 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.factory.access.BootstrapException;
+
+import javax.annotation.PostConstruct;
 
 
 /**
@@ -54,7 +57,15 @@ public class Install extends UIAction {
     private boolean error = false;
     private boolean success = false;
     private List<String> messages = null;
-    private String databaseName = "Unknown";
+
+    public DatabaseProvider databaseProvider;
+
+    public void setDatabaseProvider(DatabaseProvider databaseProvider) {
+        this.databaseProvider = databaseProvider;
+        databaseInstaller = new DatabaseInstaller(databaseProvider);
+    }
+
+    public DatabaseInstaller databaseInstaller;
 
     @Override
     public GlobalRole requiredGlobalRole() {
@@ -72,8 +83,9 @@ public class Install extends UIAction {
             return SUCCESS;
         }
 
-        if (WebloggerStartup.getDatabaseProviderException() != null) {
-            StartupException se = WebloggerStartup.getDatabaseProviderException();
+        try {
+            new DatabaseProvider();
+        } catch(StartupException se) {
             if (se.getRootCause() != null) {
                 rootCauseException = se.getRootCause();
             } else {
@@ -86,12 +98,12 @@ public class Install extends UIAction {
             return DATABASE_ERROR;
         }
 
-        if (WebloggerStartup.isDatabaseCreationRequired()) {
+        if (databaseInstaller.isCreationRequired()) {
             log.debug("Forwarding to database table creation page");
             setPageTitle("installer.database.creation.pageTitle");
             return CREATE_DATABASE;
         }
-        if (WebloggerStartup.isDatabaseUpgradeRequired()) {
+        if (databaseInstaller.isUpgradeRequired()) {
             log.debug("Forwarding to database table upgrade page");
             setPageTitle("installer.database.upgrade.pageTitle");
             return UPGRADE_DATABASE;
@@ -105,14 +117,12 @@ public class Install extends UIAction {
 
 
     public String create() {
-
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
 
         try {
-            messages = WebloggerStartup.createDatabase();
-
+            messages = databaseInstaller.createDatabase();
             success = true;
         } catch (StartupException se) {
             error = true;
@@ -123,16 +133,13 @@ public class Install extends UIAction {
         return CREATE_DATABASE;
     }
 
-
     public String upgrade() {
-
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
 
         try {
-            messages = WebloggerStartup.upgradeDatabase(true);
-
+            messages = databaseInstaller.upgradeDatabase(true);
             success = true;
         } catch (StartupException se) {
             error = true;
@@ -180,7 +187,7 @@ public class Install extends UIAction {
 
         Connection con = null;
         try {
-            con = WebloggerStartup.getDatabaseProvider().getConnection();
+            con = databaseProvider.getConnection();
             name = con.getMetaData().getDatabaseProductName();
         } catch (Exception intentionallyIgnored) {
             // ignored
@@ -218,7 +225,7 @@ public class Install extends UIAction {
     }
 
     public boolean isUpgradeRequired() {
-        return WebloggerStartup.isDatabaseUpgradeRequired();
+        return databaseInstaller.isUpgradeRequired();
     }
 
     public boolean isError() {
@@ -227,10 +234,6 @@ public class Install extends UIAction {
 
     public List<String> getMessages() {
         return messages;
-    }
-
-    public String getDatabaseName() {
-        return databaseName;
     }
 
     public boolean isSuccess() {

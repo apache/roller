@@ -36,10 +36,10 @@
 
     <beans:bean id="cacheManager" class="org.apache.roller.weblogger.util.cache.CacheManager"/>
 
+    <beans:bean id="databaseProvider" class="org.apache.roller.weblogger.business.DatabaseProvider"/>
+
     <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
-        <beans:constructor-arg>
-            <beans:bean class="org.apache.roller.weblogger.business.DatabaseProvider"/>
-        </beans:constructor-arg>
+        <beans:constructor-arg ref="databaseProvider"/>
         <beans:constructor-arg ref="cacheManager"/>
     </beans:bean>
 

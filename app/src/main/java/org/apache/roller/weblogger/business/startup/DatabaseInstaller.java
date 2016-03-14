@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.startup;
 
 import java.sql.Connection;
@@ -146,8 +145,9 @@ public class DatabaseInstaller {
     
     /**
      * Create datatabase tables.
+     * @return List of messages created during processing
      */
-    public void createDatabase() throws StartupException {
+    public List<String> createDatabase() throws StartupException {
         
         log.info("Creating weblogger database tables.");
         
@@ -185,13 +185,16 @@ public class DatabaseInstaller {
                 }
             } catch (Exception ignored) {}
         }
+
+        return messages;
     }
     
     
     /**
      * Upgrade database if dbVersion is older than desiredVersion.
+     * @return List of messages created during processing
      */
-    public void upgradeDatabase(boolean runScripts) throws StartupException {
+    public List<String> upgradeDatabase(boolean runScripts) throws StartupException {
         
         int myVersion = parseVersionString(version);
         int dbversion = getDatabaseVersion();
@@ -213,7 +216,7 @@ public class DatabaseInstaller {
                 throw new StartupException(msg);
             } else if(dbversion >= myVersion) {
                 log.info("Database is current, no upgrade needed");
-                return;
+                return null;
             }
 
             log.info("Database is old, beginning upgrade to version "+myVersion);
@@ -222,14 +225,16 @@ public class DatabaseInstaller {
             // to add to the upgrade sequence simply add a new "if" statement
             // for whatever version needed and then define a new method upgradeXXX()
 
-            if(dbversion < 510) {
-                upgradeTo510(con, runScripts);
-                dbversion = 510;
+            if (runScripts) {
+                if (dbversion < 510) {
+                    upgradeTo510(con);
+                    dbversion = 510;
+                }
+                if (dbversion < 520) {
+                    upgradeTo520(con);
+                }
             }
-            if(dbversion < 520) {
-                upgradeTo520(con, runScripts);
-            }
-            
+
             // make sure the database version is the exact version
             // we are upgrading too.
             updateDatabaseVersion(con, myVersion);
@@ -243,24 +248,24 @@ public class DatabaseInstaller {
                 }
             } catch (Exception ignored) {}
         }
+
+        return messages;
     }
 
     /**
      * Upgrade database to Roller 5.1
      */
-	private void upgradeTo510(Connection con, boolean runScripts) throws StartupException {
+	private void upgradeTo510(Connection con) throws StartupException {
         
         // first we need to run upgrade scripts 
         SQLScriptRunner runner = null;
         try {    
-            if (runScripts) {
-                String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/500-to-510-migration.sql";
-                successMessage("Running database upgrade script: "+scriptPath);                
-                runner = new SQLScriptRunner(scriptPath, true);
-                runner.runScript(con, true);
-                messages.addAll(runner.getMessages());
-            }
+            String handle = getDatabaseHandle(con);
+            String scriptPath = handle + "/500-to-510-migration.sql";
+            successMessage("Running database upgrade script: "+scriptPath);
+            runner = new SQLScriptRunner(scriptPath, true);
+            runner.runScript(con, true);
+            messages.addAll(runner.getMessages());
         } catch(Exception ex) {
             log.error("ERROR running 510 database upgrade script", ex);
             if (runner != null) {
@@ -275,19 +280,17 @@ public class DatabaseInstaller {
     /**
      * Upgrade database to Roller 5.2
      */
-    private void upgradeTo520(Connection con, boolean runScripts) throws StartupException {
+    private void upgradeTo520(Connection con) throws StartupException {
 
         // first we need to run upgrade scripts
         SQLScriptRunner runner = null;
         try {
-            if (runScripts) {
-                String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/510-to-520-migration.sql";
-                successMessage("Running database upgrade script: "+scriptPath);
-                runner = new SQLScriptRunner(scriptPath, true);
-                runner.runScript(con, true);
-                messages.addAll(runner.getMessages());
-            }
+            String handle = getDatabaseHandle(con);
+            String scriptPath = handle + "/510-to-520-migration.sql";
+            successMessage("Running database upgrade script: "+scriptPath);
+            runner = new SQLScriptRunner(scriptPath, true);
+            runner.runScript(con, true);
+            messages.addAll(runner.getMessages());
         } catch(Exception ex) {
             log.error("ERROR running 520 database upgrade script", ex);
             if (runner != null) {
@@ -316,10 +319,6 @@ public class DatabaseInstaller {
             handle =  "postgresql";
         } else if (productName.toLowerCase().contains("oracle")) {
             handle =  "oracle";
-        } else if (productName.toLowerCase().contains("microsoft")) {
-            handle =  "mssql";
-        } else if (productName.toLowerCase().contains("db2")) {
-            handle =  "db2";
         }
         
         return handle;
