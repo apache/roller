@@ -45,7 +45,7 @@ public class FeedManagerImplTest extends WebloggerTest {
     
     String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
     String expectedTitle = "Slashdot";
-    String expectedSiteUrl = "http://slashdot.org/";
+    String expectedSiteUrl = "https://slashdot.org/";
     String externalFeedUrl = "http://rss.slashdot.org/Slashdot/slashdotMainatom";
     private Subscription testSub = null;
     private Planet planet = null;

@@ -21,6 +21,7 @@
         <spring.security.version>4.0.4.RELEASE</spring.security.version>
         <struts2.version>2.3.24</struts2.version>
         <jackson.version>2.7.2</jackson.version>
+        <log4j2.version>2.5</log4j2.version>
     </properties>
 
     <dependencies>
@@ -70,9 +71,22 @@
         </dependency-->
 
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+
+        <!-- route Commons Logging to Log4j2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <version>${log4j2.version}</version>
         </dependency>
 
         <dependency>
@@ -134,13 +148,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
-
-        <!--dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.13</version>
-            <scope>runtime</scope>
-        </dependency-->
 
         <!-- spring deps -->
 
