@@ -28,7 +28,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 
 /**
@@ -70,10 +69,8 @@ public final class WebloggerConfig {
             if (is != null) {
 
                 config.load(is);
-                System.out
-                        .println("TightBlog Weblogger: Successfully loaded junit properties file from classpath");
-                System.out.println("File path : "
-                        + configClass.getResource(junit_config).getFile());
+                System.out.println("TightBlog Weblogger: Successfully loaded junit properties file from classpath");
+                System.out.println("File path : " + configClass.getResource(junit_config).getFile());
 
             } else {
 
@@ -82,13 +79,10 @@ public final class WebloggerConfig {
 
                 if (is != null) {
                     config.load(is);
-                    System.out
-                            .println("TightBlog Weblogger: Successfully loaded custom properties file from classpath");
-                    System.out.println("File path : "
-                            + configClass.getResource(custom_config).getFile());
+                    System.out.println("TightBlog Weblogger: Successfully loaded custom properties file from classpath");
+                    System.out.println("File path : " + configClass.getResource(custom_config).getFile());
                 } else {
-                    System.out
-                            .println("TightBlog Weblogger: No custom properties file found in classpath");
+                    System.out.println("TightBlog Weblogger: No custom properties file found in classpath");
                 }
             }
 
@@ -101,19 +95,12 @@ public final class WebloggerConfig {
                 if(custom_config_file != null && custom_config_file.exists()) {
                     is = new FileInputStream(custom_config_file);
                     config.load(is);
-                    System.out.println("TightBlog Weblogger: Successfully loaded custom properties from "+
-                            custom_config_file.getAbsolutePath());
+                    System.out.println("TightBlog Weblogger: Successfully loaded custom properties from " + custom_config_file.getAbsolutePath());
                 } else {
-                    System.out.println("TightBlog Weblogger: Failed to load custom properties from "+
-                            custom_config_file.getAbsolutePath());
+                    System.out.println("TightBlog Weblogger: Failed to load custom properties from " + custom_config_file.getAbsolutePath());
                 }
 
             } 
-
-            // initialize logging subsystem via WebloggerConfig
-            PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
-            
-            // finally we can start logging...
 
             // some debugging for those that want it
             if(log.isDebugEnabled()) {
@@ -213,19 +200,6 @@ public final class WebloggerConfig {
      **/
     public static Enumeration keys() {
         return config.keys();
-    }
-    
-    
-    /**
-     * Get properties starting with a specified string.
-     */
-    public static Properties getPropertiesStartingWith(String startingWith) {
-        Properties props = new Properties();
-        for (Enumeration it = config.keys(); it.hasMoreElements();) {
-            String key = (String)it.nextElement();
-            props.put(key, config.get(key));
-        }
-        return props;
     }
     
     /**
