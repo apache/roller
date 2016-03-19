@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class Blacklist {
     
-    private static Log mLogger = LogFactory.getLog(Blacklist.class);
+    private static Log log = LogFactory.getLog(Blacklist.class);
 
     /** Hide constructor */
     private Blacklist() {
@@ -60,10 +60,10 @@ public final class Blacklist {
     private static boolean testRegExRules(String str, List<Pattern> regexRules) {
         for (Pattern testPattern : regexRules) {
             // want to see what it is matching on, but only in debug mode
-            if (mLogger.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 Matcher matcher = testPattern.matcher(str);
                 if (matcher.find()) {
-                    mLogger.debug(matcher.group() + " matched by " + testPattern.pattern());
+                    log.debug(matcher.group() + " matched by " + testPattern.pattern());
                     return true;
                 }
             } else {
@@ -109,14 +109,14 @@ public final class Blacklist {
 
                 matches = matcher.find();
                 if (matches) {
-                    mLogger.debug("matched:" + rule + ":");
+                    log.debug("matched:" + rule + ":");
                     break;
                 }
             }
             catch (PatternSyntaxException e) {
                 matches = source.contains(rule);
                 if (matches) {
-                    mLogger.debug("matched:" + rule + ":");
+                    log.debug("matched:" + rule + ":");
                     break;
                 }
             }

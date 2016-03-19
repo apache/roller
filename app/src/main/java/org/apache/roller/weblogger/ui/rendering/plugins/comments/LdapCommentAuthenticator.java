@@ -41,7 +41,7 @@ import org.springframework.util.StringUtils;
  */
 public class LdapCommentAuthenticator implements CommentAuthenticator {
 
-	private static Log LOG = LogFactory.getLog(LdapCommentAuthenticator.class);
+	private static Log log = LogFactory.getLog(LdapCommentAuthenticator.class);
 
 	private String ldapPort;
 
@@ -115,16 +115,16 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 				env.put(Context.PROVIDER_URL, "ldap://" + ldapHost + ":" + ldapPort);  
 				context = new InitialLdapContext(env, null);
 				validUser = true;
-				LOG.info("LDAP Authentication Successful. user: " + ldapUser);
+				log.info("LDAP Authentication Successful. user: " + ldapUser);
 			} catch (Exception e) {
 				// unexpected
-				LOG.error(e);
+				log.error(e);
 			} finally {
 				if(context != null){
 					try {
 						context.close();
 					} catch (NamingException e) {
-						LOG.error(e);
+						log.error(e);
 					}
 				}
 			}

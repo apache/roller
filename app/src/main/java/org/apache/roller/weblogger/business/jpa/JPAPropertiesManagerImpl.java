@@ -165,7 +165,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
                     log.info("Property " + propDef.getName() +
                         " not yet in weblogger_properties database table, will store with " +
-                        "default value of [" + propDef.getDefaultValue() + "`]");
+                        "default value of [" + propDef.getDefaultValue() + "]");
                 }
             }
         }

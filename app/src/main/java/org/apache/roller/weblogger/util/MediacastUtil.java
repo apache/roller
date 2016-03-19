@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class MediacastUtil {
     
-    private static final Log LOG = LogFactory.getLog(MediacastUtil.class);
+    private static final Log log = LogFactory.getLog(MediacastUtil.class);
     
     public static final int BAD_URL = 1;
     public static final int CHECK_FAILED = 2;
@@ -60,26 +60,26 @@ public final class MediacastUtil {
             String message = con.getResponseMessage();
             
             if(response != 200) {
-                LOG.debug("Mediacast error " + response + ":" + message + " from url " + url);
+                log.debug("Mediacast error " + response + ":" + message + " from url " + url);
                 throw new MediacastException(BAD_RESPONSE, "weblogEdit.mediaCastResponseError");
             } else {
                 String contentType = con.getContentType();
                 long length = con.getContentLength();
                 
                 if(contentType == null || length == -1) {
-                    LOG.debug("Response valid, but contentType or length is invalid");
+                    log.debug("Response valid, but contentType or length is invalid");
                     throw new MediacastException(INCOMPLETE, "weblogEdit.mediaCastLacksContentTypeOrLength");
                 }
                 
                 resource = new MediacastResource(url, contentType, length);
-                LOG.debug("Valid mediacast resource = " + resource.toString());
+                log.debug("Valid mediacast resource = " + resource.toString());
                 
             }
         } catch (MalformedURLException mfue) {
-            LOG.debug("Malformed MediaCast url: " + url);
+            log.debug("Malformed MediaCast url: " + url);
             throw new MediacastException(BAD_URL, "weblogEdit.mediaCastUrlMalformed", mfue);
         } catch (Exception e) {
-            LOG.error("ERROR while checking MediaCast URL: " + url + ": " + e.getMessage());
+            log.error("ERROR while checking MediaCast URL: " + url + ": " + e.getMessage());
             throw new MediacastException(CHECK_FAILED, "weblogEdit.mediaCastFailedFetchingInfo", e);
         }      
         return resource;

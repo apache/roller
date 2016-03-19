@@ -55,7 +55,7 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     private final JPAPersistenceStrategy strategy;
-    private static final Log logger = LogFactory.getLog(JPAPingTargetManagerImpl.class);
+    private static final Log log = LogFactory.getLog(JPAPingTargetManagerImpl.class);
 
     // for debugging, will log but not send ping out.
     private boolean logPingsOnly = false;
@@ -166,7 +166,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
             // Remove all autoping configurations if ping usage has been disabled.
             if (WebloggerConfig.getBooleanProperty("pings.disablePingUsage", false)) {
-                logger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
+                log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 removeAllAutoPings();
             }
         } catch (Exception e) {
@@ -192,15 +192,15 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
         String configuredVal = WebloggerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
+            if (log.isDebugEnabled()) {
+                log.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
             }
             return;
         }
 
         if (!getCommonPingTargets().isEmpty()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+            if (log.isDebugEnabled()) {
+                log.debug("Some common ping targets are present in the database already.  Skipping initialization.");
             }
             return;
         }
@@ -218,11 +218,11 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             if (m.matches() && m.groupCount() == 2) {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
-                logger.info("Creating common ping target '" + name + "' from configuration properties.");
+                log.info("Creating common ping target '" + name + "' from configuration properties.");
                 PingTarget pingTarget = new PingTarget(name, url, false);
                 savePingTarget(pingTarget);
             } else {
-                logger.error("Unable to parse configured initial ping target '" + thisTarget +
+                log.error("Unable to parse configured initial ping target '" + thisTarget +
                         "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
             }
         }
@@ -254,8 +254,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     public void queueApplicableAutoPings(Weblog changedWeblog) throws WebloggerException {
         if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Ping processing is suspended." + " No auto pings will be queued.");
+            if (log.isDebugEnabled()) {
+                log.debug("Ping processing is suspended." + " No auto pings will be queued.");
             }
             return;
         }
@@ -282,7 +282,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     @Override
     public void sendPings() throws WebloggerException {
-        logger.debug("ping task started");
+        log.debug("ping task started");
 
         OutgoingPingQueue opq = OutgoingPingQueue.getInstance();
 
@@ -292,18 +292,18 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         opq.clearPings();
 
         if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
-            logger.info("Ping processing suspended on admin settings page, no pings are being generated.");
+            log.info("Ping processing suspended on admin settings page, no pings are being generated.");
             return;
         }
 
         String absoluteContextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
-            logger.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
+            log.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
             return;
         }
 
         if (logPingsOnly) {
-            logger.info("pings.logOnly set to true in properties file so no actual pinging will occur." +
+            log.info("pings.logOnly set to true in properties file so no actual pinging will occur." +
                     " To see logged pings, make sure logging at DEBUG for this class.");
         }
 
@@ -312,7 +312,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         for (AutoPing ping : pings) {
             try {
                 if (logPingsOnly) {
-                    logger.debug("Would have pinged:" + ping);
+                    log.debug("Would have pinged:" + ping);
                 } else {
                     PingTarget pingTarget = ping.getPingTarget();
                     PingResult pr = sendPing(pingTarget, ping.getWeblog());
@@ -324,14 +324,14 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                     }
                 }
             } catch (IOException|XmlRpcException ex) {
-                logger.debug(ex);
+                log.debug(ex);
             }
         }
         if (hadDateUpdate) {
             strategy.flush();
         }
 
-        logger.info("ping task completed, pings processed = " + pings.size());
+        log.info("ping task completed, pings processed = " + pings.size());
     }
 
     public PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException {
@@ -342,8 +342,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         List<String> params = new ArrayList<>();
         params.add(website.getName());
         params.add(websiteUrl);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + website.getName() + ")");
+        if (log.isDebugEnabled()) {
+            log.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + website.getName() + ")");
         }
 
         // Send the ping.
@@ -353,8 +353,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         client.setConfig(config);
         PingResult pingResult = parseResult(client.execute("weblogUpdates.ping", params.toArray()));
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Ping result is: " + pingResult);
+        if (log.isDebugEnabled()) {
+            log.debug("Ping result is: " + pingResult);
         }
         return pingResult;
     }
@@ -371,8 +371,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         } catch (Exception ex) {
             // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
             // This effectively assumes flerror = false, and sets message = obj.toString();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Invalid ping result of type: " + obj.getClass().getName() + "; proceeding with stand-in representative.");
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid ping result of type: " + obj.getClass().getName() + "; proceeding with stand-in representative.");
             }
             return new PingResult(null,obj.toString());
         }

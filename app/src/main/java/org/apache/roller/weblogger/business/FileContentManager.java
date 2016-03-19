@@ -76,25 +76,6 @@ public interface FileContentManager {
             throws IOException;
 
     /**
-     * Delete all files associated with a given weblog.
-     *
-     * The only real use of this method is for when a weblog is being deleted.
-     *
-     * @param weblog The weblog to delete all files from.
-     * @throws IOException If there is an unexpected error during the delete.
-     */
-    void deleteAllFiles(Weblog weblog)
-            throws IOException;
-
-    /** 
-     * Is the given weblog over the file-upload quota limit?
-     *
-     * @param weblog The weblog we are working on.
-     * @return True if weblog is over set quota, False otherwise.
-     */
-    boolean overQuota(Weblog weblog);
-
-    /**
      * Determine if file can be saved given current WebloggerConfig settings.
      * 
      * @param weblog The weblog we are working on.

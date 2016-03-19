@@ -64,7 +64,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/tb-ui/rendering/trackback/**")
 public class IncomingTrackbackProcessor {
 
-    private static Log logger = LogFactory.getLog(IncomingTrackbackProcessor.class);
+    private static Log log = LogFactory.getLog(IncomingTrackbackProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/trackback";
 
@@ -107,7 +107,7 @@ public class IncomingTrackbackProcessor {
 
     @PostConstruct
     public void init() throws ServletException {
-        logger.info("Initializing IncomingTrackbackProcessor");
+        log.info("Initializing IncomingTrackbackProcessor");
         commentValidationManager = new CommentValidationManager(trackbackValidators);
     }
 
@@ -166,7 +166,7 @@ public class IncomingTrackbackProcessor {
 
             } catch (Exception e) {
                 // some kind of error parsing the request or looking up weblog
-                logger.debug("error creating trackback request", e);
+                log.debug("error creating trackback request", e);
                 error = e.getMessage();
             }
         }
@@ -193,7 +193,7 @@ public class IncomingTrackbackProcessor {
 
                 // run new trackback through validators
                 int validationScore = commentValidationManager.validateComment(comment, messages);
-                logger.debug("Comment Validation score: " + validationScore);
+                log.debug("Comment Validation score: " + validationScore);
 
                 if (validationScore == WebloggerCommon.PERCENT_100 && weblog.getCommentModerationRequired()) {
                     // Valid comments go into moderation if required

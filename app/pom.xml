@@ -82,6 +82,13 @@
             <version>${log4j2.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${log4j2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- route Commons Logging to Log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

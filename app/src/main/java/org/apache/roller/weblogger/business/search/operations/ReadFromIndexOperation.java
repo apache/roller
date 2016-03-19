@@ -29,8 +29,7 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
         super(mgr);
     }
     
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            ReadFromIndexOperation.class);
+    private static Log log = LogFactory.getFactory().getInstance(ReadFromIndexOperation.class);
     
     public final void run() {
         try {
@@ -38,7 +37,7 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
             doRun();
 
         } catch (Exception e) {
-            mLogger.info("Error acquiring read lock on index", e);
+            log.info("Error acquiring read lock on index", e);
         } finally {
             manager.getReadWriteLock().readLock().unlock();
         }

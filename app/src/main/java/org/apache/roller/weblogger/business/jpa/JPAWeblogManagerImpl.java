@@ -690,7 +690,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         try {
             Date now = new Date();
-
             log.debug("looking up scheduled entries older than " + now);
 
             // get all published entries older than current time
@@ -698,7 +697,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             wesc.setEndDate(now);
             wesc.setStatus(WeblogEntry.PubStatus.SCHEDULED);
             List<WeblogEntry> scheduledEntries = weblogEntryManager.getWeblogEntries(wesc);
-            log.info("promoting "+scheduledEntries.size() + " entries to PUBLISHED state");
+            log.debug("promoting " + scheduledEntries.size() + " entries to PUBLISHED state");
 
             for (WeblogEntry entry : scheduledEntries) {
                 entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);

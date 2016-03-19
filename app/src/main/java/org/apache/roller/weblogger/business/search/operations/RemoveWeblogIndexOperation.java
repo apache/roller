@@ -41,8 +41,7 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            RemoveWeblogIndexOperation.class);
+    private static Log log = LogFactory.getFactory().getInstance(RemoveWeblogIndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
@@ -79,7 +78,7 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
                 }
             }
         } catch (IOException e) {
-            mLogger.info("Problems deleting doc from index", e);
+            log.info("Problems deleting doc from index", e);
         } finally {
             endWriting();
         }
@@ -87,7 +86,7 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
         Date end = new Date();
         double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
 
-        mLogger.info("Completed deleting indices for weblog with handle '"
+        log.info("Completed deleting indices for weblog with handle '"
                 + weblogHandle + "' in '" + length + "' seconds");
     }
 }

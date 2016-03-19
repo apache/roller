@@ -91,8 +91,7 @@ import javax.persistence.Transient;
 })
 public class WeblogEntry implements Serializable {
 
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(WeblogEntry.class);
+    private static Log log = LogFactory.getFactory().getInstance(WeblogEntry.class);
     
     public static final long serialVersionUID = 2341505386843044125L;
 
@@ -668,7 +667,7 @@ public class WeblogEntry implements Serializable {
             
             return format.format(getPubTime());
         } catch (RuntimeException e) {
-            mLogger.error("Unexpected exception", e);
+            log.error("Unexpected exception", e);
         }
         
         return "ERROR: formatting date";
@@ -689,7 +688,7 @@ public class WeblogEntry implements Serializable {
             
             return format.format(getUpdateTime());
         } catch (RuntimeException e) {
-            mLogger.error("Unexpected exception", e);
+            log.error("Unexpected exception", e);
         }
         
         return "ERROR: formatting date";
@@ -842,7 +841,7 @@ public class WeblogEntry implements Serializable {
      * Transform string based on plugins enabled for this weblog entry.
      */
     private String render(String str) {
-        mLogger.debug("Applying page plugins to string");
+        log.debug("Applying page plugins to string");
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         return mgr.applyWeblogEntryPlugins(this, str);
     }
@@ -919,7 +918,7 @@ public class WeblogEntry implements Serializable {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             setCategory(wmgr.getWeblogCategory(categoryId));
         } catch (WebloggerException e) {
-            mLogger.error("Error setting category for blog entry", e);
+            log.error("Error setting category for blog entry", e);
         }
     }
 
@@ -977,9 +976,9 @@ public class WeblogEntry implements Serializable {
     public Weblog getWrappedWeblog() {
         if (wrappedWeblog == null) {
             wrappedWeblog = weblog.templateCopy();
-            mLogger.info("Weblog: miss on " + weblog.getHandle());
+            log.info("Weblog: miss on " + weblog.getHandle());
         } else {
-            mLogger.info("Weblog: hit on " + weblog.getHandle());
+            log.info("Weblog: hit on " + weblog.getHandle());
         }
         return wrappedWeblog;
     }
@@ -988,9 +987,9 @@ public class WeblogEntry implements Serializable {
     public WeblogCategory getWrappedCategory() {
         if (wrappedCategory == null) {
             wrappedCategory = category.templateCopy();
-            mLogger.info("Weblog Category: miss on " + weblog.getHandle());
+            log.info("Weblog Category: miss on " + weblog.getHandle());
         } else {
-            mLogger.info("Weblog Category: hit on " + weblog.getHandle());
+            log.info("Weblog Category: hit on " + weblog.getHandle());
         }
         return wrappedCategory;
     }
