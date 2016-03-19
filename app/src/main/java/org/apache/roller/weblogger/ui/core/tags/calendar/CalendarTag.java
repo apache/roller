@@ -36,51 +36,23 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 
-
-/**
- * Calendar tag.
- * @jsp.tag name="Calendar"
- */
 public class CalendarTag extends TagSupport {
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(CalendarTag.class);
+    private static Log log = LogFactory.getFactory().getInstance(CalendarTag.class);
 
     private Locale mLocale = Locale.getDefault();
 
     private CalendarModel calendarModel;
 
-    public CalendarModel getCalendarModel() {
-        return calendarModel;
-    }
-
     public void setCalendarModel(CalendarModel calendarModel) {
         this.calendarModel = calendarModel;
     }
 
-    // JSP Attributes
-    
-    /** @jsp.attribute required="true" */
-    public String getName() { return mName; }
-    public void setName( String name ) { mName = name; }
-    private String mName = null;
-    
-    /* @jsp.attribute description="Date in yyyyMMdd format"
-    public String getDate() { return mDate; }
-    public void setDate( String s ) { mDate = s; }
-    private String mDate = null;
-     */
-    
-    /** @jsp.attribute */
-    public String getModel() { return mModelName; }
-    public void setModel( String s ) { mModelName= s; }
-    private String mModelName = null;
-    
-    /** @jsp.attribute */
-    public String getClassSuffix() { return mClassSuffix; }
-    public void setClassSuffix( String s ) { mClassSuffix= s; }
     private String mClassSuffix = "";
-    
-    // not a tag attribute
+
+    public void setClassSuffix( String s ) {
+        mClassSuffix = s;
+    }
+
     public void setLocale(Locale locale) {
         if (locale != null) {
             mLocale = locale;
@@ -90,13 +62,6 @@ public class CalendarTag extends TagSupport {
     private String[] mDayNames = null;
     
     public CalendarTag() {
-        /*
-         * Empty constructor.
-         *
-         * Used to build the day names, but the correct locale
-         * was not set at this stage. Day-name-building has moved to the
-         * doStartTag() method.
-         */
     }
     
     //------------------------------------------------------------------------
@@ -218,7 +183,7 @@ public class CalendarTag extends TagSupport {
                         }
                     } else {
                         // apply day-not-in-month style ;-)
-                        printDayNotInMonth(pw, cal);
+                        printDayNotInMonth(pw);
                     }
                     
                     // increment calendar by one day
@@ -244,14 +209,13 @@ public class CalendarTag extends TagSupport {
             pw.print("<span class=\"error\">");
             pw.print("<p><b>An ERROR has occured CalendarTag</b></p>");
             pw.print("</span>");
-            mLogger.error("Calendar tag exception",e);
+            log.error("Calendar tag exception",e);
         }
         return Tag.SKIP_BODY;
     }
     
-    private void printDayNotInMonth(PrintWriter pw, Calendar cal) {
+    private void printDayNotInMonth(PrintWriter pw) {
         pw.print("<td class=\"hCalendarDayNotInMonth"+mClassSuffix+"\">");
-        //pw.print(cal.get(Calendar.DAY_OF_MONTH));
         pw.print("&nbsp;");
         pw.print("</td>");
     }
@@ -325,16 +289,16 @@ public class CalendarTag extends TagSupport {
     
     
     public String toString() {
-        String ret = null;
+        String ret;
         try {
             StringWriter sw = new StringWriter();
             doStartTag( new PrintWriter( sw, true ));
             // See, design precludes contents
-            doEndTag( new PrintWriter( sw, true ));
+            doEndTag();
             ret = sw.toString();
         } catch (Exception e) {
             ret = "Exception in tag";
-            mLogger.error(ret,e);
+            log.error(ret,e);
         }
         return ret;
     }
@@ -347,15 +311,8 @@ public class CalendarTag extends TagSupport {
         return doStartTag( new PrintWriter( pageContext.getOut(), true) );
     }
     
-    
     public int doEndTag() throws JspException {
-        return doEndTag( new PrintWriter( pageContext.getOut(), true) );
-    }
-    
-    /** Default processing of the end tag returning EVAL_PAGE. */
-    public int doEndTag( PrintWriter pw ) throws JspException {
         return EVAL_PAGE;
     }
 
 }
-
