@@ -105,12 +105,7 @@ public class CalendarModel implements Model {
                 model = new WeblogCalendarModel(pageRequest, catArgument, weblogEntryManager, urlStrategy);
             }
             
-            // save model in JSP page context so CalendarTag can find it
-//            pageContext.setAttribute("calendarModel", model);
-            
             CalendarTag calTag = new CalendarTag();
-            calTag.setName("calendar");
-            calTag.setModel("calendarModel");
             calTag.setLocale(websiteWrapper.getLocaleInstance());
             calTag.setCalendarModel(model);
             if (big) {
@@ -118,7 +113,7 @@ public class CalendarModel implements Model {
             }
             ret = calTag.emit();
         } catch (Exception e) {
-            log.error("ERROR: initializing calendar tag",e);
+            log.error("ERROR: initializing calendar tag", e);
         }
         return ret;
     }

@@ -42,12 +42,6 @@ public interface CalendarModel {
     String computeNextMonthUrl();
 
     /**
-     * Get the earliest month in which there could possibly be data.  For a weblog this
-     * is the beginning of the month containing the creation date.
-     */
-    //public Date getInitialMonth();
-    
-    /**
      * Create URL for use on edit-weblog page, preserves the request
      * parameters used by the tabbed-menu tag for navigation.
      *
@@ -62,7 +56,6 @@ public interface CalendarModel {
      * Get calendar cell content or null if none.
      *
      * @param day Day for URL
-     * @param valid Always return a URL, never return null
      * @return Calendar cell content or null if none.
      */
     String getContent( java.util.Date day );
