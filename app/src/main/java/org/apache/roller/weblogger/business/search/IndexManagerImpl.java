@@ -53,8 +53,6 @@ import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperat
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PreDestroy;
 
@@ -72,8 +70,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private final int MAX_TOKEN_COUNT = 100;
 
-    static Log mLogger = LogFactory.getFactory().getInstance(
-            IndexManagerImpl.class);
+    static Log log = LogFactory.getFactory().getInstance(IndexManagerImpl.class);
 
     // ~ Instance fields
     // ========================================================
@@ -112,8 +109,8 @@ public class IndexManagerImpl implements IndexManager {
         this.indexDir = searchIndexDir.replace('/', File.separatorChar);
 
         // a little debugging
-        mLogger.info("search enabled: " + this.searchEnabled);
-        mLogger.info("index dir: " + this.indexDir);
+        log.info("search enabled: " + this.searchEnabled);
+        log.info("index dir: " + this.indexDir);
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
@@ -155,18 +152,18 @@ public class IndexManagerImpl implements IndexManager {
             if (indexConsistencyMarker.exists()) {
                 getFSDirectory(true);
                 inconsistentAtStartup = true;
-                mLogger.debug("Index inconsistent: marker exists");
+                log.debug("Index inconsistent: marker exists");
             } else {
                 try {
                     File makeIndexDir = new File(indexDir);
                     if (!makeIndexDir.exists()) {
                         makeIndexDir.mkdirs();
                         inconsistentAtStartup = true;
-                        mLogger.debug("Index inconsistent: new");
+                        log.debug("Index inconsistent: new");
                     }
                     indexConsistencyMarker.createNewFile();
                 } catch (IOException e) {
-                    mLogger.error(e);
+                    log.error(e);
                 }
             }
 
@@ -176,11 +173,11 @@ public class IndexManagerImpl implements IndexManager {
                     try {
                         fRAMindex = new RAMDirectory(filesystem, IOContext.DEFAULT);
                     } catch (IOException e) {
-                        mLogger.error("Error creating in-memory index", e);
+                        log.error("Error creating in-memory index", e);
                     }
                 }
             } else {
-                mLogger.debug("Creating index");
+                log.debug("Creating index");
                 inconsistentAtStartup = true;
                 if (useRAMIndex) {
                     fRAMindex = new RAMDirectory();
@@ -191,14 +188,14 @@ public class IndexManagerImpl implements IndexManager {
             }
 
             if (isInconsistentAtStartup()) {
-                mLogger.info("Index was inconsistent. Rebuilding index in the background...");
+                log.info("Index was inconsistent. Rebuilding index in the background...");
                 try {
                     rebuildWeblogIndex();
                 } catch (WebloggerException e) {
-                    mLogger.error("ERROR: scheduling re-index operation");
+                    log.error("ERROR: scheduling re-index operation");
                 }
             } else {
-                mLogger.info("Index initialized and ready for use.");
+                log.info("Index initialized and ready for use.");
             }
         }
 
@@ -260,7 +257,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private void scheduleIndexOperation(final IndexOperation op) {
         if (this.searchEnabled) {
-            mLogger.debug("Starting scheduled index operation: " + op.getClass().getName());
+            log.debug("Starting scheduled index operation: " + op.getClass().getName());
             serviceScheduler.submit(op);
         }
     }
@@ -270,7 +267,7 @@ public class IndexManagerImpl implements IndexManager {
      */
     public void executeIndexOperationNow(final IndexOperation op) {
         if (this.searchEnabled) {
-            mLogger.debug("Executing index operation now: " + op.getClass().getName());
+            log.debug("Executing index operation now: " + op.getClass().getName());
             op.run();
         }
     }
@@ -311,7 +308,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             return DirectoryReader.indexExists(getIndexDirectory());
         } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+            log.error("Problem accessing index directory", e);
         }
         return false;
     }
@@ -336,7 +333,7 @@ public class IndexManagerImpl implements IndexManager {
             }
 
         } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+            log.error("Problem accessing index directory", e);
         }
 
         return directory;
@@ -355,7 +352,7 @@ public class IndexManagerImpl implements IndexManager {
             writer = new IndexWriter(dir, config);
 
         } catch (IOException e) {
-            mLogger.error("Error creating index", e);
+            log.error("Error creating index", e);
         } finally {
             try {
                 if (writer != null) {
@@ -380,7 +377,7 @@ public class IndexManagerImpl implements IndexManager {
                     writer.commit();
                     indexConsistencyMarker.delete();
                 } catch (IOException e) {
-                    mLogger.error("Problem saving index to disk", e);
+                    log.error("Problem saving index to disk", e);
                     // Delete the directory, since there was a problem saving the RAM contents
                     getFSDirectory(true);
                 } finally {
@@ -389,7 +386,7 @@ public class IndexManagerImpl implements IndexManager {
                             writer.close();
                         }
                     } catch (IOException e1) {
-                        mLogger.warn("Unable to close IndexWriter.");
+                        log.warn("Unable to close IndexWriter.");
                     }
                 }
             }
@@ -404,7 +401,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             serviceScheduler.awaitTermination(20, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            mLogger.debug(e.getMessage(), e);
+            log.debug(e.getMessage(), e);
         }
 
         if (!useRAMIndex) {

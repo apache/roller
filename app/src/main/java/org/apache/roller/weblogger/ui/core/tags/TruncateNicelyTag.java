@@ -16,7 +16,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
 */
-package org.apache.roller.weblogger.ui.tags;
+package org.apache.roller.weblogger.ui.core.tags;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;

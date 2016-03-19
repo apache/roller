@@ -47,8 +47,7 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            RebuildWeblogIndexOperation.class);
+    private static Log log = LogFactory.getFactory().getInstance(RebuildWeblogIndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
@@ -79,9 +78,9 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
         Date start = new Date();
 
         if (this.website != null) {
-            mLogger.debug("Reindexining weblog " + website.getHandle());
+            log.debug("Reindexining weblog " + website.getHandle());
         } else {
-            mLogger.debug("Reindexining entire site");
+            log.debug("Reindexining entire site");
         }
 
         IndexWriter writer = beginWriting();
@@ -109,17 +108,17 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
                 wesc.setStatus(PubStatus.PUBLISHED);
                 List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
 
-                mLogger.debug("Entries to index: " + entries.size());
+                log.debug("Entries to index: " + entries.size());
 
                 for (WeblogEntry entry : entries) {
                     writer.addDocument(getDocument(entry));
-                    mLogger.debug(MessageFormat.format(
+                    log.debug(MessageFormat.format(
                             "Indexed entry {0}: {1}",
                             entry.getPubTime(), entry.getAnchor()));
                 }
             }
         } catch (Exception e) {
-            mLogger.error("ERROR adding/deleting doc to index", e);
+            log.error("ERROR adding/deleting doc to index", e);
         } finally {
             endWriting();
         }
@@ -128,10 +127,10 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
         double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
 
         if (website == null) {
-            mLogger.info("Completed rebuilding index for all users in '"
+            log.info("Completed rebuilding index for all users in '"
                     + length + "' secs");
         } else {
-            mLogger.info("Completed rebuilding index for website handle: '"
+            log.info("Completed rebuilding index for website handle: '"
                     + website.getHandle() + "' in '" + length + "' seconds");
         }
     }

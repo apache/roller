@@ -39,7 +39,7 @@ import javax.servlet.ServletContext;
  */
 public final class WebloggerFactory {
     
-    private static final Log LOG = LogFactory.getLog(WebloggerFactory.class);
+    private static final Log log = LogFactory.getLog(WebloggerFactory.class);
 
     // Spring Application Context
     private static ApplicationContext context = null;
@@ -136,14 +136,14 @@ public final class WebloggerFactory {
         try {
             mailProvider = new MailProvider();
         } catch(StartupException ex) {
-            LOG.warn("Failed to setup mail provider, continuing anyways.\n"
+            log.warn("Failed to setup mail provider, continuing anyways.\n"
                     + "Reason: " + ex.getMessage());
-            LOG.info("The cause of setting up mail provider error was: ", ex);
+            log.info("The cause of setting up mail provider error was: ", ex);
         }
 
-        LOG.info("TightBlog Weblogger business tier successfully bootstrapped");
-        LOG.info("   Version: " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
-        LOG.info("   Revision: " + WebloggerConfig.getProperty("weblogger.revision", "Unknown"));
+        log.info("TightBlog Weblogger business tier successfully bootstrapped");
+        log.info("   Version: " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
+        log.info("   Revision: " + WebloggerConfig.getProperty("weblogger.revision", "Unknown"));
     }
 
     public static void flush() throws WebloggerException {

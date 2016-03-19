@@ -2,10 +2,7 @@
 <Configuration status="warn">
     <Appenders>
         <!-- Pattern options: http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout -->
-        <Console name="Console">
-            <PatternLayout pattern="%d [%thread] %level{length=2} %logger{1.1.} - %msg%n"/>
-        </Console>
-        <File name="TightBlogFileAppender" fileName="${env.CATALINA_HOME}/logs/tightblog.log">
+        <File name="TightBlogTestFileAppender" fileName="target/tightblog-test.log">
             <PatternLayout>
                 <Pattern>%d [%thread] %level{length=2} %logger{1.1.} - %msg%n</Pattern>
             </PatternLayout>
@@ -13,9 +10,10 @@
     </Appenders>
     <Loggers>
         <Root level="error">
-            <AppenderRef ref="TightBlogFileAppender"/>
+            <AppenderRef ref="TightBlogTestFileAppender"/>
         </Root>
         <Logger name="org.apache.roller" level="info"/>
+        <!--Logger name="org.apache.roller.weblogger.business" level="debug"/-->
         <Logger name="org.apache.struts2" level="warn"/>
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="com.opensymphony.xwork2" level="error"/>

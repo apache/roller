@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.pojos.User;
  */
 public class CustomUserRegistry {
     
-    private static final Log LOG = LogFactory.getLog(CustomUserRegistry.class);
+    private static final Log log = LogFactory.getLog(CustomUserRegistry.class);
 
     private String ldapUidAttribute = "uid";
 
@@ -84,7 +84,7 @@ public class CustomUserRegistry {
     public User getUserDetailsFromAuthentication(HttpServletRequest request) {
 
         if (!(WebloggerConfig.getAuthMethod() == AuthMethod.LDAP)) {
-            LOG.info("LDAP is not enabled. Skipping CustomUserRegistry functionality.");
+            log.info("LDAP is not enabled. Skipping CustomUserRegistry functionality.");
             return null;
         }
         
@@ -118,7 +118,7 @@ public class CustomUserRegistry {
             if (userName == null && fullName == null && screenName == null &&
                     email == null && locale == null && timezone == null) {
 
-                LOG.warn("No Authentication found in SecurityContextHolder and HttpServletRequest.");
+                log.warn("No Authentication found in SecurityContextHolder and HttpServletRequest.");
                 return null;
             } else {
                 enabled = true;
@@ -128,13 +128,13 @@ public class CustomUserRegistry {
             Object oPrincipal = authentication.getPrincipal();
         
             if(oPrincipal == null) {
-                LOG.warn("Principal is null. Skipping auto-registration.");
+                log.warn("Principal is null. Skipping auto-registration.");
                 return null;
             }
         
             if (!(oPrincipal instanceof UserDetails)) {
-                LOG.warn("Unsupported Principal type in Authentication. Skipping auto-registration.");
-                LOG.warn("oPrincipal found of type " + oPrincipal.getClass().getName() + "; needs to be UserDetails");
+                log.warn("Unsupported Principal type in Authentication. Skipping auto-registration.");
+                log.warn("oPrincipal found of type " + oPrincipal.getClass().getName() + "; needs to be UserDetails");
                 return null;
             }
         

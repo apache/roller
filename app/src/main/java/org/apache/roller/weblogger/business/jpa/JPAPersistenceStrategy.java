@@ -50,7 +50,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  */
 public class JPAPersistenceStrategy {
     
-    private static Log logger = 
+    private static Log log =
         LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);
     
     /**
@@ -93,7 +93,7 @@ public class JPAPersistenceStrategy {
                         || key.startsWith("eclipselink.")
                         || key.startsWith("hibernate.")) {
                     String value = WebloggerConfig.getProperty(key);
-                    logger.info(key + ": " + value);
+                    log.info(key + ": " + value);
                     emfProps.setProperty(key, value);
                 }
             }
@@ -111,7 +111,7 @@ public class JPAPersistenceStrategy {
                 this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
 
             } catch (Exception pe) {
-                logger.error("ERROR: creating entity manager", pe);
+                log.error("ERROR: creating entity manager", pe);
                 throw new WebloggerException(pe);
             }
         }
@@ -357,13 +357,13 @@ public class JPAPersistenceStrategy {
                 em.getTransaction().rollback();
             }
         } catch (Exception e) {
-            logger.error("error during releasing database session", e);
+            log.error("error during releasing database session", e);
         } finally {
             if (em != null) {
                 try {
                     em.close();
                 } catch (Exception e) {
-                    logger.debug("error during closing EntityManager", e);
+                    log.debug("error during closing EntityManager", e);
                 }
             }
             threadLocalEntityManager.remove();
@@ -372,7 +372,7 @@ public class JPAPersistenceStrategy {
 
     @PreDestroy
     public void shutdown() {
-        logger.info("DB shutdown");
+        log.info("DB shutdown");
         release();
         if (emf != null) {
             emf.close();

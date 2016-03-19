@@ -49,8 +49,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LinkbackExtractor
 {
-    private static Log mLogger        = LogFactory.getFactory().getInstance(
-                                              LinkbackExtractor.class);
+    private static Log log = LogFactory.getFactory().getInstance(LinkbackExtractor.class);
     private boolean    mFound         = false;
     private String     mTitle         = "";
     private String     mRssLink       = null;
@@ -79,8 +78,8 @@ public class LinkbackExtractor
                 extractByParsingRss(mRssLink, requestURL);
             }
         } catch (Exception e) {
-            if (mLogger.isDebugEnabled()) {
-                mLogger.debug("Extracting linkback", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Extracting linkback", e);
             }
         }
     }
@@ -151,8 +150,8 @@ public class LinkbackExtractor
 
         int count = 0;
 
-        if (mLogger.isDebugEnabled()) {
-            mLogger.debug("Feed parsed, title: " + feedTitle);
+        if (log.isDebugEnabled()) {
+            log.debug("Feed parsed, title: " + feedTitle);
         }
 
         for (Object objItem : feed.getEntries()) {
@@ -175,8 +174,8 @@ public class LinkbackExtractor
             }
         }
 
-        if (mLogger.isDebugEnabled()) {
-            mLogger.debug("Parsed " + count + " articles, found linkback=" + mFound);
+        if (log.isDebugEnabled()) {
+            log.debug("Parsed " + count + " articles, found linkback=" + mFound);
         }
     }
 
@@ -305,9 +304,9 @@ public class LinkbackExtractor
                 {
                     mRssLink = (String) atts.getAttribute(HTML.Attribute.HREF);
 
-                    if (mLogger.isDebugEnabled())
+                    if (log.isDebugEnabled())
                     {
-                        mLogger.debug("Found RSS link " + mRssLink);
+                        log.debug("Found RSS link " + mRssLink);
                     }
 
                     if (mRssLink.startsWith("/") && mRssLink.length() > 1)
@@ -322,9 +321,9 @@ public class LinkbackExtractor
                         catch (MalformedURLException e)
                         {
                             mRssLink = null;
-                            if (mLogger.isDebugEnabled())
+                            if (log.isDebugEnabled())
                             {
-                                mLogger.debug("Determining RSS URL", e);
+                                log.debug("Determining RSS URL", e);
                             }
                         }
                     }
@@ -337,9 +336,9 @@ public class LinkbackExtractor
                                     + mRssLink;
                         }
                     }
-                    if (mLogger.isDebugEnabled())
+                    if (log.isDebugEnabled())
                     {
-                        mLogger.debug("Qualified RSS link is " + mRssLink);
+                        log.debug("Qualified RSS link is " + mRssLink);
                     }
                 }
             }

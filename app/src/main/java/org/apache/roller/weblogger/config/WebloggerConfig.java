@@ -48,6 +48,9 @@ public final class WebloggerConfig {
 
     private static Log log = LogFactory.getLog(WebloggerConfig.class);
 
+    // no, you may not instantiate this class :p
+    private WebloggerConfig() {}
+
     /*
      * Static block run once at class loading
      *
@@ -92,7 +95,7 @@ public final class WebloggerConfig {
                 custom_config_file = new File(env_file);
 
                 // make sure the file exists, then try and load it
-                if(custom_config_file != null && custom_config_file.exists()) {
+                if(custom_config_file.exists()) {
                     is = new FileInputStream(custom_config_file);
                     config.load(is);
                     System.out.println("TightBlog Weblogger: Successfully loaded custom properties from " + custom_config_file.getAbsolutePath());
@@ -100,13 +103,13 @@ public final class WebloggerConfig {
                     System.out.println("TightBlog Weblogger: Failed to load custom properties from " + custom_config_file.getAbsolutePath());
                 }
 
-            } 
+            }
 
             // some debugging for those that want it
             if(log.isDebugEnabled()) {
                 log.debug("WebloggerConfig looks like this ...");
 
-                String key = null;
+                String key;
                 Enumeration keys = config.keys();
                 while(keys.hasMoreElements()) {
                     key = (String) keys.nextElement();
@@ -119,11 +122,6 @@ public final class WebloggerConfig {
         }
 
     }
-
-
-    // no, you may not instantiate this class :p
-    private WebloggerConfig() {}
-
 
     /**
      * Retrieve a property value

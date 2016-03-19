@@ -10,7 +10,7 @@
     </info>
     <tag>
         <name>truncateNicely</name>
-        <tagclass>org.apache.roller.weblogger.ui.tags.TruncateNicelyTag</tagclass>
+        <tagclass>org.apache.roller.weblogger.ui.core.tags.TruncateNicelyTag</tagclass>
         <bodycontent>JSP</bodycontent>
         <attribute>
             <name>var</name>
