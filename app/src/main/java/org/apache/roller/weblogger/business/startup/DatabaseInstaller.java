@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
 
 /**
@@ -50,7 +50,7 @@ public class DatabaseInstaller {
     
     public DatabaseInstaller(DatabaseProvider dbProvider) {
         db = dbProvider;
-        version = WebloggerConfig.getProperty("weblogger.version", "UNKNOWN");
+        version = WebloggerStaticConfig.getProperty("weblogger.version", "UNKNOWN");
     }
     
     

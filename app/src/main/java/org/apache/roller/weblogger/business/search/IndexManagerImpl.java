@@ -43,6 +43,7 @@ import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;
@@ -52,7 +53,6 @@ import org.apache.roller.weblogger.business.search.operations.RemoveWeblogIndexO
 import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperation;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 
 import javax.annotation.PreDestroy;
 
@@ -104,8 +104,8 @@ public class IndexManagerImpl implements IndexManager {
         serviceScheduler = Executors.newCachedThreadPool();
 
         // we also need to know what our index directory is
-        // Note: system property expansion is now handled by WebloggerConfig
-        String searchIndexDir = WebloggerConfig.getProperty("search.index.dir");
+        // Note: system property expansion is now handled by WebloggerStaticConfig
+        String searchIndexDir = WebloggerStaticConfig.getProperty("search.index.dir");
         this.indexDir = searchIndexDir.replace('/', File.separatorChar);
 
         // a little debugging

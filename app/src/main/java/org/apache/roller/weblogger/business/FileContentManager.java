@@ -76,7 +76,7 @@ public interface FileContentManager {
             throws IOException;
 
     /**
-     * Determine if file can be saved given current WebloggerConfig settings.
+     * Determine if file can be saved given current WebloggerStaticConfig settings.
      * 
      * @param weblog The weblog we are working on.
      * @param fileName name of the file to be saved

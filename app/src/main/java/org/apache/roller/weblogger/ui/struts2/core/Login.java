@@ -22,7 +22,7 @@
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -42,7 +42,7 @@ public class Login extends UIAction {
     
     private String error = null;
 
-    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+    private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
 
     public Login() {
         this.pageTitle = "loginPage.title";

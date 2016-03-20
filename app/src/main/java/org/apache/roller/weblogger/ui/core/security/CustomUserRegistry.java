@@ -35,7 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.User;
 
 /**
@@ -83,7 +83,7 @@ public class CustomUserRegistry {
 
     public User getUserDetailsFromAuthentication(HttpServletRequest request) {
 
-        if (!(WebloggerConfig.getAuthMethod() == AuthMethod.LDAP)) {
+        if (!(WebloggerStaticConfig.getAuthMethod() == AuthMethod.LDAP)) {
             log.info("LDAP is not enabled. Skipping CustomUserRegistry functionality.");
             return null;
         }
@@ -157,7 +157,7 @@ public class CustomUserRegistry {
 
         // for LDAP we don't store its password in the roller_users table,
         // just an string indicating external auth method being used.
-        unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue","<externalAuth>");
+        unusedPassword = WebloggerStaticConfig.getProperty("users.passwords.externalAuthValue","<externalAuth>");
         ud.setPassword(unusedPassword);
         ud.setEnabled(enabled ? Boolean.TRUE : Boolean.FALSE);
 

@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.config;
+package org.apache.roller.weblogger.business;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
  * read only at application startup, are not stored in any database table and
  * require an application restart in order to read any changed values.
  */
-public final class WebloggerConfig {
+public final class WebloggerStaticConfig {
     
     private static String default_config = "/org/apache/roller/weblogger/config/tightblog.properties";
     private static String custom_config = "/tightblog-custom.properties";
@@ -50,10 +50,10 @@ public final class WebloggerConfig {
     private static String relativeContextURL = null;
     private static String absoluteContextURL = null;
 
-    private static Log log = LogFactory.getLog(WebloggerConfig.class);
+    private static Log log = LogFactory.getLog(WebloggerStaticConfig.class);
 
     // no, you may not instantiate this class :p
-    private WebloggerConfig() {}
+    private WebloggerStaticConfig() {}
 
     /*
      * Static block run once at class loading
@@ -65,7 +65,7 @@ public final class WebloggerConfig {
 
         try {
             // we'll need this to get at our properties files in the classpath
-            Class configClass = Class.forName("org.apache.roller.weblogger.config.WebloggerConfig");
+            Class configClass = Class.forName("org.apache.roller.weblogger.business.WebloggerStaticConfig");
 
             // first, lets load our default properties
             InputStream is = configClass.getResourceAsStream(default_config);
@@ -111,7 +111,7 @@ public final class WebloggerConfig {
 
             // some debugging for those that want it
             if(log.isDebugEnabled()) {
-                log.debug("WebloggerConfig looks like this ...");
+                log.debug("WebloggerStaticConfig looks like this ...");
 
                 String key;
                 Enumeration keys = config.keys();
@@ -166,7 +166,7 @@ public final class WebloggerConfig {
      */
     public static boolean getBooleanProperty(String name, boolean defaultValue) {
         // get the value first, then convert
-        String value = WebloggerConfig.getProperty(name);
+        String value = WebloggerStaticConfig.getProperty(name);
 
         if (value == null) {
             return defaultValue;
@@ -187,7 +187,7 @@ public final class WebloggerConfig {
      */
     public static int getIntProperty(String name, int defaultValue) {
         // get the value first, then convert
-        String value = WebloggerConfig.getProperty(name);
+        String value = WebloggerStaticConfig.getProperty(name);
 
         if (value == null) {
             return defaultValue;

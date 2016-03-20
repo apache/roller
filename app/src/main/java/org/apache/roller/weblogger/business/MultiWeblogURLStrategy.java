@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -45,9 +44,9 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     protected String getRootURL(boolean absolute) {
         if (absolute) {
-            return WebloggerConfig.getAbsoluteContextURL();
+            return WebloggerStaticConfig.getAbsoluteContextURL();
         } else {
-            return WebloggerConfig.getRelativeContextURL();
+            return WebloggerStaticConfig.getRelativeContextURL();
         }
     }
 

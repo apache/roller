@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
 /**
  * Model which provides access to application config data like site
@@ -110,13 +110,13 @@ public class ConfigModel implements Model {
     
     /** Get Roller version string */
     public String getRollerVersion() {
-        return WebloggerConfig.getProperty("weblogger.version", "Unknown");
+        return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
     }
     
     
     /** Get timestamp of Roller build */
     public String getRollerBuildTimestamp() {
-        return WebloggerConfig.getProperty("weblogger.buildTime", "Unknown");
+        return WebloggerStaticConfig.getProperty("weblogger.buildTime", "Unknown");
     }
 
     public String getDefaultAnalyticsTrackingCode() {

@@ -28,7 +28,6 @@ import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -51,16 +50,16 @@ public class MailProvider {
 
     public MailProvider() throws StartupException {
         
-        String connectionTypeString = WebloggerConfig.getProperty("mail.configurationType"); 
+        String connectionTypeString = WebloggerStaticConfig.getProperty("mail.configurationType");
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
         }
-        String jndiName = WebloggerConfig.getProperty("mail.jndi.name");
-        mailHostname = WebloggerConfig.getProperty("mail.hostname");
-        mailUsername = WebloggerConfig.getProperty("mail.username");
-        mailPassword = WebloggerConfig.getProperty("mail.password");
+        String jndiName = WebloggerStaticConfig.getProperty("mail.jndi.name");
+        mailHostname = WebloggerStaticConfig.getProperty("mail.hostname");
+        mailUsername = WebloggerStaticConfig.getProperty("mail.username");
+        mailPassword = WebloggerStaticConfig.getProperty("mail.password");
         try {
-            String portString = WebloggerConfig.getProperty("mail.port");
+            String portString = WebloggerStaticConfig.getProperty("mail.port");
             if (portString != null) {
                 mailPort = Integer.parseInt(portString);
             }

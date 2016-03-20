@@ -41,7 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -84,7 +84,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		this.weblogManager = wm;
 
 		// get theme directory from config and verify it
-		this.themeDir = WebloggerConfig.getProperty("themes.dir");
+		this.themeDir = WebloggerStaticConfig.getProperty("themes.dir");
 		if (themeDir == null || themeDir.trim().length() < 1) {
 			throw new RuntimeException("couldn't get themes directory from config");
 		} else {

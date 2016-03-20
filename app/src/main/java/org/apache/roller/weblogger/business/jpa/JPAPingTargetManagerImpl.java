@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PingResult;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -169,7 +169,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             initializeCommonTargets();
 
             // Remove all autoping configurations if ping usage has been disabled.
-            if (WebloggerConfig.getBooleanProperty("pings.disablePingUsage", false)) {
+            if (WebloggerStaticConfig.getBooleanProperty("pings.disablePingUsage", false)) {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 removeAllAutoPings();
             }
@@ -194,7 +194,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
         String PINGS_INITIAL_COMMON_TARGETS_PROP = "pings.initialCommonTargets";
 
-        String configuredVal = WebloggerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
+        String configuredVal = WebloggerStaticConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
             if (log.isDebugEnabled()) {
                 log.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
@@ -300,7 +300,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             return;
         }
 
-        String absoluteContextUrl = WebloggerConfig.getAbsoluteContextURL();
+        String absoluteContextUrl = WebloggerStaticConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
             log.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
             return;

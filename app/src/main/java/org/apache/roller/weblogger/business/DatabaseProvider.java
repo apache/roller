@@ -32,7 +32,6 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -45,7 +44,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * information to whoever is installing the weblogger.</p>
  * 
  * 
- * <p>Reads configuration properties from WebloggerConfig:</p>
+ * <p>Reads configuration properties from WebloggerStaticConfig:</p>
  * <pre>
  * # Specify database configuration type of 'jndi' or 'jdbc'
  * database.configurationType=jndi
@@ -85,15 +84,15 @@ public class DatabaseProvider  {
     public DatabaseProvider() throws StartupException {
 
         String connectionTypeString =
-                WebloggerConfig.getProperty("database.configurationType"); 
+                WebloggerStaticConfig.getProperty("database.configurationType");
         if ("jdbc".equals(connectionTypeString)) {
             type = ConfigurationType.JDBC_PROPERTIES;
         }
-        jndiName =          WebloggerConfig.getProperty("database.jndi.name");
-        jdbcDriverClass =   WebloggerConfig.getProperty("database.jdbc.driverClass");
-        jdbcConnectionURL = WebloggerConfig.getProperty("database.jdbc.connectionURL");
-        jdbcUsername =      WebloggerConfig.getProperty("database.jdbc.username");
-        jdbcPassword =      WebloggerConfig.getProperty("database.jdbc.password");
+        jndiName =          WebloggerStaticConfig.getProperty("database.jndi.name");
+        jdbcDriverClass =   WebloggerStaticConfig.getProperty("database.jdbc.driverClass");
+        jdbcConnectionURL = WebloggerStaticConfig.getProperty("database.jdbc.connectionURL");
+        jdbcUsername =      WebloggerStaticConfig.getProperty("database.jdbc.username");
+        jdbcPassword =      WebloggerStaticConfig.getProperty("database.jdbc.password");
         
         successMessage("SUCCESS: Got parameters. Using configuration type " + type);
 

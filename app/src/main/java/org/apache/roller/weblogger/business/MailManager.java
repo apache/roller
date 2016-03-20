@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -176,7 +175,7 @@ public class MailManager {
             String content;
             
             // Figure URL to entry edit page
-            String rootURL = WebloggerConfig.getAbsoluteContextURL();
+            String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
             String url = rootURL + "/tb-ui/menu.rol";
             
             ResourceBundle resources = ResourceBundle.getBundle(
@@ -235,7 +234,7 @@ public class MailManager {
                     "user.account.activation.mail.subject");
             String content;
             
-            String rootURL = WebloggerConfig.getAbsoluteContextURL();
+            String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
             
             StringBuilder sb = new StringBuilder();
             

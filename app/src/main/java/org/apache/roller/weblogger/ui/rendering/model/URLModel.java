@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
@@ -83,13 +83,13 @@ public class URLModel implements Model {
     
     /** Relative URL of Roller, e.g. /roller */
     public String getSite() {
-        return WebloggerConfig.getRelativeContextURL();
+        return WebloggerStaticConfig.getRelativeContextURL();
     }
     
     
     /** Absolute URL of Roller, e.g. http://localhost:8080/roller */
     public String getAbsoluteSite() {
-        return WebloggerConfig.getAbsoluteContextURL();
+        return WebloggerStaticConfig.getAbsoluteContextURL();
     }
 
     /** URL for logging in */  

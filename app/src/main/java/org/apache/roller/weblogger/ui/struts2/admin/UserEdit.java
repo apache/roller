@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -64,7 +64,7 @@ public class UserEdit extends UIAction {
     // user we are creating or modifying
     private User user = null;
     
-    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+    private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
 
     public UserEdit() {
         this.desiredMenu = "admin";
@@ -220,7 +220,7 @@ public class UserEdit extends UIAction {
             addError("Register.error.emailAddressNull");
         }
         if (isAdd()) {
-            String allowed = WebloggerConfig.getProperty("username.allowedChars");
+            String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.trim().length() == 0) {
                 allowed = Register.DEFAULT_ALLOWED_CHARS;
             }

@@ -30,8 +30,8 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -216,7 +216,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         userManager.grantWeblogRole(
                 newWeblog.getCreator(), newWeblog, WeblogRole.OWNER);
         
-        String cats = WebloggerConfig.getProperty("newuser.categories");
+        String cats = WebloggerStaticConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = null;
         if (cats != null) {
             String[] splitcats = cats.split(",");
@@ -238,7 +238,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.store(newWeblog);
 
         // add default bookmarks
-        String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
+        String blogroll = WebloggerStaticConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
             String[] splitroll = blogroll.split(",");
             for (String splitItem : splitroll) {

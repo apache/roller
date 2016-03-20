@@ -26,7 +26,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -142,8 +141,8 @@ public final class WebloggerFactory {
         }
 
         log.info("TightBlog Weblogger business tier successfully bootstrapped");
-        log.info("   Version: " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
-        log.info("   Revision: " + WebloggerConfig.getProperty("weblogger.revision", "Unknown"));
+        log.info("   Version: " + WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
+        log.info("   Revision: " + WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));
     }
 
     public static void flush() throws WebloggerException {

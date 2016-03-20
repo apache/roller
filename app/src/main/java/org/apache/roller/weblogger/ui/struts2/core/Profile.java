@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -44,7 +44,7 @@ public class Profile extends UIAction {
     private static Log log = LogFactory.getLog(Profile.class);
     
     private User bean = new User();
-    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+    private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
 
     private UserManager userManager;
 
