@@ -43,8 +43,8 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PingResult;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -55,6 +55,9 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     private final JPAPersistenceStrategy strategy;
+
+    private PropertiesManager propertiesManager;
+
     private static final Log log = LogFactory.getLog(JPAPingTargetManagerImpl.class);
 
     // for debugging, will log but not send ping out.
@@ -64,8 +67,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         logPingsOnly = boolVal;
     }
 
-    protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy) {
+    protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy, PropertiesManager propertiesManager) {
         this.strategy = strategy;
+        this.propertiesManager = propertiesManager;
     }
 
     public void removePingTarget(PingTarget pingTarget) 
@@ -253,7 +257,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     public void queueApplicableAutoPings(Weblog changedWeblog) throws WebloggerException {
-        if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
+        if (propertiesManager.getBooleanProperty("pings.suspendPingProcessing")) {
             if (log.isDebugEnabled()) {
                 log.debug("Ping processing is suspended." + " No auto pings will be queued.");
             }
@@ -291,12 +295,12 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         // reset queue for next execution
         opq.clearPings();
 
-        if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
+        if (propertiesManager.getBooleanProperty("pings.suspendPingProcessing")) {
             log.info("Ping processing suspended on admin settings page, no pings are being generated.");
             return;
         }
 
-        String absoluteContextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
+        String absoluteContextUrl = WebloggerConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
             log.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
             return;

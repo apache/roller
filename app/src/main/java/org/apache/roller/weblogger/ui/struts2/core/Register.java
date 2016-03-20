@@ -33,10 +33,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -65,6 +65,12 @@ public class Register extends UIAction implements ServletRequestAware {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     private CustomUserRegistry customUserRegistry;
@@ -112,7 +118,7 @@ public class Register extends UIAction implements ServletRequestAware {
         
         // if registration is disabled, then don't allow registration
         try {
-            if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
+            if (!propertiesManager.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
                 && userManager.getUserCount() != 0) {
                 addError("Register.disabled");
@@ -158,7 +164,7 @@ public class Register extends UIAction implements ServletRequestAware {
         
         // if registration is disabled, then don't allow registration
         try {
-            if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
+            if (!propertiesManager.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
                 && userManager.getUserCount() != 0) {
                 return DISABLED_RETURN_CODE;
@@ -194,7 +200,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 }
 
                 // are we using email activation?
-                boolean activationEnabled = WebloggerRuntimeConfig.getBooleanProperty(
+                boolean activationEnabled = propertiesManager.getBooleanProperty(
                         "user.account.email.activation");
                 if (activationEnabled) {
                     // User account will be enabled after the activation process

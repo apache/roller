@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.Template;
@@ -28,7 +29,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
@@ -67,6 +67,13 @@ public class PreviewProcessor {
 
     public void setRendererManager(RendererManager rendererManager) {
         this.rendererManager = rendererManager;
+    }
+
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     @PostConstruct
@@ -212,7 +219,7 @@ public class PreviewProcessor {
             model = Model.getModelMap("previewModelSet", initData);
 
             // Load special models for site-wide blog
-            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
                 model.putAll(Model.getModelMap("siteModelSet", initData));
             }
 

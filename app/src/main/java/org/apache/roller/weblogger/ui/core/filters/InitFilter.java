@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.core.filters;
 
 import java.io.IOException;
@@ -30,14 +32,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
  * A special initialization filter which ensures that we have an opportunity to
  * extract a few pieces of information about the environment we are running in
  * when the first request is sent.
- * 
- * @web.filter name="InitFilter"
  */
 public class InitFilter implements Filter {
 
@@ -59,8 +59,8 @@ public class InitFilter implements Filter {
             String absPath = this.getAbsoluteUrl(request);
 
             // set them in our config
-            WebloggerRuntimeConfig.setAbsoluteContextURL(absPath);
-            WebloggerRuntimeConfig.setRelativeContextURL(relPath);
+            WebloggerConfig.setAbsoluteContextURL(absPath);
+            WebloggerConfig.setRelativeContextURL(relPath);
 
             if (log.isDebugEnabled()) {
                 log.debug("relPath = " + relPath);
@@ -87,9 +87,9 @@ public class InitFilter implements Filter {
 
     protected static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL){
 
-        String url = null;
+        String url;
 
-        String fullUrl = null;
+        String fullUrl;
 
         if (!secure) {
             fullUrl = requestURL;

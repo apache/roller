@@ -29,17 +29,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-
 
 /**
  * Action for modifying weblog configuration.
@@ -64,6 +63,12 @@ public class WeblogConfig extends UIAction {
 
     public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.persistenceStrategy = strategy;
+    }
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     // bean for managing submitted data
@@ -191,7 +196,7 @@ public class WeblogConfig extends UIAction {
         }
 
         // make sure user didn't enter an invalid entry display count
-        int maxEntries = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
+        int maxEntries = propertiesManager.getIntProperty("site.pages.maxEntries");
         if(bean.getEntryDisplayCount() > maxEntries) {
             addError("websiteSettings.error.entryDisplayCount");
         }

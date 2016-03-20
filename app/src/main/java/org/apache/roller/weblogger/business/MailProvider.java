@@ -55,7 +55,7 @@ public class MailProvider {
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
         }
-        String jndiName =     WebloggerConfig.getProperty("mail.jndi.name");
+        String jndiName = WebloggerConfig.getProperty("mail.jndi.name");
         mailHostname = WebloggerConfig.getProperty("mail.hostname");
         mailUsername = WebloggerConfig.getProperty("mail.username");
         mailPassword = WebloggerConfig.getProperty("mail.password");

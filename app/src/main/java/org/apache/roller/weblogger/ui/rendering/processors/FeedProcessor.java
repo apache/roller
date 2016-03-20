@@ -33,8 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
@@ -94,6 +94,13 @@ public class FeedProcessor {
         this.rendererManager = rendererManager;
     }
 
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -113,7 +120,7 @@ public class FeedProcessor {
             }
 
             // is this the site-wide weblog?
-            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle());
+            isSiteWide = propertiesManager.isSiteWideWeblog(weblog.getHandle());
 
         } catch (Exception e) {
             // invalid feed request format or weblog doesn't exist
@@ -143,8 +150,7 @@ public class FeedProcessor {
         // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
-        if (WebloggerRuntimeConfig
-                .getBooleanProperty("site.newsfeeds.styledFeeds")
+        if (propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds")
                 && accepts != null
                 && accepts.contains("*/*")
                 && userAgent != null && userAgent.startsWith("Mozilla")) {

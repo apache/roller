@@ -75,10 +75,6 @@
          <type>string</type>
          <default-value></default-value>
       </property-def>
-      <property-def  name="site.absoluteurl"  key="configForm.absoluteUrl">
-         <type>string</type>
-         <default-value></default-value>
-      </property-def>
       <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
           <!-- If true, new auto ping requests are not queued, any existing queued requests
           are not processed, and sending a manual ping results in a message saying pings

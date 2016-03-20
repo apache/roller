@@ -25,8 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PingTargetManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -66,8 +66,13 @@ public class Pings extends UIAction {
     
     // track the enabled/disabled status for pings
     private Map pingStatus = Collections.EMPTY_MAP;
-    
-    
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
     public Pings() {
         this.actionName = "pings";
         this.desiredMenu = "editor";
@@ -158,7 +163,7 @@ public class Pings extends UIAction {
         
         if(getPingTarget() != null) {
             try {
-                if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
+                if (propertiesManager.getBooleanProperty("pings.suspendPingProcessing")) {
                     log.debug("Ping processing is disabled.");
                     addError("ping.pingProcessingIsSuspended");
                 } else {

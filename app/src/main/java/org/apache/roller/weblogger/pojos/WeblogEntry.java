@@ -45,7 +45,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
@@ -618,7 +617,7 @@ public class WeblogEntry implements Serializable {
      */
     @Transient
     public boolean getCommentsStillAllowed() {
-        if (!WebloggerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
+        if (!WebloggerFactory.getWeblogger().getPropertiesManager().getBooleanProperty("users.comments.enabled")) {
             return false;
         }
         if (getWeblog().getAllowComments() != null && !getWeblog().getAllowComments()) {

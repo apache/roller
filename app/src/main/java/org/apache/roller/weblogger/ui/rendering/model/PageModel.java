@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -78,6 +79,12 @@ public class PageModel implements Model {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    protected PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     /**
@@ -308,6 +315,7 @@ public class PageModel implements Model {
             return new WeblogEntriesTimePager(
                     interval,
                     weblogEntryManager,
+                    propertiesManager,
                     urlStrategy,
                     weblog,
                     pageRequest.getWeblogDate(),

@@ -52,7 +52,6 @@ import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -65,6 +64,7 @@ public class FeedManagerImpl implements FeedManager {
     private PlanetManager planetManager;
     private URLStrategy urlStrategy;
     private JPAPersistenceStrategy strategy;
+    private PropertiesManager propertiesManager;
 
     private static Log log = LogFactory.getLog(FeedManagerImpl.class);
     
@@ -90,6 +90,10 @@ public class FeedManagerImpl implements FeedManager {
 
     public void setStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
+    }
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     /**
@@ -257,7 +261,7 @@ public class FeedManagerImpl implements FeedManager {
         
         // lookup recent entries from weblog and add them to the subscription
         try {
-            int entryCount = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+            int entryCount = propertiesManager.getIntProperty("site.newsfeeds.defaultEntries");
 
             if (log.isDebugEnabled()) {
                 log.debug("Seeking up to " + entryCount + " entries from " + localWeblog.getHandle());
@@ -569,8 +573,8 @@ public class FeedManagerImpl implements FeedManager {
 
     // update proxy settings for jvm based on planet configuration
     private void updateProxySettings() {
-        String proxyHost = WebloggerRuntimeConfig.getProperty("planet.site.proxyhost");
-        int proxyPort = WebloggerRuntimeConfig.getIntProperty("planet.site.proxyport");
+        String proxyHost = propertiesManager.getStringProperty("planet.site.proxyhost");
+        int proxyPort = propertiesManager.getIntProperty("planet.site.proxyport");
         if (proxyHost != null && proxyPort > 0) {
             System.setProperty("proxySet", "true");
             System.setProperty("http.proxyHost", proxyHost);

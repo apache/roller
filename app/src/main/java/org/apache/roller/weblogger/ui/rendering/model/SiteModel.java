@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.UserManager;
@@ -88,6 +89,12 @@ public class SiteModel implements Model {
         this.userManager = userManager;
     }
 
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
     public String getModelName() {
         return "site";
     }
@@ -136,6 +143,7 @@ public class SiteModel implements Model {
     public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, String cat, int sinceDays, int length) {
         return new WeblogEntriesTimePager(
                 weblogEntryManager,
+                propertiesManager,
                 urlStrategy,
                 queryWeblog,
                 user,

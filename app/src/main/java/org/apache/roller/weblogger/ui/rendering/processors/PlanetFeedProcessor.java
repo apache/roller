@@ -31,7 +31,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -78,6 +79,13 @@ public class PlanetFeedProcessor {
 
     public void setRendererManager(RendererManager rendererManager) {
         this.rendererManager = rendererManager;
+    }
+
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -152,20 +160,17 @@ public class PlanetFeedProcessor {
             model.put("utils", new UtilitiesModel());
             model.put("lastModified", lastModified);
 
-            if (StringUtils.isNotEmpty(WebloggerRuntimeConfig
-                    .getProperty("planet.site.absoluteurl"))) {
+            if (StringUtils.isNotEmpty(propertiesManager.getStringProperty("planet.site.absoluteurl"))) {
                 model.put("absoluteSite",
-                        WebloggerRuntimeConfig.getProperty("planet.site.absoluteurl"));
+                        propertiesManager.getStringProperty("planet.site.absoluteurl"));
             } else {
                 model.put("absoluteSite",
-                        WebloggerRuntimeConfig.getAbsoluteContextURL());
+                        WebloggerConfig.getAbsoluteContextURL());
             }
 
-            model.put("feedStyle", WebloggerRuntimeConfig
-                    .getBooleanProperty("site.newsfeeds.styledFeeds"));
+            model.put("feedStyle", propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds"));
 
-            int numEntries = WebloggerRuntimeConfig
-                    .getIntProperty("site.newsfeeds.defaultEntries");
+            int numEntries = propertiesManager.getIntProperty("site.newsfeeds.defaultEntries");
 
             int entryCount = numEntries;
             String sCount = request.getParameter("count");
