@@ -38,8 +38,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -129,6 +129,13 @@ public class CommentProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     @Autowired
@@ -252,16 +259,14 @@ public class CommentProcessor {
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
 
         // set comment content-type depending on if html is allowed
-        if (WebloggerRuntimeConfig
-                .getBooleanProperty("users.comments.htmlenabled")) {
+        if (propertiesManager.getBooleanProperty("users.comments.htmlenabled")) {
             comment.setContentType("text/html");
         } else {
             comment.setContentType("text/plain");
         }
 
         // add all enabled content plugins
-        comment.setPlugins(WebloggerRuntimeConfig
-                .getProperty("enabled.comment.plugins"));
+        comment.setPlugins(propertiesManager.getStringProperty("enabled.comment.plugins"));
 
         WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
         cf.setData(comment);
@@ -352,8 +357,8 @@ public class CommentProcessor {
             }
 
             try {
-                if (!ApprovalStatus.SPAM.equals(comment.getStatus()) || !WebloggerRuntimeConfig
-                        .getBooleanProperty("comments.ignoreSpam.enabled")) {
+                if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
+                        !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled")) {
 
                     weblogEntryManager.saveComment(comment);
                     WebloggerFactory.flush();

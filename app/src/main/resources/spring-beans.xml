@@ -52,10 +52,13 @@
         <beans:constructor-arg ref="persistenceStrategy"/>
     </beans:bean>
 
-    <beans:bean id="fileContentManager" class="org.apache.roller.weblogger.business.FileContentManagerImpl"/>
+    <beans:bean id="fileContentManager" class="org.apache.roller.weblogger.business.FileContentManagerImpl">
+        <beans:constructor-arg ref="propertiesManager"/>
+    </beans:bean>
 
     <beans:bean id="pingTargetManager" class="org.apache.roller.weblogger.business.jpa.JPAPingTargetManagerImpl">
         <beans:constructor-arg ref="persistenceStrategy"/>
+        <beans:constructor-arg ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="propertiesManager" class="org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl">
@@ -96,6 +99,7 @@
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="planetManager" ref="planetManager"/>
         <beans:property name="strategy" ref="persistenceStrategy"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
@@ -110,6 +114,7 @@
     <beans:bean id="mailManager" class="org.apache.roller.weblogger.business.MailManager">
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg ref="propertiesManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
     </beans:bean>
 
@@ -131,9 +136,12 @@
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="userManager" ref="userManager"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
-    <beans:bean id="configModel" class="org.apache.roller.weblogger.ui.rendering.model.ConfigModel" scope="prototype"/>
+    <beans:bean id="configModel" class="org.apache.roller.weblogger.ui.rendering.model.ConfigModel" scope="prototype">
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
+    </beans:bean>
 
     <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype">
         <beans:property name="userManager" ref="userManager"/>
@@ -159,12 +167,14 @@
     <beans:bean id="feedModel" class="org.apache.roller.weblogger.ui.rendering.model.FeedModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="searchResultsModel" class="org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="indexManager" ref="indexManager"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="previewUrlStrategy" class="org.apache.roller.weblogger.business.PreviewURLStrategy"/>
@@ -182,6 +192,7 @@
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="userManager" ref="userManager"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="pageModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">

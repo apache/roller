@@ -37,11 +37,11 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesSearchPager;
@@ -75,14 +75,21 @@ public class SearchResultsModel extends PageModel {
 	private boolean websiteSpecificSearch = true;
 	private String errorMessage = null;
     private WeblogEntryManager weblogEntryManager;
-    private IndexManager indexManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
 
+    private IndexManager indexManager;
+
     public void setIndexManager(IndexManager indexManager) {
         this.indexManager = indexManager;
+    }
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     public void init(Map initData) throws WebloggerException {
@@ -108,7 +115,7 @@ public class SearchResultsModel extends PageModel {
 		SearchOperation search = new SearchOperation(indexManager);
 		search.setTerm(searchRequest.getQuery());
 
-		if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
+		if (propertiesManager.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
 			this.websiteSpecificSearch = false;
 		} else {
 			search.setWebsiteHandle(searchRequest.getWeblogHandle());

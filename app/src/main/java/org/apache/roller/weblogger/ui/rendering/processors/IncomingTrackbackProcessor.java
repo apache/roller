@@ -34,8 +34,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -92,6 +92,13 @@ public class IncomingTrackbackProcessor {
     }
 
     @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
+    @Autowired
     private MailManager mailManager;
 
     public void setMailManager(MailManager manager) {
@@ -129,7 +136,7 @@ public class IncomingTrackbackProcessor {
         RollerMessages messages = new RollerMessages();
 
         WeblogTrackbackRequest trackbackRequest = null;
-        if (!WebloggerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
+        if (!propertiesManager.getBooleanProperty("users.trackbacks.enabled")) {
             error = "Trackbacks are disabled for this site";
         } else {
 
@@ -208,7 +215,7 @@ public class IncomingTrackbackProcessor {
 
                 // save, commit, send response
                 if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
-                        !WebloggerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
+                        !propertiesManager.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
 
                     weblogEntryManager.saveComment(comment);
                     WebloggerFactory.flush();

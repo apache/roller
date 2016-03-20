@@ -27,12 +27,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -70,6 +70,12 @@ public class CreateWeblog extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
     private Weblog bean = new Weblog();
 
     public CreateWeblog() {
@@ -90,7 +96,7 @@ public class CreateWeblog extends UIAction {
     public String execute() {
 
         // check if blog administrator has enabled creation of new blogs
-        if(!WebloggerRuntimeConfig.getBooleanProperty("site.allowUserWeblogCreation")) {
+        if(!propertiesManager.getBooleanProperty("site.allowUserWeblogCreation")) {
             addError("createWebsite.disabled");
             return DISABLED_RETURN_CODE;
         }

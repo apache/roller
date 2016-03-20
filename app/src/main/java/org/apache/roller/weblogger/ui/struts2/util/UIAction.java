@@ -25,8 +25,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -155,18 +155,18 @@ public abstract class UIAction extends ActionSupport
     }
 
     public String getSiteURL() {
-        return WebloggerRuntimeConfig.getRelativeContextURL();
+        return WebloggerConfig.getRelativeContextURL();
     }
     
     public String getAbsoluteSiteURL() {
-        return WebloggerRuntimeConfig.getAbsoluteContextURL();
+        return WebloggerConfig.getAbsoluteContextURL();
     }
     
     public String getProp(String key) {
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
-            value = WebloggerRuntimeConfig.getProperty(key);
+            value = WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty(key);
         }
         
         return (value == null) ? key : value;
@@ -176,20 +176,10 @@ public abstract class UIAction extends ActionSupport
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
-            value = WebloggerRuntimeConfig.getProperty(key);
+            value = WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty(key);
         }
         
         return (value == null) ? false : Boolean.valueOf(value);
-    }
-    
-    public int getIntProp(String key) {
-        // first try static config
-        String value = WebloggerConfig.getProperty(key);
-        if(value == null) {
-            value = WebloggerRuntimeConfig.getProperty(key);
-        }
-        
-        return (value == null) ? 0 : Integer.valueOf(value);
     }
 
     @Override

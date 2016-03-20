@@ -26,8 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -112,6 +113,13 @@ public class PageProcessor {
         this.rendererManager = rendererManager;
     }
 
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
     // set "true" to NOT cache the custom pages for users who are logged in
     private boolean excludeOwnerPages = false;
 
@@ -151,7 +159,7 @@ public class PageProcessor {
             }
 
             // is this the site-wide weblog?
-            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle());
+            isSiteWide = propertiesManager.isSiteWideWeblog(pageRequest.getWeblogHandle());
 
             if (this.processReferrers && !isSiteWide) {
                 boolean spam = processReferrer(request, pageRequest);
@@ -519,7 +527,7 @@ public class PageProcessor {
         }
 
         // Base page URLs, with and without www.
-        String basePageUrlWWW = WebloggerRuntimeConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
+        String basePageUrlWWW = WebloggerConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
         String basePageUrl = basePageUrlWWW;
         if (basePageUrlWWW.startsWith("http://www.")) {
             // chop off the http://www.
@@ -553,7 +561,7 @@ public class PageProcessor {
         List<String> stringRules = new ArrayList<>();
         List<Pattern> regexRules = new ArrayList<>();
         Blacklist.populateSpamRules(
-                weblog.getBlacklist(), WebloggerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules);
+                weblog.getBlacklist(), propertiesManager.getStringProperty("spam.blacklist"), stringRules, regexRules);
         return Blacklist.isBlacklisted(referrerURL, stringRules, regexRules);
     }
 

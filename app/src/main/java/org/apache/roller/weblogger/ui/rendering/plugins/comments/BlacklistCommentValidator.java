@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Blacklist;
@@ -61,7 +61,8 @@ public class BlacklistCommentValidator implements CommentValidator {
         List<Pattern> regexRules = new ArrayList<>();
         Weblog weblog = comment.getWeblogEntry().getWeblog();
         Blacklist.populateSpamRules(
-                weblog.getBlacklist(), WebloggerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules
+                weblog.getBlacklist(), WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty("spam.blacklist"),
+                stringRules, regexRules
         );
         if (Blacklist.isBlacklisted(comment.getUrl(), stringRules, regexRules)
                 || Blacklist.isBlacklisted(comment.getEmail(), stringRules, regexRules)

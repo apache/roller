@@ -29,9 +29,9 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.config.RuntimeConfigDefs;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -114,7 +114,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             addError("frontpageConfig.weblogs.error");
         }
 
-        globalConfigDef = WebloggerRuntimeConfig.getRuntimeConfigDefs();
+        globalConfigDef = JPAPropertiesManagerImpl.getRuntimeConfigDefs();
     }
     
     
@@ -125,8 +125,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public String execute() {
         
         // setup array of configured plugins
-        if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("enabled.comment.plugins"))) {
-            setEnabledCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("enabled.comment.plugins"), ","));
+        if (!StringUtils.isEmpty(propertiesManager.getStringProperty("enabled.comment.plugins"))) {
+            setEnabledCommentPlugins(StringUtils.split(propertiesManager.getStringProperty("enabled.comment.plugins"), ","));
         }
         
         return SUCCESS;

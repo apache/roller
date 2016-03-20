@@ -31,8 +31,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
@@ -59,6 +59,12 @@ public class MediaFileEdit extends UIAction {
 
     public void setMediaFileManager(MediaFileManager mediaFileManager) {
         this.mediaFileManager = mediaFileManager;
+    }
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     // an array of files uploaded by the user, if applicable
@@ -130,7 +136,7 @@ public class MediaFileEdit extends UIAction {
         } else {
             if (isAdd()) {
                 // make sure uploads are enabled
-                if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
+                if (!propertiesManager.getBooleanProperty("uploads.enabled")) {
                     addError("error.upload.disabled");
                 }
                 if (uploadedFile == null || !uploadedFile.exists()) {

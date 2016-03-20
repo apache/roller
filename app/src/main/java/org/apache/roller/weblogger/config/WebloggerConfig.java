@@ -46,6 +46,10 @@ public final class WebloggerConfig {
 
     private static Properties config;
 
+    // special case for our context urls
+    private static String relativeContextURL = null;
+    private static String absoluteContextURL = null;
+
     private static Log log = LogFactory.getLog(WebloggerConfig.class);
 
     // no, you may not instantiate this class :p
@@ -190,6 +194,45 @@ public final class WebloggerConfig {
         }
 
         return Integer.valueOf(value);
+    }
+
+    /**
+     * Special method which sets the non-persisted absolute url to this site.
+     *
+     * This property is *not* persisted in any way.
+     */
+    public static void setAbsoluteContextURL(String url) {
+        absoluteContextURL = url;
+    }
+
+
+    /**
+     * Get the absolute url to this site.
+     *
+     * This method will just return the value of the "site.absoluteurl"
+     * property if it is set, otherwise it will return the non-persisted
+     * value which is set by the InitFilter.
+     */
+    public static String getAbsoluteContextURL() {
+        // db prop takes priority if it exists
+        String absURL = getProperty("site.absoluteurl");
+        if (absURL != null && absURL.trim().length() > 0) {
+            return absURL;
+        }
+        return absoluteContextURL;
+    }
+
+    /**
+     * Special method which sets the non-persisted relative url to this site.
+     *
+     * This property is *not* persisted in any way.
+     */
+    public static void setRelativeContextURL(String url) {
+        relativeContextURL = url;
+    }
+
+    public static String getRelativeContextURL() {
+        return relativeContextURL;
     }
 
     /**

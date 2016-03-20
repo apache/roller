@@ -107,6 +107,7 @@ public class PreviewPageModel extends PageModel {
             return new WeblogEntriesTimePager(
                     WeblogEntriesTimePager.PagingInterval.LATEST,
                     weblogEntryManager,
+                    propertiesManager,
                     urlStrategy,
                     previewRequest.getWeblog(),
                     previewRequest.getWeblogDate(),

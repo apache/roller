@@ -60,5 +60,30 @@ public interface PropertiesManager {
      * Retrieve a list of all properties
      */
     Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException;
+
+
+    /**
+     * Obtain String value of a property
+     * @return String value of property, null if missing or an error
+     */
+    String getStringProperty(String name);
+
+    /**
+     * Obtain boolean value of a property
+     * @return boolean value of property, false if a parsing or other error
+     */
+    boolean getBooleanProperty(String name);
+
+    /**
+     * Obtain integer value of a property
+     * @return int value of property, -1 if a parsing or other error
+     */
+    int getIntProperty(String name);
+
+    /**
+     * Return true if given weblog handle points to the front-page weblog and
+     * that weblog is also configured to have site-wide data available.
+     */
+    boolean isSiteWideWeblog(String weblogHandle);
     
 }

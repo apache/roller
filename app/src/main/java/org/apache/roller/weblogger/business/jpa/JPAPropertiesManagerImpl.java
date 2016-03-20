@@ -29,18 +29,29 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.config.RuntimeConfigDefs;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.util.Utilities;
 
+/**
+ * This class implementation reads the application's runtime properties.  At installation
+ * time, these properties are initially loaded from the runtimeConfigDefs.xml into the
+ * properties database table, from where they are subsequently read during runtime.
+ * In contrast to the static properties in WebloggerConfig, these values may be changed
+ * during runtime on the system administration page and take effect immediately.
+ *
+ * This class also provides convenience methods for returning the String, int, or boolean
+ * values of RuntimeConfigProperty objects.
+ */
 public class JPAPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */
-    private static Log log = LogFactory.getLog(
-        JPAPropertiesManagerImpl.class);
+    private static Log log = LogFactory.getLog(JPAPropertiesManagerImpl.class);
+
+    /** List of valid runtime configuration properties that can be stored in the database. */
+    private static RuntimeConfigDefs configDefs = null;
 
     private final JPAPersistenceStrategy strategy;
-    
     
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
@@ -49,7 +60,22 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         log.debug("Instantiating JPA Properties Manager");
         this.strategy = strategy;
     }
-    
+
+    public static RuntimeConfigDefs getRuntimeConfigDefs() {
+        if(configDefs == null) {
+            try {
+                configDefs = (RuntimeConfigDefs) Utilities.jaxbUnmarshall(
+                        "/org/apache/roller/weblogger/config/runtimeConfigDefs.xsd",
+                        "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml",
+                        false,
+                        RuntimeConfigDefs.class);
+            } catch(Exception e) {
+                // error while parsing :(
+                log.error("Error parsing runtime config defs", e);
+            }
+        }
+        return configDefs;
+    }
 
     @Override
     public void initialize() throws WebloggerException {
@@ -141,8 +167,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         }
 
         // start by getting our runtimeConfigDefs
-        RuntimeConfigDefs runtimeConfigDefs =
-                WebloggerRuntimeConfig.getRuntimeConfigDefs();
+        RuntimeConfigDefs runtimeConfigDefs = getRuntimeConfigDefs();
 
         // can't do initialization without our config defs
         if (runtimeConfigDefs == null) {
@@ -172,4 +197,68 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
         return props;
     }
+
+    /**
+     * Retrieve a single property from the PropertiesManager ... returns null
+     * if there is an error
+     **/
+    public String getStringProperty(String name) {
+        String value = null;
+        try {
+            RuntimeConfigProperty prop = getProperty(name);
+            if (prop != null) {
+                value = prop.getValue();
+            }
+        } catch(Exception e) {
+            log.warn("Trouble accessing property: "+name, e);
+        }
+        log.debug("fetched property ["+name+"="+value+"]");
+        return value;
+    }
+
+    /**
+     * Retrieve a property as a boolean ... defaults to false if there is an error
+     **/
+    public boolean getBooleanProperty(String name) {
+        // get the value first, then convert
+        String value = getStringProperty(name);
+        if (value == null) {
+            return false;
+        }
+        return Boolean.valueOf(value);
+    }
+
+    /**
+     * Retrieve a property as an int ... defaults to -1 if there is an error
+     **/
+    public int getIntProperty(String name) {
+        // get the value first, then convert
+        String value = getStringProperty(name);
+        if (value == null || value.isEmpty()) {
+            return -1;
+        }
+        int intval = -1;
+        try {
+            intval = Integer.parseInt(value);
+        } catch(Exception e) {
+            log.warn("Trouble converting to int: "+name, e);
+        }
+        return intval;
+    }
+
+    private boolean isFrontPageWeblog(String weblogHandle) {
+        String frontPageHandle = getStringProperty("site.frontpage.weblog.handle");
+        return (frontPageHandle.equals(weblogHandle));
+    }
+
+    /**
+     * Convenience method for classes trying to determine if a given
+     * weblog handle represents the front page blog and it is configured
+     * to render site-wide data.
+     */
+    public boolean isSiteWideWeblog(String weblogHandle) {
+        boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
+        return (siteWide && isFrontPageWeblog(weblogHandle));
+    }
+
 }

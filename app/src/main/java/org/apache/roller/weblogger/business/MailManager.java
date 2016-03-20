@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -69,12 +69,15 @@ public class MailManager {
 
     private URLStrategy urlStrategy;
 
+    private PropertiesManager propertiesManager;
+
     /**
      * Create file content manager.
      */
-    public MailManager(UserManager umgr, WeblogManager wmgr, URLStrategy strategy) {
+    public MailManager(UserManager umgr, WeblogManager wmgr, PropertiesManager pmgr, URLStrategy strategy) {
         userManager = umgr;
         weblogManager = wmgr;
+        propertiesManager = pmgr;
         urlStrategy = strategy;
     }
 
@@ -173,7 +176,7 @@ public class MailManager {
             String content;
             
             // Figure URL to entry edit page
-            String rootURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
+            String rootURL = WebloggerConfig.getAbsoluteContextURL();
             String url = rootURL + "/tb-ui/menu.rol";
             
             ResourceBundle resources = ResourceBundle.getBundle(
@@ -222,7 +225,7 @@ public class MailManager {
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", Utilities.toLocale(user.getLocale()));
             
-            String from = WebloggerRuntimeConfig.getProperty(
+            String from = propertiesManager.getStringProperty(
                     "user.account.activation.mail.from");
             
             String cc[] = new String[0];
@@ -232,7 +235,7 @@ public class MailManager {
                     "user.account.activation.mail.subject");
             String content;
             
-            String rootURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
+            String rootURL = WebloggerConfig.getAbsoluteContextURL();
             
             StringBuilder sb = new StringBuilder();
             
@@ -273,7 +276,7 @@ public class MailManager {
         
         // Only send email if email notification is enabled, or a pending message that needs moderation.
         if (!commentObject.getPending()) {
-            boolean notify = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+            boolean notify = propertiesManager.getBooleanProperty("users.comments.emailnotify");
             if (!notify) {
                 // notifications disabled, just bail
                 return;
@@ -321,7 +324,7 @@ public class MailManager {
         // Determine with mime type to use for e-mail
         StringBuilder msg = new StringBuilder();
         StringBuilder ownermsg = new StringBuilder();
-        boolean isPlainText = !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
+        boolean isPlainText = !propertiesManager.getBooleanProperty("users.comments.htmlenabled");
         
         // first the common stub message for the owner and commenters (if applicable)
         if (!isPlainText) {

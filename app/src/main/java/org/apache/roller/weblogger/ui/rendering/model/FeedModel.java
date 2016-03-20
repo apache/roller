@@ -18,16 +18,15 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
@@ -41,8 +40,8 @@ import org.apache.roller.weblogger.util.Utilities;
  * Model which provides information needed to render a feed.
  */
 public class FeedModel implements Model {
-    
-    private static int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+
+    private static int DEFAULT_ENTRIES = 0;
     
     private WeblogFeedRequest feedRequest = null;
     private Weblog weblog = null;
@@ -59,7 +58,15 @@ public class FeedModel implements Model {
         this.weblogEntryManager = weblogEntryManager;
     }
 
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
     public void init(Map initData) throws WebloggerException {
+
+        DEFAULT_ENTRIES = propertiesManager.getIntProperty("site.newsfeeds.defaultEntries");
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -128,7 +135,6 @@ public class FeedModel implements Model {
         
     /**
      * Returns the list of tags specified in the request /?tags=foo+bar
-     * @return
      */
     public List getTags() {
         return feedRequest.getTags();
@@ -139,7 +145,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(weblogEntryManager, urlStrategy,
+            super(weblogEntryManager, propertiesManager, urlStrategy,
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
                     feedRequest.getPage(), DEFAULT_ENTRIES, -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;

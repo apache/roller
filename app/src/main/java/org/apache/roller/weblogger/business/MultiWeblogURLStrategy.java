@@ -23,7 +23,8 @@ package org.apache.roller.weblogger.business;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -44,9 +45,9 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     protected String getRootURL(boolean absolute) {
         if (absolute) {
-            return WebloggerRuntimeConfig.getAbsoluteContextURL();
+            return WebloggerConfig.getAbsoluteContextURL();
         } else {
-            return WebloggerRuntimeConfig.getRelativeContextURL();
+            return WebloggerConfig.getRelativeContextURL();
         }
     }
 

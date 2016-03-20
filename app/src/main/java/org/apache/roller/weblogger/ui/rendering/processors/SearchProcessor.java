@@ -32,8 +32,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -71,6 +71,13 @@ public class SearchProcessor {
 
     public void setRendererManager(RendererManager rendererManager) {
         this.rendererManager = rendererManager;
+    }
+
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     @PostConstruct
@@ -163,7 +170,7 @@ public class SearchProcessor {
             model = Model.getModelMap("searchModelSet", initData);
 
             // Load special models for site-wide blog
-            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
                 model.putAll(Model.getModelMap("siteModelSet", initData));
             }
 

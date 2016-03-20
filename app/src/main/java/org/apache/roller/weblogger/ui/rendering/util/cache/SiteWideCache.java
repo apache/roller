@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.util.Date;
 
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
@@ -31,8 +31,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.cache.BlogEventListener;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
@@ -43,6 +43,13 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
 
     // keep a cached version of cache last refresh time for 304 Not Modified calculations
     private ExpiringCacheEntry lastUpdateTime = null;
+
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
 
     @PostConstruct
     public void init() {
@@ -100,7 +107,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A bookmark has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogBookmark bookmark) {
-        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWeblog().getHandle())) {
+        if (enabled && propertiesManager.isSiteWideWeblog(bookmark.getWeblog().getHandle())) {
             invalidate(bookmark.getWeblog());
         }
     }
@@ -109,7 +116,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A comment has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogEntryComment comment) {
-        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWeblog().getHandle())) {
+        if (enabled && propertiesManager.isSiteWideWeblog(comment.getWeblogEntry().getWeblog().getHandle())) {
             invalidate(comment.getWeblogEntry().getWeblog());
         }
     }
@@ -127,7 +134,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A category has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogCategory category) {
-        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
+        if (enabled && propertiesManager.isSiteWideWeblog(category.getWeblog().getHandle())) {
             invalidate(category.getWeblog());
         }
     }
@@ -136,7 +143,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A weblog template has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogTemplate template) {
-        if (enabled && WebloggerRuntimeConfig.isSiteWideWeblog(template.getWeblog().getHandle())) {
+        if (enabled && propertiesManager.isSiteWideWeblog(template.getWeblog().getHandle())) {
             invalidate(template.getWeblog());
         }
     }
