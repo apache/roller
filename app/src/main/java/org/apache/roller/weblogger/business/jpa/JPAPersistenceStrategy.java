@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManagerFactory;
@@ -72,10 +72,10 @@ public class JPAPersistenceStrategy {
      */
     protected JPAPersistenceStrategy(DatabaseProvider dbProvider, CacheManager cacheManager) throws WebloggerException {
         this.cacheManager = cacheManager;
-        String jpaConfigurationType = WebloggerConfig.getProperty("jpa.configurationType");
+        String jpaConfigurationType = WebloggerStaticConfig.getProperty("jpa.configurationType");
         if ("jndi".equals(jpaConfigurationType)) {
             // Lookup EMF via JNDI: added for Geronimo
-            String emfJndiName = "java:comp/env/" + WebloggerConfig.getProperty("jpa.emf.jndi.name");
+            String emfJndiName = "java:comp/env/" + WebloggerStaticConfig.getProperty("jpa.emf.jndi.name");
             try {
                 emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
             } catch (NamingException e) {
@@ -85,14 +85,14 @@ public class JPAPersistenceStrategy {
 
             // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
             Properties emfProps = new Properties();
-            Enumeration keys = WebloggerConfig.keys();
+            Enumeration keys = WebloggerStaticConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
                 if (       key.startsWith("javax.persistence.") 
                         || key.startsWith("openjpa.")
                         || key.startsWith("eclipselink.")
                         || key.startsWith("hibernate.")) {
-                    String value = WebloggerConfig.getProperty(key);
+                    String value = WebloggerStaticConfig.getProperty(key);
                     log.info(key + ": " + value);
                     emfProps.setProperty(key, value);
                 }

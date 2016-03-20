@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
@@ -70,7 +70,7 @@ public class PlanetModel implements Model {
     
     public void init(Map initData) throws WebloggerException {
 
-        if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+        if (!WebloggerStaticConfig.getBooleanProperty("planet.aggregator.enabled")) {
             return;
         }
         

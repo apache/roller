@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.util.Utilities;
  * This class implementation reads the application's runtime properties.  At installation
  * time, these properties are initially loaded from the runtimeConfigDefs.xml into the
  * properties database table, from where they are subsequently read during runtime.
- * In contrast to the static properties in WebloggerConfig, these values may be changed
+ * In contrast to the static properties in WebloggerStaticConfig, these values may be changed
  * during runtime on the system administration page and take effect immediately.
  *
  * This class also provides convenience methods for returning the String, int, or boolean

@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 
@@ -79,7 +79,7 @@ public class AkismetCommentValidator implements CommentValidator {
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
-            conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
+            conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8"); 
             conn.setRequestProperty("Content-length", Integer.toString(sb.length()));
 

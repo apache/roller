@@ -28,7 +28,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -194,8 +194,8 @@ public class User implements Serializable {
      */
     public void resetPassword(String newPassword) throws WebloggerException {
         
-        String encrypt = WebloggerConfig.getProperty("passwds.encryption.enabled");
-        String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
+        String encrypt = WebloggerStaticConfig.getProperty("passwds.encryption.enabled");
+        String algorithm = WebloggerStaticConfig.getProperty("passwds.encryption.algorithm");
         if (Boolean.valueOf(encrypt)) {
             setPassword(Utilities.encodePassword(newPassword, algorithm));
         } else {

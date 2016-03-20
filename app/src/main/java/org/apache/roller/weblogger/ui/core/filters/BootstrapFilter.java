@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
 
 /**
@@ -55,7 +55,7 @@ public class BootstrapFilter implements Filter {
         log.debug("Entered "+request.getRequestURI());
         
         if (!WebloggerFactory.isBootstrapped()
-                && "auto".equals(WebloggerConfig.getProperty("installation.type"))
+                && "auto".equals(WebloggerStaticConfig.getProperty("installation.type"))
                 && !isInstallUrl(request.getRequestURI())) {
                     
             log.debug("Forwarding to install page");

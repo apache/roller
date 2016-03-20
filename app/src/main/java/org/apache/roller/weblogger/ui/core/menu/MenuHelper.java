@@ -24,9 +24,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -240,7 +240,7 @@ public final class MenuHelper {
         if (hasPropertyDef(propertyName)) {
             return WebloggerFactory.getWeblogger().getPropertiesManager().getBooleanProperty(propertyName);
         }
-        return WebloggerConfig.getBooleanProperty(propertyName);
+        return WebloggerStaticConfig.getBooleanProperty(propertyName);
     }
 
     /**

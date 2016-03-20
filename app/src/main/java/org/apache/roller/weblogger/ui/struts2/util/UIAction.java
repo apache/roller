@@ -26,7 +26,7 @@ import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -155,16 +155,16 @@ public abstract class UIAction extends ActionSupport
     }
 
     public String getSiteURL() {
-        return WebloggerConfig.getRelativeContextURL();
+        return WebloggerStaticConfig.getRelativeContextURL();
     }
     
     public String getAbsoluteSiteURL() {
-        return WebloggerConfig.getAbsoluteContextURL();
+        return WebloggerStaticConfig.getAbsoluteContextURL();
     }
     
     public String getProp(String key) {
         // first try static config
-        String value = WebloggerConfig.getProperty(key);
+        String value = WebloggerStaticConfig.getProperty(key);
         if(value == null) {
             value = WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty(key);
         }
@@ -174,7 +174,7 @@ public abstract class UIAction extends ActionSupport
     
     public boolean getBooleanProp(String key) {
         // first try static config
-        String value = WebloggerConfig.getProperty(key);
+        String value = WebloggerStaticConfig.getProperty(key);
         if(value == null) {
             value = WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty(key);
         }

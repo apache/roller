@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -165,7 +165,7 @@ public class PlanetFeedProcessor {
                         propertiesManager.getStringProperty("planet.site.absoluteurl"));
             } else {
                 model.put("absoluteSite",
-                        WebloggerConfig.getAbsoluteContextURL());
+                        WebloggerStaticConfig.getAbsoluteContextURL());
             }
 
             model.put("feedStyle", propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds"));

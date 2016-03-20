@@ -31,8 +31,8 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -104,7 +104,7 @@ public class CreateWeblog extends UIAction {
         User user = getAuthenticatedUser();
 
         try {
-            if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
+            if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
                 List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
@@ -132,7 +132,7 @@ public class CreateWeblog extends UIAction {
         
         User user = getAuthenticatedUser();
         try {
-            if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
+            if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
                 List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
@@ -160,7 +160,7 @@ public class CreateWeblog extends UIAction {
                     getBean().getTimeZone());
             
             // set weblog editor to default one, can be changed by blogger on blog settings page
-            wd.setEditorPage(WebloggerConfig.getProperty("plugins.defaultEditor", "editor-text.jsp"));
+            wd.setEditorPage(WebloggerStaticConfig.getProperty("plugins.defaultEditor", "editor-text.jsp"));
 
             try {
                 // add weblog and flush
@@ -198,7 +198,7 @@ public class CreateWeblog extends UIAction {
         }
 
         // make sure handle only contains safe characters
-        String allowed = WebloggerConfig.getProperty("username.allowedChars");
+        String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }

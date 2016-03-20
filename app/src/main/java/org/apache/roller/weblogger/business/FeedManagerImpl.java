@@ -51,7 +51,6 @@ import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -374,7 +373,7 @@ public class FeedManagerImpl implements FeedManager {
     // get a feed fetcher cache, if possible
     private FeedFetcherCache getRomeFetcherCache() {
 
-        String cacheDirPath = WebloggerConfig.getProperty("planet.aggregator.cache.dir");
+        String cacheDirPath = WebloggerStaticConfig.getProperty("planet.aggregator.cache.dir");
 
         // can't continue without cache dir
         if (cacheDirPath == null) {

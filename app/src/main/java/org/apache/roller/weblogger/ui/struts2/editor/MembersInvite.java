@@ -24,7 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -90,7 +90,7 @@ public class MembersInvite extends UIAction {
     public String execute() {
         
         // if group blogging is disabled then you can't change permissions
-        if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
+        if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
             addError("inviteMember.disabled");
             return SUCCESS;
         }
@@ -107,7 +107,7 @@ public class MembersInvite extends UIAction {
     public String save() {
         
         // if group blogging is disabled then you can't change permissions
-        if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
+        if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
             addError("inviteMember.disabled");
             return SUCCESS;
         }

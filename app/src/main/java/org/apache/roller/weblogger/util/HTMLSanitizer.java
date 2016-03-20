@@ -47,10 +47,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.UrlValidator;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
 public class HTMLSanitizer {
-    public static Boolean xssEnabled = WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted", Boolean.FALSE);
+    public static Boolean xssEnabled = WebloggerStaticConfig.getBooleanProperty("weblogAdminsUntrusted", Boolean.FALSE);
 
     public static Pattern forbiddenTags = Pattern.compile("^(script|object|embed|link|style|form|input)$");
     public static Pattern allowedTags = Pattern.compile("^(b|p|i|s|a|img|table|thead|tbody|tfoot|tr|th|td|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|li|ul|ol|span|div|strike|strong|"

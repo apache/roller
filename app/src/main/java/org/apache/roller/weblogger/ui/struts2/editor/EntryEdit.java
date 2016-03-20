@@ -31,9 +31,9 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -119,7 +119,7 @@ public final class EntryEdit extends UIAction {
     }
 
     // Max Tags to show for autocomplete
-    private static final int MAX_TAGS = WebloggerConfig.getIntProperty("services.tagdata.max", 20);
+    private static final int MAX_TAGS = WebloggerStaticConfig.getIntProperty("services.tagdata.max", 20);
 
     // bean for managing form data
     private WeblogEntry bean = new WeblogEntry();

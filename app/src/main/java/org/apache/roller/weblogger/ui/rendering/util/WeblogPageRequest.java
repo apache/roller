@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -161,7 +161,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     String tagsString = pathElements[1].replace('+', ' ');
                     this.tags = Utilities.splitStringAsTags(Utilities
                             .decode(tagsString));
-                    int maxSize = WebloggerConfig.getIntProperty(
+                    int maxSize = WebloggerStaticConfig.getIntProperty(
                             "tags.queries.maxIntersectionSize", 3);
                     if (this.tags.size() > maxSize) {
                         throw new InvalidRequestException(

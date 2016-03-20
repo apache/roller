@@ -32,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -56,8 +55,8 @@ public class FileContentManagerImpl implements FileContentManager {
     public FileContentManagerImpl(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
 
-        String inStorageDir = WebloggerConfig.getProperty("mediafiles.storage.dir");
-        // Note: System property expansion is now handled by WebloggerConfig.
+        String inStorageDir = WebloggerStaticConfig.getProperty("mediafiles.storage.dir");
+        // Note: System property expansion is now handled by WebloggerStaticConfig.
         if (inStorageDir == null || inStorageDir.trim().length() < 1) {
             inStorageDir = System.getProperty("user.home") + File.separator
                     + "roller_data" + File.separator + "mediafiles";

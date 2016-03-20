@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.User;
@@ -228,7 +227,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
         assertNull(mediaFile2);
 
-        String uploadsDirName = WebloggerConfig.getProperty("mediafiles.storage.dir");
+        String uploadsDirName = WebloggerStaticConfig.getProperty("mediafiles.storage.dir");
         File flag = new File(uploadsDirName + File.separator
                 + "migration-status.properties");
         flag.delete();

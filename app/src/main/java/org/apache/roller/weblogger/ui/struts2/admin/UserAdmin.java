@@ -22,7 +22,7 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -38,7 +38,7 @@ public class UserAdmin extends UIAction {
         this.pageTitle = "userAdmin.title.searchUser";
     }
 
-    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+    private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
 
     @Override
     public WeblogRole requiredWeblogRole() {

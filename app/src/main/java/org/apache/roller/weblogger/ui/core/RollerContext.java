@@ -27,6 +27,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -40,7 +41,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -86,10 +86,10 @@ public class RollerContext extends ContextLoaderListener
         // we leave it here for now to allow users to keep using
         // themes in their webapp context, but this is a bad idea
         //
-        // also, the WebloggerConfig.setThemesDir() method is smart
+        // also, the WebloggerStaticConfig.setThemesDir() method is smart
         // enough to disregard this call unless the themes.dir
         // is set to ${webapp.context}
-        WebloggerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
+        WebloggerStaticConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
 
         // Call Spring's context ContextLoaderListener to initialize all the
         // context files specified in web.xml. This is necessary because
@@ -159,7 +159,7 @@ public class RollerContext extends ContextLoaderListener
         for (String name : beanNames)
             System.out.println(name);*/
         
-        String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
+        String rememberMe = WebloggerStaticConfig.getProperty("rememberme.enabled");
         boolean rememberMeEnabled = Boolean.valueOf(rememberMe);
         
         log.info("Remember Me enabled: " + rememberMeEnabled);
@@ -175,7 +175,7 @@ public class RollerContext extends ContextLoaderListener
             }
         }
         
-        String encryptPasswords = WebloggerConfig.getProperty("passwds.encryption.enabled");
+        String encryptPasswords = WebloggerStaticConfig.getProperty("passwds.encryption.enabled");
         boolean doEncrypt = Boolean.valueOf(encryptPasswords);
         
         String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
@@ -183,7 +183,7 @@ public class RollerContext extends ContextLoaderListener
         // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) may be provided in security.xml.
         if (doEncrypt && ctx.containsBean(daoBeanName)) {
             DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
-            String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
+            String algorithm = WebloggerStaticConfig.getProperty("passwds.encryption.algorithm");
             PasswordEncoder encoder = null;
             if ("SHA".equalsIgnoreCase(algorithm)) {
                 encoder = new ShaPasswordEncoder();
@@ -229,7 +229,7 @@ public class RollerContext extends ContextLoaderListener
 
         // now we need to deal with database install/upgrade logic
         DatabaseInstaller dbInstaller = new DatabaseInstaller(dbProvider);
-        if("manual".equals(WebloggerConfig.getProperty("installation.type"))) {
+        if("manual".equals(WebloggerStaticConfig.getProperty("installation.type"))) {
             if (dbInstaller.isUpgradeRequired()) {
                 // if we are doing manual install then all that is needed is the app to
                 // update the version number in weblogger_properties, not run any db scripts

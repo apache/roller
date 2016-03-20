@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -527,7 +527,7 @@ public class PageProcessor {
         }
 
         // Base page URLs, with and without www.
-        String basePageUrlWWW = WebloggerConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
+        String basePageUrlWWW = WebloggerStaticConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
         String basePageUrl = basePageUrlWWW;
         if (basePageUrlWWW.startsWith("http://www.")) {
             // chop off the http://www.

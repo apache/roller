@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -88,7 +88,7 @@ public class Register extends UIAction implements ServletRequestAware {
     // this is a no-no, we should not need this
     private HttpServletRequest servletRequest = null;
 
-    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+    private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
 
     private String activationStatus = null;
     
@@ -137,7 +137,7 @@ public class Register extends UIAction implements ServletRequestAware {
         bean.setTimeZone(TimeZone.getDefault().getID());
 
         try {
-            if (WebloggerConfig.getAuthMethod() == AuthMethod.LDAP) {
+            if (WebloggerStaticConfig.getAuthMethod() == AuthMethod.LDAP) {
                 // See if user is already logged in via Spring Security
                 User fromSSOUser = customUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
                 if (fromSSOUser != null) {
@@ -314,7 +314,7 @@ public class Register extends UIAction implements ServletRequestAware {
         if (authMethod == AuthMethod.LDAP) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP case, as actual passwords are stored externally
-            String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
+            String unusedPassword = WebloggerStaticConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
             
             // Preserve username and password, Spring Security case
             User fromSSOUser = customUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
@@ -331,7 +331,7 @@ public class Register extends UIAction implements ServletRequestAware {
         }
 
         // check that username only contains safe characters
-        String allowed = WebloggerConfig.getProperty("username.allowedChars");
+        String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
         if (allowed == null || allowed.trim().length() == 0) {
             allowed = DEFAULT_ALLOWED_CHARS;
         }

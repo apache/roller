@@ -23,7 +23,6 @@ import java.net.URL;
 import com.rometools.fetcher.impl.SyndFeedInfo;
 import com.rometools.fetcher.impl.DiskFeedInfoCache;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -36,7 +35,7 @@ public class DiskFeedInfoCacheTest extends WebloggerTest {
         SyndFeedInfo info = new SyndFeedInfo();
         info.setUrl(url);
         
-        String testPlanetCache = WebloggerConfig.getProperty("planet.aggregator.cache.dir");
+        String testPlanetCache = WebloggerStaticConfig.getProperty("planet.aggregator.cache.dir");
         assertNotNull("testPlanetCache not null", testPlanetCache);
         assertTrue("testPlanetCache not zero length", testPlanetCache.trim().length() > 0);
         
@@ -46,7 +45,7 @@ public class DiskFeedInfoCacheTest extends WebloggerTest {
         }
         
         DiskFeedInfoCache cache =
-                new DiskFeedInfoCache(WebloggerConfig.getProperty("planet.aggregator.cache.dir"));
+                new DiskFeedInfoCache(WebloggerStaticConfig.getProperty("planet.aggregator.cache.dir"));
         cache.setFeedInfo(info.getUrl(), info);
         
         SyndFeedInfo info2 = cache.getFeedInfo(url);
