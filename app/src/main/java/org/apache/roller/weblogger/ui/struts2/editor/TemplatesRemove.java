@@ -31,8 +31,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -139,8 +137,7 @@ public class TemplatesRemove extends UIAction {
         if (getIds() != null) {
             try {
 
-                String[] idsToDelete = Utilities.stringToStringArray(getIds(),
-                        ",");
+                String[] idsToDelete = Utilities.stringToStringArray(getIds(), ",");
                 if (idsToDelete != null && idsToDelete.length > 0) {
 
                     Weblog weblog = getActionWeblog();
@@ -149,32 +146,6 @@ public class TemplatesRemove extends UIAction {
                     for (String id : idsToDelete) {
                         if (!id.equals("")) {
                             template = weblogManager.getTemplate(id);
-
-                            // if weblog template remove custom style sheet
-                            if (template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
-
-                                ThemeTemplate stylesheet = getActionWeblog()
-                                        .getTheme().getTemplateByAction(ComponentType.STYLESHEET);
-
-                                // Delete style sheet if the same name
-                                if (stylesheet != null
-                                        && getActionWeblog().getTheme()
-                                                .getTemplateByAction(ThemeTemplate.ComponentType.STYLESHEET) != null
-                                        && stylesheet.getLink().equals(
-                                                getActionWeblog()
-                                                        .getTheme()
-                                                        .getTemplateByAction(ComponentType.STYLESHEET)
-                                                        .getLink())) {
-                                    // Same so OK to delete
-                                    WeblogTemplate css = weblogManager.getTemplateByLink(
-                                            getActionWeblog(),
-                                            stylesheet.getLink());
-
-                                    if (css != null) {
-                                        weblogManager.removeTemplate(css);
-                                    }
-                                }
-                            }
                             weblogManager.removeTemplate(template);
                         }
                     }

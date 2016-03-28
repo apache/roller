@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -77,9 +76,6 @@ public class ThemeEdit extends UIAction {
     // a potentially new selected theme
     private String selectedThemeId = null;
 
-    // Are we using a shared theme with a custom stylesheet
-    private boolean sharedThemeCustomStylesheet = false;
-
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
@@ -105,21 +101,6 @@ public class ThemeEdit extends UIAction {
 
     public void prepare() {
         themes = themeManager.getEnabledThemesList();
-
-        // See if we're using a shared theme with a custom template
-        try {
-            if (getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
-
-                ThemeTemplate override = weblogManager.getTemplateByLink(getActionWeblog(),
-                                getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET).getLink());
-                if (override != null) {
-                    sharedThemeCustomStylesheet = true;
-                }
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up stylesheet on weblog - "
-                    + getActionWeblog().getHandle(), ex);
-        }
     }
 
     public String execute() {
@@ -145,10 +126,7 @@ public class ThemeEdit extends UIAction {
                 try {
                     if (!StringUtils.isEmpty(selectedThemeId)) {
                         t = themeManager.getTheme(selectedThemeId);
-                        // if moving from shared w/custom SS to custom import of same shared theme,
-                        // keep the custom stylesheet.
-                        boolean skipStylesheet = (sharedThemeCustomStylesheet && selectedThemeId.equals(weblog.getEditorTheme()));
-                        themeManager.importTheme(getActionWeblog(), t, skipStylesheet);
+                        themeManager.importTheme(getActionWeblog(), t);
                         addMessage("themeEditor.setCustomTheme.success", t.getName());
                     }
                 } catch (Exception re) {
@@ -194,14 +172,12 @@ public class ThemeEdit extends UIAction {
                     String originalTheme = weblog.getEditorTheme();
 
                     // Remove old style sheet
-                    if (!originalTheme.equals(selectedThemeId) && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
-                        WeblogTemplate stylesheet = weblogManager.getTemplateByAction(getActionWeblog(),
-                                ComponentType.STYLESHEET);
+                    if (!originalTheme.equals(selectedThemeId)) {
+                        WeblogTemplate stylesheet = weblogManager.getTemplateByAction(getActionWeblog(), ComponentType.STYLESHEET);
 
                         if (stylesheet != null) {
                             // Remove template and its renditions
                             weblogManager.removeTemplate(stylesheet);
-                            sharedThemeCustomStylesheet = false;
                         }
                     }
 
@@ -277,15 +253,6 @@ public class ThemeEdit extends UIAction {
 
     public void setSelectedThemeId(String importThemeId) {
         this.selectedThemeId = importThemeId;
-    }
-
-    /**
-     * Checks if we are using a shared theme with a custom stylesheet.
-     * 
-     * @return true, if using a shared theme with a custom stylesheet; false otherwise.
-     */
-    public boolean isSharedThemeCustomStylesheet() {
-        return sharedThemeCustomStylesheet;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/themes", method = RequestMethod.GET)

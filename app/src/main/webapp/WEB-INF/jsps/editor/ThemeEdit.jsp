@@ -81,12 +81,6 @@ function updateThemeChooser(selected) {
                 <s:text name="themeEditor.yourCurrentTheme" />:
                 <b><s:property value="actionWeblog.theme.name"/></b>
                 <%-- The type of stylesheet we are using --%>
-                <s:if test="%{sharedThemeCustomStylesheet}">
-                    <s:text name="themeEditor.yourCustomStylesheet" />
-                </s:if>
-                <s:else>
-                    <s:text name="themeEditor.yourThemeStyleSheet" />
-                </s:else>
             </s:if>
             <s:else>
                 <s:text name="themeEditor.selectTheme" />:
