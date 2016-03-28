@@ -18,7 +18,7 @@
 
 // lets see if we have a frontpage blog
 String frontpageBlog =
-        org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getPropertiesManager().getProperty("site.frontpage.weblog.handle");
+        org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty("site.frontpage.weblog.handle");
 
 if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
     // dispatch to frontpage blog

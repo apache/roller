@@ -37,8 +37,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
@@ -74,22 +72,11 @@ public class SearchResultsModel extends PageModel {
 	private Set categories = new TreeSet();
 	private boolean websiteSpecificSearch = true;
 	private String errorMessage = null;
-    private WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
 
     private IndexManager indexManager;
 
     public void setIndexManager(IndexManager indexManager) {
         this.indexManager = indexManager;
-    }
-
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     public void init(Map initData) throws WebloggerException {
@@ -161,8 +148,7 @@ public class SearchResultsModel extends PageModel {
 		return pager;
 	}
 
-	// override page model and return search results pager
-	public WeblogEntriesPager getWeblogEntriesPager(String category) {
+	public WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
 		return pager;
 	}
 

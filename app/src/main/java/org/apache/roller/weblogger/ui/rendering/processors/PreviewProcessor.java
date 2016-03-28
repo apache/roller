@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.Template;
@@ -74,6 +75,13 @@ public class PreviewProcessor {
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
+    }
+
+    @Autowired
+    protected ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
     }
 
     @PostConstruct
@@ -149,7 +157,7 @@ public class PreviewProcessor {
         } else if("tags".equals(previewRequest.getContext()) &&
                 previewRequest.getTags() == null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ComponentType.TAGSINDEX);
+                page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
@@ -167,7 +175,7 @@ public class PreviewProcessor {
             // If this is a permalink then look for a permalink template
         } else if(previewRequest.getWeblogAnchor() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ComponentType.PERMALINK);
+                page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }
@@ -175,7 +183,7 @@ public class PreviewProcessor {
 
         if(page == null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ComponentType.WEBLOG);
+                page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
             } catch(WebloggerException re) {
                 log.error("Error getting default page for preview", re);
             }

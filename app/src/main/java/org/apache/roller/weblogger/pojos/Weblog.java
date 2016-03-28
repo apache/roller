@@ -1,6 +1,6 @@
 /*
 * Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
+* contributor license agreements.  The ASF licenses this file to You
 * under the Apache License, Version 2.0 (the "License"); you may not
 * use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
@@ -142,23 +141,6 @@ public class Weblog implements Serializable {
         this.editorTheme = editorTheme;
         this.locale = locale;
         this.timeZone = timeZone;
-    }
-
-    /**
-     * Get the Theme object in use by this weblog, or null if no theme selected.
-     */
-    @Transient
-    public WeblogTheme getTheme() {
-        try {
-            // let the ThemeManager handle it
-            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-            return themeMgr.getTheme(this);
-        } catch (WebloggerException ex) {
-            log.error("Error getting theme for weblog - "+getHandle(), ex);
-        }
-        
-        // TODO: maybe we should return a default theme in this case?
-        return null;
     }
 
     @Id
@@ -467,16 +449,6 @@ public class Weblog implements Serializable {
         this.lastModified = lastModified;
     }
 
-    @Transient
-    public String getURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, false);
-    }
-
-    @Transient
-    public String getAbsoluteURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, true);
-    }
-
     /**
      * The path under the weblog's resources to an icon image.
      */
@@ -513,23 +485,6 @@ public class Weblog implements Serializable {
         this.about = about;
     }
     
-    
-    /**
-     * Get weblog entry specified by anchor or null if no such entry exists.
-     * @param anchor Weblog entry anchor
-     * @return Weblog entry specified by anchor
-     */
-    public WeblogEntry getWeblogEntry(String anchor) {
-        WeblogEntry entry = null;
-        try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            entry = wmgr.getWeblogEntryByAnchor(this, anchor);
-        } catch (WebloggerException e) {
-            log.error("ERROR: getting entry by anchor");
-        }
-        return entry;
-    }
-
     public WeblogCategory getWeblogCategory(String categoryName) {
         WeblogCategory category = null;
         try {
@@ -653,30 +608,6 @@ public class Weblog implements Serializable {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }
         return results;
-    }
-
-    @Transient
-    public long getCommentCount() {
-        long count = 0;
-        try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            count = mgr.getCommentCount(this);            
-        } catch (WebloggerException e) {
-            log.error("Error getting comment count for weblog " + this.getName(), e);
-        }
-        return count;
-    }
-
-    @Transient
-    public long getEntryCount() {
-        long count = 0;
-        try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            count = mgr.getEntryCount(this);            
-        } catch (WebloggerException e) {
-            log.error("Error getting entry count for weblog " + this.getName(), e);
-        }
-        return count;
     }
 
     public void invalidateCache() {
@@ -847,22 +778,6 @@ public class Weblog implements Serializable {
         copy.setId(null);
         copy.setAbout(HTMLSanitizer.conditionallySanitize(about));
         return copy;
-    }
-
-    public ThemeTemplate getTemplateByName(String name)
-            throws WebloggerException {
-        ThemeTemplate templateToWrap = getTheme().getTemplateByName(name);
-        return templateToWrap.templateCopy();
-    }
-
-    public List<ThemeTemplate> getTemplates() throws WebloggerException {
-        List<? extends ThemeTemplate> unwrapped = getTheme().getTemplates();
-        List<ThemeTemplate> wrapped = new ArrayList<>(unwrapped.size());
-
-        for (ThemeTemplate template : unwrapped) {
-            wrapped.add(template.templateCopy());
-        }
-        return wrapped;
     }
 
     // convenience methods for populating fields from forms

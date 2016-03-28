@@ -18,9 +18,9 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <% request.setAttribute("version",
-      org.apache.roller.weblogger.config.WebloggerConfig.getProperty("weblogger.version", "Unknown")); %>
+      org.apache.roller.weblogger.business.WebloggerStaticConfig.getProperty("weblogger.version", "Unknown")); %>
 <% request.setAttribute("revision",
-      org.apache.roller.weblogger.config.WebloggerConfig.getProperty("weblogger.revision", "Unknown")); %>
+      org.apache.roller.weblogger.business.WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown")); %>
 
 <s:text name="footer.productName" >
     <s:param value="#request.version" />

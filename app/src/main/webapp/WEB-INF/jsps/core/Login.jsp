@@ -20,8 +20,6 @@
 --%>
 
 <%-- Body of the login page, invoked from login.jsp --%>
-<%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
-<%@ page import="org.apache.roller.weblogger.WebloggerCommon.AuthMethod" %>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 

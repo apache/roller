@@ -46,7 +46,6 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     // lightweight attributes
     // theme name provided only for theme (not blog entry) previews.
     private String themeName = null;
-    private String previewEntry = null;
     private String type = "standard";
     
     // heavyweight attributes
@@ -71,7 +70,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         
         // we may also have a specific entry to preview
         if(request.getParameter("previewEntry") != null) {
-            this.previewEntry = Utilities.decode(request.getParameter("previewEntry"));
+            this.weblogAnchor = Utilities.decode(request.getParameter("previewEntry"));
         }
 
         if(log.isDebugEnabled()) {
@@ -123,30 +122,16 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         this.theme = theme;
     }
 
-    public String getPreviewEntry() {
-        return previewEntry;
-    }
-
-    public void setPreviewEntry(String previewEntry) {
-        this.previewEntry = previewEntry;
-    }
-    
-    // if we have a preview entry we would prefer to return that
     public WeblogEntry getWeblogEntry() {
         
-        if(weblogEntry == null && 
-                (previewEntry != null || super.getWeblogAnchor() != null)) {
-            
-            String anchor = previewEntry;
-            if(previewEntry == null) {
-                anchor = super.getWeblogAnchor();
-            }
-            
+        if (weblogEntry == null && super.getWeblogAnchor() != null) {
+            String anchor = super.getWeblogAnchor();
+
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), anchor);
             } catch (WebloggerException ex) {
-                log.error("Error getting weblog entry "+anchor, ex);
+                log.error("Error getting weblog entry " + anchor, ex);
             }
         }
         

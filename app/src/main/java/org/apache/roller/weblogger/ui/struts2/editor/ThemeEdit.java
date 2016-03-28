@@ -171,20 +171,19 @@ public class ThemeEdit extends UIAction {
                 try {
                     String originalTheme = weblog.getEditorTheme();
 
-                    // Remove old style sheet
+                    // Remove old template customizations
                     if (!originalTheme.equals(selectedThemeId)) {
-                        WeblogTemplate stylesheet = weblogManager.getTemplateByAction(getActionWeblog(), ComponentType.STYLESHEET);
+                        List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(getActionWeblog());
 
-                        if (stylesheet != null) {
+                        for (WeblogTemplate template : oldTemplates) {
                             // Remove template and its renditions
-                            weblogManager.removeTemplate(stylesheet);
+                            weblogManager.removeTemplate(template);
                         }
                     }
 
                     weblog.setEditorTheme(selectedThemeId);
 
-                    log.debug("Saving theme " + selectedThemeId + " for weblog "
-                            + weblog.getHandle());
+                    log.debug("Saving theme " + selectedThemeId + " for weblog " + weblog.getHandle());
 
                     // save updated weblog and flush
                     weblogManager.saveWeblog(weblog);

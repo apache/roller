@@ -174,22 +174,18 @@ public class ThemeManagerImpl implements ThemeManager {
 	 */
 	public void importTheme(Weblog weblog, SharedTheme theme) throws WebloggerException {
 
-		log.debug("Importing theme [" + theme.getName() + "] to weblog ["
-				+ weblog.getName() + "]");
+		log.debug("Importing theme [" + theme.getName() + "] to weblog [" + weblog.getName() + "]");
 
 		Set<ComponentType> importedActionTemplates = new HashSet<>();
 		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
 			WeblogTemplate template;
 
-			// if template is an action, lookup by action
-			if (themeTemplate.getAction() != null
-					&& !themeTemplate.getAction().equals(ComponentType.CUSTOM)) {
+			if (themeTemplate.getAction() != null && themeTemplate.getAction().isSingleton()) {
+				// if template is a singleton, lookup by action
 				importedActionTemplates.add(themeTemplate.getAction());
-				template = weblogManager.getTemplateByAction(weblog,
-                        themeTemplate.getAction());
-
-				// otherwise, lookup by name
+				template = weblogManager.getTemplateByAction(weblog, themeTemplate.getAction());
 			} else {
+				// otherwise, lookup by name
 				template = weblogManager.getTemplateByName(weblog, themeTemplate.getName());
 			}
 
@@ -236,10 +232,10 @@ public class ThemeManagerImpl implements ThemeManager {
 			}
 		}
 
-		// now, see if the weblog has left over non-custom action templates that
+		// now, see if the weblog has left over singleton action templates that
 		// need to be deleted because they aren't in their new theme
         for (ComponentType action : ComponentType.values()) {
-            if (action == ComponentType.CUSTOM) {
+            if (!action.isSingleton()) {
                 continue;
             }
 			// if we didn't import this action then see if it should be deleted

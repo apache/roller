@@ -44,6 +44,7 @@ import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PingResult;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -56,7 +57,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     private final JPAPersistenceStrategy strategy;
 
-    private PropertiesManager propertiesManager;
+    private final PropertiesManager propertiesManager;
+
+    private final URLStrategy urlStrategy;
 
     private static final Log log = LogFactory.getLog(JPAPingTargetManagerImpl.class);
 
@@ -67,8 +70,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         logPingsOnly = boolVal;
     }
 
-    protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy, PropertiesManager propertiesManager) {
+    protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy, URLStrategy urlStrategy, PropertiesManager propertiesManager) {
         this.strategy = strategy;
+        this.urlStrategy = urlStrategy;
         this.propertiesManager = propertiesManager;
     }
 
@@ -338,16 +342,16 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         log.info("ping task completed, pings processed = " + pings.size());
     }
 
-    public PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException {
-        String websiteUrl = website.getAbsoluteURL();
+    public PingResult sendPing(PingTarget pingTarget, Weblog weblog) throws IOException, XmlRpcException {
+        String websiteUrl = urlStrategy.getWeblogURL(weblog, true);
         String pingTargetUrl = pingTarget.getPingUrl();
 
         // Set up the ping parameters.
         List<String> params = new ArrayList<>();
-        params.add(website.getName());
+        params.add(weblog.getName());
         params.add(websiteUrl);
         if (log.isDebugEnabled()) {
-            log.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + website.getName() + ")");
+            log.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + weblog.getName() + ")");
         }
 
         // Send the ping.
