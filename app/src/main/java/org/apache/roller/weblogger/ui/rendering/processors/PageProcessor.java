@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -118,6 +119,13 @@ public class PageProcessor {
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
+    }
+
+    @Autowired
+    protected ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
     }
 
     // set "true" to NOT cache the custom pages for users who are logged in
@@ -260,7 +268,7 @@ public class PageProcessor {
         } else if ("tags".equals(pageRequest.getContext())
                 && pageRequest.getTags() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ComponentType.TAGSINDEX);
+                page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
@@ -278,7 +286,7 @@ public class PageProcessor {
             // If this is a permalink then look for a permalink template
         } else if (pageRequest.getWeblogAnchor() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ComponentType.PERMALINK);
+                page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }
@@ -287,7 +295,7 @@ public class PageProcessor {
         // if we haven't found a page yet then try our default page
         if (page == null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ComponentType.WEBLOG);
+                page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
             } catch (Exception e) {
                 log.error(
                         "Error getting default page for weblog = "

@@ -91,24 +91,22 @@ public class Templates extends UIAction {
 			// build list of action types that may be added
 			Map<ComponentType, String> actionsMap = new EnumMap<>(ComponentType.class);
 			addComponentTypeToMap(actionsMap, ComponentType.CUSTOM);
-
             addComponentTypeToMap(actionsMap, ComponentType.PERMALINK);
             addComponentTypeToMap(actionsMap, ComponentType.SEARCH);
             addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
             addComponentTypeToMap(actionsMap, ComponentType.TAGSINDEX);
 
+			// remove from above list any already existing for the theme
             for (WeblogTemplate tmpPage : getTemplates()) {
-                if (!ComponentType.CUSTOM.equals(tmpPage
-                        .getAction())) {
+                if (tmpPage.getAction().isSingleton()) {
                     actionsMap.remove(tmpPage.getAction());
                 }
             }
 			setAvailableActions(actionsMap);
 
 		} catch (WebloggerException ex) {
-			log.error("Error getting templates for weblog - "
-					+ getActionWeblog().getHandle(), ex);
-			addError("Error getting template list - check TightBlog logs");
+			log.error("Error getting templates for weblog - " + getActionWeblog().getHandle(), ex);
+			addError("Error getting template list - check server logfiles");
 		}
 
 		return LIST;
@@ -137,7 +135,7 @@ public class Templates extends UIAction {
                 newTemplate.setNavbar(false);
                 newTemplate.setLastModified(new Date());
 
-                if (ComponentType.CUSTOM.equals(getNewTmplAction())) {
+                if (!getNewTmplAction().isSingleton()) {
                     newTemplate.setLink(getNewTmplName());
                 }
 

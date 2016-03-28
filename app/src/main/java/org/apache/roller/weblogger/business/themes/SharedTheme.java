@@ -192,7 +192,7 @@ public class SharedTheme implements Theme, Serializable {
     void addTemplate(SharedThemeTemplate template) {
         this.templatesByName.put(template.getName(), template);
         this.templatesByLink.put(template.getLink(), template);
-        if (!ComponentType.CUSTOM.equals(template.getAction())) {
+        if (template.getAction().isSingleton()) {
             this.templatesByAction.put(template.getAction(), template);
         }
     }

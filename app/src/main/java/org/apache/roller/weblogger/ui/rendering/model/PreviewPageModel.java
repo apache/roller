@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPag
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 
-
 /**
  * An extension of the PageModel to make some adjustments for previewing.
  */
@@ -66,15 +65,12 @@ public class PreviewPageModel extends PageModel {
     
     
     public boolean isPermalink() {
-        return (previewRequest.getPreviewEntry() != null ||
-                previewRequest.getWeblogAnchor() != null);
+        return previewRequest.getWeblogAnchor() != null;
     }
     
     
     public WeblogEntry getWeblogEntry() {
-        
-        if(previewRequest.getPreviewEntry() != null ||
-                previewRequest.getWeblogAnchor() != null) {
+        if (previewRequest.getWeblogAnchor() != null) {
             return previewRequest.getWeblogEntry().templateCopy();
         }
         return null;
@@ -86,13 +82,10 @@ public class PreviewPageModel extends PageModel {
      * pager for preview pages which can display things that we don't want
      * available on the "live" weblog, like DRAFT entries.
      */
-    public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
+    public WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
         
-        String anchor = previewRequest.getPreviewEntry();
-        if(anchor == null) {
-            anchor = previewRequest.getWeblogAnchor();
-        }
-        
+        String anchor = previewRequest.getWeblogAnchor();
+
         if (anchor != null) {
             return new WeblogEntriesPermalinkPager(
                     weblogEntryManager,

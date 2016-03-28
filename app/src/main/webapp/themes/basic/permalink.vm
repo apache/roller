@@ -6,7 +6,7 @@
     <title>$model.weblogEntry.title : $model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
-    <link rel="stylesheet" href="$model.stylesheet">
+    <link rel="stylesheet" href='$url.page("basic", "basic-custom.css")' />
     #showMetaDescription()
 </head>
 <!-- permalink -->

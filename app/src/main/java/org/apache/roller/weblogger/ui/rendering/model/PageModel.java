@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -60,6 +61,7 @@ public class PageModel implements Model {
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
     protected Weblog weblog = null;
+    protected Weblog wrappedWeblog = null;
     private DeviceType deviceType = null;
 
     protected boolean isPreview = false;
@@ -85,6 +87,12 @@ public class PageModel implements Model {
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
+    }
+
+    protected ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
     }
 
     /**
@@ -130,6 +138,7 @@ public class PageModel implements Model {
         
         // extract weblog object
         weblog = pageRequest.getWeblog();
+        wrappedWeblog = weblog.templateCopy();
 
         this.deviceType = weblogRequest.getDeviceType();
     }    
@@ -147,18 +156,7 @@ public class PageModel implements Model {
      * Get weblog being displayed.
      */
     public Weblog getWeblog() {
-        return weblog.templateCopy();
-    }
-
-    /**
-     * Get main stylesheet for weblog.
-     */
-    public String getStylesheet() throws WebloggerException {
-        ThemeTemplate stylesheet = this.weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.STYLESHEET);
-        if(stylesheet != null) {
-            return urlStrategy.getWeblogPageURL(weblog, null, stylesheet.getLink(), null, null, null, null, 0, false);
-        }
-        return null;
+        return wrappedWeblog;
     }
 
     /**
@@ -203,15 +201,20 @@ public class PageModel implements Model {
             return pageRequest.getWeblogPage().templateCopy();
         } else {
             try {
-                return weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG).templateCopy();
+                return themeManager.getTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG).templateCopy();
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
         }
         return null;
     }
-    
-    
+
+    public ThemeTemplate getTemplateByName(String name)
+            throws WebloggerException {
+        ThemeTemplate templateToWrap = themeManager.getTheme(weblog).getTemplateByName(name);
+        return templateToWrap.templateCopy();
+    }
+
     /**
      * Get weblog category specified by request, or null if the category name
      * found in the request does not exist in the current weblog.
@@ -234,7 +237,7 @@ public class PageModel implements Model {
 
 	/**
 	 * Access to device type, which is either 'mobile' or 'standard'
-	 * @return 
+	 * @return device type
 	 */
 	public String getDeviceType() {
 		return deviceType.toString();
@@ -247,33 +250,10 @@ public class PageModel implements Model {
      * date they were published.
      */
     public WeblogEntriesPager getWeblogEntriesPager() {
-        return getWeblogEntriesPager(null);
+        return getWeblogEntriesPager(null, null);
     }
     
-    
-    /**
-     * A map of entries representing this page - with entries restricted by category.
-     * The collection is grouped by days of entries.  
-     * Each value is a list of entry objects keyed by the date they were published.
-     * @param catArgument Category restriction (null or "nil" for no restriction)
-     */
-    public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
-        return getWeblogEntriesPager(catArgument, null);
-    }
-    
-    
-    /**
-     * A map of entries representing this page - with entries restricted by tag.
-     * The collection is grouped by days of entries.  
-     * Each value is a list of entry objects keyed by the date they were published.
-     * @param tagArgument tag restriction (null or "nil" for no restriction)
-     */
-    public WeblogEntriesPager getWeblogEntriesPagerByTag(String tagArgument) {
-        return getWeblogEntriesPager(null, tagArgument);
-    }
-    
-    
-    private WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
+    public WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
         
         // category specified by argument wins over request parameter
         String cat = pageRequest.getWeblogCategoryName();

@@ -34,21 +34,35 @@ public interface ThemeTemplate extends Template {
     @XmlType
     @XmlEnum
     public enum ComponentType {
-        @XmlEnumValue("weblog") WEBLOG("Weblog"),
-        @XmlEnumValue("permalink") PERMALINK("Permalink"),
-        @XmlEnumValue("search") SEARCH("Search"),
-        @XmlEnumValue("tagsIndex") TAGSINDEX("Tag Index"),
-        @XmlEnumValue("stylesheet") STYLESHEET("Stylesheet"),
-        @XmlEnumValue("custom") CUSTOM("Custom");
+        @XmlEnumValue("weblog") WEBLOG("Weblog", "text/html", true),
+        @XmlEnumValue("permalink") PERMALINK("Permalink", "text/html", true),
+        @XmlEnumValue("search") SEARCH("Search", "text/html", true),
+        @XmlEnumValue("tagsIndex") TAGSINDEX("Tag Index", "text/html", true),
+        @XmlEnumValue("stylesheet") STYLESHEET("Stylesheet", "text/css", false),
+        @XmlEnumValue("custom") CUSTOM("Custom", null, false);
 
         private final String readableName;
 
-        ComponentType(String readableName) {
+        private final String contentType;
+
+        private final boolean singleton;
+
+        ComponentType(String readableName, String contentType, boolean singleton) {
             this.readableName = readableName;
+            this.contentType = contentType;
+            this.singleton = singleton;
         }
 
         public String getReadableName() {
             return readableName;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+
+        public boolean isSingleton() {
+            return singleton;
         }
     }
 

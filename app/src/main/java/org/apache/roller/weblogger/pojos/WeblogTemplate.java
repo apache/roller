@@ -73,8 +73,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     
     public static final long serialVersionUID = -613737191638263428L;
 
-    private static Set<String> requiredTemplates = null;
-    
     // attributes
     private String id = WebloggerCommon.generateUUID();
     private ComponentType action = null;
@@ -91,12 +89,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
 
     // associations
     private Weblog weblog = null;
-
-    static {
-        requiredTemplates = new HashSet<>();
-        requiredTemplates.add("Weblog");
-        requiredTemplates.add("_day");
-    }
 
     public WeblogTemplate() {}
 
@@ -212,26 +204,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
      */
     @Transient
     public boolean isCustom() {
-        return ComponentType.CUSTOM.equals(getAction()) && !isRequired();
-    }
-
-    /**
-     * Determine if this WeblogTemplate is required or not.
-     */
-    @Transient
-    public boolean isRequired() {
-       /*
-        * this is kind of hacky right now, but it's like that so we can be
-        * reasonably flexible while we migrate old blogs which may have some
-        * pretty strange customizations.
-        *
-        * my main goal starting now is to prevent further deviations from the
-        * standardized templates as we move forward.
-        *
-        * eventually, the required flag should probably be stored in the db
-        * and possibly applicable to any template.
-        */
-        return (requiredTemplates.contains(getName()) || "Weblog".equals(getLink()));
+        return ComponentType.CUSTOM.equals(getAction());
     }
 
     public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType) throws WebloggerException {

@@ -909,12 +909,12 @@ public class WeblogEntryTest extends WebloggerTest {
             blog1 = weblogManager.getWeblog(blog1.getId());
             blog2 = weblogManager.getWeblog(blog2.getId());
             
-            assertEquals(2L, blog1.getEntryCount());
-            assertEquals(3L, blog2.getEntryCount());
+            assertEquals(2L, weblogEntryManager.getEntryCount(blog1));
+            assertEquals(3L, weblogEntryManager.getEntryCount(blog2));
             assertEquals(5L, weblogEntryManager.getEntryCount());
 
-            assertEquals(2L, blog1.getCommentCount());
-            assertEquals(3L, blog2.getCommentCount());
+            assertEquals(2L, weblogEntryManager.getCommentCount(blog1));
+            assertEquals(3L, weblogEntryManager.getCommentCount(blog2));
             assertEquals(5L, weblogEntryManager.getCommentCount());
 
             assertEquals(4L, weblogManager.getWeblogCount());

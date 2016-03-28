@@ -72,8 +72,8 @@ alter table user_weblog_role add constraint uwr_weblogid_fk
 
 
 create table weblog_template (
-    id              varchar(48)  not null primary key,
-    name            varchar(255)  not null,
+    id              varchar(48) not null primary key,
+    name            varchar(255) not null,
     description     varchar(255),
     link            varchar(255),
     weblogid        varchar(48) not null,
@@ -86,11 +86,13 @@ create table weblog_template (
 create index wp_name_idx on weblog_template(name);
 create index wp_link_idx on weblog_template(link);
 
-alter table weblog_template add constraint wct_weblogid_fk
+alter table weblog_template add constraint wt_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 
+alter table weblog_template add constraint wt_name_uq unique (weblogid, name);
+
 #if($db.FOREIGN_KEY_MAKES_INDEX == "false")
-    create index wct_weblogid_idx on weblog_template(weblogid);
+    create index wt_weblogid_idx on weblog_template(weblogid);
 #end
 
 create table weblog_template_rendition (
@@ -101,7 +103,7 @@ create table weblog_template_rendition (
     #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
-alter table weblog_template_rendition add constraint ctr_templateid_fk
+alter table weblog_template_rendition add constraint wtr_templateid_fk
     foreign key ( templateid ) references weblog_template( id ) ;
 
 create table blogroll_link (

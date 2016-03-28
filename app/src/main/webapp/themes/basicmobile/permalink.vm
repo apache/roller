@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>$model.weblogEntry.title : $model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
-    <link rel="stylesheet" media="all" href="$model.stylesheet">
+    <link rel="stylesheet" href='$url.page("basicmobile", "basic-custom.css")' />
     #showMetaDescription()
     #showAnalyticsTrackingCode($model.weblog)
 </head>

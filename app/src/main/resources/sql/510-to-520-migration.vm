@@ -39,6 +39,8 @@
 update user_weblog_role uwr set userid = (select id from weblogger_user wu where uwr.username = wu.username);
 #dropColumn("user_weblog_role", "username")
 
+-- new constraint on weblog_template
+alter table weblog_template add constraint wt_name_uq unique (weblogid, name);
 
 update user_weblog_role uwr set weblogid = (select id
 from weblog w where w.handle = uwr.weblogid)

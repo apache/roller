@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -80,6 +81,13 @@ public class SearchProcessor {
         this.propertiesManager = propertiesManager;
     }
 
+    @Autowired
+    protected ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
     @PostConstruct
     public void init() {
         log.info("Initializing SearchProcessor...");
@@ -123,11 +131,11 @@ public class SearchProcessor {
         try {
 
             // try looking for a specific search page
-            page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.SEARCH);
+            page = themeManager.getTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.SEARCH);
 
             // if not found then fall back on default page
             if (page == null) {
-                page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG);
+                page = themeManager.getTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG);
             }
 
             // if still null then that's a problem
