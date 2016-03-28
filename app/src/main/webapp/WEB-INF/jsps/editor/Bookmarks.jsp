@@ -321,11 +321,19 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     }
 
     function deleteFolder() {
-        // TODO: do not use plain old DHTML confirm here
+
+        $('#boomarks_delete_folder_folderId').val('<s:text name="%{folder.id}"/>');
+
+        $('#deleteBlogrollName').html('<s:text name="%{folder.name}"/>');
+
+        $('#delete-blogroll-modal').modal({show: true});
+
+        <%--
         if (confirm("<s:text name='bookmarksForm.deleteFolder.confirm' />")) {
             document.bookmarks.action = '<s:url action="bookmarks!deleteFolder" />';
             document.bookmarks.submit();
         }
+        --%>
     }
 
     function onMoveToFolder() {
@@ -451,6 +459,58 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     }
 
 </script>
+
+
+<%-- ========================================================================================== --%>
+
+<%-- delete blogroll confirmation modal --%>
+
+<div id="delete-blogroll-modal" class="modal fade delete-blogroll-modal" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3>
+                    <s:text name="blogrollDeleteOK.removeBlogroll"/>:
+                    <span id="blogroll-name"></span>
+                </h3>
+            </div>
+
+            <s:form id="boomarks_delete_folder" action="bookmarks!deleteFolder" theme="bootstrap" cssClass="form-horizontal">
+                <s:hidden name="salt"/>
+                <s:hidden name="weblog"/>
+                <s:hidden name="folderId"/>
+
+                <div class="modal-body">
+                    <s:text name="blogrollDeleteOK.areYouSure"></s:text>
+                    <span id="deleteBlogrollName"></span>?
+                </div>
+
+                <div class="modal-footer">
+                    <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>&nbsp;
+                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                        <s:text name="generic.no" />
+                    </button>
+                </div>
+
+            </s:form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function showBlogrollDeleteModal( id, name ) {
+        $('#blogrollRemove_removeId').val(id);
+        $('#blogroll-name').html(name);
+        $('#delete-remove-modal').modal({show: true});
+    }
+
+</script>
+
 
 <%-- ================================================================================================ --%>
 
