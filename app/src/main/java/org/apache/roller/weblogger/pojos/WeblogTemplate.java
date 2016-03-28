@@ -72,8 +72,7 @@ import java.util.Set;
 public class WeblogTemplate implements ThemeTemplate, Serializable {
     
     public static final long serialVersionUID = -613737191638263428L;
-    public static final String DEFAULT_PAGE = "Weblog";
-    
+
     private static Set<String> requiredTemplates = null;
     
     // attributes

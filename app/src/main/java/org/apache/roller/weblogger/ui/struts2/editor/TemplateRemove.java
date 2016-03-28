@@ -27,8 +27,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -95,35 +93,10 @@ public class TemplateRemove extends UIAction {
 
 		if (getTemplate() != null) {
             try {
-                // if weblog template remove custom style sheet also
-                if (getTemplate().getName().equals(
-                        WeblogTemplate.DEFAULT_PAGE)) {
-
-                    ThemeTemplate stylesheet = getActionWeblog().getTheme()
-                            .getTemplateByAction(ComponentType.STYLESHEET);
-
-                    // Delete style sheet if the same name
-                    if (stylesheet != null
-                            && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null
-                            && stylesheet.getLink().equals(
-                            getActionWeblog().getTheme()
-                                    .getTemplateByAction(ComponentType.STYLESHEET).getLink())) {
-                        // Same so OK to delete
-                        WeblogTemplate css = weblogManager.getTemplateByLink(
-                                getActionWeblog(), stylesheet.getLink());
-
-                        if (css != null) {
-                            weblogManager.removeTemplate(css);
-                        }
-                    }
-                }
-
                 weblogManager.removeTemplate(getTemplate());
                 WebloggerFactory.flush();
                 cacheManager.invalidate(getTemplate());
-
                 return SUCCESS;
-
             } catch (Exception ex) {
                 log.error("Error removing page - " + getRemoveId(), ex);
                 addError("editPages.remove.error");

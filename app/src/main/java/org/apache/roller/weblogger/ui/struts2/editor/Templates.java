@@ -144,7 +144,7 @@ public class Templates extends UIAction {
                 // Make sure we have always have a Weblog main page. Stops
                 // deleting main page in custom theme mode also.
                 if (ComponentType.WEBLOG.equals(getNewTmplAction())) {
-                    newTemplate.setName(WeblogTemplate.DEFAULT_PAGE);
+                    newTemplate.setName(ComponentType.WEBLOG.name());
                 }
 
                 // save the new Template
@@ -168,7 +168,7 @@ public class Templates extends UIAction {
                 // if this person happened to create a Weblog template from
                 // scratch then make sure and set the defaultPageId. What does
                 // this do????
-                if (WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
+                if (ComponentType.WEBLOG.name().equals(newTemplate.getName())) {
                     weblogManager.saveWeblog(getActionWeblog());
                 }
 

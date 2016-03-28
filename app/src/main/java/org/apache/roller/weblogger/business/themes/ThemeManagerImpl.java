@@ -170,17 +170,14 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importTheme(Weblog,
-	 *      SharedTheme, boolean)
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importTheme(Weblog, SharedTheme)
 	 */
-	public void importTheme(Weblog weblog, SharedTheme theme, boolean skipStylesheet)
-			throws WebloggerException {
+	public void importTheme(Weblog weblog, SharedTheme theme) throws WebloggerException {
 
 		log.debug("Importing theme [" + theme.getName() + "] to weblog ["
 				+ weblog.getName() + "]");
 
 		Set<ComponentType> importedActionTemplates = new HashSet<>();
-		ThemeTemplate stylesheetTemplate = theme.getTemplateByAction(ComponentType.STYLESHEET);
 		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
 			WeblogTemplate template;
 
@@ -202,44 +199,41 @@ public class ThemeManagerImpl implements ThemeManager {
 				template.setWeblog(weblog);
 			}
 
-			// update template attributes except leave existing custom stylesheets as-is
-			if (!themeTemplate.equals(stylesheetTemplate) || !skipStylesheet) {
-				template.setAction(themeTemplate.getAction());
-				template.setName(themeTemplate.getName());
-				template.setDescription(themeTemplate.getDescription());
-				template.setLink(themeTemplate.getLink());
-				template.setHidden(themeTemplate.isHidden());
-				template.setNavbar(themeTemplate.isNavbar());
-                template.setOutputContentType(themeTemplate.getOutputContentType());
-				template.setLastModified(new Date());
+			template.setAction(themeTemplate.getAction());
+			template.setName(themeTemplate.getName());
+			template.setDescription(themeTemplate.getDescription());
+			template.setLink(themeTemplate.getLink());
+			template.setHidden(themeTemplate.isHidden());
+			template.setNavbar(themeTemplate.isNavbar());
+			template.setOutputContentType(themeTemplate.getOutputContentType());
+			template.setLastModified(new Date());
 
-				// save it
-				weblogManager.saveTemplate(template);
+			// save it
+			weblogManager.saveTemplate(template);
 
-                // create weblog template code objects and save them
-                for (RenditionType type : RenditionType.values()) {
+			// create weblog template code objects and save them
+			for (RenditionType type : RenditionType.values()) {
 
-                    // See if we already have some code for this template already (eg previous theme)
-                    WeblogTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
+				// See if we already have some code for this template already (eg previous theme)
+				WeblogTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
 
-                    // Get the template for the new theme
-                    TemplateRendition templateCode = themeTemplate.getTemplateRendition(type);
-                    if (templateCode != null) {
+				// Get the template for the new theme
+				TemplateRendition templateCode = themeTemplate.getTemplateRendition(type);
+				if (templateCode != null) {
 
-                        // Check for existing template
-                        if (weblogTemplateCode == null) {
-                            // Does not exist so create a new one
-                            weblogTemplateCode = new WeblogTemplateRendition(template, type);
-                        }
-                        weblogTemplateCode.setType(type);
-                        weblogTemplateCode.setTemplate(templateCode.getTemplate());
-                        weblogTemplateCode.setTemplateLanguage(templateCode
-                                .getTemplateLanguage());
-                        weblogManager.saveTemplateRendition(weblogTemplateCode);
-                    }
+					// Check for existing template
+					if (weblogTemplateCode == null) {
+						// Does not exist so create a new one
+						weblogTemplateCode = new WeblogTemplateRendition(template, type);
+					}
+					weblogTemplateCode.setType(type);
+					weblogTemplateCode.setTemplate(templateCode.getTemplate());
+					weblogTemplateCode.setTemplateLanguage(templateCode
+							.getTemplateLanguage());
+					weblogManager.saveTemplateRendition(weblogTemplateCode);
+				}
 
-                }
-            }
+			}
 		}
 
 		// now, see if the weblog has left over non-custom action templates that
