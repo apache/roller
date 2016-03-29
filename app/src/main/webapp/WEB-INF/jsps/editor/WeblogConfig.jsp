@@ -41,31 +41,26 @@
     <tr>
         <td class="label"><s:text name="websiteSettings.websiteTitle" />
         <td class="field"><s:textfield name="bean.name" size="40" maxlength="255"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
 
     <tr>
         <td class="label"><s:text name="generic.tagline" /></td>
         <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.icon" /></td>
         <td class="field"><s:textfield name="bean.iconPath" size="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.about" /></td>
         <td class="field"><s:textarea name="bean.about" rows="3" cols="40" maxlength="255"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.emailAddress" />
         <td class="field"><s:textfield name="bean.emailAddress" size="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     <tr>
@@ -73,19 +68,16 @@
         <td class="field">
             <s:select name="bean.editorPage" size="1" list="editorsList" listKey="left" listValue="getText(right)" />
        </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.active" /></td>
         <td class="field"><s:checkbox name="bean.active" /></td>
-        <td class="description"></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.entryDisplayCount" /></td>
         <td class="field"><s:textfield name="bean.entryDisplayCount" size="4"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
 
     <tr>
@@ -93,7 +85,6 @@
         <td class="field">
             <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
         </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     <tr>
@@ -101,63 +92,46 @@
         <td class="field">
             <s:select name="bean.timeZone" size="1" list="timeZonesList" />
         </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     
     <%-- ***** Comment settings ***** --%>
     
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.commentSettings" /></h2></td>
-    </tr>
-
-    <tr>
-        <td class="label"><s:text name="websiteSettings.allowComments" /></td>
-        <td class="field"><s:checkbox name="bean.allowComments" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <s:if test="!getBooleanProp('users.moderation.required')">
-    <tr>
-        <td class="label"><s:text name="websiteSettings.moderateComments" /></td>
-        <td class="field"><s:checkbox name="bean.moderateComments" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    </s:if>
-    
-    <s:if test="getBooleanProp('users.comments.emailnotify')">
+    <s:if test="getBooleanProp('users.comments.enabled')">
         <tr>
-            <td class="label"><s:text name="websiteSettings.emailComments" /></td>
-            <td class="field"><s:checkbox name="bean.emailComments"/></td>
-            <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
+            <td colspan="3"><h2><s:text name="websiteSettings.commentSettings" /></h2></td>
+        </tr>
+
+        <tr>
+            <td class="label"><s:text name="websiteSettings.allowComments" /></td>
+            <td class="field"><s:checkbox name="bean.allowComments" /></td>
+        </tr>
+
+        <s:if test="!getBooleanProp('users.moderation.required')">
+            <tr>
+                <td class="label"><s:text name="websiteSettings.approveComments" /></td>
+                <td class="field"><s:checkbox name="bean.approveComments" /></td>
+            </tr>
+        </s:if>
+
+        <s:if test="getBooleanProp('users.comments.emailnotify')">
+            <tr>
+                <td class="label"><s:text name="websiteSettings.emailComments" /></td>
+                <td class="field"><s:checkbox name="bean.emailComments"/></td>
+            </tr>
+        </s:if>
+
+        <tr>
+            <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
+            <td class="field">
+                <s:select name="bean.defaultCommentDaysString" list="commentDaysList" size="1" listKey="left" listValue="right" />
+        </tr>
+
+        <tr>
+            <td class="label"><s:text name="websiteSettings.applyCommentDefaults" /></td>
+            <td class="field"><s:checkbox name="bean.applyCommentDefaults" /></td>
         </tr>
     </s:if>
-
-    <%-- ***** Default entry comment settings ***** --%>
-
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.defaultCommentSettings" /></h2></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.defaultAllowComments" /></td>
-        <td class="field"><s:checkbox name="bean.defaultAllowComments" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-     <tr>
-        <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
-        <td class="field">
-            <s:select name="bean.defaultCommentDaysString" list="commentDaysList" size="1" listKey="left" listValue="right" />
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.applyCommentDefaults" /></td>
-        <td class="field"><s:checkbox name="bean.applyCommentDefaults" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
 
     <%-- ***** Plugins "formatting" settings ***** --%>
     <s:if test="!weblogEntryPlugins.isEmpty">
@@ -170,7 +144,6 @@
             <td class="field">
                 <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" name="bean.defaultPluginsArray"/>
             </td>
-            <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
         </tr>
     </s:if>
     <s:else>
@@ -187,7 +160,6 @@
     <tr>
         <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
         <td class="field"><s:textarea name="bean.blacklist" rows="7" cols="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
 
 

@@ -34,9 +34,7 @@
     </div>
 
     <div role="main" class="ui-content">
-
-      #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
-      #showMobileCategoryLinksList($rootCategory)
+      #showMobileCategoryLinksList()
 
       <h3>Search Results for '$model.term'</h3>
 

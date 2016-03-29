@@ -88,6 +88,9 @@ public class CommentProcessor {
 
     private CommentValidationManager commentValidationManager = null;
 
+    // whether comment moderation is enforced server-wide (regardless of per-blog setting)
+    private boolean globalCommentModerationRequired = true;
+
     @Autowired(required=false)
     private GenericThrottle commentThrottle = null;
 
@@ -157,8 +160,8 @@ public class CommentProcessor {
      */
     @PostConstruct
     public void init() {
-        // instantiate a comment validation manager for comment spam checking
         commentValidationManager = new CommentValidationManager(commentValidators);
+        globalCommentModerationRequired = propertiesManager.getBooleanProperty("users.moderation.required");
     }
 
     /**
@@ -229,7 +232,7 @@ public class CommentProcessor {
 
         log.debug("Doing comment posting for entry = " + entry.getPermalink());
 
-        // collect input from request params and construct new comment object
+        // Collect input from request params and construct new comment object
         // fields: name, email, url, content, notify
         // TODO: data validation on collected comment data
         WeblogEntryComment comment = new WeblogEntryComment();
@@ -316,8 +319,8 @@ public class CommentProcessor {
         log.debug("Comment Validation score: " + validationScore);
 
         if (!preview) {
-            if (validationScore == WebloggerCommon.PERCENT_100
-                    && weblog.getCommentModerationRequired()) {
+            if (validationScore == WebloggerCommon.PERCENT_100 &&
+                    (globalCommentModerationRequired || weblog.getApproveComments())) {
                 // Valid comments go into moderation if required
                 comment.setStatus(ApprovalStatus.PENDING);
                 message = messageUtils.getString("commentServlet.submittedToModerator");
@@ -363,14 +366,12 @@ public class CommentProcessor {
                     weblogEntryManager.saveComment(comment);
                     WebloggerFactory.flush();
 
-                    // Send email notifications only to subscribers if comment
-                    // is 100% valid
+                    // Send email notifications only to subscribers if comment is 100% valid
                     boolean notifySubscribers = (validationScore == WebloggerCommon.PERCENT_100);
                     mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
 
-                    // only re-index/invalidate the cache if comment isn't
-                    // moderated
-                    if (!weblog.getCommentModerationRequired()) {
+                    // only re-index/invalidate the cache if comment isn't moderated
+                    if (!(globalCommentModerationRequired || weblog.getApproveComments())) {
 
                         // remove entry before (re)adding it, or in case it
                         // isn't Published

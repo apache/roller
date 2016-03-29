@@ -85,8 +85,8 @@ import javax.persistence.Transient;
                 query="SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1"),
         @NamedQuery(name="WeblogEntry.getCountDistinctByStatus&Weblog",
                 query="SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1 AND e.weblog = ?2"),
-        @NamedQuery(name="WeblogEntry.updateAllowComments&CommentDaysByWeblog",
-                query="UPDATE WeblogEntry e SET e.allowComments = ?1, e.commentDays = ?2 WHERE e.weblog = ?3")
+        @NamedQuery(name="WeblogEntry.updateCommentDaysByWeblog",
+                query="UPDATE WeblogEntry e SET e.commentDays = ?1 WHERE e.weblog = ?2")
 })
 public class WeblogEntry implements Serializable {
 
@@ -109,7 +109,6 @@ public class WeblogEntry implements Serializable {
     private Timestamp pubTime;
     private Timestamp updateTime;
     private String plugins;
-    private Boolean allowComments = Boolean.TRUE;
     private Integer commentDays = 7;
     private Boolean rightToLeft = Boolean.FALSE;
     private Boolean pinnedToMain = Boolean.FALSE;
@@ -189,7 +188,6 @@ public class WeblogEntry implements Serializable {
         this.setUpdateTime(other.getUpdateTime());
         this.setStatus(other.getStatus());
         this.setPlugins(other.getPlugins());
-        this.setAllowComments(other.getAllowComments());
         this.setCommentDays(other.getCommentDays());
         this.setRightToLeft(other.getRightToLeft());
         this.setPinnedToMain(other.getPinnedToMain());
@@ -300,7 +298,7 @@ public class WeblogEntry implements Serializable {
     }
     
     /**
-     * Get summary for weblog entry (maps to RSS description and Atom summary).
+     * Summary for weblog entry (maps to RSS description and Atom summary).
      */
     public String getSummary() {
         return summary;
@@ -311,7 +309,7 @@ public class WeblogEntry implements Serializable {
     }
 
     /**
-     * Get blogger's notes for weblog entry
+     * Blogger's notes for weblog entry
      */
     public String getNotes() {
         return notes;
@@ -322,31 +320,25 @@ public class WeblogEntry implements Serializable {
     }
 
     /**
-     * Get search description for weblog entry.
+     * Search description for weblog entry (intended for HTML header).
      */
     @Column(name="search_description")
     public String getSearchDescription() {
         return searchDescription;
     }
     
-    /**
-     * Set search description for weblog entry
-     */
     public void setSearchDescription(String searchDescription) {
         this.searchDescription = searchDescription;
     }
 
     /**
-     * Get content text for weblog entry (maps to RSS content:encoded and Atom content).
+     * Content text for weblog entry (maps to RSS content:encoded and Atom content).
      */
     @Basic(optional=false)
     public String getText() {
         return this.text;
     }
     
-    /**
-     * Set content text for weblog entry (maps to RSS content:encoded and Atom content).
-     */
     public void setText(String text) {
         this.text = text;
     }
@@ -394,11 +386,8 @@ public class WeblogEntry implements Serializable {
      * for viewing by newsfeed readers and visitors to the weblogger site.</p>
      *
      * <p>TightBlog stores time using the timezone of the server itself. When
-     * times are displayed  in a user's weblog they must be translated
+     * times are displayed in a user's weblog they must be translated
      * to the user's timeZone.</p>
-     *
-     * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on
-     * MySQL has only a one-second resolution.</p>
      */
     public Timestamp getPubTime() {
         return this.pubTime;
@@ -415,9 +404,6 @@ public class WeblogEntry implements Serializable {
      * <p>Roller stores time using the timeZone of the server itself. When
      * times are displayed  in a user's weblog they must be translated
      * to the user's timeZone.</p>
-     *
-     * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on
-     * MySQL has only a one-second resolution.</p>
      */
     @Basic(optional=false)
     public Timestamp getUpdateTime() {
@@ -450,59 +436,37 @@ public class WeblogEntry implements Serializable {
     }
 
     /**
-     * True if comments are allowed on this weblog entry.
-     */
-    @Basic(optional=false)
-    public Boolean getAllowComments() {
-        return allowComments;
-    }
-    /**
-     * True if comments are allowed on this weblog entry.
-     */
-    public void setAllowComments(Boolean allowComments) {
-        this.allowComments = allowComments;
-    }
-    
-    /**
-     * Number of days after pubTime that comments should be allowed, or 0 for no limit.
+     * Number of days after pubTime that comments should be allowed, -1 for no limit.
      */
     @Basic(optional=false)
     public Integer getCommentDays() {
         return commentDays;
     }
-    /**
-     * Number of days after pubTime that comments should be allowed, or 0 for no limit.
-     */
+
     public void setCommentDays(Integer commentDays) {
         this.commentDays = commentDays;
     }
     
     /**
-     * True if this entry should be rendered right to left.
+     * True for entries that should be rendered right to left.
      */
     @Basic(optional=false)
     public Boolean getRightToLeft() {
         return rightToLeft;
     }
-    /**
-     * True if this entry should be rendered right to left.
-     */
+
     public void setRightToLeft(Boolean rightToLeft) {
         this.rightToLeft = rightToLeft;
     }
     
     /**
-     * True if story should be pinned to the top of the site main blog.
-     * @return Returns the pinned.
+     * True if blog entry should be pinned to the top of the site main blog.
      */
     @Basic(optional=false)
     public Boolean getPinnedToMain() {
         return pinnedToMain;
     }
-    /**
-     * True if story should be pinned to the top of the Roller site main blog.
-     * @param pinnedToMain The pinned to set.
-     */
+
     public void setPinnedToMain(Boolean pinnedToMain) {
         this.pinnedToMain = pinnedToMain;
     }
@@ -524,7 +488,7 @@ public class WeblogEntry implements Serializable {
     /**
      * TightBlog lowercases all tags based on locale because there's not a 1:1 mapping
      * between uppercase/lowercase characters across all languages.  
-     * @param name
+     * @param name tag name
      * @throws WebloggerException
      */
     public void addTag(String name) throws WebloggerException {
@@ -608,8 +572,6 @@ public class WeblogEntry implements Serializable {
         }
     }
 
-    // ------------------------------------------------------------------------
-    
     /**
      * True if comments are still allowed on this entry considering the
      * allowComments and commentDays fields as well as the weblog and 
@@ -620,23 +582,19 @@ public class WeblogEntry implements Serializable {
         if (!WebloggerFactory.getWeblogger().getPropertiesManager().getBooleanProperty("users.comments.enabled")) {
             return false;
         }
-        if (getWeblog().getAllowComments() != null && !getWeblog().getAllowComments()) {
+        if (!Boolean.TRUE.equals(getWeblog().getAllowComments())) {
             return false;
         }
-        if (getAllowComments() != null && !getAllowComments()) {
+        if (getCommentDays() == null || getCommentDays() == 0) {
             return false;
+        }
+        if (getCommentDays() < 0) {
+            return true;
         }
         boolean ret = false;
-        if (getCommentDays() == null || getCommentDays() == 0) {
-            ret = true;
-        } else {
-            // we want to use pubtime for calculating when comments expire, but
-            // if pubtime isn't set (like for drafts) then just use updatetime
-            Date inPubTime = getPubTime();
-            if (inPubTime == null) {
-                inPubTime = getUpdateTime();
-            }
-            
+
+        Date inPubTime = getPubTime();
+        if (inPubTime != null) {
             Calendar expireCal = Calendar.getInstance(
                     getWeblog().getLocaleInstance());
             expireCal.setTime(inPubTime);
@@ -650,8 +608,6 @@ public class WeblogEntry implements Serializable {
         return ret;
     }
 
-    //------------------------------------------------------------------------
-    
     /**
      * Format the publish time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
@@ -672,8 +628,6 @@ public class WeblogEntry implements Serializable {
         return "ERROR: formatting date";
     }
     
-    //------------------------------------------------------------------------
-    
     /**
      * Format the update time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
@@ -693,8 +647,6 @@ public class WeblogEntry implements Serializable {
         return "ERROR: formatting date";
     }
     
-    //------------------------------------------------------------------------
-
     @Transient
     public List<WeblogEntryComment> getComments() {
         return getComments(true, true);
@@ -723,8 +675,6 @@ public class WeblogEntry implements Serializable {
         return comments.size();
     }
     
-    //------------------------------------------------------------------------
-        
     /**
      * Returns absolute entry permalink.
      */
@@ -734,9 +684,7 @@ public class WeblogEntry implements Serializable {
     }
     
     /**
-     * Return the Title of this post, or the first 255 characters of the
-     * entry's text.
-     *
+     * Return the Title of this post, or the first 255 characters of the entry's text.
      * @return String
      */
     @Transient
@@ -772,7 +720,6 @@ public class WeblogEntry implements Serializable {
      */
     public void setRss09xDescription(String string) {
     }
-    
     
     /**
      * Convenience method to transform mPlugins to a List

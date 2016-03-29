@@ -181,7 +181,6 @@ public final class EntryEdit extends UIAction {
         try {
             if (isAdd()) {
                 // set weblog defaults
-                bean.setAllowComments(getActionWeblog().getDefaultAllowComments());
                 bean.setCommentDays(getActionWeblog().getDefaultCommentDays());
                 // apply weblog default plugins
                 if (getActionWeblog().getDefaultPlugins() != null) {
@@ -218,7 +217,6 @@ public final class EntryEdit extends UIAction {
                     log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", " + bean.getMinutes() + ", " + bean.getSeconds());
                 }
 
-                bean.setAllowComments(entry.getAllowComments());
                 bean.setCommentDays(entry.getCommentDays());
                 bean.setRightToLeft(entry.getRightToLeft());
                 bean.setPinnedToMain(entry.getPinnedToMain());
@@ -337,7 +335,6 @@ public final class EntryEdit extends UIAction {
                 weblogEntry.setPlugins(bean.getPlugins());
 
                 // comment settings & right-to-left option
-                weblogEntry.setAllowComments(bean.getAllowComments());
                 weblogEntry.setCommentDays(bean.getCommentDays());
                 weblogEntry.setRightToLeft(bean.getRightToLeft());
 
@@ -557,6 +554,10 @@ public final class EntryEdit extends UIAction {
 
     public boolean isUserAnAuthor() {
         return getActionWeblogRole().hasEffectiveRole(WeblogRole.POST);
+    }
+
+    public boolean isCommentingEnabled() {
+        return getBooleanProp("users.comments.enabled") && getActionWeblog().getAllowComments();
     }
 
     /**

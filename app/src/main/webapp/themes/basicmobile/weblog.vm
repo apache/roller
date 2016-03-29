@@ -52,7 +52,7 @@
     <div class="mobile">
         <a id="btnMobile" href="#" alt="View Mobile Weblog">View Mobile Weblog</a>
     </div>
-    #includeTemplate($model.weblog "sidebar")
+    #includeTemplate("sidebar")
   </div>
 </div>
 

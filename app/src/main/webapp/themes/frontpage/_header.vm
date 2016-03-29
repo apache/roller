@@ -7,7 +7,7 @@
   <link href="$url.absoluteSite/favicon.ico" rel="shortcut icon" type="image/x-icon" />
   #showAutodiscoveryLinks($model.weblog)
   <style>
-  #includeTemplate($model.weblog "_css")
+  #includeTemplate("_css")
   </style>
 </head>
 <body class="view" bgcolor="#FFFFFF">

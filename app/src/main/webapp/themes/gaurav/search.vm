@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	#includeTemplate($model.weblog "standard_head")
+	#includeTemplate("standard_head")
 	<title>$model.weblog.name: Search Results for '$model.term'</title>
 	#if ($model.hits > 0)
 		<style>
@@ -29,7 +29,7 @@
 
 	<!-- HEADER -->
 	<header>
-		#includeTemplate($model.weblog "standard_header")
+		#includeTemplate("standard_header")
 	</header>
 
 	<!-- BODY -->
@@ -101,7 +101,7 @@
 
 	<!-- FOOTER -->
 	<footer>
-		#includeTemplate($model.weblog "standard_footer")
+		#includeTemplate("standard_footer")
 	</footer>
 	
 </body>

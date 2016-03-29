@@ -108,9 +108,8 @@ public class WeblogConfig extends UIAction {
         bean.setEditorPage(currentWeblog.getEditorPage());
         bean.setBlacklist(currentWeblog.getBlacklist());
         bean.setAllowComments(currentWeblog.getAllowComments());
-        bean.setDefaultAllowComments(currentWeblog.getDefaultAllowComments());
         bean.setDefaultCommentDays(currentWeblog.getDefaultCommentDays());
-        bean.setModerateComments(currentWeblog.getModerateComments());
+        bean.setApproveComments(currentWeblog.getApproveComments());
         bean.setEmailComments(currentWeblog.getEmailComments());
         bean.setEmailAddress(currentWeblog.getEmailAddress());
         bean.setLocale(currentWeblog.getLocale());
@@ -118,7 +117,6 @@ public class WeblogConfig extends UIAction {
         bean.setDefaultPlugins(currentWeblog.getDefaultPlugins());
         bean.setEntryDisplayCount(currentWeblog.getEntryDisplayCount());
         bean.setActive(currentWeblog.isActive());
-        bean.setCommentModerationRequired(currentWeblog.getCommentModerationRequired());
         bean.setAnalyticsCode(currentWeblog.getAnalyticsCode());
         bean.setIconPath(currentWeblog.getIconPath());
         bean.setAbout(currentWeblog.getAbout());
@@ -147,8 +145,7 @@ public class WeblogConfig extends UIAction {
                 weblog.setEditorPage(bean.getEditorPage());
                 weblog.setBlacklist(bean.getBlacklist());
                 weblog.setAllowComments(bean.getAllowComments());
-                weblog.setDefaultAllowComments(bean.getDefaultAllowComments());
-                weblog.setModerateComments(bean.getModerateComments());
+                weblog.setApproveComments(bean.getApproveComments());
                 weblog.setEmailComments(bean.getEmailComments());
                 weblog.setEmailAddress(bean.getEmailAddress());
                 weblog.setLocale(bean.getLocale());
@@ -156,7 +153,6 @@ public class WeblogConfig extends UIAction {
                 weblog.setDefaultPlugins(bean.getDefaultPlugins());
                 weblog.setEntryDisplayCount(bean.getEntryDisplayCount());
                 weblog.setActive(bean.isActive());
-                weblog.setCommentModerationRequired(bean.getCommentModerationRequired());
                 weblog.setIconPath(bean.getIconPath());
                 weblog.setAbout(bean.getAbout());
                 weblog.setAnalyticsCode(bean.getAnalyticsCode());
@@ -234,4 +230,5 @@ public class WeblogConfig extends UIAction {
     public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
         this.weblogEntryPlugins = weblogEntryPlugins;
     }
+
 }

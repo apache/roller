@@ -1,4 +1,4 @@
-#includeTemplate($model.weblog "_header")
+#includeTemplate("_header")
 
 #set($maxResults = 25) 
 #set($since = 365) 
@@ -71,4 +71,4 @@
 
 </div>
 </div>
-#includeTemplate($model.weblog "_footer")
+#includeTemplate("_footer")

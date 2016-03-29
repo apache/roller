@@ -742,12 +742,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             LOG.debug("applyCommentDefaults");
         }
         
-        // TODO: Non-standard JPA bulk update, using parameter values in set clause
         Query q = strategy.getNamedUpdate(
-                "WeblogEntry.updateAllowComments&CommentDaysByWeblog");
-        q.setParameter(1, weblog.getDefaultAllowComments());
-        q.setParameter(2, weblog.getDefaultCommentDays());
-        q.setParameter(3, weblog);
+                "WeblogEntry.updateCommentDaysByWeblog");
+        q.setParameter(1, weblog.getDefaultCommentDays());
+        q.setParameter(2, weblog);
         q.executeUpdate();
     }
     

@@ -1,4 +1,4 @@
-#includeTemplate($model.weblog "_header")
+#includeTemplate("_header")
 
 #set($maxResults = 25) 
 #set($since = 365) 
@@ -35,10 +35,10 @@
                     #set($handle = $model.getRequestParameter("weblog"))
                     <a href="?letter=$utils.left($handle,1)">Back to blog directory</a>
                     #set($profileWeblog = $site.getWeblog($handle))
-                    #includeTemplate($model.weblog "_blogprofile")
+                    #includeTemplate("_blogprofile")
                 #else                 
                    #set($pageLength = $maxResults)
-                   #includeTemplate($model.weblog "_blogdirectory")
+                   #includeTemplate("_blogdirectory")
                 #end
                 </div>
             </div>
@@ -72,4 +72,4 @@
 
 </div>
 </div>
-#includeTemplate($model.weblog "_footer")
+#includeTemplate("_footer")

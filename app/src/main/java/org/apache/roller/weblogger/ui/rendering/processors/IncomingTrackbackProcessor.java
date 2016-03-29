@@ -70,6 +70,9 @@ public class IncomingTrackbackProcessor {
 
     private CommentValidationManager commentValidationManager = null;
 
+    // whether comment moderation is enforced server-wide (regardless of per-blog setting)
+    private boolean globalCommentModerationRequired = true;
+
     @Autowired
     private WeblogManager weblogManager;
 
@@ -114,8 +117,8 @@ public class IncomingTrackbackProcessor {
 
     @PostConstruct
     public void init() throws ServletException {
-        log.info("Initializing IncomingTrackbackProcessor");
         commentValidationManager = new CommentValidationManager(trackbackValidators);
+        globalCommentModerationRequired = propertiesManager.getBooleanProperty("users.moderation.required");
     }
 
     /**
@@ -202,7 +205,8 @@ public class IncomingTrackbackProcessor {
                 int validationScore = commentValidationManager.validateComment(comment, messages);
                 log.debug("Comment Validation score: " + validationScore);
 
-                if (validationScore == WebloggerCommon.PERCENT_100 && weblog.getCommentModerationRequired()) {
+                if (validationScore == WebloggerCommon.PERCENT_100 &&
+                        (globalCommentModerationRequired || weblog.getApproveComments())) {
                     // Valid comments go into moderation if required
                     comment.setStatus(ApprovalStatus.PENDING);
                 } else if (validationScore == WebloggerCommon.PERCENT_100) {
@@ -221,7 +225,7 @@ public class IncomingTrackbackProcessor {
                     WebloggerFactory.flush();
 
                     // only invalidate the cache if comment isn't moderated
-                    if(!weblog.getCommentModerationRequired()) {
+                    if (!(globalCommentModerationRequired || weblog.getApproveComments())) {
                         // Clear all caches associated with comment
                         cacheManager.invalidate(comment);
                     }

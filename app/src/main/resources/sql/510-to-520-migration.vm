@@ -117,6 +117,10 @@ update media_file mf set creatorid = (select id from weblogger_user wu where mf.
 #dropColumn("weblog", "showalllangs")
 #dropColumn("weblog", "enablebloggerapi")
 #dropColumn("weblog", "bloggercatid")
+#dropColumn("weblog", "defaultallowcomments")
+#dropColumn("weblog_entry", "allowcomments")
+
+#renameColumn("weblog", "commentmod", "approvecomments", "$db.BOOLEAN_SQL_TYPE_TRUE not null")
 
 #dropIndex("weblog_entry", "we_locale_idx")
 #dropColumn("weblog_entry", "locale")

@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
-
 /**
  * Allows user to view and pick from list of his/her websites.
  */
@@ -43,14 +42,14 @@ public class MainMenu extends UIAction {
     
     private static Log log = LogFactory.getLog(MainMenu.class);
 
+    private String websiteId = null;
+    private String inviteId = null;
+
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
-
-    private String websiteId = null;
-    private String inviteId = null;
 
     private UserManager userManager;
 
