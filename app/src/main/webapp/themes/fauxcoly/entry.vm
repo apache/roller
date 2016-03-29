@@ -3,7 +3,7 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    #includeTemplate($model.weblog "standard_head")
+    #includeTemplate("standard_head")
     <title>$model.weblog.name: $model.weblogEntry.title</title>
 
     <style>
@@ -152,7 +152,7 @@
 <!-- HEADER -->
 <!-- *************************************************** -->
 <div id="header_content">
-#includeTemplate($model.weblog "standard_header")
+#includeTemplate("standard_header")
 </div>
 
 
@@ -241,7 +241,7 @@
 <!-- FOOTER -->
 <!-- *************************************************** -->
 <div id="footer_content">
-#includeTemplate($model.weblog "standard_footer")
+#includeTemplate("standard_footer")
 </div>
 
 </body>

@@ -44,7 +44,6 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
     // keep a cached version of cache last refresh time for 304 Not Modified calculations
     private ExpiringCacheEntry lastUpdateTime = null;
 
-    @Autowired
     private PropertiesManager propertiesManager;
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {

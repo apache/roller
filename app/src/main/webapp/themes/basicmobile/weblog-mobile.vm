@@ -55,8 +55,7 @@
       ## Search
       #showMobileSearchForm($model.weblog false)
 
-      #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
-      #showMobileCategoryLinksList($rootCategory)
+      #showMobileCategoryLinksList()
 
       ## show next/previous paging controls
       #set($pager = $model.getWeblogEntriesPager())

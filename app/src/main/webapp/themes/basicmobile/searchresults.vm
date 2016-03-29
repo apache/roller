@@ -35,7 +35,7 @@
 
 <div class="rightbar_wrapper">
   <div class="rightbar">
-    #includeTemplate($model.weblog "sidebar")
+    #includeTemplate("sidebar")
   </div>
 </div>
 

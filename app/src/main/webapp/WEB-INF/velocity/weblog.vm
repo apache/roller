@@ -20,10 +20,10 @@
 *#
 
 #** 
-Set of essential macros needed in TightBlog velocity templates.
-These are the documented macros in order defined in this file:
+Set of essential macros needed in weblogger velocity templates.
+Macros defined in this file:
 
-    #includeTemplate($weblog $pageName)
+    #includeTemplate($pageName)
     #showAutodiscoveryLinks($weblog)
     #showTrackbackAutodiscovery($entry)
     #showMetaDescription()
@@ -67,7 +67,7 @@ These are the documented macros in order defined in this file:
 #** 
 Parse and include page template from weblog.
 *#
-#macro(includeTemplate $weblog $pageName)
+#macro(includeTemplate $pageName)
     #set($pageArg = false)## This is required for such constructs; see Velocity docs and ROL-689
     #set($pageArg = $model.getTemplateByName($pageName))
     #if ($pageArg)
@@ -527,7 +527,6 @@ Show weblog's categories in specified parent category.
 
 ## Mobile version
 #macro(showMobileCategoryLinksList)
-    <!-- showMobileCategoryLinksList -->
     <div data-role="popup" id="categories">
       <div data-role="collapsible-set" data-theme="a" data-content-theme="a" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
         <div data-role="collapsible" data-collapsed="false" data-inset="false">
@@ -995,7 +994,3 @@ Include Javascript code needed for expanding folder macros (undocumented).
 
 </script>
 #end
-
-
-
-

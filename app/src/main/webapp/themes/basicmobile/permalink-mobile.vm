@@ -35,9 +35,7 @@
     </div>
 
     <div role="main" class="ui-content">
-
-      #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
-      #showMobileCategoryLinksList($rootCategory)
+      #showMobileCategoryLinksList()
 
       ## show next/previous paging controls
       #set($pager = $model.getWeblogEntriesPager()) 

@@ -153,8 +153,7 @@
       </property-def>
       <property-def  name="users.comments.emailnotify"  key="configForm.emailComments">
          <type>boolean</type>
-         <!-- defaults to false because we don't distribute mail jars -->
-         <default-value>false</default-value> 
+         <default-value>true</default-value>
       </property-def>
       <property-def  name="users.moderation.required"  key="configForm.moderationRequired">
          <type>boolean</type>

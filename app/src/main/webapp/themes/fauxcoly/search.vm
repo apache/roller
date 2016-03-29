@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>$model.weblog.name: Search Results for '$model.term'</title>
-    #includeTemplate($model.weblog "standard_head")
+    #includeTemplate("standard_head")
     #if ($model.hits > 0)
     <style>
     span.searchword { background-color:yellow; }
@@ -31,7 +31,7 @@
 <!-- HEADER -->
 <!-- *************************************************** -->
 <div id="header_content">
-#includeTemplate($model.weblog "standard_header")
+#includeTemplate("standard_header")
 </div>
 
 
@@ -114,7 +114,7 @@
 <!-- FOOTER -->
 <!-- *************************************************** -->
 <div id="footer_content">
-#includeTemplate($model.weblog "standard_footer")
+#includeTemplate("standard_footer")
 </div>
 
 </body>

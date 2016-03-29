@@ -3,7 +3,7 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    #includeTemplate($model.weblog "standard_head")
+    #includeTemplate("standard_head")
     <title>$model.weblog.name: $model.weblog.tagline</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
@@ -16,7 +16,7 @@
 <!-- HEADER -->
 <!-- *************************************************** -->
 <div id="header_content">
-#includeTemplate($model.weblog "standard_header")
+#includeTemplate("standard_header")
 </div>
 
 
@@ -112,7 +112,7 @@ Click the link below to subscribe via your favorite feed reader:</p>
 <!-- FOOTER -->
 <!-- *************************************************** -->
 <div id="footer_content">
-#includeTemplate($model.weblog "standard_footer")
+#includeTemplate("standard_footer")
 </div>
 </body>
 </html>

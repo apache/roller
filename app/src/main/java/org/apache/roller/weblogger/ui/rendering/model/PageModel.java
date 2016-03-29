@@ -33,11 +33,15 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
+import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
@@ -56,7 +60,9 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 public class PageModel implements Model {
     
     private static Log log = LogFactory.getLog(PageModel.class);
-    
+
+    private static final int MAX_ENTRIES = 100;
+
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
@@ -224,6 +230,77 @@ public class PageModel implements Model {
             return pageRequest.getWeblogCategory().templateCopy();
         }
         return null;
+    }
+
+    /**
+     * Get up to 100 most recent published entries in weblog.
+     * @param cat Category name or null for no category restriction
+     * @param length Max entries to return (1-100)
+     * @return List of weblog entry objects.
+     */
+    public List<WeblogEntry> getRecentWeblogEntries(String cat, int length) {
+        if (cat != null && "nil".equals(cat)) {
+            cat = null;
+        }
+        if (length > MAX_ENTRIES) {
+            length = MAX_ENTRIES;
+        }
+        List<WeblogEntry> recentEntries = new ArrayList<>();
+        if (length < 1) {
+            return recentEntries;
+        }
+        try {
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(weblog);
+            wesc.setCatName(cat);
+            wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+            wesc.setMaxResults(length);
+            recentEntries = weblogEntryManager.getWeblogEntries(wesc);
+        } catch (WebloggerException e) {
+            log.error("ERROR: getting recent entries", e);
+        }
+        return recentEntries;
+    }
+
+    /**
+     * Get up to 100 most recent approved and non-spam comments in weblog.
+     * @param length Max entries to return (1-100)
+     * @return List of comment objects.
+     */
+    public List<WeblogEntryComment> getRecentComments(int length) {
+        if (length > MAX_ENTRIES) {
+            length = MAX_ENTRIES;
+        }
+        List<WeblogEntryComment> recentComments = new ArrayList<>();
+        if (length < 1) {
+            return recentComments;
+        }
+        try {
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setWeblog(weblog);
+            csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
+            csc.setMaxResults(length);
+            recentComments = weblogEntryManager.getComments(csc);
+        } catch (WebloggerException e) {
+            log.error("ERROR: getting recent comments", e);
+        }
+        return recentComments;
+    }
+
+    /**
+     * Get a list of TagStats objects for the most popular tags
+     *
+     * @param length    Max number of tags to return.
+     * @return          Collection of WeblogEntryTag objects
+     */
+    public List<TagStat> getPopularTags(int length) {
+        List<TagStat> results = new ArrayList<>();
+        try {
+            results = weblogEntryManager.getPopularTags(weblog, 0, length);
+        } catch (Exception e) {
+            log.error("ERROR: fetching popular tags for weblog " + weblog.getName(), e);
+        }
+        return results;
     }
 
 

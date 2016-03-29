@@ -375,6 +375,7 @@
         <beans:property name="cacheHandlerId" value="cache.sitewide"/>
         <beans:property name="size" value="50"/>
         <beans:property name="timeoutSec" value="1800"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="planetCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache">

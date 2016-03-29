@@ -202,11 +202,12 @@
         </div>
         <br />
 
-        <s:checkbox name="bean.allowComments" />
-        <s:text name="weblogEdit.allowComments" />
-        <s:text name="weblogEdit.commentDays" />
-        <s:select name="bean.commentDays" list="commentDaysList" size="1" listKey="left" listValue="right" />
-        <br />
+        <s:if test="commentingEnabled">
+            <s:text name="weblogEdit.allowComments" />
+            <s:text name="weblogEdit.commentDays" />
+            <s:select name="bean.commentDays" list="commentDaysList" size="1" listKey="left" listValue="right" />
+            <br />
+        </s:if>
 
         <s:checkbox name="bean.rightToLeft" />
         <s:text name="weblogEdit.rightToLeft" />

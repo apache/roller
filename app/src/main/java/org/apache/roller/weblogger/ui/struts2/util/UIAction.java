@@ -390,7 +390,8 @@ public abstract class UIAction extends ActionSupport
 
     public List<Pair<Integer, String>> getCommentDaysList() {
         List<Pair<Integer, String>> opts = new ArrayList<>();
-        opts.add(Pair.of(0, getText("weblogEdit.unlimitedCommentDays")));
+        opts.add(Pair.of(-1, getText("weblogEdit.unlimitedCommentDays")));
+        opts.add(Pair.of(0, getText("weblogEdit.days0")));
         opts.add(Pair.of(3, getText("weblogEdit.days3")));
         opts.add(Pair.of(7, getText("weblogEdit.days7")));
         opts.add(Pair.of(14, getText("weblogEdit.days14")));

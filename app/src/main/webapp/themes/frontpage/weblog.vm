@@ -1,4 +1,4 @@
-#includeTemplate($model.weblog "_header") 
+#includeTemplate("_header")
 
 #set($maxResults = 25)
 #set($since = 365)
@@ -69,7 +69,7 @@
 
                         #foreach($entry in $pager.items)
                             #if($velocityCount <= $maxResults)
-                                #includeTemplate($model.weblog "_entry")
+                                #includeTemplate("_entry")
                             #end
                         #end
 
@@ -103,7 +103,7 @@
                         #foreach($day in $map.keySet())
                             #set($entries = $map.get($day))   
                             #foreach($entry in $entries)
-                                #includeTemplate($model.weblog "_entry")
+                                #includeTemplate("_entry")
                             #end
                         #end
 
@@ -184,4 +184,4 @@
 
 </div> <!-- wrapper -->
 
-#includeTemplate($model.weblog "_footer")
+#includeTemplate("_footer")
