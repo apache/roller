@@ -65,10 +65,10 @@
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
-                    <s:textfield name="bean.link" size="50" maxlength="255" onkeyup="updatePageURLDisplay()" />
+                    <s:textfield name="bean.relativePath" size="50" maxlength="255" onkeyup="updatePageURLDisplay()" />
                     <br/>
-                    <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red"><s:property value="bean.link" /></span>
-                    <s:if test="template.link != null">
+                    <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red"><s:property value="bean.relativePath" /></span>
+                    <s:if test="template.relativePath != null">
                         [<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]
                     </s:if>
                 </td>
@@ -196,14 +196,14 @@
 
 <script>
 var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';
-var originalLink = '<s:property value="bean.link" />';
+var originalLink = '<s:property value="bean.relativePath" />';
 var type = '<s:property value="bean.type" /> ' ;
 
 // Update page URL when user changes link
 function updatePageURLDisplay() {
     var previewSpan = document.getElementById('linkPreview');
     var n1 = previewSpan.firstChild;
-    var n2 = document.createTextNode(document.getElementById('template_bean_link').value);
+    var n2 = document.createTextNode(document.getElementById('templateEdit_bean_relativePath').value);
     if (n1 == null) {
         previewSpan.appendChild(n2);
     } else {
@@ -212,10 +212,10 @@ function updatePageURLDisplay() {
 }
 // Don't launch page if user has changed link, it'll be a 404
 function launchPage() {
-    if (originalLink != document.getElementById('template_bean_link').value) {
-        window.alert("Link changed, not launching page");
+    if (originalLink != document.getElementById('templateEdit_bean_relativePath').value) {
+        window.alert("Link changed, please save before launching");
     } else {
-        window.open(weblogURL + 'page/' + originalLink+'?type='+type, '_blank');
+        window.open(weblogURL + 'page/' + originalLink, '_blank');
     }
 }
 //Get cookie to determine state of control

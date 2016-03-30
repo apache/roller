@@ -30,7 +30,7 @@
                             <xs:element name="name" type="xs:string"/>
                             <xs:element name="description" type="xs:string"/>
                             <xs:element name="navbar" type="xs:boolean"/>
-                            <xs:element name="link" type="xs:string" minOccurs="0"/>
+                            <xs:element name="relativePath" type="xs:string" minOccurs="0"/>
                             <xs:element name="hidden" type="xs:boolean"/>
                             <xs:element name="renditions" type="renditionsType"/>
                         </xs:all>

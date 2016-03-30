@@ -25,10 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -49,7 +48,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     private String type = "standard";
     
     // heavyweight attributes
-    private Theme theme = null;
+    private SharedTheme sharedTheme = null;
     private WeblogEntry weblogEntry = null;
     
     public WeblogPreviewRequest(HttpServletRequest request) 
@@ -83,15 +82,10 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         return (servlet != null && PREVIEW_SERVLET.equals(servlet));
     }
     
-    
     public String getThemeName() {
         return themeName;
     }
 
-    public void setThemeName(String theme) {
-        this.themeName = theme;
-    }
-    
     // override so that previews never show login status
     public String getAuthenticUser() {
         return null;
@@ -102,24 +96,20 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         return false;
     }
 
-    public Theme getTheme() {
+    public SharedTheme getSharedTheme() {
         
-        if(theme == null && themeName != null) {
+        if (sharedTheme == null && themeName != null) {
             try {
                 ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-                theme = themeMgr.getTheme(themeName);
+                sharedTheme = themeMgr.getSharedTheme(themeName);
             } catch(IllegalArgumentException tnfe) {
                 // bogus theme given in URL, return null for callee to handle
             } catch(WebloggerException re) {
-                log.error("Error looking up theme "+themeName, re);
+                log.error("Error looking up theme " + themeName, re);
             }
         }
         
-        return theme;
-    }
-
-    public void setTheme(Theme theme) {
-        this.theme = theme;
+        return sharedTheme;
     }
 
     public WeblogEntry getWeblogEntry() {

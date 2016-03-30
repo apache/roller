@@ -82,7 +82,7 @@ public class PlanetModel implements Model {
         
         if (weblogRequest instanceof WeblogPageRequest) {
             ThemeTemplate weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
-            pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
+            pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }  
         

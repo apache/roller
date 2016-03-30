@@ -118,9 +118,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getTheme(java.lang.String)
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getSharedTheme(java.lang.String)
 	 */
-	public SharedTheme getTheme(String id) throws WebloggerException {
+	public SharedTheme getSharedTheme(String id) throws WebloggerException {
 
 		// try to lookup theme from library
 		SharedTheme theme = this.themes.get(id);
@@ -134,9 +134,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getTheme(Weblog)
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getWeblogTheme(Weblog)
 	 */
-	public WeblogTheme getTheme(Weblog weblog) throws WebloggerException {
+	public WeblogTheme getWeblogTheme(Weblog weblog) throws WebloggerException {
 
 		if (weblog == null) {
 			return null;
@@ -158,9 +158,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getEnabledThemesList()
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getEnabledSharedThemesList()
 	 */
-	public List<SharedTheme> getEnabledThemesList() {
+	public List<SharedTheme> getEnabledSharedThemesList() {
 		List<SharedTheme> allThemes = new ArrayList<>(this.themes.values());
 
 		// sort 'em ... default ordering for themes is by name
@@ -170,9 +170,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importTheme(Weblog, SharedTheme)
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importSharedTheme(Weblog, SharedTheme)
 	 */
-	public void importTheme(Weblog weblog, SharedTheme theme) throws WebloggerException {
+	public void importSharedTheme(Weblog weblog, SharedTheme theme) throws WebloggerException {
 
 		log.debug("Importing theme [" + theme.getName() + "] to weblog [" + weblog.getName() + "]");
 
@@ -180,7 +180,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
 			WeblogTemplate template;
 
-			if (themeTemplate.getAction() != null && themeTemplate.getAction().isSingleton()) {
+			if (themeTemplate.getAction().isSingleton()) {
 				// if template is a singleton, lookup by action
 				importedActionTemplates.add(themeTemplate.getAction());
 				template = weblogManager.getTemplateByAction(weblog, themeTemplate.getAction());
@@ -198,7 +198,7 @@ public class ThemeManagerImpl implements ThemeManager {
 			template.setAction(themeTemplate.getAction());
 			template.setName(themeTemplate.getName());
 			template.setDescription(themeTemplate.getDescription());
-			template.setLink(themeTemplate.getLink());
+			template.setRelativePath(themeTemplate.getRelativePath());
 			template.setHidden(themeTemplate.isHidden());
 			template.setNavbar(themeTemplate.isNavbar());
 			template.setLastModified(new Date());

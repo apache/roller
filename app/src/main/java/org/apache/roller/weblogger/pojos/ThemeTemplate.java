@@ -80,14 +80,16 @@ public interface ThemeTemplate extends Template {
     
     
     /**
-     * The url link value for this Template.  If this template is not
-     * private this is the url that it can be accessed at.
+     * The relative path for this Template to add to the default page URL
+     * to view the template from the browser providing it is not hidden.
+     * Can be null or empty if hidden.
      */
-    String getLink();
+    String getRelativePath();
     
     
     /**
-     * Is the Template hidden?  A hidden template cannot be accessed directly.
+     * A hidden template can be called from other templates but not accessed
+     * directly from the browser via a URL.
      */
     boolean isHidden();
     

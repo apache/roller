@@ -64,7 +64,7 @@ public class WeblogPageTest extends WebloggerTest {
         testPage.setAction(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
-        testPage.setLink("testTemp");
+        testPage.setRelativePath("testTemp");
         testPage.setLastModified(new java.util.Date());
         testPage.setWeblog(getManagedWeblog(testWeblog));
     }
@@ -148,7 +148,7 @@ public class WeblogPageTest extends WebloggerTest {
         assertNotNull(page);
 
         // lookup by link
-        page = weblogManager.getTemplateByLink(testWeblog, testPage.getLink());
+        page = weblogManager.getTemplateByPath(testWeblog, testPage.getRelativePath());
         assertNotNull(page);
 
         // lookup all pages for weblog

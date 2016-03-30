@@ -15,7 +15,7 @@
         <description>Stylesheet for Basic theme</description>
         <navbar>false</navbar>
         <hidden>false</hidden>
-        <link>basic-custom.css</link>
+        <relativePath>basic-custom.css</relativePath>
         <renditions>
             <rendition>
                 <contentsFile>basic-custom.css</contentsFile>

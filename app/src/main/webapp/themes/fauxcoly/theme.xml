@@ -17,7 +17,7 @@
         <description>Custom style sheet</description>
         <navbar>false</navbar>
         <hidden>false</hidden>
-        <link>custom.css</link>
+        <relativePath>custom.css</relativePath>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -94,7 +94,7 @@
     <template action="custom">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
-        <link>archives</link>
+        <relativePath>archives</relativePath>
         <navbar>true</navbar>
         <hidden>false</hidden>
         <renditions>
@@ -147,7 +147,7 @@
     <template action="custom">
         <name>style.css</name>
         <description>Base stylesheet for theme</description>
-        <link>style.css</link>
+        <relativePath>style.css</relativePath>
         <navbar>false</navbar>
         <hidden>false</hidden>
         <renditions>
@@ -161,7 +161,7 @@
     <template action="javascript">
         <name>searchhi.js</name>
         <description>3rd party script for search term highlighting</description>
-        <link>searchhi.js</link>
+        <relativePath>searchhi.js</relativePath>
         <navbar>false</navbar>
         <hidden>false</hidden>
         <renditions>

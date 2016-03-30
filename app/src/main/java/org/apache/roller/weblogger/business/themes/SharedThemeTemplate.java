@@ -47,7 +47,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private ComponentType action = null;
     private String name = null;
     private String description = null;
-    private String link = null;
+    private String relativePath = null;
     private boolean navbar = false;
     private boolean hidden = false;
 
@@ -60,14 +60,14 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     public SharedThemeTemplate() {}
     
     public SharedThemeTemplate(String id, ComponentType action, String name,
-            String desc, String link,
+            String desc, String relativePath,
             boolean hidden, boolean navbar) {
         
         this.id = id;
         this.action = action;
         this.name = name;
         this.description = desc;
-        this.link = link;
+        this.relativePath = relativePath;
         this.hidden = hidden;
         this.navbar = navbar;
     }
@@ -96,12 +96,12 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.description = description;
     }
 
-    public String getLink() {
-        return link;
+    public String getRelativePath() {
+        return relativePath;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 
     public boolean isNavbar() {
@@ -126,7 +126,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         copy.setId(id);
         copy.setName(name);
         copy.setDescription(description);
-        copy.setLink(link);
+        copy.setRelativePath(relativePath);
         copy.setLastModified(lastModified);
         copy.setHidden(hidden);
         copy.setNavbar(navbar);
@@ -183,7 +183,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
 
 
     public String toString() {
-        return (id + "," + name + "," + description + "," + link + "," + 
+        return (id + "," + name + "," + description + "," + relativePath + "," +
                 lastModified + "\n\n" + contents + "\n");
     }
 

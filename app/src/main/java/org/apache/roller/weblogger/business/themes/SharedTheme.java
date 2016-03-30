@@ -20,13 +20,9 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
@@ -40,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * theme related attributes such as name, last modified date, etc.
  */
 @XmlRootElement(name="weblogtheme")
-public class SharedTheme implements Theme, Serializable {
+public class SharedTheme implements Comparable<SharedTheme>, Serializable {
 
     private String id = null;
     private String name = null;
@@ -59,8 +55,6 @@ public class SharedTheme implements Theme, Serializable {
     public Set<SharedThemeTemplate> getTempTemplates() {
         return tempTemplates;
     }
-
-    private static Log log = LogFactory.getLog(SharedTheme.class);
 
     // the filesystem directory where we should read this theme from
     private String themeDir = null;
@@ -174,7 +168,7 @@ public class SharedTheme implements Theme, Serializable {
      * Lookup the specified template by link. Returns null if the template
      * cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) {
+    public ThemeTemplate getTemplateByPath(String link) {
         return this.templatesByLink.get(link);
     }
 
@@ -191,7 +185,7 @@ public class SharedTheme implements Theme, Serializable {
      */
     void addTemplate(SharedThemeTemplate template) {
         this.templatesByName.put(template.getName(), template);
-        this.templatesByLink.put(template.getLink(), template);
+        this.templatesByLink.put(template.getRelativePath(), template);
         if (template.getAction().isSingleton()) {
             this.templatesByAction.put(template.getAction(), template);
         }
@@ -210,7 +204,7 @@ public class SharedTheme implements Theme, Serializable {
         return sb.toString();
     }
 
-    public int compareTo(Theme other) {
+    public int compareTo(SharedTheme other) {
         return getName().compareTo(other.getName());
     }
 }

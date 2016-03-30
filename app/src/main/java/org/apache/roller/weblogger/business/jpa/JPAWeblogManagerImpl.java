@@ -433,21 +433,21 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Use JPA directly because Weblogger's Query API does too much allocation.
      */
-    public WeblogTemplate getTemplateByLink(Weblog weblog, String templateLink)
+    public WeblogTemplate getTemplateByPath(Weblog weblog, String path)
     throws WebloggerException {
         
         if (weblog == null) {
             throw new WebloggerException("userName is null");
         }
 
-        if (templateLink == null) {
-            throw new WebloggerException("templateLink is null");
+        if (path == null) {
+            throw new WebloggerException("path is null");
         }
 
-        TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByWeblog&Link",
+        TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByWeblog&RelativePath",
                 WeblogTemplate.class);
         query.setParameter(1, weblog);
-        query.setParameter(2, templateLink);
+        query.setParameter(2, path);
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {

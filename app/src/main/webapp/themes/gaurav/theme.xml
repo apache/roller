@@ -17,7 +17,7 @@
         <description>Custom style sheet</description>
         <navbar>false</navbar>
         <hidden>false</hidden>
-        <link>custom.css</link>
+        <relativePath>custom.css</relativePath>
         <renditions>
             <rendition>
                 <contentsFile>custom_css.vm</contentsFile>
@@ -94,7 +94,7 @@
     <template action="custom">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
-        <link>archives</link>
+        <relativePath>archives</relativePath>
         <navbar>true</navbar>
         <hidden>false</hidden>
         <renditions>

@@ -80,10 +80,6 @@ public class WeblogTheme {
         return this.sharedTheme.isEnabled();
     }
 
-    public int compareTo(Theme other) {
-        return sharedTheme.compareTo(other);
-    }
-
     /**
      * Get the collection of all templates associated with this Theme.
      */
@@ -157,14 +153,14 @@ public class WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
+    public ThemeTemplate getTemplateByPath(String path) throws WebloggerException {
         ThemeTemplate template = null;
 
         if (!weblog.isTempPreviewWeblog()) {
-            template = weblogManager.getTemplateByLink(this.weblog, link);
+            template = weblogManager.getTemplateByPath(this.weblog, path);
         }
         if (template == null) {
-            template = sharedTheme.getTemplateByLink(link);
+            template = sharedTheme.getTemplateByPath(path);
         }
         return template;
     }

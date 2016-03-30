@@ -23,7 +23,7 @@
 			//]]>
 		</script>
    	#end
-	<link rel="stylesheet" href='$url.page("custom.css")' />
+	<link rel="stylesheet" href='$url.page("gaurav", "custom.css")' />
 </head>
 <body onload="loadSearchHighlight()">
 

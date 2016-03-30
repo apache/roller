@@ -138,7 +138,7 @@ public class Templates extends UIAction {
                 newTemplate.setLastModified(new Date());
 
                 if (!getNewTmplAction().isSingleton()) {
-                    newTemplate.setLink(getNewTmplName());
+                    newTemplate.setRelativePath(getNewTmplName());
                 }
 
                 // Make sure we have always have a Weblog main page. Stops
