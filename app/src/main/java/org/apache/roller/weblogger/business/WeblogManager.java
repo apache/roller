@@ -175,9 +175,9 @@ public interface WeblogManager {
     
     
     /**
-     * Get a custom template by its link.
+     * Get a custom template by its relative path.
      */
-    WeblogTemplate getTemplateByLink(Weblog w, String p)
+    WeblogTemplate getTemplateByPath(Weblog w, String p)
         throws WebloggerException;
 
     /**

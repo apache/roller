@@ -3,7 +3,7 @@
 <head>
 	#includeTemplate("standard_head")
 	<title>$model.weblog.name: Archives</title>
-	<link rel="stylesheet" href='$url.page("custom.css")' />
+	<link rel="stylesheet" href='$url.page("gaurav", "custom.css")' />
 </head>
 <body>
 

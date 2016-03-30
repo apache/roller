@@ -109,7 +109,7 @@ public class SiteModel implements Model {
         
         if (weblogRequest instanceof WeblogPageRequest) {
             ThemeTemplate weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
-            pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
+            pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
             tags = ((WeblogPageRequest)weblogRequest).getTags();
         } else if (weblogRequest instanceof WeblogFeedRequest) {

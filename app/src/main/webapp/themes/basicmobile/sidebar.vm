@@ -22,6 +22,6 @@
 
     <h2>Navigation</h2>
     <div class="sidebar">
-    #showPageMenu($model.weblog)
+    #showPageMenu()
     #showEditorMenu(true)
     </div>

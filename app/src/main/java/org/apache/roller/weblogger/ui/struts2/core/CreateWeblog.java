@@ -224,7 +224,7 @@ public class CreateWeblog extends UIAction {
     
     
     public List getThemes() {
-        return themeManager.getEnabledThemesList();
+        return themeManager.getEnabledSharedThemesList();
     }
 
     public Weblog getBean() {

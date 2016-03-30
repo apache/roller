@@ -40,13 +40,13 @@
                     </li>
                 #end
 				#foreach($iPage in $weblog.pages)
-				    #if (!$iPage.hidden && $iPage.navbar && $iPage.link != "Weblog")
+				    #if (!$iPage.hidden && $iPage.navbar)
 				        #set($isSelected = false)
 				        #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
 				        #if (!$isSelected)
-				            <li><a href="$url.page($iPage.link)">$iPage.name</a></li>
+				            <li><a href="$url.page(null, $iPage.relativePath)">$iPage.name</a></li>
 				        #else
-				            <li class="active"><a href="$url.page($iPage.link)">$iPage.name</a></li>
+				            <li class="active"><a href="$url.page(null, $iPage.relativePath)">$iPage.name</a></li>
 				        #end
 				    #end
 				#end

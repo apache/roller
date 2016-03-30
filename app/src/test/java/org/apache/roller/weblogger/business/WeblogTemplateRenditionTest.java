@@ -68,7 +68,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         testPage.setAction(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
-        testPage.setLink("testTemp");
+        testPage.setRelativePath("testTemp");
         testPage.setLastModified(new java.util.Date());
         testPage.setWeblog(getManagedWeblog(testWeblog));
     }

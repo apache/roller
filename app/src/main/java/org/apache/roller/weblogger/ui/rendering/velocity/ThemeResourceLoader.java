@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
@@ -33,7 +34,6 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 
 /**
@@ -82,15 +82,13 @@ public class ThemeResourceLoader extends ResourceLoader {
             }
 
             // lookup the template from the proper theme
-            ThemeManager themeMgr = WebloggerFactory.getWeblogger()
-                    .getThemeManager();
-            Theme theme = themeMgr.getTheme(split[0]);
+            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+            SharedTheme theme = themeMgr.getSharedTheme(split[0]);
             ThemeTemplate template = theme.getTemplateByName(split[1]);
 
             if (template == null) {
                 throw new ResourceNotFoundException("Template [" + split[1]
-                        + "] doesn't seem to be part of theme [" + split[0]
-                        + "]");
+                        + "] doesn't seem to be part of theme [" + split[0] + "]");
             }
 
             final String contents;

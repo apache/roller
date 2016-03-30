@@ -40,15 +40,15 @@ public interface ThemeManager {
     void initialize() throws WebloggerException;
 
     /**
-     * Get the Theme object with the given id.
+     * Get the SharedTheme object with the given id.
      *
-     * @return Theme The Theme object with the given id.
+     * @return Theme The SharedTheme object with the given id.
      * @throws IllegalArgumentException
      *             If the named theme cannot be found.
      * @throws WebloggerException
      *             If there is some kind of fatal backend error.
      **/
-    SharedTheme getTheme(String id) throws WebloggerException;
+    SharedTheme getSharedTheme(String id) throws WebloggerException;
 
     /**
      * Get the WeblogTheme for a given weblog.
@@ -59,18 +59,18 @@ public interface ThemeManager {
      * @throws WebloggerException
      *             If there is some kind of fatal backend error.
      */
-    WeblogTheme getTheme(Weblog weblog) throws WebloggerException;
+    WeblogTheme getWeblogTheme(Weblog weblog) throws WebloggerException;
 
     /**
-     * Get a list of all theme names that are currently enabled. This list is
+     * Get a list of all shared themes that are currently enabled. This list is
      * ordered alphabetically by default.
      *
-     * @return List A list of Theme objects which are enabled.
+     * @return List A list of SharedTheme objects which are enabled.
      */
-    List<SharedTheme> getEnabledThemesList();
+    List<SharedTheme> getEnabledSharedThemesList();
 
     /**
-     * Import all the contents for a Theme into a weblog.
+     * Import all the contents of a SharedTheme into a weblog.
      *
      * @param website
      *            The weblog (website) to import the theme into.
@@ -80,7 +80,7 @@ public interface ThemeManager {
      * @throws WebloggerException
      *             If there is some kind of error in saving.
      */
-    void importTheme(Weblog website, SharedTheme theme)
+    void importSharedTheme(Weblog website, SharedTheme theme)
             throws WebloggerException;
 
 }

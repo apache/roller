@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -100,7 +99,7 @@ public class ThemeEdit extends UIAction {
     }
 
     public void prepare() {
-        themes = themeManager.getEnabledThemesList();
+        themes = themeManager.getEnabledSharedThemesList();
     }
 
     public String execute() {
@@ -125,8 +124,8 @@ public class ThemeEdit extends UIAction {
             if (importTheme) {
                 try {
                     if (!StringUtils.isEmpty(selectedThemeId)) {
-                        t = themeManager.getTheme(selectedThemeId);
-                        themeManager.importTheme(getActionWeblog(), t);
+                        t = themeManager.getSharedTheme(selectedThemeId);
+                        themeManager.importSharedTheme(getActionWeblog(), t);
                         addMessage("themeEditor.setCustomTheme.success", t.getName());
                     }
                 } catch (Exception re) {
@@ -158,47 +157,48 @@ public class ThemeEdit extends UIAction {
         } else if ("shared".equals(getThemeType())) {
 
             // make sure theme is valid and enabled
-            Theme newTheme = null;
+            SharedTheme newTheme;
 
             try {
-                newTheme = themeManager.getTheme(selectedThemeId);
+                newTheme = themeManager.getSharedTheme(selectedThemeId);
+
+                if (!hasActionErrors()) {
+                    try {
+                        String originalTheme = weblog.getEditorTheme();
+
+                        // Remove old template customizations
+                        if (!originalTheme.equals(selectedThemeId)) {
+                            List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(getActionWeblog());
+
+                            for (WeblogTemplate template : oldTemplates) {
+                                // Remove template and its renditions
+                                weblogManager.removeTemplate(template);
+                            }
+                        }
+
+                        weblog.setEditorTheme(selectedThemeId);
+
+                        log.debug("Saving theme " + selectedThemeId + " for weblog " + weblog.getHandle());
+
+                        // save updated weblog and flush
+                        weblogManager.saveWeblog(weblog);
+                        persistenceStrategy.flushAndInvalidateWeblog(weblog);
+
+                        // Theme set to..
+                        if (!originalTheme.equals(selectedThemeId)) {
+                            addMessage("themeEditor.setTheme.success", newTheme.getName());
+                        }
+
+                    } catch (WebloggerException re) {
+                        log.error("Error saving weblog - " + getActionWeblog().getHandle(), re);
+                        addError("generic.error.check.logs");
+                    }
+                }
             } catch (Exception ex) {
                 log.warn(ex);
                 addError("Theme not found");
             }
 
-            if (!hasActionErrors()) {
-                try {
-                    String originalTheme = weblog.getEditorTheme();
-
-                    // Remove old template customizations
-                    if (!originalTheme.equals(selectedThemeId)) {
-                        List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(getActionWeblog());
-
-                        for (WeblogTemplate template : oldTemplates) {
-                            // Remove template and its renditions
-                            weblogManager.removeTemplate(template);
-                        }
-                    }
-
-                    weblog.setEditorTheme(selectedThemeId);
-
-                    log.debug("Saving theme " + selectedThemeId + " for weblog " + weblog.getHandle());
-
-                    // save updated weblog and flush
-                    weblogManager.saveWeblog(weblog);
-                    persistenceStrategy.flushAndInvalidateWeblog(weblog);
-
-                    // Theme set to..
-                    if (!originalTheme.equals(selectedThemeId)) {
-                        addMessage("themeEditor.setTheme.success", newTheme.getName());
-                    }
-
-                } catch (WebloggerException re) {
-                    log.error("Error saving weblog - " + getActionWeblog().getHandle(), re);
-                    addError("generic.error.check.logs");
-                }
-            }
         }
 
         return execute();
@@ -256,7 +256,7 @@ public class ThemeEdit extends UIAction {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/themes", method = RequestMethod.GET)
     public List<SharedThemeData> getSharedThemes() {
-        List<SharedTheme> list = themeManager.getEnabledThemesList();
+        List<SharedTheme> list = themeManager.getEnabledSharedThemesList();
         List<SharedThemeData> to = new ArrayList<>();
         for (SharedTheme item : list) {
             SharedThemeData temp = new SharedThemeData();

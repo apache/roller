@@ -72,17 +72,17 @@ alter table user_weblog_role add constraint uwr_weblogid_fk
 
 create table weblog_template (
     id              varchar(48) not null primary key,
+    weblogid        varchar(48) not null,
+    #columnNotNullWithDefault('action' 'varchar(16)' 'custom'),
     name            varchar(255) not null,
     description     varchar(255),
-    link            varchar(255),
-    weblogid        varchar(48) not null,
-    updatetime      $db.TIMESTAMP_SQL_TYPE not null,
+    relative_path   varchar(255),
     hidden          $db.BOOLEAN_SQL_TYPE_FALSE not null,
     navbar          $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
+    updatetime      $db.TIMESTAMP_SQL_TYPE not null
 );
 create index wp_name_idx on weblog_template(name);
-create index wp_link_idx on weblog_template(link);
+create index wp_link_idx on weblog_template(relative_path);
 
 alter table weblog_template add constraint wt_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;

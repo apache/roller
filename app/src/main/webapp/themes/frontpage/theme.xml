@@ -145,7 +145,7 @@
     <template action="custom">
         <name>directory</name>
         <description>weblog directory</description>
-        <link>directory</link>
+        <relativePath>directory</relativePath>
         <navbar>false</navbar>
         <hidden>false</hidden>
         <renditions>

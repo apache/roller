@@ -228,7 +228,7 @@
          can lock up the entire site with this single element:
          <url-pattern>/*</url-pattern>, if you do site-wide however must
          set Absolute URL to Site field (Server Admin | Configuration | Settings)
-         e.g., to https://localhost:8443/roller.
+         e.g., to https://localhost:8443/tightblog.
 
          Servlet container-specific SSL configuration must be done,
          see your servlet container's documentation for details.

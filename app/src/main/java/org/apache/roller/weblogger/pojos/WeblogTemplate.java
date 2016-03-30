@@ -59,8 +59,8 @@ import java.util.List;
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1"),
     @NamedQuery(name="WeblogTemplate.getByWeblogOrderByName",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name"),
-    @NamedQuery(name="WeblogTemplate.getByWeblog&Link",
-            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.link = ?2"),
+    @NamedQuery(name="WeblogTemplate.getByWeblog&RelativePath",
+            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.relativePath = ?2"),
     @NamedQuery(name="WeblogTemplate.getByAction",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.action = ?2"),
     @NamedQuery(name="WeblogTemplate.getByWeblog&Name",
@@ -75,7 +75,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private ComponentType action = null;
     private String  name = null;
     private String  description = null;
-    private String  link = null;
+    private String  relativePath = null;
     private Date    lastModified = null;
     private boolean hidden = false;
     private boolean navbar = false;
@@ -124,12 +124,13 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.description = description;
     }
 
-    public String getLink() {
-        return this.link;
+    @Column(name="relative_path")
+    public String getRelativePath() {
+        return this.relativePath;
     }
     
-    public void setLink( String link ) {
-        this.link = link;
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 
     @Column(name="updatetime", nullable=false)
@@ -168,8 +169,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         return this.weblog;
     }
 
-    public void setWeblog( Weblog website ) {
-        this.weblog = website;
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
     }
 
     @OneToMany(targetEntity=WeblogTemplateRendition.class,
@@ -223,7 +224,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         copy.setId(id);
         copy.setName(name);
         copy.setDescription(description);
-        copy.setLink(link);
+        copy.setRelativePath(relativePath);
         copy.setLastModified(lastModified);
         copy.setHidden(hidden);
         copy.setNavbar(navbar);
@@ -233,7 +234,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return "{" + getId() + ", " + getName() + ", " + getLink() + "}";
+        return "{" + getId() + ", " + getName() + ", " + getRelativePath() + "}";
     }
 
     public boolean equals(Object other) {

@@ -207,7 +207,7 @@ public class PageModel implements Model {
             return pageRequest.getWeblogPage().templateCopy();
         } else {
             try {
-                return themeManager.getTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG).templateCopy();
+                return themeManager.getWeblogTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG).templateCopy();
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
@@ -215,9 +215,18 @@ public class PageModel implements Model {
         return null;
     }
 
-    public ThemeTemplate getTemplateByName(String name)
-            throws WebloggerException {
-        ThemeTemplate templateToWrap = themeManager.getTheme(weblog).getTemplateByName(name);
+    public List<ThemeTemplate> getTemplates() throws WebloggerException {
+        List<? extends ThemeTemplate> unwrapped = themeManager.getWeblogTheme(weblog).getTemplates();
+        List<ThemeTemplate> wrapped = new ArrayList<>(unwrapped.size());
+
+        for (ThemeTemplate template : unwrapped) {
+            wrapped.add(template.templateCopy());
+        }
+        return wrapped;
+    }
+
+    public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
+        ThemeTemplate templateToWrap = themeManager.getWeblogTheme(weblog).getTemplateByName(name);
         return templateToWrap.templateCopy();
     }
 

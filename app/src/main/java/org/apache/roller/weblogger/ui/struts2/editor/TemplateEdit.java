@@ -26,12 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
-import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -110,7 +110,7 @@ public class TemplateEdit extends UIAction {
             bean.setName(template.getName());
             bean.setAction(template.getAction());
             bean.setDescription(template.getDescription());
-            bean.setLink(template.getLink());
+            bean.setRelativePath(template.getRelativePath());
 
             if (template.getTemplateRendition(RenditionType.STANDARD) != null) {
                 bean.setContentsStandard(template.getTemplateRendition(RenditionType.STANDARD).getTemplate());
@@ -175,7 +175,7 @@ public class TemplateEdit extends UIAction {
                     templateToSave.setName(bean.getName());
                     templateToSave.setAction(bean.getAction());
                     templateToSave.setDescription(bean.getDescription());
-                    templateToSave.setLink(bean.getLink());
+                    templateToSave.setRelativePath(bean.getRelativePath());
                     templateToSave.setNavbar(bean.isNavbar());
                     templateToSave.setHidden(bean.isHidden());
                 }
@@ -220,11 +220,11 @@ public class TemplateEdit extends UIAction {
             }
 
             // if link changed make sure there isn't a conflict
-            if (!StringUtils.isEmpty(getBean().getLink()) &&
-                    !getBean().getLink().equals(getTemplate().getLink())) {
+            if (!StringUtils.isEmpty(getBean().getRelativePath()) &&
+                    !getBean().getRelativePath().equals(getTemplate().getRelativePath())) {
                 try {
-                    if (weblogManager.getTemplateByLink(getActionWeblog(), getBean().getLink()) != null) {
-                        addError("pagesForm.error.alreadyExists", getBean().getLink());
+                    if (weblogManager.getTemplateByPath(getActionWeblog(), getBean().getRelativePath()) != null) {
+                        addError("pagesForm.error.alreadyExists", getBean().getRelativePath());
                     }
                 } catch (WebloggerException ex) {
                     log.error("Error checking page link uniqueness", ex);
@@ -252,7 +252,7 @@ public class TemplateEdit extends UIAction {
                 WeblogTemplate templateToRevert = getTemplate();
 
                 // lookup the theme used by this weblog
-                Theme theme = themeManager.getTheme(getActionWeblog().getEditorTheme());
+                SharedTheme theme = themeManager.getSharedTheme(getActionWeblog().getEditorTheme());
 
                 templateToRevert.setLastModified(new Date());
 

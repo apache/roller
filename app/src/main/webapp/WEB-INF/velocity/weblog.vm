@@ -46,7 +46,7 @@ Macros defined in this file:
 
     #showWeblogEntryCalendar($weblog $category)
 
-    #showPageMenu($weblog)
+    #showPageMenu()
     #showEditorMenu($vertical)
 
     #showWeblogSearchForm($weblog)
@@ -588,7 +588,7 @@ Show weblog's categories in specified parent category.
 #**
  * Show TightBlog Page Navigation Bar, includes links to all pages.
  *#
-#macro(showPageMenu $weblog)
+#macro(showPageMenu)
     <ul class="rNavigationBar">
         <li class="rNavItem">
             <a href="$url.site/"><span>$config.siteShortName</span></a>
@@ -596,12 +596,12 @@ Show weblog's categories in specified parent category.
         <li class="rNavItem">
             <a href="$url.home"><span>Weblog</span></a>
         </li>
-        #foreach($iPage in $weblog.templates)
-            #if (!$iPage.hidden && $iPage.navbar && $iPage.link != "Weblog")
+        #foreach($iPage in $model.templates)
+            #if (!$iPage.hidden && $iPage.navbar)
                 #set($isSelected = false)
                 #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
                 #if (!$isSelected)
-                    <li class="rNavItem"><a href="$url.page($iPage.link)"><span>$iPage.name</span></a></li>
+                    <li class="rNavItem"><a href='$url.page(null, $iPage.relativePath)'><span>$iPage.name</span></a></li>
                 #else
                     <li class="rNavItem"><span>$iPage.name</span></li>
                 #end
