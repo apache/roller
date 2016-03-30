@@ -23,14 +23,13 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
@@ -91,11 +90,9 @@ public class PreviewProcessor {
 
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         log.debug("Entering");
 
         Weblog weblog;
-
         WeblogPreviewRequest previewRequest;
 
         try {
@@ -124,8 +121,6 @@ public class PreviewProcessor {
                     : MobileDeviceRepository.DeviceType.mobile;
         }
 
-        Weblog tmpWebsite = weblog;
-
         if (previewRequest.getThemeName() != null) {
             // only create temporary weblog object if theme name was specified
             // in request, which indicates we're doing a theme preview
@@ -136,7 +131,7 @@ public class PreviewProcessor {
 
             // construct a temporary Website object for this request
             // and set the EditorTheme to our previewTheme
-            tmpWebsite = new Weblog();
+            Weblog tmpWebsite = new Weblog();
             tmpWebsite.setData(weblog);
             if (previewTheme != null && previewTheme.isEnabled()) {
                 tmpWebsite.setEditorTheme(previewTheme.getId());
@@ -149,12 +144,12 @@ public class PreviewProcessor {
             weblog = tmpWebsite;
         }
 
-        Template page = null;
-        if("page".equals(previewRequest.getContext())) {
+        ThemeTemplate page = null;
+        if ("page".equals(previewRequest.getContext())) {
             page = previewRequest.getWeblogPage();
 
             // If request specified tags section index, then look for custom template
-        } else if("tags".equals(previewRequest.getContext()) &&
+        } else if ("tags".equals(previewRequest.getContext()) &&
                 previewRequest.getTags() == null) {
             try {
                 page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
@@ -164,7 +159,7 @@ public class PreviewProcessor {
 
             // if we don't have a custom tags page then 404, we don't let
             // this one fall through to the default template
-            if(page == null) {
+            if (page == null) {
                 if (!response.isCommitted()) {
                     response.reset();
                 }
@@ -173,7 +168,7 @@ public class PreviewProcessor {
             }
 
             // If this is a permalink then look for a permalink template
-        } else if(previewRequest.getWeblogAnchor() != null) {
+        } else if (previewRequest.getWeblogAnchor() != null) {
             try {
                 page = themeManager.getTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
             } catch(Exception e) {
@@ -202,16 +197,7 @@ public class PreviewProcessor {
         log.debug("preview page found, dealing with it");
 
         // set the content type
-        String pageLink = previewRequest.getWeblogPageName();
-        String mimeType = pageLink !=  null ? RollerContext.getServletContext().getMimeType(pageLink) : null;
-        String contentType = "text/html; charset=utf-8";
-        if(mimeType != null) {
-            // we found a match ... set the content type
-            contentType = mimeType+"; charset=utf-8";
-        } else if ("_css".equals(previewRequest.getWeblogPageName())) {
-            // TODO: store content-type for each page so this hack is unnecessary
-            contentType = "text/css; charset=utf-8";
-        }
+        String contentType = page.getAction().getContentType();
 
         // looks like we need to render content
         Map<String, Object> model;
@@ -269,7 +255,7 @@ public class PreviewProcessor {
             rendererOutput.close();
         } catch(Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for page "+page.getId(), e);
+            log.error("Error during rendering for page " + page.getId(), e);
 
             if (!response.isCommitted()) {
                 response.reset();

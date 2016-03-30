@@ -50,7 +50,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String link = null;
     private boolean navbar = false;
     private boolean hidden = false;
-    private String contentType = null;
 
     private String contents = null;
     private Date lastModified = null;
@@ -121,10 +120,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.hidden = hidden;
     }
 
-    public String getOutputContentType() {
-        return contentType;
-    }
-
     @Override
     public ThemeTemplate templateCopy() {
         SharedThemeTemplate copy = new SharedThemeTemplate();
@@ -135,13 +130,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         copy.setLastModified(lastModified);
         copy.setHidden(hidden);
         copy.setNavbar(navbar);
-        copy.setOutputContentType(contentType);
         return copy;
-    }
-
-    @XmlElement(name="contentType")
-    public void setOutputContentType(String contentType) {
-        this.contentType = contentType;
     }
 
     public void addTemplateRendition(SharedThemeTemplateRendition rendition){

@@ -39,7 +39,8 @@ public interface ThemeTemplate extends Template {
         @XmlEnumValue("search") SEARCH("Search", "text/html", true),
         @XmlEnumValue("tagsIndex") TAGSINDEX("Tag Index", "text/html", true),
         @XmlEnumValue("stylesheet") STYLESHEET("Stylesheet", "text/css", false),
-        @XmlEnumValue("custom") CUSTOM("Custom", null, false);
+        @XmlEnumValue("javascript") JAVASCRIPT("JavaScript file", "application/javascript", false),
+        @XmlEnumValue("custom") CUSTOM("Other template", "text/html", false);
 
         private final String readableName;
 

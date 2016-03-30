@@ -80,6 +80,8 @@ group by weblogid, name;
 #renameColumn("roller_weblogentrytag", "websiteid", "weblogid", "varchar(48) not null")
 #renameColumn("media_filedir", "websiteid", "weblogid", "varchar(48) not null")
 
+#dropColumn("weblog_template", "outputtype")
+
 -- Media File revamp
 #dropColumn("media_directory", "description")
 #dropColumn("media_file", "copyright_text")

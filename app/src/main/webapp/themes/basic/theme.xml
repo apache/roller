@@ -29,7 +29,6 @@
         <description>weblog</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
@@ -43,7 +42,6 @@
         <description>permalink</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition>
                 <contentsFile>permalink.vm</contentsFile>
@@ -57,7 +55,6 @@
         <description>searchresults</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition>
                 <contentsFile>searchresults.vm</contentsFile>
@@ -71,7 +68,6 @@
         <description>_day</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition>
                 <contentsFile>_day.vm</contentsFile>
@@ -85,7 +81,6 @@
         <description>sidebar</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition>
                 <contentsFile>sidebar.vm</contentsFile>

@@ -124,15 +124,6 @@ public class TemplateEdit extends UIAction {
 
             bean.setNavbar(template.isNavbar());
             bean.setHidden(template.isHidden());
-            bean.setOutputContentType(template.getOutputContentType());
-
-            // empty content-type indicates that page uses auto content-type detection
-            if (StringUtils.isEmpty(template.getOutputContentType())) {
-                getBean().setAutoContentType(Boolean.TRUE);
-            } else {
-                getBean().setAutoContentType(Boolean.FALSE);
-                getBean().setOutputContentType(template.getOutputContentType());
-            }
 
         } catch (WebloggerException ex) {
            log.error("Error updating page - " + getBean().getId(), ex);
@@ -189,7 +180,6 @@ public class TemplateEdit extends UIAction {
                     templateToSave.setHidden(bean.isHidden());
                 }
                 templateToSave.setLastModified(new Date());
-                templateToSave.setOutputContentType(getBean().getOutputContentType());
 
                 // save template
                 weblogManager.saveTemplate(templateToSave);

@@ -58,11 +58,6 @@ public interface Template {
     
     
     /**
-     * Content-type of output or null if none defined.
-     */
-    String getOutputContentType();
-
-    /**
      *
      * get the Template rendition object for the given type.
      */
