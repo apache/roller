@@ -148,8 +148,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     this.weblogPageName = pathElements[1];
                     String tagsString = request.getParameter("tags");
                     if (tagsString != null) {
-                        this.tags = Utilities.splitStringAsTags(Utilities
-                                .decode(tagsString));
+                        this.tags = Utilities.splitStringAsTags(Utilities.decode(tagsString));
                     }
 
                     // Other page, we do not want css etc stuff so filter out
@@ -165,8 +164,7 @@ public class WeblogPageRequest extends WeblogRequest {
                             "tags.queries.maxIntersectionSize", 3);
                     if (this.tags.size() > maxSize) {
                         throw new InvalidRequestException(
-                                "max number of tags allowed is " + maxSize
-                                        + ", " + request.getRequestURL());
+                                "max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
                     }
 
                     // Other page
@@ -174,7 +172,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
                 } else {
                     throw new InvalidRequestException("context " + this.context
-                            + "not supported, " + request.getRequestURL());
+                            + " not supported, " + request.getRequestURL());
                 }
 
             } else {
@@ -246,7 +244,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
         // build customParams Map, we remove built-in params because we only
         // want this map to represent params defined by the template author
-        customParams = new HashMap(request.getParameterMap());
+        customParams = new HashMap<>(request.getParameterMap());
         customParams.remove("entry");
         customParams.remove("anchor");
         customParams.remove("date");

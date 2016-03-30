@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import org.apache.roller.weblogger.WebloggerException;
@@ -40,7 +42,6 @@ public class StaticTemplate implements Template, Serializable {
     private String name = null;
     private String description = null;
     private Date lastModified = new Date();
-    private String  outputContentType = null;
     private TemplateRendition templateRendition;
 
     public StaticTemplate(String id, TemplateLanguage lang) {
@@ -85,17 +86,8 @@ public class StaticTemplate implements Template, Serializable {
         this.lastModified = lastModified;
     }
 
-    public String getOutputContentType() {
-        return outputContentType;
-    }
-
     public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
         // only one rendition for now
         return templateRendition;
     }
-
-    public void setOutputContentType(String outputContentType) {
-        this.outputContentType = outputContentType;
-    }
-    
 }

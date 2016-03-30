@@ -90,11 +90,13 @@ public class Templates extends UIAction {
 
 			// build list of action types that may be added
 			Map<ComponentType, String> actionsMap = new EnumMap<>(ComponentType.class);
+			addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
+			addComponentTypeToMap(actionsMap, ComponentType.PERMALINK);
+			addComponentTypeToMap(actionsMap, ComponentType.SEARCH);
+			addComponentTypeToMap(actionsMap, ComponentType.TAGSINDEX);
+			addComponentTypeToMap(actionsMap, ComponentType.JAVASCRIPT);
+			addComponentTypeToMap(actionsMap, ComponentType.STYLESHEET);
 			addComponentTypeToMap(actionsMap, ComponentType.CUSTOM);
-            addComponentTypeToMap(actionsMap, ComponentType.PERMALINK);
-            addComponentTypeToMap(actionsMap, ComponentType.SEARCH);
-            addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
-            addComponentTypeToMap(actionsMap, ComponentType.TAGSINDEX);
 
 			// remove from above list any already existing for the theme
             for (WeblogTemplate tmpPage : getTemplates()) {

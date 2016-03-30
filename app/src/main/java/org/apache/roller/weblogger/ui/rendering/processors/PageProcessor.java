@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -34,7 +33,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
@@ -366,25 +364,7 @@ public class PageProcessor {
         }
 
         // looks like we need to render content
-        // set the content deviceType
-        String contentType;
-        if (StringUtils.isNotEmpty(page.getOutputContentType())) {
-            contentType = page.getOutputContentType() + "; charset=utf-8";
-        } else {
-            final String defaultContentType = "text/html; charset=utf-8";
-            if (page.getLink() == null) {
-                contentType = defaultContentType;
-            } else {
-                String mimeType = RollerContext.getServletContext().getMimeType(
-                        page.getLink());
-                if (mimeType != null) {
-                    // we found a match ... set the content deviceType
-                    contentType = mimeType + "; charset=utf-8";
-                } else {
-                    contentType = defaultContentType;
-                }
-            }
-        }
+        String contentType = page.getAction().getContentType() + "; charset=utf-8";
 
         Map<String, Object> model;
         try {

@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -45,9 +44,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * POJO that represents a single user defined template page.
@@ -82,7 +79,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private Date    lastModified = null;
     private boolean hidden = false;
     private boolean navbar = false;
-    private String  outputContentType = null;
 
     private String  contentsStandard = null;
     private String  contentsMobile = null;
@@ -164,18 +160,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.hidden = isHidden;
     }
 
-    /**
-     * Content-type rendered by template or null for auto-detection by link extension.
-     */
-    @Column(name="outputtype")
-    public String getOutputContentType() {
-        return outputContentType;
-    }
-    
-    public void setOutputContentType(String outputContentType) {
-        this.outputContentType = outputContentType;
-    }
-
     private List<WeblogTemplateRendition> templateRenditions = new ArrayList<WeblogTemplateRendition>();
 
     @ManyToOne
@@ -243,7 +227,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         copy.setLastModified(lastModified);
         copy.setHidden(hidden);
         copy.setNavbar(navbar);
-        copy.setOutputContentType(outputContentType);
         return copy;
     }
 
@@ -290,18 +273,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
 
     public void setContentsMobile( String contents ) {
         this.contentsMobile = contents;
-    }
-
-    @Transient
-    public Boolean getAutoContentType() {
-        return StringUtils.isEmpty(this.outputContentType);
-    }
-
-    public void setAutoContentType(Boolean autoContentType) {
-        // empty content-type indicates that template uses auto content-type detection
-        if (autoContentType) {
-            outputContentType = null;
-        }
     }
 
 }

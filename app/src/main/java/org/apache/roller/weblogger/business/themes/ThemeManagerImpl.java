@@ -201,7 +201,6 @@ public class ThemeManagerImpl implements ThemeManager {
 			template.setLink(themeTemplate.getLink());
 			template.setHidden(themeTemplate.isHidden());
 			template.setNavbar(themeTemplate.isNavbar());
-			template.setOutputContentType(themeTemplate.getOutputContentType());
 			template.setLastModified(new Date());
 
 			// save it

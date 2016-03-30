@@ -79,7 +79,6 @@ create table weblog_template (
     updatetime      $db.TIMESTAMP_SQL_TYPE not null,
     hidden          $db.BOOLEAN_SQL_TYPE_FALSE not null,
     navbar          $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    outputtype      varchar(48) default null,
     #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
 );
 create index wp_name_idx on weblog_template(name);

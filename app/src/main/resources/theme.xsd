@@ -32,18 +32,18 @@
                             <xs:element name="navbar" type="xs:boolean"/>
                             <xs:element name="link" type="xs:string" minOccurs="0"/>
                             <xs:element name="hidden" type="xs:boolean"/>
-                            <xs:element name="contentType" type="xs:string" minOccurs="0"/>
                             <xs:element name="renditions" type="renditionsType"/>
                         </xs:all>
                         <xs:attribute name="action" use="required">
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
-                                    <xs:enumeration value="custom"/>
+                                    <xs:enumeration value="weblog"/>
                                     <xs:enumeration value="permalink"/>
                                     <xs:enumeration value="search"/>
-                                    <xs:enumeration value="stylesheet"/>
                                     <xs:enumeration value="tagsIndex"/>
-                                    <xs:enumeration value="weblog"/>
+                                    <xs:enumeration value="stylesheet"/>
+                                    <xs:enumeration value="javascript"/>
+                                    <xs:enumeration value="custom"/>
                                 </xs:restriction>
                             </xs:simpleType>
                         </xs:attribute>

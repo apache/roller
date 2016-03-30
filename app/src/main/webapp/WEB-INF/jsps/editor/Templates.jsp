@@ -40,11 +40,11 @@
 <s:if test="!templates.isEmpty">
 
     <tr>
-        <th width="30%"><s:text name="generic.name" /></th>
-        <th width="10"><s:text name="pagesForm.action" /></th>
-        <th width="55%"><s:text name="generic.description" /></th>
-        <th width="10"><s:text name="pagesForm.remove" /></th>
-        <th width="5"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
+        <th width="20%"><s:text name="generic.name" /></th>
+        <th width="15%"><s:text name="pagesForm.action" /></th>
+        <th width="50%"><s:text name="generic.description" /></th>
+        <th width="10%"><s:text name="pagesForm.remove" /></th>
+        <th width="5%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
     </tr>
     <s:iterator id="p" value="templates" status="rowstatus">
         <s:if test="#rowstatus.odd == true">

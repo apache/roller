@@ -52,7 +52,6 @@
                     <s:textfield name="bean.name" size="50" maxlength="255"/>
                 </s:else>
             </td>
-            <td class="description"></td>
         </tr>
         
         <tr>
@@ -60,10 +59,9 @@
             <td class="field">
                  <s:textfield name="bean.action" size="50" readonly="true" cssStyle="background: #e5e5e5" />
             </td>
-            <td class="description"></td>
         </tr>
         
-       <s:if test="!template.required && template.custom">
+       <s:if test="!template.action.singleton && !template.hidden">
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
@@ -74,7 +72,6 @@
                         [<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]
                     </s:if>
                 </td>
-                <td class="description"></td>
             </tr>
         </s:if>
         <tr>
@@ -89,7 +86,6 @@
                     <s:textarea name="bean.description" cols="50" rows="2" maxlength="255"/>
                 </s:else>
             </td>
-            <td class="description"></td>
         </tr>
         
     </table>
@@ -170,66 +166,10 @@
             
             <table cellspacing="6">
                 <tr>
-                    <td class="label" valign="top"><s:text name="pageForm.outputContentType" />&nbsp;</td>
-                    <td class="field">
-                        <script><!--
-                        function showContentTypeField() {
-                            if (document.getElementById('template_bean_autoContentType1').checked) {
-                                document.getElementById('template_bean_manualContentType').readOnly = true;
-                                document.getElementById('template_bean_manualContentType').style.background = '#e5e5e5';
-                            } else {
-                                document.getElementById('template_bean_manualContentType').readOnly = false;
-                                document.getElementById('template_bean_manualContentType').style.background = '#ffffff';
-                            }
-                        }
-                        // --></script>
-                        <s:if test="bean.autoContentType">
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="true" checked="true" 
-                                   onchange="showContentTypeField()" 
-                                   id="template_bean_autoContentType1"/> 
-                            <s:text name="pageForm.useAutoContentType" /><br />
-                            
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="false" 
-                                   onchange="showContentTypeField()" 
-                                   id="template_bean_autoContentType2"/>
-                            <s:text name="pageForm.useManualContentType" />
-                            <s:textfield name="bean.outputContentType" />
-                        </s:if>
-                        <s:else>
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="true" 
-                                   onchange="showContentTypeField()" 
-                                   id="template_bean_autoContentType1"/> 
-                            <s:text name="pageForm.useAutoContentType" /><br />
-                            
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="false" 
-                                   checked="true" 
-                                   onchange="showContentTypeField()" 
-                                   id="template_bean_autoContentType2"/>
-                            <s:text name="pageForm.useManualContentType" />
-                            <s:textfield name="bean.outputContentType" />
-                        </s:else>
-                        
-                        <br />
-                        <br />
-                        
-                        <script><!--
-                            showContentTypeField();
-                        // --></script> 
-                        
-                    </td>
-                    <td class="description"></td>
-                </tr>
-                
-                <tr>
                     <td class="label"><s:text name="pageForm.navbar" />&nbsp;</td>
                     <td class="field"><s:checkbox name="bean.navbar" /> 
                         <s:text name="pageForm.navbar.tip" />
                     </td>
-                    <td class="description"></td>
                 </tr>
                 
                 <tr>
@@ -237,7 +177,6 @@
                     <td class="field"><s:checkbox name="bean.hidden" />
                         <s:text name="pageForm.hidden.tip" />
                     </td>
-                    <td class="description"></td>                            
                 </tr>
                 
                 <tr>
@@ -245,7 +184,6 @@
                     <td class="field">
                         <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
                     </td>
-                    <td class="description"></td>
                 </tr>
                 
             </table>
