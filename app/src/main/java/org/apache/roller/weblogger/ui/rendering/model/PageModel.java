@@ -204,10 +204,10 @@ public class PageModel implements Model {
      */
     public ThemeTemplate getWeblogPage() {
         if(pageRequest.getWeblogPageName() != null) {
-            return pageRequest.getWeblogPage().templateCopy();
+            return pageRequest.getWeblogPage();
         } else {
             try {
-                return themeManager.getWeblogTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG).templateCopy();
+                return themeManager.getWeblogTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG);
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
@@ -215,19 +215,12 @@ public class PageModel implements Model {
         return null;
     }
 
-    public List<ThemeTemplate> getTemplates() throws WebloggerException {
-        List<? extends ThemeTemplate> unwrapped = themeManager.getWeblogTheme(weblog).getTemplates();
-        List<ThemeTemplate> wrapped = new ArrayList<>(unwrapped.size());
-
-        for (ThemeTemplate template : unwrapped) {
-            wrapped.add(template.templateCopy());
-        }
-        return wrapped;
+    public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
+        return themeManager.getWeblogTheme(weblog).getTemplates();
     }
 
     public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
-        ThemeTemplate templateToWrap = themeManager.getWeblogTheme(weblog).getTemplateByName(name);
-        return templateToWrap.templateCopy();
+        return themeManager.getWeblogTheme(weblog).getTemplateByName(name);
     }
 
     /**

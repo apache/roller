@@ -24,7 +24,6 @@ import org.apache.roller.weblogger.WebloggerException;
 
 import java.util.Date;
 
-
 /**
  * The Template interface represents the abstract concept of a single unit
  * of templated or non-rendered content.  For TightBlog we mainly think of
@@ -58,7 +57,6 @@ public interface Template {
     
     
     /**
-     *
      * get the Template rendition object for the given type.
      */
     TemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType type) throws WebloggerException;

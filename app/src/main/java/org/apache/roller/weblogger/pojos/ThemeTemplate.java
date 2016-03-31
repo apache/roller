@@ -68,12 +68,6 @@ public interface ThemeTemplate extends Template {
     }
 
     /**
-     * A read-only copy for usage within templates, with fields limited
-     * to just those we wish to provide to those templates.
-     */
-    ThemeTemplate templateCopy();
-
-    /**
      * The action this template is defined for.
      */
     ComponentType getAction();
@@ -88,8 +82,8 @@ public interface ThemeTemplate extends Template {
     
     
     /**
-     * A hidden template can be called from other templates but not accessed
-     * directly from the browser via a URL.
+     * A hidden template can be called from other templates by name or action
+     * but not accessed directly from the browser via a relativePath.
      */
     boolean isHidden();
     

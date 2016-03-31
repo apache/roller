@@ -1,4 +1,0 @@
- <link rel="stylesheet" href="$ctxPath/themes/base.css" />
- #if( $theme ) 	 
-     <link rel="stylesheet" href="#showThemePath($theme)/theme.css" />
- #end

@@ -607,11 +607,11 @@ Show weblog's categories in specified parent category.
                 #end
             #end
         #end
-        #if ($utils.isUserAuthorizedToAuthor($weblog))
+        #if ($utils.isUserBlogPublisher($model.weblog))
             <li class="rNavItem">
                <a href="$url.createEntry"><span>$text.get("navigationBar.newEntry")</span></a>
             </li>
-            #if($utils.isUserAuthorizedToAdmin($weblog))
+            #if($utils.isUserBlogOwner($model.weblog))
                <li class="rNavItem">
                    <a href="$url.editSettings"><span>$text.get("navigationBar.settings")</span></a>
                </li>

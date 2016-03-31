@@ -61,7 +61,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogDate = null;
     private List<String> tags = null;
     private int pageNum = 0;
-    private Map customParams = new HashMap();
+    private Map<String, String[]> customParams = new HashMap<>();
 
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
@@ -321,11 +321,11 @@ public class WeblogPageRequest extends WeblogRequest {
         this.pageNum = pageNum;
     }
 
-    public Map getCustomParams() {
+    public Map<String, String[]> getCustomParams() {
         return customParams;
     }
 
-    public void setCustomParams(Map customParams) {
+    public void setCustomParams(Map<String, String[]> customParams) {
         this.customParams = customParams;
     }
 

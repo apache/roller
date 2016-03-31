@@ -72,18 +72,19 @@
 
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
         <beans:constructor-arg ref="persistenceStrategy"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
     <beans:bean id="customUserRegistry" class="org.apache.roller.weblogger.ui.core.security.CustomUserRegistry"/>
 
     <beans:bean id="weblogManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl">
-        <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:constructor-arg ref="cacheManager"/>
+        <beans:property name="userManager" ref="userManager"/>
     </beans:bean>
 
     <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
@@ -132,7 +133,7 @@
         </beans:property>
     </beans:bean>
 
-    <!-- page models -->
+    <!-- page models, additional models can be added as shown here: http://stackoverflow.com/a/13160350/1207540 -->
     <beans:bean id="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>

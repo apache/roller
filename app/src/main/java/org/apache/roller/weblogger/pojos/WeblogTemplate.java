@@ -161,7 +161,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.hidden = isHidden;
     }
 
-    private List<WeblogTemplateRendition> templateRenditions = new ArrayList<WeblogTemplateRendition>();
+    private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="weblogid", nullable=false)
@@ -216,19 +216,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
             }
         }
         return false;
-    }
-
-    @Override
-    public ThemeTemplate templateCopy() {
-        WeblogTemplate copy = new WeblogTemplate();
-        copy.setId(id);
-        copy.setName(name);
-        copy.setDescription(description);
-        copy.setRelativePath(relativePath);
-        copy.setLastModified(lastModified);
-        copy.setHidden(hidden);
-        copy.setNavbar(navbar);
-        return copy;
     }
 
     //------------------------------------------------------- Good citizenship

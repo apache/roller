@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:spring-beans.xml")
+@ContextConfiguration("classpath:/spring-beans.xml")
 abstract public class WebloggerTest {
 
     @Autowired

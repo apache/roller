@@ -177,7 +177,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		log.debug("Importing theme [" + theme.getName() + "] to weblog [" + weblog.getName() + "]");
 
 		Set<ComponentType> importedActionTemplates = new HashSet<>();
-		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
+		for (ThemeTemplate themeTemplate : theme.getTemplatesByName().values()) {
 			WeblogTemplate template;
 
 			if (themeTemplate.getAction().isSingleton()) {

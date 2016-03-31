@@ -220,17 +220,14 @@ public class PageProcessor {
             if (isSiteWide) {
                 cachedContent = (CachedContent) siteWideCache.get(cacheKey);
             } else {
-                cachedContent = (CachedContent) weblogPageCache.get(cacheKey,
-                        lastModified);
+                cachedContent = (CachedContent) weblogPageCache.get(cacheKey, lastModified);
             }
 
             if (cachedContent != null) {
                 log.debug("HIT " + cacheKey);
 
                 // allow for hit counting
-                if (!isSiteWide
-                        && (pageRequest.isWebsitePageHit() || pageRequest
-                                .isOtherPageHit())) {
+                if (!isSiteWide && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
                     this.processHit(weblog);
                 }
 
@@ -261,10 +258,8 @@ public class PageProcessor {
                 return;
             }
 
-            // If request specified tags section index, then look for custom
-            // template
-        } else if ("tags".equals(pageRequest.getContext())
-                && pageRequest.getTags() != null) {
+            // If request specified tags section index, then look for custom template
+        } else if ("tags".equals(pageRequest.getContext()) && pageRequest.getTags() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
             } catch (Exception e) {
@@ -295,9 +290,7 @@ public class PageProcessor {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
             } catch (Exception e) {
-                log.error(
-                        "Error getting default page for weblog = "
-                                + weblog.getHandle(), e);
+                log.error("Error getting default page for weblog = " + weblog.getHandle(), e);
             }
         }
 
@@ -357,9 +350,7 @@ public class PageProcessor {
         }
 
         // allow for hit counting
-        if (!isSiteWide
-                && (pageRequest.isWebsitePageHit() || pageRequest
-                        .isOtherPageHit())) {
+        if (!isSiteWide && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
             this.processHit(weblog);
         }
 
@@ -377,8 +368,7 @@ public class PageProcessor {
             initData.put("parsedRequest", pageRequest);
 
             // if this was a comment posting, check for comment form
-            WeblogEntryCommentForm commentForm = (WeblogEntryCommentForm) request
-                    .getAttribute("commentForm");
+            WeblogEntryCommentForm commentForm = (WeblogEntryCommentForm) request.getAttribute("commentForm");
             if (commentForm != null) {
                 initData.put("commentForm", commentForm);
             }
@@ -404,8 +394,7 @@ public class PageProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page,
-                    pageRequest.getDeviceType());
+            renderer = rendererManager.getRenderer(page, pageRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page " + page.getId(), e);
@@ -446,8 +435,7 @@ public class PageProcessor {
         response.getOutputStream().write(rendererOutput.getContent());
 
         // cache rendered content. only cache if user is not logged in?
-        if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())
-                && request.getAttribute("skipCache") == null) {
+        if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) && request.getAttribute("skipCache") == null) {
             log.debug("PUT " + cacheKey);
 
             // put it in the right cache

@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -43,7 +44,9 @@ public class JPAUserManagerImpl implements UserManager {
     private static Log log = LogFactory.getLog(JPAUserManagerImpl.class);
 
     private final JPAPersistenceStrategy strategy;
-    
+
+    private WeblogManager weblogManager;
+
     // cached mapping of userNames -> userIds
     private Map<String, String> userNameToIdMap = new HashMap<>();
     
@@ -56,6 +59,10 @@ public class JPAUserManagerImpl implements UserManager {
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA User Manager");
         this.strategy = strat;
+    }
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     //--------------------------------------------------------------- user CRUD
@@ -309,6 +316,12 @@ public class JPAUserManagerImpl implements UserManager {
     
     //-------------------------------------------------------- permissions CRUD
  
+    @Override
+    public boolean checkWeblogRole(User user, String weblogHandle, WeblogRole role) throws WebloggerException {
+        Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
+        return checkWeblogRole(user, weblogToCheck, role);
+    }
+
     public boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role) {
 
         // if user has specified permission in weblog return true

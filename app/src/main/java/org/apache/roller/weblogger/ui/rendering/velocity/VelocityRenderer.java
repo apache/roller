@@ -122,11 +122,9 @@ public class VelocityRenderer implements Renderer {
     }
 
     /**
-     * @see org.apache.roller.weblogger.ui.rendering.Renderer#render(java.util.Map,
-     *      java.io.Writer)
+     * @see org.apache.roller.weblogger.ui.rendering.Renderer#render(java.util.Map, java.io.Writer)
      */
-    public void render(Map<String, Object> model, Writer out)
-            throws WebloggerException {
+    public void render(Map<String, Object> model, Writer out) throws WebloggerException {
 
         try {
 
