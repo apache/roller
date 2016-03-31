@@ -249,8 +249,7 @@ public class FeedProcessor {
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate(pageId, TemplateLanguage.VELOCITY);
-            renderer = rendererManager.getRenderer(template,
-                    MobileDeviceRepository.DeviceType.standard);
+            renderer = rendererManager.getRenderer(template, MobileDeviceRepository.DeviceType.standard);
         } catch (Exception e) {
             // nobody wants to render my content :(
 

@@ -60,13 +60,13 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
     private String themeDir = null;
 
     // we keep templates in a Map for faster lookups by name
-    private Map<String, SharedThemeTemplate> templatesByName = new HashMap<>();
+    private Map<String, ThemeTemplate> templatesByName = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by link
-    private Map<String, SharedThemeTemplate> templatesByLink = new HashMap<>();
+    private Map<String, ThemeTemplate> templatesByLink = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, SharedThemeTemplate> templatesByAction = new HashMap<>();
+    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<>();
 
     public SharedTheme() {
     }
@@ -120,10 +120,10 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
     }
 
     /**
-     * Get the collection of all templates associated with this Theme.
+     * Get the name-keyed map of all templates associated with this Theme.
      */
-    public List<SharedThemeTemplate> getTemplates() {
-        return new ArrayList<>(this.templatesByName.values());
+    public Map<String, ThemeTemplate> getTemplatesByName() {
+        return templatesByName;
     }
 
     public void setTemplates(Set<SharedThemeTemplate> templates) {

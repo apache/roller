@@ -38,7 +38,7 @@
 		            <a href="$link" class="commentslink">$text.get("macro.weblog.comments") [$commentCount]</a>
 		        #end
 
-		        #if ($utils.isUserAuthorizedToAuthor($entry.weblog))
+		        #if ($utils.isUserBlogPublisher($entry.weblog))
 		            &nbsp;|&nbsp;
 		            <a href="$url.editEntry($entry.anchor)">
 		                $text.get("generic.edit")</a>

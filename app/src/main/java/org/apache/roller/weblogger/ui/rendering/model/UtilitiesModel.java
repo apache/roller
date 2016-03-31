@@ -24,8 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -52,59 +50,14 @@ public class UtilitiesModel implements Model {
         this.userManager = userManager;
     }
 
-    private static Pattern mLinkPattern =
-            Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);    
-    private static final Pattern OPENING_B_TAG_PATTERN = 
-            Pattern.compile("&lt;b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_B_TAG_PATTERN = 
-            Pattern.compile("&lt;/b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_I_TAG_PATTERN = 
-            Pattern.compile("&lt;i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_I_TAG_PATTERN = 
-            Pattern.compile("&lt;/i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_BLOCKQUOTE_TAG_PATTERN = 
-            Pattern.compile("&lt;blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_BLOCKQUOTE_TAG_PATTERN = 
-            Pattern.compile("&lt;/blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern BR_TAG_PATTERN = 
-            Pattern.compile("&lt;br */*&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_P_TAG_PATTERN = 
-            Pattern.compile("&lt;p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_P_TAG_PATTERN = 
-            Pattern.compile("&lt;/p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_PRE_TAG_PATTERN = 
-            Pattern.compile("&lt;pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_PRE_TAG_PATTERN = 
-            Pattern.compile("&lt;/pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_UL_TAG_PATTERN = 
-            Pattern.compile("&lt;ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_UL_TAG_PATTERN = 
-            Pattern.compile("&lt;/ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_OL_TAG_PATTERN = 
-            Pattern.compile("&lt;ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_OL_TAG_PATTERN = 
-            Pattern.compile("&lt;/ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_LI_TAG_PATTERN = 
-            Pattern.compile("&lt;li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_LI_TAG_PATTERN = 
-            Pattern.compile("&lt;/li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_A_TAG_PATTERN = 
-            Pattern.compile("&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_A_TAG_PATTERN = 
-            Pattern.compile("&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern QUOTE_PATTERN = 
-            Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
-    
     private ParsedRequest parsedRequest = null;
     private Weblog weblog = null;
-    
-    
+
     /** Template context name to be used for model */
     public String getModelName() {
         return "utils";
     }
-    
-    
+
     /** Init page model based on request */
     public void init(Map initData) throws WebloggerException {      
         
@@ -120,14 +73,14 @@ public class UtilitiesModel implements Model {
             weblog = weblogRequest.getWeblog();
         }
     }
-     
-    
-    //---------------------------------------------------- Authentication utils 
-    
-    public boolean isUserAuthorizedToAuthor(Weblog weblog) {
+
+    //---------------------------------------------------- Authentication utils
+
+    public boolean isUserBlogPublisher(Weblog weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog, WeblogRole.POST);
+                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
+                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog.getHandle(), WeblogRole.POST);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -135,10 +88,11 @@ public class UtilitiesModel implements Model {
         return false;
     }
     
-    public boolean isUserAuthorizedToAdmin(Weblog weblog) {
+    public boolean isUserBlogAdmin(Weblog weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog, WeblogRole.OWNER);
+                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
+                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog.getHandle(), WeblogRole.OWNER);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -151,10 +105,13 @@ public class UtilitiesModel implements Model {
     }
        
     public User getAuthenticatedUser() {
-        return parsedRequest.getAuthenticUser() != null 
-                ? parsedRequest.getUser().templateCopy() : null;
+        return parsedRequest.getAuthenticUser() != null ? parsedRequest.getUser().templateCopy() : null;
     }
-             
+
+    public String autoformat(String s) {
+        return Utilities.autoformat(s);
+    }
+
     //-------------------------------------------------------------- Date utils
     /**
      * Return date for current time.
@@ -180,7 +137,7 @@ public class UtilitiesModel implements Model {
         }
         
         SimpleDateFormat format = new SimpleDateFormat(fmt, weblog.getLocaleInstance());
-        if(tzOverride != null) {
+        if (tzOverride != null) {
             format.setTimeZone(tzOverride);
         }
         
@@ -188,14 +145,14 @@ public class UtilitiesModel implements Model {
     }
     
     /**
-     * Format date in ISO-8601 format.
+     * Format date in ISO-8601 format (YYYY-MM-DD)
      */
     public String formatIso8601Date(Date d) {
         return DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(d);
     }
     
     /**
-     * Return a date in RFC-822 format.
+     * Return a date in RFC-822 format (EEE, dd MMM yyyy HH:mm:ss Z)
      */
     public String formatRfc822Date(Date date) {
         return DateFormatUtils.SMTP_DATETIME_FORMAT.format(date);
@@ -212,128 +169,59 @@ public class UtilitiesModel implements Model {
         return StringUtils.isNotEmpty(str);
     }
     
-    public String[] split(String str1, String str2) {
-        return StringUtils.split(str1, str2);
-    }
-    
-    public boolean equals(String str1, String str2) {
-        return StringUtils.equals(str1, str2);
-    }
-    
-    public boolean isAlphanumeric(String str) {
-        return StringUtils.isAlphanumeric(str);
-    }
-    
-    public String[] stripAll(String[] strs) {
-        return StringUtils.stripAll(strs);
-    }
-    
     public String left(String str, int length) {
         return StringUtils.left(str, length);
     }
-    
+
+    public String right(String str, int length) {
+        return StringUtils.right(str, length);
+    }
+
     public String escapeHTML(String str) {
-        return StringEscapeUtils.escapeHtml4(str);
+        return Utilities.escapeHTML(str);
     }
     
     public String unescapeHTML(String str) {
-        return StringEscapeUtils.unescapeHtml4(str);
-    }
-    
-    public String escapeXML(String str) {
-        return StringEscapeUtils.escapeXml(str);
-    }
-    
-    public String unescapeXML(String str) {
-        return StringEscapeUtils.unescapeXml(str);
-    }
-    
-    public String escapeJavaScript(String str) {
-        return StringEscapeUtils.escapeEcmaScript(str);
-    }
-    
-    public String unescapeJavaScript(String str) {
-        return StringEscapeUtils.unescapeEcmaScript(str);
-    }
-    
-    public String replace(String src, String target, String rWith) {
-        return StringUtils.replace(src, target, rWith);
-    }
-    
-    public String replace(String src, String target, String rWith, int maxCount) {
-        return StringUtils.replace(src, target, rWith, maxCount);
-    }
-    
-    private String replace(String string, Pattern pattern, String replacement) {
-        Matcher m = pattern.matcher(string);
-        return m.replaceAll(replacement);
+        return Utilities.unescapeHTML(str);
     }
     
     /**
-     * Remove occurences of html, defined as any text
-     * between the characters "&lt;" and "&gt;".  Replace
-     * any HTML tags with a space.
+     * Remove occurrences of html, defined as any text between the characters "&lt;" and "&gt;".
      */
     public String removeHTML(String str) {
-        return removeHTML(str, true);
+        return Utilities.removeHTML(str, false);
     }
-    
+
     /**
-     * Remove occurences of html, defined as any text
-     * between the characters "&lt;" and "&gt;".
-     * Optionally replace HTML tags with a space.
+     * Truncates based on text-only but retains HTML.
      */
-    public String removeHTML(String str, boolean addSpace) {
-        return Utilities.removeHTML(str, addSpace);
+    public String truncateHTML(String str, int lower, int upper, String appendToEnd) {
+        return Utilities.truncateHTML(str, lower, upper, appendToEnd);
     }
-        
-    /**
-     * Autoformat.
-     */
-    public String autoformat(String s) {
-        return Utilities.autoformat(s);
-    }
-    
+
     /**
      * Strips HTML and truncates.
      */
-    public String truncate(String str, int lower, int upper, String appendToEnd) {
-        // this method is a dupe of truncateText() method
-        return truncateText(str, lower, upper, appendToEnd);
-    }
-    
-    public String truncateNicely(String str, int lower, int upper, String appendToEnd) {
-        return Utilities.truncateNicely(str, lower, upper, appendToEnd);
-    }
-    
     public String truncateText(String str, int lower, int upper, String appendToEnd) {
         return Utilities.truncateText(str, lower, upper, appendToEnd);
-    }    
-    
+    }
+
     /**
      * URL encoding.
      * @param s a string to be URL-encoded
      * @return URL encoding of s using character encoding UTF-8; null if s is null.
      */
     public final String encode(String s) {
-        if(s != null) {
-            return Utilities.encode(s);
-        } else {
-            return s;
-        }
+        return (s == null) ? null : Utilities.encode(s);
     }
-    
+
     /**
      * URL decoding.
      * @param s a URL-encoded string to be URL-decoded
      * @return URL decoded value of s using character encoding UTF-8; null if s is null.
      */
     public final String decode(String s) {
-        if(s != null) {
-            return Utilities.decode(s);
-        } else {
-            return s;
-        }
+        return (s == null) ? null : Utilities.decode(s);
     }
         
     /**
@@ -355,11 +243,4 @@ public class UtilitiesModel implements Model {
         return Utilities.transformToHTMLSubset(s);
     }
     
-    /**
-     * Convert a byte array into a Base64 string (as used in mime formats)
-     */
-    public String toBase64(byte[] aValue) {
-        return Utilities.toBase64(aValue);
-    }
-       
 }

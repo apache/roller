@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.util;
 
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -53,33 +52,30 @@ public class UtilitiesTest extends WebloggerTest {
     }
 
     @Test
-    public void testTruncateNicely1() {
+    public void testTruncateHTML1() {
         String test = "blah blah blah blah blah";
         String expect = "blah blah blah";
-        String result = Utilities.truncateNicely(test, 11, 15, "");
+        String result = Utilities.truncateHTML(test, 11, 15, "");
         assertEquals(expect, result);
     }
 
     @Test
-    public void testTruncateNicely2() {
+    public void testTruncateHTML2() {
         String test = "<p><b>blah1 blah2</b> <i>blah3 blah4 blah5</i></p>";
         String expect = "<p><b>blah1 blah2</b> <i>blah3</i></p>";
-        String result = Utilities.truncateNicely(test, 15, 20, "");
-        //System.out.println(result);
+        String result = Utilities.truncateHTML(test, 15, 20, "");
         assertEquals(expect, result);
     }
     
     public void testAddNoFollow() {
-        UtilitiesModel um = new UtilitiesModel();
-
         String test1 = "<p>this some text with a <a href=\"http://example.com\">link</a>";
         String expect1 = "<p>this some text with a <a href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        String result1 = um.addNofollow(test1);
+        String result1 = Utilities.addNofollow(test1);
         assertEquals(expect1, result1);
 
         String test2 = "<p>this some text with a <A href=\"http://example.com\">link</a>";
         String expect2 = "<p>this some text with a <A href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        String result2 = um.addNofollow(test2);
+        String result2 = Utilities.addNofollow(test2);
         assertEquals(expect2, result2);
     }
 

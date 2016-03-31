@@ -50,11 +50,11 @@
 				        #end
 				    #end
 				#end
-				#if ($utils.isUserAuthorizedToAuthor($weblog))
+				#if ($utils.isUserBlogPublisher($weblog))
 				    <li>
 				       <a href="$url.createEntry">$text.get("navigationBar.newEntry")</a>
 				    </li>
-				    #if($utils.isUserAuthorizedToAdmin($weblog))
+				    #if($utils.isUserBlogOwner($weblog))
 				       <li>
 				           <a href="$url.editSettings">$text.get("navigationBar.settings")</a>
 				       </li>

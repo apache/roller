@@ -84,27 +84,18 @@ public class WeblogTheme {
      * Get the collection of all templates associated with this Theme.
      */
     public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
-        Map<String, ThemeTemplate> pages = new TreeMap<>();
+        Map<String, ThemeTemplate> pageMap = new TreeMap<>();
 
         // first get shared theme pages (non-db)
-        try {
-            for (ThemeTemplate template : this.sharedTheme.getTemplates()) {
-                // note that this will put theme pages over custom
-                // pages in the pages list, which is what we want
-                pages.put(template.getName(), template);
-            }
-        } catch(Exception e) {
-            // how??
-            log.error(e);
-        }
+        pageMap.putAll(this.sharedTheme.getTemplatesByName());
 
-        // now get templates from the database (non-preview only)
+        // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
         if (!weblog.isTempPreviewWeblog()) {
             try {
                 for (ThemeTemplate template : weblogManager.getTemplates(this.weblog)) {
                     // note that this will replace shared templates with any overrides
                     // from the db, which is what we want
-                    pages.put(template.getName(), template);
+                    pageMap.put(template.getName(), template);
                 }
             } catch (Exception e) {
                 // db error
@@ -112,7 +103,7 @@ public class WeblogTheme {
             }
         }
 
-        return new ArrayList<>(pages.values());
+        return new ArrayList<>(pageMap.values());
     }
     
     /**

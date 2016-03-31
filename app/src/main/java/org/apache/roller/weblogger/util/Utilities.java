@@ -29,7 +29,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -110,39 +109,17 @@ public class Utilities {
     private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
             Pattern.CASE_INSENSITIVE);
 
-    // ------------------------------------------------------------------------
-    /**
-     * Escape, but do not replace HTML. The default behaviour is to escape
-     * ampersands.
-     */
-    public static String escapeHTML(String s) {
-        return escapeHTML(s, true);
-    }
-
-    // ------------------------------------------------------------------------
     /**
      * Escape, but do not replace HTML.
-     * 
-     * @param escapeAmpersand
-     *            Optionally escape ampersands (&amp;).
      */
-    public static String escapeHTML(String s, boolean escapeAmpersand) {
-        // got to do amp's first so we don't double escape
-        if (escapeAmpersand) {
-            s = StringUtils.replace(s, "&", "&amp;");
-        }
-        s = StringUtils.replace(s, "&nbsp;", " ");
-        s = StringUtils.replace(s, "\"", "&quot;");
-        s = StringUtils.replace(s, "<", "&lt;");
-        s = StringUtils.replace(s, ">", "&gt;");
-        return s;
+    public static String escapeHTML(String str) {
+        return StringEscapeUtils.escapeHtml4(str);
     }
 
     public static String unescapeHTML(String str) {
         return StringEscapeUtils.unescapeHtml4(str);
     }
 
-    // ------------------------------------------------------------------------
     /**
      * Remove occurrences of html, defined as any text between the characters
      * "&lt;" and "&gt;". Replace any HTML tags with a space.
@@ -153,11 +130,11 @@ public class Utilities {
 
     /**
      * Remove occurrences of html, defined as any text between the characters
-     * "&lt;" and "&gt;". Optionally replace HTML tags with a space.
+     * "&lt;" and "&gt;".
      * 
-     * @param str
-     * @param addSpace
-     * @return
+     * @param str text to strip HTML out of
+     * @param addSpace whether to replace tags with a space
+     * @return String without the HTML tags
      */
     public static String removeHTML(String str, boolean addSpace) {
         if (str == null) {
@@ -200,17 +177,15 @@ public class Utilities {
         return ret.toString().trim();
     }
 
-    // ------------------------------------------------------------------------
     /**
-     * Autoformat.
+     * Replace new lines with HTML break characters
      */
     public static String autoformat(String s) {
-        return StringUtils.replace(s, "\n", "<br />");
+        return StringUtils.replace(s, "\n", "<br/>");
     }
 
     /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in
-     * HTML.
+     * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
      */
     public static String addNofollow(String html) {
         if (html == null || html.length() == 0) {
@@ -224,8 +199,8 @@ public class Utilities {
             String link = html.substring(start, end);
             buf.append(html.substring(0, start));
             if (link.contains("rel=\"nofollow\"")) {
-                buf.append(link.substring(0, link.length() - 1)
-                        + " rel=\"nofollow\">");
+                buf.append(link.substring(0, link.length() - 1));
+                buf.append(" rel=\"nofollow\">");
             } else {
                 buf.append(link);
             }
@@ -236,16 +211,15 @@ public class Utilities {
         return buf.toString();
     }
 
-    // ------------------------------------------------------------------------
     /**
      * Replaces occurrences of non-alphanumeric characters with a supplied char.
      */
     public static String replaceNonAlphanumeric(String str, char subst) {
         StringBuilder ret = new StringBuilder(str.length());
         char[] testChars = str.toCharArray();
-        for (int i = 0; i < testChars.length; i++) {
-            if (Character.isLetterOrDigit(testChars[i])) {
-                ret.append(testChars[i]);
+        for (char aChar : testChars) {
+            if (Character.isLetterOrDigit(aChar)) {
+                ret.append(aChar);
             } else {
                 ret.append(subst);
             }
@@ -253,34 +227,22 @@ public class Utilities {
         return ret.toString();
     }
 
-    // ------------------------------------------------------------------------
     /** Convert string array to string with delimeters. */
     public static String stringArrayToString(String[] stringArray, String delim) {
         StringBuilder bldr = new StringBuilder();
-        for (int i = 0; i < stringArray.length; i++) {
+        for (String element : stringArray) {
             if (bldr.length() > 0) {
-                bldr.append(delim).append(stringArray[i]);
+                bldr.append(delim).append(element);
             } else {
-                bldr.append(stringArray[i]);
+                bldr.append(element);
             }
         }
         return bldr.toString();
     }
 
-    // --------------------------------------------------------------------------
     /** Convert string with delimeters to string array. */
     public static String[] stringToStringArray(String instr, String delim) {
         return StringUtils.split(instr, delim);
-    }
-
-    // --------------------------------------------------------------------------
-    /** Convert string with delimiters to string list.
-     */
-    public static List<String> stringToStringList(String instr, String delim) {
-        List<String> stringList = new ArrayList<String>();
-        String[] str = StringUtils.split(instr, delim);
-        Collections.addAll(stringList, str);
-        return stringList;
     }
 
     /**
@@ -334,71 +296,28 @@ public class Utilities {
 
         StringBuilder buf = new StringBuilder();
 
-        for (int i = 0; i < encodedPassword.length; i++) {
-            if ((encodedPassword[i] & 0xff) < 0x10) {
+        for (byte aByte : encodedPassword) {
+            if ((aByte & 0xff) < 0x10) {
                 buf.append("0");
             }
 
-            buf.append(Long.toString(encodedPassword[i] & 0xff, 16));
+            buf.append(Long.toString(aByte & 0xff, 16));
         }
 
         return buf.toString();
     }
 
     /**
-     * Strips HTML and truncates.
+     * This method based on the "truncateNicely" tag at the former Apache Jakarta taglib project.
+     *
+     * @param str String to parse
+     * @param lower minimum acceptable length of string (not counting HTML tags)
+     * @param upper maximum acceptable length (not counting HTML tags)
+     * @param appendToEnd characters (potentially past maximum length) to add to
+     *                    visually indicate that truncation occurred
+     * @return processed string
      */
-    public static String truncate(String str, int lower, int upper,
-            String appendToEnd) {
-        // strip markup from the string
-        String str2 = removeHTML(str, false);
-
-        // quickly adjust the upper if it is set lower than 'lower'
-        if (upper < lower) {
-            upper = lower;
-        }
-
-        // now determine if the string fits within the upper limit
-        // if it does, go straight to return, do not pass 'go' and collect $200
-        if (str2.length() > upper) {
-            // the magic location int
-            int loc;
-
-            // first we determine where the next space appears after lower
-            loc = str2.lastIndexOf(' ', upper);
-
-            // now we'll see if the location is greater than the lower limit
-            if (loc >= lower) {
-                // yes it was, so we'll cut it off here
-                str2 = str2.substring(0, loc);
-            } else {
-                // no it wasnt, so we'll cut it off at the upper limit
-                str2 = str2.substring(0, upper);
-            }
-
-            // the string was truncated, so we append the appendToEnd String
-            str2 = str2 + appendToEnd;
-        }
-
-        return str2;
-    }
-
-    /**
-     * This method based on code from the String taglib at Apache Jakarta:
-     * http:/
-     * /cvs.apache.org/viewcvs/jakarta-taglibs/string/src/org/apache/taglibs
-     * /string/util/StringW.java?rev=1.16&content-type=text/vnd.viewcvs-markup
-     * Copyright (c) 1999 The Apache Software Foundation. Author:
-     * timster@mac.com
-     * 
-     * @param str
-     * @param lower
-     * @param upper
-     * @param appendToEnd
-     * @return
-     */
-    public static String truncateNicely(String str, int lower, int upper,
-            String appendToEnd) {
+    public static String truncateHTML(String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
         String str2 = removeHTML(str, false);
         boolean diff = (str2.length() < str.length());
@@ -459,8 +378,7 @@ public class Utilities {
         return str;
     }
 
-    public static String truncateText(String str, int lower, int upper,
-            String appendToEnd) {
+    public static String truncateText(String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
         String str2 = removeHTML(str, false);
 
@@ -487,16 +405,15 @@ public class Utilities {
                 str2 = str2.substring(0, upper);
             }
             // the string was truncated, so we append the appendToEnd String
-            str = str2 + appendToEnd;
+            str2 = str2 + appendToEnd;
         }
-        return str;
+        return str2;
     }
 
     /**
      * Extract (keep) JUST the HTML from the String.
-     * 
-     * @param str
-     * @return
+     * @param str String to remove HTML from
+     * @return String with HTML removed
      */
     public static String extractHTML(String str) {
         if (str == null) {
@@ -505,13 +422,12 @@ public class Utilities {
         StringBuilder ret = new StringBuilder(str.length());
         int start = 0;
         int beginTag = str.indexOf('<');
-        int endTag = 0;
         if (beginTag == -1) {
             return str;
         }
 
         while (beginTag >= start) {
-            endTag = str.indexOf('>', beginTag);
+            int endTag = str.indexOf('>', beginTag);
 
             // if endTag found, keep tag
             if (endTag > -1) {
@@ -561,8 +477,9 @@ public class Utilities {
     }
 
     /**
-     * @param tag
-     * @return
+     * Removes non-alphanumerics from tags.
+     * @param tag tag to strip invalid chars from
+     * @return tag without invalid chars.
      */
     public static String stripInvalidTagCharacters(String tag) {
         if (tag == null) {
@@ -571,8 +488,7 @@ public class Utilities {
 
         StringBuilder sb = new StringBuilder();
         char[] charArray = tag.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
+        for (char c : charArray) {
 
             // fast-path exclusions quotes and commas are obvious
             // 34 = double-quote, 44 = comma
@@ -584,7 +500,7 @@ public class Utilities {
 
             if ((33 <= c && c <= 126) || Character.isUnicodeIdentifierPart(c)
                     || Character.isUnicodeIdentifierStart(c)) {
-                sb.append(charArray[i]);
+                sb.append(c);
             }
         }
         return sb.toString();

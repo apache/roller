@@ -120,19 +120,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.hidden = hidden;
     }
 
-    @Override
-    public ThemeTemplate templateCopy() {
-        SharedThemeTemplate copy = new SharedThemeTemplate();
-        copy.setId(id);
-        copy.setName(name);
-        copy.setDescription(description);
-        copy.setRelativePath(relativePath);
-        copy.setLastModified(lastModified);
-        copy.setHidden(hidden);
-        copy.setNavbar(navbar);
-        return copy;
-    }
-
     public void addTemplateRendition(SharedThemeTemplateRendition rendition){
         this.templateRenditionHashMap.put(rendition.getType(), rendition);
     }

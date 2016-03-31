@@ -171,7 +171,17 @@ public interface UserManager {
 
     //-------------------------------------------------------- WeblogRoles CRUD
 
-    
+
+    /**
+     * Check user's rights given a weblog handle
+     * @param user    User whose role is being checked
+     * @param weblogHandle target weblog handle of the role
+     * @param role    Minimum WeblogRole being checked for
+     * @return true if user has WeblogRole or a more powerful one
+     * @throws WebloggerException If no weblog could be found for the handle
+     */
+    boolean checkWeblogRole(User user, String weblogHandle, WeblogRole role) throws WebloggerException;
+
     /**
      * Check user's rights for a specified weblog
      * @param user    User whose role is being checked

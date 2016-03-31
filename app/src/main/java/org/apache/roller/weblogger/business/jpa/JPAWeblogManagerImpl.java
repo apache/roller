@@ -68,22 +68,25 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(JPAWeblogManagerImpl.class);
     
-    private final UserManager userManager;
+    private UserManager userManager;
     private final WeblogEntryManager weblogEntryManager;
     private final MediaFileManager mediaFileManager;
     private final IndexManager indexManager;
     private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
-    
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
 
-    protected JPAWeblogManagerImpl(UserManager um, WeblogEntryManager wem, MediaFileManager mfm,
+    protected JPAWeblogManagerImpl(WeblogEntryManager wem, MediaFileManager mfm,
                                    IndexManager im, PingTargetManager ptm, JPAPersistenceStrategy strat,
                                    CacheManager cacheManager) {
         log.debug("Instantiating JPA Weblog Manager");
-        this.userManager = um;
         this.weblogEntryManager = wem;
         this.mediaFileManager = mfm;
         this.indexManager = im;
