@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
@@ -127,15 +127,15 @@ public class SearchProcessor {
         }
 
         // lookup template to use for rendering
-        ThemeTemplate page = null;
+        Template page = null;
         try {
 
             // try looking for a specific search page
-            page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.SEARCH);
+            page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH);
 
             // if not found then fall back on default page
             if (page == null) {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG);
+                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
             }
 
             // if still null then that's a problem

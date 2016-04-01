@@ -15,7 +15,7 @@
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:element name="weblogtheme">
+    <xs:element name="sharedtheme">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="id" type="xs:string"/>
@@ -29,12 +29,10 @@
                         <xs:all>
                             <xs:element name="name" type="xs:string"/>
                             <xs:element name="description" type="xs:string"/>
-                            <xs:element name="navbar" type="xs:boolean"/>
                             <xs:element name="relativePath" type="xs:string" minOccurs="0"/>
-                            <xs:element name="hidden" type="xs:boolean"/>
                             <xs:element name="renditions" type="renditionsType"/>
                         </xs:all>
-                        <xs:attribute name="action" use="required">
+                        <xs:attribute name="role" use="required">
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
                                     <xs:enumeration value="weblog"/>
@@ -43,7 +41,8 @@
                                     <xs:enumeration value="tagsIndex"/>
                                     <xs:enumeration value="stylesheet"/>
                                     <xs:enumeration value="javascript"/>
-                                    <xs:enumeration value="custom"/>
+                                    <xs:enumeration value="customInternal"/>
+                                    <xs:enumeration value="customExternal"/>
                                 </xs:restriction>
                             </xs:simpleType>
                         </xs:attribute>

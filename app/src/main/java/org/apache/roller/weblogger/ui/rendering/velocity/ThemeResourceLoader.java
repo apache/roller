@@ -34,7 +34,7 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Template;
 
 /**
  * The ThemeResourceLoader is a Velocity template loader which loads templates
@@ -84,7 +84,7 @@ public class ThemeResourceLoader extends ResourceLoader {
             // lookup the template from the proper theme
             ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
             SharedTheme theme = themeMgr.getSharedTheme(split[0]);
-            ThemeTemplate template = theme.getTemplateByName(split[1]);
+            Template template = theme.getTemplateByName(split[1]);
 
             if (template == null) {
                 throw new ResourceNotFoundException("Template [" + split[1]

@@ -21,10 +21,11 @@
 package org.apache.roller.weblogger.ui.rendering;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.Template;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
 /**

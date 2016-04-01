@@ -4,5 +4,5 @@
 </div>
 
 <div id="page_menu">
-    #showPageMenu()
+    #showPageMenu(false)
 </div>

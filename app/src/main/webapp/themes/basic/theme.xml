@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<weblogtheme>
+<sharedtheme>
 
     <id>basic</id>
     <name>Basic</name>
@@ -10,11 +10,9 @@
     <previewImagePath>basic-preview.png</previewImagePath>
 
     <!-- templates -->
-    <template action="stylesheet">
+    <template role="stylesheet">
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic theme</description>
-        <navbar>false</navbar>
-        <hidden>false</hidden>
         <relativePath>basic-custom.css</relativePath>
         <renditions>
             <rendition>
@@ -24,11 +22,9 @@
         </renditions>
     </template>
 
-    <template action="weblog">
+    <template role="weblog">
         <name>Weblog</name>
         <description>weblog</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
@@ -37,11 +33,9 @@
         </renditions>
     </template>
 
-    <template action="permalink">
+    <template role="permalink">
         <name>permalink</name>
         <description>permalink</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>permalink.vm</contentsFile>
@@ -50,11 +44,9 @@
         </renditions>
     </template>
 
-    <template action="search">
+    <template role="search">
         <name>searchresults</name>
         <description>searchresults</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>searchresults.vm</contentsFile>
@@ -63,11 +55,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_day</name>
         <description>_day</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_day.vm</contentsFile>
@@ -76,11 +66,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>sidebar</name>
         <description>sidebar</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>sidebar.vm</contentsFile>
@@ -88,4 +76,4 @@
             </rendition>
         </renditions>
     </template>
-</weblogtheme>
+</sharedtheme>

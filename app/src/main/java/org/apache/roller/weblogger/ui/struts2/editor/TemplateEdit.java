@@ -108,7 +108,7 @@ public class TemplateEdit extends UIAction {
 
             bean.setId(template.getId());
             bean.setName(template.getName());
-            bean.setAction(template.getAction());
+            bean.setRole(template.getRole());
             bean.setDescription(template.getDescription());
             bean.setRelativePath(template.getRelativePath());
 
@@ -121,9 +121,6 @@ public class TemplateEdit extends UIAction {
                 bean.setContentsMobile(template.getTemplateRendition(RenditionType.MOBILE).getTemplate());
             }
             log.debug("Standard: " + bean.getContentsStandard() + " Mobile: " + bean.getContentsMobile());
-
-            bean.setNavbar(template.isNavbar());
-            bean.setHidden(template.isHidden());
 
         } catch (WebloggerException ex) {
            log.error("Error updating page - " + getBean().getId(), ex);
@@ -169,16 +166,16 @@ public class TemplateEdit extends UIAction {
                     weblogManager.saveTemplateRendition(tc);
                 }
 
-                // the rest of the template properties can be modified only when
-                // dealing with a CUSTOM weblog template
-                if (templateToSave.isCustom()) {
+                // some properties relevant only for certain template roles
+                if (!templateToSave.getRole().isSingleton()) {
                     templateToSave.setName(bean.getName());
-                    templateToSave.setAction(bean.getAction());
                     templateToSave.setDescription(bean.getDescription());
-                    templateToSave.setRelativePath(bean.getRelativePath());
-                    templateToSave.setNavbar(bean.isNavbar());
-                    templateToSave.setHidden(bean.isHidden());
                 }
+
+                if (templateToSave.getRole().isAccessibleViaUrl()) {
+                    templateToSave.setRelativePath(bean.getRelativePath());
+                }
+
                 templateToSave.setLastModified(new Date());
 
                 // save template
@@ -234,7 +231,7 @@ public class TemplateEdit extends UIAction {
     }
 
     public Map<TemplateLanguage, String> getTemplateLanguages() {
-        Map<TemplateLanguage, String> langMap = new EnumMap<TemplateLanguage, String>(TemplateLanguage.class);
+        Map<TemplateLanguage, String> langMap = new EnumMap<>(TemplateLanguage.class);
         for (TemplateLanguage lang : TemplateLanguage.values()) {
             langMap.put(lang, lang.getReadableName());
         }
@@ -256,21 +253,21 @@ public class TemplateEdit extends UIAction {
 
                 templateToRevert.setLastModified(new Date());
 
-                if (templateToRevert.getTemplateRendition(TemplateRendition.RenditionType.STANDARD) != null) {
+                if (templateToRevert.getTemplateRendition(RenditionType.STANDARD) != null) {
                     TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
-                            .getTemplateRendition(TemplateRendition.RenditionType.STANDARD);
+                            .getTemplateRendition(RenditionType.STANDARD);
                     // if we have a template, then set it
                     WeblogTemplateRendition existingTemplateCode = templateToRevert
-                            .getTemplateRendition(TemplateRendition.RenditionType.STANDARD);
+                            .getTemplateRendition(RenditionType.STANDARD);
                     existingTemplateCode
                             .setTemplate(templateCode.getTemplate());
                     weblogManager.saveTemplateRendition(existingTemplateCode);
                 }
-                if (templateToRevert.getTemplateRendition(TemplateRendition.RenditionType.MOBILE) != null) {
+                if (templateToRevert.getTemplateRendition(RenditionType.MOBILE) != null) {
                     TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
-                            .getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
+                            .getTemplateRendition(RenditionType.MOBILE);
                     WeblogTemplateRendition existingTemplateCode = templateToRevert
-                            .getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
+                            .getTemplateRendition(RenditionType.MOBILE);
                     existingTemplateCode
                             .setTemplate(templateCode.getTemplate());
                 }

@@ -55,13 +55,13 @@
         </tr>
         
         <tr>
-            <td class="label"><s:text name="pageForm.action" />&nbsp;</td>
+            <td class="label"><s:text name="pageForm.role" />&nbsp;</td>
             <td class="field">
-                 <s:textfield name="bean.action" size="50" readonly="true" cssStyle="background: #e5e5e5" />
+                 <s:textfield name="bean.role" size="50" readonly="true" cssStyle="background: #e5e5e5" />
             </td>
         </tr>
         
-       <s:if test="!template.action.singleton && !template.hidden">
+       <s:if test="bean.role.accessibleViaUrl">
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
@@ -87,7 +87,14 @@
                 </s:else>
             </td>
         </tr>
-        
+
+        <tr>
+            <td class="label"><s:text name="pageForm.templateLanguage" />&nbsp;</td>
+            <td class="field">
+                <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
+            </td>
+        </tr>
+
     </table>
 
     <%-- ================================================================== --%>
@@ -151,46 +158,6 @@
         });
     </script>
 
-    <%-- ================================================================== --%>
-    <%-- Advanced settings inside a control toggle --%>
-    
-    <s:if test="template.custom">
-        <br />
-        <div id="advancedControlToggle" class="controlToggle">
-            <span id="iadvancedControl">+</span>
-            <a class="controlToggle" onclick="javascript:toggleControl('advancedControlToggle','advancedControl')">
-            <s:text name="pageForm.advancedSettings" /></a>
-        </div>
-        
-        <div id="advancedControl" class="advancedControl" style="display:none">
-            
-            <table cellspacing="6">
-                <tr>
-                    <td class="label"><s:text name="pageForm.navbar" />&nbsp;</td>
-                    <td class="field"><s:checkbox name="bean.navbar" /> 
-                        <s:text name="pageForm.navbar.tip" />
-                    </td>
-                </tr>
-                
-                <tr>
-                    <td class="label"><s:text name="pageForm.hidden" />&nbsp;</td>
-                    <td class="field"><s:checkbox name="bean.hidden" />
-                        <s:text name="pageForm.hidden.tip" />
-                    </td>
-                </tr>
-                
-                <tr>
-                    <td class="label"><s:text name="pageForm.templateLanguage" />&nbsp;</td>
-                    <td class="field">
-                        <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
-                    </td>
-                </tr>
-                
-            </table>
-            
-        </div>
-    </s:if>
-    
 </s:form>
 
 
@@ -216,13 +183,6 @@ function launchPage() {
         window.alert("Link changed, please save before launching");
     } else {
         window.open(weblogURL + 'page/' + originalLink, '_blank');
-    }
-}
-//Get cookie to determine state of control
-if (getCookie('control_advancedControl') != null) {
-    if(getCookie('control_advancedControl') == 'true'){
-        toggle('advancedControl');
-        togglePlusMinus('iadvancedControl');
     }
 }
 </script>

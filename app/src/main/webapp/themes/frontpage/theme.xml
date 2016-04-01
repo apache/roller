@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<weblogtheme>
+<sharedtheme>
 
     <id>frontpage</id>
     <name>Frontpage</name>
@@ -12,11 +12,9 @@
     <previewImagePath>sm-theme-frontpage.png</previewImagePath>
 
     <!-- templates -->
-    <template action="weblog">
+    <template role="weblog">
         <name>Weblog</name>
         <description>Weblog</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
@@ -25,11 +23,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_blogdirectory</name>
         <description>_blogdirectory</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_blogdirectory.vm</contentsFile>
@@ -38,11 +34,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_blogprofile</name>
         <description>_blogprofile</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_blogprofile.vm</contentsFile>
@@ -51,11 +45,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_blogs</name>
         <description>_blogs</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_blogs.vm</contentsFile>
@@ -64,11 +56,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="stylesheet">
         <name>_css</name>
         <description>_css</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_css.vm</contentsFile>
@@ -77,11 +67,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_day</name>
         <description>_day</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_day.vm</contentsFile>
@@ -90,11 +78,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_decorator</name>
         <description>_decorator</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_decorator.vm</contentsFile>
@@ -103,11 +89,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_entry</name>
         <description>_entry</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_entry.vm</contentsFile>
@@ -116,11 +100,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_footer</name>
         <description>_footer</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_footer.vm</contentsFile>
@@ -129,11 +111,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_header</name>
         <description>_header</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <contentsFile>_header.vm</contentsFile>
@@ -142,12 +122,10 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customExternal">
         <name>directory</name>
         <description>weblog directory</description>
         <relativePath>directory</relativePath>
-        <navbar>false</navbar>
-        <hidden>false</hidden>
         <renditions>
             <rendition>
                 <contentsFile>directory.vm</contentsFile>
@@ -156,4 +134,4 @@
         </renditions>
     </template>
 
-</weblogtheme>
+</sharedtheme>

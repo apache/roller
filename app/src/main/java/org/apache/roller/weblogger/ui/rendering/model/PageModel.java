@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -202,12 +202,12 @@ public class PageModel implements Model {
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
-    public ThemeTemplate getWeblogPage() {
+    public Template getWeblogPage() {
         if(pageRequest.getWeblogPageName() != null) {
             return pageRequest.getWeblogPage();
         } else {
             try {
-                return themeManager.getWeblogTheme(weblog).getTemplateByAction(ThemeTemplate.ComponentType.WEBLOG);
+                return themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
@@ -215,11 +215,11 @@ public class PageModel implements Model {
         return null;
     }
 
-    public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
+    public List<? extends Template> getTemplates() throws WebloggerException {
         return themeManager.getWeblogTheme(weblog).getTemplates();
     }
 
-    public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
+    public Template getTemplateByName(String name) throws WebloggerException {
         return themeManager.getWeblogTheme(weblog).getTemplateByName(name);
     }
 

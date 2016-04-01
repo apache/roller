@@ -61,24 +61,22 @@ import java.util.List;
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name"),
     @NamedQuery(name="WeblogTemplate.getByWeblog&RelativePath",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.relativePath = ?2"),
-    @NamedQuery(name="WeblogTemplate.getByAction",
-            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.action = ?2"),
+    @NamedQuery(name="WeblogTemplate.getByRole",
+            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.role = ?2"),
     @NamedQuery(name="WeblogTemplate.getByWeblog&Name",
         query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2")
 })
-public class WeblogTemplate implements ThemeTemplate, Serializable {
+public class WeblogTemplate implements Template, Serializable {
     
     public static final long serialVersionUID = -613737191638263428L;
 
     // attributes
     private String id = WebloggerCommon.generateUUID();
-    private ComponentType action = null;
+    private ComponentType role = null;
     private String  name = null;
     private String  description = null;
     private String  relativePath = null;
     private Date    lastModified = null;
-    private boolean hidden = false;
-    private boolean navbar = false;
 
     private String  contentsStandard = null;
     private String  contentsMobile = null;
@@ -99,12 +97,12 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
 
     @Basic(optional=false)
     @Enumerated(EnumType.STRING)
-    public ComponentType getAction() {
-        return action;
+    public ComponentType getRole() {
+        return role;
     }
 
-    public void setAction(ComponentType action) {
-        this.action = action;
+    public void setRole(ComponentType role) {
+        this.role = role;
     }
 
     @Basic(optional=false)
@@ -143,24 +141,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         lastModified = newtime;
     }
 
-    @Basic(optional=false)
-    public boolean isNavbar() {
-        return navbar;
-    }
-
-    public void setNavbar(boolean navbar) {
-        this.navbar = navbar;
-    }
-
-    @Basic(optional=false)
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean isHidden) {
-        this.hidden = isHidden;
-    }
-
     private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
     @ManyToOne
@@ -183,16 +163,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.templateRenditions = templateRenditions;
     }
 
-    /**
-     * A convenience method for testing if this template represents a 'custom'
-     * template, meaning a template with action = ACTION_CUSTOM.
-     */
-    @Transient
-    public boolean isCustom() {
-        return ComponentType.CUSTOM.equals(getAction());
-    }
-
-    public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType) throws WebloggerException {
+    public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType)
+            throws WebloggerException {
         for (WeblogTemplateRendition rnd : templateRenditions) {
             if (rnd.getType().equals(desiredType)) {
                 return rnd;

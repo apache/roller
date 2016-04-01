@@ -41,7 +41,7 @@
 
     <tr>
         <th width="20%"><s:text name="generic.name" /></th>
-        <th width="15%"><s:text name="pagesForm.action" /></th>
+        <th width="15%"><s:text name="pagesForm.role" /></th>
         <th width="50%"><s:text name="generic.description" /></th>
         <th width="10%"><s:text name="pagesForm.remove" /></th>
         <th width="5%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
@@ -68,7 +68,7 @@
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>
             
-            <td style="vertical-align:middle"><s:property value="#p.action.readableName" /></td>
+            <td style="vertical-align:middle"><s:property value="#p.role.readableName" /></td>
 
             <td style="vertical-align:middle"><s:property value="#p.description" /></td>
 

@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.PlanetEntriesPager;
@@ -81,7 +81,7 @@ public class PlanetModel implements Model {
         }
         
         if (weblogRequest instanceof WeblogPageRequest) {
-            ThemeTemplate weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
             pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }  

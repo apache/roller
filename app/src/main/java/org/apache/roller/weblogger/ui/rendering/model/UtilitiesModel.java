@@ -184,7 +184,11 @@ public class UtilitiesModel implements Model {
     public String unescapeHTML(String str) {
         return Utilities.unescapeHTML(str);
     }
-    
+
+    public String escapeXML(String str) {
+        return StringEscapeUtils.escapeXml10(str);
+    }
+
     /**
      * Remove occurrences of html, defined as any text between the characters "&lt;" and "&gt;".
      */

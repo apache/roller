@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -61,7 +61,7 @@ public class WeblogPageTest extends WebloggerTest {
         }
         
         testPage = new WeblogTemplate();
-        testPage.setAction(ComponentType.WEBLOG);
+        testPage.setRole(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setRelativePath("testTemp");
@@ -140,7 +140,7 @@ public class WeblogPageTest extends WebloggerTest {
 
         // lookup by action
         testWeblog = getManagedWeblog(testWeblog);
-        page = weblogManager.getTemplateByAction(testWeblog, testPage.getAction());
+        page = weblogManager.getTemplateByAction(testWeblog, testPage.getRole());
         assertNotNull(page);
 
         // lookup by name
