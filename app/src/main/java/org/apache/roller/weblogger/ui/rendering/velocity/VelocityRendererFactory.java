@@ -14,17 +14,19 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
@@ -36,7 +38,7 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 public class VelocityRendererFactory implements RendererFactory {
     private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
     
-    public Renderer getRenderer(Template template, 
+    public Renderer getRenderer(Template template,
 			MobileDeviceRepository.DeviceType deviceType) {
         Renderer renderer = null;
         TemplateRendition tr;

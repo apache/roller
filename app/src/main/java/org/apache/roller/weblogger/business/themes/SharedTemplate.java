@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,39 +39,33 @@ import java.util.Map;
 
 
 /**
- * A SharedThemeTemplate represents a template which is part of a SharedTheme.
+ * A SharedTemplate represents a template which is part of a SharedTheme.
  */
-public class SharedThemeTemplate implements ThemeTemplate, Serializable {
+public class SharedTemplate implements Template, Serializable {
     
     private String id = null;
-    private ComponentType action = null;
+    private ComponentType role = null;
     private String name = null;
     private String description = null;
     private String relativePath = null;
-    private boolean navbar = false;
-    private boolean hidden = false;
 
     private String contents = null;
     private Date lastModified = null;
 
-    //hash map to cache template Code objects parsed
-    private Map<RenditionType, SharedThemeTemplateRendition> templateRenditionHashMap = new HashMap<>();
-    
-    public SharedThemeTemplate() {}
-    
-    public SharedThemeTemplate(String id, ComponentType action, String name,
-            String desc, String relativePath,
-            boolean hidden, boolean navbar) {
-        
+    public SharedTemplate(String id, TemplateRendition.TemplateLanguage lang) {
         this.id = id;
-        this.action = action;
-        this.name = name;
-        this.description = desc;
-        this.relativePath = relativePath;
-        this.hidden = hidden;
-        this.navbar = navbar;
+        SharedTemplateRendition templateRendition = new SharedTemplateRendition();
+        templateRendition.setTemplateLanguage(lang);
+        templateRendition.setType(RenditionType.STANDARD);
+        addTemplateRendition(templateRendition);
     }
 
+
+    //hash map to cache template Code objects parsed
+    private Map<RenditionType, SharedTemplateRendition> templateRenditionHashMap = new HashMap<>();
+    
+    public SharedTemplate() {}
+    
     public String getId() {
         return id;
     }
@@ -104,23 +98,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.relativePath = relativePath;
     }
 
-    public boolean isNavbar() {
-        return navbar;
-    }
-
-    public void setNavbar(boolean navbar) {
-        this.navbar = navbar;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
-
-    public void addTemplateRendition(SharedThemeTemplateRendition rendition){
+    public void addTemplateRendition(SharedTemplateRendition rendition){
         this.templateRenditionHashMap.put(rendition.getType(), rendition);
     }
 
@@ -128,34 +106,34 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         return templateRenditionHashMap.get(type);
     }
 
-    public Map<RenditionType, SharedThemeTemplateRendition> getRenditionMap() {
+    public Map<RenditionType, SharedTemplateRendition> getRenditionMap() {
         return templateRenditionHashMap;
     }
 
     @XmlJavaTypeAdapter(value=MapAdapter.class)
     @XmlElements(@XmlElement(name="renditions"))
-    public void setRenditionMap(Map<RenditionType, SharedThemeTemplateRendition> renditionTable) {
+    public void setRenditionMap(Map<RenditionType, SharedTemplateRendition> renditionTable) {
         this.templateRenditionHashMap = renditionTable;
     }
 
-    static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<RenditionType, SharedThemeTemplateRendition>> {
+    static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<RenditionType, SharedTemplateRendition>> {
 
         static class AdaptedMap {
             @XmlElements(@XmlElement(name="rendition"))
-            public List<SharedThemeTemplateRendition> renditions = new ArrayList<>();
+            public List<SharedTemplateRendition> renditions = new ArrayList<>();
         }
 
         @Override
-        public Map<RenditionType, SharedThemeTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
-            Map<RenditionType, SharedThemeTemplateRendition> map = new HashMap<>();
-            for(SharedThemeTemplateRendition item : list.renditions) {
+        public Map<RenditionType, SharedTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
+            Map<RenditionType, SharedTemplateRendition> map = new HashMap<>();
+            for(SharedTemplateRendition item : list.renditions) {
                 map.put(item.getType(), item);
             }
             return map;
         }
 
         @Override
-        public AdaptedMap marshal(Map<RenditionType, SharedThemeTemplateRendition> map) throws Exception {
+        public AdaptedMap marshal(Map<RenditionType, SharedTemplateRendition> map) throws Exception {
             // unused
             return null;
         }
@@ -174,13 +152,13 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
                 lastModified + "\n\n" + contents + "\n");
     }
 
-    public ComponentType getAction() {
-        return action;
+    public ComponentType getRole() {
+        return role;
     }
 
     @XmlAttribute
-    public void setAction(ComponentType action) {
-        this.action = action;
+    public void setRole(ComponentType role) {
+        this.role = role;
     }
 
 }

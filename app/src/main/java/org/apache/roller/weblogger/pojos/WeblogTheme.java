@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.roller.weblogger.business.themes.SharedTheme;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
 
 
 /**
@@ -83,8 +83,8 @@ public class WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
-    public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
-        Map<String, ThemeTemplate> pageMap = new TreeMap<>();
+    public List<? extends Template> getTemplates() throws WebloggerException {
+        Map<String, Template> pageMap = new TreeMap<>();
 
         // first get shared theme pages (non-db)
         pageMap.putAll(this.sharedTheme.getTemplatesByName());
@@ -92,7 +92,7 @@ public class WeblogTheme {
         // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
         if (!weblog.isTempPreviewWeblog()) {
             try {
-                for (ThemeTemplate template : weblogManager.getTemplates(this.weblog)) {
+                for (Template template : weblogManager.getTemplates(this.weblog)) {
                     // note that this will replace shared templates with any overrides
                     // from the db, which is what we want
                     pageMap.put(template.getName(), template);
@@ -110,8 +110,8 @@ public class WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
-        ThemeTemplate template = null;
+    public Template getTemplateByAction(ComponentType action) throws WebloggerException {
+        Template template = null;
 
         if (!weblog.isTempPreviewWeblog()) {
             template = weblogManager.getTemplateByAction(this.weblog, action);
@@ -127,8 +127,8 @@ public class WeblogTheme {
      * Lookup the specified template by name.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
-        ThemeTemplate template = null;
+    public Template getTemplateByName(String name) throws WebloggerException {
+        Template template = null;
 
         if (!weblog.isTempPreviewWeblog()) {
             template = weblogManager.getTemplateByName(this.weblog, name);
@@ -144,8 +144,8 @@ public class WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByPath(String path) throws WebloggerException {
-        ThemeTemplate template = null;
+    public Template getTemplateByPath(String path) throws WebloggerException {
+        Template template = null;
 
         if (!weblog.isTempPreviewWeblog()) {
             template = weblogManager.getTemplateByPath(this.weblog, path);

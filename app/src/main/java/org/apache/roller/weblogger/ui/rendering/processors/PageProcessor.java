@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -29,8 +30,8 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -243,7 +244,7 @@ public class PageProcessor {
         log.debug("Looking for template to use for rendering");
 
         // figure out what template to use
-        ThemeTemplate page = null;
+        Template page = null;
 
         if ("page".equals(pageRequest.getContext())) {
             page = pageRequest.getWeblogPage();
@@ -307,7 +308,7 @@ public class PageProcessor {
 
         // validation. make sure that request input makes sense.
         boolean invalid = false;
-        if (pageRequest.getWeblogPageName() != null && page.isHidden()) {
+        if (pageRequest.getWeblogPageName() != null && StringUtils.isEmpty(page.getRelativePath())) {
             invalid = true;
         }
         if (pageRequest.getWeblogAnchor() != null) {
@@ -355,7 +356,7 @@ public class PageProcessor {
         }
 
         // looks like we need to render content
-        String contentType = page.getAction().getContentType() + "; charset=utf-8";
+        String contentType = page.getRole().getContentType() + "; charset=utf-8";
 
         Map<String, Object> model;
         try {

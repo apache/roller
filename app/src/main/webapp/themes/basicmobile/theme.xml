@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<weblogtheme>
+<sharedtheme>
     
     <id>basicmobile</id>
     <name>Basic Mobile</name>
@@ -13,11 +13,9 @@
     <previewImagePath>basic-preview.png</previewImagePath>
     
     <!-- templates -->
-    <template action="stylesheet">
+    <template role="stylesheet">
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic Mobile theme</description>
-        <navbar>false</navbar>
-        <hidden>false</hidden>
         <relativePath>basic-custom.css</relativePath>
         <renditions>
             <rendition type="standard">
@@ -31,11 +29,9 @@
         </renditions>
     </template>
 
-    <template action="weblog">
+    <template role="weblog">
         <name>Weblog</name>
         <description>weblog</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition type="standard">
                 <templateLanguage>velocity</templateLanguage>
@@ -48,11 +44,9 @@
         </renditions>
     </template>
 
-    <template action="permalink">
+    <template role="permalink">
         <name>permalink</name>
         <description>permalink</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition type="standard">
                 <contentsFile>permalink.vm</contentsFile>
@@ -65,11 +59,9 @@
         </renditions>
     </template>
 
-    <template action="search">
+    <template role="search">
         <name>searchresults</name>
         <description>searchresults</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition type="standard">
                 <contentsFile>searchresults.vm</contentsFile>
@@ -82,11 +74,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_day</name>
         <description>_day</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition type="standard">
                 <templateLanguage>velocity</templateLanguage>
@@ -99,11 +89,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>sidebar</name>
         <description>sidebar</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition type="standard">
                 <contentsFile>sidebar.vm</contentsFile>
@@ -112,4 +100,4 @@
         </renditions>
     </template>
 
-</weblogtheme>
+</sharedtheme>

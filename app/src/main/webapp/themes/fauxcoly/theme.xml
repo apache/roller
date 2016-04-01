@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<weblogtheme>
+<sharedtheme>
 
     <!-- YUI Grid based TightBlog theme -->
 
@@ -12,11 +12,9 @@
     <previewImagePath>images/fauxcoly-preview.png</previewImagePath>
 
     <!-- templates -->
-    <template action="stylesheet">
+    <template role="stylesheet">
         <name>custom.css</name>
         <description>Custom style sheet</description>
-        <navbar>false</navbar>
-        <hidden>false</hidden>
         <relativePath>custom.css</relativePath>
         <renditions>
             <rendition>
@@ -26,11 +24,9 @@
         </renditions>
     </template>
 
-    <template action="weblog">
+    <template role="weblog">
         <name>Weblog</name>
         <description>Main page of weblog</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -39,11 +35,9 @@
         </renditions>
     </template>
 
-    <template action="permalink">
+    <template role="permalink">
         <name>Entry</name>
         <description>Page for one weblog entry</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -52,11 +46,9 @@
         </renditions>
     </template>
 
-    <template action="tagsIndex">
+    <template role="tagsIndex">
         <name>TagsIndex</name>
         <description>Tag index page</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -65,11 +57,9 @@
         </renditions>
     </template>
 
-    <template action="search">
+    <template role="search">
         <name>Search</name>
         <description>Search results page</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -78,11 +68,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>_day</name>
         <description>One day's worth of entries</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -91,12 +79,10 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customExternal">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
         <relativePath>archives</relativePath>
-        <navbar>true</navbar>
-        <hidden>false</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -105,11 +91,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>standard_head</name>
         <description>Contents of HTML head</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -118,11 +102,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>standard_header</name>
         <description>Displayed in header of each page</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -131,11 +113,9 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="customInternal">
         <name>standard_footer</name>
         <description>For footer of each page</description>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -144,12 +124,10 @@
         </renditions>
     </template>
 
-    <template action="custom">
+    <template role="stylesheet">
         <name>style.css</name>
         <description>Base stylesheet for theme</description>
         <relativePath>style.css</relativePath>
-        <navbar>false</navbar>
-        <hidden>false</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -158,12 +136,10 @@
         </renditions>
     </template>
 
-    <template action="javascript">
+    <template role="javascript">
         <name>searchhi.js</name>
         <description>3rd party script for search term highlighting</description>
         <relativePath>searchhi.js</relativePath>
-        <navbar>false</navbar>
-        <hidden>false</hidden>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -172,4 +148,4 @@
         </renditions>
     </template>
 
-</weblogtheme>
+</sharedtheme>

@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -65,7 +65,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
-    protected ThemeTemplate weblogPage = null;
+    protected Template weblogPage = null;
     private WeblogCategory weblogCategory = null;
 
     // Page hits
@@ -356,7 +356,7 @@ public class WeblogPageRequest extends WeblogRequest {
         this.weblogEntry = weblogEntry;
     }
 
-    public ThemeTemplate getWeblogPage() {
+    public Template getWeblogPage() {
 
         if (weblogPage == null && weblogPageName != null) {
             try {

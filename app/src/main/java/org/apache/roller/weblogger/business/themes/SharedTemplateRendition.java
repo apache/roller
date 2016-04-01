@@ -30,14 +30,14 @@ import java.io.Serializable;
 /**
  * A pojo that maintains device-specific renditions of a single template
  */
-public class SharedThemeTemplateRendition implements TemplateRendition, Serializable {
+public class SharedTemplateRendition implements TemplateRendition, Serializable {
 
     private TemplateLanguage templateLanguage = TemplateLanguage.VELOCITY;
     private RenditionType type = RenditionType.STANDARD;
     private String contentsFile = null;
 	private String template = null;
 
-	public SharedThemeTemplateRendition() {
+	public SharedTemplateRendition() {
 	}
 
     public String getContentsFile() {
@@ -79,7 +79,7 @@ public class SharedThemeTemplateRendition implements TemplateRendition, Serializ
         return "{" + this.template + ", [ " + this.template +"] , " + this.type + "}";
 	}
 
-	public boolean equals(SharedThemeTemplateRendition other) {
+	public boolean equals(SharedTemplateRendition other) {
 		return other == this || new EqualsBuilder()
 				.append(template, other.getTemplate())
                 .append(templateLanguage, other.getTemplateLanguage())

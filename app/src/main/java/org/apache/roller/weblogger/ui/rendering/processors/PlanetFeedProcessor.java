@@ -34,10 +34,10 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.business.themes.SharedTemplate;
 import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.StaticTemplate;
-import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
@@ -202,9 +202,9 @@ public class PlanetFeedProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate(
+            Template template = new SharedTemplate(
                     "templates/planet/planetrss.vm", TemplateLanguage.VELOCITY);
-            renderer = rendererManager.getRenderer(template, DeviceType.mobile);
+            renderer = rendererManager.getRenderer(template, DeviceType.standard);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for planet rss", e);

@@ -940,21 +940,20 @@ public class WeblogEntry implements Serializable {
         return wrappedCategory;
     }
 
-    public static java.util.Comparator<WeblogEntry> Comparator = new Comparator<WeblogEntry>() {
-        public int compare(WeblogEntry val1, WeblogEntry val2) {
 
-            long pubTime1 = val1.getPubTime().getTime();
-            long pubTime2 = val2.getPubTime().getTime();
+    public static java.util.Comparator<WeblogEntry> Comparator = (val1, val2) -> {
+        long pubTime1 = val1.getPubTime().getTime();
+        long pubTime2 = val2.getPubTime().getTime();
 
-            if (pubTime1 > pubTime2) {
-                return -1;
-            }
-            else if (pubTime1 < pubTime2) {
-                return 1;
-            }
-
-            // if pubTimes are the same, return results of String.compareTo() on Title
-            return val1.getTitle().compareTo(val2.getTitle());
+        if (pubTime1 > pubTime2) {
+            return -1;
         }
+        else if (pubTime1 < pubTime2) {
+            return 1;
+        }
+
+        // if pubTimes are the same, return results of String.compareTo() on Title
+        return val1.getTitle().compareTo(val2.getTitle());
     };
+
 }

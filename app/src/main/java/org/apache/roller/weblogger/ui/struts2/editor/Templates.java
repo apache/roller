@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -54,7 +54,7 @@ public class Templates extends UIAction {
 	private List<WeblogTemplate> templates = Collections.emptyList();
 
 	// list of template action types user is allowed to create
-	private Map<ComponentType, String> availableActions = Collections.emptyMap();
+	private Map<ComponentType, String> availableRoles = Collections.emptyMap();
 
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;
@@ -89,22 +89,23 @@ public class Templates extends UIAction {
 			setTemplates(pages);
 
 			// build list of action types that may be added
-			Map<ComponentType, String> actionsMap = new EnumMap<>(ComponentType.class);
-			addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
-			addComponentTypeToMap(actionsMap, ComponentType.PERMALINK);
-			addComponentTypeToMap(actionsMap, ComponentType.SEARCH);
-			addComponentTypeToMap(actionsMap, ComponentType.TAGSINDEX);
-			addComponentTypeToMap(actionsMap, ComponentType.JAVASCRIPT);
-			addComponentTypeToMap(actionsMap, ComponentType.STYLESHEET);
-			addComponentTypeToMap(actionsMap, ComponentType.CUSTOM);
+			Map<ComponentType, String> rolesMap = new EnumMap<>(ComponentType.class);
+			addComponentTypeToMap(rolesMap, ComponentType.WEBLOG);
+			addComponentTypeToMap(rolesMap, ComponentType.PERMALINK);
+			addComponentTypeToMap(rolesMap, ComponentType.SEARCH);
+			addComponentTypeToMap(rolesMap, ComponentType.TAGSINDEX);
+			addComponentTypeToMap(rolesMap, ComponentType.JAVASCRIPT);
+			addComponentTypeToMap(rolesMap, ComponentType.STYLESHEET);
+			addComponentTypeToMap(rolesMap, ComponentType.CUSTOM_INTERNAL);
+			addComponentTypeToMap(rolesMap, ComponentType.CUSTOM_EXTERNAL);
 
 			// remove from above list any already existing for the theme
             for (WeblogTemplate tmpPage : getTemplates()) {
-                if (tmpPage.getAction().isSingleton()) {
-                    actionsMap.remove(tmpPage.getAction());
+                if (tmpPage.getRole().isSingleton()) {
+                    rolesMap.remove(tmpPage.getRole());
                 }
             }
-			setAvailableActions(actionsMap);
+			setAvailableRoles(rolesMap);
 
 		} catch (WebloggerException ex) {
 			log.error("Error getting templates for weblog - " + getActionWeblog().getHandle(), ex);
@@ -131,10 +132,8 @@ public class Templates extends UIAction {
 
                 WeblogTemplate newTemplate = new WeblogTemplate();
                 newTemplate.setWeblog(getActionWeblog());
-                newTemplate.setAction(getNewTmplAction());
+                newTemplate.setRole(getNewTmplAction());
                 newTemplate.setName(getNewTmplName());
-                newTemplate.setHidden(false);
-                newTemplate.setNavbar(false);
                 newTemplate.setLastModified(new Date());
 
                 if (!getNewTmplAction().isSingleton()) {
@@ -225,12 +224,12 @@ public class Templates extends UIAction {
 		this.templates = templates;
 	}
 
-	public Map<ComponentType, String> getAvailableActions() {
-		return availableActions;
+	public Map<ComponentType, String> getAvailableRoles() {
+		return availableRoles;
 	}
 
-	public void setAvailableActions(Map<ComponentType, String> availableActions) {
-		this.availableActions = availableActions;
+	public void setAvailableRoles(Map<ComponentType, String> availableRoles) {
+		this.availableRoles = availableRoles;
 	}
 
 	public String getNewTmplName() {

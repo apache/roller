@@ -81,7 +81,10 @@ group by weblogid, name;
 #renameColumn("media_filedir", "websiteid", "weblogid", "varchar(48) not null")
 
 #dropColumn("weblog_template", "outputtype")
+#dropColumn("weblog_template", "hidden")
+#dropColumn("weblog_template", "navbar")
 #renameColumn("weblog_template", "link", "relative_path", "varchar(255)")
+#renameColumn("weblog_template", "action", "role", "varchar(20)")
 
 
 -- Media File revamp

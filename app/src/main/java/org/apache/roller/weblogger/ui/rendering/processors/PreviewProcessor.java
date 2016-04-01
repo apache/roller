@@ -24,9 +24,9 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -144,7 +144,7 @@ public class PreviewProcessor {
             weblog = tmpWebsite;
         }
 
-        ThemeTemplate page = null;
+        Template page = null;
         if ("page".equals(previewRequest.getContext())) {
             page = previewRequest.getWeblogPage();
 
@@ -197,7 +197,7 @@ public class PreviewProcessor {
         log.debug("preview page found, dealing with it");
 
         // set the content type
-        String contentType = page.getAction().getContentType();
+        String contentType = page.getRole().getContentType();
 
         // looks like we need to render content
         Map<String, Object> model;

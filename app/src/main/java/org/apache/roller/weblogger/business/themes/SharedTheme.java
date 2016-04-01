@@ -23,8 +23,8 @@ package org.apache.roller.weblogger.business.themes;
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * used mostly to contain all the templates for a theme, but does contain other
  * theme related attributes such as name, last modified date, etc.
  */
-@XmlRootElement(name="weblogtheme")
+@XmlRootElement(name="sharedtheme")
 public class SharedTheme implements Comparable<SharedTheme>, Serializable {
 
     private String id = null;
@@ -50,9 +50,9 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
 
     // JAXB loads here; ThemeManagerImpl moves them to the three maps.
     @XmlElements(@XmlElement(name="template"))
-    private Set<SharedThemeTemplate> tempTemplates = new HashSet<>();
+    private Set<SharedTemplate> tempTemplates = new HashSet<>();
 
-    public Set<SharedThemeTemplate> getTempTemplates() {
+    public Set<SharedTemplate> getTempTemplates() {
         return tempTemplates;
     }
 
@@ -60,13 +60,13 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
     private String themeDir = null;
 
     // we keep templates in a Map for faster lookups by name
-    private Map<String, ThemeTemplate> templatesByName = new HashMap<>();
+    private Map<String, Template> templatesByName = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by link
-    private Map<String, ThemeTemplate> templatesByLink = new HashMap<>();
+    private Map<String, Template> templatesByLink = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<>();
+    private Map<ComponentType, Template> templatesByAction = new HashMap<>();
 
     public SharedTheme() {
     }
@@ -122,12 +122,12 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
     /**
      * Get the name-keyed map of all templates associated with this Theme.
      */
-    public Map<String, ThemeTemplate> getTemplatesByName() {
+    public Map<String, Template> getTemplatesByName() {
         return templatesByName;
     }
 
-    public void setTemplates(Set<SharedThemeTemplate> templates) {
-        for (SharedThemeTemplate t : templates) {
+    public void setTemplates(Set<SharedTemplate> templates) {
+        for (SharedTemplate t : templates) {
             addTemplate(t);
         }
     }
@@ -160,7 +160,7 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
      * Lookup the specified template by name. Returns null if the template
      * cannot be found.
      */
-    public ThemeTemplate getTemplateByName(String name) {
+    public Template getTemplateByName(String name) {
         return this.templatesByName.get(name);
     }
 
@@ -168,7 +168,7 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
      * Lookup the specified template by link. Returns null if the template
      * cannot be found.
      */
-    public ThemeTemplate getTemplateByPath(String link) {
+    public Template getTemplateByPath(String link) {
         return this.templatesByLink.get(link);
     }
 
@@ -176,18 +176,18 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
      * Lookup the specified template by action. Returns null if the template
      * cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(ComponentType action) {
+    public Template getTemplateByAction(ComponentType action) {
         return this.templatesByAction.get(action);
     }
 
     /**
      * Set the value for a given template name.
      */
-    void addTemplate(SharedThemeTemplate template) {
+    void addTemplate(SharedTemplate template) {
         this.templatesByName.put(template.getName(), template);
         this.templatesByLink.put(template.getRelativePath(), template);
-        if (template.getAction().isSingleton()) {
-            this.templatesByAction.put(template.getAction(), template);
+        if (template.getRole().isSingleton()) {
+            this.templatesByAction.put(template.getRole(), template);
         }
     }
 
@@ -196,7 +196,7 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
         sb.append(name);
         sb.append("\n");
 
-        for (ThemeTemplate template : templatesByName.values()) {
+        for (Template template : templatesByName.values()) {
             sb.append(template);
             sb.append("\n");
         }

@@ -46,11 +46,11 @@ Macros defined in this file:
 
     #showWeblogEntryCalendar($weblog $category)
 
-    #showPageMenu()
+    #showPageMenu($addExternalPages)
     #showEditorMenu($vertical)
 
-    #showWeblogSearchForm($weblog)
-    #showMobileSearchForm($weblog)
+    #showWeblogSearchForm($weblog $showCatChooser)
+    #showMobileSearchForm($weblog $showCatChooser)
     #showWeblogSearchAgainForm($weblog)
     #showMobileSearchAgainForm($weblog)
     #showNextPrevSearchControl($pager)
@@ -588,7 +588,7 @@ Show weblog's categories in specified parent category.
 #**
  * Show TightBlog Page Navigation Bar, includes links to all pages.
  *#
-#macro(showPageMenu)
+#macro(showPageMenu $addExternalPages)
     <ul class="rNavigationBar">
         <li class="rNavItem">
             <a href="$url.site/"><span>$config.siteShortName</span></a>
@@ -596,14 +596,16 @@ Show weblog's categories in specified parent category.
         <li class="rNavItem">
             <a href="$url.home"><span>Weblog</span></a>
         </li>
-        #foreach($iPage in $model.templates)
-            #if (!$iPage.hidden && $iPage.navbar)
-                #set($isSelected = false)
-                #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
-                #if (!$isSelected)
-                    <li class="rNavItem"><a href='$url.page(null, $iPage.relativePath)'><span>$iPage.name</span></a></li>
-                #else
-                    <li class="rNavItem"><span>$iPage.name</span></li>
+        #if( $addExternalPages )
+            #foreach($iPage in $model.templates)
+                #if ($iPage.role == 'CUSTOM_EXTERNAL')
+                    #set($isSelected = false)
+                    #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
+                    #if (!$isSelected)
+                        <li class="rNavItem"><a href='$url.page(null, $iPage.relativePath)'><span>$iPage.name</span></a></li>
+                    #else
+                        <li class="rNavItem"><span>$iPage.name</span></li>
+                    #end
                 #end
             #end
         #end

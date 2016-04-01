@@ -35,11 +35,11 @@
                             <td><s:textfield name="newTmplName" /></td>
                         </tr>
                         
-                        <s:if test="!availableActions.isEmpty" >
+                        <s:if test="!availableRoles.isEmpty" >
                             <tr>
-                                <td><s:text name="pagesForm.action"/></td>
+                                <td><s:text name="pagesForm.role"/></td>
                                 <td>
-                                    <s:select name="newTmplAction" size="1" list="availableActions" />
+                                    <s:select name="newTmplAction" size="1" list="availableRoles" />
                                 </td>
                             </tr>
                         </s:if>

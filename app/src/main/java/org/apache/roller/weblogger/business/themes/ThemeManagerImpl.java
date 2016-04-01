@@ -45,8 +45,8 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -177,13 +177,13 @@ public class ThemeManagerImpl implements ThemeManager {
 		log.debug("Importing theme [" + theme.getName() + "] to weblog [" + weblog.getName() + "]");
 
 		Set<ComponentType> importedActionTemplates = new HashSet<>();
-		for (ThemeTemplate themeTemplate : theme.getTemplatesByName().values()) {
+		for (Template themeTemplate : theme.getTemplatesByName().values()) {
 			WeblogTemplate template;
 
-			if (themeTemplate.getAction().isSingleton()) {
+			if (themeTemplate.getRole().isSingleton()) {
 				// if template is a singleton, lookup by action
-				importedActionTemplates.add(themeTemplate.getAction());
-				template = weblogManager.getTemplateByAction(weblog, themeTemplate.getAction());
+				importedActionTemplates.add(themeTemplate.getRole());
+				template = weblogManager.getTemplateByAction(weblog, themeTemplate.getRole());
 			} else {
 				// otherwise, lookup by name
 				template = weblogManager.getTemplateByName(weblog, themeTemplate.getName());
@@ -195,12 +195,10 @@ public class ThemeManagerImpl implements ThemeManager {
 				template.setWeblog(weblog);
 			}
 
-			template.setAction(themeTemplate.getAction());
+			template.setRole(themeTemplate.getRole());
 			template.setName(themeTemplate.getName());
 			template.setDescription(themeTemplate.getDescription());
 			template.setRelativePath(themeTemplate.getRelativePath());
-			template.setHidden(themeTemplate.isHidden());
-			template.setNavbar(themeTemplate.isNavbar());
 			template.setLastModified(new Date());
 
 			// save it
@@ -321,10 +319,10 @@ public class ThemeManagerImpl implements ThemeManager {
 
         // create the templates based on the theme descriptor data
         boolean hasWeblogTemplate = false;
-        for (SharedThemeTemplate template : sharedTheme.getTempTemplates()) {
+        for (SharedTemplate template : sharedTheme.getTempTemplates()) {
 
             // one and only one template with action "weblog" allowed
-            if (ComponentType.WEBLOG.equals(template.getAction())) {
+            if (ComponentType.WEBLOG.equals(template.getRole())) {
                 if (hasWeblogTemplate) {
                     throw new WebloggerException("Theme has more than one template with action of 'weblog'");
                 } else {
@@ -333,7 +331,7 @@ public class ThemeManagerImpl implements ThemeManager {
             }
 
             // get the template's available renditions
-            SharedThemeTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.STANDARD);
+            SharedTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.STANDARD);
 
             if (standardRendition == null) {
                 throw new WebloggerException("Cannot retrieve required standard rendition for template " + template.getName());
@@ -347,11 +345,11 @@ public class ThemeManagerImpl implements ThemeManager {
 
             // see if a mobile rendition needs adding
             if (sharedTheme.getDualTheme()) {
-                SharedThemeTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
+                SharedTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
 
                 // cloning the standard template code if no mobile is present
                 if (mobileRendition == null) {
-                    mobileRendition = new SharedThemeTemplateRendition();
+                    mobileRendition = new SharedTemplateRendition();
                     mobileRendition.setContentsFile(standardRendition.getContentsFile());
                     mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
                     mobileRendition.setType(RenditionType.MOBILE);
@@ -373,7 +371,7 @@ public class ThemeManagerImpl implements ThemeManager {
         return sharedTheme;
     }
 
-    private boolean loadRenditionSource(String themeDir, SharedThemeTemplateRendition rendition) {
+    private boolean loadRenditionSource(String themeDir, SharedTemplateRendition rendition) {
         File renditionFile = new File(themeDir + File.separator + rendition.getContentsFile());
         String contents = loadTemplateRendition(renditionFile);
         if (contents == null) {

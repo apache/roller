@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
@@ -226,8 +225,7 @@ public class VelocityRenderer implements Renderer {
 
             if (template != null) {
                 // need to lookup error page template
-                velocityTemplate = RollerVelocity.getTemplate(template,
-                        deviceType);
+                velocityTemplate = RollerVelocity.getTemplate(template, deviceType);
             }
 
             Context ctx = new VelocityContext(model);
