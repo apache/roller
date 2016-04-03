@@ -322,7 +322,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function deleteFolder() {
 
-        $('#boomarks_delete_folder_folderId').val('<s:text name="%{folder.id}"/>');
+        $('#boomarks_delete_folder_folderId').val( $('#bookmarks_folderId:first').val() );
 
         $('#deleteBlogrollName').html('<s:text name="%{folder.name}"/>');
 
@@ -437,7 +437,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             data: $("#folderEditForm").serialize(),
             context: document.body
 
-        }).done(function (data) {
+        }).done(function (data, status, response) {
 
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
@@ -449,7 +449,15 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 feedbackAreaBlogrollEdit.css("color", "green");
                 feedbackAreaBlogrollEdit.html('<s:text name="generic.success" />');
                 $('#blogroll-edit-modal').modal("hide");
-                location.reload(true);
+
+                // kludge get folderId from response header send back by Struts action
+                var newFolderId = response.getResponseHeader('folderId');
+                viewSelector.append( new Option('', newFolderId ));
+                $("#bookmarks_viewFolderId").val( newFolderId );
+
+                var bookmarksForm = $("#bookmarks")[0];
+                bookmarksForm.action = "bookmarks!view.rol";
+                bookmarksForm.submit();
             }
 
         }).error(function (data) {
@@ -727,6 +735,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 feedbackAreaEdit.css("color", "green");
                 feedbackAreaEdit.html('<s:text name="generic.success" />');
                 $('#category-edit-modal').modal("hide");
+
                 location.reload(true);
             }
 

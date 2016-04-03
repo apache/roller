@@ -157,7 +157,13 @@ public class Bookmarks extends UIAction {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             WeblogBookmarkFolder fd = bmgr.getFolder(getFolderId());
+
             if (fd != null) {
+
+                if ( "default".equals( fd.getName() ) ) {
+                    addError("Cannot delete default bookmark");
+                    return execute();
+                }
                 bmgr.removeFolder(fd);
 
                 // flush changes
@@ -170,6 +176,7 @@ public class Bookmarks extends UIAction {
                 setFolder(bmgr.getDefaultFolder(getActionWeblog()));
                 setFolderId(getFolder().getId());
             }
+
         } catch (WebloggerException ex) {
             log.error("Error deleting folder", ex);
         }
@@ -280,6 +287,9 @@ public class Bookmarks extends UIAction {
 
     public void setFolder(WeblogBookmarkFolder folder) {
         this.folder = folder;
+        if ( folder != null ) {
+            this.folderId = folder.getId();
+        }
     }
 
     public String getViewFolderId() {

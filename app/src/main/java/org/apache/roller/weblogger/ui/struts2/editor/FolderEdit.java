@@ -27,13 +27,16 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
  * Edit a new or existing folder.
  */
-public class FolderEdit extends UIAction {
+public class FolderEdit extends UIAction implements ServletResponseAware {
     
     private static Log log = LogFactory.getLog(FolderEdit.class);
 
@@ -45,6 +48,9 @@ public class FolderEdit extends UIAction {
 
     // the folder we are adding or editing
     private WeblogBookmarkFolder folder = null;
+
+    private HttpServletResponse httpServletResponse;
+
 
     public FolderEdit() {
         this.desiredMenu = "editor";
@@ -70,6 +76,11 @@ public class FolderEdit extends UIAction {
                 log.error("Error looking up folder", ex);
             }
         }
+    }
+
+    @Override
+    public void setServletResponse(HttpServletResponse httpServletResponse) {
+        this.httpServletResponse = httpServletResponse;
     }
 
     /**
@@ -111,6 +122,8 @@ public class FolderEdit extends UIAction {
                     // redirect in struts.xml instead of a chain.
                     addMessage("folderForm.updated");
                 }
+
+                httpServletResponse.addHeader("folderId", folderId );
 
                 return SUCCESS;
 
