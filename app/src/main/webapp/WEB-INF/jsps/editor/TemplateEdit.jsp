@@ -36,8 +36,7 @@
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
-    <s:hidden name ="bean.type"/>
-    
+
     <%-- ================================================================== --%>
     <%-- Name, link and description: disabled when page is a required page --%>
     

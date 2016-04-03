@@ -23,6 +23,8 @@ package org.apache.roller.weblogger.business.themes;
 import java.util.List;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -83,4 +85,5 @@ public interface ThemeManager {
     void importSharedTheme(Weblog website, SharedTheme theme)
             throws WebloggerException;
 
+    WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) throws WebloggerException;
 }

@@ -25,6 +25,7 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
@@ -65,6 +66,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         }
 
         testPage = new WeblogTemplate();
+        testPage.setId(WebloggerCommon.generateUUID());
         testPage.setRole(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");

@@ -34,6 +34,7 @@ import java.util.TreeMap;
 
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
+import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
 
 
 /**
@@ -92,9 +93,12 @@ public class WeblogTheme {
         // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
         if (!weblog.isTempPreviewWeblog()) {
             try {
-                for (Template template : weblogManager.getTemplates(this.weblog)) {
-                    // note that this will replace shared templates with any overrides
-                    // from the db, which is what we want
+                for (WeblogTemplate template : weblogManager.getTemplates(this.weblog)) {
+                    if (pageMap.get(template.getName()) != null) {
+                        // mark weblog template as an override
+                        template.setDerivation(TemplateDerivation.OVERRIDDEN);
+                    }
+                    // add new or replace shared template
                     pageMap.put(template.getName(), template);
                 }
             } catch (Exception e) {

@@ -425,12 +425,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     public WeblogTemplate getTemplate(String id) throws WebloggerException {
-        // Don't hit database for templates stored on disk
-        if (id != null && id.endsWith(".vm")) {
+        if (id == null) {
             return null;
         }
         
-        return this.strategy.load(WeblogTemplate.class,id);
+        return this.strategy.load(WeblogTemplate.class, id);
     }
     
     /**

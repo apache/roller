@@ -40,10 +40,11 @@
 <s:if test="!templates.isEmpty">
 
     <tr>
-        <th width="20%"><s:text name="generic.name" /></th>
-        <th width="15%"><s:text name="pagesForm.role" /></th>
-        <th width="50%"><s:text name="generic.description" /></th>
-        <th width="10%"><s:text name="pagesForm.remove" /></th>
+        <th width="20%"><s:text name="generic.name"/></th>
+        <th width="15%"><s:text name="pagesForm.role"/></th>
+        <th width="40%"><s:text name="generic.description"/></th>
+        <th width="10%"><s:text name="pagesForm.source"/></th>
+        <th width="10%"><s:text name="pagesForm.remove"/></th>
         <th width="5%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
     </tr>
     <s:iterator id="p" value="templates" status="rowstatus">
@@ -61,10 +62,18 @@
                 <s:else>
                     <img src='<s:url value="/images/page_white_gear.png"/>' border="0" alt="icon" />
                 </s:else>
-                <s:url var="edit" action="templateEdit">
-                    <s:param name="weblog" value="actionWeblog.handle" />
-                    <s:param name="bean.id" value="#p.id" />
-                </s:url>
+                <s:if test="#p.derivation.name() != 'SHARED'">
+                    <s:url var="edit" action="templateEdit">
+                        <s:param name="weblog" value="actionWeblog.handle" />
+                        <s:param name="bean.id" value="#p.id" />
+                    </s:url>
+                </s:if>
+                <s:else>
+                    <s:url var="edit" action="templateEdit">
+                        <s:param name="weblog" value="actionWeblog.handle" />
+                        <s:param name="bean.name" value="#p.name" />
+                    </s:url>
+                </s:else>
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>
             
@@ -72,15 +81,21 @@
 
             <td style="vertical-align:middle"><s:property value="#p.description" /></td>
 
+            <td style="vertical-align:middle"><s:property value="#p.derivation.readableName" /></td>
+
             <td class="center" style="vertical-align:middle">
-                 <s:url var="removeUrl" action="templateRemove">
-                     <s:param name="weblog" value="actionWeblog.handle"/>
-                     <s:param name="removeId" value="#p.id"/>
-                 </s:url>
-                 <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' /></s:a>
+                <s:if test="#p.derivation.name() != 'SHARED'">
+                     <s:url var="removeUrl" action="templateRemove">
+                         <s:param name="weblog" value="actionWeblog.handle"/>
+                         <s:param name="removeId" value="#p.id"/>
+                     </s:url>
+                     <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' /></s:a>
+                </s:if>
             </td>
             <td class="center" style="vertical-align:middle">
-                <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" />
+                <s:if test="#p.derivation.name() != 'SHARED'">
+                    <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" />
+                </s:if>
             </td>
         </tr>
     </s:iterator>

@@ -23,12 +23,14 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
@@ -88,9 +90,13 @@ public class TemplateEdit extends UIAction {
 
     public void prepare() {
         try {
-            setTemplate(weblogManager.getTemplate(getBean().getId()));
+            if (bean.getId() != null && bean.getId().length() > 0) {
+                // Template is overridden or blog-only
+                setTemplate(weblogManager.getTemplate(getBean().getId()));
+            }
+
         } catch (WebloggerException ex) {
-            log.error("Error looking up template - " + getBean().getId(), ex);
+            log.error("Error looking up template: " + getBean(), ex);
         }
     }
 
@@ -102,8 +108,11 @@ public class TemplateEdit extends UIAction {
     public String execute() {
         try {
             if (getTemplate() == null) {
-                addError("Unable to locate specified template");
-                return LIST;
+                // Overriding a shared template, generate a template override
+                SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getEditorTheme());
+                Template template = sharedTheme.getTemplateByName(bean.getName());
+                WeblogTemplate newTemplate = themeManager.createWeblogTemplate(getActionWeblog(), template);
+                setTemplate(newTemplate);
             }
 
             bean.setId(template.getId());
@@ -111,16 +120,19 @@ public class TemplateEdit extends UIAction {
             bean.setRole(template.getRole());
             bean.setDescription(template.getDescription());
             bean.setRelativePath(template.getRelativePath());
+            bean.setWeblog(getActionWeblog());
 
-            if (template.getTemplateRendition(RenditionType.STANDARD) != null) {
-                bean.setContentsStandard(template.getTemplateRendition(RenditionType.STANDARD).getTemplate());
+            WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(RenditionType.STANDARD);
+            if (maybeTemplate != null) {
+                bean.setContentsStandard(maybeTemplate.getTemplate());
             } else {
                 bean.setContentsStandard("");
             }
-            if (template.getTemplateRendition(RenditionType.MOBILE) != null) {
-                bean.setContentsMobile(template.getTemplateRendition(RenditionType.MOBILE).getTemplate());
+
+            maybeTemplate = template.getTemplateRendition(RenditionType.MOBILE);
+            if (maybeTemplate != null) {
+                bean.setContentsMobile(maybeTemplate.getTemplate());
             }
-            log.debug("Standard: " + bean.getContentsStandard() + " Mobile: " + bean.getContentsMobile());
 
         } catch (WebloggerException ex) {
            log.error("Error updating page - " + getBean().getId(), ex);
@@ -134,55 +146,56 @@ public class TemplateEdit extends UIAction {
      * Save an existing template.
      */
     public String save() {
-        log.debug("Entering save()");
-
-        if (getTemplate() == null) {
-            addError("Unable to locate specified template");
-            return LIST;
-        }
-
         // validation
         myValidate();
 
         if (!hasActionErrors()) {
+            WeblogTemplate templateToSave = getTemplate();
+
+            if (templateToSave == null) {
+                templateToSave = new WeblogTemplate();
+                templateToSave.setId(WebloggerCommon.generateUUID());
+                templateToSave.setWeblog(getActionWeblog());
+                templateToSave.setRole(bean.getRole());
+            }
+
+            // some properties relevant only for certain template roles
+            if (!templateToSave.getRole().isSingleton()) {
+                templateToSave.setName(bean.getName());
+                templateToSave.setDescription(bean.getDescription());
+            }
+
+            if (templateToSave.getRole().isAccessibleViaUrl()) {
+                templateToSave.setRelativePath(bean.getRelativePath());
+            }
+
+            templateToSave.setLastModified(new Date());
+
             try {
-                WeblogTemplate templateToSave = getTemplate();
-
-                if (templateToSave.getTemplateRendition(RenditionType.STANDARD) != null) {
-                    // if we have a template, then set it
-                    WeblogTemplateRendition tc = templateToSave.getTemplateRendition(RenditionType.STANDARD);
-                    tc.setTemplate(bean.getContentsStandard());
-                    weblogManager.saveTemplateRendition(tc);
-                } else {
-                    // otherwise create it, then set it
-                    WeblogTemplateRendition tc = new WeblogTemplateRendition(templateToSave, RenditionType.STANDARD);
-                    tc.setTemplate("");
-                    weblogManager.saveTemplateRendition(tc);
-                }
-
-                if (templateToSave.getTemplateRendition(RenditionType.MOBILE) != null) {
-                    WeblogTemplateRendition tc = templateToSave.getTemplateRendition(RenditionType.MOBILE);
-                    tc.setTemplate(bean.getContentsMobile());
-                    weblogManager.saveTemplateRendition(tc);
-                }
-
-                // some properties relevant only for certain template roles
-                if (!templateToSave.getRole().isSingleton()) {
-                    templateToSave.setName(bean.getName());
-                    templateToSave.setDescription(bean.getDescription());
-                }
-
-                if (templateToSave.getRole().isAccessibleViaUrl()) {
-                    templateToSave.setRelativePath(bean.getRelativePath());
-                }
-
-                templateToSave.setLastModified(new Date());
-
-                // save template
                 weblogManager.saveTemplate(templateToSave);
                 log.debug("Saved template: " + templateToSave.getId());
 
-                //flush
+                WeblogTemplateRendition wtr = templateToSave.getTemplateRendition(RenditionType.STANDARD);
+
+                if (wtr != null) {
+                    // if we have a template, then set it
+                    wtr.setTemplate(bean.getContentsStandard());
+                    weblogManager.saveTemplateRendition(wtr);
+                } else {
+                    // otherwise create it, then set it
+                    wtr = new WeblogTemplateRendition(templateToSave, RenditionType.STANDARD);
+                    wtr.setTemplate(bean.getContentsStandard());
+                    wtr.setTemplateLanguage(TemplateLanguage.VELOCITY);
+                    weblogManager.saveTemplateRendition(wtr);
+                }
+
+                wtr = templateToSave.getTemplateRendition(RenditionType.MOBILE);
+                if (wtr != null) {
+                    wtr.setTemplate(bean.getContentsMobile());
+                    wtr.setTemplateLanguage(TemplateLanguage.VELOCITY);
+                    weblogManager.saveTemplateRendition(wtr);
+                }
+
                 WebloggerFactory.flush();
 
                 // notify caches
@@ -206,7 +219,7 @@ public class TemplateEdit extends UIAction {
             addError("Template.error.nameNull");
         } else {
             // if name changed make sure there isn't a conflict
-            if (!getTemplate().getName().equals(getBean().getName())) {
+            if (template != null && !getTemplate().getName().equals(getBean().getName())) {
                 try {
                     if (weblogManager.getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
                         addError("pagesForm.error.alreadyExists", getBean().getName());
@@ -217,7 +230,7 @@ public class TemplateEdit extends UIAction {
             }
 
             // if link changed make sure there isn't a conflict
-            if (!StringUtils.isEmpty(getBean().getRelativePath()) &&
+            if (template != null && !StringUtils.isEmpty(getBean().getRelativePath()) &&
                     !getBean().getRelativePath().equals(getTemplate().getRelativePath())) {
                 try {
                     if (weblogManager.getTemplateByPath(getActionWeblog(), getBean().getRelativePath()) != null) {
@@ -253,23 +266,21 @@ public class TemplateEdit extends UIAction {
 
                 templateToRevert.setLastModified(new Date());
 
-                if (templateToRevert.getTemplateRendition(RenditionType.STANDARD) != null) {
+                WeblogTemplateRendition existingTemplate = templateToRevert.getTemplateRendition(RenditionType.STANDARD);
+                if (existingTemplate != null) {
                     TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
                             .getTemplateRendition(RenditionType.STANDARD);
                     // if we have a template, then set it
-                    WeblogTemplateRendition existingTemplateCode = templateToRevert
-                            .getTemplateRendition(RenditionType.STANDARD);
-                    existingTemplateCode
-                            .setTemplate(templateCode.getTemplate());
-                    weblogManager.saveTemplateRendition(existingTemplateCode);
+                    existingTemplate.setTemplate(templateCode.getTemplate());
+                    weblogManager.saveTemplateRendition(existingTemplate);
                 }
-                if (templateToRevert.getTemplateRendition(RenditionType.MOBILE) != null) {
+
+                existingTemplate = templateToRevert.getTemplateRendition(RenditionType.MOBILE);
+                if (existingTemplate != null) {
                     TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
                             .getTemplateRendition(RenditionType.MOBILE);
-                    WeblogTemplateRendition existingTemplateCode = templateToRevert
-                            .getTemplateRendition(RenditionType.MOBILE);
-                    existingTemplateCode
-                            .setTemplate(templateCode.getTemplate());
+                    existingTemplate.setTemplate(templateCode.getTemplate());
+                    weblogManager.saveTemplateRendition(existingTemplate);
                 }
 
                 // save template and flush

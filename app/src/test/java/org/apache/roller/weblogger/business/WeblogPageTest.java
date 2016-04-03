@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.business;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
@@ -61,6 +62,7 @@ public class WeblogPageTest extends WebloggerTest {
         }
         
         testPage = new WeblogTemplate();
+        testPage.setId(WebloggerCommon.generateUUID());
         testPage.setRole(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");

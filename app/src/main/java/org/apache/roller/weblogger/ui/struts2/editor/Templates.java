@@ -28,12 +28,15 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 import java.util.ArrayList;
@@ -51,7 +54,7 @@ public class Templates extends UIAction {
 	private static Log log = LogFactory.getLog(Templates.class);
 
 	// list of templates to display
-	private List<WeblogTemplate> templates = Collections.emptyList();
+	private List<Template> templates = Collections.emptyList();
 
 	// list of template action types user is allowed to create
 	private Map<ComponentType, String> availableRoles = Collections.emptyMap();
@@ -65,6 +68,12 @@ public class Templates extends UIAction {
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
+
+	private ThemeManager themeManager;
+
+	public void setThemeManager(ThemeManager themeManager) {
+		this.themeManager = themeManager;
+	}
 
     public Templates() {
 		this.actionName = "templates";
@@ -82,9 +91,12 @@ public class Templates extends UIAction {
 		// query for templates list
 		try {
 
-			// get current list of templates, minus custom stylesheet
-			List<WeblogTemplate> raw = weblogManager.getTemplates(getActionWeblog());
-			List<WeblogTemplate> pages = new ArrayList<>();
+			// get current list of templates defined for the blog
+			WeblogTheme theme = new WeblogTheme(weblogManager, getActionWeblog(),
+					themeManager.getSharedTheme(getActionWeblog().getEditorTheme()));
+
+			List<? extends Template> raw = theme.getTemplates();
+			List<Template> pages = new ArrayList<>();
 			pages.addAll(raw);
 			setTemplates(pages);
 
@@ -100,7 +112,7 @@ public class Templates extends UIAction {
 			addComponentTypeToMap(rolesMap, ComponentType.CUSTOM_EXTERNAL);
 
 			// remove from above list any already existing for the theme
-            for (WeblogTemplate tmpPage : getTemplates()) {
+            for (Template tmpPage : getTemplates()) {
                 if (tmpPage.getRole().isSingleton()) {
                     rolesMap.remove(tmpPage.getRole());
                 }
@@ -129,16 +141,12 @@ public class Templates extends UIAction {
 
 		if (!hasActionErrors()) {
             try {
-
                 WeblogTemplate newTemplate = new WeblogTemplate();
-                newTemplate.setWeblog(getActionWeblog());
+				newTemplate.setId(WebloggerCommon.generateUUID());
+				newTemplate.setWeblog(getActionWeblog());
                 newTemplate.setRole(getNewTmplAction());
                 newTemplate.setName(getNewTmplName());
                 newTemplate.setLastModified(new Date());
-
-                if (!getNewTmplAction().isSingleton()) {
-                    newTemplate.setRelativePath(getNewTmplName());
-                }
 
                 // Make sure we have always have a Weblog main page. Stops
                 // deleting main page in custom theme mode also.
@@ -205,8 +213,7 @@ public class Templates extends UIAction {
 
 		// check if template by that name already exists
 		try {
-			WeblogTemplate existingPage = weblogManager.getTemplateByName(getActionWeblog(),
-                    getNewTmplName());
+			WeblogTemplate existingPage = weblogManager.getTemplateByName(getActionWeblog(), getNewTmplName());
 			if (existingPage != null) {
 				addError("pagesForm.error.alreadyExists", getNewTmplName());
 			}
@@ -216,11 +223,11 @@ public class Templates extends UIAction {
 
 	}
 
-	public List<WeblogTemplate> getTemplates() {
+	public List<Template> getTemplates() {
 		return templates;
 	}
 
-	public void setTemplates(List<WeblogTemplate> templates) {
+	public void setTemplates(List<Template> templates) {
 		this.templates = templates;
 	}
 

@@ -37,7 +37,7 @@ public interface Template {
 
     @XmlType
     @XmlEnum
-    public enum ComponentType {
+    enum ComponentType {
         @XmlEnumValue("weblog") WEBLOG("Weblog", "text/html", true, "template.weblog.description"),
         @XmlEnumValue("permalink") PERMALINK("Permalink", "text/html", true, "template.permalink.description"),
         @XmlEnumValue("search") SEARCH("Search", "text/html", true, "template.search.description"),
@@ -88,6 +88,31 @@ public interface Template {
     }
 
     /**
+     * The template derivation provides the background for this template, useful for doing validation
+     * during template customization.  Enum values:
+     * SHARED - file-based only, the template came from a shared theme and was not overridden by the user
+     *          during template customization.
+     * OVERRIDDEN - A database-stored template that overrides one provided by a shared theme.
+     * NONSHARED - A database-stored template that does not override a shared template.
+     */
+    enum TemplateDerivation {
+        SHARED("Default"),
+        OVERRIDDEN("Override"),
+        NONSHARED("Blog-Only");
+
+        private final String readableName;
+
+        TemplateDerivation(String readableName) {
+            this.readableName = readableName;
+        }
+
+        public String getReadableName() {
+            return readableName;
+        }
+    }
+
+
+    /**
      * The unique identifier for this Template.
      */
     String getId();
@@ -120,6 +145,11 @@ public interface Template {
      * The role this template performs.
      */
     ComponentType getRole();
+
+    /**
+     * The derivation of this template.
+     */
+    TemplateDerivation getDerivation();
 
     /**
      * The relative path for this Template to add to the default page URL

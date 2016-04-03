@@ -146,7 +146,9 @@ public class TemplatesRemove extends UIAction {
                     for (String id : idsToDelete) {
                         if (!id.equals("")) {
                             template = weblogManager.getTemplate(id);
-                            weblogManager.removeTemplate(template);
+                            if (template != null) {
+                                weblogManager.removeTemplate(template);
+                            }
                         }
                     }
 
