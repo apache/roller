@@ -14,19 +14,21 @@
 # copyright in this work, please see the NOTICE file in the top level
 # directory of this distribution.
 #
-# This script compares a given resource file against the default (English) file,
-# signalling unused strings that can be removed from the given file.
-#
+# This script checks the default (English) resource file for unused strings that can be removed.
+# 
 # To use: 
-# 1.) first run docs/examples/i18n/check-default-resource-file.py to remove 
-#     unused strings from default (English) resource file -- see that .py file
-#     for instructions.
-# 2.) Edit the open() command below for the language resource file you wish to check. 
-#     then run from a command prompt: python compare-vs-default-file.py | grep UNUSED > results.txt
-# 3.) results.txt will list unused strings that can be removed.
-#     Caveat: due to substring searching, if "xxx.yyy" has 0 usages but "xxx.yyy.zzz" 
+# 1.) run from a command prompt: python check-default-resource-file.py | grep UNUSED > results.txt
+# 2.) results.txt will list unused strings that can be removed.  Good to confirm each by doing a
+#     full search in your IDE on the string.
+#     Caveat #1: due to substring searching, if "xxx.yyy" has 0 usages but "xxx.yyy.zzz"
 #     has one or more, "xxx.yyy" will not be marked as unused, so some unused strings may
 #     end up remaining in the resource file.
+#
+#     Caveat #2: certainly strings are dynamically generated in the code (weblogEntriesPager.*.*
+#     for example) and hence will show up in the list as false positives -- don't delete them.
+#
+# 3.) Removal is best from the IntelliJ Resource Bundle view, where you can delete the key and it
+#     will automatically delete the string from all of the language resource files.
 #
 #!/usr/bin/python
 
@@ -36,7 +38,7 @@ from contextlib import closing
 import sys
 
 def prop_names():
-    rfile = open("../../../app/src/main/resources/ApplicationResources_de.properties")
+    rfile = open("../../../app/src/main/resources/ApplicationResources.properties")
     prop_pattern = re.compile('^([a-zA-Z]+(\.[a-zA-Z]+)*)=.*')
     for line in rfile:
         m = prop_pattern.match(line)
@@ -46,7 +48,7 @@ def prop_names():
 
 
 for propname in prop_names():
-    cmd = 'find ../../../app -type f -name "ApplicationResources.properties" | xargs grep -n %s /dev/null | wc -l' % propname
+    cmd = 'find ../../../app -type f \! -name "ApplicationResources*" | xargs grep -n %s /dev/null | wc -l' % propname
     with closing(os.popen(cmd,'r')) as pipe:
         occurrences = int(pipe.readline())
     if (occurrences == 0):
@@ -55,9 +57,3 @@ for propname in prop_names():
         print "Property %s occurs %d times" % (propname, occurrences)
     sys.stdout.flush()
 
-
-
-
-
-        
-    
