@@ -149,12 +149,17 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 </td>
                 
                 <td align="center">
-                    <s:url var="editUrl" action="bookmarkEdit">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="bean.id" value="#bookmark.id" />
-                        <s:param name="folderId" value="%{folderId}" suppressEmptyParameters="true"/>
-                    </s:url>
-                    <s:a href="%{editUrl}"> <span class="glyphicon glyphicon-edit"></span> </s:a>
+
+                    <a href="#" onclick="editBookmark(
+                            '<s:property value="#bookmark.id" />',
+                            '<s:property value="#bookmark.name"/>',
+                            '<s:property value="#bookmark.url"/>',
+                            '<s:property value="#bookmark.feedUrl"/>',
+                            '<s:property value="#bookmark.description"/>',
+                            '<s:property value="#bookmark.image" />' )">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+
                 </td>
                 
             </tr>
@@ -292,7 +297,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function nameChanged() {
         var newName = $("#bookmarks_folder_name:first").val();
-        if ( newName != originalName && newName.trim().length > 0 ) {
+        if ( newName && newName != originalName && newName.trim().length > 0 ) {
             renameButton.attr("disabled", false );
             renameButton.addClass("btn-success");
 
@@ -597,21 +602,18 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             </div> <%-- modal header --%>
 
-            <s:form action="bookmark" theme="bootstrap" cssClass="form-horizontal">
-                <s:hidden name="salt" />
-                <s:hidden name="weblog" />
-                <%--
-                    Edit action uses folderId for redirection back to proper bookmarks folder on cancel
-                    (as configured in struts.xml); add action also, plus to know which folder to put new
-                    bookmark in.
-                --%>
-                <s:hidden name="folderId" />
-                <s:if test="actionName == 'bookmarkEdit'">
-                    <%-- bean for bookmark add does not have a bean id yet --%>
-                    <s:hidden name="bean.id" />
-                </s:if>
-
                 <div class="modal-body">
+
+                    <s:form action="bookmark" theme="bootstrap" cssClass="form-horizontal">
+                    <s:hidden name="salt" />
+                    <s:hidden name="weblog" />
+                        <%--
+                            Edit action uses folderId for redirection back to proper bookmarks folder on cancel
+                            (as configured in struts.xml); add action also, plus to know which folder to put new
+                            bookmark in.
+                        --%>
+                    <s:hidden name="folderId" />
+                    <s:hidden name="bean.id" />
 
                     <s:textfield name="bean.name" maxlength="255"
                                  onchange="onBookmarkFormChanged()"
@@ -637,6 +639,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                                  onchange="onBookmarkFormChanged()"
                                  onkeyup ="onBookmarkFormChanged()"
                                  label="%{getText('bookmarkForm.image')}" />
+                    </s:form>
+
                 </div>
 
                 <div class="modal-body">
@@ -651,7 +655,6 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                     </div>
                 </div>
 
-            </s:form>
 
         </div> <%-- modal content --%>
 
@@ -686,6 +689,32 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         $('#addedit-bookmark-modal').modal({show: true});
     }
+
+
+    function editBookmark(id, name, url, feedUrl, description, image) {
+
+        var saveBookmarkButton = $('#save_bookmark:first');
+        saveBookmarkButton.attr("disabled", true );
+
+        var elem = $('#bookmark_required_fields:first');
+        elem.html('<s:text name="bookmarkForm.requiredFields" />');
+        elem.removeClass("alert-success");
+        elem.removeClass("alert-danger");
+        elem.addClass("alert-info");
+
+        $('#bookmark_bean_id:first').val(id);
+        $('#bookmark_folderId').val(id);
+        $('#bookmark_bean_name:first').val(name);
+        $('#bookmark_bean_url:first').val(url);
+        $('#bookmark_bean_feedUrl:first').val(feedUrl);
+        $('#bookmark_bean_description:first').val(description);
+        $('#bookmark_bean_image:first').val(image);
+
+        $('#subtitle_folder_name:first').html(originalName);
+
+        $('#addedit-bookmark-modal').modal({show: true});
+    }
+
 
     function onBookmarkFormChanged() {
 
