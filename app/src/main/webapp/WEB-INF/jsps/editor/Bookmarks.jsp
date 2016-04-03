@@ -186,7 +186,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         <input id="delete_selected"
             value="<s:text name="bookmarksForm.delete"/>"
             type="button" class="btn btn-danger" style="float:right; margin-right: 0.5em"
-            onclick="deleteFolder();return false;"/>
+            onclick="confirmDeleteSelected();return false;"/>
 
     </s:if>
 
@@ -213,7 +213,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         <s:submit value="%{getText('bookmarksForm.deleteFolder')}"
             theme="simple" cssClass="btn btn-danger" cssStyle="float:right; clear:left; margin-top:2em"
             action="bookmarks!deleteFolder"
-            onclick="deleteFolder();return false;"/>
+            onclick="confirmDeleteFolder();return false;"/>
 
     </s:if>
 
@@ -259,21 +259,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 new Option( '<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll" ));
     });
 
-    function nameChanged() {
-        var newName = $("#bookmarks_folder_name:first").val();
-        if ( newName != originalName ) {
-            renameButton.attr("disabled", false );
-            renameButton.addClass("btn-success");
 
-            renameCancel.attr("disabled", false );
-
-        } else {
-            renameButton.attr("disabled", true );
-            renameButton.removeClass("btn-success");
-
-            renameCancel.attr("disabled", true );
-        }
-    }
 
     function selectionChanged() {
         var checked = false;
@@ -304,8 +290,53 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         }
     }
 
-    function renameFolder( event ) {
-        event.preventDefault();
+    function nameChanged() {
+        var newName = $("#bookmarks_folder_name:first").val();
+        if ( newName != originalName && newName.trim().length > 0 ) {
+            renameButton.attr("disabled", false );
+            renameButton.addClass("btn-success");
+
+            renameCancel.attr("disabled", false );
+
+        } else {
+            renameButton.attr("disabled", true );
+            renameButton.removeClass("btn-success");
+
+            renameCancel.attr("disabled", true );
+        }
+    }
+
+    function renameFolder() {
+
+        var newName = $("#bookmarks_folder_name:first").val();
+        $("#folderEditForm_bean_name").val(newName);
+
+        var folderId = $("#bookmarks_folderId").val();
+        $("#folderEditForm_bean_id").val(folderId);
+
+        // post blogroll via AJAX
+        var folderEditForm = $("#folderEditForm")[0];
+        $.ajax({
+            method: 'post',
+            url: folderEditForm.attributes["action"].value,
+            data: $("#folderEditForm").serialize(),
+            context: document.body
+
+        }).done(function (data, status, response) {
+
+            // kludge: scrape response status from HTML returned by Struts
+            var alertEnd = data.indexOf("ALERT_END");
+            if (data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />') < alertEnd) {
+                alert('<s:text name="bookmarkForm.error.duplicateName" />');
+
+            } else {
+                originalName = newName;
+                nameChanged();
+            }
+
+        }).error(function (data) {
+            alert('<s:text name="generic.error.check.logs" />');
+        });
     }
 
     function cancelRenameFolder( event ) {
@@ -313,35 +344,22 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         nameChanged();
     }
 
-    function confirmDelete() {
-        // TODO: do not use plain old DHTML confirm here
-        if (confirm("<s:text name='bookmarksForm.delete.confirm' />")) {
-            document.bookmarks.submit();
-        }
+    function confirmDeleteSelected() {
+        $('#delete-links-modal').modal({show: true});
     }
 
-    function deleteFolder() {
+    function deleteSelected() {
+        document.bookmarks[0].submit();
+    }
 
+    function confirmDeleteFolder() {
         $('#boomarks_delete_folder_folderId').val( $('#bookmarks_folderId:first').val() );
-
         $('#deleteBlogrollName').html('<s:text name="%{folder.name}"/>');
-
         $('#delete-blogroll-modal').modal({show: true});
-
-        <%--
-        if (confirm("<s:text name='bookmarksForm.deleteFolder.confirm' />")) {
-            document.bookmarks.action = '<s:url action="bookmarks!deleteFolder" />';
-            document.bookmarks.submit();
-        }
-        --%>
     }
 
     function onMoveToFolder() {
-        // TODO: do not use plain old DHTML confirm here
-        if (confirm("<s:text name='bookmarksForm.move.confirm' />")) {
-            document.bookmarks.action = '<s:url action="bookmarks!move" />';
-            document.bookmarks.submit();
-        }
+        $('#move-links-modal').modal({show: true});
     }
 
     function viewChanged() {
@@ -473,6 +491,43 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
 <%-- delete blogroll confirmation modal --%>
 
+<div id="delete-links-modal" class="modal fade delete-links-modal" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3>
+                    <s:text name="bookmarksForm.delete.confirm" />
+                </h3>
+            </div>
+
+            <s:form theme="bootstrap" cssClass="form-horizontal">
+                <div class="modal-body">
+                    <s:text name="bookmarksForm.delete.areYouSure"></s:text>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn" value="%{getText('generic.yes')}" onclick="deleteSelected()">
+                        <s:text name="generic.yes" />
+                    </button>
+                    &nbsp;
+                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                        <s:text name="generic.no" />
+                    </button>
+                </div>
+            </s:form>
+
+        </div>
+    </div>
+</div>
+
+
+<%-- ========================================================================================== --%>
+
+<%-- delete blogroll confirmation modal --%>
+
 <div id="delete-blogroll-modal" class="modal fade delete-blogroll-modal" tabindex="-1" role="dialog">
 
     <div class="modal-dialog modal-lg">
@@ -508,16 +563,6 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         </div>
     </div>
 </div>
-
-<script>
-
-    function showBlogrollDeleteModal( id, name ) {
-        $('#blogrollRemove_removeId').val(id);
-        $('#blogroll-name').html(name);
-        $('#delete-remove-modal').modal({show: true});
-    }
-
-</script>
 
 
 <%-- ================================================================================================ --%>
