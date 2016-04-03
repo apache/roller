@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.business.themes.SharedTemplate;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -71,12 +72,13 @@ public class WeblogTemplate implements Template, Serializable {
     public static final long serialVersionUID = -613737191638263428L;
 
     // attributes
-    private String id = WebloggerCommon.generateUUID();
+    private String id = null;
     private ComponentType role = null;
     private String  name = null;
     private String  description = null;
     private String  relativePath = null;
     private Date    lastModified = null;
+    private TemplateDerivation derivation = TemplateDerivation.NONSHARED;
 
     private String  contentsStandard = null;
     private String  contentsMobile = null;
@@ -190,6 +192,34 @@ public class WeblogTemplate implements Template, Serializable {
         return false;
     }
 
+    @Transient
+    public String getContentsStandard() {
+        return this.contentsStandard;
+    }
+
+    public void setContentsStandard( String contents ) {
+        this.contentsStandard = contents;
+    }
+
+    @Transient
+    public String getContentsMobile() {
+        return this.contentsMobile;
+    }
+
+    public void setContentsMobile( String contents ) {
+        this.contentsMobile = contents;
+    }
+
+    @Override
+    @Transient
+    public TemplateDerivation getDerivation() {
+        return derivation;
+    }
+
+    public void setDerivation(TemplateDerivation derivation) {
+        this.derivation = derivation;
+    }
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
@@ -215,24 +245,6 @@ public class WeblogTemplate implements Template, Serializable {
             .append(getName())
             .append(getWeblog())
             .toHashCode();
-    }
-
-    @Transient
-    public String getContentsStandard() {
-        return this.contentsStandard;
-    }
-
-    public void setContentsStandard( String contents ) {
-        this.contentsStandard = contents;
-    }
-
-    @Transient
-    public String getContentsMobile() {
-        return this.contentsMobile;
-    }
-
-    public void setContentsMobile( String contents ) {
-        this.contentsMobile = contents;
     }
 
 }

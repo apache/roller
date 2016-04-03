@@ -620,9 +620,7 @@ public class Weblog implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return  "{" + getId() + ", " + getHandle()
-                + ", " + getName() + ", " + getEmailAddress()
-                + ", " + getLocale() + ", " + getTimeZone() + "}";
+        return  "{" + getId() + ", " + getHandle() + ", " + getName() + "}";
     }
 
     public boolean equals(Object other) {

@@ -161,4 +161,8 @@ public class SharedTemplate implements Template, Serializable {
         this.role = role;
     }
 
+    @Override
+    public TemplateDerivation getDerivation() {
+        return TemplateDerivation.SHARED;
+    }
 }

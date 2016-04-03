@@ -39,6 +39,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -177,56 +178,26 @@ public class ThemeManagerImpl implements ThemeManager {
 		log.debug("Importing theme [" + theme.getName() + "] to weblog [" + weblog.getName() + "]");
 
 		Set<ComponentType> importedActionTemplates = new HashSet<>();
-		for (Template themeTemplate : theme.getTemplatesByName().values()) {
-			WeblogTemplate template;
+		for (Template sharedTemplate : theme.getTemplatesByName().values()) {
+			WeblogTemplate weblogTemplate;
 
-			if (themeTemplate.getRole().isSingleton()) {
+			if (sharedTemplate.getRole().isSingleton()) {
 				// if template is a singleton, lookup by action
-				importedActionTemplates.add(themeTemplate.getRole());
-				template = weblogManager.getTemplateByAction(weblog, themeTemplate.getRole());
+				importedActionTemplates.add(sharedTemplate.getRole());
+				weblogTemplate = weblogManager.getTemplateByAction(weblog, sharedTemplate.getRole());
 			} else {
 				// otherwise, lookup by name
-				template = weblogManager.getTemplateByName(weblog, themeTemplate.getName());
+				weblogTemplate = weblogManager.getTemplateByName(weblog, sharedTemplate.getName());
 			}
 
-			// Weblog does not have this template, so create it.
-			if (template == null) {
-				template = new WeblogTemplate();
-				template.setWeblog(weblog);
+			// If template already exists, remove it.
+			if (weblogTemplate != null) {
+				weblogManager.removeTemplate(weblogTemplate);
 			}
 
-			template.setRole(themeTemplate.getRole());
-			template.setName(themeTemplate.getName());
-			template.setDescription(themeTemplate.getDescription());
-			template.setRelativePath(themeTemplate.getRelativePath());
-			template.setLastModified(new Date());
-
-			// save it
-			weblogManager.saveTemplate(template);
-
-			// create weblog template code objects and save them
-			for (RenditionType type : RenditionType.values()) {
-
-				// See if we already have some code for this template already (eg previous theme)
-				WeblogTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
-
-				// Get the template for the new theme
-				TemplateRendition templateCode = themeTemplate.getTemplateRendition(type);
-				if (templateCode != null) {
-
-					// Check for existing template
-					if (weblogTemplateCode == null) {
-						// Does not exist so create a new one
-						weblogTemplateCode = new WeblogTemplateRendition(template, type);
-					}
-					weblogTemplateCode.setType(type);
-					weblogTemplateCode.setTemplate(templateCode.getTemplate());
-					weblogTemplateCode.setTemplateLanguage(templateCode
-							.getTemplateLanguage());
-					weblogManager.saveTemplateRendition(weblogTemplateCode);
-				}
-
-			}
+			WeblogTemplate template = createWeblogTemplate(weblog, sharedTemplate);
+            template.setId(WebloggerCommon.generateUUID());
+            weblogManager.saveTemplate(template);
 		}
 
 		// now, see if the weblog has left over singleton action templates that
@@ -247,6 +218,35 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		weblogManager.saveWeblog(weblog);
 	}
+
+	@Override
+    public WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) throws WebloggerException {
+		WeblogTemplate weblogTemplate = new WeblogTemplate();
+		weblogTemplate.setWeblog(weblog);
+		weblogTemplate.setRole(sharedTemplate.getRole());
+		weblogTemplate.setName(sharedTemplate.getName());
+		weblogTemplate.setDescription(sharedTemplate.getDescription());
+		weblogTemplate.setRelativePath(sharedTemplate.getRelativePath());
+		weblogTemplate.setLastModified(new Date());
+
+		// create weblog template code objects and save them
+		for (RenditionType type : RenditionType.values()) {
+
+			// Get the template for the new theme
+			TemplateRendition templateCode = sharedTemplate.getTemplateRendition(type);
+			if (templateCode != null) {
+				// See if we already have some code for this template already (eg previous theme)
+				WeblogTemplateRendition weblogTemplateCode = new WeblogTemplateRendition(weblogTemplate, type);
+				weblogTemplateCode.setType(type);
+				weblogTemplateCode.setTemplate(templateCode.getTemplate());
+				weblogTemplateCode.setTemplateLanguage(templateCode.getTemplateLanguage());
+			}
+
+		}
+
+		return weblogTemplate;
+	}
+
 
 	/**
 	 * This is a convenience method which loads all the theme data from themes
