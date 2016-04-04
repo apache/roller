@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -30,9 +29,10 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.Template.ComponentType;
+import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,17 +60,11 @@ public class ThemeEdit extends UIAction {
         this.themeManager = themeManager;
     }
 
-    // list of available themes
+    // list of available shared themes
     private List<SharedTheme> themes = Collections.emptyList();
 
-    // type of theme desired, either 'shared' or 'custom'
-    private String themeType = null;
-
-    // the currently selected theme, shared or custom
+    // the currently selected theme
     private String themeId = null;
-
-    // import a shared theme into the blog's custom templates
-    private boolean importTheme = false;
 
     // a potentially new selected theme
     private String selectedThemeId = null;
@@ -116,118 +110,65 @@ public class ThemeEdit extends UIAction {
 
         Weblog weblog = getActionWeblog();
 
-        // Are we dealing with a custom theme scenario?
-        if ("custom".equals(getThemeType())) {
-            SharedTheme t = null;
+        // make sure theme is valid and enabled
+        SharedTheme newTheme;
 
-            // do theme import if requested
-            if (importTheme) {
-                try {
-                    if (!StringUtils.isEmpty(selectedThemeId)) {
-                        t = themeManager.getSharedTheme(selectedThemeId);
-                        themeManager.importSharedTheme(getActionWeblog(), t);
-                        addMessage("themeEditor.setCustomTheme.success", t.getName());
-                    }
-                } catch (Exception re) {
-                    log.error("Error customizing theme for weblog - "
-                            + getActionWeblog().getHandle(), re);
-                    addError("generic.error.check.logs");
-                    return execute();
+        try {
+            // before switching themes, ensure no conflict with already existing blog-only themes.
+            newTheme = themeManager.getSharedTheme(selectedThemeId);
+
+            WeblogTheme oldTheme = new WeblogTheme(weblogManager, getActionWeblog(),
+                    themeManager.getSharedTheme(getActionWeblog().getEditorTheme()));
+
+            oldTheme.getTemplates().stream().filter(
+                    old -> old.getDerivation() == TemplateDerivation.NONSHARED).forEach(old -> {
+                if (newTheme.getTemplateByName(old.getName()) != null) {
+                    addError("themeEditor.conflicting.name", old.getName());
                 }
-            }
+                String maybePath = old.getRelativePath();
+                if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
+                    addError("themeEditor.conflicting.link", old.getName());
+                }
+            });
 
             if (!hasActionErrors()) {
                 try {
-                    // save updated weblog and flush
-                    if (t != null) {
-                        weblog.setEditorTheme(t.getId());
+                    // Remove old template overrides and their renditions
+                    List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(getActionWeblog());
+
+                    for (WeblogTemplate template : oldTemplates) {
+                        // Remove template overrides and their renditions
+                        if (template.getDerivation() == TemplateDerivation.OVERRIDDEN) {
+                            weblogManager.removeTemplate(template);
+                        }
                     }
+
+                    weblog.setEditorTheme(selectedThemeId);
+
+                    log.debug("Saving theme " + selectedThemeId + " for weblog " + weblog.getHandle());
+
+                    // save updated weblog and flush
                     weblogManager.saveWeblog(weblog);
                     persistenceStrategy.flushAndInvalidateWeblog(weblog);
 
-                    addMessage("themeEditor.setTheme.success", t != null ? t.getName() : "custom");
-                    addMessage("themeEditor.setCustomTheme.instructions");
+                    // Theme set to..
+                    addMessage("themeEditor.setTheme.success", newTheme.getName());
 
                 } catch (WebloggerException re) {
                     log.error("Error saving weblog - " + getActionWeblog().getHandle(), re);
                     addError("generic.error.check.logs");
                 }
             }
-
-        } else if ("shared".equals(getThemeType())) {
-
-            // make sure theme is valid and enabled
-            SharedTheme newTheme;
-
-            try {
-                newTheme = themeManager.getSharedTheme(selectedThemeId);
-
-                if (!hasActionErrors()) {
-                    try {
-                        String originalTheme = weblog.getEditorTheme();
-
-                        // Remove old template customizations
-                        if (!originalTheme.equals(selectedThemeId)) {
-                            List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(getActionWeblog());
-
-                            for (WeblogTemplate template : oldTemplates) {
-                                // Remove template and its renditions
-                                weblogManager.removeTemplate(template);
-                            }
-                        }
-
-                        weblog.setEditorTheme(selectedThemeId);
-
-                        log.debug("Saving theme " + selectedThemeId + " for weblog " + weblog.getHandle());
-
-                        // save updated weblog and flush
-                        weblogManager.saveWeblog(weblog);
-                        persistenceStrategy.flushAndInvalidateWeblog(weblog);
-
-                        // Theme set to..
-                        if (!originalTheme.equals(selectedThemeId)) {
-                            addMessage("themeEditor.setTheme.success", newTheme.getName());
-                        }
-
-                    } catch (WebloggerException re) {
-                        log.error("Error saving weblog - " + getActionWeblog().getHandle(), re);
-                        addError("generic.error.check.logs");
-                    }
-                }
-            } catch (Exception ex) {
-                log.warn(ex);
-                addError("Theme not found");
-            }
-
+        } catch (Exception ex) {
+            log.warn(ex);
+            addError("Theme not found");
         }
 
         return execute();
     }
 
-    public boolean isCustomTheme() {
-        return false;
-    }
-
-    // has this weblog had a custom theme before?
-    public boolean isFirstCustomization() {
-        try {
-            return (weblogManager.getTemplateByAction(getActionWeblog(), ComponentType.WEBLOG) == null);
-        } catch (WebloggerException ex) {
-            log.error("Error looking up weblog template", ex);
-        }
-        return false;
-    }
-
     public List<SharedTheme> getThemes() {
         return themes;
-    }
-
-    public String getThemeType() {
-        return themeType;
-    }
-
-    public void setThemeType(String themeType) {
-        this.themeType = themeType;
     }
 
     public String getThemeId() {
@@ -236,14 +177,6 @@ public class ThemeEdit extends UIAction {
 
     public void setThemeId(String theme) {
         this.themeId = theme;
-    }
-
-    public boolean isImportTheme() {
-        return importTheme;
-    }
-
-    public void setImportTheme(boolean importTheme) {
-        this.importTheme = importTheme;
     }
 
     public String getSelectedThemeId() {
@@ -311,4 +244,3 @@ public class ThemeEdit extends UIAction {
     }
 
 }
-

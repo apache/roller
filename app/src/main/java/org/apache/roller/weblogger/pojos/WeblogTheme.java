@@ -82,7 +82,9 @@ public class WeblogTheme {
     }
 
     /**
-     * Get the collection of all templates associated with this Theme.
+     * Get the collection of all templates associated with this Theme.  Presently, for
+     * performance reasons, this is the only method that will check the sharedTemplates
+     * for the purpose of switching the NONSHARED derivation to OVERRIDDEN if appropriate.
      */
     public List<? extends Template> getTemplates() throws WebloggerException {
         Map<String, Template> pageMap = new TreeMap<>();
