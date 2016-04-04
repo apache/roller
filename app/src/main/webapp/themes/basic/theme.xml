@@ -24,7 +24,6 @@
 
     <template role="weblog">
         <name>Weblog</name>
-        <description>weblog</description>
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
@@ -35,7 +34,6 @@
 
     <template role="permalink">
         <name>permalink</name>
-        <description>permalink</description>
         <renditions>
             <rendition>
                 <contentsFile>permalink.vm</contentsFile>
@@ -46,7 +44,6 @@
 
     <template role="search">
         <name>searchresults</name>
-        <description>searchresults</description>
         <renditions>
             <rendition>
                 <contentsFile>searchresults.vm</contentsFile>
@@ -57,7 +54,6 @@
 
     <template role="customInternal">
         <name>_day</name>
-        <description>_day</description>
         <renditions>
             <rendition>
                 <contentsFile>_day.vm</contentsFile>
@@ -68,7 +64,6 @@
 
     <template role="customInternal">
         <name>sidebar</name>
-        <description>sidebar</description>
         <renditions>
             <rendition>
                 <contentsFile>sidebar.vm</contentsFile>

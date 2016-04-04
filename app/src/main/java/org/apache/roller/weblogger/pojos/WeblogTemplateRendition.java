@@ -47,7 +47,7 @@ public class WeblogTemplateRendition implements Serializable, TemplateRendition 
 	private String id = WebloggerCommon.generateUUID();
     private WeblogTemplate weblogTemplate = null;
 	// template contents
-	private String template = null;
+	private String template = "";
 	private RenditionType type = null;
 	private TemplateLanguage templateLanguage = null;
 

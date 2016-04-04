@@ -427,18 +427,8 @@
         
         <action name="templateEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.TemplateEdit">
-            <result name="list" type="chain">templates</result>
             <result name="input" type="tiles">.TemplateEdit</result>
-        </action>
-        
-        <action name="templateRemove!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.TemplateRemove">
-            <result name="confirm" type="tiles">.TemplateRemove</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">templates</param>
-                <param name="weblog">${weblog}</param>
-            </result>
-            <result name="success" type="chain">templates</result>
+            <result name="list" type="chain">templates</result>
         </action>
         
         <action name="templatesRemove!*" method="{1}"

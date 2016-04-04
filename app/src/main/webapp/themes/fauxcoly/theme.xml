@@ -26,7 +26,6 @@
 
     <template role="weblog">
         <name>Weblog</name>
-        <description>Main page of weblog</description>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -37,7 +36,6 @@
 
     <template role="permalink">
         <name>Entry</name>
-        <description>Page for one weblog entry</description>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -48,7 +46,6 @@
 
     <template role="tagsIndex">
         <name>TagsIndex</name>
-        <description>Tag index page</description>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>
@@ -59,7 +56,6 @@
 
     <template role="search">
         <name>Search</name>
-        <description>Search results page</description>
         <renditions>
             <rendition>
                 <templateLanguage>velocity</templateLanguage>

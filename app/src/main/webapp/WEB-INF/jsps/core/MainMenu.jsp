@@ -139,16 +139,9 @@
                            
                            <%-- And only show theme option if custom themes are enabled --%>
                            <s:if test="getProp('themes.customtheme.allowed')">
-                               <s:if test="#perms.weblog.editorTheme == 'custom'">
-                                   <s:url action="templates" namespace="/tb-ui/authoring" id="weblogTheme">
-                                       <s:param name="weblog" value="#perms.weblog.handle" />
-                                   </s:url>
-                               </s:if>
-                               <s:else>
-                                   <s:url action="themeEdit" namespace="/tb-ui/authoring" id="weblogTheme">
-                                       <s:param name="weblog" value="#perms.weblog.handle" />
-                                   </s:url>
-                               </s:else>
+                               <s:url action="templates" namespace="/tb-ui/authoring" id="weblogTheme">
+                                   <s:param name="weblog" value="#perms.weblog.handle" />
+                               </s:url>
                                <img src='<s:url value="/tb-ui/images/layout.png"/>' />
                                <a href='<s:property value="weblogTheme" />'>
                                    <s:text name="yourWebsites.theme" /></a> 

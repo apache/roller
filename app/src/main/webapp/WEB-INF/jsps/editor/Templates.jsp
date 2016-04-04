@@ -18,17 +18,13 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle">
-   <s:text name="pagesForm.subtitle" >
+   <s:text name="templates.subtitle" >
        <s:param value="actionWeblog.handle" />
    </s:text>
 </p>  
 <p class="pagetip">
-   <s:text name="pagesForm.tip" />
+   <s:text name="templates.tip" />
 </p>
-
-<s:if test="actionWeblog.editorTheme != 'custom'">
-    <p><s:text name="pagesForm.themesReminder"><s:param value="actionWeblog.editorTheme"/></s:text></p>
-</s:if>
 
 <s:form action="templatesRemove">
 <s:hidden name="salt" />
@@ -37,14 +33,12 @@
 <%-- table of pages --%>
 <table class="rollertable">
 
-<s:if test="!templates.isEmpty">
-
     <tr>
         <th width="20%"><s:text name="generic.name"/></th>
-        <th width="15%"><s:text name="pagesForm.role"/></th>
-        <th width="40%"><s:text name="generic.description"/></th>
-        <th width="10%"><s:text name="pagesForm.source"/></th>
-        <th width="10%"><s:text name="pagesForm.remove"/></th>
+        <th width="10%"><s:text name="templates.source"/></th>
+        <th width="40%"><s:text name="templates.role"/></th>
+        <th width="20%"><s:text name="templates.path"/></th>
+        <th width="5%"><s:text name="generic.view"/></th>
         <th width="5%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
     </tr>
     <s:iterator id="p" value="templates" status="rowstatus">
@@ -56,12 +50,6 @@
         </s:else>
 
             <td style="vertical-align:middle">
-                <s:if test="!#p.hidden">
-                    <img src='<s:url value="/images/page_white.png"/>' border="0" alt="icon" />
-                </s:if>
-                <s:else>
-                    <img src='<s:url value="/images/page_white_gear.png"/>' border="0" alt="icon" />
-                </s:else>
                 <s:if test="#p.derivation.name() != 'SHARED'">
                     <s:url var="edit" action="templateEdit">
                         <s:param name="weblog" value="actionWeblog.handle" />
@@ -76,22 +64,37 @@
                 </s:else>
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>
-            
-            <td style="vertical-align:middle"><s:property value="#p.role.readableName" /></td>
-
-            <td style="vertical-align:middle"><s:property value="#p.description" /></td>
 
             <td style="vertical-align:middle"><s:property value="#p.derivation.readableName" /></td>
 
-            <td class="center" style="vertical-align:middle">
-                <s:if test="#p.derivation.name() != 'SHARED'">
-                     <s:url var="removeUrl" action="templateRemove">
-                         <s:param name="weblog" value="actionWeblog.handle"/>
-                         <s:param name="removeId" value="#p.id"/>
-                     </s:url>
-                     <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' /></s:a>
+            <td style="vertical-align:middle">
+                <s:if test="#p.role.singleton || #p.description == null || #p.description == ''">
+                    <s:property value="#p.role.readableName"/>
                 </s:if>
+                <s:else>
+                    <s:property value="#p.role.readableName"/>: <s:property value="#p.description" />
+                </s:else>
             </td>
+
+            <td style="vertical-align:middle">
+                <s:if test="#p.role.accessibleViaUrl">
+                    <s:property value="#p.relativePath" />
+                </s:if>
+                <s:else>
+                    &nbsp;
+                </s:else>
+            </td>
+
+            <td align="center" style="vertical-align:middle">
+                <s:if test="#p.role.accessibleViaUrl">
+                    <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"
+                    onclick="launchPage('<s:property value="actionWeblog.absoluteURL"/>page/<s:property value="#p.relativePath" />')"/>
+                </s:if>
+                <s:else>
+                    &nbsp;
+                </s:else>
+            </td>
+
             <td class="center" style="vertical-align:middle">
                 <s:if test="#p.derivation.name() != 'SHARED'">
                     <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" />
@@ -99,23 +102,20 @@
             </td>
         </tr>
     </s:iterator>
-    
-</s:if>
-<s:else>
-    <tr class="rollertable_odd">
-        <td style="vertical-align:middle" colspan="5" >
-            <s:text name="pageForm.notemplates"/>
-        </td>
-    </tr>
-</s:else>
 </table>
 
 <br/>
 
 <s:if test="!templates.isEmpty">
 	<div class="control">
-		<s:submit value="%{getText('pagesForm.deleteselected')}" />
+		<s:submit value="%{getText('templates.deleteselected')}" />
 	</div>
 </s:if>
+
+<script>
+function launchPage(url) {
+    window.open(url, '_blank');
+}
+</script>
 
 </s:form>

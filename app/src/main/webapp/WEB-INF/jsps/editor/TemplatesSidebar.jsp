@@ -22,7 +22,7 @@
         <div class="menu-tl">
             
             <div class="sidebarInner">
-                <h3><s:text name="pagesForm.addNewPage" /></h3>
+                <h3><s:text name="templates.addNewPage" /></h3>
                 <hr size="1" noshade="noshade" />
                 
                 <s:form action="templates!add">
@@ -37,7 +37,7 @@
                         
                         <s:if test="!availableRoles.isEmpty" >
                             <tr>
-                                <td><s:text name="pagesForm.role"/></td>
+                                <td><s:text name="templates.role"/></td>
                                 <td>
                                     <s:select name="newTmplAction" size="1" list="availableRoles" />
                                 </td>
@@ -46,7 +46,7 @@
                         
                         <tr>
                             <td></td>
-                            <td><s:submit value="%{getText('pagesForm.add')}" /></td>
+                            <td><s:submit value="%{getText('templates.add')}" /></td>
                         </tr>
                     </table>
                     

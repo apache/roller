@@ -314,11 +314,6 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".TemplateRemove" extends=".tiles-tabbedpage"  >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateRemove.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
-    </definition>
-    
     <definition name=".TemplatesRemove" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplatesRemove.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
