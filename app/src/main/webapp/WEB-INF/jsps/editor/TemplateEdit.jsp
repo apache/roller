@@ -19,17 +19,17 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <p class="subtitle">
-   <s:text name="pageForm.subtitle" >
+   <s:text name="templateEdit.subtitle" >
        <s:param value="bean.name" />
        <s:param value="actionWeblog.handle" />
    </s:text>
 </p>
 
 <s:if test="template.required">
-    <p class="pagetip"><s:text name="pageForm.tip.required" /></p>
+    <p class="pagetip"><s:text name="templateEdit.tip.required" /></p>
 </s:if>
 <s:else>
-    <p class="pagetip"><s:text name="pageForm.tip" /></p>
+    <p class="pagetip"><s:text name="templateEdit.tip" /></p>
 </s:else>
                 
 <s:form action="templateEdit!save">
@@ -54,7 +54,7 @@
         </tr>
         
         <tr>
-            <td class="label"><s:text name="pageForm.role" />&nbsp;</td>
+            <td class="label"><s:text name="templateEdit.role" />&nbsp;</td>
             <td class="field">
                  <s:textfield name="bean.role" size="50" readonly="true" cssStyle="background: #e5e5e5" />
             </td>
@@ -62,33 +62,30 @@
         
        <s:if test="bean.role.accessibleViaUrl">
             <tr>
-                <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
+                <td class="label" valign="top"><s:text name="templateEdit.link" />&nbsp;</td>
                 <td class="field">
                     <s:textfield name="bean.relativePath" size="50" maxlength="255" onkeyup="updatePageURLDisplay()" />
                     <br/>
                     <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red"><s:property value="bean.relativePath" /></span>
                     <s:if test="template.relativePath != null">
-                        [<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]
+                        [<a id="launchLink" onClick="launchPage()"><s:text name="templateEdit.launch" /></a>]
                     </s:if>
                 </td>
             </tr>
         </s:if>
-        <tr>
-            <td class="label" valign="top" style="padding-top: 4px">
-                <s:text name="generic.description"/>&nbsp;</td>
-            <td class="field">
-                <s:if test="template.required">
-                    <s:textarea name="bean.description" cols="50" rows="2" 
-                        readonly="true" cssStyle="background: #e5e5e5" />
-                </s:if>
-                <s:else>
-                    <s:textarea name="bean.description" cols="50" rows="2" maxlength="255"/>
-                </s:else>
-            </td>
-        </tr>
+
+        <s:if test="!template.role.singleton">
+            <tr>
+                <td class="label" valign="top" style="padding-top: 4px">
+                    <s:text name="generic.description"/>&nbsp;</td>
+                <td class="field">
+                        <s:textarea name="bean.description" cols="50" rows="2" maxlength="255"/>
+                </td>
+            </tr>
+        </s:if>
 
         <tr>
-            <td class="label"><s:text name="pageForm.templateLanguage" />&nbsp;</td>
+            <td class="label"><s:text name="templateEdit.templateLanguage" />&nbsp;</td>
             <td class="field">
                 <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
             </td>
@@ -125,12 +122,11 @@
         <tr>
             <td>
                 <s:submit value="%{getText('generic.save')}" />
-                <input type="button" value='<s:text name="generic.done"/>'
+                <input type="button" value='<s:text name="generic.cancel"/>'
                     onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
-                <%--s:if test="!customTheme"--%>
-                    <s:submit value="%{getText('templateEdit.revert')}" onclick="revertTemplate();return false;" />
-                <%--/s:if--%>
-                <s:submit value="%{getText('templateEdit.delete')}" onclick="deleteTemplate();return false;" />
+                <s:if test="template != null && template.id != null">
+                    <s:submit value="%{getText('templateEdit.delete')}" onclick="deleteTemplate();return false;" />
+                </s:if>
             </td>
         </tr>
     </table>
@@ -140,12 +136,6 @@
     <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
     <script>
-        function revertTemplate() {
-            if (window.confirm('<s:text name="templateEdit.confirmRevert"/>')) {
-                document.templateEdit.action = "<s:url action='templateEdit!revert' />";
-                document.templateEdit.submit();
-            }
-        };
         function deleteTemplate() {
             if (window.confirm('<s:text name="templateEdit.confirmDelete"/>')) {
                 document.templateEdit.action = "<s:url action='templateEdit!delete' />";

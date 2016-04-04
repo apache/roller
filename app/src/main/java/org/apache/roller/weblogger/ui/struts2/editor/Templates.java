@@ -78,7 +78,7 @@ public class Templates extends UIAction {
     public Templates() {
 		this.actionName = "templates";
 		this.desiredMenu = "editor";
-		this.pageTitle = "pagesForm.title";
+		this.pageTitle = "templates.title";
 	}
 
     @Override
@@ -148,36 +148,17 @@ public class Templates extends UIAction {
                 newTemplate.setName(getNewTmplName());
                 newTemplate.setLastModified(new Date());
 
-                // Make sure we have always have a Weblog main page. Stops
-                // deleting main page in custom theme mode also.
-                if (ComponentType.WEBLOG.equals(getNewTmplAction())) {
-                    newTemplate.setName(ComponentType.WEBLOG.name());
-                }
-
                 // save the new Template
                 weblogManager.saveTemplate(newTemplate);
 
                 // Create weblog template codes for available types.
                 WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
                         newTemplate, RenditionType.STANDARD);
-                standardRendition.setTemplate(getText("pageForm.newTemplateContent"));
+				if (newTmplAction != ComponentType.STYLESHEET && newTmplAction != ComponentType.JAVASCRIPT) {
+					standardRendition.setTemplate(getText("templateEdit.newTemplateContent"));
+				}
                 standardRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
                 weblogManager.saveTemplateRendition(standardRendition);
-
-                /* TBI -- need a way for user to specify dual or single template
-                WeblogTemplateRendition mobileRendition = new WeblogTemplateRendition(
-                        newTemplate.getId(), RenditionType.MOBILE);
-                mobileRendition.setTemplate(newTemplate.getContents());
-                mobileRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
-                weblogManager.saveTemplateRendition(mobileRendition);
-                */
-
-                // if this person happened to create a Weblog template from
-                // scratch then make sure and set the defaultPageId. What does
-                // this do????
-                if (ComponentType.WEBLOG.name().equals(newTemplate.getName())) {
-                    weblogManager.saveWeblog(getActionWeblog());
-                }
 
                 // flush results to db
                 WebloggerFactory.flush();
@@ -201,21 +182,21 @@ public class Templates extends UIAction {
 
 		// make sure name is non-null and within proper size
 		if (StringUtils.isEmpty(getNewTmplName())) {
-			addError("Template.error.nameNull");
+			addError("templates.error.nameNull");
 		} else if (getNewTmplName().length() > WebloggerCommon.TEXTWIDTH_255) {
-			addError("Template.error.nameSize");
+			addError("templates.error.nameSize");
 		}
 
 		// make sure action is a valid
 		if (getNewTmplAction() == null) {
-			addError("Template.error.actionNull");
+			addError("templates.error.actionNull");
 		}
 
 		// check if template by that name already exists
 		try {
 			WeblogTemplate existingPage = weblogManager.getTemplateByName(getActionWeblog(), getNewTmplName());
 			if (existingPage != null) {
-				addError("pagesForm.error.alreadyExists", getNewTmplName());
+				addError("templates.error.alreadyExists", getNewTmplName());
 			}
 		} catch (WebloggerException ex) {
 			log.error("Error checking for existing template", ex);

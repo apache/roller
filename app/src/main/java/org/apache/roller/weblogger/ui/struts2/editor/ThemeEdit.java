@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -122,12 +123,15 @@ public class ThemeEdit extends UIAction {
 
             oldTheme.getTemplates().stream().filter(
                     old -> old.getDerivation() == TemplateDerivation.NONSHARED).forEach(old -> {
-                if (newTheme.getTemplateByName(old.getName()) != null) {
+                if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
+                    addError("themeEditor.conflicting.singleton.role", old.getRole().getReadableName());
+                } else if (newTheme.getTemplateByName(old.getName()) != null) {
                     addError("themeEditor.conflicting.name", old.getName());
-                }
-                String maybePath = old.getRelativePath();
-                if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
-                    addError("themeEditor.conflicting.link", old.getName());
+                } else {
+                    String maybePath = old.getRelativePath();
+                    if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
+                        addError("themeEditor.conflicting.link", Arrays.asList(old.getName(), old.getRelativePath()));
+                    }
                 }
             });
 

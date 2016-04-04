@@ -18,15 +18,15 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle">
-	<s:text name="pageRemoves.subtitle" />
+	<s:text name="templateRemoves.subtitle" />
 </p>
 
 <p>
-	<s:text name="pageRemoves.youSure" />
+	<s:text name="templateRemoves.youSure" />
 	<br/>
 	<br/>
 	<span class="warning">
-		<s:text name="pageRemoves.youSureWarning" />
+		<s:text name="templateRemoves.youSureWarning" />
 	</span>
 </p>
 
@@ -37,8 +37,8 @@
 	
 	<s:iterator id="p" value="templates" status="rowstatus">
 		<p>
-			<s:text name="pageRemove.pageId" /> = [<s:property value="#p.id" />]
-			<s:text name="pageRemove.pageName" /> = [<s:property value="#p.name" />]
+			<s:text name="templateRemoves.pageId" /> = [<s:property value="#p.id" />]
+			<s:text name="templateRemoves.pageName" /> = [<s:property value="#p.name" />]
 		</p>
 	</s:iterator>
 

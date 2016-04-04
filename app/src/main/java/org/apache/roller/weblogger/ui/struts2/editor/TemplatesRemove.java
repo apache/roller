@@ -68,7 +68,7 @@ public class TemplatesRemove extends UIAction {
     public TemplatesRemove() {
         this.actionName = "templatesRemove";
         this.desiredMenu = "editor";
-        this.pageTitle = "editPages.title.removeOK";
+        this.pageTitle = "templateRemoves.title.removeOK";
     }
 
     @Override

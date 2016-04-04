@@ -14,7 +14,6 @@
     <!-- templates -->
     <template role="weblog">
         <name>Weblog</name>
-        <description>Weblog</description>
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
@@ -25,7 +24,6 @@
 
     <template role="customInternal">
         <name>_blogdirectory</name>
-        <description>_blogdirectory</description>
         <renditions>
             <rendition>
                 <contentsFile>_blogdirectory.vm</contentsFile>
@@ -36,7 +34,6 @@
 
     <template role="customInternal">
         <name>_blogprofile</name>
-        <description>_blogprofile</description>
         <renditions>
             <rendition>
                 <contentsFile>_blogprofile.vm</contentsFile>
@@ -47,7 +44,6 @@
 
     <template role="customInternal">
         <name>_blogs</name>
-        <description>_blogs</description>
         <renditions>
             <rendition>
                 <contentsFile>_blogs.vm</contentsFile>
@@ -58,7 +54,6 @@
 
     <template role="stylesheet">
         <name>_css</name>
-        <description>_css</description>
         <renditions>
             <rendition>
                 <contentsFile>_css.vm</contentsFile>
@@ -69,7 +64,6 @@
 
     <template role="customInternal">
         <name>_day</name>
-        <description>_day</description>
         <renditions>
             <rendition>
                 <contentsFile>_day.vm</contentsFile>
@@ -80,7 +74,6 @@
 
     <template role="customInternal">
         <name>_decorator</name>
-        <description>_decorator</description>
         <renditions>
             <rendition>
                 <contentsFile>_decorator.vm</contentsFile>
@@ -91,7 +84,6 @@
 
     <template role="customInternal">
         <name>_entry</name>
-        <description>_entry</description>
         <renditions>
             <rendition>
                 <contentsFile>_entry.vm</contentsFile>
@@ -102,7 +94,6 @@
 
     <template role="customInternal">
         <name>_footer</name>
-        <description>_footer</description>
         <renditions>
             <rendition>
                 <contentsFile>_footer.vm</contentsFile>
@@ -113,7 +104,6 @@
 
     <template role="customInternal">
         <name>_header</name>
-        <description>_header</description>
         <renditions>
             <rendition>
                 <contentsFile>_header.vm</contentsFile>

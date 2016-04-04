@@ -31,10 +31,8 @@ import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -80,7 +78,7 @@ public class TemplateEdit extends UIAction {
     public TemplateEdit() {
         this.actionName = "templateEdit";
         this.desiredMenu = "editor";
-        this.pageTitle = "pagesForm.title";
+        this.pageTitle = "templates.title";
     }
 
     @Override
@@ -150,32 +148,33 @@ public class TemplateEdit extends UIAction {
         myValidate();
 
         if (!hasActionErrors()) {
-            WeblogTemplate templateToSave = getTemplate();
 
-            if (templateToSave == null) {
-                templateToSave = new WeblogTemplate();
-                templateToSave.setId(WebloggerCommon.generateUUID());
-                templateToSave.setWeblog(getActionWeblog());
-                templateToSave.setRole(bean.getRole());
+            // starting from a shared template (first override)?
+            if (template == null) {
+                template = new WeblogTemplate();
+                template.setId(WebloggerCommon.generateUUID());
+                template.setWeblog(getActionWeblog());
+                template.setRole(bean.getRole());
+                template.setName(bean.getName());
             }
 
             // some properties relevant only for certain template roles
-            if (!templateToSave.getRole().isSingleton()) {
-                templateToSave.setName(bean.getName());
-                templateToSave.setDescription(bean.getDescription());
+            if (!template.getRole().isSingleton()) {
+                template.setName(bean.getName());
+                template.setDescription(bean.getDescription());
             }
 
-            if (templateToSave.getRole().isAccessibleViaUrl()) {
-                templateToSave.setRelativePath(bean.getRelativePath());
+            if (template.getRole().isAccessibleViaUrl()) {
+                template.setRelativePath(bean.getRelativePath());
             }
 
-            templateToSave.setLastModified(new Date());
+            template.setLastModified(new Date());
 
             try {
-                weblogManager.saveTemplate(templateToSave);
-                log.debug("Saved template: " + templateToSave.getId());
+                weblogManager.saveTemplate(template);
+                log.debug("Saved template: " + template.getId());
 
-                WeblogTemplateRendition wtr = templateToSave.getTemplateRendition(RenditionType.STANDARD);
+                WeblogTemplateRendition wtr = template.getTemplateRendition(RenditionType.STANDARD);
 
                 if (wtr != null) {
                     // if we have a template, then set it
@@ -183,13 +182,13 @@ public class TemplateEdit extends UIAction {
                     weblogManager.saveTemplateRendition(wtr);
                 } else {
                     // otherwise create it, then set it
-                    wtr = new WeblogTemplateRendition(templateToSave, RenditionType.STANDARD);
+                    wtr = new WeblogTemplateRendition(template, RenditionType.STANDARD);
                     wtr.setTemplate(bean.getContentsStandard());
                     wtr.setTemplateLanguage(TemplateLanguage.VELOCITY);
                     weblogManager.saveTemplateRendition(wtr);
                 }
 
-                wtr = templateToSave.getTemplateRendition(RenditionType.MOBILE);
+                wtr = template.getTemplateRendition(RenditionType.MOBILE);
                 if (wtr != null) {
                     wtr.setTemplate(bean.getContentsMobile());
                     wtr.setTemplateLanguage(TemplateLanguage.VELOCITY);
@@ -199,10 +198,11 @@ public class TemplateEdit extends UIAction {
                 WebloggerFactory.flush();
 
                 // notify caches
-                cacheManager.invalidate(templateToSave);
+                cacheManager.invalidate(template);
 
                 // success message
-                addMessage("pageForm.save.success", templateToSave.getName());
+                addMessage("templateEdit.save.success", template.getName());
+                bean.setId(template.getId());
 
             } catch (Exception ex) {
                 log.error("Error updating page - " + getBean().getId(), ex);
@@ -216,13 +216,13 @@ public class TemplateEdit extends UIAction {
 
     private void myValidate() {
         if (StringUtils.isEmpty(bean.getName())) {
-            addError("Template.error.nameNull");
+            addError("templates.error.nameNull");
         } else {
             // if name changed make sure there isn't a conflict
             if (template != null && !getTemplate().getName().equals(getBean().getName())) {
                 try {
                     if (weblogManager.getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
-                        addError("pagesForm.error.alreadyExists", getBean().getName());
+                        addError("templates.error.alreadyExists", getBean().getName());
                     }
                 } catch (WebloggerException ex) {
                     log.error("Error checking page name uniqueness", ex);
@@ -234,12 +234,19 @@ public class TemplateEdit extends UIAction {
                     !getBean().getRelativePath().equals(getTemplate().getRelativePath())) {
                 try {
                     if (weblogManager.getTemplateByPath(getActionWeblog(), getBean().getRelativePath()) != null) {
-                        addError("pagesForm.error.alreadyExists", getBean().getRelativePath());
+                        addError("templates.error.alreadyExists", getBean().getRelativePath());
                     }
                 } catch (WebloggerException ex) {
                     log.error("Error checking page link uniqueness", ex);
                 }
             }
+
+            // make sure relative path exists if required
+            if (template != null && template.getRole().isAccessibleViaUrl() &&
+                    StringUtils.isEmpty(bean.getRelativePath())) {
+                addError("templateEdit.error.relativePathRequired");
+            }
+
         }
     }
 
@@ -251,88 +258,23 @@ public class TemplateEdit extends UIAction {
         return langMap;
     }
 
-
-    /**
-     * Revert the stylesheet to its original state.  UI provides this only for shared themes.
-     */
-    public String revert() {
-        if (!hasActionErrors()) {
-            try {
-
-                WeblogTemplate templateToRevert = getTemplate();
-
-                // lookup the theme used by this weblog
-                SharedTheme theme = themeManager.getSharedTheme(getActionWeblog().getEditorTheme());
-
-                templateToRevert.setLastModified(new Date());
-
-                WeblogTemplateRendition existingTemplate = templateToRevert.getTemplateRendition(RenditionType.STANDARD);
-                if (existingTemplate != null) {
-                    TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
-                            .getTemplateRendition(RenditionType.STANDARD);
-                    // if we have a template, then set it
-                    existingTemplate.setTemplate(templateCode.getTemplate());
-                    weblogManager.saveTemplateRendition(existingTemplate);
-                }
-
-                existingTemplate = templateToRevert.getTemplateRendition(RenditionType.MOBILE);
-                if (existingTemplate != null) {
-                    TemplateRendition templateCode = theme.getTemplateByName(templateToRevert.getName())
-                            .getTemplateRendition(RenditionType.MOBILE);
-                    existingTemplate.setTemplate(templateCode.getTemplate());
-                    weblogManager.saveTemplateRendition(existingTemplate);
-                }
-
-                // save template and flush
-                weblogManager.saveTemplate(templateToRevert);
-                WebloggerFactory.flush();
-
-                // notify caches
-                cacheManager.invalidate(templateToRevert);
-
-                // success message
-                addMessage("templateEdit.revert.success",
-                        templateToRevert.getName());
-
-            } catch (WebloggerException ex) {
-                log.error("Error updating stylesheet template for weblog - "
-                        + getActionWeblog().getHandle(), ex);
-                addError("generic.error.check.logs");
-            }
-        }
-        return execute();
-    }
-
-    /**
-     * set theme to default stylesheet, ie delete it.
-     */
     public String delete() {
         if (template != null && !hasActionErrors()) {
             try {
-                // Delete template and flush
-
-                // Remove template and page codes
+                // Remove template and its renditions
                 weblogManager.removeTemplate(template);
-
-                Weblog weblog = getActionWeblog();
-
-                // save updated weblog and flush
-                weblogManager.saveWeblog(weblog);
-
-                // Flush for operation
+                weblogManager.saveWeblog(getActionWeblog());
                 WebloggerFactory.flush();
 
                 // notify caches
                 cacheManager.invalidate(template);
 
                 // success message
-                addMessage("templateEdit.default.success", template.getName());
+                addMessage("templateEdit.delete.success", template.getName());
 
-                template = null;
-
+                return LIST;
             } catch (Exception e) {
-                log.error("Error deleting template for weblog - "
-                        + getActionWeblog().getHandle(), e);
+                log.error("Error deleting template for weblog - " + getActionWeblog().getHandle(), e);
                 addError("generic.error.check.logs");
             }
         }

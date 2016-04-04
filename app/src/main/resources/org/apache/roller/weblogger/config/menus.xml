@@ -80,17 +80,16 @@ Defines the menus provided with Weblogger
             </tabItem>
         </tab>
         <tab titleKey="tabbedmenu.design" weblogRole="OWNER" globalRole="BLOGGER" enabledProperty="themes.customtheme.allowed">
-            <tabItem action="themeEdit"
-                     titleKey="tabbedmenu.website.themes"/>
             <tabItem action="templates"
                      titleKey="tabbedmenu.website.pages">
                 <subactions>
                     <subaction>templateAdd</subaction>
                     <subaction>templateEdit</subaction>
-                    <subaction>templateRemove</subaction>
                     <subaction>templatesRemove</subaction>
                 </subactions>
             </tabItem>
+            <tabItem action="themeEdit"
+                     titleKey="tabbedmenu.website.themes"/>
         </tab>
         <tab titleKey="tabbedmenu.website" weblogRole="OWNER" globalRole="BLOGGER">
             <tabItem action="weblogConfig"
