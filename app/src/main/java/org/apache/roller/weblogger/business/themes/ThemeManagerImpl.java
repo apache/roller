@@ -28,10 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
@@ -39,7 +37,6 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -170,55 +167,6 @@ public class ThemeManagerImpl implements ThemeManager {
 		return allThemes;
 	}
 
-	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importSharedTheme(Weblog, SharedTheme)
-	 */
-	public void importSharedTheme(Weblog weblog, SharedTheme theme) throws WebloggerException {
-
-		log.debug("Importing theme [" + theme.getName() + "] to weblog [" + weblog.getName() + "]");
-
-		Set<ComponentType> importedActionTemplates = new HashSet<>();
-		for (Template sharedTemplate : theme.getTemplatesByName().values()) {
-			WeblogTemplate weblogTemplate;
-
-			if (sharedTemplate.getRole().isSingleton()) {
-				// if template is a singleton, lookup by action
-				importedActionTemplates.add(sharedTemplate.getRole());
-				weblogTemplate = weblogManager.getTemplateByAction(weblog, sharedTemplate.getRole());
-			} else {
-				// otherwise, lookup by name
-				weblogTemplate = weblogManager.getTemplateByName(weblog, sharedTemplate.getName());
-			}
-
-			// If template already exists, remove it.
-			if (weblogTemplate != null) {
-				weblogManager.removeTemplate(weblogTemplate);
-			}
-
-			WeblogTemplate template = createWeblogTemplate(weblog, sharedTemplate);
-            template.setId(WebloggerCommon.generateUUID());
-            weblogManager.saveTemplate(template);
-		}
-
-		// now, see if the weblog has left over singleton action templates that
-		// need to be deleted because they aren't in their new theme
-        for (ComponentType action : ComponentType.values()) {
-            if (!action.isSingleton()) {
-                continue;
-            }
-			// if we didn't import this action then see if it should be deleted
-			if (!importedActionTemplates.contains(action)) {
-				WeblogTemplate toDelete = weblogManager.getTemplateByAction(weblog, action);
-				if (toDelete != null) {
-					log.debug("Removing stale action template " + toDelete.getId());
-					weblogManager.removeTemplate(toDelete);
-				}
-			}
-		}
-
-		weblogManager.saveWeblog(weblog);
-	}
-
 	@Override
     public WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) throws WebloggerException {
 		WeblogTemplate weblogTemplate = new WeblogTemplate();
@@ -258,12 +206,9 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		// first, get a list of the themes available
 		File themesdir = new File(this.themeDir);
-		FilenameFilter filter = new FilenameFilter() {
-
-			public boolean accept(File dir, String name) {
-				File file = new File(dir.getAbsolutePath() + File.separator + name);
-				return file.isDirectory() && !file.getName().startsWith(".");
-			}
+		FilenameFilter filter = (dir, name) -> {
+			File file = new File(dir.getAbsolutePath() + File.separator + name);
+			return file.isDirectory() && !file.getName().startsWith(".");
 		};
 		String[] themenames = themesdir.list(filter);
 

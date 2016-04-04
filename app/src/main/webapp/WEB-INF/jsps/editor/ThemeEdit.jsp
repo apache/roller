@@ -27,19 +27,6 @@ function fullPreview(selector) {
     selected = selector.selectedIndex;
     window.open('<s:url value="/tb-ui/authoring/preview/%{actionWeblog.handle}"/>?theme=' + selector.options[selected].value);
 }
-function updateThemeChooser(selected) {
-    if (selected[0].value == 'shared') {
-        $('#sharedChooser').addClass("selectedChooser");
-        $('#customChooser').removeClass("selectedChooser");
-        $('#sharedOptioner').show();
-        $('#customOptioner').hide();
-    } else {
-        $('#customChooser').addClass("selectedChooser");
-        $('#sharedChooser').removeClass("selectedChooser");
-        $('#customOptioner').show();
-        $('#sharedOptioner').hide();
-    }
-}
 </script>
 
 <p class="subtitle">
@@ -52,67 +39,14 @@ function updateThemeChooser(selected) {
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
 
-    <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <td width="50%" valign="top">
-                <div id="sharedChooser" class="chooser">
-                    <h2><input id="sharedRadio" type="radio" name="themeType" value="shared"
-                               <s:if test="!customTheme">checked</s:if>
-                               onclick="updateThemeChooser($(this))" />&nbsp;
-                    <s:text name="themeEditor.sharedTheme" /></h2>
-                    <s:text name="themeEditor.sharedThemeDescription" />
-                </div>
-            </td>
-            <td width="50%" valign="top">
-                <div id="customChooser" class="chooser">
-                    <h2><input id="customRadio" type="radio" name="themeType" value="custom"
-                               <s:if test="customTheme">checked</s:if>
-                               onclick="updateThemeChooser($(this))" />&nbsp;
-                    <s:text name="themeEditor.customTheme" /></h2>
-                    <s:text name="themeEditor.customThemeDescription" />
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <div id="sharedOptioner" class="optioner" style="display:none;">
+    <div class="optioner">
         <p>
-            <s:if test="!customTheme">
-                <s:text name="themeEditor.yourCurrentTheme" />:
-                <b><s:property value="actionWeblog.theme.name"/></b>
-                <%-- The type of stylesheet we are using --%>
-            </s:if>
-            <s:else>
-                <s:text name="themeEditor.selectTheme" />:
-            </s:else>
+            <s:text name="themeEditor.yourCurrentTheme" />:
+            <b><s:property value="actionWeblog.editorTheme.name"/></b>
         </p>
     </div>
 
-    <div id="customOptioner" class="optioner" style="display:none;">
-        <%-- if already custom, an update must mean an import. --%>
-        <s:if test="customTheme">
-            <p>
-                <span class="warning"><s:text name="themeEditor.importWarning" /></span>
-                <s:hidden name="importTheme" value="true" />
-            </p>
-        </s:if>
-        <%-- shared, may be required to do an import if no custom templates present --%>
-        <s:else>
-            <s:if test="firstCustomization">
-                <p>
-                    <s:text name="themeEditor.importRequired" />
-                    <s:hidden name="importTheme" value="true" />
-                </p>
-            </s:if>
-            <s:else>
-                <%-- User has option not just to switch from shared to custom but also override present custom templates --%>
-                <s:checkbox name="importTheme"/> <s:text name="themeEditor.importAndOverwriteTemplates" />
-                    <tags:help key="themeEditor.importAndOverwriteTemplates.tooltip"/>
-            </s:else>
-        </s:else>
-    </div>
-
-    <div id="themeOptioner" class="optioner" ng-app="themeSelectModule" ng-controller="themeController">
+    <div class="optioner" ng-app="themeSelectModule" ng-controller="themeController">
         <p>
             <select id="themeSelector" name="selectedThemeId" size="1"
             ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
@@ -146,13 +80,6 @@ function updateThemeChooser(selected) {
             $.ajax({ url: "<s:url value='rest/themes'/>", async:false,
                 success: function(data) { $scope.themes = data; }
             });
-            <s:if test="customTheme">
-                updateThemeChooser($('#customRadio'));
-                $scope.selectedTheme = $scope.themes[0];
-            </s:if>
-            <s:else>
-                updateThemeChooser($('#sharedRadio'));
-                $scope.selectedTheme = $.grep($scope.themes, function(e){ return e.id == "<s:property value='themeId'/>"; })[0];
-            </s:else>
+            $scope.selectedTheme = $.grep($scope.themes, function(e){ return e.id == "<s:property value='themeId'/>"; })[0];
     }]);
 </script>

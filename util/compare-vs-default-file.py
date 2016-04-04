@@ -35,7 +35,7 @@ from contextlib import closing
 import sys
 
 def prop_names():
-    rfile = open("../../../app/src/main/resources/ApplicationResources_de.properties")
+    rfile = open("../app/src/main/resources/ApplicationResources_de.properties")
     prop_pattern = re.compile('^([a-zA-Z]+(\.[a-zA-Z]+)*)=.*')
     for line in rfile:
         m = prop_pattern.match(line)
@@ -45,7 +45,7 @@ def prop_names():
 
 
 for propname in prop_names():
-    cmd = 'find ../../../app -type f -name "ApplicationResources.properties" | xargs grep -n %s /dev/null | wc -l' % propname
+    cmd = 'find ../app -type f -name "ApplicationResources.properties" | xargs grep -n %s /dev/null | wc -l' % propname
     with closing(os.popen(cmd,'r')) as pipe:
         occurrences = int(pipe.readline())
     if (occurrences == 0):

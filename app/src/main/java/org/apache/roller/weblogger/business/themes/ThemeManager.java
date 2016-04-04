@@ -72,18 +72,18 @@ public interface ThemeManager {
     List<SharedTheme> getEnabledSharedThemesList();
 
     /**
-     * Import all the contents of a SharedTheme into a weblog.
+     * Create a weblog template (database-stored, weblog-specific)
+     * from a shared (file) template, including the latter's renditions
      *
-     * @param website
-     *            The weblog (website) to import the theme into.
-     * @param theme
-     *            The theme that should be imported.
+     * @param weblog
+     *            The weblog to import the template into
+     * @param sharedTemplate
+     *            The sharedTemplate that should copied from
+     * @return WeblogTemplate instance, not persisted to the database.
+     *            (Caller is expected to do persistence if and when desired.)
      *
      * @throws WebloggerException
-     *             If there is some kind of error in saving.
+     *             If there is some kind of error in creating the weblog template
      */
-    void importSharedTheme(Weblog website, SharedTheme theme)
-            throws WebloggerException;
-
     WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) throws WebloggerException;
 }
