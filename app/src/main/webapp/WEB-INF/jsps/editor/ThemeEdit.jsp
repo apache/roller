@@ -42,7 +42,7 @@ function fullPreview(selector) {
     <div class="optioner">
         <p>
             <s:text name="themeEditor.yourCurrentTheme" />:
-            <b><s:property value="actionWeblog.editorTheme"/></b>
+            <b><s:property value="actionWeblog.theme"/></b>
         </p>
     </div>
 

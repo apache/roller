@@ -171,7 +171,7 @@ abstract public class WebloggerTest {
         testWeblog.setEmailAddress("testweblog@dev.null");
         testWeblog.setEditorPage("editor-text.jsp");
         testWeblog.setBlacklist("");
-        testWeblog.setEditorTheme("basic");
+        testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
         testWeblog.setDateCreated(new java.util.Date());

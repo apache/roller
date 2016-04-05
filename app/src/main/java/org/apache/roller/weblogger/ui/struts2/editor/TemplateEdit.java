@@ -31,10 +31,12 @@ import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -69,6 +71,8 @@ public class TemplateEdit extends UIAction {
         this.cacheManager = cacheManager;
     }
 
+    private boolean nameChangeable = false;
+
     // form bean for collection all template properties
     private WeblogTemplate bean = new WeblogTemplate();
 
@@ -91,6 +95,11 @@ public class TemplateEdit extends UIAction {
             if (bean.getId() != null && bean.getId().length() > 0) {
                 // Template is overridden or blog-only
                 setTemplate(weblogManager.getTemplate(getBean().getId()));
+                // name can be changed only on blog-only templates
+                SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getTheme());
+                if (sharedTheme.getTemplateByName(template.getName()) == null) {
+                    nameChangeable = true;
+                }
             }
 
         } catch (WebloggerException ex) {
@@ -106,11 +115,12 @@ public class TemplateEdit extends UIAction {
     public String execute() {
         try {
             if (getTemplate() == null) {
-                // Overriding a shared template, generate a template override
-                SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getEditorTheme());
+                // First-time override of a shared template
+                SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getTheme());
                 Template template = sharedTheme.getTemplateByName(bean.getName());
                 WeblogTemplate newTemplate = themeManager.createWeblogTemplate(getActionWeblog(), template);
                 setTemplate(newTemplate);
+                bean.setDerivation(TemplateDerivation.OVERRIDDEN);
             }
 
             bean.setId(template.getId());
@@ -215,38 +225,46 @@ public class TemplateEdit extends UIAction {
     }
 
     private void myValidate() {
+        boolean earlyExit = false;
+
         if (StringUtils.isEmpty(bean.getName())) {
             addError("templates.error.nameNull");
-        } else {
-            // if name changed make sure there isn't a conflict
-            if (template != null && !getTemplate().getName().equals(getBean().getName())) {
-                try {
-                    if (weblogManager.getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
-                        addError("templates.error.alreadyExists", getBean().getName());
+            earlyExit = true;
+        }
+
+        // make sure relative path exists if required
+        if (bean.getRole().isAccessibleViaUrl() && StringUtils.isEmpty(bean.getRelativePath())) {
+            addError("templateEdit.error.relativePathRequired");
+            earlyExit = true;
+        }
+
+        if (!earlyExit) {
+            try {
+                WeblogTheme testTheme = new WeblogTheme(weblogManager, getActionWeblog(),
+                        themeManager.getSharedTheme(getActionWeblog().getTheme()));
+
+                // if initial save or name changed make sure there isn't a conflict
+                if ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
+                        || (template !=null && !getBean().getName().equals(getTemplate().getName()))) {
+                    if (testTheme.getTemplateByName(getBean().getName()) != null) {
+                        addError("templates.error.nameAlreadyExists", getBean().getName());
                     }
-                } catch (WebloggerException ex) {
-                    log.error("Error checking page name uniqueness", ex);
                 }
-            }
 
-            // if link changed make sure there isn't a conflict
-            if (template != null && !StringUtils.isEmpty(getBean().getRelativePath()) &&
-                    !getBean().getRelativePath().equals(getTemplate().getRelativePath())) {
-                try {
-                    if (weblogManager.getTemplateByPath(getActionWeblog(), getBean().getRelativePath()) != null) {
-                        addError("templates.error.alreadyExists", getBean().getRelativePath());
+                // same check for path
+                if (bean.getRole().isAccessibleViaUrl() &&
+                        ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
+                                || (template != null && !StringUtils.isEmpty(getBean().getRelativePath()) &&
+                        !getBean().getRelativePath().equals(getTemplate().getRelativePath())))) {
+                    if (testTheme.getTemplateByPath(getBean().getRelativePath()) != null) {
+                        addError("templates.error.pathAlreadyExists", getBean().getRelativePath());
                     }
-                } catch (WebloggerException ex) {
-                    log.error("Error checking page link uniqueness", ex);
                 }
-            }
 
-            // make sure relative path exists if required
-            if (template != null && template.getRole().isAccessibleViaUrl() &&
-                    StringUtils.isEmpty(bean.getRelativePath())) {
-                addError("templateEdit.error.relativePathRequired");
+            } catch (WebloggerException ex) {
+                addError("Error validating save -- check application logs.");
+                log.error("Error validating data", ex);
             }
-
         }
     }
 
@@ -295,4 +313,9 @@ public class TemplateEdit extends UIAction {
     public void setTemplate(WeblogTemplate template) {
         this.template = template;
     }
+
+    public boolean isNameChangeable() {
+        return nameChangeable;
+    }
+
 }

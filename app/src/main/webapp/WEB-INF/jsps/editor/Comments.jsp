@@ -121,13 +121,13 @@
             </div>
             <div style="float:right;">
                 <s:if test="firstComment.postTime != null">
-                    <s:text name="commentManagement.date.toStringFormat">
+                    <s:text name="generic.date.toStringFormat">
                         <s:param value="firstComment.postTime" />
                     </s:text>
                 </s:if>
                 ---
                 <s:if test="lastComment.postTime != null">
-                    <s:text name="commentManagement.date.toStringFormat">
+                    <s:text name="generic.date.toStringFormat">
                         <s:param value="lastComment.postTime" />
                     </s:text>
                 </s:if>

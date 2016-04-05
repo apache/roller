@@ -36,6 +36,7 @@
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
+    <s:hidden name="bean.derivation"/>
 
     <%-- ================================================================== --%>
     <%-- Name, link and description: disabled when page is a required page --%>
@@ -44,11 +45,11 @@
         <tr>
             <td class="label"><s:text name="generic.name" />&nbsp;</td>
             <td class="field">
-                <s:if test="template.required || bean.mobile">
-                    <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
+                <s:if test="nameChangeable">
+                    <s:textfield name="bean.name" size="50" maxlength="255"/>
                 </s:if>
                 <s:else>
-                    <s:textfield name="bean.name" size="50" maxlength="255"/>
+                    <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
                 </s:else>
             </td>
         </tr>
@@ -62,7 +63,7 @@
         
        <s:if test="bean.role.accessibleViaUrl">
             <tr>
-                <td class="label" valign="top"><s:text name="templateEdit.link" />&nbsp;</td>
+                <td class="label" valign="top"><s:text name="templateEdit.path" />&nbsp;</td>
                 <td class="field">
                     <s:textfield name="bean.relativePath" size="50" maxlength="255" onkeyup="updatePageURLDisplay()" />
                     <br/>
@@ -79,7 +80,7 @@
                 <td class="label" valign="top" style="padding-top: 4px">
                     <s:text name="generic.description"/>&nbsp;</td>
                 <td class="field">
-                        <s:textarea name="bean.description" cols="50" rows="2" maxlength="255"/>
+                    <s:textarea name="bean.description" cols="50" rows="2" maxlength="255"/>
                 </td>
             </tr>
         </s:if>
