@@ -93,7 +93,7 @@ function handlePreview(handle) {
 <tr>
     <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
     <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
-        <select id="themeSelector" name="bean.editorTheme" size="1"
+        <select id="themeSelector" name="bean.theme" size="1"
         ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
         <br />
         <br />

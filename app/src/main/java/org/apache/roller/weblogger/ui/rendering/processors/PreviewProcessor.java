@@ -130,11 +130,11 @@ public class PreviewProcessor {
             SharedTheme previewTheme = previewRequest.getSharedTheme();
 
             // construct a temporary Website object for this request
-            // and set the EditorTheme to our previewTheme
+            // and set the weblog theme to our previewTheme
             Weblog tmpWebsite = new Weblog();
             tmpWebsite.setData(weblog);
             if (previewTheme != null && previewTheme.isEnabled()) {
-                tmpWebsite.setEditorTheme(previewTheme.getId());
+                tmpWebsite.setTheme(previewTheme.getId());
                 tmpWebsite.setTempPreviewWeblog(true);
             }
 

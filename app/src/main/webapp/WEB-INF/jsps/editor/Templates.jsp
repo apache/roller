@@ -34,12 +34,13 @@
 <table class="rollertable">
 
     <tr>
-        <th width="20%"><s:text name="generic.name"/></th>
-        <th width="10%"><s:text name="templates.source"/></th>
-        <th width="40%"><s:text name="templates.role"/></th>
+        <th width="17%"><s:text name="generic.name"/></th>
         <th width="20%"><s:text name="templates.path"/></th>
-        <th width="5%"><s:text name="generic.view"/></th>
-        <th width="5%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
+        <th width="34%"><s:text name="templates.role"/></th>
+        <th width="8%"><s:text name="templates.source"/></th>
+        <th width="13%"><s:text name="generic.lastModified"/></th>
+        <th width="4%"><s:text name="generic.view"/></th>
+        <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
     </tr>
     <s:iterator id="p" value="templates" status="rowstatus">
         <s:if test="#rowstatus.odd == true">
@@ -65,7 +66,11 @@
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>
 
-            <td style="vertical-align:middle"><s:property value="#p.derivation.readableName" /></td>
+            <td style="vertical-align:middle">
+                <s:if test="#p.role.accessibleViaUrl">
+                    <s:property value="#p.relativePath" />
+                </s:if>
+            </td>
 
             <td style="vertical-align:middle">
                 <s:if test="#p.role.singleton || #p.description == null || #p.description == ''">
@@ -76,13 +81,14 @@
                 </s:else>
             </td>
 
-            <td style="vertical-align:middle">
-                <s:if test="#p.role.accessibleViaUrl">
-                    <s:property value="#p.relativePath" />
+            <td style="vertical-align:middle"><s:property value="#p.derivation.readableName" /></td>
+
+            <td>
+                <s:if test="#p.lastModified != null">
+                    <s:text name="generic.date.toStringFormat">
+                        <s:param value="#p.lastModified" />
+                    </s:text>
                 </s:if>
-                <s:else>
-                    &nbsp;
-                </s:else>
             </td>
 
             <td align="center" style="vertical-align:middle">
@@ -90,9 +96,6 @@
                     <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"
                     onclick="launchPage('<s:property value="actionWeblog.absoluteURL"/>page/<s:property value="#p.relativePath" />')"/>
                 </s:if>
-                <s:else>
-                    &nbsp;
-                </s:else>
             </td>
 
             <td class="center" style="vertical-align:middle">

@@ -22,6 +22,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -38,17 +39,22 @@ import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Templates listing page.
  */
+@RestController
 public class Templates extends UIAction {
 
 	private static Log log = LogFactory.getLog(Templates.class);
@@ -57,7 +63,7 @@ public class Templates extends UIAction {
 	private List<Template> templates = Collections.emptyList();
 
 	// list of template action types user is allowed to create
-	private Map<ComponentType, String> availableRoles = Collections.emptyMap();
+	private List<Pair<String, String>> availableRoles;
 
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;
@@ -93,7 +99,7 @@ public class Templates extends UIAction {
 
 			// get current list of templates defined for the blog
 			WeblogTheme theme = new WeblogTheme(weblogManager, getActionWeblog(),
-					themeManager.getSharedTheme(getActionWeblog().getEditorTheme()));
+					themeManager.getSharedTheme(getActionWeblog().getTheme()));
 
 			List<? extends Template> raw = theme.getTemplates();
 			List<Template> pages = new ArrayList<>();
@@ -101,23 +107,18 @@ public class Templates extends UIAction {
 			setTemplates(pages);
 
 			// build list of action types that may be added
-			Map<ComponentType, String> rolesMap = new EnumMap<>(ComponentType.class);
-			addComponentTypeToMap(rolesMap, ComponentType.WEBLOG);
-			addComponentTypeToMap(rolesMap, ComponentType.PERMALINK);
-			addComponentTypeToMap(rolesMap, ComponentType.SEARCH);
-			addComponentTypeToMap(rolesMap, ComponentType.TAGSINDEX);
-			addComponentTypeToMap(rolesMap, ComponentType.JAVASCRIPT);
-			addComponentTypeToMap(rolesMap, ComponentType.STYLESHEET);
-			addComponentTypeToMap(rolesMap, ComponentType.CUSTOM_INTERNAL);
-			addComponentTypeToMap(rolesMap, ComponentType.CUSTOM_EXTERNAL);
+            availableRoles = new ArrayList<>();
+            for (ComponentType type : ComponentType.values()) {
+                availableRoles.add(Pair.of(type.name(), type.getReadableName()));
+            }
 
-			// remove from above list any already existing for the theme
+            // remove from above list any already existing for the theme
             for (Template tmpPage : getTemplates()) {
                 if (tmpPage.getRole().isSingleton()) {
-                    rolesMap.remove(tmpPage.getRole());
+                    availableRoles.removeIf(p -> p.getLeft().equals(tmpPage.getRole().name()));
                 }
             }
-			setAvailableRoles(rolesMap);
+			setAvailableRoles(availableRoles);
 
 		} catch (WebloggerException ex) {
 			log.error("Error getting templates for weblog - " + getActionWeblog().getHandle(), ex);
@@ -126,10 +127,6 @@ public class Templates extends UIAction {
 
 		return LIST;
 	}
-
-    private void addComponentTypeToMap(Map<ComponentType, String> map, ComponentType component) {
-        map.put(component, component.getReadableName());
-    }
 
 	/**
 	 * Save a new template.
@@ -196,7 +193,7 @@ public class Templates extends UIAction {
 		try {
 			WeblogTemplate existingPage = weblogManager.getTemplateByName(getActionWeblog(), getNewTmplName());
 			if (existingPage != null) {
-				addError("templates.error.alreadyExists", getNewTmplName());
+				addError("templates.error.nameAlreadyExists", getNewTmplName());
 			}
 		} catch (WebloggerException ex) {
 			log.error("Error checking for existing template", ex);
@@ -212,11 +209,11 @@ public class Templates extends UIAction {
 		this.templates = templates;
 	}
 
-	public Map<ComponentType, String> getAvailableRoles() {
+	public List<Pair<String, String>> getAvailableRoles() {
 		return availableRoles;
 	}
 
-	public void setAvailableRoles(Map<ComponentType, String> availableRoles) {
+	public void setAvailableRoles(List<Pair<String, String>> availableRoles) {
 		this.availableRoles = availableRoles;
 	}
 
@@ -236,4 +233,11 @@ public class Templates extends UIAction {
 		this.newTmplAction = newTmplAction;
 	}
 
+    @RequestMapping(value = "/tb-ui/authoring/rest/templateDescriptions/{role}", method = RequestMethod.GET)
+    public String getTemplateComponentTypeDescription(@PathVariable String role) {
+        ComponentType desiredType = ComponentType.valueOf(role);
+        ResourceBundle rb = ResourceBundle.getBundle("ApplicationResources");
+        String resultText = rb.getString(desiredType.getDescriptionProperty());
+        return resultText;
+    }
 }

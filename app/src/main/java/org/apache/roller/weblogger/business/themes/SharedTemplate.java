@@ -50,7 +50,6 @@ public class SharedTemplate implements Template, Serializable {
     private String relativePath = null;
 
     private String contents = null;
-    private Date lastModified = null;
 
     public SharedTemplate(String id, TemplateRendition.TemplateLanguage lang) {
         this.id = id;
@@ -138,18 +137,13 @@ public class SharedTemplate implements Template, Serializable {
             return null;
         }
     }
+
     public Date getLastModified() {
-        return lastModified;
+        return null;
     }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
-
 
     public String toString() {
-        return (id + "," + name + "," + description + "," + relativePath + "," +
-                lastModified + "\n\n" + contents + "\n");
+        return id + "," + name + "," + description + "," + relativePath + "\n\n" + contents + "\n";
     }
 
     public ComponentType getRole() {

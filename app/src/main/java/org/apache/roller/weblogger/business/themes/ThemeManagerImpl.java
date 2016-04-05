@@ -142,11 +142,11 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		WeblogTheme weblogTheme = null;
 
-        SharedTheme staticTheme = this.themes.get(weblog.getEditorTheme());
+        SharedTheme staticTheme = this.themes.get(weblog.getTheme());
         if (staticTheme != null) {
             weblogTheme = new WeblogTheme(weblogManager, weblog, staticTheme);
         } else {
-            log.warn("Unable to lookup theme " + weblog.getEditorTheme());
+            log.warn("Unable to lookup theme " + weblog.getTheme());
         }
 
 		// TODO: if somehow the theme is still null should we provide some

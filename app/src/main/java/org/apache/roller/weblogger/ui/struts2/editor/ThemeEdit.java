@@ -61,9 +61,6 @@ public class ThemeEdit extends UIAction {
         this.themeManager = themeManager;
     }
 
-    // list of available shared themes
-    private List<SharedTheme> themes = Collections.emptyList();
-
     // the currently selected theme
     private String themeId = null;
 
@@ -94,12 +91,11 @@ public class ThemeEdit extends UIAction {
     }
 
     public void prepare() {
-        themes = themeManager.getEnabledSharedThemesList();
     }
 
     public String execute() {
         // set theme to current value
-        setThemeId(getActionWeblog().getEditorTheme());
+        setThemeId(getActionWeblog().getTheme());
         setSelectedThemeId(getThemeId());
         return INPUT;
     }
@@ -119,7 +115,7 @@ public class ThemeEdit extends UIAction {
             newTheme = themeManager.getSharedTheme(selectedThemeId);
 
             WeblogTheme oldTheme = new WeblogTheme(weblogManager, getActionWeblog(),
-                    themeManager.getSharedTheme(getActionWeblog().getEditorTheme()));
+                    themeManager.getSharedTheme(getActionWeblog().getTheme()));
 
             oldTheme.getTemplates().stream().filter(
                     old -> old.getDerivation() == TemplateDerivation.NONSHARED).forEach(old -> {
@@ -147,7 +143,7 @@ public class ThemeEdit extends UIAction {
                         }
                     }
 
-                    weblog.setEditorTheme(selectedThemeId);
+                    weblog.setTheme(selectedThemeId);
 
                     log.debug("Saving theme " + selectedThemeId + " for weblog " + weblog.getHandle());
 
@@ -169,10 +165,6 @@ public class ThemeEdit extends UIAction {
         }
 
         return execute();
-    }
-
-    public List<SharedTheme> getThemes() {
-        return themes;
     }
 
     public String getThemeId() {
