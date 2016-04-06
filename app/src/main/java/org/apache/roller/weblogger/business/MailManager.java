@@ -167,7 +167,7 @@ public class MailManager {
         }
         
         try {
-            String from = website.getEmailAddress();
+            String from = website.getCreator().getEmailAddress();
             String cc[] = new String[] {from};
             String bcc[] = new String[0];
             String to[] = new String[] {user.getEmailAddress()};
@@ -442,11 +442,7 @@ public class MailManager {
         
         // send message to email recipients
         try {
-            // use either the weblog configured from address or the site configured from address
-            String from = weblog.getEmailAddress();
-            if(StringUtils.isEmpty(from)) {
-                from = user.getEmailAddress();
-            }
+            String from = user.getEmailAddress();
 
             boolean isHtml = !isPlainText;
             
@@ -529,13 +525,9 @@ public class MailManager {
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
         User user = entry.getCreator();
-        
-        // use either the weblog configured from address or the site configured from address
-        String from = weblog.getEmailAddress();
-        if(StringUtils.isEmpty(from)) {
-            from = user.getEmailAddress();
-        }
-        
+
+        String from = user.getEmailAddress();
+
         // form the message to be sent
         String subject = resources.getString("email.comment.commentApproved");
         

@@ -122,8 +122,6 @@ public class CreateWeblog extends UIAction {
         // pre-populate with some logical defaults
         getBean().setLocale(user.getLocale());
         getBean().setTimeZone(user.getTimeZone());
-        getBean().setEmailAddress(user.getEmailAddress());
-        
         return INPUT;
     }
     
@@ -154,7 +152,6 @@ public class CreateWeblog extends UIAction {
                     user,
                     getBean().getName().trim(),
                     getBean().getTagline().trim(),
-                    getBean().getEmailAddress().trim(),
                     getBean().getTheme(),
                     getBean().getLocale(),
                     getBean().getTimeZone());
@@ -192,9 +189,6 @@ public class CreateWeblog extends UIAction {
         }
         if (StringUtils.isEmpty(bean.getHandle())) {
             addError("CreateWeblog.error.handleNull");
-        }
-        if (StringUtils.isEmpty(bean.getEmailAddress())) {
-            addError("Register.error.emailAddressNull");
         }
 
         // make sure handle only contains safe characters

@@ -88,7 +88,6 @@ public class WeblogTest extends WebloggerTest {
             testWeblog.setName("Test Weblog");
             testWeblog.setTagline("Test Weblog");
             testWeblog.setHandle("testweblog");
-            testWeblog.setEmailAddress("testweblog@dev.null");
             testWeblog.setEditorPage("editor-text.jsp");
             testWeblog.setBlacklist("");
             testWeblog.setTheme("basic");

@@ -59,11 +59,6 @@
     </tr>
     
     <tr>
-        <td class="label"><s:text name="websiteSettings.emailAddress" />
-        <td class="field"><s:textfield name="bean.emailAddress" size="40"/></td>
-    </tr>
-    
-    <tr>
         <td class="label"><s:text name="websiteSettings.editor" /></td>
         <td class="field">
             <s:select name="bean.editorPage" size="1" list="editorsList" listKey="left" listValue="getText(right)" />
