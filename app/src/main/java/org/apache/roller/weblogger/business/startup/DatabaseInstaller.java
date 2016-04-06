@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
 
 /**
- * Handles the install/upgrade of the Roller Weblogger database when the user
+ * Handles the install/upgrade of the TightBlog Weblogger database when the user
  * has configured their installation type to 'auto'.
  */
 public class DatabaseInstaller {
@@ -41,16 +41,16 @@ public class DatabaseInstaller {
     private static Log log = LogFactory.getLog(DatabaseInstaller.class);
     
     private final DatabaseProvider db;
-    private final String version;
+    private final String targetVersion;
     private List<String> messages = new ArrayList<>();
     
-    // the name of the property which holds the dbversion value
-    private static final String DBVERSION_PROP = "roller.database.version";
+    // the name of the property in weblogger_properties table which holds the dbversion value
+    private static final String DBVERSION_PROP = "tightblog.database.version";
     
     
     public DatabaseInstaller(DatabaseProvider dbProvider) {
         db = dbProvider;
-        version = WebloggerStaticConfig.getProperty("weblogger.version", "UNKNOWN");
+        targetVersion = WebloggerStaticConfig.getProperty("weblogger.version", "UNKNOWN");
     }
     
     
@@ -62,13 +62,10 @@ public class DatabaseInstaller {
         try {            
             con = db.getConnection();
             
-            // just check for a couple key Roller tables
-            // weblogger_user table had different names in the past
-            if (tableExists(con, "weblog") && (tableExists(con, "weblogger_user")
-                    || tableExists(con, "roller_user") || tableExists(con, "rolleruser"))) {
+            // just check for a couple key database tables
+            if (tableExists(con, "weblog") && (tableExists(con, "weblogger_user"))) {
                 return false;
             }
-            
         } catch (Exception e) {
             throw new RuntimeException("Error checking for tables", e);
         } finally {
@@ -87,21 +84,20 @@ public class DatabaseInstaller {
      * Determine if database schema needs to be upgraded.
      */
     public boolean isUpgradeRequired() {
-        int desiredVersion = parseVersionString(version);
-        int databaseVersion;
+        int desiredVersion = parseVersionString(targetVersion);
+        int currentDatabaseVersion;
         try {
-            databaseVersion = getDatabaseVersion();
+            currentDatabaseVersion = getDatabaseVersion();
         } catch (StartupException ex) {
             throw new RuntimeException(ex);
         }
         
-        // if dbversion is unset then assume a new install, otherwise compare
-        if (databaseVersion < 0) {
-            // if this is a fresh db then we need to set the database version
+        if (currentDatabaseVersion < 0) {
+            // assuming a fresh install has already occurred, just that the version number hasn't been set yet
             Connection con = null;
             try {
                 con = db.getConnection();
-                setDatabaseVersion(con, version);
+                insertDatabaseVersion(con, desiredVersion);
             } catch (Exception ioe) {
                 errorMessage("ERROR setting database version");
             } finally {
@@ -112,10 +108,9 @@ public class DatabaseInstaller {
                 } catch (Exception ignored) {
                 }
             }
-
             return false;
         } else {
-            return databaseVersion < desiredVersion;
+            return currentDatabaseVersion < desiredVersion;
         }
     }
     
@@ -160,7 +155,7 @@ public class DatabaseInstaller {
             create.runScript(con, true);
             messages.addAll(create.getMessages());
             
-            setDatabaseVersion(con, version);
+            insertDatabaseVersion(con, parseVersionString(targetVersion));
             
         } catch (SQLException sqle) {
             log.error("ERROR running SQL in database creation script", sqle);
@@ -196,48 +191,39 @@ public class DatabaseInstaller {
      */
     public List<String> upgradeDatabase(boolean runScripts) throws StartupException {
         
-        int myVersion = parseVersionString(version);
-        int dbversion = getDatabaseVersion();
+        int targetVersionInt = parseVersionString(targetVersion);
+        int currentDbVersion = getDatabaseVersion();
         
-        log.debug("Database version = "+dbversion);
-        log.debug("Desired version = "+myVersion);
+        log.debug("Database version = " + currentDbVersion);
+        log.debug("Desired version = " + targetVersionInt);
        
         Connection con = null;
         try {
             con = db.getConnection();
-            if(dbversion < 0) {
+            if (currentDbVersion < 0) {
                 String msg = "Cannot upgrade database tables, TightBlog database version cannot be determined";
                 errorMessage(msg);
                 throw new StartupException(msg);
-            } else if (dbversion < 500) {
-                String msg = "TightBlog " + myVersion + " cannot upgrade from versions older than 5.0; " +
+            } else if (currentDbVersion < 100) {
+                String msg = "TightBlog " + targetVersionInt + " cannot upgrade from versions older than 1.0; " +
                         "try first upgrading to an earlier version of TightBlog.";
                 errorMessage(msg);
                 throw new StartupException(msg);
-            } else if(dbversion >= myVersion) {
+            } else if (currentDbVersion >= targetVersionInt) {
                 log.info("Database is current, no upgrade needed");
                 return null;
             }
 
-            log.info("Database is old, beginning upgrade to version "+myVersion);
+            log.info("Database is old, beginning upgrade to version " + targetVersionInt);
 
             // iterate through each upgrade as needed
-            // to add to the upgrade sequence simply add a new "if" statement
-            // for whatever version needed and then define a new method upgradeXXX()
-
+            // to add to the upgrade sequence simply add a new "if" statement for whatever version needed
             if (runScripts) {
-                if (dbversion < 510) {
-                    upgradeTo510(con);
-                    dbversion = 510;
-                }
-                if (dbversion < 520) {
-                    upgradeTo520(con);
-                }
+                // no-op until new versions released
             }
 
-            // make sure the database version is the exact version
-            // we are upgrading too.
-            updateDatabaseVersion(con, myVersion);
+            // finished, update DB version in properties table
+            updateDatabaseVersion(con, targetVersionInt);
         
         } catch (SQLException e) {
             throw new StartupException("ERROR obtaining connection");
@@ -252,55 +238,27 @@ public class DatabaseInstaller {
         return messages;
     }
 
-    /**
-     * Upgrade database to Roller 5.1
-     */
-	private void upgradeTo510(Connection con) throws StartupException {
-        
-        // first we need to run upgrade scripts 
-        SQLScriptRunner runner = null;
-        try {    
-            String handle = getDatabaseHandle(con);
-            String scriptPath = handle + "/500-to-510-migration.sql";
-            successMessage("Running database upgrade script: "+scriptPath);
-            runner = new SQLScriptRunner(scriptPath, true);
-            runner.runScript(con, true);
-            messages.addAll(runner.getMessages());
-        } catch(Exception ex) {
-            log.error("ERROR running 510 database upgrade script", ex);
-            if (runner != null) {
-                messages.addAll(runner.getMessages());
-            }
-            
-            errorMessage("Problem upgrading database to version 510", ex);
-            throw new StartupException("Problem upgrading database to version 510", ex);
-        }        
-	}
+    private void runDbUpgrade(Connection con, String versionStr, String script) throws StartupException {
 
-    /**
-     * Upgrade database to Roller 5.2
-     */
-    private void upgradeTo520(Connection con) throws StartupException {
-
-        // first we need to run upgrade scripts
         SQLScriptRunner runner = null;
         try {
             String handle = getDatabaseHandle(con);
-            String scriptPath = handle + "/510-to-520-migration.sql";
-            successMessage("Running database upgrade script: "+scriptPath);
+            String scriptPath = handle + script;
+            successMessage("Running database upgrade script: " + scriptPath);
             runner = new SQLScriptRunner(scriptPath, true);
             runner.runScript(con, true);
             messages.addAll(runner.getMessages());
         } catch(Exception ex) {
-            log.error("ERROR running 520 database upgrade script", ex);
+            log.error("ERROR running " + versionStr + " database upgrade script", ex);
             if (runner != null) {
                 messages.addAll(runner.getMessages());
             }
 
-            errorMessage("Problem upgrading database to version 520", ex);
-            throw new StartupException("Problem upgrading database to version 520", ex);
+            errorMessage("Problem upgrading database to version " + versionStr, ex);
+            throw new StartupException("Problem upgrading database to version " + versionStr, ex);
         }
     }
+
 
     /**
      * Use database product name to get the database script directory name.
@@ -350,23 +308,13 @@ public class DatabaseInstaller {
             
             // just check in the weblogger_properties table
             ResultSet rs = stmt.executeQuery(
-                    "select value from weblogger_properties where name = '"+DBVERSION_PROP+"'");
+                    "select value from weblogger_properties where name = '" + DBVERSION_PROP + "'");
             
-            if(rs.next()) {
+            if (rs.next()) {
                 dbversion = Integer.parseInt(rs.getString(1));
-                
-            } else {
-                // tough to know if this is an upgrade with no db version :/
-                // however, if weblogger_properties is not empty then we at least
-                // we have someone upgrading from 1.2.x
-                rs = stmt.executeQuery("select count(*) from weblogger_properties");
-                if (rs.next() && rs.getInt(1) > 0) {
-                    dbversion = 120;
-                }
             }
-            
         } catch(Exception e) {
-            // that's strange ... hopefully we didn't need to upgrade
+            // that's strange ... hopefully we don't need to upgrade
             log.error("Couldn't lookup current database version", e);           
         } finally {
             try {
@@ -383,24 +331,23 @@ public class DatabaseInstaller {
         int myversion = 0;
         
         // NOTE: this assumes a maximum of 3 digits for the version number
-        // so if we get to 10.0 then we'll need to upgrade this
-        
-        // strip out non-digits
-        vstring = vstring.replaceAll("\\Q.\\E", "");
+        // so if we get to 10.0 we'll need to upgrade this
+        // strip out non-digits (\D), e.g. 1.0.0-SNAPSHOT -> 100
         vstring = vstring.replaceAll("\\D", "");
-        if(vstring.length() > 3) {
+        if (vstring.length() > 3) {
             vstring = vstring.substring(0, 3);
         }
         
         // parse to an int
         try {
             int parsed = Integer.parseInt(vstring);            
-            if(parsed < 100) {
+            if (parsed < 100) {
+                // i.e., make version 1.0 -> 10 -> 100
                 myversion = parsed * 10;
             } else {
                 myversion = parsed;
             }
-        } catch(Exception e) {}
+        } catch (Exception ignored) {}
         
         return myversion;
     }
@@ -410,24 +357,13 @@ public class DatabaseInstaller {
      * Insert a new database.version property.
      * This should only be called once for new installations
      */
-    private void setDatabaseVersion(Connection con, String version) 
-            throws StartupException {
-        setDatabaseVersion(con, parseVersionString(version));
-    }
-
-    /**
-     * Insert a new database.version property.
-     * This should only be called once for new installations
-     */
-    private void setDatabaseVersion(Connection con, int version)
-            throws StartupException {
-        
+    private void insertDatabaseVersion(Connection con, int version) throws StartupException {
         try {
             Statement stmt = con.createStatement();
-            stmt.executeUpdate("insert into weblogger_properties "+
-                    "values('"+DBVERSION_PROP+"', '"+version+"')");
+            stmt.executeUpdate("insert into weblogger_properties values('"
+                    + DBVERSION_PROP + "', '" + version + "')");
             
-            log.debug("Set database verstion to "+version);
+            log.debug("Set database version to "+version);
         } catch(SQLException se) {
             throw new StartupException("Error setting database version.", se);
         }
@@ -442,14 +378,12 @@ public class DatabaseInstaller {
         
         try {
             Statement stmt = con.createStatement();
-            stmt.executeUpdate("update weblogger_properties "+
-                    "set value = '"+version+"'"+
-                    "where name = '"+DBVERSION_PROP+"'");
+            stmt.executeUpdate("update weblogger_properties set value = '"
+                    + version + "' where name = '" + DBVERSION_PROP + "'");
             
-            log.debug("Updated database version to "+version);
+            log.debug("Updated database version to " + version);
         } catch(SQLException se) {
             throw new StartupException("Error setting database version.", se);
         } 
     }
-
 }
