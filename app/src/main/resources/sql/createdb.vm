@@ -43,7 +43,6 @@ create table weblog (
     emailcomments     $db.BOOLEAN_SQL_TYPE_TRUE not null,
     approvecomments   $db.BOOLEAN_SQL_TYPE_TRUE not null,
     defaultcommentdays integer default 7 not null,
-    emailaddress      varchar(255) not null,
     blacklist         $db.TEXT_SQL_TYPE,
     analyticscode     $db.TEXT_SQL_TYPE,
     hitstoday	      integer default 0 not null

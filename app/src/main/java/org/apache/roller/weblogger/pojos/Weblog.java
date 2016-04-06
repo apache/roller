@@ -81,7 +81,6 @@ public class Weblog implements Serializable {
     private Boolean allowComments    = Boolean.TRUE;
     private Boolean emailComments    = Boolean.FALSE;
     private Boolean approveComments  = Boolean.TRUE;
-    private String  emailAddress     = null;
     private String  theme            = null;
     private String  locale           = null;
     private String  timeZone         = null;
@@ -112,7 +111,6 @@ public class Weblog implements Serializable {
             User creator,
             String name,
             String desc,
-            String email,
             String theme,
             String locale,
             String timeZone) {
@@ -121,7 +119,6 @@ public class Weblog implements Serializable {
         this.creator = creator;
         this.name = name;
         this.tagline = desc;
-        this.emailAddress = email;
         this.theme = theme;
         this.locale = locale;
         this.timeZone = timeZone;
@@ -242,15 +239,6 @@ public class Weblog implements Serializable {
         this.emailComments = emailComments;
     }
 
-    @Basic(optional=false)
-    public String getEmailAddress() {
-        return this.emailAddress;
-    }
-    
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
-    
     public String getTheme() {
         return this.theme;
     }
@@ -317,7 +305,6 @@ public class Weblog implements Serializable {
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());
         this.setEmailComments(other.getEmailComments());
-        this.setEmailAddress(other.getEmailAddress());
         this.setTheme(other.getTheme());
         this.setLocale(other.getLocale());
         this.setTimeZone(other.getTimeZone());

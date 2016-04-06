@@ -111,7 +111,6 @@ public class WeblogConfig extends UIAction {
         bean.setDefaultCommentDays(currentWeblog.getDefaultCommentDays());
         bean.setApproveComments(currentWeblog.getApproveComments());
         bean.setEmailComments(currentWeblog.getEmailComments());
-        bean.setEmailAddress(currentWeblog.getEmailAddress());
         bean.setLocale(currentWeblog.getLocale());
         bean.setTimeZone(currentWeblog.getTimeZone());
         bean.setDefaultPlugins(currentWeblog.getDefaultPlugins());
@@ -147,7 +146,6 @@ public class WeblogConfig extends UIAction {
                 weblog.setAllowComments(bean.getAllowComments());
                 weblog.setApproveComments(bean.getApproveComments());
                 weblog.setEmailComments(bean.getEmailComments());
-                weblog.setEmailAddress(bean.getEmailAddress());
                 weblog.setLocale(bean.getLocale());
                 weblog.setTimeZone(bean.getTimeZone());
                 weblog.setDefaultPlugins(bean.getDefaultPlugins());

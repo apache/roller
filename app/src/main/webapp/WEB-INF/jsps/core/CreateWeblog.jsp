@@ -51,7 +51,7 @@ function handlePreview(handle) {
 </tr>
 
 <tr>
-        <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
+    <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
     <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
     <td class="description"><s:text name="createWebsite.tip.description" /></td>
 </tr>
@@ -66,12 +66,6 @@ function handlePreview(handle) {
         </span>
     </td>
     <td class="description"><s:text name="createWebsite.tip.handle" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="emailAddress" /><s:text name="createWebsite.emailAddress" /></label></td>
-    <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="50" onBlur="this.value=this.value.trim()"/></td>
-    <td class="description"><s:text name="createWebsite.tip.email" /></td>
 </tr>
 
 <tr>
