@@ -112,12 +112,6 @@ public class ConfigModel implements Model {
     public String getRollerVersion() {
         return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
     }
-    
-    
-    /** Get timestamp of Roller build */
-    public String getRollerBuildTimestamp() {
-        return WebloggerStaticConfig.getProperty("weblogger.buildTime", "Unknown");
-    }
 
     public String getDefaultAnalyticsTrackingCode() {
         return getProperty("analytics.default.tracking.code");
