@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Action for controlling theme selection.
@@ -183,9 +185,11 @@ public class ThemeEdit extends UIAction {
         this.selectedThemeId = importThemeId;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/themes", method = RequestMethod.GET)
-    public List<SharedThemeData> getSharedThemes() {
-        List<SharedTheme> list = themeManager.getEnabledSharedThemesList();
+    @RequestMapping(value = "/tb-ui/authoring/rest/themes/{currentTheme}", method = RequestMethod.GET)
+    public List<SharedThemeData> getSharedThemes(@PathVariable String currentTheme) {
+        List<SharedTheme> list = themeManager.getEnabledSharedThemesList().stream()
+                .filter(t -> !t.getId().equals(currentTheme))
+                .collect(Collectors.toList());
         List<SharedThemeData> to = new ArrayList<>();
         for (SharedTheme item : list) {
             SharedThemeData temp = new SharedThemeData();

@@ -77,9 +77,10 @@ function fullPreview(selector) {
 <script>
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
-            $.ajax({ url: "<s:url value='rest/themes'/>", async:false,
+            var myUrl = '<s:url value="/tb-ui/authoring/rest/themes/"/><s:property value="actionWeblog.theme"/>'
+            $.ajax({ url: myUrl, async:false,
                 success: function(data) { $scope.themes = data; }
             });
-            $scope.selectedTheme = $.grep($scope.themes, function(e){ return e.id == "<s:property value='themeId'/>"; })[0];
+            $scope.selectedTheme = $scope.themes[0];
     }]);
 </script>
