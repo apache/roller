@@ -149,7 +149,7 @@ public class WeblogsPager extends AbstractPager {
                 int count = 0;
                 for (Weblog weblog : rawWeblogs) {
                     if (count++ < length) {
-                        results.add(weblog.templateCopy());
+                        results.add(weblog);
                     } else {
                         more = true;
                     }

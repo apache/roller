@@ -88,27 +88,23 @@ public abstract class ParsedRequest {
         this.authenticUser = authenticUser;
     }
     
-    
     public User getUser() {
-        
         if(user == null && authenticUser != null) {
             try {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 user = umgr.getUserByUserName(authenticUser);
+                user.setPassword(null);
             } catch (WebloggerException ex) {
                 log.error("Error looking up user " + authenticUser, ex);
             }
         }
-        
         return user;
     }
-    
-    
+
     public void setUser(User u) {
         this.user = u;
     }
-    
-    
+
     public boolean isLoggedIn() {
         return (this.authenticUser != null);
     }

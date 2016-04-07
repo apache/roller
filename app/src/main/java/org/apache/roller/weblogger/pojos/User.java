@@ -285,37 +285,18 @@ public class User implements Serializable {
         this.activationCode = activationCode;
     }
 
-    /**
-     * A read-only copy for usage within templates, with fields limited
-     * to just those we wish to provide to those templates.
-     */
-    public User templateCopy() {
-        User copy = new User();
-        copy.setId(null);
-        copy.setUserName(null);
-        copy.setScreenName(HTMLSanitizer.conditionallySanitize(this.screenName));
-        copy.setFullName(HTMLSanitizer.conditionallySanitize(this.fullName));
-        copy.setEmailAddress(emailAddress);
-        copy.setDateCreated(dateCreated);
-        copy.setLocale(locale);
-        copy.setTimeZone(timeZone);
-        return copy;
-    }
-
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getUserName());
-        buf.append(", ").append(getFullName());
-        buf.append(", ").append(getGlobalRole());
-        buf.append(", ").append(getEmailAddress());
-        buf.append(", ").append(getDateCreated());
-        buf.append(", ").append(getEnabled());
-        buf.append("}");
-        return buf.toString();
+        String stringVal = "{" + getId();
+        stringVal += ", " + getUserName();
+        stringVal += ", " + getFullName();
+        stringVal += ", " + getGlobalRole();
+        stringVal += ", " + getEmailAddress();
+        stringVal += ", " + getDateCreated();
+        stringVal += ", " + getEnabled();
+        stringVal += "}";
+        return stringVal;
     }
     
     public boolean equals(Object other) {

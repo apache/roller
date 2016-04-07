@@ -314,20 +314,20 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 // need to wrap pojos
                 int count = 0;
                 for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {
-                    // now we need to go through each entry in a timePeriod and wrap
-                    List<WeblogEntry> wrapped = new ArrayList<>();
-                    List<WeblogEntry> unwrapped = entry.getValue();
-                    for (int i=0; i < unwrapped.size(); i++) {
+                    // now we need to go through each entry in a timePeriod
+                    List<WeblogEntry> entrySubset = new ArrayList<>();
+                    List<WeblogEntry> dayEntries = entry.getValue();
+                    for (int i=0; i < dayEntries.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i, unwrapped.get(i).templateCopy());
+                            entrySubset.add(i, dayEntries.get(i));
                         } else {
                             more = true;
                         }
                     }
                     
                     // done with that timePeriod, put it in the map
-                    if (wrapped.size() > 0) {
-                        entries.put(entry.getKey(), wrapped);
+                    if (entrySubset.size() > 0) {
+                        entries.put(entry.getKey(), entrySubset);
                     }
                 }
             } catch (Exception e) {

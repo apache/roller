@@ -317,6 +317,7 @@ public class Weblog implements Serializable {
         this.setAnalyticsCode(other.getAnalyticsCode());
         this.setIconPath(other.getIconPath());
         this.setTempPreviewWeblog(other.isTempPreviewWeblog());
+        this.setBookmarks(other.getBookmarks());
     }
     
     /**
@@ -436,7 +437,7 @@ public class Weblog implements Serializable {
     }
 
     public void setAbout(String about) {
-        this.about = about;
+        this.about = HTMLSanitizer.conditionallySanitize(about);
     }
 
     /**
@@ -561,18 +562,6 @@ public class Weblog implements Serializable {
 
     public void setTempPreviewWeblog(boolean tempPreviewWeblog) {
         this.tempPreviewWeblog = tempPreviewWeblog;
-    }
-
-    /**
-     * A read-only copy for usage within templates, with fields limited
-     * to just those we wish to provide to those templates.
-     */
-    public Weblog templateCopy() {
-        Weblog copy = new Weblog();
-        copy.setData(this);
-        copy.setId(null);
-        copy.setAbout(HTMLSanitizer.conditionallySanitize(about));
-        return copy;
     }
 
     // convenience methods for populating fields from forms

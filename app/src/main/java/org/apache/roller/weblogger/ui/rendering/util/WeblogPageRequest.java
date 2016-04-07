@@ -338,17 +338,14 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public WeblogEntry getWeblogEntry() {
-
         if (weblogEntry == null && weblogAnchor != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(),
-                        weblogAnchor);
+                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog entry " + weblogAnchor, ex);
             }
         }
-
         return weblogEntry;
     }
 
@@ -375,19 +372,16 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public WeblogCategory getWeblogCategory() {
-
         if (weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(),
-                        weblogCategoryName);
+                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName);
             } catch (WebloggerException ex) {
                 log.error(
                         "Error getting weblog category " + weblogCategoryName,
                         ex);
             }
         }
-
         return weblogCategory;
     }
 

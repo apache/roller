@@ -36,9 +36,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-/**
- * Tag bean.
- */
 @Entity
 @Table(name="weblog_entry_tag")
 @NamedQueries({
@@ -57,19 +54,7 @@ public class WeblogEntryTag implements Serializable {
     public WeblogEntryTag() {
     }
     
-    /**
-     * A read-only copy for usage within templates, with fields limited
-     * to just those we wish to provide to those templates.
-     */
-    public WeblogEntryTag templateCopy() {
-        WeblogEntryTag copy = new WeblogEntryTag();
-        copy.setId(null);
-        copy.setName(this.name);
-        return copy;
-    }
 
-    //------------------------------------------------------- Simple properties
-    
     /**
      * Unique ID and primary key.
      */
@@ -147,10 +132,7 @@ public class WeblogEntryTag implements Serializable {
         .toHashCode();
     }
 
-    public static Comparator<WeblogEntryTag> Comparator = new Comparator<WeblogEntryTag>() {
-        public int compare(WeblogEntryTag o1, WeblogEntryTag o2) {
-            return o1.getName().compareTo(o2.getName());
-        }
-    };
+    public static Comparator<WeblogEntryTag> Comparator = (tag1, tag2) ->
+        tag1.getName().compareTo(tag2.getName());
 
 }

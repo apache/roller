@@ -55,8 +55,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     private String url;
     private Integer position;
 
-    //----------------------------------------------------------- Constructors
-    
     /** Default constructor, for use in form beans only. */
     public WeblogBookmark() {
     }
@@ -91,19 +89,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         } else {
             this.position = weblog.getBookmarks().get(size - 1).getPosition() + 1;
         }
-    }
-
-    /**
-     * A read-only copy for usage within templates, with fields limited
-     * to just those we wish to provide to those templates.
-     */
-    public WeblogBookmark templateCopy() {
-        WeblogBookmark copy = new WeblogBookmark();
-        copy.setName(name);
-        copy.setDescription(description);
-        copy.setUrl(url);
-        copy.setPosition(position);
-        return copy;
     }
 
     @Basic(optional=false)
@@ -145,8 +130,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
 
-    //---------------------------------------------------------- Relationships
-
     @ManyToOne
     @JoinColumn(name="weblogid", nullable=false)
     public Weblog getWeblog() {
@@ -160,12 +143,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getUrl());
-        buf.append("}");
-        return buf.toString();
+        return "{" + getId() + ", " + getName() + ", " + getUrl() + "}";
     }
     
     public boolean equals(Object other) {

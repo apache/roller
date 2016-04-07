@@ -108,7 +108,7 @@ public class CommentsPager extends AbstractPager {
                 int count = 0;
                 for (WeblogEntryComment comment : commentsList) {
                     if (count++ < length) {
-                        results.add(comment.templateCopy());
+                        results.add(comment);
                     } else {
                         more = true;
                     }

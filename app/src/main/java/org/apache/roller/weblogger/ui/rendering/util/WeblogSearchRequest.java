@@ -128,7 +128,6 @@ public class WeblogSearchRequest extends WeblogRequest {
     }
 
     public WeblogCategory getWeblogCategory() {
-        
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();

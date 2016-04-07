@@ -66,8 +66,6 @@ public class PageModel implements Model {
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
-    protected Weblog weblog = null;
-    protected Weblog wrappedWeblog = null;
     private DeviceType deviceType = null;
 
     protected boolean isPreview = false;
@@ -142,10 +140,6 @@ public class PageModel implements Model {
         // custom request parameters
         this.requestParameters = (Map)initData.get("requestParameters");
         
-        // extract weblog object
-        weblog = pageRequest.getWeblog();
-        wrappedWeblog = weblog.templateCopy();
-
         this.deviceType = weblogRequest.getDeviceType();
     }    
     
@@ -162,7 +156,7 @@ public class PageModel implements Model {
      * Get weblog being displayed.
      */
     public Weblog getWeblog() {
-        return wrappedWeblog;
+        return pageRequest.getWeblog();
     }
 
     /**
@@ -192,8 +186,8 @@ public class PageModel implements Model {
      * Get weblog entry being displayed or null if none specified by request.
      */
     public WeblogEntry getWeblogEntry() {
-        if(pageRequest.getWeblogEntry() != null) {
-            return pageRequest.getWeblogEntry().templateCopy();
+        if (pageRequest.getWeblogEntry() != null) {
+            return pageRequest.getWeblogEntry();
         }
         return null;
     }
@@ -207,7 +201,7 @@ public class PageModel implements Model {
             return pageRequest.getWeblogPage();
         } else {
             try {
-                return themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
+                return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByAction(Template.ComponentType.WEBLOG);
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
@@ -216,11 +210,11 @@ public class PageModel implements Model {
     }
 
     public List<? extends Template> getTemplates() throws WebloggerException {
-        return themeManager.getWeblogTheme(weblog).getTemplates();
+        return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplates();
     }
 
     public Template getTemplateByName(String name) throws WebloggerException {
-        return themeManager.getWeblogTheme(weblog).getTemplateByName(name);
+        return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByName(name);
     }
 
     /**
@@ -229,7 +223,7 @@ public class PageModel implements Model {
      */
     public WeblogCategory getWeblogCategory() {
         if(pageRequest.getWeblogCategory() != null) {
-            return pageRequest.getWeblogCategory().templateCopy();
+            return pageRequest.getWeblogCategory();
         }
         return null;
     }
@@ -253,7 +247,7 @@ public class PageModel implements Model {
         }
         try {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-            wesc.setWeblog(weblog);
+            wesc.setWeblog(pageRequest.getWeblog());
             wesc.setCatName(cat);
             wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
             wesc.setMaxResults(length);
@@ -279,7 +273,7 @@ public class PageModel implements Model {
         }
         try {
             CommentSearchCriteria csc = new CommentSearchCriteria();
-            csc.setWeblog(weblog);
+            csc.setWeblog(pageRequest.getWeblog());
             csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
             csc.setMaxResults(length);
             recentComments = weblogEntryManager.getComments(csc);
@@ -298,9 +292,9 @@ public class PageModel implements Model {
     public List<TagStat> getPopularTags(int length) {
         List<TagStat> results = new ArrayList<>();
         try {
-            results = weblogEntryManager.getPopularTags(weblog, 0, length);
+            results = weblogEntryManager.getPopularTags(pageRequest.getWeblog(), 0, length);
         } catch (Exception e) {
-            log.error("ERROR: fetching popular tags for weblog " + weblog.getName(), e);
+            log.error("ERROR: fetching popular tags for weblog " + pageRequest.getWeblog().getName(), e);
         }
         return results;
     }
@@ -353,7 +347,7 @@ public class PageModel implements Model {
             return new WeblogEntriesPermalinkPager(
                     weblogEntryManager,
                     urlStrategy,
-                    weblog,
+                    pageRequest.getWeblog(),
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     cat,
@@ -376,7 +370,7 @@ public class PageModel implements Model {
                     weblogEntryManager,
                     propertiesManager,
                     urlStrategy,
-                    weblog,
+                    pageRequest.getWeblog(),
                     pageRequest.getWeblogDate(),
                     cat,
                     tags,
@@ -417,7 +411,7 @@ public class PageModel implements Model {
     public Menu getEditorMenu() {
         try {
             if (pageRequest.isLoggedIn()) {
-                UserWeblogRole uwr = userManager.getWeblogRole(pageRequest.getUser(), weblog);
+                UserWeblogRole uwr = userManager.getWeblogRole(pageRequest.getUser(), pageRequest.getWeblog());
                 return MenuHelper.generateMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog(), uwr.getWeblogRole());
             } else {
                 return null;
