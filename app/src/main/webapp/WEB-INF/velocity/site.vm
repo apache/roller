@@ -408,7 +408,7 @@ Show pager and next/prev control for a collection of comments
                     | $comment.postTime<br/> 
                 </span>
                 <span class="entryDescription">
-                    #set($content = $utils.removeHTML($comment.content))
+                    #set($content = $utils.removeHTML($comment.processedContent))
                     $utils.truncateNicely($content, 240, 260, "...")
                 </span>
             </div>

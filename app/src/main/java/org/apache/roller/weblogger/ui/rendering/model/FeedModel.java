@@ -97,7 +97,7 @@ public class FeedModel implements Model {
      * Get weblog being displayed.
      */
     public Weblog getWeblog() {
-        return weblog.templateCopy();
+        return weblog;
     }
     
     

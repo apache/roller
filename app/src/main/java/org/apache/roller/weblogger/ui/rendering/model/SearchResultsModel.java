@@ -201,7 +201,7 @@ public class SearchResultsModel extends PageModel {
 				// or entry's user is not the requested user.
 				// but don't return future posts
 				if (entry != null && entry.getPubTime().before(now)) {
-					addEntryToResults(entry.templateCopy());
+					addEntryToResults(entry);
 				}
 			}
 
@@ -270,9 +270,10 @@ public class SearchResultsModel extends PageModel {
 		return searchRequest.getWeblogCategoryName();
 	}
 
+	@Override
 	public WeblogCategory getWeblogCategory() {
 		if (searchRequest.getWeblogCategory() != null) {
-			return searchRequest.getWeblogCategory().templateCopy();
+			return searchRequest.getWeblogCategory();
 		}
 		return null;
 	}

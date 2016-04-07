@@ -105,7 +105,7 @@ public class UtilitiesModel implements Model {
     }
        
     public User getAuthenticatedUser() {
-        return parsedRequest.getAuthenticUser() != null ? parsedRequest.getUser().templateCopy() : null;
+        return parsedRequest.getAuthenticUser() != null ? parsedRequest.getUser() : null;
     }
 
     public String autoformat(String s) {

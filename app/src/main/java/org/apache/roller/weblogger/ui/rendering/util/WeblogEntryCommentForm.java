@@ -41,12 +41,6 @@ public class WeblogEntryCommentForm {
     
     public WeblogEntryCommentForm() {}
     
-    
-    public void setPreview(WeblogEntryComment preview) {
-        this.previewComment = preview;
-        setData(preview);
-    }
-    
     public void setData(WeblogEntryComment comment) {
         this.name = comment.getName();
         this.email = comment.getEmail();
@@ -54,14 +48,18 @@ public class WeblogEntryCommentForm {
         this.content = comment.getContent();
         this.notify = comment.getNotify();
     }
-    
+
+    public void setPreview(WeblogEntryComment preview) {
+        this.previewComment = preview;
+    }
+
     public void setError(String errorMessage) {
         this.error = true;
         this.message = errorMessage;
     }
     
     public WeblogEntryComment getPreviewComment() {
-        return previewComment.templateCopy();
+        return previewComment;
     }
     
     public boolean isPreview() {

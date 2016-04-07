@@ -271,7 +271,7 @@ Show comments for weblog entry according to TightBlog configuration.
             <a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
             <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
 
-                $comment.content
+                $comment.processedContent
 
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")
@@ -320,7 +320,7 @@ Show comments for weblog entry according to TightBlog configuration.
             ##</li>
             <li data-theme="a">
               <p class="ui-li-desc content-textbox">
-                 $comment.content
+                 $comment.processedContent
               </p>
               <p class="ui-li-desc content-textbox">
                 $text.get("macro.weblog.postedby")

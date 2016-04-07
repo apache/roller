@@ -273,12 +273,12 @@ public class SiteModel implements Model {
      * Return list of weblogs that user belongs to.
      */
     public List getUsersWeblogs(String userName) {
-        List results = new ArrayList();
+        List<Weblog> results = new ArrayList<>();
         try {            
             User user = userManager.getUserByUserName(userName);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
             for (UserWeblogRole role : roles) {
-                results.add(role.getWeblog().templateCopy());
+                results.add(role.getWeblog());
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -286,8 +286,7 @@ public class SiteModel implements Model {
         return results;
     }
     
-    
-    /** 
+    /**
      * Return list of users that belong to website.
      */
     public List<User> getWeblogsUsers(String handle) {
@@ -296,7 +295,9 @@ public class SiteModel implements Model {
             Weblog website = weblogManager.getWeblogByHandle(handle);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(website);
             for (UserWeblogRole role : roles) {
-                results.add(role.getUser().templateCopy());
+                User userTemp = role.getUser();
+                userTemp.setPassword(null);
+                results.add(userTemp);
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -306,32 +307,29 @@ public class SiteModel implements Model {
 
     /** Get User object by username */
     public User getUser(String username) {
-        User wrappedUser = null;
+        User user = null;
         try {            
-            User user = userManager.getUserByUserName(username, Boolean.TRUE);
-            wrappedUser = user.templateCopy();
+            user = userManager.getUserByUserName(username, Boolean.TRUE);
+            user.setPassword(null);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
         }
-        return wrappedUser;
+        return user;
     }
     
     
     /** Get Website object by handle */
     public Weblog getWeblog(String handle) {
-        Weblog wrappedWebsite = null;
+        Weblog weblog = null;
         try {            
-            Weblog weblog = weblogManager.getWeblogByHandle(handle);
-            wrappedWebsite = weblog.templateCopy();
+            weblog = weblogManager.getWeblogByHandle(handle);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
         }
-        return wrappedWebsite;
+        return weblog;
     }
     
         
-    //------------------------------------------------------- Small collections
-    
     /*
      * Get most collection of Website objects,
      * in reverse chrono order by creationDate.
@@ -345,10 +343,9 @@ public class SiteModel implements Model {
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
         try {            
-            List<Weblog> weblogs = weblogManager.getWeblogs(
-                Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
+            List<Weblog> weblogs = weblogManager.getWeblogs(true, true, startDate, null, 0, length);
             for (Weblog weblog : weblogs) {
-                results.add(weblog.templateCopy());
+                results.add(weblog);
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -357,25 +354,6 @@ public class SiteModel implements Model {
     }
            
 
-    /*
-     * Get most recent User objects, in reverse chrono order by creationDate.
-     * @param offset   Offset into results (for paging)
-     * @param len      Max number of results to return
-     */
-    public List<User> getNewUsers(int sinceDays, int length) {
-        List<User> results = new ArrayList<>();
-        try {            
-            List<User> users = userManager.getUsers(Boolean.TRUE, null, null, 0, length);
-            for (User user : users) {
-                results.add(user.templateCopy());
-            }
-        } catch (Exception e) {
-            log.error("ERROR: fetching weblog list", e);
-        }
-        return results;
-    }   
-    
-    
     /**
      * Get list of WebsiteDisplay objects, ordered by number of hits.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
@@ -456,7 +434,7 @@ public class SiteModel implements Model {
         try {            
             List<WeblogEntry> weblogEntries = weblogEntryManager.getWeblogEntriesPinnedToMain(length);
             for (WeblogEntry entry : weblogEntries) {
-                results.add(entry.templateCopy());
+                results.add(entry);
             }
         } catch (Exception e) {
             log.error("ERROR: fetching pinned weblog entries", e);

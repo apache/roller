@@ -104,7 +104,6 @@ public class WeblogEntryComment implements Serializable {
 
     // associations
     private WeblogEntry weblogEntry = null;
-    private WeblogEntry wrappedWeblogEntry = null;
 
     public WeblogEntryComment() {}
 
@@ -207,7 +206,7 @@ public class WeblogEntryComment implements Serializable {
     }
     
     public void setReferrer(String referrer) {
-        this.referrer = referrer;
+        this.referrer = StringEscapeUtils.escapeHtml4(referrer);
     }
     
     public String getUserAgent() {
@@ -276,8 +275,6 @@ public class WeblogEntryComment implements Serializable {
         return null;
     }
     
-    //------------------------------------------------------- Good citizenship
-
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -312,54 +309,24 @@ public class WeblogEntryComment implements Serializable {
             .toHashCode();
     }
 
-    /**
-     * A read-only copy for usage within templates, with fields limited
-     * to just those we wish to provide to those templates.
-     */
-    public WeblogEntryComment templateCopy() {
-        WeblogEntryComment copy = new WeblogEntryComment();
-        copy.setId(null);
-        copy.setName(name);
-        copy.setWeblogEntry(getWrappedWeblogEntry());
-        copy.setEmail(email);
-        copy.setUrl(url);
-        copy.setContent(processContent());
-        copy.setContentType(contentType);
-        copy.setPostTime(postTime);
-        copy.setStatus(status);
-        copy.setNotify(notify);
-        copy.setRemoteHost(remoteHost);
-        copy.setReferrer(StringEscapeUtils.escapeHtml4(referrer));
-        copy.setUserAgent(userAgent);
-        return copy;
-    }
-
     @Transient
-    public WeblogEntry getWrappedWeblogEntry() {
-        if (wrappedWeblogEntry == null) {
-            wrappedWeblogEntry = weblogEntry.templateCopy();
-            log.info("Weblog Entry: miss on " + weblogEntry.getTitle());
-        } else {
-            log.info("Weblog Entry: hit on " + weblogEntry.getTitle());
-        }
-        return wrappedWeblogEntry;
-    }
+    public String getProcessedContent() {
+        String processedContent = content;
 
-    public String processContent() {
         // escape content (e.g., " -> &quot;) if content-type is text/plain
         // html content has to remain as-is so the HTML subset plugin can render it.
         if ("text/plain".equals(contentType)) {
-            content = StringEscapeUtils.escapeHtml4(content);
+            processedContent = StringEscapeUtils.escapeHtml4(processedContent);
         }
 
         // apply plugins
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        content = mgr.applyCommentPlugins(this, content);
+        processedContent = mgr.applyCommentPlugins(this, processedContent);
 
         // always add rel=nofollow for links
-        content = Utilities.addNofollow(content);
+        processedContent = Utilities.addNofollow(processedContent);
 
-        return content;
+        return processedContent;
     }
 
 }

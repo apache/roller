@@ -57,7 +57,7 @@
 							#if($comment.approved || $model.commentForm.preview)
 								<a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
 								<div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
-									<p>$comment.content</p>
+									<p>$comment.processedContent</p>
 									<p class="comment-details">
 									$text.get("macro.weblog.postedby")
 									#if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))

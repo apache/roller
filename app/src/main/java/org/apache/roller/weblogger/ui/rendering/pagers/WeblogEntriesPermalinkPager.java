@@ -111,7 +111,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
                 if (publishedOnly) {
                     if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                         entries = new TreeMap<>();
-                        entries.put(currEntry.getPubTime(), Collections.singletonList(currEntry.templateCopy()));
+                        entries.put(currEntry.getPubTime(), Collections.singletonList(currEntry));
                     }
                 } else {
                     // for weblog entry previews, here we allow unpublished entries to be shown
@@ -128,7 +128,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
                         // store the entry in the collection
                         entries = new TreeMap<>();
-                        entries.put(tmpEntry.getPubTime(), Collections.singletonList(tmpEntry.templateCopy()));
+                        entries.put(tmpEntry.getPubTime(), Collections.singletonList(tmpEntry));
                     }
                 }
             } catch (Exception e) {

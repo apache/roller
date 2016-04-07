@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -231,8 +230,6 @@ public class WeblogEntry implements Serializable {
             .toHashCode();
     }
     
-   //------------------------------------------------------ Simple properties
-    
     @Id
     public String getId() {
         return this.id;
@@ -328,7 +325,7 @@ public class WeblogEntry implements Serializable {
     }
     
     public void setSearchDescription(String searchDescription) {
-        this.searchDescription = searchDescription;
+        this.searchDescription = HTMLSanitizer.conditionallySanitize(searchDescription);
     }
 
     /**
@@ -903,43 +900,6 @@ public class WeblogEntry implements Serializable {
     public void setDateString(String dateString) {
         this.dateString = dateString;
     }
-
-    /**
-     * A read-only copy for usage within templates, with fields limited
-     * to just those we wish to provide to those templates.
-     */
-    public WeblogEntry templateCopy() {
-        WeblogEntry copy = new WeblogEntry();
-        copy.setData(this);
-        copy.setId(null);
-        copy.setCategory(getWrappedCategory());
-        copy.setWeblog(getWrappedWeblog());
-        copy.setSearchDescription(HTMLSanitizer.conditionallySanitize(searchDescription));
-        return copy;
-    }
-
-    @Transient
-    public Weblog getWrappedWeblog() {
-        if (wrappedWeblog == null) {
-            wrappedWeblog = weblog.templateCopy();
-            log.info("Weblog: miss on " + weblog.getHandle());
-        } else {
-            log.info("Weblog: hit on " + weblog.getHandle());
-        }
-        return wrappedWeblog;
-    }
-
-    @Transient
-    public WeblogCategory getWrappedCategory() {
-        if (wrappedCategory == null) {
-            wrappedCategory = category.templateCopy();
-            log.info("Weblog Category: miss on " + weblog.getHandle());
-        } else {
-            log.info("Weblog Category: hit on " + weblog.getHandle());
-        }
-        return wrappedCategory;
-    }
-
 
     public static java.util.Comparator<WeblogEntry> Comparator = (val1, val2) -> {
         long pubTime1 = val1.getPubTime().getTime();

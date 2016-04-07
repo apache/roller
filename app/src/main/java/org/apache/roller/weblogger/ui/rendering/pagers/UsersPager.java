@@ -137,7 +137,9 @@ public class UsersPager extends AbstractPager {
                 int count = 0;
                 for (User user : rawUsers) {
                     if (count++ < length) {
-                        results.add(user.templateCopy());
+                        User tempUser = user;
+                        tempUser.setPassword(null);
+                        results.add(tempUser);
                     } else {
                         more = true;
                     }

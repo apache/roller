@@ -112,8 +112,8 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         return sharedTheme;
     }
 
+    @Override
     public WeblogEntry getWeblogEntry() {
-        
         if (weblogEntry == null && super.getWeblogAnchor() != null) {
             String anchor = super.getWeblogAnchor();
 
@@ -124,7 +124,6 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
                 log.error("Error getting weblog entry " + anchor, ex);
             }
         }
-        
         return weblogEntry;
     }
     
