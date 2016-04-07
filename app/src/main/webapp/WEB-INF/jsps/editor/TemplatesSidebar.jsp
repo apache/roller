@@ -41,7 +41,8 @@
                         <tr>
                             <td><s:text name="templates.role"/></td>
                             <td>
-                                <s:select ng-model="selectedRole" ng-change="changedValue(selectedRole)"
+                                <s:select ng-model="selectedRole"
+                                ng-init="changedValue(selectedRole)" ng-change="changedValue(selectedRole)"
                                   name="newTmplAction" size="1" list="availableRoles"
                                 listKey="left" listValue="right"/>
                             </td>
@@ -73,6 +74,8 @@
 
     angular.module('roleDescriptionModule', [])
         .controller('roleDescriptionController', ['$scope', function($scope) {
+           $scope.selectedRole = 'STYLESHEET';
+
            $scope.changedValue=function(item){
               $.ajax({ url: "<s:property value='siteURL' />/tb-ui/authoring/rest/templateDescriptions/" + $scope.selectedRole
                   , async:false,
