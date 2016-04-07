@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -191,8 +190,10 @@ public class Templates extends UIAction {
 
 		// check if template by that name already exists
 		try {
-			WeblogTemplate existingPage = weblogManager.getTemplateByName(getActionWeblog(), getNewTmplName());
-			if (existingPage != null) {
+			WeblogTheme testTheme = new WeblogTheme(weblogManager, getActionWeblog(),
+					themeManager.getSharedTheme(getActionWeblog().getTheme()));
+
+			if (testTheme.getTemplateByName(getNewTmplName()) != null) {
 				addError("templates.error.nameAlreadyExists", getNewTmplName());
 			}
 		} catch (WebloggerException ex) {
@@ -237,7 +238,6 @@ public class Templates extends UIAction {
     public String getTemplateComponentTypeDescription(@PathVariable String role) {
         ComponentType desiredType = ComponentType.valueOf(role);
         ResourceBundle rb = ResourceBundle.getBundle("ApplicationResources");
-        String resultText = rb.getString(desiredType.getDescriptionProperty());
-        return resultText;
+        return rb.getString(desiredType.getDescriptionProperty());
     }
 }
