@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -102,7 +103,7 @@ public class MailManager {
         }
         
         try {
-            String userName = entry.getCreator().getUserName();
+            String screenName = entry.getCreator().getScreenName();
             String from = entry.getCreator().getEmailAddress();
             String cc[] = new String[] {from};
             String bcc[] = new String[0];
@@ -142,7 +143,7 @@ public class MailManager {
             sb.append(
                     MessageFormat.format(
                     resources.getString("weblogEntry.pendingEntryContent"),
-                    new Object[] { userName, userName, editURL })
+                    new Object[] { screenName, screenName, editURL })
                     );
             content = sb.toString();
             sendTextMessage(from, to, cc, bcc, subject, content);
@@ -271,7 +272,7 @@ public class MailManager {
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        User user = entry.getCreator();
+        SafeUser user = entry.getCreator();
         
         // Only send email if email notification is enabled, or a pending message that needs moderation.
         if (!commentObject.getPending()) {
@@ -524,7 +525,7 @@ public class MailManager {
         
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        User user = entry.getCreator();
+        SafeUser user = entry.getCreator();
 
         String from = user.getEmailAddress();
 

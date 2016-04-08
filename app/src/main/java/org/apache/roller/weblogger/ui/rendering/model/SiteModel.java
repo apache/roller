@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.Template;
@@ -242,8 +243,8 @@ public class SiteModel implements Model {
      * containing integers reflecting the number of users whose
      * names start with each letter.
      */
-    public Map getUserNameLetterMap() {
-        Map results = new HashMap();
+    public Map<String, Long> getUserNameLetterMap() {
+        Map<String, Long> results = new HashMap<>();
         try {            
             results = userManager.getUserNameLetterMap();
         } catch (Exception e) {
@@ -272,10 +273,10 @@ public class SiteModel implements Model {
     /** 
      * Return list of weblogs that user belongs to.
      */
-    public List getUsersWeblogs(String userName) {
+    public List<Weblog> getUsersWeblogs(String userId) {
         List<Weblog> results = new ArrayList<>();
         try {            
-            User user = userManager.getUserByUserName(userName);
+            User user = userManager.getUser(userId);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
             for (UserWeblogRole role : roles) {
                 results.add(role.getWeblog());
@@ -289,15 +290,15 @@ public class SiteModel implements Model {
     /**
      * Return list of users that belong to website.
      */
-    public List<User> getWeblogsUsers(String handle) {
-        List<User> results = new ArrayList<>();
+    public List<SafeUser> getWeblogsUsers(String handle) {
+        List<SafeUser> results = new ArrayList<>();
         try {            
             Weblog website = weblogManager.getWeblogByHandle(handle);
             List<UserWeblogRole> roles = userManager.getWeblogRoles(website);
             for (UserWeblogRole role : roles) {
                 User userTemp = role.getUser();
-                userTemp.setPassword(null);
-                results.add(userTemp);
+                SafeUser safeUser = userManager.getSafeUser(userTemp.getId());
+                results.add(safeUser);
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -305,19 +306,6 @@ public class SiteModel implements Model {
         return results;
     }
 
-    /** Get User object by username */
-    public User getUser(String username) {
-        User user = null;
-        try {            
-            user = userManager.getUserByUserName(username, Boolean.TRUE);
-            user.setPassword(null);
-        } catch (Exception e) {
-            log.error("ERROR: fetching users by letter", e);
-        }
-        return user;
-    }
-    
-    
     /** Get Website object by handle */
     public Weblog getWeblog(String handle) {
         Weblog weblog = null;

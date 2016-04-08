@@ -119,7 +119,7 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     dc:identifier="$url.entry($entry.anchor)"
     dc:subject="$entry.category.name"
     dc:description="$entry.title"
-    dc:creator="$entry.creator.userName"
+    dc:creator="$entry.creator.screenName"
     dc:date="$entry.pubTime" />
 </rdf:RDF>
 -->

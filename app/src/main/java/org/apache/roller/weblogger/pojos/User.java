@@ -52,28 +52,18 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="weblogger_user")
 @NamedQueries({
-        @NamedQuery(name="User.getAll",
-                query="SELECT u FROM User u"),
-        @NamedQuery(name="User.getByEnabled",
-                query="SELECT u FROM User u WHERE u.enabled = ?1"),
         @NamedQuery(name="User.getUserByActivationCode",
                 query="SELECT u FROM User u WHERE u.activationCode = ?1"),
         @NamedQuery(name="User.getByEnabled&EndDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name="User.getByEnabled&EndDate&StartDateOrderByStartDateDesc",
-                query="SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated < ?2 AND u.dateCreated > ?3 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name="User.getByEnabled&UserNameOrEmailAddressStartsWith",
-                query="SELECT u FROM User u WHERE u.enabled = ?1 AND (u.userName LIKE ?2 OR u.emailAddress LIKE ?3)"),
         @NamedQuery(name="User.getByEndDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.dateCreated < ?1 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getByUserName",
                 query="SELECT u FROM User u WHERE u.userName= ?1"),
+        @NamedQuery(name="User.getByScreenName",
+                query="SELECT u FROM User u WHERE u.screenName= ?1"),
         @NamedQuery(name="User.getByUserName&Enabled",
                 query="SELECT u FROM User u WHERE u.userName= ?1 AND u.enabled = ?2"),
-        @NamedQuery(name="User.getByUserNameOrEmailAddressStartsWith",
-                query="SELECT u FROM User u WHERE u.userName LIKE ?1 OR u.emailAddress LIKE ?1"),
-        @NamedQuery(name="User.getByUserNameOrderByUserName",
-                query="SELECT u FROM User u WHERE u.userName= ?1 ORDER BY u.userName"),
         @NamedQuery(name="User.getByEndDate&StartDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getGlobalRole",
@@ -307,7 +297,8 @@ public class User implements Serializable {
             return false;
         }
         User o = (User)other;
-        return new EqualsBuilder().append(getUserName(), o.getUserName()).isEquals();
+        return new EqualsBuilder().append(getUserName(), o.getUserName())
+                .append(getId(), o.getId()).isEquals();
     }
     
     public int hashCode() {

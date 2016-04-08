@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -99,7 +100,7 @@ public class IndexManagerTest extends WebloggerTest {
         +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
         +"begin to lose power, and Spock reports strange sensor readings.");
         wd1.setAnchor("dummy1");
-        wd1.setCreator(testUser);
+        wd1.setCreatorId(testUser.getId());
         wd1.setStatus(PubStatus.PUBLISHED);
         wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
@@ -124,7 +125,7 @@ public class IndexManagerTest extends WebloggerTest {
           +"in communication with Boss Oxmyx.");
         wd2.setAnchor("dummy2");
         wd2.setStatus(PubStatus.PUBLISHED);
-        wd2.setCreator(testUser);
+        wd2.setCreatorId(testUser.getId());
         wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd2.setWeblog(getManagedWeblog(testWeblog));

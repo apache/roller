@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.User;
@@ -131,7 +132,7 @@ abstract public class WebloggerTest {
         testUser.setUserName(userName);
         testUser.setPassword("password");
         testUser.setGlobalRole(GlobalRole.BLOGGER);
-        testUser.setScreenName("Test User Screen Name");
+        testUser.setScreenName(userName);
         testUser.setFullName("Test User");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
@@ -174,7 +175,7 @@ abstract public class WebloggerTest {
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
         testWeblog.setDateCreated(new java.util.Date());
-        testWeblog.setCreator(creator);
+        testWeblog.setCreatorId(creator.getId());
 
         // add weblog
         weblogManager.addWeblog(testWeblog);
@@ -219,7 +220,7 @@ abstract public class WebloggerTest {
                 .getTime()));
         testEntry.setStatus(status);
         testEntry.setWeblog(getManagedWeblog(weblog));
-        testEntry.setCreator(getManagedUser(user));
+        testEntry.setCreatorId(user.getId());
         testEntry.setCategory(cat);
 
         // store entry

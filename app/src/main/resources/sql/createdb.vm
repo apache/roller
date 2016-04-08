@@ -21,6 +21,8 @@ create table weblogger_user (
 );
 alter table weblogger_user add constraint wu_username_uq unique (username);
 
+alter table weblogger_user add constraint wu_screenname_uq unique (screenname);
+
 create table weblog (
     id                varchar(48) not null primary key,
     name              varchar(255) not null,

@@ -197,7 +197,7 @@ public class MediaFileEdit extends UIAction {
                     mediaFile.setTitleText(bean.getTitleText().trim());
                     mediaFile.setAnchor(bean.getAnchor().trim());
                     mediaFile.setNotes(bean.getNotes().trim());
-                    mediaFile.setCreator(getAuthenticatedUser());
+                    mediaFile.setCreatorId(getAuthenticatedUser().getId());
                     String fileName = getUploadedFileFileName();
 
                     // make sure fileName is valid
@@ -257,7 +257,7 @@ public class MediaFileEdit extends UIAction {
                     if (uploadedFile != null) {
                         mediaFile.setLength(this.uploadedFile.length());
                         mediaFile.setContentType(this.uploadedFileContentType);
-                        mediaFile.setCreator(getAuthenticatedUser());
+                        mediaFile.setCreatorId(getAuthenticatedUser().getId());
                         mediaFileManager.updateMediaFile(getActionWeblog(), mediaFile,
                                 new FileInputStream(this.uploadedFile));
                     } else {

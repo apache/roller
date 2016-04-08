@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -232,16 +233,13 @@ public class MembersInvite extends UIAction {
                 }
 
                 try {
-                    List<User> users = userManager.getUsersStartingWith(startsWith,
-                            enabledOnly, offset, length);
+                    List<SafeUser> users = userManager.getUsers(startsWith, enabledOnly, offset, length);
                     List<UserData> userDataList = new ArrayList<>();
-                    for (User user : users) {
+                    for (SafeUser user : users) {
                         UserData ud = new UserData();
-                        ud.setUsername(user.getUserName());
+                        ud.setUsername(user.getScreenName());
                         if (authenticatedUser.isGlobalAdmin()) {
                             ud.setAdditionalInfo(user.getEmailAddress());
-                        } else{
-                            ud.setAdditionalInfo(user.getScreenName());
                         }
                         userDataList.add(ud);
                     }
