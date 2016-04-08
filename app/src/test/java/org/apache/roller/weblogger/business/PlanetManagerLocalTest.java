@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -70,7 +71,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
             testEntry1.setPubTime(new Timestamp(new Date().getTime()));
             testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
             testEntry1.setWeblog(testWeblog);
-            testEntry1.setCreator(testUser);
+            testEntry1.setCreatorId(testUser.getId());
             testEntry1.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
             testEntry1.setStatus(PubStatus.PUBLISHED);
             weblogEntryManager.saveWeblogEntry(testEntry1);
@@ -83,7 +84,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
             testEntry2.setPubTime(new Timestamp(new Date().getTime()));
             testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
             testEntry2.setWeblog(testWeblog);
-            testEntry2.setCreator(testUser);
+            testEntry2.setCreatorId(testUser.getId());
             testEntry2.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
             testEntry2.setStatus(PubStatus.PUBLISHED);
             weblogEntryManager.saveWeblogEntry(testEntry2);
@@ -96,7 +97,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
             testEntry3.setPubTime(new Timestamp(new Date().getTime()));
             testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
             testEntry3.setWeblog(testWeblog);
-            testEntry3.setCreator(testUser);
+            testEntry3.setCreatorId(testUser.getId());
             testEntry3.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
             testEntry3.setStatus(PubStatus.PUBLISHED);
             weblogEntryManager.saveWeblogEntry(testEntry3);

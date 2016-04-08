@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -33,8 +34,6 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,10 @@ public class JPAUserManagerImpl implements UserManager {
 
     // cached mapping of userNames -> userIds
     private Map<String, String> userNameToIdMap = new HashMap<>();
-    
+
+    // cached mapping of screenNames -> userIds
+    private Map<String, String> screenNameToIdMap = new HashMap<>();
+
     private Boolean makeFirstUserAdmin = true;
 
     public void setMakeFirstUserAdmin(Boolean makeFirstUserAdmin) {
@@ -92,7 +94,7 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("cannot add null user");
         }
         
-        List existingUsers = this.getUsers(Boolean.TRUE, null, null, 0, 1);
+        List existingUsers = this.getUsers(null, Boolean.TRUE, 0, 1);
 
         if (existingUsers.size() == 0 && makeFirstUserAdmin) {
             // Make first user an admin
@@ -106,9 +108,14 @@ public class JPAUserManagerImpl implements UserManager {
             newUser.setGlobalRole(GlobalRole.BLOGGER);
         }
 
-        if (getUserByUserName(newUser.getUserName()) != null ||
-                getUserByUserName(newUser.getUserName().toLowerCase()) != null) {
+        if (getUserByUserName(newUser.getUserName(), null) != null ||
+                getUserByUserName(newUser.getUserName().toLowerCase(), null) != null) {
             throw new WebloggerException("error.add.user.userNameInUse");
+        }
+
+        if (getUserByScreenName(newUser.getScreenName()) != null ||
+                getUserByScreenName(newUser.getScreenName().toLowerCase()) != null) {
+            throw new WebloggerException("error.add.user.screenNameInUse");
         }
 
         this.strategy.store(newUser);
@@ -117,6 +124,11 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public User getUser(String id) throws WebloggerException {
         return this.strategy.load(User.class, id);
+    }
+
+    @Override
+    public SafeUser getSafeUser(String id) throws WebloggerException {
+        return this.strategy.load(SafeUser.class, id);
     }
 
     //------------------------------------------------------------ user queries
@@ -181,72 +193,77 @@ public class JPAUserManagerImpl implements UserManager {
         return user;
     }
 
-    public List<User> getUsers(Boolean enabled, Date startDate, Date endDate,
-            int offset, int length)
+
+    private User getUserByScreenName(String screenName)
             throws WebloggerException {
+
+        if (screenName==null) {
+            throw new WebloggerException("screenName cannot be null");
+        }
+
+        // check cache first
+        if(this.screenNameToIdMap.containsKey(screenName)) {
+
+            User user = this.getUser(this.screenNameToIdMap.get(screenName));
+            if (user != null) {
+                log.debug("screenNameToIdMap CACHE HIT - "+screenName);
+                return user;
+            } else {
+                // mapping hit with lookup miss?  mapping must be old, remove it
+                this.screenNameToIdMap.remove(screenName);
+            }
+        }
+
+        // cache failed, do lookup
         TypedQuery<User> query;
+        Object[] params;
+        query = strategy.getNamedQuery(
+                "User.getByScreenName", User.class);
+        params = new Object[] {screenName};
 
-        Timestamp end = new Timestamp(endDate != null ? endDate.getTime() : new Date().getTime());
+        for (int i=0; i<params.length; i++) {
+            query.setParameter(i+1, params[i]);
+        }
+        User user;
+        try {
+            user = query.getSingleResult();
+        } catch (NoResultException e) {
+            user = null;
+        }
 
-        if (enabled != null) {
-            if (startDate != null) {
-                Timestamp start = new Timestamp(startDate.getTime());
-                query = strategy.getNamedQuery(
-                        "User.getByEnabled&EndDate&StartDateOrderByStartDateDesc", User.class);
-                query.setParameter(1, enabled);
-                query.setParameter(2, end);
-                query.setParameter(3, start);
-            } else {
-                query = strategy.getNamedQuery(
-                        "User.getByEnabled&EndDateOrderByStartDateDesc", User.class);
-                query.setParameter(1, enabled);
-                query.setParameter(2, end);
-            }
-        } else {
-            if (startDate != null) {
-                Timestamp start = new Timestamp(startDate.getTime());
-                query = strategy.getNamedQuery(
-                        "User.getByEndDate&StartDateOrderByStartDateDesc", User.class);
-                query.setParameter(1, end);
-                query.setParameter(2, start);
-            } else {
-                query = strategy.getNamedQuery(
-                        "User.getByEndDateOrderByStartDateDesc", User.class);
-                query.setParameter(1, end);
-            }
+        // add mapping to cache
+        if(user != null) {
+            log.debug("screenNameToIdMap CACHE MISS - " + screenName);
+            this.screenNameToIdMap.put(user.getUserName(), user.getId());
         }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        return query.getResultList();
+
+        return user;
     }
 
-    public List<User> getUsersStartingWith(String startsWith, Boolean enabled,
+    @Override
+    public List<SafeUser> getUsers(String startsWith, Boolean enabled,
             int offset, int length) throws WebloggerException {
-        TypedQuery<User> query;
+        TypedQuery<SafeUser> query;
 
         if (enabled != null) {
             if (startsWith != null) {
                 query = strategy.getNamedQuery(
-                        "User.getByEnabled&UserNameOrEmailAddressStartsWith", User.class);
+                        "SafeUser.getByEnabled&ScreenNameOrEmailAddressStartsWith", SafeUser.class);
                 query.setParameter(1, enabled);
                 query.setParameter(2, startsWith + '%');
                 query.setParameter(3, startsWith + '%');
             } else {
                 query = strategy.getNamedQuery(
-                        "User.getByEnabled", User.class);
+                        "SafeUser.getByEnabled", SafeUser.class);
                 query.setParameter(1, enabled);
             }
         } else {
             if (startsWith != null) {
                 query = strategy.getNamedQuery(
-                        "User.getByUserNameOrEmailAddressStartsWith", User.class);
+                        "SafeUser.getByScreenNameOrEmailAddressStartsWith", SafeUser.class);
                 query.setParameter(1, startsWith +  '%');
             } else {
-                query = strategy.getNamedQuery("User.getAll", User.class);
+                query = strategy.getNamedQuery("SafeUser.getAll", SafeUser.class);
             }
         }
         if (offset != 0) {
@@ -261,7 +278,7 @@ public class JPAUserManagerImpl implements UserManager {
     
     public Map<String, Long> getUserNameLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Map<String, Long> results = new TreeMap<String, Long>();
+        Map<String, Long> results = new TreeMap<>();
         TypedQuery<Long> query = strategy.getNamedQuery(
                 "User.getCountByUserNameLike", Long.class);
         for (int i=0; i<26; i++) {
@@ -275,10 +292,10 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public List<User> getUsersByLetter(char letter, int offset, int length)
+    public List<SafeUser> getUsersByLetter(char letter, int offset, int length)
             throws WebloggerException {
-        TypedQuery<User> query = strategy.getNamedQuery(
-                "User.getByUserNameOrderByUserName", User.class);
+        TypedQuery<SafeUser> query = strategy.getNamedQuery(
+                "SafeUser.getByScreenNameOrderByScreenName", SafeUser.class);
         query.setParameter(1, letter + "%");
         if (offset != 0) {
             query.setFirstResult(offset);
@@ -393,6 +410,10 @@ public class JPAUserManagerImpl implements UserManager {
             UserWeblogRole perm = new UserWeblogRole(user, weblog, role);
             this.strategy.store(perm);
         }
+    }
+
+    public void grantWeblogRole(String userId, Weblog weblog, WeblogRole role) throws WebloggerException {
+        grantWeblogRole(getUser(userId), weblog, role);
     }
 
     @Override

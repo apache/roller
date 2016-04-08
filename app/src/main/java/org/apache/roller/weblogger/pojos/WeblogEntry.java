@@ -112,7 +112,9 @@ public class WeblogEntry implements Serializable {
     private Boolean rightToLeft = Boolean.FALSE;
     private Boolean pinnedToMain = Boolean.FALSE;
     private PubStatus status;
-    private User creator;
+    // Using String creatorId instead of User creator; see comments in Weblog class for info
+    private String  creatorId        = null;
+    private SafeUser creator         = null;
     private String searchDescription;
 
     // set to true when switching between pending/draft/scheduled and published
@@ -122,10 +124,8 @@ public class WeblogEntry implements Serializable {
 
     // Associated objects
     private Weblog weblog;
-    private Weblog wrappedWeblog;
     private WeblogCategory category;
-    private WeblogCategory wrappedCategory;
-    
+
     private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
     private Set<WeblogEntryTag> removedTags = new HashSet<WeblogEntryTag>();
     private Set<WeblogEntryTag> addedTags = new HashSet<WeblogEntryTag>();
@@ -154,7 +154,7 @@ public class WeblogEntry implements Serializable {
         this.id = WebloggerCommon.generateUUID();
         this.category = category;
         this.weblog = weblog;
-        this.creator = creator;
+        this.creatorId = creator.getId();
         this.title = title;
         this.text = text;
         this.anchor = anchor;
@@ -174,9 +174,9 @@ public class WeblogEntry implements Serializable {
      */
     public void setData(WeblogEntry other) {
         this.setId(other.getId());
+        this.setCreatorId(other.getCreatorId());
         this.setCategory(other.getCategory());
         this.setWeblog(other.getWeblog());
-        this.setCreator(other.getCreator());
         this.setTitle(other.getTitle());
         this.setText(other.getText());
         this.setSummary(other.getSummary());
@@ -275,14 +275,25 @@ public class WeblogEntry implements Serializable {
         this.weblog = weblog;
     }
 
-    @ManyToOne
-    @JoinColumn(name="creatorid",nullable=false)
-    public User getCreator() {
-        return creator;
+    @Column(name="creatorid", nullable=false)
+    public String getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    @Transient
+    public SafeUser getCreator() {
+        if (creator == null) {
+            try {
+                creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
+            } catch (Exception ignored) {
+                log.error("Cannot find a SafeUser object for userId = " + creatorId);
+            }
+        }
+        return creator;
     }
 
     @Basic(optional=false)

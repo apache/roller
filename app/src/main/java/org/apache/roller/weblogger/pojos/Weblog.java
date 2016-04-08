@@ -26,6 +26,8 @@ import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
@@ -71,7 +73,9 @@ import javax.persistence.Transient;
 })
 public class Weblog implements Serializable {
     public static final long serialVersionUID = 206437645033737127L;
-    
+
+    private static Log log = LogFactory.getFactory().getInstance(Weblog.class);
+
     private String  id               = WebloggerCommon.generateUUID();
     private String  handle           = null;
     private String  name             = null;
@@ -93,7 +97,14 @@ public class Weblog implements Serializable {
     private Date    lastModified     = new Date();
     private String  iconPath         = null;
     private String  about            = null;
-    private User    creator          = null;
+    /*
+     * String creatorId used instead of User object to prevent models from having access to sensitive User
+     * info (passwords etc.) via this object.  Transient SafeUser object without sensitive fields used instead.
+     * (Avoiding direct use of SafeUser in a @ManyToOne relationship to avoid JPA trying to persist the SafeUser
+     * when this Weblog object is persisted.)
+     */
+    private String  creatorId        = null;
+    private SafeUser creator         = null;
     private String  analyticsCode    = null;
     private int     hitsToday        = 0;
     private boolean applyCommentDefaults = false;
@@ -116,7 +127,7 @@ public class Weblog implements Serializable {
             String timeZone) {
         
         this.handle = handle;
-        this.creator = creator;
+        this.creatorId = creator.getId();
         this.name = name;
         this.tagline = desc;
         this.theme = theme;
@@ -177,14 +188,25 @@ public class Weblog implements Serializable {
         this.tagline = tagline;
     }
 
-    @ManyToOne
-    @JoinColumn(name="creatorid",nullable=false)
-    public User getCreator() {
-        return creator;
+    @Column(name="creatorid", nullable=false)
+    public String getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    @Transient
+    public SafeUser getCreator() {
+        if (creator == null) {
+            try {
+                creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
+            } catch (Exception ignored) {
+                log.error("Cannot find a SafeUser object for userId = " + creatorId);
+            }
+        }
+        return creator;
     }
 
     public String getEditorPage() {
@@ -300,7 +322,7 @@ public class Weblog implements Serializable {
         this.setName(other.getName());
         this.setHandle(other.getHandle());
         this.setTagline(other.getTagline());
-        this.setCreator(other.getCreator());
+        this.setCreatorId(other.getCreatorId());
         this.setEditorPage(other.getEditorPage());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());

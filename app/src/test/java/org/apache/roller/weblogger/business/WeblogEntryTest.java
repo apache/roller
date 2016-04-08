@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.business;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.User;
@@ -100,7 +102,7 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWeblog(testWeblog);
-        testEntry.setCreator(testUser);
+        testEntry.setCreatorId(testUser.getId());
         testEntry.setStatus(PubStatus.DRAFT);
 
         WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");
@@ -334,7 +336,7 @@ public class WeblogEntryTest extends WebloggerTest {
             testEntry.setUpdateTime(
                     new java.sql.Timestamp(new java.util.Date().getTime()));
             testEntry.setWeblog(testWeblog);
-            testEntry.setCreator(testUser);
+            testEntry.setCreatorId(testUser.getId());
             testEntry.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
 
             // shortcut
@@ -834,7 +836,7 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWeblog(testWeblog);
         testEntry.setStatus(PubStatus.DRAFT);
-        testEntry.setCreator(testUser);
+        testEntry.setCreatorId(testUser.getId());
 
         WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");
         testEntry.setCategory(cat);

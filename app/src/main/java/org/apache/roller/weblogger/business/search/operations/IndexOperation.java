@@ -110,7 +110,7 @@ public abstract class IndexOperation implements Runnable {
 
         // text, don't index deleted/disabled users of a group blog
         if (data.getCreator() != null) {
-            doc.add(new TextField(FieldConstants.USERNAME, data.getCreator().getUserName()
+            doc.add(new TextField(FieldConstants.USERNAME, data.getCreator().getScreenName()
                     .toLowerCase(), Field.Store.YES));
         }
 

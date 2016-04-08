@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.SafeUser;
 
 /**
  * Paging through a collection of users.
@@ -38,7 +38,7 @@ public class UsersPager extends AbstractPager {
     private int length = 0;
     
     // collection for the pager
-    private List<User> users;
+    private List<SafeUser> users;
     
     // are there more items?
     private boolean more = false;
@@ -118,28 +118,25 @@ public class UsersPager extends AbstractPager {
     }
     
     
-    public List<User> getItems() {
-        
+    public List<SafeUser> getItems() {
         if (users == null) {
             // calculate offset
             int offset = getPage() * length;
             
-            List<User> results = new ArrayList<>();
+            List<SafeUser> results = new ArrayList<>();
             try {
-                List<User> rawUsers;
+                List<SafeUser> rawUsers;
                 if (letter == null) {
-                    rawUsers = userManager.getUsers(Boolean.TRUE, null, null, offset, length + 1);
+                    rawUsers = userManager.getUsers(null, Boolean.TRUE, offset, length + 1);
                 } else {
                     rawUsers = userManager.getUsersByLetter(letter.charAt(0), offset, length + 1);
                 }
                 
                 // wrap the results
                 int count = 0;
-                for (User user : rawUsers) {
+                for (SafeUser user : rawUsers) {
                     if (count++ < length) {
-                        User tempUser = user;
-                        tempUser.setPassword(null);
-                        results.add(tempUser);
+                        results.add(user);
                     } else {
                         more = true;
                     }

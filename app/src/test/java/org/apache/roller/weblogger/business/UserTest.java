@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,6 +105,7 @@ public class UserTest extends WebloggerTest {
     @Test
     public void testUserLookups() throws Exception {
         User user;
+        SafeUser safeUser;
         
         // add test user
         User testUser = setupUser("userTestUser");
@@ -121,19 +123,19 @@ public class UserTest extends WebloggerTest {
         assertEquals(testUser.getUserName(), user.getUserName());
         
         // lookup by UserName (part)
-        List users1 = userManager.getUsersStartingWith(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
+        List<SafeUser> users1 = userManager.getUsers(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users1.size());
-        user = (User) users1.get(0);
-        assertNotNull(user);
-        assertEquals(testUser.getUserName(), user.getUserName());
+        safeUser = users1.get(0);
+        assertNotNull(safeUser);
+        assertEquals(testUser.getScreenName(), safeUser.getScreenName());
         
         // lookup by Email (part)
-        List users2 = userManager.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
+        List<SafeUser> users2 = userManager.getUsers(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users2.size());
-        user = (User) users2.get(0);
-        assertNotNull(user);
-        assertEquals(testUser.getUserName(), user.getUserName());
-        
+        safeUser = users2.get(0);
+        assertNotNull(safeUser);
+        assertEquals(testUser.getScreenName(), safeUser.getScreenName());
+
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);
         userManager.saveUser(user);

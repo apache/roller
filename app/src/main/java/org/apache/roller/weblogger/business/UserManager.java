@@ -22,6 +22,7 @@
 package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -97,6 +98,15 @@ public interface UserManager {
     User getUser(String id) throws WebloggerException;
 
     /**
+     * Retrieve a SafeUser object by its internal identifier id.
+     *
+     * @param id the id of the user to retrieve.
+     * @return the SafeUser object with specified id or null if not found
+     * @throws WebloggerException
+     */
+    SafeUser getSafeUser(String id) throws WebloggerException;
+
+    /**
      * Lookup a user by UserName.
      * 
      * This lookup is restricted to 'enabled' users by default.  So this method
@@ -120,37 +130,16 @@ public interface UserManager {
         throws WebloggerException;
 
     /**
-     * Lookup a group of users.
-     * 
-     * The lookup may be constrained to users with a certain enabled status,
-     * to users created within a certain date range, and the results can be
-     * confined to a certain offset & length for paging abilities.
-     * 
-     * @param enabled True for enabled only, False for disabled only (or null for all)
-     * @param startDate Restrict to those created after startDate (or null for all)
-     * @param endDate Restrict to those created before startDate (or null for all)
-     * @param offset The index of the first result to return.
-     * @param length The number of results to return.
-     * @return List A list of UserDatUsers which match the criteria.
-     * @throws WebloggerException If there is a problem.
-     */
-    List<User> getUsers(
-            Boolean enabled,
-            Date    startDate,
-            Date    endDate,
-            int     offset,
-            int     length) throws WebloggerException;
-
-    /**
      * Lookup users whose usernames or email addresses start with a string.
      *
-     * @param startsWith String to match userNames and emailAddresses against
+     * @param startsWith String to match screenNames and emailAddresses against (null for all)
+     * @param enabled    True if user is enabled, false disabled, null if either OK.
      * @param offset     Offset into results (for paging)
      * @param length     Max to return (for paging)
      * @param enabled    True for only enalbed, false for disabled, null for all
      * @return List of (up to length) users that match startsWith string
      */
-    List<User> getUsersStartingWith(String startsWith,
+    List<SafeUser> getUsers(String startsWith,
             Boolean enabled, int offset, int length) throws WebloggerException;
     
     
@@ -165,7 +154,7 @@ public interface UserManager {
     /** 
      * Get collection of users whose names begin with specified letter 
      */
-    List<User> getUsersByLetter(char letter, int offset, int length)
+    List<SafeUser> getUsersByLetter(char letter, int offset, int length)
         throws WebloggerException;
     
 
@@ -201,7 +190,16 @@ public interface UserManager {
     void grantWeblogRole(User user, Weblog weblog, WeblogRole role)
             throws WebloggerException;
 
-    
+    /**
+     * Grant user specific WeblogRole for a weblog.
+     * @param user    User to grant weblog role to
+     * @param weblog  Weblog being granted access to
+     * @param role    WeblogRole to grant
+     */
+    void grantWeblogRole(String userId, Weblog weblog, WeblogRole role)
+            throws WebloggerException;
+
+
     /**
      * Grant user a specific WeblogRole for a weblog, but pending user's acceptance of it
      * @param user    User to grant weblog role to

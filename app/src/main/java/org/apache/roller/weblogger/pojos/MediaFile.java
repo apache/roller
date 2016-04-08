@@ -27,6 +27,8 @@ import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -48,6 +50,8 @@ import javax.persistence.Transient;
 @Table(name="media_file")
 public class MediaFile implements Serializable {
 
+    private static Log log = LogFactory.getFactory().getInstance(WeblogEntry.class);
+
     private static final long serialVersionUID = -6704258422169734004L;
 
     private String id = WebloggerCommon.generateUUID();
@@ -64,7 +68,10 @@ public class MediaFile implements Serializable {
     private String contentType;
     private Timestamp dateUploaded = new Timestamp(System.currentTimeMillis());
     private Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
-    private User creator;
+
+    // Using String creatorId instead of User creator; see comments in Weblog class for info
+    private String  creatorId        = null;
+    private SafeUser creator         = null;
 
     private InputStream is;
     private MediaDirectory directory;
@@ -247,14 +254,25 @@ public class MediaFile implements Serializable {
                 .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId(), true);
     }
 
-    @ManyToOne
-    @JoinColumn(name="creatorid", nullable=false)
-    public User getCreator() {
-        return creator;
+    @Column(name="creatorid", nullable=false)
+    public String getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    @Transient
+    public SafeUser getCreator() {
+        if (creator == null) {
+            try {
+                creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
+            } catch (Exception ignored) {
+                log.error("Cannot find a SafeUser object for userId = " + creatorId);
+            }
+        }
+        return creator;
     }
 
     public int getWidth() {

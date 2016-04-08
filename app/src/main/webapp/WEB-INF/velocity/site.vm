@@ -47,7 +47,7 @@ Show pager and next/prev control for site-wide or planet entries.
                     <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
                     #if($entry.category.name)| $entry.category.name #end
                     #if($entry.pubTime)| $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
-                    #if($entry.creator.userName)| By $entry.creator.userName #end
+                    #if($entry.creator.screenName)| By $entry.creator.screenName #end
                     <br/> 
                 </p>
                 <p class="entryDescription">
@@ -91,7 +91,7 @@ Show weblog profile for specified weblog
         </tr>
         <tr>
             <td>Created by</td>
-            <td><$weblog.creator.fullName/td>
+            <td><$weblog.creator.screenName/td>
         </tr>
         <tr>
             <td>Last modified</td>
@@ -112,14 +112,12 @@ Show weblog profile for specified weblog
     <table class="rollertable">
         <thead>
             <tr>
-                <th>Username</th>
-                <th>Full name</th>
+                <th>Screen Name</th>
             </tr>
         </thead>    
         #foreach($user in $users) 
         <tr>
-            <td>$user.userName</td>
-            <td>$user.fullName</td>
+            <td>$user.screenName</td>
         </tr>
         #end
     </table>
@@ -137,7 +135,7 @@ Show weblog profile for specified weblog
         </thead>  
         #foreach($entry in $entriesPager.items)
             <tr>
-                <td>$entry.creator.userName</td>
+                <td>$entry.creator.screenName</td>
                 <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
                 <td><a href="$utils.escapeHTML($entry.permalink)">
                     $utils.removeHTML($entry.title)</a></td>
@@ -238,12 +236,8 @@ Show weblog directory, sensitive to letter specified in request.
 Show user profile of specified user.
 *#
 #macro(showUserProfile $user)
-    <h2 class="pageTitle">User: $user.fullName</h2>
+    <h2 class="pageTitle">User: $user.screenName</h2>
     <table class="blogprofile data">
-        <tr>
-            <th scope="row">Username</td>
-            <td>$user.userName</td>
-        </tr>
         <tr>
             <th scope="row">Created</td>
             <td>$user.dateCreated</td>
@@ -259,7 +253,7 @@ Show user profile of specified user.
     </table>
 
     <h2 class="pageTitle">User's weblogs</h2>
-    #set($weblogs = $site.getUsersWeblogs($user.userName))
+    #set($weblogs = $site.getUsersWeblogs($user.id))
     #if($perms.size() > 0)
     <table class="rollertable">
         <thead>
@@ -339,17 +333,13 @@ Show user directory, sensitive to letter specified in request.
     <table class="blogdirectory data">
         <thead>
             <tr>
-               <th scope="col" class="username">Username</th>
-               <th scope="col" class="profile">Profile</th>
-               <th scope="col" class="fullname">Full name</th>
+               <th scope="col" class="username">Screen Name</th>
             </tr>
         </thead>
         <tbody>
             #foreach($u in $usersPager.items)
                <tr>
-                  <th scope="row" class="name">$u.userName</th>
-                  <td><a href="?userName=$u.userName">Profile</a></td>
-                  <td>$u.fullName</td>
+                  <th scope="row" class="name">$u.screenName</th>
                </tr>
             #end 
         </tbody>

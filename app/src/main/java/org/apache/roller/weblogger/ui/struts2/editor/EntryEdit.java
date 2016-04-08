@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -154,7 +155,7 @@ public final class EntryEdit extends UIAction {
             // Create and initialize new, not-yet-saved Weblog Entry
             entry = new WeblogEntry();
             entry.setId(WebloggerCommon.generateUUID());
-            entry.setCreator(getAuthenticatedUser());
+            entry.setCreatorId(getAuthenticatedUser().getId());
             entry.setWeblog(getActionWeblog());
         } else {
             // already saved entry
