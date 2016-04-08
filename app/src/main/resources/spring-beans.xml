@@ -279,7 +279,6 @@
 
     <!-- Comment Validators -->
     <beans:bean name="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <!-- qualifier added as DI tends to otherwise merge objects of a given type -->
         <beans:property name="sourceList">
             <beans:list>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator"/>

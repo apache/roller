@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -559,6 +558,10 @@ public final class EntryEdit extends UIAction {
 
     public boolean isCommentingEnabled() {
         return getBooleanProp("users.comments.enabled") && getActionWeblog().getAllowComments();
+    }
+
+    public boolean isShowRightToLeftOption() {
+        return getBooleanProp("entry.edit.show.righttoleft");
     }
 
     /**

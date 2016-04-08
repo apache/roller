@@ -360,8 +360,20 @@ public class Register extends UIAction implements ServletRequestAware {
             try {
                 if (userManager.getUserByUserName(bean.getUserName(), null) != null) {
                     addError("error.add.user.userNameInUse");
-                    // reset user name
                     bean.setUserName(null);
+                }
+            } catch (WebloggerException ex) {
+                log.error("error checking for user", ex);
+                addError("generic.error.check.logs");
+            }
+        }
+
+        // check that screen name is not taken
+        if (!StringUtils.isEmpty(bean.getScreenName())) {
+            try {
+                if (userManager.getUserByScreenName(bean.getScreenName()) != null) {
+                    addError("error.add.user.screenNameInUse");
+                    bean.setScreenName(null);
                 }
             } catch (WebloggerException ex) {
                 log.error("error checking for user", ex);

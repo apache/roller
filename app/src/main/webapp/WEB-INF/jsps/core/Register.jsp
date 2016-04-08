@@ -144,7 +144,7 @@ function onChange() {
     var disabled = true;
     var authMethod    = "<s:property value='authMethod' />";
     var emailAddress    = document.register['bean.emailAddress'].value;
-    var userName = passwordText = passwordConfirm = "";
+    var userName = screenName = passwordText = passwordConfirm = "";
 
     if (authMethod == 'LDAP') {
         userName = '<s:property value="bean.userName" />';
@@ -152,15 +152,17 @@ function onChange() {
         userName = document.register['bean.userName'].value;
     }
 
+    screenName = document.register['bean.screenName'].value;
+
     if (authMethod == "DATABASE") {
         passwordText    = document.register['bean.passwordText'].value;
         passwordConfirm = document.register['bean.passwordConfirm'].value;
     }
 
     if (authMethod == "LDAP") {
-        if (emailAddress) disabled = false;
+        if (emailAddress && screenName) disabled = false;
     } else if (authMethod == "DATABASE") {
-        if (emailAddress && userName && passwordText && passwordConfirm) disabled = false;
+        if (emailAddress && userName && screenName && passwordText && passwordConfirm) disabled = false;
     }
 
     if (authMethod != 'LDAP') {

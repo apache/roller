@@ -209,9 +209,11 @@
             <br />
         </s:if>
 
-        <s:checkbox name="bean.rightToLeft" />
-        <s:text name="weblogEdit.rightToLeft" />
-        <br />
+        <s:if test="showRightToLeftOption">
+            <s:checkbox name="bean.rightToLeft" />
+            <s:text name="weblogEdit.rightToLeft" />
+            <br />
+        </s:if>
 
         <s:if test="authenticatedUser.hasGlobalPermission('admin')">
             <s:checkbox name="bean.pinnedToMain" />

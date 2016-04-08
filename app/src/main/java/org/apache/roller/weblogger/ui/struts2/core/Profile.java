@@ -125,6 +125,8 @@ public class Profile extends UIAction {
             emails = { @EmailValidator(fieldName="bean.emailAddress", key="Register.error.emailAddressBad")}
     )
     public void myValidate() {
+        User realUser = getAuthenticatedUser();
+
         if (StringUtils.isEmpty(bean.getScreenName())) {
             addError("Register.error.screenNameNull");
         }
@@ -137,6 +139,19 @@ public class Profile extends UIAction {
         // check that passwords match if they were specified (w/StringUtils.equals, null == null)
         if (!StringUtils.equals(bean.getPasswordText(), bean.getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
+        }
+
+        // check that screen name is not taken
+        if (!StringUtils.isEmpty(bean.getScreenName()) && !bean.getScreenName().equals(realUser.getScreenName())) {
+            try {
+                if (userManager.getUserByScreenName(bean.getScreenName()) != null) {
+                    addError("error.add.user.screenNameInUse");
+                    bean.setScreenName(null);
+                }
+            } catch (WebloggerException ex) {
+                log.error("error checking for user", ex);
+                addError("generic.error.check.logs");
+            }
         }
     }
 

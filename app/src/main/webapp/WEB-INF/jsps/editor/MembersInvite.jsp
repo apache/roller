@@ -35,7 +35,7 @@
        <label for="userName" class="formrow" />
            <s:text name="inviteMember.userName" /></label>
        <div>
-           <input name="userName" id="userName" size="30" maxlength="30" 
+           <input name="userName" id="userName" size="30" maxlength="30"
                onfocus="onUserNameFocus(true)" onkeyup="onUserNameChange(true)" /><br />
        </div>
     </div>    
@@ -48,7 +48,7 @@
     </div>    
     
     <div style="clear:left">
-       <label for="userName" class="formrow" />
+       <label for="permissionString" class="formrow" />
            <s:text name="inviteMember.permissions" /></label>
        <input type="radio" name="permissionString" value="OWNER"  />
        <s:text name="inviteMember.administrator" />
@@ -64,7 +64,7 @@
 
 </s:form>
 
-<%-- this forces focus to the userName field --%>
+<%-- this forces focus to the screenName field --%>
 <script>
 <!--
 document.getElementById('userName').focus();

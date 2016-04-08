@@ -129,6 +129,9 @@ public interface UserManager {
     User getUserByUserName(String userName, Boolean enabled)
         throws WebloggerException;
 
+    User getUserByScreenName(String screenName)
+            throws WebloggerException;
+
     /**
      * Lookup users whose usernames or email addresses start with a string.
      *
