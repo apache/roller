@@ -118,7 +118,7 @@ public class MembersInvite extends UIAction {
         // user being invited
         User user = null;
         try {
-            user = userManager.getUserByUserName(getUserName());
+            user = userManager.getUserByScreenName(getUserName());
             if (user == null) {
                 addError("inviteMember.error.userNotFound");
             }
@@ -237,7 +237,7 @@ public class MembersInvite extends UIAction {
                     List<UserData> userDataList = new ArrayList<>();
                     for (SafeUser user : users) {
                         UserData ud = new UserData();
-                        ud.setUsername(user.getScreenName());
+                        ud.setScreenName(user.getScreenName());
                         if (authenticatedUser.isGlobalAdmin()) {
                             ud.setAdditionalInfo(user.getEmailAddress());
                         }
@@ -259,15 +259,15 @@ public class MembersInvite extends UIAction {
     private static class UserData {
         public UserData() {}
 
-        private String username;
+        private String screenName;
         private String additionalInfo;
 
-        public String getUsername() {
-            return username;
+        public String getScreenName() {
+            return screenName;
         }
 
-        public void setUsername(String username) {
-            this.username = username;
+        public void setScreenName(String screenName) {
+            this.screenName = screenName;
         }
 
         public String getAdditionalInfo() {

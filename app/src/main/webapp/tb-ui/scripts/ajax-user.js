@@ -69,8 +69,8 @@ function handleUserResponse() {
         var jsonUserList = JSON.parse(http.responseText);
         for (i = 0; i < jsonUserList.length; i++) {
            userList.options[userList.length] =
-              new Option(jsonUserList[i].username +
-                 jsonUserList[i].additionalInfo ? " (" + jsonUserList[i].additionalInfo + ")" : "", jsonUserList[i].username);
+              new Option(jsonUserList[i].screenName +
+                 ((jsonUserList[i].additionalInfo == null) ? "" : (" (" + jsonUserList[i].additionalInfo + ")")), jsonUserList[i].screenName);
         }
     }
     isBusy = false;

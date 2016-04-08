@@ -194,7 +194,8 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
 
-    private User getUserByScreenName(String screenName)
+    @Override
+    public User getUserByScreenName(String screenName)
             throws WebloggerException {
 
         if (screenName==null) {
