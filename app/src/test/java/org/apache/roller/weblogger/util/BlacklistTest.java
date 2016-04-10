@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,24 +37,22 @@ import static org.junit.Assert.*;
 public class BlacklistTest extends WebloggerTest {
     public static Log log = LogFactory.getLog(BlacklistTest.class);
     
-    private List<String> blacklistStr = new LinkedList<>();
-    private List<Pattern> blacklistRegex = new LinkedList<>();
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        Blacklist.populateSpamRules("www.myblacklistedsite.com", null, blacklistStr, blacklistRegex);
     }
 
     @Test
-    public void testIsBlacklisted0() {
-        assertFalse(Blacklist.isBlacklisted("four score and seven years ago.com", blacklistStr, blacklistRegex));
+    public void testIsNotBlacklisted() {
+        Weblog weblog = new Weblog();
+        assertFalse(weblog.getWeblogBlacklist().isBlacklisted("four score and seven years ago.com"));
     }
 
     @Test
-    public void testIsBlacklisted1() {
-        // test non-regex
-        assertTrue(Blacklist.isBlacklisted("www.myblacklistedsite.com", blacklistStr, blacklistRegex));
+    public void testIsBlacklisted() {
+        Weblog weblog = new Weblog();
+        weblog.setBlacklist("www.myblacklistedsite.com");
+        assertTrue(weblog.getWeblogBlacklist().isBlacklisted("www.myblacklistedsite.com"));
     }
 
 }

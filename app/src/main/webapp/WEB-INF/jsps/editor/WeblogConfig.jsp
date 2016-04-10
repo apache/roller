@@ -40,22 +40,22 @@
     
     <tr>
         <td class="label"><s:text name="websiteSettings.websiteTitle" />
-        <td class="field"><s:textfield name="bean.name" size="40" maxlength="255"/></td>
+        <td class="field"><s:textfield name="bean.name" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
     </tr>
 
     <tr>
         <td class="label"><s:text name="generic.tagline" /></td>
-        <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255"/></td>
+        <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.icon" /></td>
-        <td class="field"><s:textfield name="bean.iconPath" size="40"/></td>
+        <td class="field"><s:textfield name="bean.iconPath" size="40" onBlur="this.value=this.value.trim()"/></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.about" /></td>
-        <td class="field"><s:textarea name="bean.about" rows="3" cols="40" maxlength="255"/></td>
+        <td class="field"><s:textarea name="bean.about" rows="3" cols="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
     </tr>
     
     <tr>
@@ -72,7 +72,7 @@
     
     <tr>
         <td class="label"><s:text name="websiteSettings.entryDisplayCount" /></td>
-        <td class="field"><s:textfield name="bean.entryDisplayCount" size="4"/></td>
+        <td class="field"><s:textfield name="bean.entryDisplayCount" size="3" onBlur="this.value=this.value.trim()"/></td>
     </tr>
 
     <tr>
@@ -154,7 +154,7 @@
 
     <tr>
         <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
-        <td class="field"><s:textarea name="bean.blacklist" rows="7" cols="40"/></td>
+        <td class="field"><s:textarea name="bean.blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"/></td>
     </tr>
 
 
@@ -167,7 +167,7 @@
 
         <tr>
             <td class="label"><s:text name="websiteSettings.analyticsTrackingCode" /></td>
-            <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70" maxlength="1200"/></td>
+            <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"/></td>
         </tr>
     </s:if>
 

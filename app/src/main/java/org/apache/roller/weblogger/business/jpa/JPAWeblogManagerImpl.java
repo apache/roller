@@ -286,24 +286,24 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public Weblog getWeblogByHandle(String handle, Boolean visible)
     throws WebloggerException {
         
-        if (handle==null) {
+        if (handle == null) {
             throw new WebloggerException("Handle cannot be null");
         }
         
         // check cache first
         // NOTE: if we ever allow changing handles then this needs updating
-        if(this.weblogHandleToIdMap.containsKey(handle)) {
-            
-            Weblog weblog = this.getWeblog(this.weblogHandleToIdMap.get(handle));
+        if (weblogHandleToIdMap.containsKey(handle)) {
+            Weblog weblog = getWeblog(weblogHandleToIdMap.get(handle));
+
             if (weblog != null) {
                 // only return weblog if enabled status matches
-                if(visible == null || visible.equals(weblog.getVisible())) {
-                    log.debug("weblogHandleToId CACHE HIT - "+handle);
+                if (visible == null || visible.equals(weblog.getVisible())) {
+                    log.debug("weblogHandleToId CACHE HIT - " + handle);
                     return weblog;
                 }
             } else {
-                // mapping hit with lookup miss?  mapping must be old, remove it
-                this.weblogHandleToIdMap.remove(handle);
+                // id no longer maps to an existing weblog, remove it from cache
+                weblogHandleToIdMap.remove(handle);
             }
         }
         
@@ -317,13 +317,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // add mapping to cache
-        if(weblog != null) {
-            log.debug("weblogHandleToId CACHE MISS - "+handle);
-            this.weblogHandleToIdMap.put(weblog.getHandle(), weblog.getId());
+        if (weblog != null) {
+            log.debug("weblogHandleToId CACHE MISS - " + handle);
+            weblogHandleToIdMap.put(weblog.getHandle(), weblog.getId());
         }
         
-        if(weblog != null &&
-                (visible == null || visible.equals(weblog.getVisible()))) {
+        if (weblog != null && (visible == null || visible.equals(weblog.getVisible()))) {
             return weblog;
         } else {
             return null;

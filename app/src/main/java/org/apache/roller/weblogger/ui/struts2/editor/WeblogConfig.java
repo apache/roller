@@ -196,13 +196,12 @@ public class WeblogConfig extends UIAction {
         }
         
         // check blacklist
-        List<Pattern> regexRules = new ArrayList<>();
-        List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
-            Blacklist.populateSpamRules(bean.getBlacklist(), null, stringRules, regexRules);
+            Blacklist testBlacklist = new Blacklist(bean.getBlacklist(), false);
             addMessage("websiteSettings.acceptedBlacklist",
-                    Arrays.asList(new String[] {""+stringRules.size(), ""+regexRules.size()}));
+                    Arrays.asList(new String[] {"" + testBlacklist.getStringRulesCount(),
+                            "" + testBlacklist.getRegexRulesCount()}));
         } catch (Exception e) {
             addError("websiteSettings.error.processingBlacklist", e.getMessage());
         }

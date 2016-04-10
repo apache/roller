@@ -67,11 +67,11 @@
                   <%-- "text" type means use a full textarea --%>
                   <s:elseif test="#pd.type == 'text'">
                     <td class="field">
+                      <%-- avoid whitespace around property tag so it does not appear in the textedit --%>
                       <textarea name='<s:property value="#pd.name"/>'
                                 rows="<s:property value="#pd.rows"/>"
-                                cols="<s:property value="#pd.cols"/>" onBlur="this.value=this.value.trim()">
-                                <s:property value="properties[#pd.name].value"/>
-                      </textarea>
+                                cols="<s:property value="#pd.cols"/>"
+                                onBlur="this.value=this.value.trim()"><s:property value="properties[#pd.name].value"/></textarea>
                     </td>
                   </s:elseif>
                   

@@ -52,22 +52,17 @@ public class BlacklistCommentValidator implements CommentValidator {
     }
 
     /**
-     * Test comment, applying both site and weblog blacklists, if configured
+     * Test comment, applying weblog's blacklist
      * @return True if comment matches a blacklist term
      */
     private boolean checkComment(WeblogEntryComment comment) {
         boolean isBlacklisted = false;
-        List<String> stringRules = new ArrayList<>();
-        List<Pattern> regexRules = new ArrayList<>();
-        Weblog weblog = comment.getWeblogEntry().getWeblog();
-        Blacklist.populateSpamRules(
-                weblog.getBlacklist(), WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty("spam.blacklist"),
-                stringRules, regexRules
-        );
-        if (Blacklist.isBlacklisted(comment.getUrl(), stringRules, regexRules)
-                || Blacklist.isBlacklisted(comment.getEmail(), stringRules, regexRules)
-                || Blacklist.isBlacklisted(comment.getName(), stringRules, regexRules)
-                || Blacklist.isBlacklisted(comment.getContent(), stringRules, regexRules)) {
+        Blacklist bl = comment.getWeblogEntry().getWeblog().getWeblogBlacklist();
+
+        if (bl.isBlacklisted(comment.getUrl())
+                || bl.isBlacklisted(comment.getEmail())
+                || bl.isBlacklisted(comment.getName())
+                || bl.isBlacklisted(comment.getContent())) {
             isBlacklisted = true;
         }
         return isBlacklisted;

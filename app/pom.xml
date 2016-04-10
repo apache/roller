@@ -563,6 +563,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>org/apache/roller/weblogger/config/tightblog.properties</include>
+                    <include>log4j2.xml</include>
                 </includes>
             </resource>
             <resource>

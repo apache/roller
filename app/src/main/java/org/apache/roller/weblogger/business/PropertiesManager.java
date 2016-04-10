@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.util.Blacklist;
 
 
 /**
@@ -85,5 +86,11 @@ public interface PropertiesManager {
      * that weblog is also configured to have site-wide data available.
      */
     boolean isSiteWideWeblog(String weblogHandle);
+
+    /**
+     * Get the Blacklist object for the Weblogger instance (not including any
+     * weblog-specific blacklist terms.)
+     */
+    Blacklist getSiteBlacklist();
     
 }

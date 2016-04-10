@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -52,6 +53,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     private static RuntimeConfigDefs configDefs = null;
 
     private final JPAPersistenceStrategy strategy;
+
+    private Blacklist siteBlacklist = null;
     
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
@@ -145,11 +148,11 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * Save all properties.
      */
     public void saveProperties(Map properties) throws WebloggerException {
-
         // just go through the list and saveProperties each property
         for (Object prop : properties.values()) {
             this.strategy.store(prop);
         }
+        siteBlacklist = new Blacklist(getStringProperty("spam.blacklist"), false);
     }
     
 
@@ -261,4 +264,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         return (siteWide && isFrontPageWeblog(weblogHandle));
     }
 
+    @Override
+    public Blacklist getSiteBlacklist() {
+        return siteBlacklist;
+    }
 }
