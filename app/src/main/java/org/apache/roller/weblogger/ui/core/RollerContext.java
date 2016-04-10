@@ -29,14 +29,11 @@ import javax.servlet.ServletContextListener;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
-import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -158,23 +155,7 @@ public class RollerContext extends ContextLoaderListener
         /*String[] beanNames = ctx.getBeanDefinitionNames();
         for (String name : beanNames)
             System.out.println(name);*/
-        
-        String rememberMe = WebloggerStaticConfig.getProperty("rememberme.enabled");
-        boolean rememberMeEnabled = Boolean.valueOf(rememberMe);
-        
-        log.info("Remember Me enabled: " + rememberMeEnabled);
-        
-        context.setAttribute("rememberMeEnabled", rememberMe);
-        
-        if (!rememberMeEnabled) {
-            ProviderManager provider = ctx.getBean("_authenticationManager", ProviderManager.class);
-            for (AuthenticationProvider authProvider : provider.getProviders()) {
-                if (authProvider instanceof RememberMeAuthenticationProvider) {
-                    provider.getProviders().remove(authProvider);
-                }
-            }
-        }
-        
+
         String encryptPasswords = WebloggerStaticConfig.getProperty("passwds.encryption.enabled");
         boolean doEncrypt = Boolean.valueOf(encryptPasswords);
         
