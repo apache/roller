@@ -179,44 +179,33 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     </table>
 
     <%-- Add new blogroll link --%>
-    <button type="button"
-            class="btn btn-success" style="float:left; margin-right: 0.5em"
-            onclick="addBookmark();return false;">
+    <button type="button" class="btn btn-success" onclick="addBookmark();return false;"
+            style="float:left; margin-right: 2em">
         <s:text name="bookmarksForm.addBookmark"/>
     </button>
 
-    <s:if test="folder.bookmarks.size > 0">
-
-        <%-- Delete-selected button --%>
-        <input id="delete_selected"
-            value="<s:text name="bookmarksForm.delete"/>"
-            type="button" class="btn btn-danger" style="float:right; margin-right: 0.5em"
-            onclick="confirmDeleteSelected();return false;"/>
-
+    <s:if test="!allFolders.isEmpty && folder.bookmarks.size > 0">
+        <%-- Move-selected button --%>
+        <s:submit id="move_selected" value="%{getText('bookmarksForm.move')}" theme="simple"
+                  cssClass="btn btn-warning" cssStyle="float:left; margin-right: 0.5em"
+                  action="bookmarks!move" onclick="onMoveToFolder();return false;"/>
+        <%-- Move-to combo-box --%>
+        <s:select name="targetFolderId" theme="simple"
+                  cssClass="form-control" cssStyle="float:left; width:30%; margin-right: 2em"
+                  list="allFolders" listKey="id" listValue="name"/>
     </s:if>
 
-    <s:if test="!allFolders.isEmpty && folder.bookmarks.size > 0">
-
-        <%-- Move-to combo-box --%>
-        <s:select name="targetFolderId"
-            theme="simple" cssClass="form-control" cssStyle="float:right; width:30%; margin-right: 5em"
-            list="allFolders" listKey="id" listValue="name"/>
-
-        <%-- Move-selected button --%>
-        <s:submit id="move_selected"
-            value="%{getText('bookmarksForm.move')}"
-            theme="simple" cssClass="btn btn-warning" cssStyle="float:right; margin-right: 0.5em"
-            action="bookmarks!move"
-            onclick="onMoveToFolder();return false;"/>
-
+    <s:if test="folder.bookmarks.size > 0">
+        <%-- Delete-selected button --%>
+        <input id="delete_selected" value="<s:text name="bookmarksForm.delete"/>" type="button"
+            class="btn btn-danger" style="float:left;"
+            onclick="confirmDeleteSelected();return false;"/>
     </s:if>
 
     <s:if test="folder.name != 'default'">
-
         <%-- Delete the whole blogroll --%>
-
-        <s:submit value="%{getText('bookmarksForm.deleteFolder')}"
-            theme="simple" cssClass="btn btn-danger" cssStyle="float:right; clear:left; margin-top:2em"
+        <s:submit value="%{getText('bookmarksForm.deleteFolder')}" theme="simple"
+            cssClass="btn btn-danger" cssStyle="float:right; clear:left; margin-top:2em"
             action="bookmarks!deleteFolder"
             onclick="confirmDeleteFolder();return false;"/>
 
