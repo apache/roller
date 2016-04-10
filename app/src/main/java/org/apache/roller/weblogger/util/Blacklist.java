@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -28,10 +29,10 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Allows callers to test strings against site-level and/or weblog-level
- * defined blacklist terms.
+ * Allows callers to test strings against site-level and weblog-level defined blacklist terms.
  * <br />
  * Blacklist is formatted one entry per line.
  * Any line that begins with # is considered to be a comment. 
@@ -39,25 +40,41 @@ import org.apache.commons.logging.LogFactory;
  * <br />
  */
 public final class Blacklist {
-    
     private static Log log = LogFactory.getLog(Blacklist.class);
 
-    /** Hide constructor */
-    private Blacklist() {
+    private List<String> stringRules = new ArrayList<>();
+    private List<Pattern> regexRules = new ArrayList<>();
+
+    public Blacklist(String weblogBlacklist) {
+        this(weblogBlacklist, true);
     }
 
-    /**
-     * Does the String argument match any of the rules in the blacklists provided by caller?
-     * @param str String to be checked against blacklist
-     * @param stringRules String rules to consider
-     * @param regexRules  Regex rules to consider
-     */
-    public static boolean isBlacklisted(String str, List<String> stringRules, List<Pattern> regexRules) {
-        return !StringUtils.isEmpty(str) && (testStringRules(str, stringRules) || testRegExRules(str, regexRules));
+    public Blacklist(String weblogBlacklist, boolean includeSiteBlacklist) {
+        populateSpamRules(weblogBlacklist, includeSiteBlacklist);
+    }
+
+    public boolean isBlacklisted(String str) {
+        return !StringUtils.isEmpty(str) && (testStringRules(str) || testRegExRules(str));
+    }
+
+    private List<String> getStringRules() {
+        return stringRules;
+    }
+
+    private List<Pattern> getRegexRules() {
+        return regexRules;
+    }
+
+    public int getStringRulesCount() {
+        return stringRules.size();
+    }
+
+    public int getRegexRulesCount() {
+        return regexRules.size();
     }
 
     /** Test String against the RegularExpression rules. */
-    private static boolean testRegExRules(String str, List<Pattern> regexRules) {
+    private boolean testRegExRules(String str) {
         for (Pattern testPattern : regexRules) {
             // want to see what it is matching on, but only in debug mode
             if (log.isDebugEnabled()) {
@@ -82,14 +99,13 @@ public final class Blacklist {
      * is performed.
      *
      * @param source The text in which to apply the matching rules.
-     * @param rules A list a simple matching rules.
      *
      * @return true if a match was found, otherwise false
      */
-    private static boolean testStringRules(String source, List<String> rules) {
+    private boolean testStringRules(String source) {
         boolean matches = false;
         
-        for (Object ruleObj : rules) {
+        for (Object ruleObj : stringRules) {
             String rule;
             rule = (String) ruleObj;
 
@@ -125,17 +141,23 @@ public final class Blacklist {
         return matches;
     }   
     
-    /** Utility method to populate lists based a blacklist in string form
-     * @param source1 String of string and/or regEx rules (e.g., weblog list), can be null
-     * @param source2 Another string of string and/or regEx rules (e.g., site-wide list), can be null
-     * @param stringRules List (can be non-empty) to append found string rules to.
-     * @param regexRules List (can be non-empty) to append regex rules to.
+    /** Populate lists based on weblog and site blacklists
+     * @param weblogBlacklist String of string and/or regEx rules (e.g., weblog list)
+     * @param includeSiteBlacklist whether to add the site blacklist to the rules
      **/
-    public static void populateSpamRules(
-            String source1, String source2, List<String> stringRules, List<Pattern> regexRules) {
-        String source1words = (source1 != null) ? source1 : "";
-        String source2words = (source2 != null) ? source2 : "";
-        StringTokenizer toker = new StringTokenizer(source2words + "\n" + source1words, "\n");
+    private void populateSpamRules(String weblogBlacklist, boolean includeSiteBlacklist) {
+        if (weblogBlacklist == null) {
+            weblogBlacklist = "";
+        }
+
+        if (includeSiteBlacklist) {
+            Blacklist siteBlacklist = WebloggerFactory.getWeblogger().getPropertiesManager().getSiteBlacklist();
+            regexRules.addAll(siteBlacklist.getRegexRules());
+            stringRules.addAll(siteBlacklist.getStringRules());
+        }
+
+        StringTokenizer toker = new StringTokenizer(weblogBlacklist, "\n");
+
         while (toker.hasMoreTokens()) {
             String token = toker.nextToken().trim();
             if (token.startsWith("#")) {

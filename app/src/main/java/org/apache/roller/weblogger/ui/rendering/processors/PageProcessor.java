@@ -523,7 +523,7 @@ public class PageProcessor {
             String requestSite = requestUrl.substring(0, lastSlash);
 
             if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
-                    checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
+                    pageRequest.getWeblog().getWeblogBlacklist().isBlacklisted(referrerUrl)) {
                 return true;
             }
         } else {
@@ -532,14 +532,6 @@ public class PageProcessor {
         }
 
         return false;
-    }
-
-    private boolean checkReferrer(Weblog weblog, String referrerURL) {
-        List<String> stringRules = new ArrayList<>();
-        List<Pattern> regexRules = new ArrayList<>();
-        Blacklist.populateSpamRules(
-                weblog.getBlacklist(), propertiesManager.getStringProperty("spam.blacklist"), stringRules, regexRules);
-        return Blacklist.isBlacklisted(referrerURL, stringRules, regexRules);
     }
 
     /**
