@@ -39,11 +39,12 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.User;
 
 /**
- * // TODO: Unsure if useful (LDAP not being brought in), see ROL-2042
+ * Reads LDAP authentication info and populates any available User fields with its data.
+ * ROL-2042 may provide the ability to obtain more fields.
  */
-public class CustomUserRegistry {
+public class LDAPRegistrationHelper {
     
-    private static final Log log = LogFactory.getLog(CustomUserRegistry.class);
+    private static final Log log = LogFactory.getLog(LDAPRegistrationHelper.class);
 
     private String ldapUidAttribute = "uid";
 
@@ -84,7 +85,7 @@ public class CustomUserRegistry {
     public User getUserDetailsFromAuthentication(HttpServletRequest request) {
 
         if (!(WebloggerStaticConfig.getAuthMethod() == AuthMethod.LDAP)) {
-            log.info("LDAP is not enabled. Skipping CustomUserRegistry functionality.");
+            log.info("LDAP is not enabled. Skipping LDAPRegistrationHelper functionality.");
             return null;
         }
         
@@ -98,7 +99,6 @@ public class CustomUserRegistry {
         ud.setDateCreated(new java.util.Date());
 
         String userName;
-        String unusedPassword;
         String fullName = null;
         String email = null;
         String screenName = null;
@@ -106,7 +106,7 @@ public class CustomUserRegistry {
         String timezone = null;
         boolean enabled;
 
-        if(authentication == null) {
+        if (authentication == null) {
             // Try to get SSO data from HttpServletRequest
             userName = getRequestAttribute(request, ldapUidAttribute);
             screenName = getRequestAttribute(request, ldapScreennameAttribute);
@@ -155,10 +155,6 @@ public class CustomUserRegistry {
             } // Future: bring in fields from LDAP, see ROL-2042
         }
 
-        // for LDAP we don't store its password in the roller_users table,
-        // just an string indicating external auth method being used.
-        unusedPassword = WebloggerStaticConfig.getProperty("users.passwords.externalAuthValue","<externalAuth>");
-        ud.setPassword(unusedPassword);
         ud.setEnabled(enabled ? Boolean.TRUE : Boolean.FALSE);
 
         ud.setUserName(userName);

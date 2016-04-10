@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +41,7 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
+import org.apache.roller.weblogger.ui.core.security.LDAPRegistrationHelper;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -73,10 +74,10 @@ public class Register extends UIAction implements ServletRequestAware {
         this.propertiesManager = propertiesManager;
     }
 
-    private CustomUserRegistry customUserRegistry;
+    private LDAPRegistrationHelper ldapRegistrationHelper;
 
-    public void setCustomUserRegistry(CustomUserRegistry customUserRegistry) {
-        this.customUserRegistry = customUserRegistry;
+    public void setLdapRegistrationHelper(LDAPRegistrationHelper ldapRegistrationHelper) {
+        this.ldapRegistrationHelper = ldapRegistrationHelper;
     }
 
     private MailManager mailManager;
@@ -139,7 +140,7 @@ public class Register extends UIAction implements ServletRequestAware {
         try {
             if (WebloggerStaticConfig.getAuthMethod() == AuthMethod.LDAP) {
                 // See if user is already logged in via Spring Security
-                User fromSSOUser = customUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+                User fromSSOUser = ldapRegistrationHelper.getUserDetailsFromAuthentication(getServletRequest());
                 if (fromSSOUser != null) {
                     // Copy user details from Spring Security, including LDAP attributes
                     bean.setId(fromSSOUser.getId());
@@ -312,13 +313,13 @@ public class Register extends UIAction implements ServletRequestAware {
     public void myValidate() {
         // if using external auth, we don't want to error on empty password/username from HTML form.
         if (authMethod == AuthMethod.LDAP) {
-            // store an unused marker in the Roller DB for the passphrase in
-            // the LDAP case, as actual passwords are stored externally
-            String unusedPassword = WebloggerStaticConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
-            
-            // Preserve username and password, Spring Security case
-            User fromSSOUser = customUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+            // Obtain username and generate password
+            User fromSSOUser = ldapRegistrationHelper.getUserDetailsFromAuthentication(getServletRequest());
             if (fromSSOUser != null) {
+                // store a random string in the Roller DB for the passphrase in
+                // the LDAP case, as actual passwords are stored externally
+                // string will be encrypted and unused in DB unless auth switched to DB.
+                String unusedPassword = RandomStringUtils.randomAscii(15);
                 bean.setPasswordText(unusedPassword);
                 bean.setPasswordConfirm(unusedPassword);
                 bean.setUserName(fromSSOUser.getUserName());
@@ -344,17 +345,18 @@ public class Register extends UIAction implements ServletRequestAware {
             addError("Register.error.emailAddressNull");
         }
 
-        if (AuthMethod.DATABASE.name().equals(getAuthMethod())
-                && StringUtils.isEmpty(bean.getPasswordText())) {
+        if (AuthMethod.DATABASE.name().equals(getAuthMethod())) {
+            if (StringUtils.isEmpty(bean.getPasswordText())) {
                 addError("error.add.user.passwordEmpty");
                 return;
+            }
+
+            // check that passwords match
+            if (!bean.getPasswordText().equals(bean.getPasswordConfirm())) {
+                addError("userRegister.error.mismatchedPasswords");
+            }
         }
-        
-        // check that passwords match
-        if (!bean.getPasswordText().equals(bean.getPasswordConfirm())) {
-            addError("userRegister.error.mismatchedPasswords");
-        }
-        
+
         // check that username is not taken
         if (!StringUtils.isEmpty(bean.getUserName())) {
             try {
