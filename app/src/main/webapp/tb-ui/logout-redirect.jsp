@@ -16,18 +16,9 @@
   directory of this distribution.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="javax.servlet.http.Cookie" %>
-<%@ page import="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices" %>
 
 <%
 request.getSession().invalidate();
-
-// Mimic exactly TokenBasedRememberMeServices.makeCancelCookie()
-Cookie terminate = new Cookie(TokenBasedRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
-String contextPath = request.getContextPath();
-terminate.setPath(contextPath != null && contextPath.length() > 0 ? contextPath : "/");
-terminate.setMaxAge(0);
-response.addCookie(terminate);
 
 response.sendRedirect(request.getContextPath()+"/"); 
 %>

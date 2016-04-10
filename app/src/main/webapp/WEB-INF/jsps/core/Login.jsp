@@ -45,18 +45,6 @@
             </td>
         </tr>
 
-        <c:if test="${rememberMeEnabled}">
-        <tr>
-            <td width="20%"></td>
-            <td width="80%">
-                <input type="checkbox" name="_spring_security_remember_me" id="_spring_security_remember_me" />
-                <label for="rememberMe">
-                    <s:text name="loginPage.rememberMe" />
-                </label>
-            </td>
-        </tr>
-        </c:if>
-
         <tr>
             <td width="20%"></td>
             <td width="80%">
@@ -81,8 +69,7 @@ if (document.getElementById) {
 
 function saveUsername(theForm) {
     var expires = new Date();
-    expires.setTime(expires.getTime() + 24 * 30 * 60 * 60 * 1000); // sets it for approx 30 days.
+    expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // sets it for approx one day.
     setCookie("username",theForm.j_username.value,expires);
-    setCookie("favorite_authentication_method", "username");
 }
 </script>
