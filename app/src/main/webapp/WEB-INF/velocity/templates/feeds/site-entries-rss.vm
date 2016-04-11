@@ -24,9 +24,9 @@
   <title>$utils.escapeXML($config.siteName)</title>
   <link>$url.absoluteSite</link>
   #if($model.tags)
-    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rssByTags($model.tags, $model.excerpts)" />
+    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rssByTags($model.tags)" />
   #elseif($model.categoryName)
-    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryName, $model.excerpts)" />
+    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryName)" />
   #else
     <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss" />
   #end

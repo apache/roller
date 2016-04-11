@@ -250,7 +250,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Get url for a feed on a given weblog.
      */
     public String getWeblogFeedURL(Weblog weblog, String type, String format, String category,
-                            String term, List tags, boolean excerpts, boolean absolute) {
+                            String term, List tags, boolean absolute) {
 
         String url = getWeblogURL(weblog, absolute) + "feed/" + type + "/" + format;
         
@@ -264,10 +264,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         if (term != null && term.trim().length() > 0) {
             params.put("q", Utilities.encode(term.trim()));
         }
-        if (excerpts) {
-            params.put("excerpts", "true");
-        }
-        
+
         return url + Utilities.getQueryString(params);
     }
     

@@ -38,13 +38,11 @@ import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager.PagingInterval;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -66,7 +64,6 @@ public class PageModel implements Model {
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
-    private DeviceType deviceType = null;
 
     protected boolean isPreview = false;
     protected URLStrategy urlStrategy = null;
@@ -121,7 +118,7 @@ public class PageModel implements Model {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        if(weblogRequest == null) {
+        if (weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
         
@@ -139,9 +136,7 @@ public class PageModel implements Model {
         
         // custom request parameters
         this.requestParameters = (Map)initData.get("requestParameters");
-        
-        this.deviceType = weblogRequest.getDeviceType();
-    }    
+    }
     
     
     /**
@@ -186,10 +181,7 @@ public class PageModel implements Model {
      * Get weblog entry being displayed or null if none specified by request.
      */
     public WeblogEntry getWeblogEntry() {
-        if (pageRequest.getWeblogEntry() != null) {
-            return pageRequest.getWeblogEntry();
-        }
-        return null;
+        return pageRequest.getWeblogEntry();
     }
     
     
@@ -197,8 +189,8 @@ public class PageModel implements Model {
      * Get weblog entry being displayed or null if none specified by request.
      */
     public Template getWeblogPage() {
-        if(pageRequest.getWeblogPageName() != null) {
-            return pageRequest.getWeblogPage();
+        if(pageRequest.getWeblogTemplateName() != null) {
+            return pageRequest.getWeblogTemplate();
         } else {
             try {
                 return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByAction(Template.ComponentType.WEBLOG);
@@ -218,14 +210,10 @@ public class PageModel implements Model {
     }
 
     /**
-     * Get weblog category specified by request, or null if the category name
-     * found in the request does not exist in the current weblog.
+     * Get category path or name specified by request.
      */
-    public WeblogCategory getWeblogCategory() {
-        if(pageRequest.getWeblogCategory() != null) {
-            return pageRequest.getWeblogCategory();
-        }
-        return null;
+    public String getCategoryName() {
+        return pageRequest.getWeblogCategoryName();
     }
 
     /**
@@ -313,7 +301,7 @@ public class PageModel implements Model {
 	 * @return device type
 	 */
 	public String getDeviceType() {
-		return deviceType.toString();
+        return pageRequest.getDeviceType().toString();
 	}
 
 
@@ -348,7 +336,7 @@ public class PageModel implements Model {
                     weblogEntryManager,
                     urlStrategy,
                     pageRequest.getWeblog(),
-                    pageRequest.getWeblogPageName(),
+                    pageRequest.getWeblogTemplateName(),
                     pageRequest.getWeblogAnchor(),
                     cat,
                     tags,

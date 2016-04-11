@@ -218,7 +218,6 @@ public final class EntryEdit extends UIAction {
                 }
 
                 bean.setCommentDays(entry.getCommentDays());
-                bean.setRightToLeft(entry.getRightToLeft());
                 bean.setPinnedToMain(entry.getPinnedToMain());
                 bean.setEnclosureUrl(entry.getEnclosureUrl());
                 bean.setEnclosureType(entry.getEnclosureType());
@@ -336,7 +335,6 @@ public final class EntryEdit extends UIAction {
 
                 // comment settings & right-to-left option
                 weblogEntry.setCommentDays(bean.getCommentDays());
-                weblogEntry.setRightToLeft(bean.getRightToLeft());
 
                 // handle pubtime auto set
                 if (weblogEntry.isPublished() && weblogEntry.getPubTime() == null) {
@@ -558,10 +556,6 @@ public final class EntryEdit extends UIAction {
 
     public boolean isCommentingEnabled() {
         return getBooleanProp("users.comments.enabled") && getActionWeblog().getAllowComments();
-    }
-
-    public boolean isShowRightToLeftOption() {
-        return getBooleanProp("entry.edit.show.righttoleft");
     }
 
     /**

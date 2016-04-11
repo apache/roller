@@ -146,7 +146,6 @@ create table weblog_entry (
     publishentry    $db.BOOLEAN_SQL_TYPE_TRUE not null,
     plugins         varchar(255),
     commentdays     integer default 7 not null,
-    rightToLeft     $db.BOOLEAN_SQL_TYPE_FALSE not null,
     pinnedtomain    $db.BOOLEAN_SQL_TYPE_FALSE not null,
     status          varchar(20) not null,
     summary         $db.TEXT_SQL_TYPE,

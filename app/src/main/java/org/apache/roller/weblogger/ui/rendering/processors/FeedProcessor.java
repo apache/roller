@@ -35,10 +35,12 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.SharedTemplate;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
@@ -52,7 +54,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 
 /**
  * Responsible for rendering weblog feeds.
@@ -84,6 +85,13 @@ public class FeedProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -192,17 +200,23 @@ public class FeedProcessor {
         if (feedRequest.getWeblogCategoryName() != null) {
 
             // category specified. category must exist.
-            if (feedRequest.getWeblogCategory() == null) {
+            WeblogCategory test = null;
+
+            try {
+                test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(), feedRequest.getWeblogCategoryName());
+            } catch (WebloggerException ex) {
+                log.error("Error getting weblog category " + feedRequest.getWeblogCategoryName(), ex);
+            }
+
+            if (test == null) {
                 invalid = true;
             }
 
-        } else if (feedRequest.getTags() != null
-                && feedRequest.getTags().size() > 0) {
+        } else if (feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
 
             try {
                 // tags specified. make sure they exist.
-                invalid = !weblogEntryManager.getTagComboExists(feedRequest.getTags(),
-                        (isSiteWide) ? null : weblog);
+                invalid = !weblogEntryManager.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
             }
@@ -310,17 +324,16 @@ public class FeedProcessor {
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<type>/<format>/<term>[/category][/language][/excerpts]
+     * <handle>/<type>/<format>/<term>[/category]
      *
      * examples ...
      *
-     * foo/entries/rss/en
-     * foo/comments/rss/MyCategory/en
-     * foo/entries/atom/en/excerpts
+     * foo/entries/rss
+     * foo/comments/rss/MyCategory
+     * foo/entries/atom
      *
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
-
         StringBuilder key = new StringBuilder();
 
         key.append("weblogfeed.key").append(":");
@@ -336,15 +349,10 @@ public class FeedProcessor {
             } catch (UnsupportedEncodingException ex) {
                 // should never happen, utf-8 is always supported
             }
-
             key.append("/").append(cat);
         }
 
-        if(feedRequest.isExcerpts()) {
-            key.append("/excerpts");
-        }
-
-        if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+        if (feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
             Set<String> ordered = new TreeSet<>(feedRequest.getTags());
             String[] tags = ordered.toArray(new String[ordered.size()]);
             key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));

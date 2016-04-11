@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import java.util.Locale;
@@ -120,10 +119,6 @@ public class WeblogRequest extends ParsedRequest {
         return pathInfo;
     }
 
-    public void setPathInfo(String pathInfo) {
-        this.pathInfo = pathInfo;
-    }
-
     public Weblog getWeblog() {
         if (weblog == null && weblogHandle != null) {
             try {
@@ -154,8 +149,4 @@ public class WeblogRequest extends ParsedRequest {
         return localeInstance;
     }
 
-    public void setLocaleInstance(Locale localeInstance) {
-        this.localeInstance = localeInstance;
-    }
-    
 }

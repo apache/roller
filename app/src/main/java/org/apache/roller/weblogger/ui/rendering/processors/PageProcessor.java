@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
@@ -251,7 +252,7 @@ public class PageProcessor {
         Template page = null;
 
         if ("page".equals(pageRequest.getContext())) {
-            page = pageRequest.getWeblogPage();
+            page = pageRequest.getWeblogTemplate();
 
             // if we don't have this page then 404, we don't let
             // this one fall through to the default template
@@ -312,7 +313,7 @@ public class PageProcessor {
 
         // validation. make sure that request input makes sense.
         boolean invalid = false;
-        if (pageRequest.getWeblogPageName() != null && StringUtils.isEmpty(page.getRelativePath())) {
+        if (pageRequest.getWeblogTemplateName() != null && StringUtils.isEmpty(page.getRelativePath())) {
             invalid = true;
         }
         if (pageRequest.getWeblogAnchor() != null) {
@@ -328,9 +329,16 @@ public class PageProcessor {
                 invalid = true;
             }
         } else if (pageRequest.getWeblogCategoryName() != null) {
-
             // category specified. category must exist.
-            if (pageRequest.getWeblogCategory() == null) {
+            WeblogCategory test = null;
+
+            try {
+                test = weblogManager.getWeblogCategoryByName(pageRequest.getWeblog(), pageRequest.getWeblogCategoryName());
+            } catch (WebloggerException ex) {
+                log.error("Error getting weblog category " + pageRequest.getWeblogCategoryName(), ex);
+            }
+
+            if (test == null) {
                 invalid = true;
             }
         } else if (pageRequest.getTags() != null
@@ -544,15 +552,15 @@ public class PageProcessor {
      * Generate a cache key from a parsed weblog page request.
      * This generates a key of the form ...
      *
-     * <handle>/<ctx>[/anchor][/language][/user]
+     * <handle>/<ctx>[/anchor][/user]
      *   or
-     * <handle>/<ctx>[/weblogPage][/date][/category][/language][/user]
+     * <handle>/<ctx>[/template][/date][/category][/user]
      *
      * Examples:
-     * foo/en
+     * foo
      * foo/entry_anchor
-     * foo/20051110/en
-     * foo/MyCategory/en/user=myname
+     * foo/20051110
+     * foo/MyCategory/user=myname
      */
     public String generateKey(WeblogPageRequest pageRequest) {
 
@@ -573,8 +581,8 @@ public class PageProcessor {
             key.append("/entry/").append(anchor);
         } else {
 
-            if(pageRequest.getWeblogPageName() != null) {
-                key.append("/page/").append(pageRequest.getWeblogPageName());
+            if(pageRequest.getWeblogTemplateName() != null) {
+                key.append("/page/").append(pageRequest.getWeblogTemplateName());
             }
 
             if(pageRequest.getWeblogDate() != null) {
@@ -616,7 +624,7 @@ public class PageProcessor {
         key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
 
         // we allow for arbitrary query params for custom pages
-        if(pageRequest.getWeblogPageName() != null &&
+        if(pageRequest.getWeblogTemplateName() != null &&
                 pageRequest.getCustomParams().size() > 0) {
             String queryString = paramsToString(pageRequest.getCustomParams());
 

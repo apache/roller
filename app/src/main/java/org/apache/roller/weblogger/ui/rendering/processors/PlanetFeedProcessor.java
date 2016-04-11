@@ -249,45 +249,17 @@ public class PlanetFeedProcessor {
 
     /**
      * Generate a cache key from a parsed planet request. This generates a key
-     * of the form ...
+     * of the form planet.key:{planetname}/{feed flavor}
      *
-     * <context>/<type>/<language>[/user] or
-     * <context>/<type>[/flavor]/<language>[/excerpts]
-     *
-     * examples:
-     * planet/page/en
-     * planet/feed/rss/en/excerpts
+     * example: planet.key:testplanet/rss
      */
     private String generateKey(PlanetRequest planetRequest) {
-
         StringBuilder key = new StringBuilder();
         key.append("planet.key").append(":");
-        key.append(planetRequest.getContext());
-        key.append("/");
-        key.append(planetRequest.getType());
+        key.append(planetRequest.getPlanet());
 
         if (planetRequest.getFlavor() != null) {
             key.append("/").append(planetRequest.getFlavor());
-        }
-
-        // add language
-        key.append("/").append(planetRequest.getLanguage());
-
-        if (planetRequest.getFlavor() != null) {
-            // add excerpts
-            if (planetRequest.isExcerpts()) {
-                key.append("/excerpts");
-            }
-        } else {
-            // add login state
-            if (planetRequest.getAuthenticUser() != null) {
-                key.append("/user=").append(planetRequest.getAuthenticUser());
-            }
-        }
-
-        // add planet name
-        if (planetRequest.getPlanet() != null) {
-            key.append("/planet=").append(planetRequest.getPlanet());
         }
 
         return key.toString();

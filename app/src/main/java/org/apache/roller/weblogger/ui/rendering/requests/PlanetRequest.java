@@ -18,108 +18,57 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
- * Represents a request for a Planet Roller url.
+ * Represents a request for a Planet Roller feed
  *
- * currently ... /planet.do and /planetrss
+ * currently ... /planetrss
  */
 public class PlanetRequest extends ParsedRequest {
-    
     private static Log log = LogFactory.getLog(PlanetRequest.class);
-    
-    private String context = null;
-    private String type = null;
-    private String flavor = null;
-    private boolean excerpts = false;
-    private String language = null;
+
     private String planet = null;
-    
-    
+    private String flavor = null;
+
     /**
      * Construct the PlanetRequest by parsing the incoming url
      */
     public PlanetRequest(HttpServletRequest request) {
-        
         super(request);
         
         // parse the request object and figure out what we've got
-        log.debug("parsing url "+request.getRequestURL());
+        log.debug("parsing url: " + request.getRequestURL());
         
         String servlet = request.getServletPath();
         
         // what servlet is our destination?
-        if(servlet != null) {
+        if (servlet != null) {
             // strip off the leading slash
             servlet = servlet.substring(1);
             
-            if ("planet.do".equals(servlet)) {
-                this.context = "planet";
-                this.type = "page";
-            } else if ("planetrss".equals(servlet)) {
-                this.context = "planet";
-                this.type = "feed";
+            if ("planetrss".equals(servlet)) {
                 this.flavor = "rss";
             } else {
                 // not a request to a feed servlet
                 throw new IllegalArgumentException("Not a planet request: " + request.getRequestURL());
             }
-            
         } else {
             throw new IllegalArgumentException("Not a planet request: " + request.getRequestURL());
         }
         
-        
-        /*
-         * parse request parameters
-         *
-         * the only params we currently care about are:
-         *   excerpts - specifies the feed should only include excerpts
-         *   planet - specifies the planet to include
-         */
-        if (request.getParameter("excerpts") != null) {
-            this.excerpts = Boolean.valueOf(request.getParameter("excerpts"));
-        }
-        
+        // planet to include
         if (request.getParameter("planet") != null) {
             this.planet = request.getParameter("planet");
         }
-        
-        
-        // language is always from the browser
-        language = request.getLocale().getLanguage();
-    }
-    
-    
-    public String getContext() {
-        return context;
-    }
-    
-    public String getType() {
-        return type;
     }
     
     public String getFlavor() {
         return flavor;
-    }
-    
-    public boolean isExcerpts() {
-        return excerpts;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
     
     public String getPlanet() {

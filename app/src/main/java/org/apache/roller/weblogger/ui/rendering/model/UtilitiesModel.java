@@ -31,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -104,10 +103,6 @@ public class UtilitiesModel implements Model {
         return (parsedRequest.getAuthenticUser() != null);
     }
        
-    public User getAuthenticatedUser() {
-        return parsedRequest.getAuthenticUser() != null ? parsedRequest.getUser() : null;
-    }
-
     public String autoformat(String s) {
         return Utilities.autoformat(s);
     }

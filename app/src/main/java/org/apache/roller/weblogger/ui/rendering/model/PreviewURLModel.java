@@ -36,7 +36,7 @@ public class PreviewURLModel extends URLModel {
         // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
-            throw new WebloggerException("Expected 'weblogRequest' init param!");
+            throw new WebloggerException("Expected 'weblogRequest' init param");
         }
         
         // PreviewURLModel only works on preview requests, so cast weblogRequest

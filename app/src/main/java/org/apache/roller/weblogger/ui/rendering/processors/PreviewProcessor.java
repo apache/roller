@@ -127,7 +127,16 @@ public class PreviewProcessor {
 
             // try getting the preview theme
             log.debug("preview theme = " + previewRequest.getThemeName());
-            SharedTheme previewTheme = previewRequest.getSharedTheme();
+
+            SharedTheme previewTheme = null;
+
+            try {
+                previewTheme = themeManager.getSharedTheme(previewRequest.getThemeName());
+            } catch(IllegalArgumentException tnfe) {
+                // bogus theme given in URL, return null for callee to handle
+            } catch(WebloggerException re) {
+                log.error("Error looking up theme " + previewRequest.getThemeName(), re);
+            }
 
             // construct a temporary Website object for this request
             // and set the weblog theme to our previewTheme
@@ -146,7 +155,7 @@ public class PreviewProcessor {
 
         Template page = null;
         if ("page".equals(previewRequest.getContext())) {
-            page = previewRequest.getWeblogPage();
+            page = previewRequest.getWeblogTemplate();
 
             // If request specified tags section index, then look for custom template
         } else if ("tags".equals(previewRequest.getContext()) &&

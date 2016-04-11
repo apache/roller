@@ -109,7 +109,6 @@ public class WeblogEntry implements Serializable {
     private Timestamp updateTime;
     private String plugins;
     private Integer commentDays = 7;
-    private Boolean rightToLeft = Boolean.FALSE;
     private Boolean pinnedToMain = Boolean.FALSE;
     private PubStatus status;
     // Using String creatorId instead of User creator; see comments in Weblog class for info
@@ -188,7 +187,6 @@ public class WeblogEntry implements Serializable {
         this.setStatus(other.getStatus());
         this.setPlugins(other.getPlugins());
         this.setCommentDays(other.getCommentDays());
-        this.setRightToLeft(other.getRightToLeft());
         this.setPinnedToMain(other.getPinnedToMain());
         this.setEnclosureUrl(other.getEnclosureUrl());
         this.setEnclosureType(other.getEnclosureType());
@@ -453,18 +451,6 @@ public class WeblogEntry implements Serializable {
 
     public void setCommentDays(Integer commentDays) {
         this.commentDays = commentDays;
-    }
-    
-    /**
-     * True for entries that should be rendered right to left.
-     */
-    @Basic(optional=false)
-    public Boolean getRightToLeft() {
-        return rightToLeft;
-    }
-
-    public void setRightToLeft(Boolean rightToLeft) {
-        this.rightToLeft = rightToLeft;
     }
     
     /**

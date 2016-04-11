@@ -60,7 +60,6 @@ public class SiteModel implements Model {
     
     private static Log log = LogFactory.getLog(SiteModel.class);   
     
-    private Weblog weblog = null;
     private WeblogRequest weblogRequest = null;
     private WeblogFeedRequest feedRequest = null;
     private List tags = new ArrayList();
@@ -109,7 +108,7 @@ public class SiteModel implements Model {
         }
         
         if (weblogRequest instanceof WeblogPageRequest) {
-            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogTemplate();
             pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
             tags = ((WeblogPageRequest)weblogRequest).getTags();
@@ -118,9 +117,6 @@ public class SiteModel implements Model {
             tags = feedRequest.getTags();
             pageNum = feedRequest.getPage();
         }
-        
-        // extract weblog object
-        weblog = weblogRequest.getWeblog();
     }
     
     //----------------------------------------------------------------- Pagers
@@ -153,7 +149,7 @@ public class SiteModel implements Model {
                 pageNum,
                 length,
                 sinceDays,
-                weblog);
+                weblogRequest.getWeblog());
     }
     
     
@@ -167,12 +163,11 @@ public class SiteModel implements Model {
         
         String pagerUrl;
         if (feedRequest != null) {
-            pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
+            pagerUrl = urlStrategy.getWeblogFeedURL(weblogRequest.getWeblog(),
                     feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null,
-                    feedRequest.isExcerpts(), true);
+                    feedRequest.getFormat(), null, null, null, true);
         } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
+            pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
                 pageLink,
                 null, null, null, null, 0, false);
         }
@@ -193,11 +188,10 @@ public class SiteModel implements Model {
         
         String pagerUrl;
         if (feedRequest != null) {
-            pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
-                    feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null, feedRequest.isExcerpts(), true);
+            pagerUrl = urlStrategy.getWeblogFeedURL(weblogRequest.getWeblog(),
+                    feedRequest.getType(), feedRequest.getFormat(), null, null, null, true);
         } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
+            pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
                 pageLink,
                 null, null, null, null, 0, false);
         }        
@@ -219,7 +213,7 @@ public class SiteModel implements Model {
     /** Get pager of weblogs whose handles begin with specified letter */
     public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, null,
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
                 pageLink,
                 null, null, null, null, 0, false);
         

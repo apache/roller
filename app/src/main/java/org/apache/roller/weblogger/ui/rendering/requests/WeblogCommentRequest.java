@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import java.io.UnsupportedEncodingException;
@@ -49,10 +51,6 @@ public class WeblogCommentRequest extends WeblogRequest {
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
     
-    
-    public WeblogCommentRequest() {}
-    
-    
     public WeblogCommentRequest(HttpServletRequest request) {
         
         // let our parent take care of their business first
@@ -85,8 +83,7 @@ public class WeblogCommentRequest extends WeblogRequest {
                 String context = pathElements[0];
                 if("entry".equals(context)) {
                     try {
-                        this.weblogAnchor = 
-                                URLDecoder.decode(pathElements[1], "UTF-8");
+                        this.weblogAnchor = URLDecoder.decode(pathElements[1], "UTF-8");
                     } catch (UnsupportedEncodingException ex) {
                         // should never happen
                         log.error(ex);
@@ -146,48 +143,24 @@ public class WeblogCommentRequest extends WeblogRequest {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getContent() {
         return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public boolean isNotify() {
         return notify;
     }
 
-    public void setNotify(boolean notify) {
-        this.notify = notify;
-    }
-
     public String getWeblogAnchor() {
         return weblogAnchor;
-    }
-
-    public void setWeblogAnchor(String weblogAnchor) {
-        this.weblogAnchor = weblogAnchor;
     }
 
     public WeblogEntry getWeblogEntry() {
@@ -204,8 +177,4 @@ public class WeblogCommentRequest extends WeblogRequest {
         return weblogEntry;
     }
 
-    public void setWeblogEntry(WeblogEntry weblogEntry) {
-        this.weblogEntry = weblogEntry;
-    }
-    
 }
