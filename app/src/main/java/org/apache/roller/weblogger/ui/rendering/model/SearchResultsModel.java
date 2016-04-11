@@ -266,16 +266,8 @@ public class SearchResultsModel extends PageModel {
 		return errorMessage;
 	}
 
-	public String getWeblogCategoryName() {
+	public String getCategoryName() {
 		return searchRequest.getWeblogCategoryName();
-	}
-
-	@Override
-	public WeblogCategory getWeblogCategory() {
-		if (searchRequest.getWeblogCategory() != null) {
-			return searchRequest.getWeblogCategory();
-		}
-		return null;
 	}
 
 }

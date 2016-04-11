@@ -48,10 +48,6 @@ public class WeblogTrackbackRequest extends WeblogRequest {
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
     
-    
-    public WeblogTrackbackRequest() {}
-    
-    
     public WeblogTrackbackRequest(HttpServletRequest request) {
         
         // let our parent take care of their business first
@@ -84,20 +80,19 @@ public class WeblogTrackbackRequest extends WeblogRequest {
                 String context = pathElements[0];
                 if("entry".equals(context)) {
                     try {
-                        this.weblogAnchor = 
-                                URLDecoder.decode(pathElements[1], "UTF-8");
+                        this.weblogAnchor = URLDecoder.decode(pathElements[1], "UTF-8");
                     } catch (UnsupportedEncodingException ex) {
                         // should never happen
                         log.error(ex);
                     }
                 } else {
-                    throw new IllegalArgumentException("bad path info, " + request.getRequestURL());
+                    throw new IllegalArgumentException("bad path info: "+ request.getRequestURL());
                 }
             } else {
-                throw new IllegalArgumentException("bad path info, " + request.getRequestURL());
+                throw new IllegalArgumentException("bad path info: "+ request.getRequestURL());
             }
         } else {
-            throw new IllegalArgumentException("bad path info, " + request.getRequestURL());
+            throw new IllegalArgumentException("bad path info: "+ request.getRequestURL());
         }
         
         
@@ -147,16 +142,8 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         return blogName;
     }
 
-    public void setBlogName(String blogName) {
-        this.blogName = blogName;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getExcerpt() {
@@ -179,10 +166,6 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         return weblogAnchor;
     }
 
-    public void setWeblogAnchor(String weblogAnchor) {
-        this.weblogAnchor = weblogAnchor;
-    }
-
     public WeblogEntry getWeblogEntry() {
         
         if(weblogEntry == null && weblogAnchor != null) {
@@ -197,8 +180,4 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         return weblogEntry;
     }
 
-    public void setWeblogEntry(WeblogEntry weblogEntry) {
-        this.weblogEntry = weblogEntry;
-    }
-    
 }

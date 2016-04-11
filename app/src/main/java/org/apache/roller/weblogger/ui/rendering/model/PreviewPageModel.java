@@ -91,7 +91,7 @@ public class PreviewPageModel extends PageModel {
                     weblogEntryManager,
                     urlStrategy,
                     previewRequest.getWeblog(),
-                    previewRequest.getWeblogPageName(),
+                    previewRequest.getWeblogTemplateName(),
                     anchor,
                     null,
                     previewRequest.getTags(),

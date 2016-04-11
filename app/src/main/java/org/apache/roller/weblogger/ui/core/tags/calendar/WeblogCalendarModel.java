@@ -81,7 +81,7 @@ public class WeblogCalendarModel implements CalendarModel {
             eightCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, tz);
             sixCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_6CHARS, tz);
 
-            pageLink = pageRequest.getWeblogPageName();            
+            pageLink = pageRequest.getWeblogTemplateName();
             day = parseWeblogURLDateString(pageRequest.getWeblogDate(),
                   weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
 

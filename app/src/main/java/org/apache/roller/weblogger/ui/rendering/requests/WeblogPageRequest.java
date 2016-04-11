@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,13 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.rendering.processors.PageProcessor;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -56,7 +52,7 @@ public class WeblogPageRequest extends WeblogRequest {
     // lightweight attributes
     private String context = null;
     protected String weblogAnchor = null;
-    protected String weblogPageName = null;
+    protected String weblogTemplateName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
     private List<String> tags = null;
@@ -65,8 +61,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
-    protected Template weblogPage = null;
-    private WeblogCategory weblogCategory = null;
+    protected Template template = null;
 
     // Page hits
     private boolean websitePageHit = false;
@@ -143,7 +138,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     otherPageHit = true;
 
                 } else if ("page".equals(this.context)) {
-                    this.weblogPageName = pathElements[1];
+                    this.weblogTemplateName = pathElements[1];
                     String tagsString = request.getParameter("tags");
                     if (tagsString != null) {
                         this.tags = Utilities.splitStringAsTags(Utilities.decode(tagsString));
@@ -194,7 +189,7 @@ public class WeblogPageRequest extends WeblogRequest {
          * defined pages (for backwards compatability). this way we prevent
          * mixing of path based and query param style urls.
          */
-        if (pathInfo == null || this.weblogPageName != null) {
+        if (pathInfo == null || this.weblogTemplateName != null) {
 
             // check for entry/anchor params which indicate permalink
             if (request.getParameter("entry") != null) {
@@ -209,8 +204,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
             }
 
-            // only check for other params if we didn't find an anchor above or
-            // tags
+            // only check for other params if we didn't find an anchor above or tags
             if (this.weblogAnchor == null && this.tags == null) {
                 if (request.getParameter("date") != null) {
                     String date = request.getParameter("date");
@@ -254,7 +248,7 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("weblogDate = " + this.weblogDate);
             log.debug("weblogCategory = " + this.weblogCategoryName);
             log.debug("tags = " + this.tags);
-            log.debug("weblogPage = " + this.weblogPageName);
+            log.debug("template = " + this.weblogTemplateName);
             log.debug("pageNum = " + this.pageNum);
         }
     }
@@ -273,24 +267,12 @@ public class WeblogPageRequest extends WeblogRequest {
         return context;
     }
 
-    public void setContext(String context) {
-        this.context = context;
-    }
-
     public String getWeblogAnchor() {
         return weblogAnchor;
     }
 
-    public void setWeblogAnchor(String weblogAnchor) {
-        this.weblogAnchor = weblogAnchor;
-    }
-
-    public String getWeblogPageName() {
-        return weblogPageName;
-    }
-
-    public void setWeblogPageName(String weblogPage) {
-        this.weblogPageName = weblogPage;
+    public String getWeblogTemplateName() {
+        return weblogTemplateName;
     }
 
     public String getWeblogCategoryName() {
@@ -305,32 +287,16 @@ public class WeblogPageRequest extends WeblogRequest {
         return weblogDate;
     }
 
-    public void setWeblogDate(String weblogDate) {
-        this.weblogDate = weblogDate;
-    }
-
     public int getPageNum() {
         return pageNum;
-    }
-
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
     }
 
     public Map<String, String[]> getCustomParams() {
         return customParams;
     }
 
-    public void setCustomParams(Map<String, String[]> customParams) {
-        this.customParams = customParams;
-    }
-
     public List<String> getTags() {
         return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
     }
 
     public WeblogEntry getWeblogEntry() {
@@ -345,82 +311,26 @@ public class WeblogPageRequest extends WeblogRequest {
         return weblogEntry;
     }
 
-    public void setWeblogEntry(WeblogEntry weblogEntry) {
-        this.weblogEntry = weblogEntry;
-    }
+    public Template getWeblogTemplate() {
 
-    public Template getWeblogPage() {
-
-        if (weblogPage == null && weblogPageName != null) {
+        if (template == null && weblogTemplateName != null) {
             try {
-                weblogPage = WebloggerFactory.getWeblogger().getThemeManager().
-                        getWeblogTheme(getWeblog()).getTemplateByPath(weblogPageName);
+                template = WebloggerFactory.getWeblogger().getThemeManager().
+                        getWeblogTheme(getWeblog()).getTemplateByPath(weblogTemplateName);
             } catch (WebloggerException ex) {
-                log.error("Error getting weblog page " + weblogPageName, ex);
+                log.error("Error getting weblog page " + weblogTemplateName, ex);
             }
         }
 
-        return weblogPage;
+        return template;
     }
 
-    public void setWeblogPage(WeblogTemplate weblogPage) {
-        this.weblogPage = weblogPage;
-    }
-
-    public WeblogCategory getWeblogCategory() {
-        if (weblogCategory == null && weblogCategoryName != null) {
-            try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName);
-            } catch (WebloggerException ex) {
-                log.error(
-                        "Error getting weblog category " + weblogCategoryName,
-                        ex);
-            }
-        }
-        return weblogCategory;
-    }
-
-    public void setWeblogCategory(WeblogCategory weblogCategory) {
-        this.weblogCategory = weblogCategory;
-    }
-
-    /**
-     * Checks if is website page hit.
-     * 
-     * @return true, if is website page hit
-     */
     public boolean isWebsitePageHit() {
         return websitePageHit;
     }
 
-    /**
-     * Sets the website page hit.
-     * 
-     * @param websitePageHit
-     *            the new website page hit
-     */
-    public void setWebsitePageHit(boolean websitePageHit) {
-        this.websitePageHit = websitePageHit;
-    }
-
-    /**
-     * Checks if is other page hit.
-     * 
-     * @return true, if is other page hit
-     */
     public boolean isOtherPageHit() {
         return otherPageHit;
-    }
-
-    /**
-     * Sets the other page hit.
-     * 
-     * @param otherPageHit
-     *            the new other page hit
-     */
-    public void setOtherPageHit(boolean otherPageHit) {
-        this.otherPageHit = otherPageHit;
     }
 
 }

@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import java.util.List;
@@ -27,14 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.ui.rendering.processors.FeedProcessor;
 import org.apache.roller.weblogger.util.Utilities;
-
 
 /**
  * Represents a request for a Roller weblog feed.
@@ -48,20 +42,12 @@ public class WeblogFeedRequest extends WeblogRequest {
     
     private static Log log = LogFactory.getLog(WeblogFeedRequest.class);
     
-    // lightweight attributes
     private String type = null;
     private String format = null;
     private String weblogCategoryName = null;
     private List<String> tags = null;
     private int    page = 0;
-    private boolean excerpts = false;
 
-    // heavyweight attributes
-    private WeblogCategory weblogCategory = null;
-
-    public WeblogFeedRequest() {}
-    
-    
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
@@ -77,7 +63,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
         
         // parse the request object and figure out what we've got
-        log.debug("parsing path "+pathInfo);
+        log.debug("parsing path " + pathInfo);
         
         // was this request bound for the feed servlet?
         if(servlet == null || !FeedProcessor.PATH.equals(servlet)) {
@@ -106,15 +92,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
         }
         
-        
-        /* 
-         * parse request parameters
-         *
-         * the only params we currently care about are:
-         *   cat - specifies a weblog category
-         *   excerpts - specifies the feed should only include excerpts
-         *
-         */
+        // parse request parameters
         if(request.getParameter("cat") != null) {
             // replacing plus sign below with its encoded equivalent (http://stackoverflow.com/a/6926987)
             this.weblogCategoryName =
@@ -129,10 +107,6 @@ public class WeblogFeedRequest extends WeblogRequest {
                         + request.getRequestURL());
             }
         }        
-        
-        if(request.getParameter("excerpts") != null) {
-            this.excerpts = Boolean.valueOf(request.getParameter("excerpts"));
-        }
         
         if(request.getParameter("page") != null) {
             try {
@@ -151,7 +125,6 @@ public class WeblogFeedRequest extends WeblogRequest {
             log.debug("format = "+this.format);
             log.debug("weblogCategory = "+this.weblogCategoryName);
             log.debug("tags = "+this.tags);
-            log.debug("excerpts = "+this.excerpts);
         }
     }
 
@@ -159,68 +132,19 @@ public class WeblogFeedRequest extends WeblogRequest {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getFormat() {
         return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
     }
 
     public String getWeblogCategoryName() {
         return weblogCategoryName;
     }
 
-    public void setWeblogCategoryName(String weblogCategory) {
-        this.weblogCategoryName = weblogCategory;
-    }
-    
     public List<String> getTags() {
       return tags;
     }
 
-    public void setTags(List<String> tags) {
-      this.tags = tags;
-    }
-
-    public boolean isExcerpts() {
-        return excerpts;
-    }
-
-    public void setExcerpts(boolean excerpts) {
-        this.excerpts = excerpts;
-    }
-
-    public WeblogCategory getWeblogCategory() {
-        
-        if(weblogCategory == null && weblogCategoryName != null) {
-            try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName);
-            } catch (WebloggerException ex) {
-                log.error("Error getting weblog category "+weblogCategoryName, ex);
-            }
-        }
-        
-        return weblogCategory;
-    }
-
-    public void setWeblogCategory(WeblogCategory weblogCategory) {
-        this.weblogCategory = weblogCategory;
-    }
-
-
     public int getPage() {
         return page;
     }
-
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
 }

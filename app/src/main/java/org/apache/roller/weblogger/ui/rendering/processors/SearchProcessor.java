@@ -168,8 +168,7 @@ public class SearchProcessor {
             // pageRequest.
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
-            pageRequest.setWeblogCategoryName(searchRequest
-                    .getWeblogCategoryName());
+            pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
             pageRequest.setDeviceType(searchRequest.getDeviceType());
             initData.put("parsedRequest", pageRequest);
             initData.put("searchRequest", searchRequest);

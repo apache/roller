@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,17 +31,11 @@ import org.apache.commons.logging.LogFactory;
  * /tb-ui/rendering/media-resources/*
  */
 public class WeblogMediaResourceRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogMediaResourceRequest.class);
         
-    // lightweight attributes
     private String resourceId = null;
-
     private boolean thumbnail = false;
-    
-    
-    public WeblogMediaResourceRequest() {}
-    
     
     /**
      * Construct the WeblogResourceRequest by parsing the incoming url
@@ -56,10 +52,7 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
                 
-        
-        /* 
-         * any id is okay...
-         */
+        // any id is okay...
         if (pathInfo != null && pathInfo.trim().length() > 1) {
             
             this.resourceId = pathInfo;
@@ -84,21 +77,8 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
         return resourceId;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-            
-    /**
-     * @return the thumbnail
-     */
     public boolean isThumbnail() {
         return thumbnail;
     }
 
-    /**
-     * @param thumbnail the thumbnail to set
-     */
-    public void setThumbnail(boolean thumbnail) {
-        this.thumbnail = thumbnail;
-    }
 }

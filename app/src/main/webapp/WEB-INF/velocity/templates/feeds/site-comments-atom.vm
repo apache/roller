@@ -22,8 +22,8 @@
     <title type="html">$utils.escapeXML($config.siteName) (Comments)</title>
     <id>$url.feed.comments.atom</id>
     <link rel="alternate" type="text/html" href="$url.home" />
-    <id>$url.feed.comments.atom($model.categoryName, $model.excerpts)</id>
-    <link rel="self" type="application/atom+xml" href="$url.feed.comments.atom($model.categoryName, $model.excerpts)" />
+    <id>$url.feed.comments.atom($model.categoryName)</id>
+    <link rel="self" type="application/atom+xml" href="$url.feed.comments.atom($model.categoryName)" />
     #if($config.feedHistoryEnabled)
         #showFeedHistory($pager)
     #end    

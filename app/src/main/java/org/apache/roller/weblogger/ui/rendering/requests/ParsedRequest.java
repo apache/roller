@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +31,7 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
 
 /**
- * An abstract class representing any request made to Roller that has been
+ * An abstract class representing any request that needs to be
  * parsed in order to extract relevant pieces of information from the url.
  *
  * NOTE: It is extremely important to mention that this class and all of its
@@ -43,21 +45,16 @@ public abstract class ParsedRequest {
     
     private static Log log = LogFactory.getLog(ParsedRequest.class);
     
-    HttpServletRequest request = null;
-    
     // lightweight attributes
     private String authenticUser = null;
 
-    private MobileDeviceRepository.DeviceType deviceType = 
-			MobileDeviceRepository.DeviceType.standard;
+    private MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.DeviceType.standard;
     
     // heavyweight attributes
     private User user = null;
     
-    
-    ParsedRequest() {}
-    
-    
+    public ParsedRequest() {}
+
     /**
      * Parse the given http request and extract any information we can.
      *
@@ -65,29 +62,20 @@ public abstract class ParsedRequest {
      * relevant to all requests to Roller.
      */
     public ParsedRequest(HttpServletRequest request) {
-        
-        // keep a reference to the original request
-        this.request = request;
-        
+
         // login status
-        java.security.Principal prince = request.getUserPrincipal();
-        if(prince != null) {
-            this.authenticUser = prince.getName();
+        java.security.Principal principal = request.getUserPrincipal();
+        if (principal != null) {
+            this.authenticUser = principal.getName();
         }
         // set the detected type of the request
         deviceType = MobileDeviceRepository.getRequestType(request);
     }
     
-    
     public String getAuthenticUser() {
         return this.authenticUser;
     }
-    
-    
-    public void setAuthenticUser(String authenticUser) {
-        this.authenticUser = authenticUser;
-    }
-    
+
     public User getUser() {
         if(user == null && authenticUser != null) {
             try {
@@ -99,10 +87,6 @@ public abstract class ParsedRequest {
             }
         }
         return user;
-    }
-
-    public void setUser(User u) {
-        this.user = u;
     }
 
     public boolean isLoggedIn() {

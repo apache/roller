@@ -44,7 +44,6 @@ public class FeedModel implements Model {
     private static int DEFAULT_ENTRIES = 0;
     
     private WeblogFeedRequest feedRequest = null;
-    private Weblog weblog = null;
 
     private URLStrategy urlStrategy = null;
 
@@ -82,9 +81,6 @@ public class FeedModel implements Model {
             throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
         }
-        
-        // extract weblog object
-        weblog = feedRequest.getWeblog();
     }
     
     
@@ -97,17 +93,8 @@ public class FeedModel implements Model {
      * Get weblog being displayed.
      */
     public Weblog getWeblog() {
-        return weblog;
+        return feedRequest.getWeblog();
     }
-    
-    
-    /**
-     * Get category path or name specified by request.
-     */
-    public boolean getExcerpts() {
-        return feedRequest.isExcerpts();
-    }
-    
     
     /**
      * Get category path or name specified by request.
@@ -154,7 +141,7 @@ public class FeedModel implements Model {
         @Override
         public String getHomeLink() {
             return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null, false, true);
+                    feedRequest.getFormat(), null, null, null, true);
         }
 
     }
@@ -167,7 +154,7 @@ public class FeedModel implements Model {
             super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
-                    null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+                    null, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
             this.feedRequest = feedRequest;
         }
         
@@ -180,9 +167,6 @@ public class FeedModel implements Model {
             if(category != null && category.trim().length() > 0) {
                 params.put("cat", Utilities.encode(category));
             }  
-            if(feedRequest.isExcerpts()) {
-                params.put("excerpts", "true");
-            }   
             return super.createURL(url, params);
         }
         

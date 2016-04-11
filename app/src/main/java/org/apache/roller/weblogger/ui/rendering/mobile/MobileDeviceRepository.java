@@ -91,16 +91,15 @@ public class MobileDeviceRepository {
                     : DeviceType.mobile;
         }
 
-        String cookie = getCookieValue(request.getCookies(), USER_REQUEST_TYPE,
-                null);
+        String cookie = getCookieValue(request.getCookies(), USER_REQUEST_TYPE, null);
         if (cookie != null) {
-            return cookie.equals("standard") ? DeviceType.standard
-                    : DeviceType.mobile;
+            return cookie.equals("standard") ? DeviceType.standard : DeviceType.mobile;
         }
 
         if (isMobileDevice(request)) {
             type = DeviceType.mobile;
         }
+
         return type;
     }
 

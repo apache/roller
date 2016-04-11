@@ -21,34 +21,17 @@
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.ui.rendering.processors.SearchProcessor;
 import org.apache.roller.weblogger.util.Utilities;
-
 
 /**
  * Represents a request for a weblog preview.
  */
 public class WeblogSearchRequest extends WeblogRequest {
-    
-    private static Log log = LogFactory.getLog(WeblogSearchRequest.class);
-    
-    // lightweight attributes
+
     private String query = null;
     private int pageNum = 0;
     private String weblogCategoryName = null;
-    
-    // heavyweight attributes
-    private WeblogCategory weblogCategory = null;
-    
-    
-    public WeblogSearchRequest() {}
-    
     
     public WeblogSearchRequest(HttpServletRequest request) {
         
@@ -72,11 +55,10 @@ public class WeblogSearchRequest extends WeblogRequest {
                     request.getRequestURL());
         }
         
-        
         /*
          * parse request parameters
          *
-         * the only params we currently care about are:
+         * the params we care about are:
          *   q - specifies the search query
          *   pageNum - specifies what pageNum # to display
          *   cat - limit results to a certain weblogCategoryName
@@ -106,41 +88,12 @@ public class WeblogSearchRequest extends WeblogRequest {
         return query;
     }
 
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
     public int getPageNum() {
         return pageNum;
-    }
-
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
     }
 
     public String getWeblogCategoryName() {
         return weblogCategoryName;
     }
 
-    public void setWeblogCategoryName(String weblogCategory) {
-        this.weblogCategoryName = weblogCategory;
-    }
-
-    public WeblogCategory getWeblogCategory() {
-        if(weblogCategory == null && weblogCategoryName != null) {
-            try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName);
-            } catch (WebloggerException ex) {
-                log.error("Error getting weblog category " + weblogCategoryName, ex);
-            }
-        }
-        
-        return weblogCategory;
-    }
-
-    public void setWeblogCategory(WeblogCategory weblogCategory) {
-        this.weblogCategory = weblogCategory;
-    }
-    
 }
