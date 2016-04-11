@@ -20,9 +20,6 @@
  */
 package org.apache.roller.weblogger.util;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
@@ -45,14 +42,14 @@ public class BlacklistTest extends WebloggerTest {
     @Test
     public void testIsNotBlacklisted() {
         Weblog weblog = new Weblog();
-        assertFalse(weblog.getWeblogBlacklist().isBlacklisted("four score and seven years ago.com"));
+        assertFalse(weblogManager.getWeblogBlacklist(weblog).isBlacklisted("four score and seven years ago.com"));
     }
 
     @Test
     public void testIsBlacklisted() {
         Weblog weblog = new Weblog();
         weblog.setBlacklist("www.myblacklistedsite.com");
-        assertTrue(weblog.getWeblogBlacklist().isBlacklisted("www.myblacklistedsite.com"));
+        assertTrue(weblogManager.getWeblogBlacklist(weblog).isBlacklisted("www.myblacklistedsite.com"));
     }
 
 }

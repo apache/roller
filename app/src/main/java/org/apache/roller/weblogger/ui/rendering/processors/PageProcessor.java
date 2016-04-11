@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
@@ -57,14 +58,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 /**
  * Rendering processor that provides access to weblog pages.
@@ -97,6 +95,13 @@ public class PageProcessor {
 
     public void setSiteWideCache(SiteWideCache siteWideCache) {
         this.siteWideCache = siteWideCache;
+    }
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -522,8 +527,10 @@ public class PageProcessor {
             }
             String requestSite = requestUrl.substring(0, lastSlash);
 
+            Blacklist testBlacklist = weblogManager.getWeblogBlacklist(pageRequest.getWeblog());
+
             if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
-                    pageRequest.getWeblog().getWeblogBlacklist().isBlacklisted(referrerUrl)) {
+                    testBlacklist.isBlacklisted(referrerUrl)) {
                 return true;
             }
         } else {

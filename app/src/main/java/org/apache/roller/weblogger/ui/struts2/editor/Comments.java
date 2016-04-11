@@ -351,7 +351,7 @@ public class Comments extends UIAction {
 
                             log.debug("Marking as approved - " + comment.getId());
                             comment.setStatus(ApprovalStatus.APPROVED);
-                            weblogEntryManager.saveComment(comment);
+                            weblogEntryManager.saveComment(comment, true);
 
                             flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                             reindexList.add(comment.getWeblogEntry());
@@ -360,7 +360,7 @@ public class Comments extends UIAction {
                         if (!ApprovalStatus.SPAM.equals(comment.getStatus())) {
                             log.debug("Marking as spam - " + comment.getId());
                             comment.setStatus(ApprovalStatus.SPAM);
-                            weblogEntryManager.saveComment(comment);
+                            weblogEntryManager.saveComment(comment, true);
 
                             flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                             reindexList.add(comment.getWeblogEntry());
@@ -369,7 +369,7 @@ public class Comments extends UIAction {
                             && !(isGlobalCommentManagement() && ApprovalStatus.APPROVED.equals(comment.getStatus()))) {
                         log.debug("Marking as disapproved - " + comment.getId());
                         comment.setStatus(ApprovalStatus.DISAPPROVED);
-                        weblogEntryManager.saveComment(comment);
+                        weblogEntryManager.saveComment(comment, true);
 
                         flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                         reindexList.add(comment.getWeblogEntry());
@@ -534,7 +534,7 @@ public class Comments extends UIAction {
                     c.setContent(content);
                     // don't update the posttime when updating the comment
                     c.setPostTime(c.getPostTime());
-                    weblogEntryManager.saveComment(c);
+                    weblogEntryManager.saveComment(c, true);
                     WebloggerFactory.flush();
                     return getComment(id, p, response);
                 } else {

@@ -152,7 +152,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         for (Object prop : properties.values()) {
             this.strategy.store(prop);
         }
-        siteBlacklist = new Blacklist(getStringProperty("spam.blacklist"), false);
+        siteBlacklist = new Blacklist(getStringProperty("spam.blacklist"), null);
     }
     
 

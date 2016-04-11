@@ -259,7 +259,7 @@ abstract public class WebloggerTest {
         testComment.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
 
         // store testComment
-        weblogEntryManager.saveComment(testComment);
+        weblogEntryManager.saveComment(testComment, true);
 
         // flush to db
         strategy.flush();

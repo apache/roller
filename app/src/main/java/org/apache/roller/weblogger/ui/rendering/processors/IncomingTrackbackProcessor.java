@@ -135,6 +135,7 @@ public class IncomingTrackbackProcessor {
 
         Weblog weblog = null;
         WeblogEntry entry = null;
+        boolean commentApprovalRequired = true;
 
         RollerMessages messages = new RollerMessages();
 
@@ -165,6 +166,8 @@ public class IncomingTrackbackProcessor {
                     throw new WebloggerException("unable to lookup weblog: "+
                             trackbackRequest.getWeblogHandle());
                 }
+
+                commentApprovalRequired = globalCommentModerationRequired || weblog.getApproveComments();
 
                 // lookup entry specified by comment request
                 entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
@@ -205,8 +208,7 @@ public class IncomingTrackbackProcessor {
                 int validationScore = commentValidationManager.validateComment(comment, messages);
                 log.debug("Comment Validation score: " + validationScore);
 
-                if (validationScore == WebloggerCommon.PERCENT_100 &&
-                        (globalCommentModerationRequired || weblog.getApproveComments())) {
+                if (validationScore == WebloggerCommon.PERCENT_100 && commentApprovalRequired) {
                     // Valid comments go into moderation if required
                     comment.setStatus(ApprovalStatus.PENDING);
                 } else if (validationScore == WebloggerCommon.PERCENT_100) {
@@ -221,11 +223,12 @@ public class IncomingTrackbackProcessor {
                 if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
                         !propertiesManager.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
 
-                    weblogEntryManager.saveComment(comment);
+                    boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(comment.getStatus());
+                    weblogEntryManager.saveComment(comment, refreshWeblog);
                     WebloggerFactory.flush();
 
                     // only invalidate the cache if comment isn't moderated
-                    if (!(globalCommentModerationRequired || weblog.getApproveComments())) {
+                    if (!commentApprovalRequired) {
                         // Clear all caches associated with comment
                         cacheManager.invalidate(comment);
                     }

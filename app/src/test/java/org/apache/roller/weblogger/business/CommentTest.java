@@ -99,7 +99,7 @@ public class CommentTest extends WebloggerTest {
         comment.setStatus(ApprovalStatus.APPROVED);
         
         // create a comment
-        weblogEntryManager.saveComment(comment);
+        weblogEntryManager.saveComment(comment, true);
         String id = comment.getId();
         endSession(true);
         
@@ -110,7 +110,7 @@ public class CommentTest extends WebloggerTest {
         
         // update a comment
         comment.setContent("testtest");
-        weblogEntryManager.saveComment(comment);
+        weblogEntryManager.saveComment(comment, true);
         endSession(true);
         
         // make sure comment was updated
@@ -158,7 +158,7 @@ public class CommentTest extends WebloggerTest {
         // make some changes
         comment3 = weblogEntryManager.getComment(comment3.getId());
         comment3.setStatus(ApprovalStatus.PENDING);
-        weblogEntryManager.saveComment(comment3);
+        weblogEntryManager.saveComment(comment3, false);
         endSession(true);
         
         // get pending comments
