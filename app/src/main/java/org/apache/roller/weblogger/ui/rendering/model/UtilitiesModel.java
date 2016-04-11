@@ -33,9 +33,9 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.ParsedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**

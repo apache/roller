@@ -23,7 +23,7 @@ import java.security.SecureRandom;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache;
+import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

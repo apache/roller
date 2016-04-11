@@ -26,8 +26,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPreviewRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 /**
  * An extension of the PageModel to make some adjustments for previewing.

@@ -28,8 +28,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
 import org.apache.roller.weblogger.ui.core.tags.calendar.WeblogCalendarModel;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 
 /**

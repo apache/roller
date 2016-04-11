@@ -283,13 +283,13 @@
     <beans:bean id="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
             <beans:list>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator">
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.BlacklistCommentValidator">
                     <beans:property name="weblogManager" ref="weblogManager"/>
                 </beans:bean>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator"/>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator"/>
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.ExcessLinksCommentValidator"/>
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.ExcessSizeCommentValidator"/>
                 <!--Akismet requires user-specific configuration -->
-                <!--beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.AkismetCommentValidator">
+                <!--beans:bean class="org.apache.roller.weblogger.ui.rendering.comments.AkismetCommentValidator">
                     <beans:property name="urlStrategy" ref="urlStrategy"/>
                 </beans:bean-->
             </beans:list>
@@ -299,7 +299,7 @@
     <beans:bean id="trackbackValidatorList" parent="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
             <beans:list merge="true">
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.TrackbackLinkbackCommentValidator">
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.TrackbackLinkbackCommentValidator">
                     <beans:property name="urlStrategy" ref="urlStrategy"/>
                 </beans:bean>
             </beans:list>
@@ -312,12 +312,12 @@
          approval.
 
          Also available:
-         org.apache.roller.weblogger.ui.rendering.plugins.comments.LdapCommentAuthenticator - must be logged into
+         org.apache.roller.weblogger.ui.rendering.comments.LdapCommentAuthenticator - must be logged into
              the LDAP defined for the blog
-         org.apache.roller.weblogger.ui.rendering.plugins.comments.DefaultCommentAuthenticator - no test, accept
+         org.apache.roller.weblogger.ui.rendering.comments.DefaultCommentAuthenticator - no test, accept
              everything immediately.  Provides no protection against robots leaving messages.
     -->
-    <beans:bean id="commentAuthenticator" class="org.apache.roller.weblogger.ui.rendering.plugins.comments.MathCommentAuthenticator"/>
+    <beans:bean id="commentAuthenticator" class="org.apache.roller.weblogger.ui.rendering.comment.MathCommentAuthenticator"/>
 
     <!-- Restricted URLs that may not represent blogs:  Used by the RequestMappingFilter to quickly toss-out non-blog URLs.
          Should be kept as-is.  To add items to this list, override and add to the subsequent customProtectedUrls element
@@ -353,7 +353,7 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="RequestMappingFilter" class="org.apache.roller.weblogger.ui.rendering.filters.RequestMappingFilter">
+    <beans:bean id="RequestMappingFilter" class="org.apache.roller.weblogger.ui.core.filters.RequestMappingFilter">
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="restrictedUrls" ref="customProtectedUrls"/>
     </beans:bean>
@@ -363,32 +363,32 @@
         <beans:property name="cacheManager" ref="cacheManager"/>
     </beans:bean>
 
-    <beans:bean id="weblogPageCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache">
+    <beans:bean id="weblogPageCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogpage"/>
         <beans:property name="size" value="400"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
-    <beans:bean id="weblogBlacklistCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache">
+    <beans:bean id="weblogBlacklistCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogblacklist"/>
         <beans:property name="size" value="200"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
-    <beans:bean id="weblogFeedCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache">
+    <beans:bean id="weblogFeedCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogfeed"/>
         <beans:property name="size" value="200"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
-    <beans:bean id="siteWideCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache">
+    <beans:bean id="siteWideCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.SiteWideCache">
         <beans:property name="cacheHandlerId" value="cache.sitewide"/>
         <beans:property name="size" value="50"/>
         <beans:property name="timeoutSec" value="1800"/>
         <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
-    <beans:bean id="planetCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache">
+    <beans:bean id="planetCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.ExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.planet"/>
         <beans:property name="size" value="10"/>
         <beans:property name="timeoutSec" value="1800"/>
@@ -399,7 +399,7 @@
       must be accompanied by a valid salt value, i.e. one generated by Weblogger. Should always
       be kept enabled.
     -->
-    <beans:bean id="saltCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache">
+    <beans:bean id="saltCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.ExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.salt"/>
         <beans:property name="size" value="5000"/>
         <beans:property name="timeoutSec" value="3600"/>

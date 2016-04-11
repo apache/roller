@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPreviewRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
 import javax.annotation.PostConstruct;

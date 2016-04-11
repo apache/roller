@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.ui.rendering.util.cache.ExpiringCache;
+import org.apache.roller.weblogger.util.cache.ExpiringCache;
 
 /**
  * Filter checks all POST request for presence of valid salt value and rejects

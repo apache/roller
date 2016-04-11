@@ -36,8 +36,8 @@ import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.PlanetEntriesPager;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 /**
  * Model that provides access to planet aggregations, feeds and subscriptions.

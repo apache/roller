@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 
 
 /**
