@@ -132,8 +132,11 @@ public interface WeblogEntryManager {
 
     /**
      * Save comment.
+     * @param refreshWeblog true if weblog should be marked for cache update, i.e., likely
+     *                      rendering change to accommodate new or removed comment, vs. one
+     *                      still requiring moderation.
      */
-    void saveComment(WeblogEntryComment comment) throws WebloggerException;
+    void saveComment(WeblogEntryComment comment, boolean refreshWeblog) throws WebloggerException;
     
     /**
      * Remove comment.

@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -115,10 +114,6 @@ public class Weblog implements Serializable {
     private List<WeblogCategory> weblogCategories = new ArrayList<>();
     private List<WeblogBookmark> bookmarks = new ArrayList<>();
     private List<MediaDirectory> mediaDirectories = new ArrayList<>();
-
-    // Transient objects
-    // Once initialized, Blacklist object holds both server-defined + weblog-specific rules
-    Blacklist weblogBlacklist = null;
 
     public Weblog() {}
     
@@ -618,19 +613,6 @@ public class Weblog implements Serializable {
 
     public void setApplyCommentDefaults(boolean applyCommentDefaults) {
         this.applyCommentDefaults = applyCommentDefaults;
-    }
-
-    @Transient
-    public Blacklist getWeblogBlacklist() {
-        if (weblogBlacklist == null) {
-            if (StringUtils.isEmpty(blacklist)) {
-                // just rely on the site blacklist if no overrides
-                weblogBlacklist = WebloggerFactory.getWeblogger().getPropertiesManager().getSiteBlacklist();
-            } else {
-                weblogBlacklist = new Blacklist(blacklist);
-            }
-        }
-        return weblogBlacklist;
     }
 
     //------------------------------------------------------- Good citizenship

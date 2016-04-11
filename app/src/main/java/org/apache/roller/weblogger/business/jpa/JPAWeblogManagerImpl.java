@@ -21,15 +21,18 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
@@ -47,10 +50,13 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache;
+import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -69,6 +75,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private static Log log = LogFactory.getLog(JPAWeblogManagerImpl.class);
     
     private UserManager userManager;
+    private PropertiesManager propertiesManager;
+    private LazyExpiringCache weblogBlacklistCache = null;
     private final WeblogEntryManager weblogEntryManager;
     private final MediaFileManager mediaFileManager;
     private final IndexManager indexManager;
@@ -76,9 +84,18 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
 
+    public void setWeblogBlacklistCache(LazyExpiringCache weblogBlacklistCache) {
+        this.weblogBlacklistCache = weblogBlacklistCache;
+    }
+
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
 
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
@@ -883,5 +900,23 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         q.setParameter(1, cat);
         int entryCount = q.getResultList().size();
         return entryCount > 0;
+    }
+
+    @Override
+    public Blacklist getWeblogBlacklist(Weblog weblog) {
+        if (StringUtils.isEmpty(weblog.getBlacklist())) {
+            // just rely on the global blacklist if no overrides
+            return propertiesManager.getSiteBlacklist();
+        } else {
+            Blacklist bl = (Blacklist) weblogBlacklistCache.get(weblog.getHandle(),
+                    weblog.getLastModified().getTime());
+
+            if (bl == null) {
+                bl = new Blacklist(weblog.getBlacklist(), propertiesManager.getSiteBlacklist());
+                weblogBlacklistCache.put(weblog.getHandle(), bl);
+            }
+
+            return bl;
+        }
     }
 }

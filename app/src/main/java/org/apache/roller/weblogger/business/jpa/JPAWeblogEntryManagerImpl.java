@@ -95,8 +95,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public void saveComment(WeblogEntryComment comment) throws WebloggerException {
-        comment.getWeblogEntry().getWeblog().invalidateCache();
+    public void saveComment(WeblogEntryComment comment, boolean refreshWeblog) throws WebloggerException {
+        if (refreshWeblog) {
+            comment.getWeblogEntry().getWeblog().invalidateCache();
+        }
         this.strategy.store(comment);
     }
     

@@ -21,14 +21,10 @@
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.regex.Pattern;
 
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -41,6 +37,12 @@ public class BlacklistCommentValidator implements CommentValidator {
 
     public String getName() {
         return bundle.getString("comment.validator.blacklistName");
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
@@ -57,7 +59,8 @@ public class BlacklistCommentValidator implements CommentValidator {
      */
     private boolean checkComment(WeblogEntryComment comment) {
         boolean isBlacklisted = false;
-        Blacklist bl = comment.getWeblogEntry().getWeblog().getWeblogBlacklist();
+
+        Blacklist bl = weblogManager.getWeblogBlacklist(comment.getWeblogEntry().getWeblog());
 
         if (bl.isBlacklisted(comment.getUrl())
                 || bl.isBlacklisted(comment.getEmail())

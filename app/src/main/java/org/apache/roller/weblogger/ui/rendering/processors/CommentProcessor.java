@@ -177,6 +177,7 @@ public class CommentProcessor {
 
         Weblog weblog;
         WeblogEntry entry;
+        boolean commentApprovalRequired;
 
         String message = null;
         RollerMessages messages = new RollerMessages();
@@ -212,6 +213,8 @@ public class CommentProcessor {
             if (weblog == null) {
                 throw new WebloggerException("unable to lookup weblog: " + commentRequest.getWeblogHandle());
             }
+
+            commentApprovalRequired = globalCommentModerationRequired || weblog.getApproveComments();
 
             // lookup entry specified by comment request
             entry = commentRequest.getWeblogEntry();
@@ -319,8 +322,7 @@ public class CommentProcessor {
         log.debug("Comment Validation score: " + validationScore);
 
         if (!preview) {
-            if (validationScore == WebloggerCommon.PERCENT_100 &&
-                    (globalCommentModerationRequired || weblog.getApproveComments())) {
+            if (validationScore == WebloggerCommon.PERCENT_100 && commentApprovalRequired) {
                 // Valid comments go into moderation if required
                 comment.setStatus(ApprovalStatus.PENDING);
                 message = messageUtils.getString("commentServlet.submittedToModerator");
@@ -363,7 +365,8 @@ public class CommentProcessor {
                 if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
                         !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled")) {
 
-                    weblogEntryManager.saveComment(comment);
+                    boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(comment.getStatus());
+                    weblogEntryManager.saveComment(comment, refreshWeblog);
                     WebloggerFactory.flush();
 
                     // Send email notifications only to subscribers if comment is 100% valid
@@ -371,7 +374,7 @@ public class CommentProcessor {
                     mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
 
                     // only re-index/invalidate the cache if comment isn't moderated
-                    if (!(globalCommentModerationRequired || weblog.getApproveComments())) {
+                    if (!commentApprovalRequired) {
 
                         // remove entry before (re)adding it, or in case it
                         // isn't Published

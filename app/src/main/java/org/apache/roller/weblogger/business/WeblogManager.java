@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.util.Blacklist;
 
 /**
  * Interface to weblog and weblog custom template management.
@@ -320,17 +321,17 @@ public interface WeblogManager {
             throws WebloggerException;
 
     /**
-     * Get category specified by website and name.
-     * @param website      Website of WeblogCategory.
+     * Get category specified by weblog and name.
+     * @param weblog      Weblog of WeblogCategory.
      * @param categoryName Name of WeblogCategory
      */
-    WeblogCategory getWeblogCategoryByName(Weblog website,
+    WeblogCategory getWeblogCategoryByName(Weblog weblog,
                                            String categoryName) throws WebloggerException;
 
     /**
      * Get WebLogCategory objects for a website.
      */
-    List<WeblogCategory> getWeblogCategories(Weblog website)
+    List<WeblogCategory> getWeblogCategories(Weblog weblog)
             throws WebloggerException;
 
     /**
@@ -344,4 +345,8 @@ public interface WeblogManager {
      */
     boolean isWeblogCategoryInUse(WeblogCategory data);
 
+    /**
+     * Obtain the combined blacklist (global-defined & weblog-defined) for a given weblog.
+     */
+    Blacklist getWeblogBlacklist(Weblog weblog);
 }

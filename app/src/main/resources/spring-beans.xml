@@ -85,6 +85,8 @@
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:constructor-arg ref="cacheManager"/>
         <beans:property name="userManager" ref="userManager"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
+        <beans:property name="weblogBlacklistCache" ref="weblogBlacklistCache"/>
     </beans:bean>
 
     <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
@@ -278,10 +280,12 @@
     </beans:bean>
 
     <!-- Comment Validators -->
-    <beans:bean name="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <beans:bean id="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
             <beans:list>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator"/>
+                <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator">
+                    <beans:property name="weblogManager" ref="weblogManager"/>
+                </beans:bean>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator"/>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator"/>
                 <!--Akismet requires user-specific configuration -->
@@ -362,6 +366,12 @@
     <beans:bean id="weblogPageCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogpage"/>
         <beans:property name="size" value="400"/>
+        <beans:property name="timeoutSec" value="3600"/>
+    </beans:bean>
+
+    <beans:bean id="weblogBlacklistCache" parent="abstractCache" class="org.apache.roller.weblogger.ui.rendering.util.cache.LazyExpiringCache">
+        <beans:property name="cacheHandlerId" value="cache.weblogblacklist"/>
+        <beans:property name="size" value="200"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 

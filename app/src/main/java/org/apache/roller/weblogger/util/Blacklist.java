@@ -29,7 +29,6 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
  * Allows callers to test strings against site-level and weblog-level defined blacklist terms.
@@ -45,12 +44,8 @@ public final class Blacklist {
     private List<String> stringRules = new ArrayList<>();
     private List<Pattern> regexRules = new ArrayList<>();
 
-    public Blacklist(String weblogBlacklist) {
-        this(weblogBlacklist, true);
-    }
-
-    public Blacklist(String weblogBlacklist, boolean includeSiteBlacklist) {
-        populateSpamRules(weblogBlacklist, includeSiteBlacklist);
+    public Blacklist(String weblogBlacklist, Blacklist parentBlacklist) {
+        populateSpamRules(weblogBlacklist, parentBlacklist);
     }
 
     public boolean isBlacklisted(String str) {
@@ -141,19 +136,18 @@ public final class Blacklist {
         return matches;
     }   
     
-    /** Populate lists based on weblog and site blacklists
-     * @param weblogBlacklist String of string and/or regEx rules (e.g., weblog list)
-     * @param includeSiteBlacklist whether to add the site blacklist to the rules
+    /** Populate rules for this instance
+     * @param weblogBlacklist String of string and/or regEx rules
+     * @param parentBlacklist Optional blacklist whose elements are to be added to this instance.
      **/
-    private void populateSpamRules(String weblogBlacklist, boolean includeSiteBlacklist) {
+    private void populateSpamRules(String weblogBlacklist, Blacklist parentBlacklist) {
         if (weblogBlacklist == null) {
             weblogBlacklist = "";
         }
 
-        if (includeSiteBlacklist) {
-            Blacklist siteBlacklist = WebloggerFactory.getWeblogger().getPropertiesManager().getSiteBlacklist();
-            regexRules.addAll(siteBlacklist.getRegexRules());
-            stringRules.addAll(siteBlacklist.getStringRules());
+        if (parentBlacklist != null) {
+            regexRules.addAll(parentBlacklist.getRegexRules());
+            stringRules.addAll(parentBlacklist.getStringRules());
         }
 
         StringTokenizer toker = new StringTokenizer(weblogBlacklist, "\n");

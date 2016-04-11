@@ -198,7 +198,7 @@ public class WeblogConfig extends UIAction {
         // check blacklist
         try {
             // just for testing/counting, this does not persist rules in any way
-            Blacklist testBlacklist = new Blacklist(bean.getBlacklist(), false);
+            Blacklist testBlacklist = new Blacklist(bean.getBlacklist(), null);
             addMessage("websiteSettings.acceptedBlacklist",
                     Arrays.asList(new String[] {"" + testBlacklist.getStringRulesCount(),
                             "" + testBlacklist.getRegexRulesCount()}));
