@@ -22,8 +22,8 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPreviewRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 /**
  * Special subclass of URLModel which can change some of the urls which are

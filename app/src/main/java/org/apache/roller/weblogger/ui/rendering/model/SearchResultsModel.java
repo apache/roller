@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesSearchPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
 /**

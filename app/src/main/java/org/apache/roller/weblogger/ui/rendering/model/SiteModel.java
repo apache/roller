@@ -48,9 +48,9 @@ import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.UsersPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogsPager;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 
 /**

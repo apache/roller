@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
 /**
