@@ -163,17 +163,6 @@ public interface UserManager {
 
     //-------------------------------------------------------- WeblogRoles CRUD
 
-
-    /**
-     * Check user's rights given a weblog handle
-     * @param user    User whose role is being checked
-     * @param weblogHandle target weblog handle of the role
-     * @param role    Minimum WeblogRole being checked for
-     * @return true if user has WeblogRole or a more powerful one
-     * @throws WebloggerException If no weblog could be found for the handle
-     */
-    boolean checkWeblogRole(User user, String weblogHandle, WeblogRole role) throws WebloggerException;
-
     /**
      * Check user's rights for a specified weblog
      * @param user    User whose role is being checked
@@ -182,8 +171,40 @@ public interface UserManager {
      * @return true if user has WeblogRole or a more powerful one
      */
     boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role);
-    
-    
+
+
+    /**
+     * Check user's rights given username and weblog handle.  Convenience
+     * overload for callers not having the User and/or Weblog objects.
+     * @param username    Username whose role is being checked
+     * @param weblogHandle target weblog handle of the role
+     * @param role    Minimum WeblogRole being checked for
+     * @return true if user has WeblogRole or a more powerful one
+     * @throws WebloggerException If no weblog could be found for the handle
+     */
+    boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) throws WebloggerException;
+
+    /**
+     * Get user's WeblogRole within a weblog or null if none.
+     * @param user    User whose role is being checked
+     * @param weblog  Target weblog of the role
+     * @return UserWeblogRole indicating user's role with weblog or null if no permission
+     */
+    UserWeblogRole getWeblogRole(User user, Weblog weblog);
+
+    /**
+     * Get user's WeblogRole within a weblog or null if none.  Convenience
+     * version of getWeblogRole(User, Weblog) for callers lacking the User and/or
+     * Weblog objects.
+     *
+     * @param username    Username whose role is being checked
+     * @param weblogHandle target weblog handle of the role
+     * @return UserWeblogRole indicating user's role with weblog or null if no permission
+     * @throws WebloggerException If exceptions occurred during processing.
+     */
+    UserWeblogRole getWeblogRole(String username, String weblogHandle) throws WebloggerException;
+
+
     /**
      * Grant user specific WeblogRole for a weblog.
      * @param user    User to grant weblog role to
@@ -195,7 +216,7 @@ public interface UserManager {
 
     /**
      * Grant user specific WeblogRole for a weblog.
-     * @param user    User to grant weblog role to
+     * @param userId    User to grant weblog role to
      * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
      */
@@ -269,12 +290,6 @@ public interface UserManager {
     List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog)
             throws WebloggerException;
 
-
-    /**
-     * Get user's WeblogRole within a weblog or null if none.
-     */
-    UserWeblogRole getWeblogRole(User user, Weblog weblog)
-            throws WebloggerException;
 
     /**
      * Get user's WeblogRole (pending or actual) for a weblog

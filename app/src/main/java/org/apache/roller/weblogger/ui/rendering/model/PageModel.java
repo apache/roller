@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -95,6 +96,8 @@ public class PageModel implements Model {
     public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
     }
+
+    private WeblogEntry weblogEntry = null;
 
     /**
      * Creates an un-initialized new instance, Weblogger calls init() to complete
@@ -181,7 +184,14 @@ public class PageModel implements Model {
      * Get weblog entry being displayed or null if none specified by request.
      */
     public WeblogEntry getWeblogEntry() {
-        return pageRequest.getWeblogEntry();
+        if (weblogEntry == null && pageRequest.getWeblogAnchor() != null) {
+            try {
+                weblogEntry = weblogEntryManager.getWeblogEntryByAnchor(getWeblog(), pageRequest.getWeblogAnchor());
+            } catch (WebloggerException ex) {
+                log.error("Error getting weblog entry " + pageRequest.getWeblogAnchor(), ex);
+            }
+        }
+        return weblogEntry;
     }
     
     
@@ -399,13 +409,16 @@ public class PageModel implements Model {
     public Menu getEditorMenu() {
         try {
             if (pageRequest.isLoggedIn()) {
-                UserWeblogRole uwr = userManager.getWeblogRole(pageRequest.getUser(), pageRequest.getWeblog());
-                return MenuHelper.generateMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog(), uwr.getWeblogRole());
+                String username = pageRequest.getAuthenticatedUser();
+                User user = userManager.getUserByUserName(username);
+                UserWeblogRole uwr = userManager.getWeblogRole(username, pageRequest.getWeblogAnchor());
+                return MenuHelper.generateMenu("editor", null, user.getGlobalRole(), uwr.getWeblogRole());
             } else {
                 return null;
             }
         } catch (Exception e) {
-            log.error("GetWeblogRole() failed for user: " + pageRequest.getUser() + " and weblog: " + pageRequest.getWeblog());
+            log.error("GetWeblogRole() failed for user: " + pageRequest.getAuthenticatedUser() + " and weblog: "
+                    + pageRequest.getWeblogAnchor());
             return null;
         }
     }

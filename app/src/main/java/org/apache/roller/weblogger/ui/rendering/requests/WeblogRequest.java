@@ -27,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 
 
 /**
@@ -34,8 +36,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * 
  * This is a fairly generic parsed request which is only trying to figure out
  * the elements of a weblog request which apply to all weblogs.  We try to 
- * determine the weblogHandle, and then what extra
- * path info remains.  The basic format is like this ...
+ * determine the weblogHandle, and then what extra path info remains.  The basic
+ * format is like this ...
  * 
  * /<weblogHandle>[/extra/path/info]
  * 
@@ -46,15 +48,22 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * path info specified by the request that has not been parsed by this
  * particular class.  this makes it relatively easy for subclasses to extend
  * this class and simply pick up where it left off in the parsing process.
+ *
+ * NOTE: It is extremely important to mention that this class and all of its
+ * subclasses are meant to be extremely light weight.  Meaning they should
+ * avoid time consuming operations whenever possible, especially operations
+ * which require a trip to the db.
  */
-public class WeblogRequest extends ParsedRequest {
+public class WeblogRequest {
     
     private static Log log = LogFactory.getLog(WeblogRequest.class);
-    
+
     // lightweight attributes
     private String weblogHandle = null;
     private String pathInfo = null;
-    
+    private String authenticatedUser = null;
+    private DeviceType deviceType = DeviceType.standard;
+
     // heavyweight attributes
     private Weblog weblog = null;
     private Locale localeInstance = null;
@@ -62,10 +71,15 @@ public class WeblogRequest extends ParsedRequest {
     public WeblogRequest() {}
 
     public WeblogRequest(HttpServletRequest request) {
-        
-        // let our parent take care of their business first
-        super(request);
-        
+
+        // login status
+        java.security.Principal principal = request.getUserPrincipal();
+        if (principal != null) {
+            this.authenticatedUser = principal.getName();
+        }
+        // set the detected type of the request
+        deviceType = MobileDeviceRepository.getRequestType(request);
+
         String path = request.getPathInfo();
         
         log.debug("parsing path "+path);
@@ -133,8 +147,7 @@ public class WeblogRequest extends ParsedRequest {
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
-    
-    
+
     /**
      * Get the Locale instance to be used for this request.
      *
@@ -147,6 +160,22 @@ public class WeblogRequest extends ParsedRequest {
             localeInstance = getWeblog().getLocaleInstance();
         }
         return localeInstance;
+    }
+
+    public String getAuthenticatedUser() {
+        return this.authenticatedUser;
+    }
+
+    public boolean isLoggedIn() {
+        return (this.authenticatedUser != null);
+    }
+
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType type) {
+        this.deviceType = type;
     }
 
 }

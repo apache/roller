@@ -50,8 +50,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogCommentRequest;
 import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
 import org.apache.roller.weblogger.util.GenericThrottle;
 import org.apache.roller.weblogger.util.IPBanList;
 import org.apache.roller.weblogger.business.MailManager;
@@ -203,9 +203,15 @@ public class CommentProcessor {
             return;
         }
 
-        WeblogCommentRequest commentRequest;
+        WeblogEntryRequest commentRequest;
+        String commenterName = null;
+        String commenterEmail = null;
+        String commenterUrl = null;
+        String content = null;
+        boolean notify = false;
+
         try {
-            commentRequest = new WeblogCommentRequest(request);
+            commentRequest = new WeblogEntryRequest(request);
 
             // lookup weblog specified by comment request
             weblog = weblogManager.getWeblogByHandle(commentRequest.getWeblogHandle());
@@ -214,13 +220,51 @@ public class CommentProcessor {
                 throw new WebloggerException("unable to lookup weblog: " + commentRequest.getWeblogHandle());
             }
 
-            commentApprovalRequired = globalCommentModerationRequired || weblog.getApproveComments();
-
             // lookup entry specified by comment request
-            entry = commentRequest.getWeblogEntry();
+            entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, commentRequest.getWeblogAnchor());
             if (entry == null) {
                 throw new WebloggerException("unable to lookup entry: " + commentRequest.getWeblogAnchor());
             }
+
+            /*
+             * parse request parameters
+             *
+             * the params we currently care about are:
+             *   name - comment author
+             *   email - comment email
+             *   url - comment referring url
+             *   content - comment contents
+             *   notify - if commenter wants to receive notifications
+             */
+            if(request.getParameter("name") != null) {
+                commenterName = Utilities.removeHTML(request.getParameter("name"));
+            }
+
+            if(request.getParameter("email") != null) {
+                commenterEmail = Utilities.removeHTML(request.getParameter("email"));
+            }
+
+            if(request.getParameter("url") != null) {
+                commenterUrl = Utilities.removeHTML(request.getParameter("url"));
+            }
+
+            if(request.getParameter("content") != null) {
+                content = request.getParameter("content");
+            }
+
+            if(request.getParameter("notify") != null) {
+                notify = true;
+            }
+
+            if(log.isDebugEnabled()) {
+                log.debug("name = " + commenterName);
+                log.debug("email = " + commenterEmail);
+                log.debug("url = " + commenterUrl);
+                log.debug("content = " + content);
+                log.debug("notify = " + notify);
+            }
+
+            commentApprovalRequired = globalCommentModerationRequired || weblog.getApproveComments();
 
             // we know what the weblog entry is, so setup our urls
             dispatch_url = PageProcessor.PATH + "/" + weblog.getHandle();
@@ -239,27 +283,20 @@ public class CommentProcessor {
         // fields: name, email, url, content, notify
         // TODO: data validation on collected comment data
         WeblogEntryComment comment = new WeblogEntryComment();
-        comment.setName(commentRequest.getName());
-        comment.setEmail(commentRequest.getEmail());
+        comment.setName(commenterName);
+        comment.setEmail(commenterEmail);
 
         // Validate url
-        if (StringUtils.isNotEmpty(commentRequest.getUrl())) {
-            String theUrl = commentRequest.getUrl().trim().toLowerCase();
-            StringBuilder url = new StringBuilder();
-            if (theUrl.startsWith("http://")) {
-                url.append(theUrl);
-            } else if (theUrl.startsWith("https://")) {
-                url.append(theUrl);
-            } else {
-                url.append("http://").append(theUrl);
+        if (StringUtils.isNotEmpty(commenterUrl)) {
+            commenterUrl = commenterUrl.trim().toLowerCase();
+            if (!commenterUrl.startsWith("http://") && !commenterUrl.startsWith("https://")) {
+                commenterUrl = "http://" + commenterUrl;
             }
-            comment.setUrl(url.toString());
-        } else {
-            comment.setUrl("");
         }
 
-        comment.setContent(commentRequest.getContent());
-        comment.setNotify(commentRequest.isNotify());
+        comment.setUrl(commenterUrl);
+        comment.setContent(content);
+        comment.setNotify(notify);
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
@@ -289,13 +326,11 @@ public class CommentProcessor {
             error = messageUtils.getString("comments.disabled");
 
             // Must have an email and also must be valid
-        } else if (StringUtils.isEmpty(commentRequest.getEmail())
-                || StringUtils.isNotEmpty(commentRequest.getEmail())
-                && !Utilities.isValidEmailAddress(commentRequest.getEmail())) {
-            error = messageUtils
-                    .getString("error.commentPostFailedEmailAddress");
+        } else if (StringUtils.isEmpty(commenterEmail)
+                || !Utilities.isValidEmailAddress(commenterEmail)) {
+            error = messageUtils.getString("error.commentPostFailedEmailAddress");
             log.debug("Email Address is invalid : "
-                    + commentRequest.getEmail());
+                    + commenterEmail);
             // if there is an URL it must be valid
         } else if (StringUtils.isNotEmpty(comment.getUrl())
                 && !new UrlValidator(new String[] { "http", "https" })

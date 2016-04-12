@@ -34,7 +34,7 @@ Defines the menus provided with Weblogger
         </tab>
     </menu>
     <menu id="editor">
-        <tab titleKey="tabbedmenu.weblog" weblogRole="EDIT_DRAFT" globalRole="BLOGGER" >
+        <tab titleKey="tabbedmenu.weblog" globalRole="BLOGGER" weblogRole="EDIT_DRAFT" >
             <tabItem action="entryAdd"
                      titleKey="tabbedmenu.weblog.newEntry"
                      weblogRole="EDIT_DRAFT">
@@ -79,7 +79,7 @@ Defines the menus provided with Weblogger
                 </subactions>
             </tabItem>
         </tab>
-        <tab titleKey="tabbedmenu.design" weblogRole="OWNER" globalRole="BLOGGER" enabledProperty="themes.customtheme.allowed">
+        <tab titleKey="tabbedmenu.design" globalRole="BLOGGER" weblogRole="OWNER" enabledProperty="themes.customtheme.allowed">
             <tabItem action="templates"
                      titleKey="tabbedmenu.website.pages">
                 <subactions>
@@ -91,7 +91,7 @@ Defines the menus provided with Weblogger
             <tabItem action="themeEdit"
                      titleKey="tabbedmenu.website.themes"/>
         </tab>
-        <tab titleKey="tabbedmenu.website" weblogRole="OWNER" globalRole="BLOGGER">
+        <tab titleKey="tabbedmenu.website" globalRole="BLOGGER" weblogRole="OWNER">
             <tabItem action="weblogConfig"
                      titleKey="tabbedmenu.website.settings">
                 <subactions>

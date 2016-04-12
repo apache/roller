@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.roller.weblogger.ui.rendering.processors.SearchProcessor;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -39,20 +38,11 @@ public class WeblogSearchRequest extends WeblogRequest {
         // parent determines weblog handle and locale if specified
         super(request);
         
-        String servlet = request.getServletPath();
-        
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
-        // was this request bound for the search servlet?
-        if(servlet == null || !SearchProcessor.PATH.equals(servlet)) {
-            throw new IllegalArgumentException("Not a weblog search request: "+
-                    request.getRequestURL());
-        }
-        
+
         if(pathInfo != null) {
-            throw new IllegalArgumentException("Invalid path info: "+
-                    request.getRequestURL());
+            throw new IllegalArgumentException("Invalid path info: " + request.getRequestURL());
         }
         
         /*

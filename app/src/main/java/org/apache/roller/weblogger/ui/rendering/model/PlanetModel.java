@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 /**
  * Model that provides access to planet aggregations, feeds and subscriptions.
@@ -44,9 +43,8 @@ public class PlanetModel implements Model {
     
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
-    private WeblogRequest  weblogRequest = null; 
+    private WeblogPageRequest weblogPageRequest = null;
     private String         pageLink = null;
-    private int            pageNum = 0;
 
     private URLStrategy    urlStrategy = null;
 
@@ -66,35 +64,30 @@ public class PlanetModel implements Model {
     }
     
     public void init(Map initData) throws WebloggerException {
-
         if (!WebloggerStaticConfig.getBooleanProperty("planet.aggregator.enabled")) {
             return;
         }
         
-        // we expect the init data to contain a weblogRequest object
-        this.weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        if(this.weblogRequest == null) {
-            throw new WebloggerException("expected weblogRequest from init data");
+        // we expect the init data to contain a WeblogPageRequest object
+        this.weblogPageRequest = (WeblogPageRequest) initData.get("parsedRequest");
+        if (this.weblogPageRequest == null) {
+            throw new WebloggerException("expected weblogPageRequest from init data");
         }
-        
-        if (weblogRequest instanceof WeblogPageRequest) {
-            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogTemplate();
-            pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
-            pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
-        }  
+
+        Template weblogPage = weblogPageRequest.getWeblogTemplate();
+        pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
     }
     
     
     /**
      * Get pager for PlanetEntry objects from 'all' and
-     * 'exernal' Planet groups. in reverse chrono order.
+     * 'external' Planet groups. in reverse chrono order.
      * @param length      Max number of results to return
      */
     public Pager getAggregationPager(int sinceDays, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
-                pageLink,
-                null, null, null, null, 0, false);
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblogPageRequest.getWeblog(), null,
+                pageLink, null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
             planetManager,
@@ -103,7 +96,7 @@ public class PlanetModel implements Model {
             null,    
             pagerUrl,
             sinceDays,
-            pageNum, 
+            weblogPageRequest.getPageNum(),
             length);
     }
     
@@ -115,7 +108,7 @@ public class PlanetModel implements Model {
      */
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblogPageRequest.getWeblog(), null,
                 pageLink,
                 null, null, null, null, 0, false);
         
@@ -126,7 +119,7 @@ public class PlanetModel implements Model {
             groupHandle,
             pagerUrl,
             sinceDays,
-            pageNum, 
+            weblogPageRequest.getPageNum(),
             length);
     }
     
@@ -138,7 +131,7 @@ public class PlanetModel implements Model {
      */
     public Pager getFeedPager(String feedURL, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblogPageRequest.getWeblog(), null,
                 pageLink,
                 null, null, null, null, 0, false);
         
@@ -149,7 +142,7 @@ public class PlanetModel implements Model {
             null,
             pagerUrl,
             -1,
-            pageNum, 
+            weblogPageRequest.getPageNum(),
             length);
     }
     

@@ -24,12 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.ui.rendering.processors.PageProcessor;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +57,6 @@ public class WeblogPageRequest extends WeblogRequest {
     private Map<String, String[]> customParams = new HashMap<>();
 
     // heavyweight attributes
-    private WeblogEntry weblogEntry = null;
     protected Template template = null;
 
     // Page hits
@@ -79,18 +75,11 @@ public class WeblogPageRequest extends WeblogRequest {
         // parent determines weblog handle
         super(request);
 
-        String servlet = request.getServletPath();
-
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
 
         // parse the request object and figure out what we've got
         log.debug("parsing path " + pathInfo);
-
-        // was this request bound for the right servlet?
-        if (!isValidDestination(servlet)) {
-            throw new IllegalArgumentException("invalid destination for request, " + request.getRequestURL());
-        }
 
         /*
          * parse path info
@@ -253,10 +242,6 @@ public class WeblogPageRequest extends WeblogRequest {
         }
     }
 
-    boolean isValidDestination(String servlet) {
-        return (servlet != null && PageProcessor.PATH.equals(servlet));
-    }
-
     private boolean isValidDateString(String dateString) {
         // string must be all numeric and 6 or 8 characters
         return (dateString != null && StringUtils.isNumeric(dateString) && (dateString
@@ -297,18 +282,6 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public List<String> getTags() {
         return tags;
-    }
-
-    public WeblogEntry getWeblogEntry() {
-        if (weblogEntry == null && weblogAnchor != null) {
-            try {
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
-            } catch (WebloggerException ex) {
-                log.error("Error getting weblog entry " + weblogAnchor, ex);
-            }
-        }
-        return weblogEntry;
     }
 
     public Template getWeblogTemplate() {

@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.requests.ParsedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -49,7 +48,8 @@ public class UtilitiesModel implements Model {
         this.userManager = userManager;
     }
 
-    private ParsedRequest parsedRequest = null;
+    private WeblogRequest weblogRequest = null;
+
     private Weblog weblog = null;
 
     /** Template context name to be used for model */
@@ -60,26 +60,24 @@ public class UtilitiesModel implements Model {
     /** Init page model based on request */
     public void init(Map initData) throws WebloggerException {      
         
-        // we expect the init data to contain a parsedRequest object
-        parsedRequest = (ParsedRequest) initData.get("parsedRequest");
-        if(parsedRequest == null) {
-            throw new WebloggerException("expected parsedRequest from init data");
+        // we expect the init data to contain a weblogRequest object
+        weblogRequest = (WeblogRequest) initData.get("parsedRequest");
+
+        if (weblogRequest == null) {
+            throw new WebloggerException("expected weblogRequest from init data");
         }
         
         // extract weblog object if possible
-        if(parsedRequest instanceof WeblogRequest) {
-            WeblogRequest weblogRequest = (WeblogRequest) parsedRequest;
-            weblog = weblogRequest.getWeblog();
-        }
+        weblog = weblogRequest.getWeblog();
     }
 
     //---------------------------------------------------- Authentication utils
 
     public boolean isUserBlogPublisher(Weblog weblog) {
         try {
-            if (parsedRequest.getAuthenticUser() != null) {
+            if (weblogRequest.getAuthenticatedUser() != null) {
                 // using handle variant of checkWeblogRole as id is presently nulled out in the templates
-                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog.getHandle(), WeblogRole.POST);
+                return userManager.checkWeblogRole(weblogRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.POST);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -89,9 +87,9 @@ public class UtilitiesModel implements Model {
     
     public boolean isUserBlogAdmin(Weblog weblog) {
         try {
-            if (parsedRequest.getAuthenticUser() != null) {
+            if (weblogRequest.getAuthenticatedUser() != null) {
                 // using handle variant of checkWeblogRole as id is presently nulled out in the templates
-                return userManager.checkWeblogRole(parsedRequest.getUser(), weblog.getHandle(), WeblogRole.OWNER);
+                return userManager.checkWeblogRole(weblogRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.OWNER);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -100,7 +98,7 @@ public class UtilitiesModel implements Model {
     }
         
     public boolean isUserAuthenticated() {
-        return (parsedRequest.getAuthenticUser() != null);
+        return (weblogRequest.getAuthenticatedUser() != null);
     }
        
     public String autoformat(String s) {

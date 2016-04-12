@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogMediaResourceRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,17 +72,42 @@ public class MediaResourceProcessor {
 
         Weblog weblog;
 
-        WeblogMediaResourceRequest resourceRequest;
+        WeblogRequest resourceRequest;
+        String resourceId;
+        boolean thumbnail = false;
+
         try {
             // parse the incoming request and extract the relevant data
-            resourceRequest = new WeblogMediaResourceRequest(request);
+            resourceRequest = new WeblogRequest(request);
 
             weblog = resourceRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "
-                        + resourceRequest.getWeblogHandle());
+                throw new WebloggerException("unable to lookup weblog: " + resourceRequest.getWeblogHandle());
             }
 
+            // we want only the path info left over from after the weblog parsing
+            String pathInfo = resourceRequest.getPathInfo();
+
+            // parse the request object and figure out what we've got
+            log.debug("parsing path " + pathInfo);
+
+            // any id is okay...
+            if (pathInfo != null && pathInfo.trim().length() > 1) {
+                resourceId = pathInfo;
+                if (pathInfo.startsWith("/")) {
+                    resourceId = pathInfo.substring(1);
+                }
+            } else {
+                throw new IllegalArgumentException("Invalid resource path info: " + request.getRequestURL());
+            }
+
+            if ("true".equals(request.getParameter("t"))) {
+                thumbnail = true;
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("resourceId = " + resourceId + ", thumbnail = " + thumbnail);
+            }
         } catch (Exception e) {
             // invalid resource request or weblog doesn't exist
             log.debug("error creating weblog resource request", e);
@@ -95,11 +120,10 @@ public class MediaResourceProcessor {
         MediaFile mediaFile;
 
         try {
-            mediaFile = mediaFileManager.getMediaFile(resourceRequest.getResourceId(), true);
+            mediaFile = mediaFileManager.getMediaFile(resourceId, true);
             resourceLastMod = mediaFile.getLastModified();
-
         } catch (Exception ex) {
-            // still not found? then we don't have it, 404.
+            // Not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -116,15 +140,13 @@ public class MediaResourceProcessor {
         }
 
         // set the content type based on whatever is in our web.xml mime defs
-        if (resourceRequest.isThumbnail()) {
+        if (thumbnail) {
             response.setContentType("image/png");
             try {
                 resourceStream = mediaFile.getThumbnailInputStream();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.debug(
-                            "ERROR loading thumbnail for " + mediaFile.getId(),
-                            e);
+                    log.debug("ERROR loading thumbnail for " + mediaFile.getId(), e);
                 } else {
                     log.warn("ERROR loading thumbnail for " + mediaFile.getId());
                 }

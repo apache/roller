@@ -27,8 +27,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTab;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTabItem;
@@ -106,23 +105,20 @@ public final class MenuHelper {
      * highlighted as appropriate for the User, Weblog, and Action being performed.
      * 
      * @param menuId unique identifier for the menu (e.g., "editor", "admin")
-     *
      * @param currentAction the current action being invoked. Null to ignore.
-     *
-     * @param user the User
-     *
-     * @param weblog Weblog instance User is working with
-     *
+     * @param userGlobalRole - user's global role
+     * @param userWeblogRole - user's role within the weblog being displayed
      * @return Menu object
      */
-    public static Menu generateMenu(String menuId, String currentAction, User user, Weblog weblog, WeblogRole weblogRole) {
+    public static Menu generateMenu(String menuId, String currentAction, GlobalRole userGlobalRole,
+                                    WeblogRole userWeblogRole) {
         Menu menu = null;
 
         // do we know the specified menu config?
         ParsedMenu menuConfig = menuMap.get(menuId);
         if (menuConfig != null) {
             try {
-                menu = buildMenu(menuConfig, currentAction, user, weblog, weblogRole);
+                menu = buildMenu(menuConfig, currentAction, userGlobalRole, userWeblogRole);
             } catch (WebloggerException ex) {
                 log.error("ERROR: fetching user roles", ex);
             }
@@ -135,13 +131,13 @@ public final class MenuHelper {
      * 
      * @param menuConfig the menu config
      * @param currentAction the current action
-     * @param user the user
-     * @param weblog the weblog
+     * @param userGlobalRole - user's global role
+     * @param userWeblogRole - user's role within the weblog being displayed
      * @return the menu
      * @throws WebloggerException the weblogger exception
      */
     private static Menu buildMenu(ParsedMenu menuConfig,
-            String currentAction, User user, Weblog weblog, WeblogRole weblogRole)
+            String currentAction, GlobalRole userGlobalRole, WeblogRole userWeblogRole)
             throws WebloggerException {
 
         Menu tabMenu = new Menu();
@@ -157,9 +153,8 @@ public final class MenuHelper {
             }
 
             if (!includeTab
-               || (configTab.getRequiredGlobalRole() != null
-                    && !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole()))
-               || (weblog != null && !checkWeblogRole(weblogRole, configTab.getRequiredWeblogRole()))
+               || userGlobalRole.getWeight() < configTab.getRequiredGlobalRole().getWeight()
+               || !checkWeblogRole(userWeblogRole, configTab.getRequiredWeblogRole())
                ) {
                 continue;
             }
@@ -185,14 +180,13 @@ public final class MenuHelper {
                 // disabled and global role check
                 if (!includeItem ||
                         (tabItem.getRequiredGlobalRole() != null
-                        && !user.hasEffectiveGlobalRole(tabItem.getRequiredGlobalRole()))) {
+                        && userGlobalRole.getWeight() < configTab.getRequiredGlobalRole().getWeight())) {
                     continue;
                 }
 
                 // weblog role check
-                if (weblog != null
-                        && (tabItem.getRequiredWeblogRole() != null
-                            && !checkWeblogRole(weblogRole, tabItem.getRequiredWeblogRole()))) {
+                if (tabItem.getRequiredWeblogRole() != null
+                            && !checkWeblogRole(userWeblogRole, tabItem.getRequiredWeblogRole())) {
                     continue;
                 }
 
@@ -226,8 +220,16 @@ public final class MenuHelper {
         return tabMenu;
     }
 
-    private static boolean checkWeblogRole(WeblogRole wr, WeblogRole requiredRole) {
-        return wr != null && wr.hasEffectiveRole(requiredRole);
+    /**
+     * Check is user's role sufficient for tab/tab item to be displayed.
+     *
+     * @param usersRole the user's weblog role for the current weblog, or null if no roles or no weblog
+     * @param requiredRole the minimum role required for the action.
+     * @return true if usersRole sufficient for requiredRole or no role is required, false otherwise
+     */
+    private static boolean checkWeblogRole(WeblogRole usersRole, WeblogRole requiredRole) {
+        return requiredRole == WeblogRole.NOBLOGNEEDED
+            || (usersRole != null && usersRole.hasEffectiveRole(requiredRole));
     }
 
     /**

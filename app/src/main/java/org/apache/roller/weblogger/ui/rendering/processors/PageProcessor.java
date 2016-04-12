@@ -132,7 +132,12 @@ public class PageProcessor {
         this.themeManager = themeManager;
     }
 
-    // set "true" to NOT cache the custom pages for users who are logged in
+    // Weblog pages shown to logged-in users are frequently different from blog readers (e.g., have
+    // different left-side menus allowing for blog administration) so need to be cached separately.
+    // Set excludeOwnerPages to "true" to NOT cache the pages for logged-in users.
+    // Recommended to keep false, but useful when debugging templates and want to trace the page
+    // rendering instead of just grabbing the page from the cache, or if using a small WeblogPageCache
+    // that you don't want less frequently accessed logged-in pages to be occupying.
     private boolean excludeOwnerPages = false;
 
     @Autowired(required=false)
@@ -145,7 +150,7 @@ public class PageProcessor {
 
     @Autowired(required=false)
     public void setProcessReferrers(@Qualifier("site.blacklist.check.referrers") boolean boolVal) {
-        excludeOwnerPages = boolVal;
+        processReferrers = boolVal;
     }
 
     @PostConstruct
@@ -320,12 +325,18 @@ public class PageProcessor {
 
             // permalink specified.
             // entry must exist and be published before current time
-            WeblogEntry entry = pageRequest.getWeblogEntry();
-            if (entry == null) {
-                invalid = true;
-            } else if (!entry.isPublished()) {
-                invalid = true;
-            } else if (new Date().before(entry.getPubTime())) {
+            try {
+                WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogAnchor());
+
+                if (entry == null) {
+                    invalid = true;
+                } else if (!entry.isPublished()) {
+                    invalid = true;
+                } else if (new Date().before(entry.getPubTime())) {
+                    invalid = true;
+                }
+            } catch (WebloggerException e) {
+                log.warn("Problem getting weblog entry: " + e.getMessage());
                 invalid = true;
             }
         } else if (pageRequest.getWeblogCategoryName() != null) {
@@ -612,13 +623,13 @@ public class PageProcessor {
         }
 
         // add page number when applicable
-        if(pageRequest.getWeblogAnchor() == null) {
+        if (pageRequest.getWeblogAnchor() == null) {
             key.append("/page=").append(pageRequest.getPageNum());
         }
 
         // add login state
-        if(pageRequest.getAuthenticUser() != null) {
-            key.append("/user=").append(pageRequest.getAuthenticUser());
+        if (pageRequest.getAuthenticatedUser() != null) {
+            key.append("/user=").append(pageRequest.getAuthenticatedUser());
         }
 
         key.append("/deviceType=").append(pageRequest.getDeviceType().toString());

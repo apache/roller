@@ -254,7 +254,6 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="siteModel"/>
-                <beans:ref bean="planetModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>

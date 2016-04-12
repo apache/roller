@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
@@ -68,15 +67,6 @@ public class PreviewPageModel extends PageModel {
         return previewRequest.getWeblogAnchor() != null;
     }
     
-    
-    public WeblogEntry getWeblogEntry() {
-        if (previewRequest.getWeblogAnchor() != null) {
-            return previewRequest.getWeblogEntry();
-        }
-        return null;
-    }
-
-
     /**
      * Override method that returns pager so that we can introduce a custom
      * pager for preview pages which can display things that we don't want
