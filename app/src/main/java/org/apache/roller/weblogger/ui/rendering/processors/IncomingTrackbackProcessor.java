@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogTrackbackRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -133,41 +133,32 @@ public class IncomingTrackbackProcessor {
         String error = null;
         PrintWriter pw = response.getWriter();
 
-        Weblog weblog = null;
+        Weblog weblog;
         WeblogEntry entry = null;
         boolean commentApprovalRequired = true;
 
         RollerMessages messages = new RollerMessages();
 
-        WeblogTrackbackRequest trackbackRequest = null;
+        WeblogEntryRequest trackbackRequest = null;
+        String blogName = null;
+        String url = null;
+        String excerpt = null;
+        String title = null;
+
         if (!propertiesManager.getBooleanProperty("users.trackbacks.enabled")) {
             error = "Trackbacks are disabled for this site";
         } else {
 
             try {
-                trackbackRequest = new WeblogTrackbackRequest(request);
+                trackbackRequest = new WeblogEntryRequest(request);
 
-                if ((trackbackRequest.getTitle() == null) ||
-                        "".equals(trackbackRequest.getTitle())) {
-                    trackbackRequest.setTitle(trackbackRequest.getUrl());
-                }
-
-                if (trackbackRequest.getExcerpt() == null) {
-                    trackbackRequest.setExcerpt("");
-                } else if (trackbackRequest.getExcerpt().length() >= WebloggerCommon.TEXTWIDTH_255) {
-                    trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0,
-                            WebloggerCommon.TEXTWIDTH_255 - 3)+"...");
-                }
-
-                // lookup weblog specified by comment request
+                // lookup weblog specified by request
                 weblog = weblogManager.getWeblogByHandle(trackbackRequest.getWeblogHandle());
 
                 if (weblog == null) {
                     throw new WebloggerException("unable to lookup weblog: "+
                             trackbackRequest.getWeblogHandle());
                 }
-
-                commentApprovalRequired = globalCommentModerationRequired || weblog.getApproveComments();
 
                 // lookup entry specified by comment request
                 entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
@@ -176,6 +167,58 @@ public class IncomingTrackbackProcessor {
                     throw new WebloggerException("unable to lookup entry: "+
                             trackbackRequest.getWeblogAnchor());
                 }
+
+                /*
+                 * parse request parameters
+                 *
+                 * the params we currently care about are:
+                 *   blog_name - comment author
+                 *   url - comment referring url
+                 *   excerpt - comment contents
+                 *   title - comment title
+                 */
+                if (request.getParameter("blog_name") != null) {
+                    blogName = request.getParameter("blog_name");
+                }
+
+                if (request.getParameter("url") != null) {
+                    url = request.getParameter("url");
+                }
+
+                if (request.getParameter("excerpt") != null) {
+                    excerpt = request.getParameter("excerpt");
+                }
+
+                if (request.getParameter("title") != null) {
+                    title = request.getParameter("title");
+                }
+
+                // a little bit of validation, trackbacks enforce that all params
+                // must have a value, so any nulls equals a bad request
+                if (blogName == null || url == null || excerpt == null || title == null) {
+                    throw new IllegalArgumentException("Bad request data.  Did not "+
+                            "receive values for all trackback params (blog_name, url, excerpt, title)");
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Trackback received: ");
+                    log.debug("weblog = " + trackbackRequest.getWeblogHandle());
+                    log.debug("anchor = " + trackbackRequest.getWeblogAnchor());
+                    log.debug("name = " + blogName);
+                    log.debug("url = " + url);
+                    log.debug("excerpt = " + excerpt);
+                    log.debug("title = " + title);
+                }
+
+                if ("".equals(title)) {
+                    title = url;
+                }
+
+                if (excerpt.length() >= WebloggerCommon.TEXTWIDTH_255) {
+                    excerpt = excerpt.substring(0, WebloggerCommon.TEXTWIDTH_255 - 3) + "...";
+                }
+
+                commentApprovalRequired = globalCommentModerationRequired || weblog.getApproveComments();
 
             } catch (Exception e) {
                 // some kind of error parsing the request or looking up weblog
@@ -196,9 +239,9 @@ public class IncomingTrackbackProcessor {
 
                 // Track trackbacks as comments
                 WeblogEntryComment comment = new WeblogEntryComment();
-                comment.setContent("[Trackback] "+trackbackRequest.getExcerpt());
-                comment.setName(trackbackRequest.getBlogName());
-                comment.setUrl(trackbackRequest.getUrl());
+                comment.setContent("[Trackback] " + title + ":" + excerpt);
+                comment.setName(blogName);
+                comment.setUrl(url);
                 comment.setWeblogEntry(entry);
                 comment.setRemoteHost(request.getRemoteHost());
                 comment.setNotify(Boolean.FALSE);

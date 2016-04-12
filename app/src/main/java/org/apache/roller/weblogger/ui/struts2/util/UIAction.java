@@ -337,10 +337,9 @@ public abstract class UIAction extends ActionSupport
     }
     
     public Menu getMenu() {
-        return MenuHelper.generateMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(),
-                getActionWeblog(), getActionWeblogRole());
+        return MenuHelper.generateMenu(getDesiredMenu(), getActionName(),
+                getAuthenticatedUser().getGlobalRole(), getActionWeblogRole());
     }
-    
     
     public String getShortDateFormat() {
         DateFormat sdf = DateFormat.getDateInstance(

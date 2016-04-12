@@ -335,20 +335,19 @@ public class JPAUserManagerImpl implements UserManager {
     //-------------------------------------------------------- permissions CRUD
  
     @Override
-    public boolean checkWeblogRole(User user, String weblogHandle, WeblogRole role) throws WebloggerException {
+    public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) throws WebloggerException {
+        User userToCheck = getUserByUserName(username, true);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
-        return checkWeblogRole(user, weblogToCheck, role);
+        return checkWeblogRole(userToCheck, weblogToCheck, role);
     }
 
+    @Override
     public boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role) {
 
         // if user has specified permission in weblog return true
-        try {
-            UserWeblogRole existingRole = getWeblogRole(user, weblog);
-            if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
-                return true;
-            }
-        } catch (WebloggerException ignored) {
+        UserWeblogRole existingRole = getWeblogRole(user, weblog);
+        if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
+            return true;
         }
 
         // if Blog Server admin would still have any weblog role
@@ -363,8 +362,15 @@ public class JPAUserManagerImpl implements UserManager {
         return false;
     }
 
-    
-    public UserWeblogRole getWeblogRole(User user, Weblog weblog) throws WebloggerException {
+    @Override
+    public UserWeblogRole getWeblogRole(String username, String weblogHandle) throws WebloggerException {
+        User userToCheck = getUserByUserName(username, true);
+        Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
+        return getWeblogRole(userToCheck, weblogToCheck);
+    }
+
+    @Override
+    public UserWeblogRole getWeblogRole(User user, Weblog weblog) {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogId"
                 , UserWeblogRole.class);
         q.setParameter(1, user.getId());

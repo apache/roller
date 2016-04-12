@@ -101,8 +101,7 @@ public class PreviewProcessor {
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: " +
-                        previewRequest.getWeblogHandle());
+                throw new WebloggerException("unable to lookup weblog: " + previewRequest.getWeblogHandle());
             }
         } catch (Exception e) {
             // some kind of error parsing the request or getting weblog

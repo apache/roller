@@ -40,9 +40,9 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
-import org.apache.roller.weblogger.ui.rendering.requests.PlanetRequest;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,16 +91,23 @@ public class PlanetFeedProcessor {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entering");
 
-        PlanetRequest planetRequest;
         Planet planet;
+        String planetName;
+        DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
 
         try {
-            planetRequest = new PlanetRequest(request);
-            planet = planetManager.getPlanet(planetRequest.getPlanet());
+            // parse the request object and figure out what we've got
+            log.debug("parsing url: " + request.getRequestURL());
+
+            // planet to include
+            planetName = request.getParameter("planet");
+            if (planetName == null) {
+                throw new IllegalArgumentException("Planet name not provided in URL: " + request.getRequestURL());
+            }
+
+            planet = planetManager.getPlanet(planetName);
             if (planet == null) {
-                log.debug("Planet not found: " + planetRequest.getPlanet());
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
+                throw new IllegalArgumentException("Could not find planet named: " + planetName);
             }
         } catch (Exception e) {
             // some kind of error parsing the request
@@ -114,7 +121,7 @@ public class PlanetFeedProcessor {
 
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response,
-                lastModified.getTime(), planetRequest.getDeviceType())) {
+                lastModified.getTime(), deviceType)) {
             return;
         }
 
@@ -134,10 +141,10 @@ public class PlanetFeedProcessor {
 
         // set last-modified date
         ModDateHeaderUtil.setLastModifiedHeader(response,
-                lastModified.getTime(), planetRequest.getDeviceType());
+                lastModified.getTime(), deviceType);
 
         // cached content checking
-        String cacheKey = generateKey(planetRequest);
+        String cacheKey = generateKey(planetName);
         CachedContent entry = (CachedContent) planetCache.get(cacheKey);
         if (entry != null) {
             response.setContentLength(entry.getContent().length);
@@ -253,15 +260,10 @@ public class PlanetFeedProcessor {
      *
      * example: planet.key:testplanet/rss
      */
-    private String generateKey(PlanetRequest planetRequest) {
-        StringBuilder key = new StringBuilder();
-        key.append("planet.key").append(":");
-        key.append(planetRequest.getPlanet());
-
-        if (planetRequest.getFlavor() != null) {
-            key.append("/").append(planetRequest.getFlavor());
-        }
-
-        return key.toString();
+    private String generateKey(String planet) {
+        String key = "planet.key:";
+        key += planet;
+        key += "/rss";
+        return key;
     }
 }

@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.ui.rendering.processors.FeedProcessor;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -57,21 +56,13 @@ public class WeblogFeedRequest extends WeblogRequest {
         // parent determines weblog handle and locale if specified
         super(request);
         
-        String servlet = request.getServletPath();
-        
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
         
         // parse the request object and figure out what we've got
         log.debug("parsing path " + pathInfo);
         
-        // was this request bound for the feed servlet?
-        if(servlet == null || !FeedProcessor.PATH.equals(servlet)) {
-            throw new IllegalArgumentException("Not a weblog feed request: "+ request.getRequestURL());
-        }
-        
-        
-        /* 
+        /*
          * parse the path info.
          * 
          * must look like this ...

@@ -33,8 +33,6 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     
     private static Log log = LogFactory.getLog(WeblogPreviewRequest.class);
     
-    private static final String PREVIEW_SERVLET = "/tb-ui/authoring/preview";
-    
     // theme name provided only for theme (not blog entry) previews.
     private String themeName = null;
     private String type = "standard";
@@ -64,16 +62,12 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         }
     }
 
-    boolean isValidDestination(String servlet) {
-        return (servlet != null && PREVIEW_SERVLET.equals(servlet));
-    }
-    
     public String getThemeName() {
         return themeName;
     }
 
     // override so that previews never show login status
-    public String getAuthenticUser() {
+    public String getAuthenticatedUser() {
         return null;
     }
     
