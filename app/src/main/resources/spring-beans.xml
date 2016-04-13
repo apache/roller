@@ -144,6 +144,11 @@
         <beans:property name="themeManager" ref="themeManager"/>
     </beans:bean>
 
+    <beans:bean id="previewPageModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
+        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
+        <beans:property name="preview" value="true"/>
+    </beans:bean>
+
     <beans:bean id="configModel" class="org.apache.roller.weblogger.ui.rendering.model.ConfigModel" scope="prototype">
         <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
@@ -155,6 +160,10 @@
     <beans:bean id="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
+    </beans:bean>
+
+    <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
+        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
     </beans:bean>
 
     <beans:bean id="messageModel" class="org.apache.roller.weblogger.ui.rendering.model.MessageModel" scope="prototype"/>
@@ -180,14 +189,6 @@
     </beans:bean>
 
     <beans:bean id="previewUrlStrategy" class="org.apache.roller.weblogger.business.PreviewURLStrategy"/>
-
-    <beans:bean id="previewPageModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
-    </beans:bean>
-
-    <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
-    </beans:bean>
 
     <beans:bean id="siteModel" class="org.apache.roller.weblogger.ui.rendering.model.SiteModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>

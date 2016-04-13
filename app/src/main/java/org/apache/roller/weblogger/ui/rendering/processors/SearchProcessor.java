@@ -164,8 +164,6 @@ public class SearchProcessor {
             // are properly loaded, which means that searchRequest needs its
             // own custom initData property aside from the standard
             // weblogRequest.
-            // possible better approach is make searchRequest extend
-            // pageRequest.
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
             pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());

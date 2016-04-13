@@ -17,7 +17,7 @@
 
 *#<?xml version="1.0" encoding='utf-8'?>
 #if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/tb-ui/styles/atom.xsl" media="screen"?>#end
-#set($pager = $site.getCommentsPager(-1, $config.feedSize) )
+#set($pager = $model.commentsPager)
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title type="html">$utils.escapeXML($config.siteName) (Comments)</title>
     <id>$url.feed.comments.atom</id>

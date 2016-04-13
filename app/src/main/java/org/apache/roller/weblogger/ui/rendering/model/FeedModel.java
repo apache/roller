@@ -133,8 +133,11 @@ public class FeedModel implements Model {
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, propertiesManager, urlStrategy,
-                    feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
-                    feedRequest.getPage(), DEFAULT_ENTRIES, -1, feedRequest.getWeblog());
+                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(), null,
+                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblogCategoryName(),
+                    feedRequest.getTags(), feedRequest.getPage(),
+                    propertiesManager.getIntProperty("site.newsfeeds.defaultEntries"),
+                    -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;
         }
 
@@ -152,9 +155,10 @@ public class FeedModel implements Model {
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
             super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
-                    feedRequest.getType(),
-                    feedRequest.getFormat(), null, null,
-                    null, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+                    feedRequest.getType(), feedRequest.getFormat(), null, null, null, true),
+                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(), -1, feedRequest.getPage(),
+                    propertiesManager.getIntProperty("site.newsfeeds.defaultEntries"));
+
             this.feedRequest = feedRequest;
         }
         

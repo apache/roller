@@ -42,6 +42,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
@@ -65,8 +66,8 @@ public class PageModel implements Model {
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
+    private boolean preview = false;
 
-    protected boolean isPreview = false;
     protected URLStrategy urlStrategy = null;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
@@ -95,6 +96,10 @@ public class PageModel implements Model {
 
     public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
+    }
+
+    public void setPreview(boolean preview) {
+        this.preview = preview;
     }
 
     private WeblogEntry weblogEntry = null;
@@ -162,13 +167,6 @@ public class PageModel implements Model {
      */
     public boolean isPermalink() {
         return (pageRequest.getWeblogAnchor() != null);
-    }
-
-    /**
-     * Is page in preview mode?
-     */
-    public boolean isPreview() {
-        return isPreview;
     }
 
     /**
@@ -321,24 +319,6 @@ public class PageModel implements Model {
      * date they were published.
      */
     public WeblogEntriesPager getWeblogEntriesPager() {
-        return getWeblogEntriesPager(null, null);
-    }
-    
-    public WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
-        
-        // category specified by argument wins over request parameter
-        String cat = pageRequest.getWeblogCategoryName();
-        if (catArgument != null && !StringUtils.isEmpty(catArgument) && !"nil".equals(catArgument)) {
-            cat = catArgument;
-        }
-        
-        List<String> tags = pageRequest.getTags();
-        if (tagArgument != null && !StringUtils.isEmpty(tagArgument) && !"nil".equals(tagArgument)) {
-            tags = new ArrayList<>();
-            tags.add(tagArgument);
-        }
-        
-        String dateString = pageRequest.getWeblogDate();
         
         // determine which mode to use
         if (pageRequest.getWeblogAnchor() != null) {
@@ -348,14 +328,15 @@ public class PageModel implements Model {
                     pageRequest.getWeblog(),
                     pageRequest.getWeblogTemplateName(),
                     pageRequest.getWeblogAnchor(),
-                    cat,
-                    tags,
-                    true);
+                    pageRequest.getWeblogCategoryName(),
+                    pageRequest.getTags(),
+                    // preview can show draft entries
+                    preview);
         } else {
             PagingInterval interval = PagingInterval.LATEST;
 
-            if (dateString != null) {
-                int len = dateString.length();
+            if (pageRequest.getWeblogDate() != null) {
+                int len = pageRequest.getWeblogDate().length();
                 if (len == 8) {
                     interval = PagingInterval.DAY;
                 } else if (len == 6) {
@@ -370,8 +351,8 @@ public class PageModel implements Model {
                     urlStrategy,
                     pageRequest.getWeblog(),
                     pageRequest.getWeblogDate(),
-                    cat,
-                    tags,
+                    pageRequest.getWeblogCategoryName(),
+                    pageRequest.getTags(),
                     pageRequest.getPageNum());
         }
     }
@@ -404,11 +385,13 @@ public class PageModel implements Model {
 
     /**
      * Get a Menu representing the editor UI action menu, if the user is
-     * currently logged in.
+     * currently logged in.  Exception: previews are coded below not to show
+     * the editor menu so it won't be used and also (for theme previews)
+     * to better show how the weblog will look to the outside visitor.
      */
     public Menu getEditorMenu() {
         try {
-            if (pageRequest.isLoggedIn()) {
+            if (!preview && pageRequest.isLoggedIn()) {
                 String username = pageRequest.getAuthenticatedUser();
                 User user = userManager.getUserByUserName(username);
                 UserWeblogRole uwr = userManager.getWeblogRole(username, pageRequest.getWeblogAnchor());
@@ -422,4 +405,29 @@ public class PageModel implements Model {
             return null;
         }
     }
+
+    public boolean isUserBlogPublisher(Weblog weblog) {
+        try {
+            if (!preview && pageRequest.getAuthenticatedUser() != null) {
+                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
+                return userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.POST);
+            }
+        } catch (Exception e) {
+            log.warn("ERROR: checking user authorization", e);
+        }
+        return false;
+    }
+
+    public boolean isUserBlogAdmin(Weblog weblog) {
+        try {
+            if (!preview && pageRequest.getAuthenticatedUser() != null) {
+                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
+                return userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.OWNER);
+            }
+        } catch (Exception e) {
+            log.warn("ERROR: checking user authorization", e);
+        }
+        return false;
+    }
+    
 }

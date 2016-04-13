@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,8 @@ public class WeblogFeedRequest extends WeblogRequest {
     private String format = null;
     private String weblogCategoryName = null;
     private List<String> tags = null;
-    private int    page = 0;
+    private boolean siteWideFeed = false;
+    private int page = 0;
 
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
@@ -69,8 +70,8 @@ public class WeblogFeedRequest extends WeblogRequest {
          *
          * /<type>/<format>
          */
-        if(pathInfo != null && pathInfo.trim().length() > 1) {
-            
+        if (pathInfo != null && pathInfo.trim().length() > 1) {
+
             String[] pathElements = pathInfo.split("/");
             if(pathElements.length == 2) {
                 this.type = pathElements[0];
@@ -78,19 +79,19 @@ public class WeblogFeedRequest extends WeblogRequest {
             } else {
                 throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
             }
-            
+
         } else {
             throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
         }
         
         // parse request parameters
-        if(request.getParameter("cat") != null) {
-            // replacing plus sign below with its encoded equivalent (http://stackoverflow.com/a/6926987)
+        if (request.getParameter("cat") != null) {
+            // replacing any plus signs with their encoded equivalent (http://stackoverflow.com/a/6926987)
             this.weblogCategoryName =
                     Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
         }
         
-        if(request.getParameter("tags") != null) {
+        if (request.getParameter("tags") != null) {
             this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));                  
             int maxSize = WebloggerStaticConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
             if (this.tags.size() > maxSize) {
@@ -99,7 +100,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             }
         }        
         
-        if(request.getParameter("page") != null) {
+        if (request.getParameter("page") != null) {
             try {
                 this.page = Integer.parseInt(request.getParameter("page"));
             } catch(NumberFormatException e) {
@@ -107,11 +108,11 @@ public class WeblogFeedRequest extends WeblogRequest {
             }
         }     
         
-        if((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
+        if ((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
             throw new IllegalArgumentException("Please specify either category or tags but not both: " + request.getRequestURL());
         }
         
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("type = "+this.type);
             log.debug("format = "+this.format);
             log.debug("weblogCategory = "+this.weblogCategoryName);
@@ -137,5 +138,13 @@ public class WeblogFeedRequest extends WeblogRequest {
 
     public int getPage() {
         return page;
+    }
+
+    public boolean isSiteWideFeed() {
+        return siteWideFeed;
+    }
+
+    public void setSiteWideFeed(boolean siteWideFeed) {
+        this.siteWideFeed = siteWideFeed;
     }
 }

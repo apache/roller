@@ -50,6 +50,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     @Override
     public String getWeblogURL(Weblog weblog, boolean absolute) {
         String url = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
+
         Map<String, String> params = new HashMap<>();
         if (previewTheme != null) {
             params.put("theme", Utilities.encode(previewTheme));
@@ -63,15 +64,16 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     @Override
     public String getWeblogEntryURL(Weblog weblog, String previewAnchor, boolean absolute) {
         String url = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
-        
+
+        if (previewAnchor != null) {
+            url += "entry/" + Utilities.encode(previewAnchor);
+        }
+
         Map<String, String> params = new HashMap<>();
         if (previewTheme != null) {
             params.put("theme", Utilities.encode(previewTheme));
         }
-        if (previewAnchor != null) {
-            params.put("previewEntry", Utilities.encode(previewAnchor));
-        }
-        
+
         return url + Utilities.getQueryString(params);
     }
 
@@ -83,11 +85,11 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         
         String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
-        if(category != null && dateString == null) {
+        if (category != null && dateString == null) {
             pathinfo += "category/" + Utilities.encodePath(category);
-        } else if(dateString != null && category == null) {
+        } else if (dateString != null && category == null) {
             pathinfo += "date/" + dateString;
-        } else if(tags != null && tags.size() > 0) {
+        } else if (tags != null && tags.size() > 0) {
             pathinfo += "tags/" + Utilities.getEncodedTagsString(tags);
         } else {
             if (dateString != null) {
@@ -98,11 +100,11 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             }
         }
 
-        if(pageNum > 0) {
+        if (pageNum > 0) {
             params.put("page", Integer.toString(pageNum));
         }
         
-        if(previewTheme != null) {
+        if (previewTheme != null) {
             params.put("theme", Utilities.encode(previewTheme));
         }
 

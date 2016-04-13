@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
- * Represents a request for a weblog preview.
+ * Represents a request for a weblog search.
  */
 public class WeblogSearchRequest extends WeblogRequest {
 

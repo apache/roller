@@ -609,11 +609,11 @@ Show weblog's categories in specified parent category.
                 #end
             #end
         #end
-        #if ($utils.isUserBlogPublisher($model.weblog))
+        #if ($model.isUserBlogPublisher($model.weblog))
             <li class="rNavItem">
                <a href="$url.createEntry"><span>$text.get("navigationBar.newEntry")</span></a>
             </li>
-            #if($utils.isUserBlogOwner($model.weblog))
+            #if($model.isUserBlogOwner($model.weblog))
                <li class="rNavItem">
                    <a href="$url.editSettings"><span>$text.get("navigationBar.settings")</span></a>
                </li>
@@ -622,7 +622,7 @@ Show weblog's categories in specified parent category.
                     <a href="$url.logout"><span>$text.get("navigationBar.logout")</span></a>
                 </li>
         #else
-            #if ($utils.isUserAuthenticated())
+            #if ($model.isUserAuthenticated())
                 <li class="rNavItem">
                     <a href="$url.logout"><span>$text.get("navigationBar.logout")</span></a>
                 </li>

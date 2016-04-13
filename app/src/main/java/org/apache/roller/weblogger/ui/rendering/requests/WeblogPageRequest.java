@@ -35,10 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents a request for a Roller weblog page.
- * 
- * any url from PageProcessor.PATH value
- * 
+ * Represents a request for a Roller weblog page
+ *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
@@ -70,7 +68,6 @@ public class WeblogPageRequest extends WeblogRequest {
      * Construct the WeblogPageRequest by parsing the incoming url
      */
     public WeblogPageRequest(HttpServletRequest request) {
-
         // let our parent take care of their business first
         // parent determines weblog handle
         super(request);
