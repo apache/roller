@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogPreviewRequest;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
 import javax.annotation.PostConstruct;
@@ -93,10 +93,10 @@ public class PreviewProcessor {
         log.debug("Entering");
 
         Weblog weblog;
-        WeblogPreviewRequest previewRequest;
+        WeblogPageRequest previewRequest;
 
         try {
-            previewRequest = new WeblogPreviewRequest(request);
+            previewRequest = new WeblogPageRequest(request);
 
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
@@ -113,28 +113,28 @@ public class PreviewProcessor {
         // Get the deviceType from user agent
         MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
 
-        // for previews we explicitly set the deviceType attribute
-        if (request.getParameter("type") != null) {
-            deviceType = request.getParameter("type").equals("standard")
-                    ? MobileDeviceRepository.DeviceType.standard
-                    : MobileDeviceRepository.DeviceType.mobile;
-        }
+        // if theme provided, indicates a theme preview rather than a entry draft preview
+        String previewThemeName = request.getParameter("theme");
 
-        if (previewRequest.getThemeName() != null) {
-            // only create temporary weblog object if theme name was specified
-            // in request, which indicates we're doing a theme preview
+        if (previewThemeName != null) {
+            // for theme previews we explicitly set the deviceType attribute
+            if (request.getParameter("type") != null) {
+                deviceType = request.getParameter("type").equals("standard")
+                        ? MobileDeviceRepository.DeviceType.standard
+                        : MobileDeviceRepository.DeviceType.mobile;
+            }
 
             // try getting the preview theme
-            log.debug("preview theme = " + previewRequest.getThemeName());
+            log.debug("preview theme = " + previewThemeName);
 
             SharedTheme previewTheme = null;
 
             try {
-                previewTheme = themeManager.getSharedTheme(previewRequest.getThemeName());
-            } catch(IllegalArgumentException tnfe) {
-                // bogus theme given in URL, return null for callee to handle
-            } catch(WebloggerException re) {
-                log.error("Error looking up theme " + previewRequest.getThemeName(), re);
+                previewTheme = themeManager.getSharedTheme(previewThemeName);
+            } catch (IllegalArgumentException tnfe) {
+                // unknown theme given in URL, so default to current theme below
+            } catch (WebloggerException re) {
+                log.error("Error looking up theme " + previewThemeName, re);
             }
 
             // construct a temporary Website object for this request

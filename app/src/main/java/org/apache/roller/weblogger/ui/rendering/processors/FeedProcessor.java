@@ -126,8 +126,9 @@ public class FeedProcessor {
                 throw new WebloggerException("unable to lookup weblog: " + feedRequest.getWeblogHandle());
             }
 
-            // is this the site-wide weblog?
+            // Is this the site-wide weblog? If so, makes a feed containing all blogs...
             isSiteWide = propertiesManager.isSiteWideWeblog(weblog.getHandle());
+            feedRequest.setSiteWideFeed(isSiteWide);
 
         } catch (Exception e) {
             // invalid feed request format or weblog doesn't exist
@@ -241,8 +242,6 @@ public class FeedProcessor {
 
             if (isSiteWide) {
                 pageId = "site-" + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
-                // Load special models for site-wide blog
-                model.putAll(Model.getModelMap("siteModelSet", initData));
             } else {
                 pageId = "weblog-" + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
             }

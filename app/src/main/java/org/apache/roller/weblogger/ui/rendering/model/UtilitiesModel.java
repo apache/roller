@@ -71,32 +71,6 @@ public class UtilitiesModel implements Model {
         weblog = weblogRequest.getWeblog();
     }
 
-    //---------------------------------------------------- Authentication utils
-
-    public boolean isUserBlogPublisher(Weblog weblog) {
-        try {
-            if (weblogRequest.getAuthenticatedUser() != null) {
-                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
-                return userManager.checkWeblogRole(weblogRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.POST);
-            }
-        } catch (Exception e) {
-            log.warn("ERROR: checking user authorization", e);
-        }
-        return false;
-    }
-    
-    public boolean isUserBlogAdmin(Weblog weblog) {
-        try {
-            if (weblogRequest.getAuthenticatedUser() != null) {
-                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
-                return userManager.checkWeblogRole(weblogRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.OWNER);
-            }
-        } catch (Exception e) {
-            log.warn("ERROR: checking user authorization", e);
-        }
-        return false;
-    }
-        
     public boolean isUserAuthenticated() {
         return (weblogRequest.getAuthenticatedUser() != null);
     }

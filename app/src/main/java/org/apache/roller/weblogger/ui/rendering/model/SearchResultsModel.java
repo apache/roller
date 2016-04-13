@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesSearchPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -145,10 +144,6 @@ public class SearchResultsModel extends PageModel {
 
 	// override page model and return search results pager
 	public WeblogEntriesPager getWeblogEntriesPager() {
-		return pager;
-	}
-
-	public WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
 		return pager;
 	}
 

@@ -61,7 +61,6 @@ public class SiteModel implements Model {
     private static Log log = LogFactory.getLog(SiteModel.class);   
     
     private WeblogRequest weblogRequest = null;
-    private WeblogFeedRequest feedRequest = null;
     private List tags = new ArrayList();
     private String pageLink = null;
     private int pageNum = 0;
@@ -103,26 +102,25 @@ public class SiteModel implements Model {
         
         // we expect the init data to contain a weblogRequest object
         this.weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        if(this.weblogRequest == null) {
+
+        if (this.weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
         
         if (weblogRequest instanceof WeblogPageRequest) {
-            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogTemplate();
+            Template weblogPage = ((WeblogPageRequest) weblogRequest).getWeblogTemplate();
             pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
             tags = ((WeblogPageRequest)weblogRequest).getTags();
-        } else if (weblogRequest instanceof WeblogFeedRequest) {
-            this.feedRequest = (WeblogFeedRequest) weblogRequest;
-            tags = feedRequest.getTags();
-            pageNum = feedRequest.getPage();
+        } else {
+            throw new WebloggerException("expected weblogPageRequest from init data");
         }
     }
     
     //----------------------------------------------------------------- Pagers
     
     /**
-     * Get pager ofWeblogEntry objects across all weblogs, in reverse chrono order by pubTime.
+     * Get pager of WeblogEntry objects across all weblogs, in reverse chrono order by pubTime.
      * @param sinceDays Limit to past X days in past (or -1 for no limit)
      * @param length    Max number of results to return
      */
@@ -151,8 +149,7 @@ public class SiteModel implements Model {
                 sinceDays,
                 weblogRequest.getWeblog());
     }
-    
-    
+
     /*
      * Get pager of most recent Comment objects across all weblogs,
      * in reverse chrono order by postTime.
@@ -161,17 +158,9 @@ public class SiteModel implements Model {
      */
     public Pager getCommentsPager(int sinceDays, int length) {
         
-        String pagerUrl;
-        if (feedRequest != null) {
-            pagerUrl = urlStrategy.getWeblogFeedURL(weblogRequest.getWeblog(),
-                    feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null, true);
-        } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
-                pageLink,
-                null, null, null, null, 0, false);
-        }
-        
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
+                pageLink, null, null, null, null, 0, false);
+
         return new CommentsPager(
             weblogEntryManager,
             urlStrategy,
@@ -180,22 +169,14 @@ public class SiteModel implements Model {
             sinceDays,
             pageNum, 
             length);
-    }     
-    
-    
+    }
+
     /* Get pager of users whose names begin with specified letter */
     public Pager getUsersByLetterPager(String letter, int sinceDays, int length) {
         
-        String pagerUrl;
-        if (feedRequest != null) {
-            pagerUrl = urlStrategy.getWeblogFeedURL(weblogRequest.getWeblog(),
-                    feedRequest.getType(), feedRequest.getFormat(), null, null, null, true);
-        } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
-                pageLink,
-                null, null, null, null, 0, false);
-        }        
-        
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
+                pageLink, null, null, null, null, 0, false);
+
         if(letter != null && StringUtils.isEmpty(letter)) {
             letter = null;
         }
@@ -214,8 +195,7 @@ public class SiteModel implements Model {
     public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblogRequest.getWeblog(), null,
-                pageLink,
-                null, null, null, null, 0, false);
+                pageLink, null, null, null, null, 0, false);
         
         if(letter != null && StringUtils.isEmpty(letter)) {
             letter = null;

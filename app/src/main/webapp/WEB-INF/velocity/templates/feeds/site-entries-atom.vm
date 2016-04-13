@@ -17,7 +17,7 @@
 
 *#<?xml version="1.0" encoding='utf-8'?>
 #if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/tb-ui/styles/atom.xsl" media="screen"?>#end
-#set($pager = $site.getWeblogEntriesPager(-1, $config.feedSize))
+#set($pager = $model.weblogEntriesPager)
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title type="html">$utils.escapeXML($config.siteName)</title>
     <subtitle type="html">$utils.escapeXML($config.siteDescription)</subtitle>

@@ -34,7 +34,11 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import javax.annotation.PostConstruct;
 
 /**
- * Cache for site-wide weblog content.
+ * Cache for site-wide weblog content.  The site weblog needs a different type of
+ * cache from regular weblogs because only certain changes from a regular weblog
+ * (for example, new weblog entry) need to trigger a refresh to the site weblog,
+ * while other changes from regular weblogs do not alter the appearance of the site
+ * weblog and hence the latter's pages can remain as-is in the cache.
  */
 public class SiteWideCache extends ExpiringCache implements BlogEventListener {
 
@@ -64,12 +68,12 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
         Date lastModified = null;
         
         // first try our cached version
-        if(this.lastUpdateTime != null) {
+        if (this.lastUpdateTime != null) {
             lastModified = (Date) this.lastUpdateTime.getValue();
         }
         
         // still null, we need to get a fresh value
-        if(lastModified == null) {
+        if (lastModified == null) {
             lastModified = new Date();
             this.lastUpdateTime = new ExpiringCacheEntry(lastModified, timeoutInMS);
         }

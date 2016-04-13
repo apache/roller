@@ -32,10 +32,10 @@
   #end
   <description>$utils.escapeXML($config.siteDescription)</description>
   <language>en-us</language>
-  #set($pager = $site.getWeblogEntriesPager(-1, $config.feedSize))
+  #set($entries = $model.weblogEntriesPager.items)
   <copyright>Copyright $utils.formatDate($pager.lastUpdated, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($pager.lastUpdated)</lastBuildDate>
   <generator>TightBlog $config.rollerVersion</generator>
-  #showEntriesRSS20($pager.items)
+  #showEntriesRSS20($entries)
 </channel>
 </rss>

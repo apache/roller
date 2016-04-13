@@ -50,11 +50,11 @@
 				        #end
 				    #end
 				#end
-				#if ($utils.isUserBlogPublisher($weblog))
+				#if ($model.isUserBlogPublisher($weblog))
 				    <li>
 				       <a href="$url.createEntry">$text.get("navigationBar.newEntry")</a>
 				    </li>
-				    #if($utils.isUserBlogOwner($weblog))
+				    #if($model.isUserBlogOwner($weblog))
 				       <li>
 				           <a href="$url.editSettings">$text.get("navigationBar.settings")</a>
 				       </li>

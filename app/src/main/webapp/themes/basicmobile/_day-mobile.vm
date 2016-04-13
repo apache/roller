@@ -9,7 +9,7 @@
        <div>
          $entry.title
          #set($commentCount = $entry.commentCount)
-         #if($utils.isUserBlogPublisher($entry.weblog))
+         #if($model.isUserBlogPublisher($entry.weblog))
            &nbsp;|&nbsp;&nbsp;<a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$text.get("generic.edit")</a>
          #end
          #if($entry.commentsStillAllowed || $commentCount > 0)

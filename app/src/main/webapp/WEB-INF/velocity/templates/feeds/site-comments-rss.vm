@@ -26,10 +26,9 @@
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.rss($model.categoryName)" />
   <description>$utils.escapeXML($config.siteDescription)</description>
   <language>en-us</language>
-  #set($pager = $site.getCommentsPager(-1, $config.feedSize))
   <copyright>Copyright $utils.formatDate($pager.lastUpdated, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($pager.lastUpdated)</lastBuildDate>
   <generator>TightBlog $config.rollerVersion</generator>
-  #showCommentsRSS20($pager.items)
+  #showCommentsRSS20($model.commentsPager.items)
 </channel>
 </rss>

@@ -62,7 +62,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     String entryAnchor = null;
     String catName = null;
     List<String> tags = new ArrayList<>();
-    Boolean publishedOnly = true;
+    Boolean canShowDraftEntries = false;
 
     WeblogEntry currEntry = null;
     WeblogEntry nextEntry = null;
@@ -79,7 +79,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
             String             entryAnchor,
             String             catName,
             List<String>       tags,
-            Boolean            publishedOnly) {
+            Boolean canShowDraftEntries) {
 
         this.urlStrategy = strat;
         this.weblogEntryManager = weblogEntryManager;
@@ -87,7 +87,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         this.pageLink = pageLink;
         this.entryAnchor = entryAnchor;
         this.catName = catName;
-        this.publishedOnly = publishedOnly;
+        this.canShowDraftEntries = canShowDraftEntries;
 
         if (tags != null) {
             this.tags = tags;
@@ -108,7 +108,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         if (entries == null) {
             try {
                 currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
-                if (publishedOnly) {
+                if (!canShowDraftEntries) {
                     if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                         entries = new TreeMap<>();
                         entries.put(currEntry.getPubTime(), Collections.singletonList(currEntry));
