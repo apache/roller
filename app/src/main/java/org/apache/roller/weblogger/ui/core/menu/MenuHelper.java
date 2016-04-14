@@ -136,8 +136,8 @@ public final class MenuHelper {
      * @return the menu
      * @throws WebloggerException the weblogger exception
      */
-    private static Menu buildMenu(ParsedMenu menuConfig,
-            String currentAction, GlobalRole userGlobalRole, WeblogRole userWeblogRole)
+    private static Menu buildMenu(ParsedMenu menuConfig, String currentAction,
+                                  GlobalRole userGlobalRole, WeblogRole userWeblogRole)
             throws WebloggerException {
 
         Menu tabMenu = new Menu();
@@ -195,9 +195,8 @@ public final class MenuHelper {
                 newTabItem.setKey(tabItem.getTitleKey());
                 newTabItem.setAction(tabItem.getAction());
 
-                // is this the selected item? Only one can be selected
-                // so skip the rest
-                if (currentAction != null && selectable && isSelected(currentAction, tabItem)) {
+                // is this the selected item? Only one can be selected so skip the rest
+                if (selectable && currentAction != null && isSelected(currentAction, tabItem)) {
                     newTabItem.setSelected(true);
                     tab.setSelected(true);
                     selectable = false;

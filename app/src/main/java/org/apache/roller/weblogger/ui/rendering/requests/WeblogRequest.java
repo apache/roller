@@ -82,7 +82,7 @@ public class WeblogRequest {
 
         String path = request.getPathInfo();
         
-        log.debug("parsing path "+path);
+        log.debug("parsing path " + path);
         
         // first, cleanup extra slashes and extract the weblog weblogHandle
         if(path != null && path.trim().length() > 1) {
@@ -138,7 +138,7 @@ public class WeblogRequest {
             try {
                 weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogHandle, true);
             } catch (WebloggerException ex) {
-                log.error("Error looking up weblog "+weblogHandle, ex);
+                log.error("Error looking up weblog " + weblogHandle, ex);
             }
         }
         return weblog;

@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.core.menu.Menu;
 
 import java.util.Date;
 import java.util.List;
@@ -296,5 +297,11 @@ public interface UserManager {
      */
     UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog)
             throws WebloggerException;
+
+    /**
+     * Return the Editor menu for the given username, weblog handle, and current
+     * action.
+     */
+    Menu getEditorMenu(String username, String weblogHandle);
 
 }

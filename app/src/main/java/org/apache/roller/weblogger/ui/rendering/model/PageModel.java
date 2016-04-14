@@ -390,18 +390,10 @@ public class PageModel implements Model {
      * to better show how the weblog will look to the outside visitor.
      */
     public Menu getEditorMenu() {
-        try {
-            if (!preview && pageRequest.isLoggedIn()) {
-                String username = pageRequest.getAuthenticatedUser();
-                User user = userManager.getUserByUserName(username);
-                UserWeblogRole uwr = userManager.getWeblogRole(username, pageRequest.getWeblogAnchor());
-                return MenuHelper.generateMenu("editor", null, user.getGlobalRole(), uwr.getWeblogRole());
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            log.error("GetWeblogRole() failed for user: " + pageRequest.getAuthenticatedUser() + " and weblog: "
-                    + pageRequest.getWeblogAnchor());
+        if (!preview && pageRequest.isLoggedIn()) {
+            String username = pageRequest.getAuthenticatedUser();
+            return userManager.getEditorMenu(username, pageRequest.getWeblogHandle());
+        } else {
             return null;
         }
     }

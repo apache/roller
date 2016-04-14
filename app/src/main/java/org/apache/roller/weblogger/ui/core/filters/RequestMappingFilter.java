@@ -149,7 +149,7 @@ public class RequestMappingFilter implements Filter {
         // special handling for trailing slash issue
         // we need this because by http standards the urls /foo and /foo/ are
         // supposed to be considered different, so we must enforce that
-        if(weblogRequestContext == null && !trailingSlash) {
+        if (weblogRequestContext == null && !trailingSlash) {
             // this means someone referred to a weblog index page with the
             // shortest form of url /<weblog> or /<weblog>/<locale> and we need
             // to do a redirect to /<weblog>/ or /<weblog>/<locale>/
@@ -159,7 +159,7 @@ public class RequestMappingFilter implements Filter {
             }
             response.sendRedirect(redirectUrl);
             return true;
-        } else if(weblogRequestContext != null && "tags".equals(weblogRequestContext)) {
+        } else if (weblogRequestContext != null && "tags".equals(weblogRequestContext)) {
             // tags section can have an index page at /<weblog>/tags/ and
             // a tags query at /<weblog>/tags/tag1+tag2, but that's it
             if((weblogRequestData == null && !trailingSlash) ||
@@ -167,7 +167,7 @@ public class RequestMappingFilter implements Filter {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return true;
             }
-        } else if(weblogRequestContext != null && trailingSlash) {
+        } else if (weblogRequestContext != null && trailingSlash) {
             // this means that someone has accessed a weblog url and included
             // a trailing slash, like /<weblog>/entry/<anchor>/ which is not
             // supported, so we need to offer up a 404 Not Found

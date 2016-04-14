@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -79,7 +79,8 @@ import org.springframework.web.bind.annotation.RestController;
  * sent to the blog owner and all who have commented on the same post.
  */
 @RestController
-@RequestMapping(path="/tb-ui/rendering/comment/**")
+// how @RequestMapping is combined at the class- and method-levels: http://stackoverflow.com/q/22702568
+@RequestMapping(path="/tb-ui/rendering/comment")
 public class CommentProcessor {
 
     private static Log log = LogFactory.getLog(CommentProcessor.class);
@@ -97,13 +98,6 @@ public class CommentProcessor {
     // See GenericThrottle class for activation information
     public void setCommentThrottle(@Qualifier("commentThrottle") GenericThrottle commentThrottle) {
         this.commentThrottle = commentThrottle;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -165,12 +159,10 @@ public class CommentProcessor {
     }
 
     /**
-     * Service incoming POST requests.
-     *
      * Here we handle incoming comment postings.
      */
-    @RequestMapping(method = RequestMethod.POST)
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    @RequestMapping(path="/**", method = RequestMethod.POST)
+    public void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         String error = null;
         String dispatch_url;
@@ -213,9 +205,8 @@ public class CommentProcessor {
         try {
             commentRequest = new WeblogEntryRequest(request);
 
-            // lookup weblog specified by comment request
-            weblog = weblogManager.getWeblogByHandle(commentRequest.getWeblogHandle());
-
+            // check weblog specified by comment request
+            weblog = commentRequest.getWeblog();
             if (weblog == null) {
                 throw new WebloggerException("unable to lookup weblog: " + commentRequest.getWeblogHandle());
             }
@@ -281,7 +272,6 @@ public class CommentProcessor {
 
         // Collect input from request params and construct new comment object
         // fields: name, email, url, content, notify
-        // TODO: data validation on collected comment data
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName(commenterName);
         comment.setEmail(commenterEmail);
@@ -317,27 +307,22 @@ public class CommentProcessor {
             cf.setPreview(comment);
         }
 
-        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest
-                .getLocaleInstance());
+        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
 
         // check if comments are allowed for this entry
         // this checks site-wide settings, weblog settings, and entry settings
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
-
-            // Must have an email and also must be valid
-        } else if (StringUtils.isEmpty(commenterEmail)
-                || !Utilities.isValidEmailAddress(commenterEmail)) {
+        // Must have an email and also must be valid
+        } else if (StringUtils.isEmpty(commenterEmail) || !Utilities.isValidEmailAddress(commenterEmail)) {
             error = messageUtils.getString("error.commentPostFailedEmailAddress");
-            log.debug("Email Address is invalid : "
-                    + commenterEmail);
-            // if there is an URL it must be valid
+            log.debug("Email Address is invalid : " + commenterEmail);
+        // if there is an URL it must be valid
         } else if (StringUtils.isNotEmpty(comment.getUrl())
-                && !new UrlValidator(new String[] { "http", "https" })
-                .isValid(comment.getUrl())) {
+                && !new UrlValidator(new String[] { "http", "https" }).isValid(comment.getUrl())) {
             error = messageUtils.getString("error.commentPostFailedURL");
             log.debug("URL is invalid : " + comment.getUrl());
-            // if this is a real comment post then authenticate request
+       // if this is a real comment post then authenticate request
         } else if (!preview && !this.commentAuthenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
             error = messageUtils.getString("error.commentAuthFailed", msg);
@@ -411,8 +396,7 @@ public class CommentProcessor {
                     // only re-index/invalidate the cache if comment isn't moderated
                     if (!commentApprovalRequired) {
 
-                        // remove entry before (re)adding it, or in case it
-                        // isn't Published
+                        // remove entry before (re)adding it, or in case it isn't Published
                         indexManager.removeEntryIndexOperation(entry);
 
                         // if published, index the entry
@@ -446,6 +430,26 @@ public class CommentProcessor {
         log.debug("comment processed, forwarding to " + dispatch_url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
         dispatcher.forward(request, response);
+    }
+
+
+    /**
+     * Used for generating the html used for comment authentication.  This is done
+     * outside of the normal rendering process so that we can cache full pages and
+     * still set the comment authentication section dynamically.
+     */
+    @RequestMapping(value="/authform", method = RequestMethod.GET)
+    public void generateAuthForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        response.setContentType("text/html; charset=utf-8");
+
+        // Convince proxies and browsers not to cache this.
+        response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.addHeader("Pragma", "no-cache");
+        response.addHeader("Expires", "-1");
+
+        PrintWriter out = response.getWriter();
+        out.println(commentAuthenticator.getHtml(request));
     }
 
 }

@@ -40,11 +40,7 @@ import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
  * for methods that take arguments so that users get a consistent way to
  * access those methods in their templates. i.e.
  *
- * $url.category("foo")
- *
- * instead of
- *
- * $url.getCategory("foo")
+ * $url.category("foo") instead of $url.getCategory("foo")
  */
 public class URLModel implements Model {
     
@@ -125,7 +121,7 @@ public class URLModel implements Model {
     
     
     public String getCommentAuthenticator() {
-        return getSite()+"/CommentAuthenticatorServlet?weblog="+weblog.getHandle();
+        return getSite()+"/tb-ui/rendering/comment/authform?weblog="+weblog.getHandle();
     }
     
     

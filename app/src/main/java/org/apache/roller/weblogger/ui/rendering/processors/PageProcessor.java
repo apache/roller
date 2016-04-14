@@ -162,7 +162,7 @@ public class PageProcessor {
      * Handle GET requests for weblog pages.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Weblog weblog;
         boolean isSiteWide;
 
@@ -223,9 +223,7 @@ public class PageProcessor {
         String cacheKey = generateKey(pageRequest);
 
         // cached content checking
-        if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())
-                && request.getAttribute("skipCache") == null
-                && request.getParameter("skipCache") == null) {
+        if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())) {
 
             CachedContent cachedContent;
             if (isSiteWide) {
@@ -352,9 +350,7 @@ public class PageProcessor {
             if (test == null) {
                 invalid = true;
             }
-        } else if (pageRequest.getTags() != null
-                && pageRequest.getTags().size() > 0) {
-
+        } else if (pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
             try {
                 // tags specified. make sure they exist.
                 invalid = !weblogEntryManager.getTagComboExists(pageRequest.getTags(),
@@ -484,13 +480,13 @@ public class PageProcessor {
      * a different way, but for now this is the easy way.
      */
     @RequestMapping(method = RequestMethod.POST)
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getPageViaPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // make sure caching is disabled
         request.setAttribute("skipCache", "true");
 
         // handle just like a GET request
-        this.doGet(request, response);
+        this.getPage(request, response);
     }
 
     /**
@@ -651,13 +647,11 @@ public class PageProcessor {
         }
 
         StringBuilder string = new StringBuilder();
-
         for (Map.Entry<String, String[]> entry : map.entrySet()) {
             if(entry.getKey() != null) {
                 string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
             }
         }
-
         return Utilities.toBase64(string.toString().substring(1).getBytes());
     }
 

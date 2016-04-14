@@ -30,6 +30,7 @@
     <mvc:annotation-driven/>
 
     <beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <!-- See CommentProcessor for an example of how URLs are combined at the class- and method-level. -->
         <beans:property name="alwaysUseFullPath" value="true"/>
     </beans:bean>
 

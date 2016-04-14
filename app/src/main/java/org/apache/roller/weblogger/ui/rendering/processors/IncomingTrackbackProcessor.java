@@ -35,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -72,13 +71,6 @@ public class IncomingTrackbackProcessor {
 
     // whether comment moderation is enforced server-wide (regardless of per-blog setting)
     private boolean globalCommentModerationRequired = true;
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
 
     @Autowired
     private CacheManager cacheManager;
@@ -127,7 +119,7 @@ public class IncomingTrackbackProcessor {
      * Here we handle incoming trackback posts.
      */
     @RequestMapping(method = RequestMethod.POST)
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void postTrackback(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String error = null;
@@ -152,20 +144,17 @@ public class IncomingTrackbackProcessor {
             try {
                 trackbackRequest = new WeblogEntryRequest(request);
 
-                // lookup weblog specified by request
-                weblog = weblogManager.getWeblogByHandle(trackbackRequest.getWeblogHandle());
-
+                // check weblog specified by request
+                weblog = trackbackRequest.getWeblog();
                 if (weblog == null) {
-                    throw new WebloggerException("unable to lookup weblog: "+
-                            trackbackRequest.getWeblogHandle());
+                    throw new WebloggerException("unable to lookup weblog: "+ trackbackRequest.getWeblogHandle());
                 }
 
                 // lookup entry specified by comment request
                 entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
 
                 if (entry == null) {
-                    throw new WebloggerException("unable to lookup entry: "+
-                            trackbackRequest.getWeblogAnchor());
+                    throw new WebloggerException("unable to lookup entry: " + trackbackRequest.getWeblogAnchor());
                 }
 
                 /*

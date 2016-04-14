@@ -46,8 +46,8 @@ public class WeblogPageRequest extends WeblogRequest {
 
     // lightweight attributes
     private String context = null;
-    protected String weblogAnchor = null;
-    protected String weblogTemplateName = null;
+    private String weblogAnchor = null;
+    private String weblogTemplateName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
     private List<String> tags = null;
@@ -117,8 +117,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     otherPageHit = true;
 
                 } else if ("category".equals(this.context)) {
-                    this.weblogCategoryName = Utilities
-                            .decode(pathElements[1]);
+                    this.weblogCategoryName = Utilities.decode(pathElements[1]);
 
                     // Other page
                     otherPageHit = true;

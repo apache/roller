@@ -68,7 +68,7 @@ public class MediaResourceProcessor {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getMediaResource(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         Weblog weblog;
 

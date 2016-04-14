@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.util.Date;
@@ -37,11 +36,7 @@ public final class ModDateHeaderUtil {
 
 	private static Log log = LogFactory.getLog(ModDateHeaderUtil.class);
 
-	/**
-	 * Instantiates a new mod date header util.
-	 */
-	private ModDateHeaderUtil() {
-	}
+	private ModDateHeaderUtil() {}
 
 	/**
 	 * Sets the HTTP response status to 304 (NOT MODIFIED) if the request
@@ -50,16 +45,11 @@ public final class ModDateHeaderUtil {
 	 * <em>truncated to second granularity</em>. Returns true if the response
 	 * status was set, false if not.
 	 * 
-	 * @param request
-	 *            the request
-	 * @param response
-	 *            the response
-	 * @param lastModifiedTimeMillis
-	 *            the last modified time millis
-	 * @param deviceType
-	 *            the device type. Null to ignore ie no theme device type
-	 *            swithing check.
-	 * 
+	 * @param request - the request
+	 * @param response - the response
+	 * @param lastModifiedTimeMillis - the last modified time millis
+	 * @param deviceType - standard or mobile, null to not check
+	 *
 	 * @return true if a response status was sent, false otherwise.
 	 */
 	public static boolean respondIfNotModified(HttpServletRequest request,
@@ -70,8 +60,7 @@ public final class ModDateHeaderUtil {
 		try {
 			sinceDate = request.getDateHeader("If-Modified-Since");
 		} catch (IllegalArgumentException ex) {
-			// this indicates there was some problem parsing the header value as
-			// a date
+			// this indicates there was some problem parsing the header value as a date
 			return false;
 		}
 
@@ -80,20 +69,12 @@ public final class ModDateHeaderUtil {
 
 		if (log.isDebugEnabled()) {
             FastDateFormat format = FastDateFormat.getInstance("EEE MMM dd 'at' h:mm:ss a");
-			log.debug("since date = "
-					+ format.format(new Date(sinceDate)));
-			log.debug("last mod date (truncated to seconds) = "
-                    + format.format(new Date(lastModifiedTimeMillis)));
+			log.debug("since date = " + format.format(new Date(sinceDate)));
+			log.debug("last mod date (truncated to seconds) = " + format.format(new Date(lastModifiedTimeMillis)));
 		}
 
 		// Set device type for device switching
-		String eTag = null;
-		if (deviceType != null) {
-			// int code = new HashCodeBuilder().append(deviceType.name())
-			// .hashCode();
-			// eTag = String.valueOf(code);
-			eTag = deviceType.name();
-		}
+		String eTag = (deviceType == null) ? null : deviceType.name();
 
 		String previousToken = request.getHeader("If-None-Match");
 		if (eTag != null && previousToken != null && eTag.equals(previousToken)
@@ -106,12 +87,8 @@ public final class ModDateHeaderUtil {
             }
 
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-
-			// use the same date we sent when we created the ETag the
-			// first time through
-			response.setHeader("Last-Modified",
-					request.getHeader("If-Modified-Since"));
-
+			// use the same date we sent when we created the eTag the first time through
+			response.setHeader("Last-Modified", request.getHeader("If-Modified-Since"));
 			return true;
 		} else {
 			return false;
@@ -122,33 +99,15 @@ public final class ModDateHeaderUtil {
 	 * Set the Last-Modified header using the given time in milliseconds. Note
 	 * that because the header has the granularity of one second, the value will
 	 * get truncated to the nearest second that does not exceed the provided
-	 * value.
-	 * <p/>
-	 * This will also set the Expires header to a date in the past. This forces
+	 * value.  This will also set the Expires header to a date in the past. This forces
 	 * clients to revalidate the cache each time.
-	 * 
-	 * @param response
-	 *            the response
-	 * @param lastModifiedTimeMillis
-	 *            the last modified time millis
-	 * @param deviceType
-	 *            the device type. Null to ignore ie no theme device type
-	 *            swithing check.
 	 */
 	public static void setLastModifiedHeader(HttpServletResponse response,
-			long lastModifiedTimeMillis,
-			MobileDeviceRepository.DeviceType deviceType) {
+			long lastModifiedTimeMillis, MobileDeviceRepository.DeviceType deviceType) {
 
-		// Save our device type for device switching. Must use chaching on
-		// headers for this to work.
+		// Save our device type for device switching. Must use caching on headers for this to work.
 		if (deviceType != null) {
-
-			// int code = new HashCodeBuilder().append(deviceType.name())
-			// .hashCode();
-			// String eTag = String.valueOf(code);
-
 			String eTag = deviceType.name();
-
 			response.setHeader("ETag", eTag);
 		}
 
@@ -158,7 +117,5 @@ public final class ModDateHeaderUtil {
 		response.setDateHeader("Expires", 0);
 		// We may also want this (See 13.2.1 and 14.9.4)
 		// response.setHeader("Cache-Control","must-revalidate");
-
 	}
-
 }

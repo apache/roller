@@ -171,7 +171,6 @@
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <url-pattern>/tb-ui/authoring/rest/*</url-pattern>
         <url-pattern>/tb-ui/authoring/preview/*</url-pattern>
-        <url-pattern>/CommentAuthenticatorServlet</url-pattern>
         <url-pattern>/tb-ui/rendering/page/*</url-pattern>
         <url-pattern>/tb-ui/rendering/comment/*</url-pattern>
         <url-pattern>/tb-ui/rendering/trackback/*</url-pattern>
