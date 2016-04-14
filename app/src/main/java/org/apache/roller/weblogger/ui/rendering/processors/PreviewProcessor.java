@@ -42,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -89,7 +88,7 @@ public class PreviewProcessor {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getPreviewPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entering");
 
         Weblog weblog;
@@ -110,19 +109,9 @@ public class PreviewProcessor {
             return;
         }
 
-        // Get the deviceType from user agent
-        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
-
         // if theme provided, indicates a theme preview rather than a entry draft preview
         String previewThemeName = request.getParameter("theme");
-
         if (previewThemeName != null) {
-            // for theme previews we explicitly set the deviceType attribute
-            if (request.getParameter("type") != null) {
-                deviceType = request.getParameter("type").equals("standard")
-                        ? MobileDeviceRepository.DeviceType.standard
-                        : MobileDeviceRepository.DeviceType.mobile;
-            }
 
             // try getting the preview theme
             log.debug("preview theme = " + previewThemeName);
@@ -240,7 +229,7 @@ public class PreviewProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page, deviceType);
+            renderer = rendererManager.getRenderer(page, previewRequest.getDeviceType());
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);
@@ -271,7 +260,6 @@ public class PreviewProcessor {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
 
         // post rendering process
 

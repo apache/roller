@@ -41,7 +41,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
 
-        if(pathInfo != null) {
+        if (pathInfo != null) {
             throw new IllegalArgumentException("Invalid path info: " + request.getRequestURL());
         }
         
@@ -53,12 +53,12 @@ public class WeblogSearchRequest extends WeblogRequest {
          *   pageNum - specifies what pageNum # to display
          *   cat - limit results to a certain weblogCategoryName
          */
-        if(request.getParameter("q") != null &&
+        if (request.getParameter("q") != null &&
                 request.getParameter("q").trim().length() > 0) {
             this.query = request.getParameter("q");
         }
         
-        if(request.getParameter("page") != null) {
+        if (request.getParameter("page") != null) {
             String pageInt = request.getParameter("page");
             try {
                 this.pageNum = Integer.parseInt(pageInt);
@@ -67,10 +67,8 @@ public class WeblogSearchRequest extends WeblogRequest {
             }
         }
         
-        if(request.getParameter("cat") != null &&
-                request.getParameter("cat").trim().length() > 0) {
-            this.weblogCategoryName =
-                    Utilities.decode(request.getParameter("cat"));
+        if (request.getParameter("cat") != null && request.getParameter("cat").trim().length() > 0) {
+            this.weblogCategoryName = Utilities.decode(request.getParameter("cat"));
         }
     }
 

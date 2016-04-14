@@ -42,8 +42,6 @@ public class WeblogEntryRequest extends WeblogRequest {
         // parent determines weblog handle and locale if specified
         super(request);
         
-        String servlet = request.getServletPath();
-        
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
         
@@ -51,28 +49,24 @@ public class WeblogEntryRequest extends WeblogRequest {
          * parse path info.  we expect ...
          * /entry/<anchor> - permalink
          */
-        if(pathInfo != null && pathInfo.trim().length() > 0) {
-            
+        if (pathInfo != null && pathInfo.trim().length() > 0) {
             // we should only ever get 2 path elements
             String[] pathElements = pathInfo.split("/");
-            if(pathElements.length == 2) {
-                
+            if (pathElements.length == 2) {
                 String context = pathElements[0];
-                if("entry".equals(context)) {
+                if ("entry".equals(context)) {
                     try {
                         this.weblogAnchor = URLDecoder.decode(pathElements[1], "UTF-8");
                     } catch (UnsupportedEncodingException ex) {
                         // should never happen
                         log.error(ex);
                     }
-                } else {
-                    throw new IllegalArgumentException("bad path info : "+ request.getRequestURL());
                 }
-            } else {
-                throw new IllegalArgumentException("bad path info: "+ request.getRequestURL());
             }
-        } else {
-            throw new IllegalArgumentException("bad path info: "+ request.getRequestURL());
+        }
+
+        if (weblogAnchor == null) {
+            throw new IllegalArgumentException("bad path info: " + request.getRequestURL());
         }
     }
 

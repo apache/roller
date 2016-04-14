@@ -31,6 +31,9 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.core.menu.Menu;
+import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
+import org.apache.roller.weblogger.util.cache.ExpiringCache;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -45,6 +48,16 @@ public class JPAUserManagerImpl implements UserManager {
     private final JPAPersistenceStrategy strategy;
 
     private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    private ExpiringCache editorMenuCache = null;
+
+    public void setEditorMenuCache(ExpiringCache editorMenuCache) {
+        this.editorMenuCache = editorMenuCache;
+    }
 
     // cached mapping of userNames -> userIds
     private Map<String, String> userNameToIdMap = new HashMap<>();
@@ -63,9 +76,6 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy = strat;
     }
 
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
 
     //--------------------------------------------------------------- user CRUD
  
@@ -417,6 +427,7 @@ public class JPAUserManagerImpl implements UserManager {
             UserWeblogRole perm = new UserWeblogRole(user, weblog, role);
             this.strategy.store(perm);
         }
+        editorMenuCache.remove(generateMenuCacheKey(user.getUserName(), weblog.getHandle()));
     }
 
     public void grantWeblogRole(String userId, Weblog weblog, WeblogRole role) throws WebloggerException {
@@ -465,6 +476,7 @@ public class JPAUserManagerImpl implements UserManager {
         // set pending to false
         existingPerm.setPending(false);
         this.strategy.store(existingPerm);
+        editorMenuCache.remove(generateMenuCacheKey(user.getUserName(), weblog.getHandle()));
     }
 
     
@@ -497,6 +509,7 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("ERROR: role not found");
         }
         this.strategy.remove(oldrole);
+        editorMenuCache.remove(generateMenuCacheKey(user.getUserName(), weblog.getHandle()));
     }
 
     
@@ -533,6 +546,29 @@ public class JPAUserManagerImpl implements UserManager {
                 UserWeblogRole.class);
         q.setParameter(1, weblog.getId());
         return q.getResultList();
+    }
+
+    @Override
+    public Menu getEditorMenu(String username, String weblogHandle) {
+        try {
+            String cacheKey = generateMenuCacheKey(username, weblogHandle);
+            Menu menu = (Menu) editorMenuCache.get(cacheKey);
+            if (menu == null) {
+                User user = getUserByUserName(username);
+                UserWeblogRole uwr = getWeblogRole(username, weblogHandle);
+                menu = MenuHelper.generateMenu("editor", null, user.getGlobalRole(), uwr.getWeblogRole());
+                editorMenuCache.put(cacheKey, menu);
+            }
+            return menu;
+        } catch (WebloggerException e) {
+            log.error("Problem generating editor window for User: "
+                    + username + " and weblog: " + weblogHandle + ", message: " + e.getMessage());
+        }
+        return null;
+    }
+
+    private String generateMenuCacheKey(String username, String weblogHandle) {
+        return "user/" + username + "/handle/" + weblogHandle;
     }
 
 }

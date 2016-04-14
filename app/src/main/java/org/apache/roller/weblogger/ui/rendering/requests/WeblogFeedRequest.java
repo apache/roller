@@ -64,8 +64,8 @@ public class WeblogFeedRequest extends WeblogRequest {
         log.debug("parsing path " + pathInfo);
         
         /*
-         * parse the path info.
-         * 
+         * arse the path info.  Format:
+         *
          * must look like this ...
          *
          * /<type>/<format>
@@ -92,14 +92,14 @@ public class WeblogFeedRequest extends WeblogRequest {
         }
         
         if (request.getParameter("tags") != null) {
-            this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));                  
+            this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));
             int maxSize = WebloggerStaticConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
             if (this.tags.size() > maxSize) {
                 throw new IllegalArgumentException("Max number of tags allowed is " + maxSize + ", "
                         + request.getRequestURL());
             }
-        }        
-        
+        }
+
         if (request.getParameter("page") != null) {
             try {
                 this.page = Integer.parseInt(request.getParameter("page"));
@@ -111,7 +111,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         if ((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
             throw new IllegalArgumentException("Please specify either category or tags but not both: " + request.getRequestURL());
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("type = "+this.type);
             log.debug("format = "+this.format);

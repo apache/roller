@@ -109,7 +109,7 @@ public class FeedProcessor {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         log.debug("Entering");
 
@@ -126,7 +126,7 @@ public class FeedProcessor {
                 throw new WebloggerException("unable to lookup weblog: " + feedRequest.getWeblogHandle());
             }
 
-            // Is this the site-wide weblog? If so, makes a feed containing all blogs...
+            // Is this the site-wide weblog? If so, make a combined feed using all blogs...
             isSiteWide = propertiesManager.isSiteWideWeblog(weblog.getHandle());
             feedRequest.setSiteWideFeed(isSiteWide);
 
@@ -186,11 +186,9 @@ public class FeedProcessor {
 
         if (cachedContent != null) {
             log.debug("HIT " + cacheKey);
-
             response.setContentLength(cachedContent.getContent().length);
             response.getOutputStream().write(cachedContent.getContent());
             return;
-
         } else {
             log.debug("MISS " + cacheKey);
         }
@@ -199,7 +197,6 @@ public class FeedProcessor {
         boolean invalid = false;
 
         if (feedRequest.getWeblogCategoryName() != null) {
-
             // category specified. category must exist.
             WeblogCategory test = null;
 
@@ -212,15 +209,17 @@ public class FeedProcessor {
             if (test == null) {
                 invalid = true;
             }
-
         } else if (feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
-
             try {
                 // tags specified. make sure they exist.
                 invalid = !weblogEntryManager.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
             }
+        } else if (!"entries".equals(feedRequest.getType()) && !"comments".equals(feedRequest.getType())) {
+            invalid = true;
+        } else if (!"rss".equals(feedRequest.getFormat()) && !"atom".equals(feedRequest.getFormat())) {
+            invalid = true;
         }
 
         if (invalid) {
@@ -239,16 +238,9 @@ public class FeedProcessor {
             Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", feedRequest);
             model = Model.getModelMap("feedModelSet", initData);
-
-            if (isSiteWide) {
-                pageId = "site-" + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
-            } else {
-                pageId = "weblog-" + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
-            }
-
+            pageId = (isSiteWide ? "site-" : "weblog-") + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
-
             if (!response.isCommitted()) {
                 response.reset();
             }
@@ -264,15 +256,7 @@ public class FeedProcessor {
             renderer = rendererManager.getRenderer(template, MobileDeviceRepository.DeviceType.standard);
         } catch (Exception e) {
             // nobody wants to render my content :(
-
-            // TODO: this log message has been disabled because it fills up
-            // the logs with useless errors due to the fact that the way these
-            // template ids are formed comes directly from the request and it
-            // often gets bunk data causing invalid template ids.
-            // at some point we should have better validation on the input so
-            // that we can quickly dispatch invalid feed requests and only
-            // get this far if we expect the template to be found
-            // log.error("Couldn't find renderer for page "+pageId, e);
+            log.error("Couldn't find render feed for page " + pageId, e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -284,7 +268,7 @@ public class FeedProcessor {
         // render content. use default size of 24K for a standard page
         CachedContent rendererOutput = new CachedContent(WebloggerCommon.TWENTYFOUR_KB_IN_BYTES);
         try {
-            log.debug("Doing rendering");
+            log.debug("Rendering...");
             renderer.render(model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close

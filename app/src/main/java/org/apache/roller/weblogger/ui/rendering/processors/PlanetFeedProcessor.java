@@ -88,7 +88,7 @@ public class PlanetFeedProcessor {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getPlanetFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entering");
 
         Planet planet;
@@ -140,8 +140,7 @@ public class PlanetFeedProcessor {
         }
 
         // set last-modified date
-        ModDateHeaderUtil.setLastModifiedHeader(response,
-                lastModified.getTime(), deviceType);
+        ModDateHeaderUtil.setLastModifiedHeader(response, lastModified.getTime(), deviceType);
 
         // cached content checking
         String cacheKey = generateKey(planetName);

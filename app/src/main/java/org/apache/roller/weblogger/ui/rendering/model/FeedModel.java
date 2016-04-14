@@ -41,8 +41,6 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class FeedModel implements Model {
 
-    private static int DEFAULT_ENTRIES = 0;
-    
     private WeblogFeedRequest feedRequest = null;
 
     private URLStrategy urlStrategy = null;
@@ -65,8 +63,6 @@ public class FeedModel implements Model {
 
     public void init(Map initData) throws WebloggerException {
 
-        DEFAULT_ENTRIES = propertiesManager.getIntProperty("site.newsfeeds.defaultEntries");
-        
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {

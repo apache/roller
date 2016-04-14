@@ -33,13 +33,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
@@ -59,13 +57,6 @@ public class SearchProcessor {
     private static Log log = LogFactory.getLog(SearchProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/search";
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
 
     @Autowired
     private RendererManager rendererManager = null;
@@ -94,36 +85,29 @@ public class SearchProcessor {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         log.debug("Entering");
 
-        Weblog weblog = null;
-        WeblogSearchRequest searchRequest = null;
+        Weblog weblog;
+        WeblogSearchRequest searchRequest;
 
         // first off lets parse the incoming request and validate it
         try {
             searchRequest = new WeblogSearchRequest(request);
 
             // now make sure the specified weblog really exists
-            weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(),
-                            Boolean.TRUE);
-
+            weblog = searchRequest.getWeblog();
+            if (weblog == null) {
+                log.info("Weblog not found: " + searchRequest.getWeblogHandle());
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
         } catch (Exception e) {
             // invalid search request format or weblog doesn't exist
-            log.debug("error creating weblog search request", e);
+            log.debug("Error creating weblog search request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
-        }
-
-        // Get the deviceType from user agent
-        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository
-                .getRequestType(request);
-
-        // for previews we explicitly set the deviceType attribute
-        if (request.getParameter("type") != null) {
-            deviceType = request.getParameter("type").equals("standard") ? MobileDeviceRepository.DeviceType.standard
-                    : MobileDeviceRepository.DeviceType.mobile;
         }
 
         // lookup template to use for rendering
@@ -144,9 +128,7 @@ public class SearchProcessor {
                         + "for weblog " + weblog.getHandle());
             }
         } catch (Exception e) {
-            log.error(
-                    "Error getting default page for weblog "
-                            + weblog.getHandle(), e);
+            log.error("Error getting default page for weblog " + weblog.getHandle(), e);
         }
 
         // set the content type
@@ -159,10 +141,9 @@ public class SearchProcessor {
             Map<String, Object> initData = new HashMap<>();
             initData.put("request", request);
 
-            // this is a little hacky, but nothing we can do about it
-            // we need the 'weblogRequest' to be a pageRequest so other models
-            // are properly loaded, which means that searchRequest needs its
-            // own custom initData property aside from the standard
+            // We need the 'parsedRequest' to be a pageRequest so other models
+            // used in a search are properly loaded, which means that searchRequest
+            // needs its own custom initData property aside from the standard
             // weblogRequest.
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
@@ -193,7 +174,7 @@ public class SearchProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page, deviceType);
+            renderer = rendererManager.getRenderer(page, searchRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
