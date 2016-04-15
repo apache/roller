@@ -20,8 +20,8 @@
              xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <!--beans:bean id="cache.excludeOwnerEditPages" class="java.lang.Boolean">
-        <beans:constructor-arg value="true"/>
+    <!--beans:bean id="cache.cacheLoggedInPages" class="java.lang.Boolean">
+        <beans:constructor-arg value="false"/>
     </beans:bean-->
 
 </beans:beans>

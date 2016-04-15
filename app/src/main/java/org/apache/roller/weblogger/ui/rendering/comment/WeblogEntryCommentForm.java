@@ -30,8 +30,8 @@ public class WeblogEntryCommentForm {
     private boolean error = false;
     private String message = null;
     
-    private String name = "";
-    private String email = "";
+    private String name = "Glen";
+    private String email = "glen.mazza@gmail.com";
     private String url = "";
     private String content = "";
     private boolean notify = false;

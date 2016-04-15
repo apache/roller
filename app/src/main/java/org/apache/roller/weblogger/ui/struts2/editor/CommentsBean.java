@@ -30,8 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
-import org.apache.roller.weblogger.util.Utilities;
-
 
 /**
  * A bean for managing comments.
@@ -70,7 +68,7 @@ public class CommentsBean {
         
         // list of ids we are working on
         String[] idArray = allComments.toArray(new String[allComments.size()]);
-        setIds(Utilities.stringArrayToString(idArray,","));
+        setIds(StringUtils.join(idArray, ','));
         
         // approved ids list
         setApprovedComments(approvedList.toArray(new String[approvedList.size()]));

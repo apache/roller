@@ -21,6 +21,7 @@
 
 package org.apache.roller.weblogger.business.plugins.comment;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -65,7 +66,7 @@ public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
             LOG.debug("starting value:\n" + output);
             	        
 	        // escape html
-	        output = Utilities.escapeHTML(output);
+	        output = StringEscapeUtils.escapeHtml4(output);
 	        
 	        // just use old utilities method
 	        output = Utilities.transformToHTMLSubset(output);

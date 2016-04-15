@@ -45,11 +45,11 @@ public final class I18nMessages {
     
     // a map of cached messages instances, keyed by locale
     private static Map<Locale, I18nMessages> messagesMap = 
-            Collections.synchronizedMap(new HashMap());
+            Collections.synchronizedMap(new HashMap<>());
     
     
     private I18nMessages(String locale) {
-        Locale loc = Utilities.toLocale(locale);
+        Locale loc = Locale.forLanguageTag(locale);
         this.locale = loc;
         this.bundle = ResourceBundle.getBundle("ApplicationResources", loc);
     }
@@ -68,7 +68,7 @@ public final class I18nMessages {
         log.debug("request for messages in locale = " + locale);
         
         // check if we already have a message utils created for that locale
-        I18nMessages messages = messagesMap.get(Utilities.toLocale(locale));
+        I18nMessages messages = messagesMap.get(Locale.forLanguageTag(locale));
         
         // if no utils for that language yet then construct
         if(messages == null) {

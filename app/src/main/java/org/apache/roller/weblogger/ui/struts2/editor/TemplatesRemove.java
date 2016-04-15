@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -34,7 +35,6 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Remove templates.
@@ -101,7 +101,7 @@ public class TemplatesRemove extends UIAction {
 
                 // Set page data
                 setTemplates(pages);
-                setIds(Utilities.stringArrayToString(idsToDelete, ","));
+                setIds(StringUtils.join(idsToDelete, ','));
 
                 // Flush for operation
                 WebloggerFactory.flush();
@@ -137,7 +137,7 @@ public class TemplatesRemove extends UIAction {
         if (getIds() != null) {
             try {
 
-                String[] idsToDelete = Utilities.stringToStringArray(getIds(), ",");
+                String[] idsToDelete = StringUtils.split(getIds(), ',');
                 if (idsToDelete != null && idsToDelete.length > 0) {
 
                     Weblog weblog = getActionWeblog();

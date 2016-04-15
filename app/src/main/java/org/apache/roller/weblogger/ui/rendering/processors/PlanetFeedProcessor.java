@@ -43,6 +43,7 @@ import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,8 +121,7 @@ public class PlanetFeedProcessor {
         Date lastModified = planet.getLastUpdated();
 
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request, response,
-                lastModified.getTime(), deviceType)) {
+        if (Utilities.respondIfNotModified(request, response, lastModified.getTime(), deviceType)) {
             return;
         }
 
@@ -140,7 +140,7 @@ public class PlanetFeedProcessor {
         }
 
         // set last-modified date
-        ModDateHeaderUtil.setLastModifiedHeader(response, lastModified.getTime(), deviceType);
+        Utilities.setLastModifiedHeader(response, lastModified.getTime(), deviceType);
 
         // cached content checking
         String cacheKey = generateKey(planetName);

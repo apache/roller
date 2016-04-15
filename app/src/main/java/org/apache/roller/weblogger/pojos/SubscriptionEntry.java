@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -204,7 +205,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public List<String> getCategories() {
         List<String> list = new ArrayList<>();
         if (getCategoriesString() != null) {
-            String[] catArray = Utilities.stringToStringArray(getCategoriesString(),",");
+            String[] catArray = StringUtils.split(getCategoriesString(), ',');
             list.addAll(Arrays.asList(catArray));
         }
         return list;

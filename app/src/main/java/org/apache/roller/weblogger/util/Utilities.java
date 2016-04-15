@@ -31,6 +31,7 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -42,27 +43,29 @@ import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
 /**
  * General purpose utilities, not for use in templates.
  */
 public class Utilities {
     /** The <code>Log</code> instance for this class. */
-    private static Log mLogger = LogFactory.getLog(Utilities.class);
+    private static Log log = LogFactory.getLog(Utilities.class);
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
@@ -108,17 +111,6 @@ public class Utilities {
             "&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
             Pattern.CASE_INSENSITIVE);
-
-    /**
-     * Escape, but do not replace HTML.
-     */
-    public static String escapeHTML(String str) {
-        return StringEscapeUtils.escapeHtml4(str);
-    }
-
-    public static String unescapeHTML(String str) {
-        return StringEscapeUtils.unescapeHtml4(str);
-    }
 
     /**
      * Remove occurrences of html, defined as any text between the characters
@@ -178,13 +170,6 @@ public class Utilities {
     }
 
     /**
-     * Replace new lines with HTML break characters
-     */
-    public static String autoformat(String s) {
-        return StringUtils.replace(s, "\n", "<br/>");
-    }
-
-    /**
      * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
      */
     public static String addNofollow(String html) {
@@ -227,24 +212,6 @@ public class Utilities {
         return ret.toString();
     }
 
-    /** Convert string array to string with delimeters. */
-    public static String stringArrayToString(String[] stringArray, String delim) {
-        StringBuilder bldr = new StringBuilder();
-        for (String element : stringArray) {
-            if (bldr.length() > 0) {
-                bldr.append(delim).append(element);
-            } else {
-                bldr.append(element);
-            }
-        }
-        return bldr.toString();
-    }
-
-    /** Convert string with delimeters to string array. */
-    public static String[] stringToStringArray(String instr, String delim) {
-        return StringUtils.split(instr, delim);
-    }
-
     /**
      * Reads an inputstream into a string
      */
@@ -281,7 +248,7 @@ public class Utilities {
             // first create an instance, given the provider
             md = MessageDigest.getInstance(algorithm);
         } catch (Exception e) {
-            mLogger.error("Exception: " + e);
+            log.error("Exception: " + e);
             return password;
         }
 
@@ -622,7 +589,8 @@ public class Utilities {
         try {
             // See if its valid
             new InternetAddress(aEmailAddress);
-            if (!hasNameAndDomain(aEmailAddress)) {
+            String[] tokens = aEmailAddress.split("@");
+            if (!(tokens.length == 2 && StringUtils.isNotEmpty(tokens[0]) && StringUtils.isNotEmpty(tokens[1]))) {
                 result = false;
             }
         } catch (AddressException ex) {
@@ -632,36 +600,16 @@ public class Utilities {
     }
 
     /**
-     * Checks for name and domain.
-     * 
-     * @param aEmailAddress
-     *            the a email address
-     * @return true, if successful
-     */
-    private static boolean hasNameAndDomain(String aEmailAddress) {
-        String[] tokens = aEmailAddress.split("@");
-        return tokens.length == 2 && StringUtils.isNotEmpty(tokens[0])
-                && StringUtils.isNotEmpty(tokens[1]);
-    }
-
-    /**
      * Compose a map of key=value params into a query string.
      */
     public static String getQueryString(Map<String, String> params) {
-
-        if(params == null) {
+        if (params == null) {
             return null;
         }
 
         StringBuilder queryString = new StringBuilder();
         for (Map.Entry<String, String> entry : params.entrySet()) {
-
-            if (queryString.length() == 0) {
-                queryString.append("?");
-            } else {
-                queryString.append("&");
-            }
-
+            queryString.append(queryString.length() == 0 ? "?" : "&");
             queryString.append(entry.getKey());
             queryString.append("=");
             queryString.append(entry.getValue());
@@ -731,38 +679,6 @@ public class Utilities {
         return sb.toString();
     }
 
-    public static Locale toLocale(String locale) {
-        if (locale != null) {
-            String[] localeStr = StringUtils.split(locale,"_");
-            if (localeStr.length == 1) {
-                if (localeStr[0] == null) {
-                    localeStr[0] = "";
-                }
-                return new Locale(localeStr[0]);
-            } else if (localeStr.length == 2) {
-                if (localeStr[0] == null) {
-                    localeStr[0] = "";
-                }
-                if (localeStr[1] == null) {
-                    localeStr[1] = "";
-                }
-                return new Locale(localeStr[0], localeStr[1]);
-            } else if (localeStr.length == 3) {
-                if (localeStr[0] == null) {
-                    localeStr[0] = "";
-                }
-                if (localeStr[1] == null) {
-                    localeStr[1] = "";
-                }
-                if (localeStr[2] == null) {
-                    localeStr[2] = "";
-                }
-                return new Locale(localeStr[0], localeStr[1], localeStr[2]);
-            }
-        }
-        return Locale.getDefault();
-    }
-
     public static Object jaxbUnmarshall(String xsdPath, String xmlPath, boolean xmlFromFileSystem,
                                         Class... classesToBeBound)
             throws WebloggerException {
@@ -781,19 +697,98 @@ public class Utilities {
             JAXBContext jaxbContext = JAXBContext.newInstance(classesToBeBound);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             jaxbUnmarshaller.setSchema(schema);
-            jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    mLogger.error("Parsing error: " +
-                            event.getMessage() + "; Line #" +
-                            event.getLocator().getLineNumber() + "; Column #" +
-                            event.getLocator().getColumnNumber());
-                    return false;
-                }
+            jaxbUnmarshaller.setEventHandler( (event) -> {
+                log.error("Parsing error: " +
+                        event.getMessage() + "; Line #" +
+                        event.getLocator().getLineNumber() + "; Column #" +
+                        event.getLocator().getColumnNumber());
+                return false;
             });
             return jaxbUnmarshaller.unmarshal(is);
         } catch (Exception ex) {
-            throw new WebloggerException(
-                    "JAXB Unmarshalling Error", ex);
+            throw new WebloggerException("JAXB Unmarshalling Error", ex);
         }
     }
+
+    /**
+     * Sets the HTTP response status to 304 (NOT MODIFIED) if the request
+     * contains an If-Modified-Since header that specifies a time that is at or
+     * after the time specified by the value of lastModifiedTimeMillis
+     * <em>truncated to second granularity</em>. Returns true if the response
+     * status was set, false if not.
+     *
+     * @param request - the request
+     * @param response - the response
+     * @param lastModifiedTimeMillis - the last modified time millis
+     * @param deviceType - standard or mobile, null to not check
+     *
+     * @return true if a response status was sent, false otherwise.
+     */
+    public static boolean respondIfNotModified(HttpServletRequest request,
+                                               HttpServletResponse response, long lastModifiedTimeMillis,
+                                               MobileDeviceRepository.DeviceType deviceType) {
+
+        long sinceDate;
+        try {
+            sinceDate = request.getDateHeader("If-Modified-Since");
+        } catch (IllegalArgumentException ex) {
+            // this indicates there was some problem parsing the header value as a date
+            return false;
+        }
+
+        // truncate to seconds
+        lastModifiedTimeMillis -= (lastModifiedTimeMillis % DateUtils.MILLIS_PER_SECOND);
+
+        if (log.isDebugEnabled()) {
+            FastDateFormat format = FastDateFormat.getInstance("EEE MMM dd 'at' h:mm:ss a");
+            log.debug("since date = " + format.format(new Date(sinceDate)));
+            log.debug("last mod date (truncated to seconds) = " + format.format(new Date(lastModifiedTimeMillis)));
+        }
+
+        // Set device type for device switching
+        String eTag = (deviceType == null) ? null : deviceType.name();
+
+        String previousToken = request.getHeader("If-None-Match");
+        if (eTag != null && previousToken != null && eTag.equals(previousToken)
+                && lastModifiedTimeMillis <= sinceDate
+                || (eTag == null || previousToken == null)
+                && lastModifiedTimeMillis <= sinceDate) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("NOT MODIFIED " + request.getRequestURL());
+            }
+
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            // use the same date we sent when we created the eTag the first time through
+            response.setHeader("Last-Modified", request.getHeader("If-Modified-Since"));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Set the Last-Modified header using the given time in milliseconds. Note
+     * that because the header has the granularity of one second, the value will
+     * get truncated to the nearest second that does not exceed the provided
+     * value.  This will also set the Expires header to a date in the past. This forces
+     * clients to revalidate the cache each time.
+     */
+    public static void setLastModifiedHeader(HttpServletResponse response,
+                                             long lastModifiedTimeMillis, MobileDeviceRepository.DeviceType deviceType) {
+
+        // Save our device type for device switching. Must use caching on headers for this to work.
+        if (deviceType != null) {
+            String eTag = deviceType.name();
+            response.setHeader("ETag", eTag);
+        }
+
+        response.setDateHeader("Last-Modified", lastModifiedTimeMillis);
+        // Force clients to revalidate each time
+        // See RFC 2616 (HTTP 1.1 spec) secs 14.21, 13.2.1
+        response.setDateHeader("Expires", 0);
+        // We may also want this (See 13.2.1 and 14.9.4)
+        // response.setHeader("Cache-Control","must-revalidate");
+    }
+
 }

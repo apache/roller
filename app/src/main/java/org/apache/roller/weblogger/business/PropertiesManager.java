@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.util.Blacklist;
  * configuration read only when Weblogger restarts).
  */
 public interface PropertiesManager {
-    
+
     /**
      * Initialize the properties manager.
      *
@@ -62,6 +62,11 @@ public interface PropertiesManager {
      */
     Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException;
 
+    /**
+     * Get the list of supported RuntimeConfigDef objects
+     */
+    RuntimeConfigDefs getRuntimeConfigDefs();
+
 
     /**
      * Obtain String value of a property
@@ -92,5 +97,5 @@ public interface PropertiesManager {
      * weblog-specific blacklist terms.)
      */
     Blacklist getSiteBlacklist();
-    
+
 }

@@ -141,7 +141,7 @@ public class Trackback {
             
             // read response
             byte[] response = method.getResponseBody();
-            String responseString = Utilities.escapeHTML(new String(response, "UTF-8"));
+            String responseString = StringEscapeUtils.escapeHtml4(new String(response, "UTF-8"));
             
             LOG.debug("result = " + statusCode + " " + method.getStatusText());
             LOG.debug("response:\n" + responseString);

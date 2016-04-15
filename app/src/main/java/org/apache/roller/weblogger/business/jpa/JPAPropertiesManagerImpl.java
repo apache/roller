@@ -64,7 +64,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         this.strategy = strategy;
     }
 
-    public static RuntimeConfigDefs getRuntimeConfigDefs() {
+    @Override
+    public RuntimeConfigDefs getRuntimeConfigDefs() {
         if(configDefs == null) {
             try {
                 configDefs = (RuntimeConfigDefs) Utilities.jaxbUnmarshall(
