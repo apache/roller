@@ -53,6 +53,12 @@ public class JPAUserManagerImpl implements UserManager {
         this.weblogManager = weblogManager;
     }
 
+    private MenuHelper menuHelper;
+
+    public void setMenuHelper(MenuHelper menuHelper) {
+        this.menuHelper = menuHelper;
+    }
+
     private ExpiringCache editorMenuCache = null;
 
     public void setEditorMenuCache(ExpiringCache editorMenuCache) {
@@ -556,7 +562,7 @@ public class JPAUserManagerImpl implements UserManager {
             if (menu == null) {
                 User user = getUserByUserName(username);
                 UserWeblogRole uwr = getWeblogRole(username, weblogHandle);
-                menu = MenuHelper.generateMenu("editor", null, user.getGlobalRole(), uwr.getWeblogRole());
+                menu = menuHelper.getMenu("editor", user.getGlobalRole(), uwr.getWeblogRole(), null);
                 editorMenuCache.put(cacheKey, menu);
             }
             return menu;

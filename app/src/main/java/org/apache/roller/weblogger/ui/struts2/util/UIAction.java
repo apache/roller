@@ -90,7 +90,13 @@ public abstract class UIAction extends ActionSupport
     
     // a result for a cancel.
     public static final String CANCEL = "cancel";
-    
+
+    private MenuHelper menuHelper;
+
+    public void setMenuHelper(MenuHelper menuHelper) {
+        this.menuHelper = menuHelper;
+    }
+
     // the authenticated user accessing this action, or null if client is not logged in
     private User authenticatedUser = null;
     
@@ -337,8 +343,8 @@ public abstract class UIAction extends ActionSupport
     }
     
     public Menu getMenu() {
-        return MenuHelper.generateMenu(getDesiredMenu(), getActionName(),
-                getAuthenticatedUser().getGlobalRole(), getActionWeblogRole());
+        return menuHelper.getMenu(getDesiredMenu(), getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(), getActionName()
+        );
     }
     
     public String getShortDateFormat() {

@@ -30,8 +30,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
@@ -41,12 +39,6 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class UtilitiesModel implements Model {
     private static Log log = LogFactory.getLog(UtilitiesModel.class);
-
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
 
     private WeblogRequest weblogRequest = null;
 
@@ -76,7 +68,7 @@ public class UtilitiesModel implements Model {
     }
        
     public String autoformat(String s) {
-        return Utilities.autoformat(s);
+        return StringUtils.replace(s, "\n", "<br/>");
     }
 
     //-------------------------------------------------------------- Date utils
@@ -145,11 +137,11 @@ public class UtilitiesModel implements Model {
     }
 
     public String escapeHTML(String str) {
-        return Utilities.escapeHTML(str);
+        return StringEscapeUtils.escapeHtml4(str);
     }
     
     public String unescapeHTML(String str) {
-        return Utilities.unescapeHTML(str);
+        return StringEscapeUtils.unescapeHtml4(str);
     }
 
     public String escapeXML(String str) {

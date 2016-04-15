@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business.plugins.comment;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -90,14 +91,14 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
                     // Copy the URL and create the hyperlink
                     // Unescape HTML as we don't know if that setting is on
                     String url;
-                    url = Utilities.unescapeHTML(text.substring(
+                    url = StringEscapeUtils.unescapeHtml4(text.substring(
                             matcher.start(), matcher.end()));
 
                     // Build the anchor tag and escape HTML in the URL output
                     result.append("<a href=\"");
-                    result.append(Utilities.escapeHTML(url));
+                    result.append(StringEscapeUtils.escapeHtml4(url));
                     result.append("\">");
-                    result.append(Utilities.escapeHTML(url));
+                    result.append(StringEscapeUtils.escapeHtml4(url));
                     result.append("</a>");
 
                     // Increment the starting index

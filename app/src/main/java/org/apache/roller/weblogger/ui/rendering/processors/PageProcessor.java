@@ -132,17 +132,17 @@ public class PageProcessor {
         this.themeManager = themeManager;
     }
 
-    // Weblog pages shown to logged-in users are frequently different from blog readers (e.g., have
-    // different left-side menus allowing for blog administration) so need to be cached separately.
-    // Set excludeOwnerPages to "true" to NOT cache the pages for logged-in users.
-    // Recommended to keep false, but useful when debugging templates and want to trace the page
-    // rendering instead of just grabbing the page from the cache, or if using a small WeblogPageCache
-    // that you don't want less frequently accessed logged-in pages to be occupying.
-    private boolean excludeOwnerPages = false;
+    // Weblog pages shown to logged-in users are frequently different from unauthed readers (e.g., have
+    // different left-side menus allowing for blog administration) so need to be cached additionally.
+    // Set cacheLoggedInPages to "false" to not cache these pages.  Recommended to keep true,
+    // but false can be useful when debugging templates and want to trace the page rendering instead
+    // of just retrieving the page from the cache, or if it is otherwise undesired to have logged-in
+    // pages consuming any part of the WeblogPageCache.
+    private boolean cacheLoggedInPages = true;
 
     @Autowired(required=false)
-    public void setExcludeOwnerPages(@Qualifier("cache.excludeOwnerEditPages") boolean boolVal) {
-        excludeOwnerPages = boolVal;
+    public void setCacheLoggedInPages(@Qualifier("cache.cacheLoggedInPages") boolean boolVal) {
+        cacheLoggedInPages = boolVal;
     }
 
     // use site & weblog blacklists to check incoming referrers, returning a 403 if a match.
@@ -209,21 +209,23 @@ public class PageProcessor {
         // We skip this for logged in users to avoid the scenario where a user
         // views their weblog, logs in, then gets a 304 without the 'edit' links
         if (!pageRequest.isLoggedIn()) {
-            if (ModDateHeaderUtil.respondIfNotModified(request, response,
-                    lastModified, pageRequest.getDeviceType())) {
+            if (Utilities.respondIfNotModified(request, response, lastModified, pageRequest.getDeviceType())) {
                 return;
             } else {
                 // set last-modified date
-                ModDateHeaderUtil.setLastModifiedHeader(response, lastModified,
-                        pageRequest.getDeviceType());
+                Utilities.setLastModifiedHeader(response, lastModified, pageRequest.getDeviceType());
             }
         }
 
         // generate cache key
         String cacheKey = generateKey(pageRequest);
 
-        // cached content checking
-        if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())) {
+        // cached content checking, bypass cache if a comment form is present
+        // i.e., request came from CommentProcessor and comment submission feedback/preview,
+        // etc. is needed.
+        WeblogEntryCommentForm commentForm = (WeblogEntryCommentForm) request.getAttribute("commentForm");
+
+        if (commentForm == null && (cacheLoggedInPages || !pageRequest.isLoggedIn())) {
 
             CachedContent cachedContent;
             if (isSiteWide) {
@@ -387,8 +389,7 @@ public class PageProcessor {
             initData.put("requestParameters", request.getParameterMap());
             initData.put("parsedRequest", pageRequest);
 
-            // if this was a comment posting, check for comment form
-            WeblogEntryCommentForm commentForm = (WeblogEntryCommentForm) request.getAttribute("commentForm");
+            // if this was a comment posting, get the comment form
             if (commentForm != null) {
                 initData.put("commentForm", commentForm);
             }
@@ -455,7 +456,7 @@ public class PageProcessor {
         response.getOutputStream().write(rendererOutput.getContent());
 
         // cache rendered content. only cache if user is not logged in?
-        if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) && request.getAttribute("skipCache") == null) {
+        if ((cacheLoggedInPages || !pageRequest.isLoggedIn()) && request.getAttribute("skipCache") == null) {
             log.debug("PUT " + cacheKey);
 
             // put it in the right cache
@@ -613,7 +614,7 @@ public class PageProcessor {
                 if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
                     Set ordered = new TreeSet<>(pageRequest.getTags());
                     String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
-                    key.append(Utilities.stringArrayToString(tags,"+"));
+                    key.append(StringUtils.join(tags, '+'));
                 }
             }
         }

@@ -29,9 +29,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
-import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -348,7 +349,7 @@ public class Weblog implements Serializable {
      */
     @Transient
     public Locale getLocaleInstance() {
-        return Utilities.toLocale(getLocale());
+        return Locale.forLanguageTag(getLocale());
     }
 
     /**
@@ -584,6 +585,32 @@ public class Weblog implements Serializable {
 
     public void setTempPreviewWeblog(boolean tempPreviewWeblog) {
         this.tempPreviewWeblog = tempPreviewWeblog;
+    }
+
+    // used by MainMenu.jsp
+    @Transient
+    public long getCommentCount() {
+        long count = 0;
+        try {
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            count = mgr.getCommentCount(this);
+        } catch (WebloggerException e) {
+            log.error("Error getting comment count for weblog " + this.getName(), e);
+        }
+        return count;
+    }
+
+    // used by MainMenu.jsp
+    @Transient
+    public long getEntryCount() {
+        long count = 0;
+        try {
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            count = mgr.getEntryCount(this);
+        } catch (WebloggerException e) {
+            log.error("Error getting entry count for weblog " + this.getName(), e);
+        }
+        return count;
     }
 
     // convenience methods for populating fields from forms

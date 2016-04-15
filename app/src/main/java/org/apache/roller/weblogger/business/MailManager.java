@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.business;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -223,7 +225,7 @@ public class MailManager {
         
         try {
             ResourceBundle resources = ResourceBundle.getBundle(
-                    "ApplicationResources", Utilities.toLocale(user.getLocale()));
+                    "ApplicationResources", Locale.forLanguageTag(user.getLocale()));
             
             String from = propertiesManager.getStringProperty(
                     "user.account.activation.mail.from");
@@ -343,7 +345,7 @@ public class MailManager {
 
         // Don't escape the content if email will be sent as plain text
         msg.append((isPlainText) ? commentObject.getContent()
-        : Utilities.transformToHTMLSubset(Utilities.escapeHTML(commentObject.getContent())));
+        : Utilities.transformToHTMLSubset(StringEscapeUtils.escapeHtml4(commentObject.getContent())));
         
         msg.append((isPlainText) ? "\n\n----\n"
                 : "<br /><br /><hr /><span style=\"font-size: 11px\">");

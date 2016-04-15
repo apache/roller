@@ -36,6 +36,11 @@
 
     <beans:bean id="cacheManager" class="org.apache.roller.weblogger.util.cache.CacheManager"/>
 
+    <beans:bean id="menuHelper" class="org.apache.roller.weblogger.ui.core.menu.MenuHelper">
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
+        <beans:property name="menuCache" ref="staticMenuCache"/>
+    </beans:bean>
+
     <beans:bean id="databaseProvider" class="org.apache.roller.weblogger.business.DatabaseProvider"/>
 
     <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
@@ -74,6 +79,7 @@
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="editorMenuCache" ref="editorMenuCache"/>
+        <beans:property name="menuHelper" ref="menuHelper"/>
     </beans:bean>
 
     <beans:bean id="ldapRegistrationHelper" class="org.apache.roller.weblogger.ui.core.security.LDAPRegistrationHelper"/>
@@ -154,9 +160,7 @@
         <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
-    <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype">
-        <beans:property name="userManager" ref="userManager"/>
-    </beans:bean>
+    <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype"/>
 
     <beans:bean id="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
@@ -377,6 +381,12 @@
         <beans:property name="cacheHandlerId" value="cache.editormenu"/>
         <beans:property name="size" value="75"/>
         <beans:property name="timeoutSec" value="3600"/>
+    </beans:bean>
+
+    <beans:bean id="staticMenuCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.ExpiringCache">
+        <beans:property name="cacheHandlerId" value="cache.staticmenu"/>
+        <beans:property name="size" value="50"/>
+        <beans:property name="timeoutSec" value="7200"/>
     </beans:bean>
 
     <beans:bean id="weblogFeedCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">

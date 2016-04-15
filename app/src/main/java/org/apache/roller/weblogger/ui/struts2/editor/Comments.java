@@ -325,8 +325,8 @@ public class Comments extends UIAction {
             // track comments approved via moderation
             List<WeblogEntryComment> approvedComments = new ArrayList<>();
 
-            String[] ids = Utilities.stringToStringArray(getBean().getIds(),
-                    ",");
+            String[] ids = StringUtils.split(getBean().getIds(), ',');
+
             for (String id : ids) {
                 log.debug("processing id - " + id);
 
@@ -503,7 +503,7 @@ public class Comments extends UIAction {
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     CommentData cd = new CommentData();
                     cd.id = id;
-                    cd.content = Utilities.escapeHTML(c.getContent());
+                    cd.content = StringEscapeUtils.escapeHtml4(c.getContent());
                     cd.content = WordUtils.wrap(cd.content, 72);
                     cd.content = StringEscapeUtils.escapeEcmaScript(cd.content);
                     return cd;

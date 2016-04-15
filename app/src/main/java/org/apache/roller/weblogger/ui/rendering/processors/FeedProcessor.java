@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -43,8 +45,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
-import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
@@ -146,14 +148,13 @@ public class FeedProcessor {
         }
 
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request, response,
+        if (Utilities.respondIfNotModified(request, response,
                 lastModified, feedRequest.getDeviceType())) {
             return;
         }
 
         // set last-modified date
-        ModDateHeaderUtil.setLastModifiedHeader(response, lastModified,
-                feedRequest.getDeviceType());
+        Utilities.setLastModifiedHeader(response, lastModified, feedRequest.getDeviceType());
 
         // set content type
         String accepts = request.getHeader("Accept");
@@ -338,7 +339,7 @@ public class FeedProcessor {
         if (feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
             Set<String> ordered = new TreeSet<>(feedRequest.getTags());
             String[] tags = ordered.toArray(new String[ordered.size()]);
-            key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+            key.append("/tags/").append(StringUtils.join(tags, '+'));
         }
 
         return key.toString();

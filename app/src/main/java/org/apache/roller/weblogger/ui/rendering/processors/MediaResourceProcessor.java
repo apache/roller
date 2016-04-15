@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
+import org.apache.roller.weblogger.util.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -130,13 +131,11 @@ public class MediaResourceProcessor {
         }
 
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request, response,
-                resourceLastMod, resourceRequest.getDeviceType())) {
+        if (Utilities.respondIfNotModified(request, response, resourceLastMod, resourceRequest.getDeviceType())) {
             return;
         } else {
             // set last-modified date
-            ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod,
-                    resourceRequest.getDeviceType());
+            Utilities.setLastModifiedHeader(response, resourceLastMod, resourceRequest.getDeviceType());
         }
 
         // set the content type based on whatever is in our web.xml mime defs

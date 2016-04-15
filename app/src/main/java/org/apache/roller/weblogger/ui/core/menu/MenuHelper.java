@@ -23,9 +23,8 @@ package org.apache.roller.weblogger.ui.core.menu;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -34,7 +33,9 @@ import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTabItem;
 import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTab;
 import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTabItem;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.roller.weblogger.util.cache.ExpiringCache;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -53,10 +54,20 @@ public final class MenuHelper {
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
     private static Set<String> propertyDefNames = new TreeSet<>();
 
-    private MenuHelper() {}
-
     private static boolean hasPropertyDef(String propertyName) {
         return propertyDefNames.contains(propertyName);
+    }
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
+    private ExpiringCache menuCache;
+
+    public void setMenuCache(ExpiringCache menuCache) {
+        this.menuCache = menuCache;
     }
 
     @XmlRootElement(name="menus")
@@ -73,7 +84,10 @@ public final class MenuHelper {
         }
     }
 
-    static {
+    public MenuHelper() {}
+
+    @PostConstruct
+    void init() {
         // parse and cache menus so we can efficiently reuse them
         try {
             MenuListHolder menus = (MenuListHolder) Utilities.jaxbUnmarshall(
@@ -85,12 +99,14 @@ public final class MenuHelper {
             for (ParsedMenu menu : menus.getMenuList()) {
                 menuMap.put(menu.getId(), menu);
             }
+
         } catch (Exception ex) {
             log.error("Error parsing menu configs", ex);
         }
 
         // Cache runtime configurable property names
-        RuntimeConfigDefs rcd = JPAPropertiesManagerImpl.getRuntimeConfigDefs();
+        propertyDefNames.clear();
+        RuntimeConfigDefs rcd = propertiesManager.getRuntimeConfigDefs();
         if (rcd != null) {
             for (RuntimeConfigDefs.DisplayGroup group : rcd.getDisplayGroups()) {
                 for (RuntimeConfigDefs.PropertyDef def : group.getPropertyDefs()) {
@@ -105,22 +121,24 @@ public final class MenuHelper {
      * highlighted as appropriate for the User, Weblog, and Action being performed.
      * 
      * @param menuId unique identifier for the menu (e.g., "editor", "admin")
-     * @param currentAction the current action being invoked. Null to ignore.
      * @param userGlobalRole - user's global role
      * @param userWeblogRole - user's role within the weblog being displayed
+     * @param currentAction the current action being invoked. Null to ignore.
      * @return Menu object
      */
-    public static Menu generateMenu(String menuId, String currentAction, GlobalRole userGlobalRole,
-                                    WeblogRole userWeblogRole) {
-        Menu menu = null;
-
-        // do we know the specified menu config?
-        ParsedMenu menuConfig = menuMap.get(menuId);
-        if (menuConfig != null) {
-            try {
-                menu = buildMenu(menuConfig, currentAction, userGlobalRole, userWeblogRole);
-            } catch (WebloggerException ex) {
-                log.error("ERROR: fetching user roles", ex);
+    public Menu getMenu(String menuId, GlobalRole userGlobalRole, WeblogRole userWeblogRole, String currentAction) {
+        String cacheKey = generateMenuCacheKey(menuId, userGlobalRole.name(),
+                userWeblogRole == null ? null : userWeblogRole.name(), currentAction);
+        Menu menu = (Menu) menuCache.get(cacheKey);
+        if (menu == null) {
+            ParsedMenu menuConfig = menuMap.get(menuId);
+            if (menuConfig != null) {
+                try {
+                    menu = buildMenu(menuConfig, userGlobalRole, userWeblogRole, currentAction);
+                    menuCache.put(cacheKey, menu);
+                } catch (WebloggerException ex) {
+                    log.error("ERROR: generating menu", ex);
+                }
             }
         }
         return menu;
@@ -130,14 +148,14 @@ public final class MenuHelper {
      * Builds the menu.
      * 
      * @param menuConfig the menu config
-     * @param currentAction the current action
      * @param userGlobalRole - user's global role
      * @param userWeblogRole - user's role within the weblog being displayed
+     * @param currentAction the current action
      * @return the menu
      * @throws WebloggerException the weblogger exception
      */
-    private static Menu buildMenu(ParsedMenu menuConfig, String currentAction,
-                                  GlobalRole userGlobalRole, WeblogRole userWeblogRole)
+    private Menu buildMenu(ParsedMenu menuConfig, GlobalRole userGlobalRole, WeblogRole userWeblogRole,
+                           String currentAction)
             throws WebloggerException {
 
         Menu tabMenu = new Menu();
@@ -237,9 +255,9 @@ public final class MenuHelper {
      * @param propertyName the property name
      * @return the boolean property
      */
-    private static boolean getBooleanProperty(String propertyName) {
+    private boolean getBooleanProperty(String propertyName) {
         if (hasPropertyDef(propertyName)) {
-            return WebloggerFactory.getWeblogger().getPropertiesManager().getBooleanProperty(propertyName);
+            return propertiesManager.getBooleanProperty(propertyName);
         }
         return WebloggerStaticConfig.getBooleanProperty(propertyName);
     }
@@ -258,6 +276,11 @@ public final class MenuHelper {
         // an item is also considered selected if it's a subaction of the current action
         Set<String> subActions = tabItem.getSubActions();
         return subActions != null && subActions.contains(currentAction);
+    }
+
+    private String generateMenuCacheKey(String menuName, String globalRole, String weblogRole, String actionName) {
+        return "menu/" + menuName + "/global/" + globalRole + "/weblog/" + weblogRole +
+                (actionName != null ? "/action/" + actionName : "");
     }
 
 }

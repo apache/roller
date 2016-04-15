@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -114,7 +113,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             addError("frontpageConfig.weblogs.error");
         }
 
-        globalConfigDef = JPAPropertiesManagerImpl.getRuntimeConfigDefs();
+        globalConfigDef = propertiesManager.getRuntimeConfigDefs();
     }
     
     
