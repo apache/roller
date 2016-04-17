@@ -40,7 +40,6 @@ import javax.persistence.TypedQuery;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class JPAUserManagerImpl implements UserManager {
     private static Log log = LogFactory.getLog(JPAUserManagerImpl.class);
@@ -292,23 +291,6 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
 
-    
-    public Map<String, Long> getUserNameLetterMap() throws WebloggerException {
-        String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Map<String, Long> results = new TreeMap<>();
-        TypedQuery<Long> query = strategy.getNamedQuery(
-                "User.getCountByUserNameLike", Long.class);
-        for (int i=0; i<26; i++) {
-            char currentChar = lc.charAt(i);
-            query.setParameter(1, currentChar + "%");
-            List row = query.getResultList();
-            Long count = (Long) row.get(0);
-            results.put(String.valueOf(currentChar), count);
-        }
-        return results;
-    }
-
-    
     public List<SafeUser> getUsersByLetter(char letter, int offset, int length)
             throws WebloggerException {
         TypedQuery<SafeUser> query = strategy.getNamedQuery(
@@ -323,7 +305,6 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
 
-    
     /**
      * Get count of users, enabled only
      */

@@ -26,19 +26,6 @@
         </tr>
     </table>
 
-    <h2 class="pageTitle">Weblog users</h2>
-    #set($users = $site.getWeblogsUsers($profileWeblog.handle))
-    <table width="70%">
-        <tr>
-            <td width="75%">Screen name</td>
-        </tr>  
-        #foreach($user in $users) 
-        <tr>
-            <td>$user.screenName</td>
-        </tr>
-        #end
-    </table>
-
     <h2 class="pageTitle">Recent posts</h2>
     #set($entriesPager = $site.getWeblogEntriesPager($profileWeblog, $null, $null, 90, 5))
     #if($entriesPager.items.size() > 0)  

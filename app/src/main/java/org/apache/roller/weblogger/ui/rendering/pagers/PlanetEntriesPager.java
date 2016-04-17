@@ -40,7 +40,7 @@ public class PlanetEntriesPager extends AbstractPager {
     private static Log log = LogFactory.getLog(PlanetEntriesPager.class);
     
     private String feedURL = null;
-    private String groupHandle = null;
+    private String planetName = null;
     private int sinceDays = -1;
     private int length = 0;
     
@@ -53,10 +53,10 @@ public class PlanetEntriesPager extends AbstractPager {
     private PlanetManager planetManager;
     
     public PlanetEntriesPager(
-            PlanetManager planetManager,
+            PlanetManager  planetManager,
             URLStrategy    strat,
             String         feedURL,
-            String         groupHandle,
+            String         planetName,
             String         baseUrl,
             int            sinceDays,
             int            page,
@@ -66,10 +66,10 @@ public class PlanetEntriesPager extends AbstractPager {
 
         this.planetManager = planetManager;
         this.feedURL = feedURL;
-        this.groupHandle = groupHandle;
+        this.planetName = planetName;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
@@ -77,38 +77,38 @@ public class PlanetEntriesPager extends AbstractPager {
     
     public List<SubscriptionEntry> getItems() {
         
+        if (planetName == null) {
+            return null;
+        }
+
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
             
             Date startDate = null;
-            if(sinceDays > 0) {
+            if (sinceDays > 0) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 cal.add(Calendar.DATE, -1 * sinceDays);
                 startDate = cal.getTime();
             }
             
-            List<SubscriptionEntry> results = new ArrayList<SubscriptionEntry>();
+            List<SubscriptionEntry> results = new ArrayList<>();
             try {
                 List<SubscriptionEntry> subEntries;
-                if (groupHandle != null && feedURL != null) {
-                    Planet planet = planetManager.getPlanet(groupHandle);
+                if (feedURL != null) {
+                    Planet planet = planetManager.getPlanet(planetName);
                     Subscription sub = planetManager.getSubscription(planet, feedURL);
                     subEntries = planetManager.getEntries(sub, offset, length+1);
-                } else if (groupHandle != null) {
-                    Planet group = planetManager.getPlanet(groupHandle);
-                    subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 } else {
-                    Planet group = planetManager.getPlanet("all");
+                    Planet group = planetManager.getPlanet(planetName);
                     subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 }
                 
                 // wrap 'em
                 int count = 0;
                 for (SubscriptionEntry entry : subEntries) {
-                    // TODO needs pojo wrapping from planet
-                    if (count++ < length) { 
+                    if (count++ < length) {
                         results.add(entry);
                     } else {
                         more = true;
@@ -130,5 +130,3 @@ public class PlanetEntriesPager extends AbstractPager {
         return more;
     }
 }
-
-

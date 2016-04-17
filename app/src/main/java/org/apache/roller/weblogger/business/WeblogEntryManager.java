@@ -90,23 +90,6 @@ public interface WeblogEntryManager {
             throws WebloggerException;
     
     /**
-     * Get weblog entries ordered by descending number of comments.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @return List of StatCount objects.
-     */
-    List<StatCount> getMostCommentedWeblogEntries(
-            Weblog website,             
-            Date        startDate,
-            Date        endDate,
-            int         offset, 
-            int         length)
-            throws WebloggerException;
-    
-    /**
      * Get the WeblogEntry following, chronologically, the current entry.
      * Restrict by the Category, if named.
      * @param current The "current" WeblogEntryData

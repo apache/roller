@@ -139,42 +139,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return q.getResultList().size();
     }
     
-    public List<Subscription> getTopSubscriptions(int offset, int length)
-    throws WebloggerException {
-        return getTopSubscriptions(null, offset, length);
-    }
-    
-    /**
-     * Get top X subscriptions, restricted by group.
-     */
-    public List<Subscription> getTopSubscriptions(
-            Planet group, int offset, int len) throws WebloggerException {
-        List<Subscription> result;
-        if (group != null) {
-            TypedQuery<Subscription> q = strategy.getNamedQuery(
-                    "Subscription.getByPlanetOrderByInboundBlogsDesc", Subscription.class);
-            q.setParameter(1, group);
-            if (offset != 0) {
-                q.setFirstResult(offset);
-            }
-            if (len != -1) {
-                q.setMaxResults(len);
-            }
-            result = q.getResultList();
-        } else {
-            TypedQuery<Subscription> q = strategy.getNamedQuery(
-                    "Subscription.getAllOrderByInboundBlogsDesc", Subscription.class);
-            if (offset != 0) {
-                q.setFirstResult(offset);
-            }
-            if (len != -1) {
-                q.setMaxResults(len);
-            }
-            result = q.getResultList();
-        }
-        return result;
-    }
-
     public List<Planet> getPlanets() throws WebloggerException {
         TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getAll", Planet.class);
         return q.getResultList();

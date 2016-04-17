@@ -52,10 +52,6 @@ import javax.persistence.Transient;
                 query="SELECT p FROM Subscription p"),
         @NamedQuery(name="Subscription.getAllOrderByFeedURL",
                 query="SELECT p FROM Subscription p ORDER BY p.feedURL DESC"),
-        @NamedQuery(name="Subscription.getAllOrderByInboundBlogsDesc",
-                query="SELECT p FROM Subscription p ORDER BY p.inboundblogs DESC"),
-        @NamedQuery(name="Subscription.getByPlanetOrderByInboundBlogsDesc",
-                query="SELECT s FROM Subscription s WHERE s.planet.handle = ?1 ORDER BY s.inboundblogs DESC"),
         @NamedQuery(name="Subscription.getByPlanetAndFeedURL",
                 query="SELECT s FROM Subscription s WHERE s.planet = ?1 AND s.feedURL = ?2")
 })
@@ -68,8 +64,6 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     private String feedUrl;
     private String siteUrl;
     private Date lastUpdated;
-    private int inboundlinks = 0;
-    private int inboundblogs = 0;
 
     // associations
     private Planet planet;
@@ -131,24 +125,6 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
-    }
-
-    @Column(name="inbound_links")
-    public int getInboundlinks() {
-        return inboundlinks;
-    }
-
-    public void setInboundlinks(int inboundlinks) {
-        this.inboundlinks = inboundlinks;
-    }
-
-    @Column(name="inbound_blogs")
-    public int getInboundblogs() {
-        return inboundblogs;
-    }
-
-    public void setInboundblogs(int inboundblogs) {
-        this.inboundblogs = inboundblogs;
     }
 
     @ManyToOne

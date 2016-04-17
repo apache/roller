@@ -27,7 +27,7 @@
         #showFeedHistory($pager)
     #end
     <updated>$utils.formatIso8601Date($model.weblog.lastModified)</updated>
-    <generator uri="https://github.com/gmazza/tightblog" version="$config.rollerVersion">TightBlog Weblogger</generator>
+    <generator uri="https://github.com/gmazza/tightblog" version="$config.systemVersion">TightBlog Weblogger</generator>
     #showCommentsAtom10($pager.items)
 </feed>
 

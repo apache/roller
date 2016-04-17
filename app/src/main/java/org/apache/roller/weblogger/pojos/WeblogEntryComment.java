@@ -52,31 +52,7 @@ import javax.persistence.Transient;
         @NamedQuery(name="WeblogEntryComment.getCountAllDistinctByStatus",
                 query="SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1"),
         @NamedQuery(name="WeblogEntryComment.getCountDistinctByWeblog&Status",
-                query="SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2"),
-        @NamedQuery(name="WeblogEntryComment.getMostCommentedWeblogByEndDate",
-                query="SELECT COUNT(c), c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name " +
-                        "FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime < ?1 " +
-                        "GROUP BY c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name ORDER BY COUNT(c)"),
-        @NamedQuery(name="WeblogEntryComment.getMostCommentedWeblogByEndDate&StartDate",
-                query="SELECT COUNT(c), c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name " +
-                        "FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime < ?1 AND c.weblogEntry.pubTime > ?2 " +
-                        "GROUP BY c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name ORDER BY COUNT(c)"),
-        @NamedQuery(name="WeblogEntryComment.getMostCommentedWeblogEntryByEndDate",
-                query="SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title " +
-                        "FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime < ?1 " +
-                        "GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title ORDER BY COUNT(c)"),
-        @NamedQuery(name="WeblogEntryComment.getMostCommentedWeblogEntryByEndDate&StartDate",
-                query="SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title " +
-                        "FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime < ?1 AND c.weblogEntry.pubTime > ?2 " +
-                        "GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title ORDER BY COUNT(c)"),
-        @NamedQuery(name="WeblogEntryComment.getMostCommentedWeblogEntryByWeblog&EndDate",
-                query="SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title " +
-                        "FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.weblogEntry.pubTime < ?2 " +
-                        "GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title ORDER BY COUNT(c)"),
-        @NamedQuery(name="WeblogEntryComment.getMostCommentedWeblogEntryByWeblog&EndDate&StartDate",
-                query="SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title " +
-                        "FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.weblogEntry.pubTime < ?2 AND c.weblogEntry.pubTime > ?3 " +
-                        "GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title ORDER BY COUNT(c)")
+                query="SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2")
 })
 public class WeblogEntryComment implements Serializable {
     

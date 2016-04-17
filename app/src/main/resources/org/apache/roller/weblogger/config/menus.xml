@@ -23,8 +23,7 @@ Defines the menus provided with Weblogger
                 </subactions>
             </tabItem>
             <tabItem action="planets"
-                     titleKey="tabbedmenu.admin.planets"
-                     enabledProperty="planet.aggregator.enabled">
+                     titleKey="tabbedmenu.admin.planets">
                 <subactions>
                     <subaction>planetSubscriptions</subaction>
                 </subactions>

@@ -148,14 +148,6 @@ public interface UserManager {
     
     
     /**
-     * Get map with 26 entries, one for each letter A-Z and
-     * containing Longs reflecting the number of users whose
-     * names start with each letter.
-     */
-    Map<String, Long> getUserNameLetterMap() throws WebloggerException;
-    
-    
-    /** 
      * Get collection of users whose names begin with specified letter 
      */
     List<SafeUser> getUsersByLetter(char letter, int offset, int length)

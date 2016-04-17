@@ -24,10 +24,9 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
-
 /**
  * Provides access to application resources required for I18N.
- * Uses model name 'text' because that's what the Velocity Tools did.
+ * Uses model name 'text' because that's what the Velocity Tools do.
  */
 public class MessageModel implements Model {  
     
@@ -35,16 +34,17 @@ public class MessageModel implements Model {
     
     
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "text";
     }
-    
-    
-    /** Init page model based on request */
+
+
+    /** Init page model, requires a WeblogRequest object */
+    @Override
     public void init(Map initData) throws WebloggerException {
-        
-        // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
+
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }

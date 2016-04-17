@@ -29,7 +29,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
@@ -68,8 +67,6 @@ import javax.persistence.Transient;
                 query="SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getGlobalRole",
                 query="SELECT u.globalRole FROM User u WHERE u.userName = ?1"),
-        @NamedQuery(name="User.getCountByUserNameLike",
-                query="SELECT COUNT(u) FROM User u WHERE UPPER(u.userName) LIKE ?1"),
         @NamedQuery(name="User.getCountEnabledDistinct",
                 query="SELECT COUNT(u) FROM User u WHERE u.enabled = ?1")
 })

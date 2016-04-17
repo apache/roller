@@ -61,15 +61,17 @@ public class URLModel implements Model {
     }
 
     public URLModel() {}
-    
+
+    @Override
     public String getModelName() {
         return "url";
     }
-    
+
+    /** Init page model, requires a WeblogRequest object. */
+    @Override
     public void init(Map initData) throws WebloggerException {
-        // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        if(weblogRequest == null) {
+        if (weblogRequest == null) {
             throw new WebloggerException("Expected 'weblogRequest' init param!");
         }
         
@@ -119,12 +121,10 @@ public class URLModel implements Model {
         return null;
     }
     
-    
     public String getCommentAuthenticator() {
-        return getSite()+"/tb-ui/rendering/comment/authform?weblog="+weblog.getHandle();
+        return getSite()+"/tb-ui/rendering/comment/authform";
     }
-    
-    
+
     public String themeResource(String theme, String filePath) {
         return getSite()+"/themes/"+theme+"/"+filePath;
     }

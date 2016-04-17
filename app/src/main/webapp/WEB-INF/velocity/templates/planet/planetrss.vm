@@ -17,16 +17,16 @@
 
   Source file modified from the original ASF source; all changes made
   are also under Apache License.
-*##if($group)<?xml version="1.0" encoding="utf-8"?>
+*##if($planet)<?xml version="1.0" encoding="utf-8"?>
 #if($feedStyle)<?xml-stylesheet type="text/xsl" href="$absoluteSite/tb-ui/styles/rss.xsl" media="screen"?>#end
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-  <title>$utils.escapeXML($group.title)</title>
-  <description>Aggregated feed for group [$utils.escapeXML($group.title)]</description>
+  <title>$utils.escapeXML($planet.title)</title>
+  <description>Aggregated feed for group [$utils.escapeXML($planet.title)]</description>
   <link>$utils.escapeXML($absoluteSite)</link>
   <lastBuildDate>$utils.formatRfc822Date($lastModified)</lastBuildDate>
   <generator>TightBlog</generator>
-  #set($entries = $planet.getEntries($group, 0, $entryCount))
+  #set($entries = $planetManager.getEntries($planet, 0, $entryCount))
   #foreach( $entry in $entries )
   <item>
     #if($entry.title)<title>$utils.escapeXML($entry.title)</title> #end

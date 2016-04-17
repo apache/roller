@@ -236,10 +236,6 @@
      <!-- Planet Settings Group -->
      <display-group name="planetSettings" key="configForm.planetSettings" >
 
-         <property-def name="planet.site.absoluteurl"  key="configForm.planetAbsoluteUrl">
-             <type>string</type>
-             <default-value></default-value>
-         </property-def>
          <property-def name="planet.site.proxyhost"  key="configForm.proxyHost">
              <type>string</type>
              <default-value></default-value>

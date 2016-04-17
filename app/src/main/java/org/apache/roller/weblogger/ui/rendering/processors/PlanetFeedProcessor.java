@@ -27,7 +27,6 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -156,25 +155,13 @@ public class PlanetFeedProcessor {
         try {
 
             // populate the rendering model
-            if (request.getParameter("planet") != null) {
-                model.put("group", planetManager.getPlanet(request.getParameter("planet")));
-            }
-
-            model.put("planet", planetManager);
+            model.put("planetManager", planetManager);
+            model.put("planet", planetName);
             model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
             model.put("lastModified", lastModified);
-
-            if (StringUtils.isNotEmpty(propertiesManager.getStringProperty("planet.site.absoluteurl"))) {
-                model.put("absoluteSite",
-                        propertiesManager.getStringProperty("planet.site.absoluteurl"));
-            } else {
-                model.put("absoluteSite",
-                        WebloggerStaticConfig.getAbsoluteContextURL());
-            }
-
+            model.put("absoluteSite", WebloggerStaticConfig.getAbsoluteContextURL());
             model.put("feedStyle", propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds"));
-
             int numEntries = propertiesManager.getIntProperty("site.newsfeeds.defaultEntries");
 
             int entryCount = numEntries;

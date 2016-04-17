@@ -63,7 +63,7 @@
 				            <a href="$url.logout">$text.get("navigationBar.logout")</a>
 				        </li>
 				#else
-				    #if ($utils.isUserAuthenticated())
+				    #if ($model.isUserAuthenticated())
 				        <li>
 				            <a href="$url.logout">$text.get("navigationBar.logout")</a>
 				        </li>

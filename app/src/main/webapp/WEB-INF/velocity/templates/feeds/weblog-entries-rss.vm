@@ -34,7 +34,7 @@
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
-  <generator>TightBlog $config.rollerVersion</generator>
+  <generator>TightBlog $config.systemVersion</generator>
   #set($entries = $model.weblogEntriesPager.items)
   #showEntriesRSS20($entries)
 </channel>

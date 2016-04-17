@@ -25,11 +25,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
@@ -43,7 +41,7 @@ public class PlanetModel implements Model {
     
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
-    private WeblogPageRequest weblogPageRequest = null;
+    private WeblogPageRequest pageRequest = null;
     private String         pageLink = null;
 
     private URLStrategy    urlStrategy = null;
@@ -58,69 +56,35 @@ public class PlanetModel implements Model {
         this.planetManager = planetManager;
     }
 
-
+    @Override
     public String getModelName() {
         return "planet";
     }
-    
+
+    /** Init page model, requires a WeblogPageRequest object. */
+    @Override
     public void init(Map initData) throws WebloggerException {
-        if (!WebloggerStaticConfig.getBooleanProperty("planet.aggregator.enabled")) {
-            return;
-        }
-        
-        // we expect the init data to contain a WeblogPageRequest object
-        this.weblogPageRequest = (WeblogPageRequest) initData.get("parsedRequest");
-        if (this.weblogPageRequest == null) {
-            throw new WebloggerException("expected weblogPageRequest from init data");
+        this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
+
+        if (pageRequest == null) {
+            throw new WebloggerException("Missing WeblogPageRequest object");
         }
 
-        Template weblogPage = weblogPageRequest.getWeblogTemplate();
+        Template weblogPage = pageRequest.getWeblogTemplate();
         pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
     }
     
-    
     /**
-     * Get pager for PlanetEntry objects from 'all' and
-     * 'external' Planet groups. in reverse chrono order.
-     * @param length      Max number of results to return
-     */
-    public Pager getAggregationPager(int sinceDays, int length) {
-        
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblogPageRequest.getWeblog(), null,
-                pageLink, null, null, null, null, 0, false);
-        
-        return new PlanetEntriesPager(
-            planetManager,
-            urlStrategy,
-            null,
-            null,    
-            pagerUrl,
-            sinceDays,
-            weblogPageRequest.getPageNum(),
-            length);
-    }
-    
-    
-    /**
-     * Get pager for WeblogEntry objects from specified
-     * Planet groups in reverse chrono order.
-     * @param length      Max number of results to return
+     * Get pager for WeblogEntry objects from specified Planet group in reverse chrono order.
+     * @param length Max number of results to return
      */
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblogPageRequest.getWeblog(), null,
-                pageLink,
-                null, null, null, null, 0, false);
+        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
+                pageLink, null, null, null, null, 0, false);
         
-        return new PlanetEntriesPager(
-            planetManager,
-            urlStrategy,
-            null,
-            groupHandle,
-            pagerUrl,
-            sinceDays,
-            weblogPageRequest.getPageNum(),
-            length);
+        return new PlanetEntriesPager(planetManager, urlStrategy, null,
+            groupHandle, pagerUrl, sinceDays, pageRequest.getPageNum(), length);
     }
     
     
@@ -129,55 +93,14 @@ public class PlanetModel implements Model {
      * Planet feed in reverse chrono order.
      * @param length      Max number of results to return
      */
-    public Pager getFeedPager(String feedURL, int length) {
+    public Pager getFeedPager(String groupHandle, String feedURL, int length) {
         
-        String pagerUrl = urlStrategy.getWeblogPageURL(weblogPageRequest.getWeblog(), null,
-                pageLink,
-                null, null, null, null, 0, false);
+        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
+                pageLink, null, null, null, null, 0, false);
         
-        return new PlanetEntriesPager(
-            planetManager,
-            urlStrategy,
-            feedURL,
-            null,
-            pagerUrl,
-            -1,
-            weblogPageRequest.getPageNum(),
-            length);
+        return new PlanetEntriesPager(planetManager, urlStrategy, feedURL,
+            groupHandle, pagerUrl, -1, pageRequest.getPageNum(), length);
     }
-    
-    
-    /**
-     * Get PlanetSubscription objects in descending order by Planet ranking.
-     * @param sinceDays Only consider weblogs updated in the last sinceDays
-     * @param length      Max number of results to return
-     */
-    public List<Subscription> getRankedSubscriptions(int sinceDays, int length) {
-        return getRankedSubscriptions(null, sinceDays, length);
-    }
-    
-    
-    /**
-     * Get PlanetSubscription objects in descending order by Planet ranking.
-     * @param planetHandle Only consider weblogs updated in the last sinceDays
-     * @param sinceDays   Only consider weblogs updated in the last sinceDays
-     * @param length         Max number of results to return
-     */
-    public List<Subscription> getRankedSubscriptions(String planetHandle, int sinceDays, int length) {
-        List<Subscription> list = new ArrayList<Subscription>();
-        try {
-            Planet planet = planetManager.getPlanet(planetHandle);
-            List<Subscription> subs = planetManager.getTopSubscriptions(planet, 0, length);
-            for (Subscription sub : subs) {
-                // TODO needs pojo wrapping from planet
-                list.add(sub);
-            }
-        } catch (Exception e) {
-            log.error("ERROR: get ranked blogs", e);
-        }
-        return list;
-    }
-    
     
     /**
      * Get Planets defined.

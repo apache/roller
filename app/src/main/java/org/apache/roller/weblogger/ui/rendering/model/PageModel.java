@@ -47,7 +47,6 @@ import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 
 /**
@@ -110,39 +109,30 @@ public class PageModel implements Model {
     /** 
      * Template context name to be used for model.
      */
+    /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "model";
     }
-    
-    
-    /** 
-     * Init page model based on request. 
-     */
+
+
+    /** Init page model, requires a WeblogPageRequest object. */
+    @Override
     public void init(Map initData) throws WebloggerException {
-        
-        // we expect the init data to contain a weblogRequest object
-        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        if (weblogRequest == null) {
-            throw new WebloggerException("expected weblogRequest from init data");
+        this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
+
+        if (pageRequest == null) {
+            throw new WebloggerException("Missing WeblogPageRequest object");
         }
-        
-        // PageModel only works on page requests, so cast weblogRequest
-        // into a WeblogPageRequest and if it fails then throw exception
-        if(weblogRequest instanceof WeblogPageRequest) {
-            this.pageRequest = (WeblogPageRequest) weblogRequest;
-        } else {
-            throw new WebloggerException("weblogRequest is not a WeblogPageRequest."+
-                    "  PageModel only supports page requests.");
-        }
-        
+
         // see if there is a comment form
         this.commentForm = (WeblogEntryCommentForm) initData.get("commentForm");
         
         // custom request parameters
         this.requestParameters = (Map)initData.get("requestParameters");
     }
-    
-    
+
+
     /**
      * Get the weblog locale used to render this page, null if no locale.
      */
@@ -193,7 +183,7 @@ public class PageModel implements Model {
      * Get weblog entry being displayed or null if none specified by request.
      */
     public Template getWeblogPage() {
-        if(pageRequest.getWeblogTemplateName() != null) {
+        if (pageRequest.getWeblogTemplateName() != null) {
             return pageRequest.getWeblogTemplate();
         } else {
             try {
@@ -359,8 +349,7 @@ public class PageModel implements Model {
      * @return Comment form object
      */
     public WeblogEntryCommentForm getCommentForm() {
-        
-        if(commentForm == null) {
+        if (commentForm == null) {
             commentForm = new WeblogEntryCommentForm();
         }
         return commentForm;
@@ -392,6 +381,10 @@ public class PageModel implements Model {
         } else {
             return null;
         }
+    }
+
+    public boolean isUserAuthenticated() {
+        return (pageRequest.getAuthenticatedUser() != null);
     }
 
     public boolean isUserBlogPublisher(Weblog weblog) {

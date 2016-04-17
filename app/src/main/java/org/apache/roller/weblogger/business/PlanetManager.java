@@ -96,19 +96,6 @@ public interface PlanetManager {
     
     
     /**
-     * Get top X subscriptions.
-     */
-    List<Subscription> getTopSubscriptions(int offset, int len) throws WebloggerException;
-    
-    
-    /**
-     * Get top X subscriptions, restricted by planet.
-     */
-    List<Subscription> getTopSubscriptions(Planet planet, int offset, int len)
-        throws WebloggerException;
-    
-    
-    /**
      * Save new or update existing entry
      */
     void saveEntry(SubscriptionEntry entry) throws WebloggerException;
@@ -156,7 +143,7 @@ public interface PlanetManager {
     /**
      * Get Entries for a planet in reverse chronological order.
      *
-     * @param planet Restrict to entries from one planet.
+     * @param planet Planet to retrieve entries for.
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */

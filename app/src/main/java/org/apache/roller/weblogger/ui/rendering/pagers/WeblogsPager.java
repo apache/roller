@@ -53,7 +53,7 @@ public class WeblogsPager extends AbstractPager {
             WeblogManager  weblogManager,
             URLStrategy    strat,
             String         baseUrl,
-            String         locale,
+            String         letter,
             int            sinceDays,
             int            page,
             int            length) {
@@ -61,25 +61,6 @@ public class WeblogsPager extends AbstractPager {
         super(strat, baseUrl, page);
 
         this.weblogManager = weblogManager;
-        this.sinceDays = sinceDays;
-        this.length = length;
-        
-        // initialize the collection
-        getItems();
-    }
-    
-    
-    public WeblogsPager(
-            URLStrategy    strat,
-            String         baseUrl,
-            String         letter,
-            String         locale,
-            int            sinceDays,
-            int            page,
-            int            length) {
-        
-        super(strat, baseUrl, page);
-        
         this.letter = letter;
         this.sinceDays = sinceDays;
         this.length = length;
@@ -94,7 +75,7 @@ public class WeblogsPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() + 1;
             if(hasMoreItems()) {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("page", ""+page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
@@ -108,10 +89,10 @@ public class WeblogsPager extends AbstractPager {
     
     public String getPrevLink() {
         // need to add letter param if it exists
-        if(letter != null) {
+        if (letter != null) {
             int page = getPage() - 1;
             if (page >= 0) {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("page", ""+page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
@@ -129,7 +110,7 @@ public class WeblogsPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
             
-            List<Weblog> results = new ArrayList<Weblog>();
+            List<Weblog> results = new ArrayList<>();
             Date startDate = null;
             if (sinceDays != -1) {
                 Calendar cal = Calendar.getInstance();
