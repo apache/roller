@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -60,8 +59,6 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     Weblog weblog = null;
     String pageLink = null;
     String entryAnchor = null;
-    String catName = null;
-    List<String> tags = new ArrayList<>();
     Boolean canShowDraftEntries = false;
 
     WeblogEntry currEntry = null;
@@ -77,8 +74,6 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
             Weblog             weblog,
             String             pageLink,
             String             entryAnchor,
-            String             catName,
-            List<String>       tags,
             Boolean canShowDraftEntries) {
 
         this.urlStrategy = strat;
@@ -86,12 +81,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         this.weblog = weblog;
         this.pageLink = pageLink;
         this.entryAnchor = entryAnchor;
-        this.catName = catName;
         this.canShowDraftEntries = canShowDraftEntries;
-
-        if (tags != null) {
-            this.tags = tags;
-        }
 
         // get a message utils instance to handle i18n of messages
         Locale viewLocale = weblog.getLocaleInstance();
@@ -137,26 +127,22 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         }
         return entries;
     }
-    
-    
+
     public String getHomeLink() {
-        return createURL(weblog, pageLink, null, catName, tags);
+        return createURL(weblog, pageLink, null);
     }
-    
-    
+
     public String getHomeName() {
         return messageUtils.getString("weblogEntriesPager.single.home");
     }
-    
-    
+
     public String getNextLink() {
         if (getNextEntry() != null) {
-            return createURL(weblog, pageLink, nextEntry.getAnchor(), catName, tags);
+            return createURL(weblog, pageLink, nextEntry.getAnchor());
         }
         return null;
     }
-    
-    
+
     public String getNextName() {
         if (getNextEntry() != null) {
             String title = Utilities.truncateHTML(getNextEntry().getTitle(), 15, 20, "...");
@@ -164,11 +150,10 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
     public String getPrevLink() {
         if (getPrevEntry() != null) {
-            return createURL(weblog, pageLink, prevEntry.getAnchor(), catName, tags);
+            return createURL(weblog, pageLink, prevEntry.getAnchor());
         }
         return null;
     }
@@ -201,7 +186,6 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     public String getPrevCollectionName() {
         return null;
     }
-
 
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) {
@@ -241,19 +225,14 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     /**
      * Create URL that encodes pager state using most appropriate form of URL.
      */
-    protected String createURL(
-            Weblog website,
-            String pageLink,
-            String entryAnchor,
-            String catName,
-            List tags) {
+    protected String createURL(Weblog website, String pageLink, String entryAnchor) {
 
         if (pageLink != null) {
-            return urlStrategy.getWeblogPageURL(website, null, pageLink, entryAnchor, catName, null, tags, 0, false);
+            return urlStrategy.getWeblogPageURL(website, null, pageLink, entryAnchor, null, null, null, 0, false);
         } else if (entryAnchor != null) {
             return urlStrategy.getWeblogEntryURL(website, entryAnchor, true);
         }
         // home page URL
-        return urlStrategy.getWeblogCollectionURL(website, catName, null, tags, 0, false);
+        return urlStrategy.getWeblogCollectionURL(website, null, null, null, 0, false);
     }
 }

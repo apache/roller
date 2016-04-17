@@ -22,13 +22,16 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +65,6 @@ public class SearchResultsModel extends PageModel {
     private Map<Date, TreeSet<WeblogEntry>> results
             = new TreeMap<>(Collections.reverseOrder());
 
-	// the pager used by the 3.0+ rendering system
 	private WeblogEntriesSearchPager pager = null;
 
 	private int hits = 0;
@@ -91,7 +93,7 @@ public class SearchResultsModel extends PageModel {
 
 		// if there is no query, then we are done
 		if (searchRequest.getQuery() == null) {
-			pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, results, false);
+			pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, Collections.emptyMap(), false);
 			return;
 		}
 
@@ -127,7 +129,11 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		// search completed, setup pager based on results
-		pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, results,
+        // convert Map from <Date, Set> to <Date, List>
+		Map<Date, List<WeblogEntry>> listMap = results.entrySet().stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, e->new ArrayList<>(e.getValue())));
+
+		pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, listMap,
 				(hits > (offset + limit)));
 	}
 
@@ -196,11 +202,11 @@ public class SearchResultsModel extends PageModel {
 	}
 
 	private void addEntryToResults(WeblogEntry entry) {
-        Calendar cal = Calendar.getInstance(entry.getWeblog().getTimeZoneInstance());
-        cal.setTime(entry.getPubTime());
+        Calendar entryPubTime = Calendar.getInstance(entry.getWeblog().getTimeZoneInstance());
+        entryPubTime.setTime(entry.getPubTime());
 
 		// convert entry's each date to midnight (00m 00h 00s)
-		Date midnight = DateUtils.truncate(cal, Calendar.DATE).getTime();
+		Date midnight = DateUtils.truncate(entryPubTime, Calendar.DATE).getTime();
 
 		// ensure we do not get duplicates from Lucene by
 		// using a Set Collection. Entries sorted by pubTime.

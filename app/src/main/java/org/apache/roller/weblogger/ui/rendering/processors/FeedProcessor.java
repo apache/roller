@@ -328,18 +328,14 @@ public class FeedProcessor {
 
         if(feedRequest.getWeblogCategoryName() != null) {
             String cat = feedRequest.getWeblogCategoryName();
-            try {
-                cat = URLEncoder.encode(cat, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                // should never happen, utf-8 is always supported
-            }
-            key.append("/").append(cat);
+            cat = Utilities.encode(cat);
+            key.append("/cat/").append(cat);
         }
 
         if (feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
             Set<String> ordered = new TreeSet<>(feedRequest.getTags());
             String[] tags = ordered.toArray(new String[ordered.size()]);
-            key.append("/tags/").append(StringUtils.join(tags, '+'));
+            key.append("/tags/").append(StringUtils.join(tags, ','));
         }
 
         return key.toString();

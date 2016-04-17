@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -131,7 +130,7 @@ public class FeedModel implements Model {
         @Override
         public String getHomeLink() {
             return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null, true);
+                    feedRequest.getFormat(), null, null);
         }
 
     }
@@ -142,7 +141,7 @@ public class FeedModel implements Model {
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
             super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
-                    feedRequest.getType(), feedRequest.getFormat(), null, null, null, true),
+                    feedRequest.getType(), feedRequest.getFormat(), null, null),
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(), -1, feedRequest.getPage(),
                     propertiesManager.getIntProperty("site.newsfeeds.defaultEntries"));
 

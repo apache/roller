@@ -598,15 +598,9 @@ public class PageProcessor {
             }
 
             if(pageRequest.getWeblogCategoryName() != null) {
-                String cat = null;
-                try {
-                    // may contain spaces or other bad chars
-                    cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), "UTF-8");
-                } catch(UnsupportedEncodingException ex) {
-                    // ignored
-                }
-
-                key.append("/").append(cat);
+                String cat = pageRequest.getWeblogCategoryName();
+                cat = Utilities.encode(cat);
+                key.append("/cat/").append(cat);
             }
 
             if("tags".equals(pageRequest.getContext())) {
@@ -614,7 +608,7 @@ public class PageProcessor {
                 if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
                     Set ordered = new TreeSet<>(pageRequest.getTags());
                     String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
-                    key.append(StringUtils.join(tags, '+'));
+                    key.append(StringUtils.join(tags, ','));
                 }
             }
         }

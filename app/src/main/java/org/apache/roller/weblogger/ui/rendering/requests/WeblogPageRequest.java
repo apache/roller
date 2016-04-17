@@ -135,7 +135,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     }
 
                 } else if ("tags".equals(this.context)) {
-                    String tagsString = pathElements[1].replace('+', ' ');
+                    String tagsString = pathElements[1].replace(',', ' ');
                     this.tags = Utilities.splitStringAsTags(Utilities
                             .decode(tagsString));
                     int maxSize = WebloggerStaticConfig.getIntProperty(

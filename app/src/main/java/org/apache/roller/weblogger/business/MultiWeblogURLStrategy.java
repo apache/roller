@@ -249,10 +249,9 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     /**
      * Get url for a feed on a given weblog.
      */
-    public String getWeblogFeedURL(Weblog weblog, String type, String format, String category,
-                            String term, List tags, boolean absolute) {
+    public String getWeblogFeedURL(Weblog weblog, String type, String format, String category, List tags) {
 
-        String url = getWeblogURL(weblog, absolute) + "feed/" + type + "/" + format;
+        String url = getWeblogURL(weblog, true) + "feed/" + type + "/" + format;
         
         Map<String, String> params = new HashMap<>();
         if (category != null && category.trim().length() > 0) {
@@ -260,9 +259,6 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         }
         if (tags != null && tags.size() > 0) {
           params.put("tags", Utilities.getEncodedTagsString(tags));
-        }
-        if (term != null && term.trim().length() > 0) {
-            params.put("q", Utilities.encode(term.trim()));
         }
 
         return url + Utilities.getQueryString(params);
