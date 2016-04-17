@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
@@ -38,102 +37,68 @@ public class ConfigModel implements Model {
     }
 
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "config";
     }
     
     
-    /** Init model */
-    public void init(Map map) throws WebloggerException {
+    /** Init model, uses no objects */
+    @Override
+    public void init(Map map) {
         // no-op
     }
-    
-    
+
     public String getSiteName() {
-        return getProperty("site.name");
+        return propertiesManager.getStringProperty("site.name");
     }
     
     public String getSiteShortName() {
-        return getProperty("site.shortName");
+        return propertiesManager.getStringProperty("site.shortName");
     }
     
     public String getSiteDescription() {
-        return getProperty("site.description");
+        return propertiesManager.getStringProperty("site.description");
     }
     
     public String getSiteEmail() {
-        return getProperty("site.adminemail");
+        return propertiesManager.getStringProperty("site.adminemail");
     }
 
     public boolean getRegistrationEnabled() {
-        return getBooleanProperty("users.registration.enabled");
+        return propertiesManager.getBooleanProperty("users.registration.enabled");
     }
     
     public String getRegistrationURL() {
-        return getProperty("users.registration.url");
+        return propertiesManager.getStringProperty("users.registration.url");
     }
 
-    public int getFeedSize() {
-        return getIntProperty("site.newsfeeds.defaultEntries");
-    }
-    
-    public int getFeedMaxSize() {
-        return getIntProperty("site.newsfeeds.defaultEntries");
-    }
-    
     public boolean getFeedStyle() {
-        return getBooleanProperty("site.newsfeeds.styledFeeds");
+        return propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds");
     }
     
     public boolean getCommentHtmlAllowed() {
-        return getBooleanProperty("users.comments.htmlenabled");
-    }
-    
-    public boolean getCommentAutoFormat() {
-        // this prop was removed in 4.0
-        return false;
-    }
-    
-    public boolean getCommentEscapeHtml() {
-        // replaced by new htmlallowed property in 4.0
-        return !getCommentHtmlAllowed();
+        return propertiesManager.getBooleanProperty("users.comments.htmlenabled");
     }
     
     public boolean getCommentEmailNotify() {
-        return getBooleanProperty("users.comments.emailnotify");
+        return propertiesManager.getBooleanProperty("users.comments.emailnotify");
     }
 
     public boolean getTrackbacksEnabled() {
-        return getBooleanProperty("users.trackbacks.enabled");
+        return propertiesManager.getBooleanProperty("users.trackbacks.enabled");
     }
     
-    
-    /** Get Roller version string */
-    public String getRollerVersion() {
+    public String getSystemVersion() {
         return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
     }
 
     public String getDefaultAnalyticsTrackingCode() {
-        return getProperty("analytics.default.tracking.code");
+        return propertiesManager.getStringProperty("analytics.default.tracking.code");
     }
 
     public boolean getAnalyticsOverrideAllowed() {
-        return getBooleanProperty("analytics.code.override.allowed");
+        return propertiesManager.getBooleanProperty("analytics.code.override.allowed");
     }
 
-    private String getProperty(String name) {
-        return propertiesManager.getStringProperty(name);
-    }
-    
-    
-    private int getIntProperty(String name) {
-        return propertiesManager.getIntProperty(name);
-    }
-    
-    
-    private boolean getBooleanProperty(String name) {
-        return propertiesManager.getBooleanProperty(name);
-    }
-    
 }
-

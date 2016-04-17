@@ -289,9 +289,7 @@ create table planet_subscription (
     feed_url         varchar(255) not null,
     site_url         varchar(255),
     author           varchar(255),
-    last_updated     $db.TIMESTAMP_SQL_TYPE,
-    inbound_links    integer default -1,
-    inbound_blogs    integer default -1
+    last_updated     $db.TIMESTAMP_SQL_TYPE
 );
 alter table planet_subscription add constraint plsb_feed_url_uq unique (planetid, feed_url);
 

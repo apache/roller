@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
 import org.apache.roller.weblogger.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 
 
 /**
@@ -40,7 +39,7 @@ import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 public class CalendarModel implements Model {
     
     private static Log log = LogFactory.getLog(CalendarModel.class);
-    
+
     private WeblogPageRequest pageRequest = null;
 
     protected WeblogEntryManager weblogEntryManager;
@@ -55,32 +54,23 @@ public class CalendarModel implements Model {
         this.urlStrategy = urlStrategy;
     }
 
+
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "calendarModel";
     }
-    
-    
-    /** Init page model based on request */
-    public void init(Map initData) throws WebloggerException {
-        
-        // we expect the init data to contain a weblogRequest object
-        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        if(weblogRequest == null) {
-            throw new WebloggerException("expected weblogRequest from init data");
-        }
-        
-        // CalendarModel only works on page requests, so cast weblogRequest
-        // into a WeblogPageRequest and if it fails then throw exception
-        if(weblogRequest instanceof WeblogPageRequest) {
-            this.pageRequest = (WeblogPageRequest) weblogRequest;
-        } else {
-            throw new WebloggerException("weblogRequest is not a WeblogPageRequest."+
-                    "  CalendarModel only supports page requests.");
+
+    /** Init page model, requires a WeblogPageRequest object */
+    @Override
+    public void init(Map initData) throws ClassCastException, WebloggerException {
+        this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
+
+        if (pageRequest == null) {
+            throw new WebloggerException("Missing WeblogPageRequest object");
         }
     }
-    
-    
+
     public String showWeblogEntryCalendar(Weblog websiteWrapper, String catArgument) {
         return showWeblogEntryCalendar(websiteWrapper, catArgument, false);
     }

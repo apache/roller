@@ -1,6 +1,6 @@
 <div class="entry">
     <a class="entryTitle" href="$utils.escapeHTML($entry.permalink)">
-        $utils.truncateNicely($utils.removeHTML($entry.title), 50, 50, "...")
+        $utils.truncateText($utils.removeHTML($entry.title), 50, 50, "...")
     </a><br /> 
     <p class="entryDetails">
         <a href="$utils.escapeHTML($entry.weblog.URL)">$entry.weblog.name</a>
@@ -12,9 +12,9 @@
     </p>
     <p class="entryDescription">                    
         #if($entry.displayContent)
-             $utils.truncateNicely($utils.removeHTML($entry.displayContent), 240, 260, "...")
+             $utils.truncateText($utils.removeHTML($entry.displayContent), 240, 260, "...")
         #else ## planet entries don't have displayContent
-             $utils.truncateNicely($utils.removeHTML($entry.text), 240, 260, "...")
+             $utils.truncateText($utils.removeHTML($entry.text), 240, 260, "...")
         #end
     </p>
 </div>

@@ -61,30 +61,21 @@ public class FeedModel implements Model {
         this.propertiesManager = propertiesManager;
     }
 
-    public void init(Map initData) throws WebloggerException {
-
-        // we expect the init data to contain a weblogRequest object
-        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        if(weblogRequest == null) {
-            throw new WebloggerException("expected weblogRequest from init data");
-        }
-        
-        // PageModel only works on page requests, so cast weblogRequest
-        // into a WeblogPageRequest and if it fails then throw exception
-        if(weblogRequest instanceof WeblogFeedRequest) {
-            this.feedRequest = (WeblogFeedRequest) weblogRequest;
-        } else {
-            throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
-                    "  FeedModel only supports feed requests.");
-        }
-    }
-    
-    
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "model";
     }
-    
+
+    @Override
+    public void init(Map initData) throws WebloggerException {
+        this.feedRequest = (WeblogFeedRequest) initData.get("parsedRequest");
+
+        if (feedRequest == null) {
+            throw new WebloggerException("Missing WeblogFeedRequest object");
+        }
+    }
+
     /**
      * Get weblog being displayed.
      */

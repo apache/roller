@@ -563,56 +563,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         return query.getResultList();
     }
-    
-    public List<StatCount> getMostCommentedWeblogs(Date startDate, Date endDate,
-            int offset, int length)
-            throws WebloggerException {
-        
-        TypedQuery<Object[]> query;
-        
-        if (endDate == null) {
-            endDate = new Date();
-        }
-        
-        if (startDate != null) {
-            Timestamp start = new Timestamp(startDate.getTime());
-            Timestamp end = new Timestamp(endDate.getTime());
-            query = strategy.getNamedQuery(
-                    "WeblogEntryComment.getMostCommentedWeblogByEndDate&StartDate", Object[].class);
-            query.setParameter(1, end);
-            query.setParameter(2, start);
-        } else {
-            Timestamp end = new Timestamp(endDate.getTime());
-            query = strategy.getNamedQuery(
-                    "WeblogEntryComment.getMostCommentedWeblogByEndDate", Object[].class);
-            query.setParameter(1, end);
-        }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        List<Object[]> queryResults = query.getResultList();
-        List<StatCount> results = new ArrayList<>();
-        for (Object[] row : queryResults) {
-            StatCount sc = new StatCount(
-                    (String)row[1],                     // weblog id
-                    (String)row[2],                     // weblog handle
-                    (String)row[3],                     // weblog name
-                    "statCount.weblogCommentCountType", // stat type
-                    ((Long)row[0]));        // # comments
-            sc.setWeblogHandle((String)row[2]);
-            results.add(sc);
-        }
 
-        // Original query ordered by desc # comments.
-        // JPA QL doesn't allow queries to be ordered by aggregates; do it in memory
-        Collections.sort(results, StatCount.CountComparator);
-
-        return results;
-    }
-    
     /**
      * Get count of weblogs, active and inactive
      */

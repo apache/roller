@@ -43,7 +43,7 @@ Show pager and next/prev control for site-wide or planet entries.
             <div class="entry">
                 <p class="entryDetails">
                     <a href="$utils.escapeHTML($entry.permalink)">
-                    <b>$utils.truncateNicely($utils.removeHTML($entry.title), 50, 50, "...")</b></a><br /> 
+                    <b>$utils.truncateText($utils.removeHTML($entry.title), 50, 50, "...")</b></a><br />
                     <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
                     #if($entry.category.name)| $entry.category.name #end
                     #if($entry.pubTime)| $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
@@ -52,9 +52,9 @@ Show pager and next/prev control for site-wide or planet entries.
                 </p>
                 <p class="entryDescription">
                     #if(!$utils.isEmpty($entry.summary))
-                         $utils.truncateNicely($utils.removeHTML($entry.transformedSummary), 240, 260, "...")
+                         $utils.truncateText($utils.removeHTML($entry.transformedSummary), 240, 260, "...")
                     #else
-                         $utils.truncateNicely($utils.removeHTML($entry.transformedText), 240, 260, "...")
+                         $utils.truncateText($utils.removeHTML($entry.transformedText), 240, 260, "...")
                     #end
                 </p>
             </div>
@@ -105,21 +105,6 @@ Show weblog profile for specified weblog
             <td>Timezone</td>
             <td>$weblog.timeZone</td>
         </tr>
-    </table>
-
-    <h2 class="pageTitle">Weblog users</h2>
-    #set($users = $site.getWeblogsUsers($weblog.handle))
-    <table class="rollertable">
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-            </tr>
-        </thead>    
-        #foreach($user in $users) 
-        <tr>
-            <td>$user.screenName</td>
-        </tr>
-        #end
     </table>
 
     <h2 class="pageTitle">Recent posts</h2>
@@ -252,27 +237,6 @@ Show user profile of specified user.
         </tr>
     </table>
 
-    <h2 class="pageTitle">User's weblogs</h2>
-    #set($weblogs = $site.getUsersWeblogs($user.id))
-    #if($perms.size() > 0)
-    <table class="rollertable">
-        <thead>
-            <tr>
-                <th>Handle</th>
-                <th>Name</th>
-            </tr>
-        </thead>    
-        #foreach($weblog in $weblogs) 
-        <tr>
-            <td><a href="$baseURL/page/$weblog.handle">$weblog.handle</a></td>
-            <td>$weblog.name</td>
-        </tr>
-        #end
-    </table>
-    #else
-       User does not belong to any weblogs
-    #end
-
     <h2 class="pageTitle">User's recent posts</h2>
     #set($entriesPager = $site.getWeblogEntriesPager($null, $user, $null, 90, 5)) 
     #if($entriesPager.items.size() > 0)  
@@ -300,84 +264,6 @@ Show user profile of specified user.
 
 
 #**
-Show user directory, sensitive to letter specified in request.
-*#
-#macro(showUserDirectory $pageLength)
-    #if($model.getRequestParameter("letter"))
-        #set($chosenLetter = $model.getRequestParameter("letter"))
-    #end
-
-    #set($userLetterMap = $site.getUserNameLetterMap())
-    <div class="letterMap">
-    #foreach($letter in $userLetterMap.keySet())
-        #if($firstLetterDone == 1) - #end
-        #set($firstLetterDone = 1)
-        #set($letterCount = $userLetterMap.get($letter))
-        #if($letter == $chosenLetter)<span style="font-size:120%; font-weight:bold">#end
-        #if($letterCount > 0)
-           <a href="?letter=$letter" title="$letterCount users">$letter</a>
-        #else
-           $letter
-        #end
-        </span>
-    #end
-    </div>
-
-    #if($chosenLetter)
-       <h2 class="pageTitle">Users starting with $chosenLetter</h2>
-    #else
-       <h2 class="pageTitle">All users</h2>
-    #end
-
-    #set($usersPager= $site.getUsersByLetterPager($chosenLetter, -1, $pageLength))
-    <table class="blogdirectory data">
-        <thead>
-            <tr>
-               <th scope="col" class="username">Screen Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            #foreach($u in $usersPager.items)
-               <tr>
-                  <th scope="row" class="name">$u.screenName</th>
-               </tr>
-            #end 
-        </tbody>
-        <tfoot>
-           <tr class="pagingcontrols">
-             <td class="pagingtext"></td>
-             <td class="paginglinks">
-
-            #if($chosenLetter)
-                #if($usersPager.prevLink)
-                   <a href="$usersPager.prevLink">&lt;$usersPager.prevName</a>
-                #end
-                #if($usersPager.nextLink && $usersPager.prevLink())
-                   &nbsp;|&nbsp;
-                #end
-                #if($usersPager.nextLink)
-                   <a href="$usersPager.nextLink">$usersPager.nextName &gt;</a>
-                #end
-            #else
-                #if($usersPager.prevLink)
-                   <a href="$usersPager.prevLink">&lt;$usersPager.prevName</a>
-                #end
-                #if($usersPager.nextLink && $usersPager.prevLink())
-                   &nbsp;|&nbsp;
-                #end
-                #if($usersPager.nextLink)
-                   <a href="$usersPager.nextLink">$usersPager.nextName &gt;</a>
-                #end
-            #end
-
-             </td>
-          </tr>
-       </tfoot>
-    </table>
-#end
-
-
-#**
 Show pager and next/prev control for a collection of comments
 *#
 #macro(showCommentsPager $commentsPager)
@@ -399,7 +285,7 @@ Show pager and next/prev control for a collection of comments
                 </span>
                 <span class="entryDescription">
                     #set($content = $utils.removeHTML($comment.processedContent))
-                    $utils.truncateNicely($content, 240, 260, "...")
+                    $utils.truncateText($content, 240, 260, "...")
                 </span>
             </div>
     #end

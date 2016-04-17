@@ -78,13 +78,12 @@ public class SearchResultsModel extends PageModel {
         this.indexManager = indexManager;
     }
 
+	/** Init page model, requires a WeblogSearchRequest object. */
+	@Override
     public void init(Map initData) throws WebloggerException {
-
-		// we expect the init data to contain a searchRequest object
 		searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
 		if (searchRequest == null) {
-			throw new WebloggerException(
-					"expected searchRequest from init data");
+			throw new WebloggerException("expected searchRequest from init data");
 		}
 
 		// let parent initialize
@@ -92,8 +91,7 @@ public class SearchResultsModel extends PageModel {
 
 		// if there is no query, then we are done
 		if (searchRequest.getQuery() == null) {
-			pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, results,
-					false);
+			pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, results, false);
 			return;
 		}
 
@@ -117,17 +115,15 @@ public class SearchResultsModel extends PageModel {
 		if (search.getResultsCount() == -1) {
 			// this means there has been a parsing (or IO) error
 			this.errorMessage = I18nMessages.getMessages(
-					searchRequest.getLocaleInstance()).getString(
-					"error.searchProblem");
+					searchRequest.getLocaleInstance()).getString("error.searchProblem");
 		} else {
 
 			TopFieldDocs docs = search.getResults();
 			ScoreDoc[] hitsArr = docs.scoreDocs;
 			this.hits = search.getResultsCount();
 
-			// Convert the Hits into WeblogEntryData instances.
+			// Convert the Hits into WeblogEntry instances.
 			convertHitsToEntries(hitsArr, search);
-
 		}
 
 		// search completed, setup pager based on results
@@ -148,14 +144,7 @@ public class SearchResultsModel extends PageModel {
 	}
 
 	/**
-	 * Convert hits to entries.
-	 * 
-	 * @param hits
-	 *            the hits
-	 * @param search
-	 *            the search
-	 * @throws WebloggerException
-	 *             the weblogger exception
+	 * Create weblog entries for each result found.
 	 */
 	private void convertHitsToEntries(ScoreDoc[] hits, SearchOperation search)
 			throws WebloggerException {
@@ -181,11 +170,9 @@ public class SearchResultsModel extends PageModel {
 			Timestamp now = new Timestamp(new Date().getTime());
 			for (int i = offset; i < offset + limit; i++) {
 				doc = search.getSearcher().doc(hits[i].doc);
-				handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
-						.stringValue();
+				handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
 
-                entry = weblogEntryManager.getWeblogEntry(doc.getField(
-                        FieldConstants.ID).stringValue());
+                entry = weblogEntryManager.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
 
                 if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))
                         && doc.getField(FieldConstants.CATEGORY) != null) {
@@ -228,13 +215,7 @@ public class SearchResultsModel extends PageModel {
 
 	public String getTerm() {
 		String query = searchRequest.getQuery();
-        return (query == null)
-			? "" : StringEscapeUtils.escapeXml10(query);
-	}
-
-	public String getRawTerm() {
-		return (searchRequest.getQuery() == null) ? "" : searchRequest
-				.getQuery();
+        return (query == null) ? "" : StringEscapeUtils.escapeXml10(query);
 	}
 
 	public int getHits() {

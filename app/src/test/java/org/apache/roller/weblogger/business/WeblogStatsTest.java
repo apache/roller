@@ -23,13 +23,11 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -43,7 +41,6 @@ import static org.junit.Assert.*;
 public class WeblogStatsTest extends WebloggerTest {
     private User user1, user2;
     private Weblog website1;
-    private WeblogEntry entry11;
     private WeblogEntryComment comment11;
     private WeblogEntryComment comment12;
     private WeblogEntryComment comment13;
@@ -59,7 +56,7 @@ public class WeblogStatsTest extends WebloggerTest {
         user2 = setupUser("b_commentCountTestUser");
 
         website1 = setupWeblog("a_testWebsite1", user1);
-        entry11 = setupWeblogEntry(
+        WeblogEntry entry11 = setupWeblogEntry(
                 "anchor11", website1, user1);
         comment11 = setupComment("Comment11", entry11);
         comment12 = setupComment("Comment12", entry11);
@@ -90,48 +87,6 @@ public class WeblogStatsTest extends WebloggerTest {
         teardownUser(user2.getUserName());
 
         endSession(true);
-    }
-
-    @Test
-    public void testGetMostCommentedWeblogs() throws Exception {
-        List list = weblogManager.getMostCommentedWeblogs(null, null, 0, -1);
-
-        assertNotNull(list);
-        assertEquals(2, list.size());
-
-        StatCount s1 = (StatCount) list.get(0);
-        assertEquals(website1.getId(), s1.getSubjectId());
-        assertEquals(3L, s1.getCount());
-        assertEquals(website1.getHandle(), s1.getSubjectNameShort());
-        assertEquals(website1.getHandle(), s1.getWeblogHandle());
-
-        StatCount s2 = (StatCount) list.get(1);
-        assertEquals(website2.getId(), s2.getSubjectId());
-        assertEquals(1L, s2.getCount());
-    }
-
-    @Test
-    public void testGetMostCommentedWeblogEntries() throws Exception {
-        List list = weblogEntryManager.getMostCommentedWeblogEntries(null, null, null, 0, -1);
-
-        assertNotNull(list);
-        assertEquals(3, list.size());
-
-        StatCount s1 = (StatCount) list.get(0);
-        assertEquals(2L, s1.getCount());
-        assertEquals(entry11.getAnchor(), s1.getSubjectNameShort());
-        assertEquals(entry11.getWeblog().getHandle(), s1.getWeblogHandle());
-
-        StatCount s2 = (StatCount) list.get(1);
-        assertEquals(1L, s2.getCount());
-    }
-
-    @Test
-    public void testGetUserNameLetterMap() throws Exception {
-        Map map = userManager.getUserNameLetterMap();
-        assertNotNull(map.get("A"));
-        assertNotNull(map.get("B"));
-        assertNotNull(map.get("C"));
     }
 
     @Test

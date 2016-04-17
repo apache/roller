@@ -25,7 +25,7 @@
                 <td class="bannerRight">
                    <a href="$url.absoluteSite">$config.siteName</a> |
                    <a href="$url.absoluteSite/tb-ui/menu.rol">Main Menu</a> |
-                   #if(!$utils.isUserAuthenticated())
+                   #if(!$model.isUserAuthenticated())
                       <a href="$url.login">Login</a> |
                      <a href="$url.register">Register</a>
                    #else

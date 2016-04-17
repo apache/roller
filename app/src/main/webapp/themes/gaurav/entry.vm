@@ -138,7 +138,7 @@
 								<div class="form-group col-lg-12">
 								    <span class="comments-syntax-indicator">
 								    $text.get( "macro.weblog.htmlsyntax" )
-								    #if($config.commentEscapeHtml)
+								    #if(!$config.commentHtmlAllowed)
 								        <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
 								    #else
 								        <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>

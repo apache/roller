@@ -27,20 +27,24 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
- * Represents a set of functionality to be used at rendering.
+ * Represents a set of functionality to be used at rendering.  Most models require specific objects
+ * to be provided within their init() methods, see the implementation of each Model to determine
+ * its requirements.
  */
 public interface Model {
     
     /**
-     * Name to be used when referring to this model.
+     * Name to be used when referring to this model (e.g., the $(model name). seen within templates).
      */
     String getModelName();
     
     
     /**
      * Initialize.
+     * @throws ClassCastException if the model is not fed the specific objects it is expecting
+     * @throws WebloggerException if required objects are null or other processing problem.
      */
-    void init(Map params) throws WebloggerException;
+    void init(Map params) throws ClassCastException, WebloggerException;
 
     static Map<String, Object> getModelMap(String modelBean, Map<String, Object> initData) throws WebloggerException {
         HashMap<String, Object> modelMap = new HashMap<>();

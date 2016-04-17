@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.Collection;
@@ -37,7 +36,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
 /**
- * Page used to display Roller install instructions.
+ * Page used to display weblogger install instructions.
  */
 public class Setup extends UIAction {
 

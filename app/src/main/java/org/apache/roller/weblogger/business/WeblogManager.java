@@ -116,22 +116,6 @@ public interface WeblogManager {
     
     
     /**
-     * Get websites ordered by descending number of comments.
-     * @param startDate Restrict to those created after (or null for all)
-     * @param endDate Restrict to those created before (or null for all)
-     * @param offset    Offset into results (for paging)
-     * @param length       Maximum number of results to return (for paging)
-     * @return List of StatCount objects.
-     */
-    List<StatCount> getMostCommentedWeblogs(
-            Date startDate,
-            Date endDate,
-            int  offset,
-            int  length)
-            throws WebloggerException;
-    
-    
-    /**
      * Get map with 26 entries, one for each letter A-Z and
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.

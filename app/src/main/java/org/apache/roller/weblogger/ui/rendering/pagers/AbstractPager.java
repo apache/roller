@@ -57,7 +57,7 @@ public abstract class AbstractPager implements Pager {
     public String getNextLink() {
         if(hasMoreItems()) {
             int nextPage = page + 1;
-            Map params = new HashMap();
+            Map<String, String> params = new HashMap<>();
             params.put("page", ""+nextPage);
             return createURL(url, params);
         }
@@ -76,7 +76,7 @@ public abstract class AbstractPager implements Pager {
     public String getPrevLink() {
         if (page > 0) {
             int prevPage = page - 1;
-            Map params = new HashMap();
+            Map<String, String> params = new HashMap<>();
             params.put("page", ""+prevPage);
             return createURL(url, params);
         }

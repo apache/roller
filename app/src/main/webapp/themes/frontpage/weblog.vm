@@ -51,7 +51,7 @@
                             #foreach($pinnedEntry in $pinnedEntries)
                                 <div class="entry">
                                     <a class="entryTitle" href="$utils.escapeHTML($pinnedEntry.permalink)">
-                                        $utils.truncateNicely($utils.removeHTML($pinnedEntry.title), 50, 50, "...")
+                                        $utils.truncateText($utils.removeHTML($pinnedEntry.title), 50, 50, "...")
                                     </a><br /> 
                                     <p class="entryDetails">
                                         <a href="$utils.escapeHTML($pinnedEntry.weblog.URL)">$pinnedEntry.weblog.name</a>

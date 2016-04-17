@@ -22,51 +22,34 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Model which provides access to a set of general utilities.
  */
 public class UtilitiesModel implements Model {
-    private static Log log = LogFactory.getLog(UtilitiesModel.class);
-
     private WeblogRequest weblogRequest = null;
 
-    private Weblog weblog = null;
-
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "utils";
     }
 
-    /** Init page model based on request */
-    public void init(Map initData) throws WebloggerException {      
-        
-        // we expect the init data to contain a weblogRequest object
+    /** Init page model, will take but does not require a WeblogRequest object. */
+    @Override
+    public void init(Map initData) throws WebloggerException {
         weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-
-        if (weblogRequest == null) {
-            throw new WebloggerException("expected weblogRequest from init data");
-        }
-        
-        // extract weblog object if possible
-        weblog = weblogRequest.getWeblog();
     }
 
-    public boolean isUserAuthenticated() {
-        return (weblogRequest.getAuthenticatedUser() != null);
-    }
-       
     public String autoformat(String s) {
         return StringUtils.replace(s, "\n", "<br/>");
     }
@@ -83,7 +66,8 @@ public class UtilitiesModel implements Model {
      * Format date using SimpleDateFormat format string.
      */
     public String formatDate(Date d, String fmt) {
-        return formatDate(d, fmt, weblog.getTimeZoneInstance());
+        return formatDate(d, fmt, weblogRequest == null ?
+                null : weblogRequest.getWeblog().getTimeZoneInstance());
     }
     
     /**
@@ -95,7 +79,9 @@ public class UtilitiesModel implements Model {
             return fmt;
         }
         
-        SimpleDateFormat format = new SimpleDateFormat(fmt, weblog.getLocaleInstance());
+        SimpleDateFormat format = new SimpleDateFormat(fmt,
+                weblogRequest == null ?
+                    Locale.getDefault() : weblogRequest.getWeblog().getLocaleInstance());
         if (tzOverride != null) {
             format.setTimeZone(tzOverride);
         }
