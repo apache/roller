@@ -53,7 +53,8 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     private boolean     moreResults = false;
     
     
-    public WeblogEntriesSearchPager(URLStrategy strat, WeblogSearchRequest searchRequest, Map entries, boolean more) {
+    public WeblogEntriesSearchPager(URLStrategy strat, WeblogSearchRequest searchRequest,
+                                    Map<Date, List<WeblogEntry>> entries, boolean more) {
         
         // url strategy for building urls
         this.urlStrategy = strat;

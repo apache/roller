@@ -82,7 +82,7 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 *#
 #macro(showAutodiscoveryLinks $weblog)
     ## main feed urls are always available
-    #if (!$model.searchResults)
+
     <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
     <link rel="alternate" type="application/rss+xml"  title="Recent Entries (RSS)"   href="$url.feed.entries.rss" />
     <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" href="$url.feed.comments.atom" />
@@ -94,10 +94,6 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #elseif ($model.categoryName)
       <link rel="alternate" type="application/atom+xml" title="Entries for category $model.categoryName (Atom)"  href="$url.feed.entries.atom($model.categoryName, false)" />
       <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.categoryName (RSS)"   href="$url.feed.entries.rss($model.categoryName, false)" />
-    #end
-
-    #else
-    <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeHTML($model.term)'"  href="$utils.escapeHTML($url.feed.entries.search($model.term, $model.categoryName))" />
     #end
 #end
 
@@ -640,14 +636,14 @@ Show weblog's categories in specified parent category.
 Show weblog entry calendar, with optional category restriction.
 *#
 #macro(showWeblogEntryCalendar $weblog $category)
-$calendarModel.showWeblogEntryCalendar($weblog, $category)
+$model.showWeblogEntryCalendar($weblog, $category)
 #end
 
 #** 
 Show large format weblog entry calendar, with optional category restriction.
 *#
 #macro(showWeblogEntryCalendarBig $weblog $category)
-$calendarModel.showWeblogEntryCalendarBig($weblog, $category)
+$model.showWeblogEntryCalendarBig($weblog, $category)
 #end
 
 

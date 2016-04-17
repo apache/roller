@@ -173,11 +173,6 @@
 
     <beans:bean id="messageModel" class="org.apache.roller.weblogger.ui.rendering.model.MessageModel" scope="prototype"/>
 
-    <beans:bean id="calendarModel" class="org.apache.roller.weblogger.ui.rendering.model.CalendarModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-    </beans:bean>
-
     <beans:bean id="planetModel" class="org.apache.roller.weblogger.ui.rendering.model.PlanetModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="planetManager" ref="planetManager"/>
@@ -199,7 +194,6 @@
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-        <beans:property name="userManager" ref="userManager"/>
         <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
@@ -211,7 +205,6 @@
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
                 <beans:ref bean="messageModel"/>
-                <beans:ref bean="calendarModel"/>
                 <beans:ref bean="planetModel"/>
             </beans:set>
         </beans:property>
@@ -226,7 +219,6 @@
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="previewUrlModel"/>
                 <beans:ref bean="messageModel"/>
-                <beans:ref bean="calendarModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>
@@ -251,7 +243,6 @@
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
                 <beans:ref bean="messageModel"/>
-                <beans:ref bean="calendarModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>

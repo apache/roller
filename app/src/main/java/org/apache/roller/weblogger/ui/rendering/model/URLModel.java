@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -79,13 +79,13 @@ public class URLModel implements Model {
     }
     
     
-    /** Relative URL of Roller, e.g. /roller */
+    /** Relative URL of weblogger, e.g. /tightblog */
     public String getSite() {
         return WebloggerStaticConfig.getRelativeContextURL();
     }
     
     
-    /** Absolute URL of Roller, e.g. http://localhost:8080/roller */
+    /** Absolute URL of weblogger, e.g. http://localhost:8080/tightblog */
     public String getAbsoluteSite() {
         return WebloggerStaticConfig.getAbsoluteContextURL();
     }
@@ -129,28 +129,10 @@ public class URLModel implements Model {
         return getSite()+"/themes/"+theme+"/"+filePath;
     }
         
-    public String themeResource(String theme, String filePath, boolean absolute) {
-        if (absolute) {
-            return getAbsoluteSite()+"/themes/"+theme+"/"+filePath;
-        }
-        return themeResource(theme, filePath);
-    }
-        
     public String getHome() {
         return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, -1, true);
     }
     
-    
-    public String home(int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, pageNum, true);
-    }
-    
-    
-    public String home() {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, -1, true);
-    }
-
-
     public String entry(String anchor) {
         return urlStrategy.getWeblogEntryURL(weblog, anchor, true);
     }
@@ -170,87 +152,26 @@ public class URLModel implements Model {
     }
 
     
-    public String date(String dateString) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, dateString, null, -1, true);
-    }
-    
-    
-    public String date(String dateString, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, dateString, null, pageNum, true);
-    }
-    
-    
     public String category(String catName) {
         return urlStrategy.getWeblogCollectionURL(weblog, catName, null, null, -1, true);
     }
     
-    
-    public String category(String catName, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, catName, null, null, pageNum, true);
-    }
-    
-    
     public String tag(String tag) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, Arrays.asList(new String[]{tag}) , -1, true);
+        return urlStrategy.getWeblogCollectionURL(weblog, null, null, Collections.singletonList(tag), -1, true);
     }
-    
-    
-    public String tag(String tag, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, Arrays.asList(new String[]{tag}), pageNum, true);
-    }    
-    
-    
-    public String tags(List tags) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, tags , -1, true);
-    }
-    
-    
-    public String tags(List tags, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, tags, -1, true);
-    }
-    
-    
-    public String collection(String dateString, String catName) {
-        return urlStrategy.getWeblogCollectionURL(weblog, catName, dateString, null, -1, true);
-    }
-    
-    
-    public String collection(String dateString, String catName, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, catName, dateString, null, pageNum, true);
-    }
-    
-    
+
     public String getSearch() {
         return urlStrategy.getWeblogSearchURL(weblog, null, null, -1, false);
     }
-    
-    public String search(String query, int pageNum) {
-        return urlStrategy.getWeblogSearchURL(weblog, query, null, pageNum, false);
-    }
-    
-    
-    public String search(String query, String catName, int pageNum) {
-        return urlStrategy.getWeblogSearchURL(weblog, query, catName, pageNum, false);
-    }
-    
-    public String absoluteSearch(String query, String catName, int pageNum) {
-        return urlStrategy.getWeblogSearchURL(weblog, query, catName, pageNum, true);
-    }        
     
     public String page(String theme, String pageLink) {
         return urlStrategy.getWeblogPageURL(weblog, theme, pageLink, null, null, null, null, -1, true);
     }
 
-    public String page(String pageLink, String dateString, String catName, int pageNum) {
-        return urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, catName, dateString, null, pageNum, true);
-    }
-    
-    
     public FeedURLS getFeed() {
         return new FeedURLS();
     }
-    
-    
+
     /** URL for editing a weblog entry */
     public String editEntry(String anchor) {
         try {
@@ -264,105 +185,72 @@ public class URLModel implements Model {
         }
         return null;
     } 
-    
-    
+
     /** URL for creating a new weblog entry */
     public String getCreateEntry() {
         return urlStrategy.getEntryAddURL(weblog.getHandle(), false);
     }
-    
-    
+
     /** URL for editing weblog settings */
     public String getEditSettings() {
         return urlStrategy.getWeblogConfigURL(weblog.getHandle(), false);
     }
-    
-    
+
     ///////  Inner Classes  ///////
-    
     public class FeedURLS {
-        
         public EntryFeedURLS getEntries() {
             return new EntryFeedURLS();
         }
-        
         public CommentFeedURLS getComments() {
             return new CommentFeedURLS();
-        }
-
-        public MediaFileFeedURLS getMediaFiles() {
-            return new MediaFileFeedURLS();
         }
     }
     
     public class EntryFeedURLS {
         
         public String getRss() {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, null);
         }
         
         public String rss(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", catName, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", catName, null);
         }
         
         public String rssByTags(List tags) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, null, tags, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, tags);
         }
         
         public String getAtom() {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, null);
         }
         
         public String atom(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", catName, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", catName, null);
         }
         
-        public String search(String term, String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", catName, term, null, true);
-        }        
-        
         public String atomByTags(List tags) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, null, tags, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, tags);
         }
     }
     
     public class CommentFeedURLS {
         
         public String getRss() {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "rss", null, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "comments", "rss", null, null);
         }
         
         public String rss(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "rss", catName, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "comments", "rss", catName, null);
         }
         
         public String getAtom() {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "atom", null, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "comments", "atom", null, null);
         }
         
         public String atom(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "atom", catName, null, null, true);
+            return urlStrategy.getWeblogFeedURL(weblog, "comments", "atom", catName, null);
         }
         
     }
-    
-    public class MediaFileFeedURLS {
-        
-        public String getRss() {
-            return urlStrategy.getWeblogFeedURL(weblog, "files", "rss", null, null, null, true);
-        }
-        
-        public String rss(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "files", "rss", catName, null, null, true);
-        }
-        
-        public String getAtom() {
-            return urlStrategy.getWeblogFeedURL(weblog, "files", "atom", null, null, null, true);
-        }
-        
-        public String atom(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "files", "atom", catName, null, null, true);
-        }
-        
-    }
+
 }
