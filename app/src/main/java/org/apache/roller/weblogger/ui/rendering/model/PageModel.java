@@ -41,9 +41,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
-import org.apache.roller.weblogger.ui.core.tags.calendar.BigWeblogCalendarModel;
-import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
-import org.apache.roller.weblogger.ui.core.tags.calendar.WeblogCalendarModel;
+import org.apache.roller.weblogger.ui.rendering.generators.BigWeblogCalendar;
+import org.apache.roller.weblogger.ui.rendering.generators.WeblogCalendar;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager.PagingInterval;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -412,37 +411,12 @@ public class PageModel implements Model {
         return false;
     }
 
-    public String showWeblogEntryCalendar(Weblog websiteWrapper, String catArgument) {
-        return showWeblogEntryCalendar(websiteWrapper, catArgument, false);
-    }
-
-
-    public String showWeblogEntryCalendarBig(Weblog websiteWrapper, String catArgument) {
-        return showWeblogEntryCalendar(websiteWrapper, catArgument, true);
-    }
-
-
-    private String showWeblogEntryCalendar(Weblog websiteWrapper, String catArgument, boolean big) {
-
-        if ("nil".equals(catArgument)) {
-            catArgument = null;
-        }
+    public String showWeblogEntryCalendar(boolean big) {
         String ret = null;
         try {
-            org.apache.roller.weblogger.ui.core.tags.calendar.CalendarModel model;
-            if (big) {
-                model = new BigWeblogCalendarModel(pageRequest, catArgument, weblogEntryManager, urlStrategy);
-            } else {
-                model = new WeblogCalendarModel(pageRequest, catArgument, weblogEntryManager, urlStrategy);
-            }
-
-            CalendarTag calTag = new CalendarTag();
-            calTag.setLocale(websiteWrapper.getLocaleInstance());
-            calTag.setCalendarModel(model);
-            if (big) {
-                calTag.setClassSuffix("Big");
-            }
-            ret = calTag.emit();
+            WeblogCalendar calendar = big ? new BigWeblogCalendar(pageRequest, weblogEntryManager, urlStrategy) :
+                    new WeblogCalendar(weblogEntryManager, urlStrategy, pageRequest);
+            ret = calendar.generateHTML();
         } catch (Exception e) {
             log.error("ERROR: initializing calendar tag", e);
         }

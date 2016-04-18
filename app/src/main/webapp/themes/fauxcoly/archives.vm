@@ -93,7 +93,7 @@
          or jump to the most recent posts listed in the right sidebar.</p>
 
       <br />
-      #showWeblogEntryCalendarBig($model.weblog "nil")
+      #showWeblogEntryCalendar(true)
 
 </div>
 </div>

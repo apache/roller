@@ -44,7 +44,7 @@ Macros defined in this file:
     #showAtomFeedsList($weblog)
     #showRSSFeedsList($weblog)
 
-    #showWeblogEntryCalendar($weblog $category)
+    #showWeblogEntryCalendar($big)
 
     #showPageMenu($addExternalPages)
     #showEditorMenu($vertical)
@@ -633,21 +633,13 @@ Show weblog's categories in specified parent category.
 
 
 #** 
-Show weblog entry calendar, with optional category restriction.
+Show weblog entry calendar, either big ($big=true) or small (false).
 *#
-#macro(showWeblogEntryCalendar $weblog $category)
-$model.showWeblogEntryCalendar($weblog, $category)
+#macro(showWeblogEntryCalendar $big)
+$model.showWeblogEntryCalendar($big)
 #end
 
-#** 
-Show large format weblog entry calendar, with optional category restriction.
-*#
-#macro(showWeblogEntryCalendarBig $weblog $category)
-$model.showWeblogEntryCalendarBig($weblog, $category)
-#end
-
-
-#** 
+#**
 Show weblog editor menu with vertical or horizontal orientation.
 *#
 #macro(showEditorMenu $vertical)
