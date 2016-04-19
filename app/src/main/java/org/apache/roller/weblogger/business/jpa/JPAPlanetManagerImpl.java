@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.jpa;
 
 import java.sql.Timestamp;
@@ -227,8 +226,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
             for (int i=0; i<params.size(); i++) {
                 query.setParameter(i+1, params.get(i));
             }
-            if (offset > 0) {
-                query.setFirstResult(offset);
+            if (offset - 1 > 0) {
+                query.setFirstResult((offset - 1) * len);
             }
             if (len != -1) {
                 query.setMaxResults(len);
@@ -295,7 +294,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
                     sub.setTitle(weblog.getName());
                     sub.setFeedURL(feedUrl);
                     sub.setSiteURL(urlStrategy.getWeblogURL(weblog, true));
-                    sub.setAuthor(weblog.getName());
                     sub.setLastUpdated(new Date(0));
                     sub.setPlanet(planet);
                     saveSubscription(sub);
@@ -305,7 +303,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
                 } else {
                     log.debug("UPDATING feed: "+feedUrl);
                     sub.setTitle(weblog.getName());
-                    sub.setAuthor(weblog.getName());
                     saveSubscription(sub);
                 }
 

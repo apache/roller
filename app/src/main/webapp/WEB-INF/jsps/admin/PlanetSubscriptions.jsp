@@ -81,7 +81,7 @@ function confirmSubDelete(subUrl) {
         </td>
         
         <td class="rollertable">
-            <s:property value="#sub.feedURL.substring(0,100)" />
+            <str:truncateNicely lower="70" upper="100" ><s:property value="#sub.feedURL" /></str:truncateNicely>
         </td>
         
         <td class="rollertable">

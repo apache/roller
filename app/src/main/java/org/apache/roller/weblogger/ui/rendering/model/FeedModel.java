@@ -98,6 +98,10 @@ public class FeedModel implements Model {
     }
     
     
+    public boolean isSiteWideFeed() {
+        return feedRequest.isSiteWideFeed();
+    }
+
     /**
      * Gets most recent comments limited by: weblog specified in request and 
      * the weblog.entryDisplayCount.
@@ -119,10 +123,10 @@ public class FeedModel implements Model {
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, propertiesManager, urlStrategy,
-                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(), null,
+                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblogCategoryName(),
                     feedRequest.getTags(), feedRequest.getPage(),
-                    propertiesManager.getIntProperty("site.newsfeeds.defaultEntries"),
+                    propertiesManager.getIntProperty("site.newsfeeds.maxEntries"),
                     -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;
         }
@@ -143,7 +147,7 @@ public class FeedModel implements Model {
             super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getType(), feedRequest.getFormat(), null, null),
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(), -1, feedRequest.getPage(),
-                    propertiesManager.getIntProperty("site.newsfeeds.defaultEntries"));
+                    propertiesManager.getIntProperty("site.newsfeeds.maxEntries"));
 
             this.feedRequest = feedRequest;
         }

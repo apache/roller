@@ -26,7 +26,7 @@
   <link>$utils.escapeXML($absoluteSite)</link>
   <lastBuildDate>$utils.formatRfc822Date($lastModified)</lastBuildDate>
   <generator>TightBlog</generator>
-  #set($entries = $planetManager.getEntries($planet, 0, $entryCount))
+  #set($entries = $planetManager.getEntries($planet, $page, $maxEntries))
   #foreach( $entry in $entries )
   <item>
     #if($entry.title)<title>$utils.escapeXML($entry.title)</title> #end

@@ -92,7 +92,7 @@ public class PlanetFeedProcessor {
         log.debug("Entering");
 
         Planet planet;
-        String planetName;
+        String planetHandle;
         DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
 
         try {
@@ -100,14 +100,14 @@ public class PlanetFeedProcessor {
             log.debug("parsing url: " + request.getRequestURL());
 
             // planet to include
-            planetName = request.getParameter("planet");
-            if (planetName == null) {
-                throw new IllegalArgumentException("Planet name not provided in URL: " + request.getRequestURL());
+            planetHandle = request.getParameter("planet");
+            if (planetHandle == null) {
+                throw new IllegalArgumentException("Planet handle not provided in URL: " + request.getRequestURL());
             }
 
-            planet = planetManager.getPlanet(planetName);
+            planet = planetManager.getPlanet(planetHandle);
             if (planet == null) {
-                throw new IllegalArgumentException("Could not find planet named: " + planetName);
+                throw new IllegalArgumentException("Could not find planet with handle: " + planetHandle);
             }
         } catch (Exception e) {
             // some kind of error parsing the request
@@ -141,8 +141,17 @@ public class PlanetFeedProcessor {
         // set last-modified date
         Utilities.setLastModifiedHeader(response, lastModified.getTime(), deviceType);
 
+        int page = 1;
+        if (request.getParameter("page") != null) {
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch(NumberFormatException ignored) {
+            }
+            page = Math.max(page, 1);
+        }
+
         // cached content checking
-        String cacheKey = generateKey(planetName);
+        String cacheKey = generateKey(planetHandle, page);
         CachedContent entry = (CachedContent) planetCache.get(cacheKey);
         if (entry != null) {
             response.setContentLength(entry.getContent().length);
@@ -156,30 +165,15 @@ public class PlanetFeedProcessor {
 
             // populate the rendering model
             model.put("planetManager", planetManager);
-            model.put("planet", planetName);
+            model.put("planet", planet);
             model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
             model.put("lastModified", lastModified);
             model.put("absoluteSite", WebloggerStaticConfig.getAbsoluteContextURL());
             model.put("feedStyle", propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds"));
-            int numEntries = propertiesManager.getIntProperty("site.newsfeeds.defaultEntries");
+            model.put("maxEntries", propertiesManager.getIntProperty("site.newsfeeds.maxEntries"));
+            model.put("page", page);
 
-            int entryCount = numEntries;
-            String sCount = request.getParameter("count");
-            if (sCount != null) {
-                try {
-                    entryCount = Integer.parseInt(sCount);
-                } catch (NumberFormatException e) {
-                    log.warn("Improperly formatted count parameter");
-                }
-                if (entryCount > numEntries) {
-                    entryCount = numEntries;
-                }
-                if (entryCount < 0) {
-                    entryCount = 0;
-                }
-            }
-            model.put("entryCount", entryCount);
         } catch (Exception ex) {
             log.error("Error loading model objects for page", ex);
 
@@ -195,7 +189,7 @@ public class PlanetFeedProcessor {
         try {
             log.debug("Looking up renderer");
             Template template = new SharedTemplate(
-                    "templates/planet/planetrss.vm", TemplateLanguage.VELOCITY);
+                    "templates/feeds/planet-rss.vm", TemplateLanguage.VELOCITY);
             renderer = rendererManager.getRenderer(template, DeviceType.standard);
         } catch (Exception e) {
             // nobody wants to render my content :(
@@ -242,14 +236,15 @@ public class PlanetFeedProcessor {
 
     /**
      * Generate a cache key from a parsed planet request. This generates a key
-     * of the form planet.key:{planetname}/{feed flavor}
+     * of the form planet.key:{planetname}/{feed flavor}/page
      *
-     * example: planet.key:testplanet/rss
+     * example: planet.key:testplanet/rss/page
      */
-    private String generateKey(String planet) {
+    private String generateKey(String planet, int page) {
         String key = "planet.key:";
         key += planet;
-        key += "/rss";
+        key += "/rss/";
+        key += page;
         return key;
     }
 }

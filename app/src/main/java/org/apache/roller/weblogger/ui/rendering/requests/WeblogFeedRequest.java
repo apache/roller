@@ -58,13 +58,13 @@ public class WeblogFeedRequest extends WeblogRequest {
         super(request);
         
         // we only want the path info left over from after our parents parsing
-        String pathInfo = this.getPathInfo();
+        String pathInfo = getPathInfo();
         
         // parse the request object and figure out what we've got
         log.debug("parsing path " + pathInfo);
         
         /*
-         * arse the path info.  Format:
+         * parse the path info.  Format:
          *
          * must look like this ...
          *
@@ -74,8 +74,8 @@ public class WeblogFeedRequest extends WeblogRequest {
 
             String[] pathElements = pathInfo.split("/");
             if(pathElements.length == 2) {
-                this.type = pathElements[0];
-                this.format = pathElements[1];
+                type = pathElements[0];
+                format = pathElements[1];
             } else {
                 throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
             }
@@ -87,14 +87,14 @@ public class WeblogFeedRequest extends WeblogRequest {
         // parse request parameters
         if (request.getParameter("cat") != null) {
             // replacing any plus signs with their encoded equivalent (http://stackoverflow.com/a/6926987)
-            this.weblogCategoryName =
+            weblogCategoryName =
                     Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
         }
         
         if (request.getParameter("tags") != null) {
-            this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));
+            tags = Utilities.splitStringAsTags(request.getParameter("tags"));
             int maxSize = WebloggerStaticConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
-            if (this.tags.size() > maxSize) {
+            if (tags.size() > maxSize) {
                 throw new IllegalArgumentException("Max number of tags allowed is " + maxSize + ", "
                         + request.getRequestURL());
             }
@@ -102,21 +102,21 @@ public class WeblogFeedRequest extends WeblogRequest {
 
         if (request.getParameter("page") != null) {
             try {
-                this.page = Integer.parseInt(request.getParameter("page"));
-            } catch(NumberFormatException e) {
-                // 
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch(NumberFormatException ignored) {
             }
         }     
         
-        if ((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
+        if ((tags != null && tags.size() > 0) && weblogCategoryName != null) {
             throw new IllegalArgumentException("Please specify either category or tags but not both: " + request.getRequestURL());
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("type = "+this.type);
-            log.debug("format = "+this.format);
-            log.debug("weblogCategory = "+this.weblogCategoryName);
-            log.debug("tags = "+this.tags);
+            log.debug("type = " + type);
+            log.debug("page = " + type);
+            log.debug("format = " + format);
+            log.debug("weblogCategory = " + weblogCategoryName);
+            log.debug("tags = " + tags);
         }
     }
 

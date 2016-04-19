@@ -132,16 +132,10 @@ public class CommentsPager extends AbstractPager {
     /** Get last updated time from items in pager */
     public Date getLastUpdated() {
         if (lastUpdated == null) {
-            // feeds are sorted by pubtime, so first might not be last updated
+            // feeds are sorted by posttime, so use that
             List<WeblogEntryComment> items = getItems();
-            if (getItems() != null && getItems().size() > 0) {
-                Timestamp newest = (getItems().get(0)).getPostTime();
-                for (WeblogEntryComment c : items) {
-                    if (c.getPostTime().after(newest)) {
-                        newest = c.getPostTime();
-                    }
-                }
-                lastUpdated = new Date(newest.getTime());
+            if (items != null && items.size() > 0) {
+                lastUpdated = items.get(0).getPostTime();
             } else {
                 // no update so we assume it's brand new
                 lastUpdated = new Date();
