@@ -21,8 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -196,23 +195,23 @@ public class FeedProcessor {
         // validation. make sure that request input makes sense.
         boolean invalid = false;
 
-        if (feedRequest.getWeblogCategoryName() != null) {
+        if (feedRequest.getCategory() != null) {
             // category specified. category must exist.
             WeblogCategory test = null;
 
             try {
-                test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(), feedRequest.getWeblogCategoryName());
+                test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(), feedRequest.getCategory());
             } catch (WebloggerException ex) {
-                log.error("Error getting weblog category " + feedRequest.getWeblogCategoryName(), ex);
+                log.error("Error getting weblog category " + feedRequest.getCategory(), ex);
             }
 
             if (test == null) {
                 invalid = true;
             }
-        } else if (feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+        } else if (feedRequest.getTag() != null) {
             try {
                 // tags specified. make sure they exist.
-                invalid = !weblogEntryManager.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
+                invalid = !weblogEntryManager.getTagComboExists(Collections.singletonList(feedRequest.getTag()), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
             }
@@ -325,16 +324,16 @@ public class FeedProcessor {
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
 
-        if(feedRequest.getWeblogCategoryName() != null) {
-            String cat = feedRequest.getWeblogCategoryName();
+        if(feedRequest.getCategory() != null) {
+            String cat = feedRequest.getCategory();
             cat = Utilities.encode(cat);
             key.append("/cat/").append(cat);
         }
 
-        if (feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
-            Set<String> ordered = new TreeSet<>(feedRequest.getTags());
-            String[] tags = ordered.toArray(new String[ordered.size()]);
-            key.append("/tags/").append(StringUtils.join(tags, ','));
+        if (feedRequest.getTag() != null) {
+            String tag = feedRequest.getTag();
+            tag = Utilities.encode(tag);
+            key.append("/tags/").append(tag);
         }
 
         return key.toString();
