@@ -20,13 +20,10 @@
  */
 package org.apache.roller.weblogger.ui.rendering.requests;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -43,8 +40,8 @@ public class WeblogFeedRequest extends WeblogRequest {
     
     private String type = null;
     private String format = null;
-    private String weblogCategoryName = null;
-    private List<String> tags = null;
+    private String category = null;
+    private String tag = null;
     private boolean siteWideFeed = false;
     private int page = 0;
 
@@ -65,40 +62,27 @@ public class WeblogFeedRequest extends WeblogRequest {
         
         /*
          * parse the path info.  Format:
-         *
-         * must look like this ...
-         *
          * /<type>/<format>
          */
         if (pathInfo != null && pathInfo.trim().length() > 1) {
-
             String[] pathElements = pathInfo.split("/");
-            if(pathElements.length == 2) {
+            if (pathElements.length == 2) {
                 type = pathElements[0];
                 format = pathElements[1];
             } else {
                 throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
             }
-
         } else {
             throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
         }
-        
+
         // parse request parameters
         if (request.getParameter("cat") != null) {
             // replacing any plus signs with their encoded equivalent (http://stackoverflow.com/a/6926987)
-            weblogCategoryName =
-                    Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
+            category = Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
         }
-        
-        if (request.getParameter("tags") != null) {
-            tags = Utilities.splitStringAsTags(request.getParameter("tags"));
-            int maxSize = WebloggerStaticConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
-            if (tags.size() > maxSize) {
-                throw new IllegalArgumentException("Max number of tags allowed is " + maxSize + ", "
-                        + request.getRequestURL());
-            }
-        }
+
+        tag = request.getParameter("tag");
 
         if (request.getParameter("page") != null) {
             try {
@@ -107,16 +91,16 @@ public class WeblogFeedRequest extends WeblogRequest {
             }
         }     
         
-        if ((tags != null && tags.size() > 0) && weblogCategoryName != null) {
-            throw new IllegalArgumentException("Please specify either category or tags but not both: " + request.getRequestURL());
+        if (tag != null && category != null) {
+            throw new IllegalArgumentException("Please specify either category or tag but not both: " + request.getRequestURL());
         }
 
         if (log.isDebugEnabled()) {
             log.debug("type = " + type);
             log.debug("page = " + type);
             log.debug("format = " + format);
-            log.debug("weblogCategory = " + weblogCategoryName);
-            log.debug("tags = " + tags);
+            log.debug("category = " + category);
+            log.debug("tag = " + tag);
         }
     }
 
@@ -128,12 +112,12 @@ public class WeblogFeedRequest extends WeblogRequest {
         return format;
     }
 
-    public String getWeblogCategoryName() {
-        return weblogCategoryName;
+    public String getCategory() {
+        return category;
     }
 
-    public List<String> getTags() {
-      return tags;
+    public String getTag() {
+      return tag;
     }
 
     public int getPage() {

@@ -20,8 +20,8 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -86,7 +86,7 @@ public class FeedModel implements Model {
      * Get category path or name specified by request.
      */
     public String getCategoryName() {
-        return feedRequest.getWeblogCategoryName();
+        return feedRequest.getCategory();
     }
     
     /**
@@ -111,10 +111,10 @@ public class FeedModel implements Model {
     }    
         
     /**
-     * Returns the list of tags specified in the request /?tags=foo+bar
+     * Returns the tag specified in the request /?tag=foo
      */
-    public List getTags() {
-        return feedRequest.getTags();
+    public String getTag() {
+        return feedRequest.getTag();
     }    
 
     public class FeedEntriesPager extends WeblogEntriesTimePager {
@@ -124,8 +124,9 @@ public class FeedModel implements Model {
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, propertiesManager, urlStrategy,
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
-                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblogCategoryName(),
-                    feedRequest.getTags(), feedRequest.getPage(),
+                    feedRequest.isSiteWideFeed() ? null : feedRequest.getCategory(),
+                    feedRequest.getTag() == null ? null : Collections.singletonList(feedRequest.getTag()),
+                    feedRequest.getPage(),
                     propertiesManager.getIntProperty("site.newsfeeds.maxEntries"),
                     -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;
@@ -153,12 +154,8 @@ public class FeedModel implements Model {
         }
         
         protected String createURL(String url, Map<String, String> params) {
-            List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
-                params.put("tags", Utilities.getEncodedTagsString(tags));
-            }
-            String category = feedRequest.getWeblogCategoryName();
-            if(category != null && category.trim().length() > 0) {
+            String category = feedRequest.getCategory();
+            if (category != null) {
                 params.put("cat", Utilities.encode(category));
             }  
             return super.createURL(url, params);

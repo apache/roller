@@ -88,9 +88,9 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" href="$url.feed.comments.atom" />
     <link rel="alternate" type="application/rss+xml"  title="Recent Comments (RSS)"  href="$url.feed.comments.rss" />
 
-    #if ($model.tags)
-      <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tags.toString() (Atom)"  href="$url.feed.entries.atomByTags($model.tags)" />
-      <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tags.toString() (RSS)"   href="$url.feed.entries.rssByTags($model.tags)" />
+    #if ($model.tag)
+      <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tag (Atom)"  href="$url.feed.entries.atomByTag($model.tag)" />
+      <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tag (RSS)"   href="$url.feed.entries.rssByTag($model.tag)" />
     #elseif ($model.categoryName)
       <link rel="alternate" type="application/atom+xml" title="Entries for category $model.categoryName (Atom)"  href="$url.feed.entries.atom($model.categoryName)" />
       <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.categoryName (RSS)"   href="$url.feed.entries.rss($model.categoryName)" />
