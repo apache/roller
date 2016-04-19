@@ -41,7 +41,7 @@
             
             <td class="bannerRight">
                 
-                <a href="<s:url value='/'/>"><s:property value="getProp('site.shortName')"/></a>
+                <a href="<s:url value='/'/>"><s:property value="getProp('site.name')"/></a>
                 
                 | <a href="<s:url action='menu' namespace='/tb-ui' />"><s:text name="mainPage.mainMenu" /></a>
                 

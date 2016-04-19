@@ -55,14 +55,6 @@
          <type>string</type>
          <default-value>TightBlog Site</default-value>
       </property-def>
-      <property-def  name="site.shortName"  key="configForm.shortName">
-         <type>string</type>
-         <default-value>Front Page</default-value>
-      </property-def>
-      <property-def  name="site.description"  key="configForm.siteDescription">
-         <type>text</type>
-	     <default-value>A default install of the TightBlog Weblogger open source blog server</default-value>
-      </property-def>      
       <property-def  name="site.frontpage.weblog.handle"  key="configForm.frontpageWeblogHandle">
          <type>string</type>
          <default-value></default-value>
@@ -108,15 +100,15 @@
    <!-- Weblog Rendering Settings Group -->
    <display-group name="weblogSettings" key="configForm.weblogSettings" >
        
-      <property-def  name="site.pages.maxEntries"  key="configForm.pageMaxEntries">
+      <property-def name="site.pages.maxEntries"  key="configForm.pageMaxEntries">
          <type>string</type>
          <default-value>30</default-value>
       </property-def>
-      <property-def  name="site.newsfeeds.defaultEntries"  key="configForm.newsfeedMaxEntries">
+      <property-def name="site.newsfeeds.maxEntries"  key="configForm.newsfeedMaxEntries">
          <type>string</type>
          <default-value>30</default-value>
       </property-def>
-      <property-def  name="site.newsfeeds.styledFeeds"  key="configForm.styledFeeds">
+      <property-def name="site.newsfeeds.styledFeeds"  key="configForm.styledFeeds">
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
@@ -127,23 +119,23 @@
    <!-- Comment & Trackback Settings Group -->
    <display-group name="commentSettings" key="configForm.commentSettings" >
    
-      <property-def  name="users.comments.enabled"  key="configForm.enableComments">
+      <property-def name="users.comments.enabled"  key="configForm.enableComments">
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
-      <property-def  name="comments.ignoreSpam.enabled"  key="configForm.ignoreSpamComments">
+      <property-def name="comments.ignoreSpam.enabled"  key="configForm.ignoreSpamComments">
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
-      <property-def  name="users.trackbacks.enabled"  key="configForm.enableTrackbacks">
+      <property-def name="users.trackbacks.enabled"  key="configForm.enableTrackbacks">
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
-      <property-def  name="trackbacks.ignoreSpam.enabled"  key="configForm.ignoreSpamTrackbacks">
+      <property-def name="trackbacks.ignoreSpam.enabled"  key="configForm.ignoreSpamTrackbacks">
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
-      <property-def  name="users.comments.htmlenabled"  key="configForm.commentHtmlAllowed">
+      <property-def name="users.comments.htmlenabled"  key="configForm.commentHtmlAllowed">
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
@@ -151,7 +143,7 @@
          <type>string</type>
          <default-value>HTMLSubset</default-value>
       </property-def>
-      <property-def  name="users.comments.emailnotify"  key="configForm.emailComments">
+      <property-def name="users.comments.emailnotify"  key="configForm.emailComments">
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>

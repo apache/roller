@@ -17,18 +17,22 @@
 
 *#<?xml version="1.0" encoding="utf-8"?>
 #if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/tb-ui/styles/rss.xsl" media="screen"?>#end
-<rss version="2.0" 
+<rss version="2.0"
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:atom="http://www.w3.org/2005/Atom" >
 <channel>
-  <title>$utils.escapeXML($config.siteName) (Comments)</title>
-  <link>$url.absoluteSite</link>
-  <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.rss($model.categoryName)" />
-  <description>$utils.escapeXML($config.siteDescription)</description>
+  <title>$utils.escapeXML($model.weblog.name)</title>
+  #if($model.siteWideFeed)
+    <link>$url.absoluteSite</link>
+  #else
+    <link>$url.home</link>
+  #end
+  <description>$utils.escapeXML($model.weblog.tagline)</description>
   <language>en-us</language>
+  #set($pager = $model.weblogEntriesPager)
   <copyright>Copyright $utils.formatDate($pager.lastUpdated, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($pager.lastUpdated)</lastBuildDate>
   <generator>TightBlog $config.systemVersion</generator>
-  #showCommentsRSS20($model.commentsPager.items)
+  #showEntriesRSS20($pager.items)
 </channel>
 </rss>

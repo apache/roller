@@ -89,11 +89,11 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     <link rel="alternate" type="application/rss+xml"  title="Recent Comments (RSS)"  href="$url.feed.comments.rss" />
 
     #if ($model.tags)
-      <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tags.toString() (Atom)"  href="$url.feed.entries.atomByTags($model.tags, false)" />
-      <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tags.toString() (RSS)"   href="$url.feed.entries.rssByTags($model.tags, false)" />
+      <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tags.toString() (Atom)"  href="$url.feed.entries.atomByTags($model.tags)" />
+      <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tags.toString() (RSS)"   href="$url.feed.entries.rssByTags($model.tags)" />
     #elseif ($model.categoryName)
-      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.categoryName (Atom)"  href="$url.feed.entries.atom($model.categoryName, false)" />
-      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.categoryName (RSS)"   href="$url.feed.entries.rss($model.categoryName, false)" />
+      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.categoryName (Atom)"  href="$url.feed.entries.atom($model.categoryName)" />
+      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.categoryName (RSS)"   href="$url.feed.entries.rss($model.categoryName)" />
     #end
 #end
 
@@ -559,7 +559,7 @@ Show weblog's categories in specified parent category.
     <li><a href="$url.feed.entries.atom">$text.get("generic.all")</a></li>
     #set($categories = $weblog.weblogCategories )
     #foreach( $cat in $categories )
-        <li><a href="$url.feed.entries.atom($cat.name, false)">$cat.name</a></li>
+        <li><a href="$url.feed.entries.atom($cat.name)">$cat.name</a></li>
     #end
     <li><a href="$url.feed.comments.atom">Comments</a></li>
     </ul>
@@ -574,7 +574,7 @@ Show weblog's categories in specified parent category.
     <li><a href="$url.feed.entries.rss">$text.get("generic.all")</a></li>
     #set($categories = $weblog.weblogCategories )
     #foreach( $cat in $categories )
-        <li><a href="$url.feed.entries.rss($cat.name, false)">$cat.name</a></li>
+        <li><a href="$url.feed.entries.rss($cat.name)">$cat.name</a></li>
     #end
     <li><a href="$url.feed.comments.rss">Comments</a></li>
     </ul>
@@ -587,7 +587,7 @@ Show weblog's categories in specified parent category.
 #macro(showPageMenu $addExternalPages)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$url.site/"><span>$config.siteShortName</span></a>
+            <a href="$url.site/"><span>$config.siteName</span></a>
         </li>
         <li class="rNavItem">
             <a href="$url.home"><span>Weblog</span></a>

@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.io.File;
@@ -110,27 +109,28 @@ public class FeedManagerImpl implements FeedManager {
     public Subscription fetchSubscription(String feedURL, Date lastModified)
             throws WebloggerException {
 
-        if(feedURL == null) {
+        if (feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
         }
 
         // we handle special weblogger planet integrated subscriptions which have
         // feedURLs defined as ... weblogger:<blog handle>
-        if(feedURL.startsWith("weblogger:")) {
-            log.debug("Feed is a local blog, handling via API - "+feedURL);
+        if (feedURL.startsWith("weblogger:")) {
+            log.debug("Feed is a local blog, handling via API - " + feedURL);
             return fetchWebloggerSubscription(feedURL, lastModified);
         }
 
         // setup Rome feed fetcher
         com.rometools.fetcher.FeedFetcher feedFetcher = getRomeFetcher();
 
+
         // fetch the feed
-        log.debug("Fetching feed: "+feedURL);
+        log.debug("Fetching feed: " + feedURL);
         SyndFeed feed;
         try {
             feed = feedFetcher.retrieveFeed(new URL(feedURL));
         } catch (Exception ex) {
-            throw new WebloggerException("Error fetching subscription - "+feedURL, ex);
+            throw new WebloggerException("Error fetching subscription - " + feedURL, ex);
         }
 
         log.debug("Feed pulled, extracting data into Subscription");
@@ -140,41 +140,38 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(feed.getLink());
         newSub.setTitle(feed.getTitle());
-        newSub.setAuthor(feed.getAuthor());
         newSub.setLastUpdated(feed.getPublishedDate());
 
         // normalize any data that couldn't be properly extracted
-        if(newSub.getSiteURL() == null) {
+        if (newSub.getSiteURL() == null) {
             // set the site url to the feed url then
             newSub.setSiteURL(newSub.getFeedURL());
         }
-        if(newSub.getAuthor() == null) {
-            // set the author to the title
-            newSub.setAuthor(newSub.getTitle());
-        }
-        if(newSub.getLastUpdated() == null) {
+        if (newSub.getLastUpdated() == null) {
             // no update time specified in feed, so try consulting feed info cache
             FeedFetcherCache feedCache = getRomeFetcherCache();
-            try {
-                SyndFeedInfo feedInfo = feedCache.getFeedInfo(new URL(newSub.getFeedURL()));
-                if(feedInfo.getLastModified() != null) {
-                    long lastUpdatedLong = (Long) feedInfo.getLastModified();
-                    if (lastUpdatedLong != 0) {
-                        newSub.setLastUpdated(new Date(lastUpdatedLong));
+            if (feedCache != null) {
+                try {
+                    SyndFeedInfo feedInfo = feedCache.getFeedInfo(new URL(newSub.getFeedURL()));
+                    if (feedInfo.getLastModified() != null) {
+                        long lastUpdatedLong = (Long) feedInfo.getLastModified();
+                        if (lastUpdatedLong != 0) {
+                            newSub.setLastUpdated(new Date(lastUpdatedLong));
+                        }
                     }
+                } catch (MalformedURLException ex) {
+                    // should never happen since we check this above
                 }
-            } catch (MalformedURLException ex) {
-                // should never happen since we check this above
             }
         }
 
         // check if feed is unchanged and bail now if so
-        if(lastModified != null && newSub.getLastUpdated() != null &&
+        if (lastModified != null && newSub.getLastUpdated() != null &&
                 !newSub.getLastUpdated().after(lastModified)) {
             return null;
         }
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("Subscription is: " + newSub.toString());
         }
 
@@ -192,23 +189,22 @@ public class FeedManagerImpl implements FeedManager {
 
         // add entries
         List<SyndEntry> feedEntries = feed.getEntries();
+        int numIncluded = 0;
         for (SyndEntry feedEntry : feedEntries) {
             SubscriptionEntry newEntry = buildEntry(feedEntry);
 
             // some kludge to handle feeds with no entry dates
-            if (newEntry.getPubTime() == null) {
-                log.debug("No published date, assigning fake date for "+feedURL);
-                newEntry.setPubTime(new Timestamp(cal.getTimeInMillis()));
-                cal.add(Calendar.DATE, -1);
-            }
-
-            if(newEntry != null) {
+            if (newEntry != null) {
+                if (newEntry.getPubTime() == null) {
+                    log.debug("No published date, assigning fake date for " + feedURL);
+                    newEntry.setPubTime(new Timestamp(cal.getTimeInMillis()));
+                    cal.add(Calendar.DATE, -1);
+                }
                 newSub.addEntry(newEntry);
+                numIncluded++;
             }
         }
-
-        log.debug(feedEntries.size()+" entries included");
-
+        log.debug(numIncluded + " entries included");
         return newSub;
     }
 
@@ -250,7 +246,6 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(urlStrategy.getWeblogURL(localWeblog, true));
         newSub.setTitle(localWeblog.getName());
-        newSub.setAuthor(localWeblog.getName());
         newSub.setLastUpdated(localWeblog.getLastModified());
         
         // must have a last updated time
@@ -260,7 +255,7 @@ public class FeedManagerImpl implements FeedManager {
         
         // lookup recent entries from weblog and add them to the subscription
         try {
-            int entryCount = propertiesManager.getIntProperty("site.newsfeeds.defaultEntries");
+            int entryCount = propertiesManager.getIntProperty("site.newsfeeds.maxEntries");
 
             if (log.isDebugEnabled()) {
                 log.debug("Seeking up to " + entryCount + " entries from " + localWeblog.getHandle());
@@ -307,7 +302,7 @@ public class FeedManagerImpl implements FeedManager {
     private SubscriptionEntry buildEntry(SyndEntry romeEntry) {
 
         // if we don't have a permalink then we can't continue
-        if(romeEntry.getLink() == null) {
+        if (romeEntry.getLink() == null) {
             return null;
         }
 
@@ -359,7 +354,7 @@ public class FeedManagerImpl implements FeedManager {
 
         // copy categories
         if (romeEntry.getCategories().size() > 0) {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             for (Object cat : romeEntry.getCategories()) {
                 list.add(((SyndCategory) cat).getName());
             }
@@ -471,7 +466,6 @@ public class FeedManagerImpl implements FeedManager {
         // update subscription attributes
         sub.setSiteURL(updatedSub.getSiteURL());
         sub.setTitle(updatedSub.getTitle());
-        sub.setAuthor(updatedSub.getAuthor());
         sub.setLastUpdated(updatedSub.getLastUpdated());
 
         // update subscription entries

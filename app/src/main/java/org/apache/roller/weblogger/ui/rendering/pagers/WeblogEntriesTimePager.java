@@ -42,7 +42,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
@@ -71,7 +70,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     List<String> tags = new ArrayList<>();
     int offset = 0;
     int page = 0;
-    int length = 0;
+    int maxEntries = 0;
     Locale viewLocale = null;
 
     private WeblogEntryManager weblogEntryManager;
@@ -121,10 +120,9 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     // are there more pages?
     private boolean more = false;
 
-    // SITE_LATEST allows for initializing these fields
-    private int siteLength = -1;
+    // PagingInterval.SITE_LATEST allows for initializing these fields
+    private int siteMaxEntries = -1;
     private Date fixedStartDate = null;
-    private User fixedUser = null;
     private Weblog siteWeblog = null;
 
     // most recent update time of current set of entries
@@ -132,24 +130,22 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
     /**
       * This constructor is to create site-wide (frontpage) weblog pagers, which allow more
-      * flexibility in specifying users, blogs, length of returns, etc.
+      * flexibility in specifying blogs, maxEntries of returns, etc.
      */
     public WeblogEntriesTimePager(
             WeblogEntryManager weblogEntryManager,
             PropertiesManager propertiesManager,
             URLStrategy strat,
             Weblog weblog,
-            User user,
             String catName,
             List<String> tags,
             int page,
-            int length,
+            int maxEntries,
             int sinceDays,
             Weblog siteWeblog) {
 
         // initialize site-specific search fields
-        this.siteLength = length;
-        this.fixedUser = user;
+        this.siteMaxEntries = maxEntries;
         this.siteWeblog = siteWeblog;
         this.viewLocale = siteWeblog.getLocaleInstance();
 
@@ -208,16 +204,16 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         }
 
         if (interval == PagingInterval.SITE_LATEST) {
-            length = siteLength;
+            maxEntries = siteMaxEntries;
         } else {
-            // make sure offset, length, and page are valid
+            // make sure offset, maxEntries, and page are valid
             int maxLength = propertiesManager.getIntProperty("site.pages.maxEntries");
-            length = weblog.getEntryDisplayCount();
-            if (length > maxLength) {
-                length = maxLength;
+            maxEntries = weblog.getEntryDisplayCount();
+            if (maxEntries > maxLength) {
+                maxEntries = maxLength;
             }
         }
-        this.offset = length * page;
+        this.offset = maxEntries * page;
 
         Date startDate = fixedStartDate;
         Date endDate = null;
@@ -301,14 +297,13 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 // With WESC, if any values null, equivalent to not setting the criterion.
                 wesc.setWeblog(weblog);
-                wesc.setUser(interval == PagingInterval.SITE_LATEST ? fixedUser : null);
                 wesc.setStartDate(startDate);
                 wesc.setEndDate(endDate);
                 wesc.setCatName(catName);
                 wesc.setTags(tags);
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);
-                wesc.setMaxResults(length+1);
+                wesc.setMaxResults(maxEntries +1);
                 Map<Date, List<WeblogEntry>> mmap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
 
                 // need to wrap pojos
@@ -318,7 +313,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                     List<WeblogEntry> entrySubset = new ArrayList<>();
                     List<WeblogEntry> dayEntries = entry.getValue();
                     for (int i=0; i < dayEntries.size(); i++) {
-                        if (count++ < length) {
+                        if (count++ < maxEntries) {
                             entrySubset.add(i, dayEntries.get(i));
                         } else {
                             more = true;
@@ -476,16 +471,16 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
             List<WeblogEntry> items = getItems();
-            if (getItems() != null && getItems().size() > 0) {
-                Timestamp newest = (getItems().get(0)).getUpdateTime();
+            if (items != null && items.size() > 0) {
+                Timestamp newest = items.get(0).getUpdateTime();
                 for (WeblogEntry e : items) {
                     if (e.getUpdateTime().after(newest)) {
-                        newest = e.getPubTime();
+                        newest = e.getUpdateTime();
                     }
                 }
                 lastUpdated = new Date(newest.getTime());
             } else {
-                // no update so we assume it's brand new
+                // no articles, so choose today's date
                 lastUpdated = new Date();
             }
         }

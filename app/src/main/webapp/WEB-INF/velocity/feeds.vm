@@ -116,26 +116,6 @@
     #end
 #end
 
-#macro(showFilesAtom10 $mediaFiles)
-#foreach($file in $mediaFiles)
-    <entry>
-        <id>$file.permalink</id>
-        <title type="html">$utils.escapeXML($file.name)</title>
-        <author><name>$utils.escapeXML($utils.removeHTML($file.creator.screenName))</name></author>
-        <link rel="alternate" type="text/html" href="$file.permalink"/>
-        <published>$utils.formatIso8601Date($file.dateUploaded)</published>
-        <updated>$utils.formatIso8601Date($file.lastUpdated)</updated> 
-#foreach($tag in $file.tags)
-        <category term="$utils.escapeXML($tag.name)" scheme="http://roller.apache.org/ns/tags/" />
-#end        
-#if( $utils.isNotEmpty($file.description))
-        <summary type="html">$utils.escapeXML($file.description)</summary>
-#end
-        <link rel="enclosure" type="$file.contentType" href="$utils.escapeXML($file.permalink)"/>
-    </entry>
-#end
-#end
-
 #macro(showFeedHistory $pager)
 <link rel="first" type="application/atom+xml" href="$utils.escapeXML($pager.url)" />
 #if($pager.hasMoreItems())

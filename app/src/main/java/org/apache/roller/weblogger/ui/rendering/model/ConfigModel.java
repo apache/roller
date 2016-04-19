@@ -53,14 +53,6 @@ public class ConfigModel implements Model {
         return propertiesManager.getStringProperty("site.name");
     }
     
-    public String getSiteShortName() {
-        return propertiesManager.getStringProperty("site.shortName");
-    }
-    
-    public String getSiteDescription() {
-        return propertiesManager.getStringProperty("site.description");
-    }
-    
     public String getSiteEmail() {
         return propertiesManager.getStringProperty("site.adminemail");
     }

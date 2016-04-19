@@ -37,7 +37,6 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
@@ -105,23 +104,21 @@ public class SiteModel implements Model {
      * @param length    Max number of results to return
      */
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
-        return getWeblogEntriesPager(null, null, null, sinceDays, length);
+        return getWeblogEntriesPager(null, null, sinceDays, length);
     }
     
     /**
      * @param queryWeblog Restrict to this weblog
-     * @param user        Restrict to this user
      * @param cat         Restrict to this category
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, String cat, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, String cat, int sinceDays, int length) {
         return new WeblogEntriesTimePager(
                 weblogEntryManager,
                 propertiesManager,
                 urlStrategy,
                 queryWeblog,
-                user,
                 cat,
                 pageRequest.getTags(),
                 pageRequest.getPageNum(),

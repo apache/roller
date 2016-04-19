@@ -60,9 +60,8 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     // attributes
     private String id = WebloggerCommon.generateUUID();
     private String title;
-    private String author;
-    private String feedUrl;
-    private String siteUrl;
+    private String feedURL;
+    private String siteURL;
     private Date lastUpdated;
 
     // associations
@@ -90,30 +89,22 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-    
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     @Column(name="feed_url", nullable=false)
     public String getFeedURL() {
-        return feedUrl;
+        return feedURL;
     }
     
     public void setFeedURL(String feedUrl) {
-        this.feedUrl = feedUrl;
+        this.feedURL = feedUrl;
     }
 
     @Column(name="site_url")
     public String getSiteURL() {
-        return siteUrl;
+        return siteURL;
     }
     
     public void setSiteURL(String siteUrl) {
-        this.siteUrl = siteUrl;
+        this.siteURL = siteUrl;
     }
 
 
@@ -179,7 +170,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     // for backwards compatability?
     @Transient
     public String getURL() {
-        return siteUrl;
+        return siteURL;
     }
 
     /**
@@ -204,11 +195,11 @@ public class Subscription implements Serializable, Comparable<Subscription> {
             return false;
         }
         final Subscription that = (Subscription) other;
-        return this.feedUrl.equals(that.getFeedURL());
+        return this.feedURL.equals(that.getFeedURL());
     }
 
     public int hashCode() {
-        return this.feedUrl.hashCode();
+        return this.feedURL.hashCode();
     }
 
     public String toString() {
@@ -217,8 +208,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         buf.append("{ Feed URL:");
         buf.append(getFeedURL()).append(", Site URL:");
         buf.append(getSiteURL()).append(", Title:");
-        buf.append(getTitle()).append(", Author:");
-        buf.append(getAuthor()).append(", Last Updated:");
+        buf.append(getTitle()).append(", Last Updated:");
         buf.append(getLastUpdated());
         buf.append("}");
 

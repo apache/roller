@@ -63,8 +63,8 @@ public class PropertiesTest extends WebloggerTest {
         // update multiple properties
         prop = props.get("site.name");
         prop.setValue("foofoo");
-        prop = props.get("site.description");
-        prop.setValue("blahblah");
+        prop = props.get("users.registration.url");
+        prop.setValue("http://www.register.com");
         propertiesManager.saveProperties(props);
         endSession(true);
         
@@ -72,6 +72,6 @@ public class PropertiesTest extends WebloggerTest {
         props = propertiesManager.getProperties();
         assertNotNull(props);
         assertEquals("foofoo", props.get("site.name").getValue());
-        assertEquals("blahblah", props.get("site.description").getValue());
+        assertEquals("http://www.register.com", props.get("users.registration.url").getValue());
     }
 }

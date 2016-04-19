@@ -181,8 +181,7 @@ public class FeedProcessor {
         if (isSiteWide) {
             cachedContent = (CachedContent) siteWideCache.get(cacheKey);
         } else {
-            cachedContent = (CachedContent) weblogFeedCache.get(cacheKey,
-                    lastModified);
+            cachedContent = (CachedContent) weblogFeedCache.get(cacheKey, lastModified);
         }
 
         if (cachedContent != null) {
@@ -239,7 +238,7 @@ public class FeedProcessor {
             Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", feedRequest);
             model = Model.getModelMap("feedModelSet", initData);
-            pageId = (isSiteWide ? "site-" : "weblog-") + feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
+            pageId = feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
             if (!response.isCommitted()) {

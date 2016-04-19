@@ -59,7 +59,7 @@ public final class MediacastUtil {
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
             
-            if(response != 200) {
+            if (response != 200) {
                 log.debug("Mediacast error " + response + ":" + message + " from url " + url);
                 throw new MediacastException(BAD_RESPONSE, "weblogEdit.mediaCastResponseError");
             } else {

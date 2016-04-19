@@ -351,8 +351,7 @@ public final class EntryEdit extends UIAction {
                     try {
                         // Fetch MediaCast resource
                         log.debug("Checking MediaCast attributes");
-                        MediacastResource mediacast = MediacastUtil
-                                .lookupResource(getBean().getEnclosureUrl());
+                        MediacastResource mediacast = MediacastUtil.lookupResource(getBean().getEnclosureUrl());
 
                         // set mediacast attributes
                         weblogEntry.setEnclosureUrl(mediacast.getUrl());

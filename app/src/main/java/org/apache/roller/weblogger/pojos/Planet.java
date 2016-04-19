@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.pojos;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -52,18 +51,12 @@ import javax.persistence.Transient;
 })
 public class Planet implements Serializable, Comparable<Planet> {
 
-    private transient String[] catArray = null;
-    
     // attributes
     private String id;
     private String handle;
     private String title;
     private String description;
-    private int maxPageEntries = 45;
     private int maxFeedEntries = 45;
-    
-    // is this really used?
-    private String categoryRestriction = null;
     
     // associations
     private Set<Subscription> subscriptions = new TreeSet<>();
@@ -128,25 +121,6 @@ public class Planet implements Serializable, Comparable<Planet> {
         this.maxFeedEntries = maxFeedEntries;
     }
 
-    @Column(name="max_page_entries")
-    public int getMaxPageEntries() {
-        return maxPageEntries;
-    }
-    
-    public void setMaxPageEntries(int maxPageEntries) {
-        this.maxPageEntries = maxPageEntries;
-    }
-
-    @Column(name="cat_restriction")
-    public String getCategoryRestriction() {
-        return categoryRestriction;
-    }
-    
-    public void setCategoryRestriction(String categoryRestriction) {
-        this.categoryRestriction = categoryRestriction;
-        catArray = null;
-    }
-
     @OneToMany(targetEntity=Subscription.class,
             cascade=CascadeType.ALL, mappedBy="planet")
     public Set<Subscription> getSubscriptions() {
@@ -157,37 +131,6 @@ public class Planet implements Serializable, Comparable<Planet> {
         this.subscriptions = subscriptions;
     }
     
-
-    /**
-     * Returns true if entry is qualified for inclusion in this planet.
-     */
-    public boolean qualified(SubscriptionEntry entry) {
-        String[] cats = createCategoryRestrictionAsArray();
-        if (cats == null || cats.length == 0) {
-            return true;
-        }
-        for (String cat : cats) {
-            if (entry.inCategory(cat)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    private String[] createCategoryRestrictionAsArray() {
-        if (catArray == null && getCategoryRestriction() != null) {
-            StringTokenizer toker = new StringTokenizer(getCategoryRestriction(),",");
-            catArray = new String[toker.countTokens()];
-            int i = 0;
-            
-            while (toker.hasMoreTokens()) {
-                catArray[i++] = toker.nextToken();
-            }
-        }
-        return catArray;
-    }
-
     @Transient
     public String getAbsoluteURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getPlanetURL(getHandle());

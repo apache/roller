@@ -275,9 +275,7 @@ create table planet (
     handle           varchar(32) not null,
     title            varchar(255) not null,
     description      varchar(255),
-    max_page_entries integer default 30,
     max_feed_entries integer default 30,
-    cat_restriction  $db.TEXT_SQL_TYPE,
     group_page       varchar(255)
 );
 alter table planet add constraint planet_handle_uq unique (handle);
@@ -288,7 +286,6 @@ create table planet_subscription (
     title            varchar(255) not null,
     feed_url         varchar(255) not null,
     site_url         varchar(255),
-    author           varchar(255),
     last_updated     $db.TIMESTAMP_SQL_TYPE
 );
 alter table planet_subscription add constraint plsb_feed_url_uq unique (planetid, feed_url);
