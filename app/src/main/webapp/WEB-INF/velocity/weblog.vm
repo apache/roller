@@ -91,9 +91,9 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #if ($model.tag)
       <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tag (Atom)"  href="$url.feed.entries.atomByTag($model.tag)" />
       <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tag (RSS)"   href="$url.feed.entries.rssByTag($model.tag)" />
-    #elseif ($model.categoryName)
-      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.categoryName (Atom)"  href="$url.feed.entries.atom($model.categoryName)" />
-      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.categoryName (RSS)"   href="$url.feed.entries.rss($model.categoryName)" />
+    #elseif ($model.category)
+      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.category (Atom)"  href="$url.feed.entries.atom($model.category)" />
+      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.category (RSS)"   href="$url.feed.entries.rss($model.category)" />
     #end
 #end
 
@@ -504,14 +504,14 @@ Show weblog's categories in specified parent category.
 *#
 #macro(showWeblogCategoryLinksList)
     <ul class="rCategory">
-    #if ($model.categoryName || $model.permalink)
+    #if ($model.category || $model.permalink)
         <li><a href="$url.home">$text.get("generic.all")</a></li>
     #else
         <li class="selected"><a href="$url.home">$text.get("generic.all")</a></li>
     #end
     #set($cats = $model.weblog.getWeblogCategories())
     #foreach($cat in $cats)
-        #if ($model.categoryName && $model.categoryName == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
+        #if ($model.category && $model.category == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
             <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
         #else
             <li><a href="$url.category($cat.name)">$cat.name</a></li>
@@ -528,7 +528,7 @@ Show weblog's categories in specified parent category.
         <div data-role="collapsible" data-collapsed="false" data-inset="false">
           <h2>Categories</h2>
           <ul data-role="listview">
-            #if ($model.categoryName || $model.permalink)
+            #if ($model.category || $model.permalink)
               <li><a href="$url.home" data-transition="fade">$text.get("generic.all")</a></li>
             #else
               <li data-icon="gear" class="ui-btn-active"><a href="$url.home" data-transition="fade">$text.get("generic.all")</a></li>
@@ -536,7 +536,7 @@ Show weblog's categories in specified parent category.
             #set($active = $text.get("generic.all"))
             #set($cats = $model.weblog.getWeblogCategories())
             #foreach($cat in $cats)
-              #if ($model.categoryName && $model.categoryName == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
+              #if ($model.category && $model.category == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
                 <li data-icon="gear" class="ui-btn-active"><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>
                 #set($active = $cat.name)
               #else
@@ -746,7 +746,7 @@ Show search again form for a weblog.
             <select name="cat" class="select">
               <option value="">$text.get( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
-                <option #if($cat.name == $model.categoryName)selected="selected"#end>$cat.name</option>
+                <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
               #end
             </select>
           #end
@@ -767,7 +767,7 @@ Show search again form for a weblog.
             <select name="cat" class="select">
               <option value="">$text.get( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
-                <option #if($cat.name == $model.categoryName)selected="selected"#end>$cat.name</option>
+                <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
               #end
             </select>
           #end

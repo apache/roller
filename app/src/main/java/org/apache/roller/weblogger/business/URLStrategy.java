@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -111,19 +110,19 @@ public interface URLStrategy {
     /**
      * Get url for a collection of entries on a given weblog.
      */
-    String getWeblogCollectionURL(Weblog weblog, String category, String dateString, List tags,
+    String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                   int pageNum, boolean absolute);
 
     /**
      * Get url for a custom page on a given weblog.
      */
     String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
-                            String dateString, List tags, int pageNum, boolean absolute);
+                            String dateString, String tag, int pageNum, boolean absolute);
 
     /**
      * Get url for a feed on a given weblog.
      */
-    String getWeblogFeedURL(Weblog weblog, String type, String format, String category, List tags);
+    String getWeblogFeedURL(Weblog weblog, String type, String format, String category, String tag);
     
     /**
      * Get url to search endpoint on a given weblog.

@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
@@ -86,7 +85,7 @@ public class FeedModel implements Model {
      * Get category path or name specified by request.
      */
     public String getCategoryName() {
-        return feedRequest.getCategory();
+        return feedRequest.getCategoryName();
     }
     
     /**
@@ -124,8 +123,7 @@ public class FeedModel implements Model {
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, propertiesManager, urlStrategy,
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
-                    feedRequest.isSiteWideFeed() ? null : feedRequest.getCategory(),
-                    feedRequest.getTag() == null ? null : Collections.singletonList(feedRequest.getTag()),
+                    feedRequest.getCategoryName(), feedRequest.getTag(),
                     feedRequest.getPage(),
                     propertiesManager.getIntProperty("site.newsfeeds.maxEntries"),
                     -1, feedRequest.getWeblog());
@@ -144,17 +142,18 @@ public class FeedModel implements Model {
         
         private WeblogFeedRequest feedRequest;
         
-        public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
+        public FeedCommentsPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getType(), feedRequest.getFormat(), null, null),
-                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(), -1, feedRequest.getPage(),
+                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
+                    feedRequest.getCategoryName(), -1, feedRequest.getPage(),
                     propertiesManager.getIntProperty("site.newsfeeds.maxEntries"));
 
             this.feedRequest = feedRequest;
         }
         
         protected String createURL(String url, Map<String, String> params) {
-            String category = feedRequest.getCategory();
+            String category = feedRequest.getCategoryName();
             if (category != null) {
                 params.put("cat", Utilities.encode(category));
             }  

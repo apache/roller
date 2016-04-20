@@ -40,7 +40,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     
     private String type = null;
     private String format = null;
-    private String category = null;
+    private String categoryName = null;
     private String tag = null;
     private boolean siteWideFeed = false;
     private int page = 0;
@@ -79,7 +79,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         // parse request parameters
         if (request.getParameter("cat") != null) {
             // replacing any plus signs with their encoded equivalent (http://stackoverflow.com/a/6926987)
-            category = Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
+            categoryName = Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
         }
 
         tag = request.getParameter("tag");
@@ -91,7 +91,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             }
         }     
         
-        if (tag != null && category != null) {
+        if (tag != null && categoryName != null) {
             throw new IllegalArgumentException("Please specify either category or tag but not both: " + request.getRequestURL());
         }
 
@@ -99,7 +99,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             log.debug("type = " + type);
             log.debug("page = " + type);
             log.debug("format = " + format);
-            log.debug("category = " + category);
+            log.debug("category = " + categoryName);
             log.debug("tag = " + tag);
         }
     }
@@ -112,8 +112,8 @@ public class WeblogFeedRequest extends WeblogRequest {
         return format;
     }
 
-    public String getCategory() {
-        return category;
+    public String getCategoryName() {
+        return categoryName;
     }
 
     public String getTag() {
@@ -131,4 +131,5 @@ public class WeblogFeedRequest extends WeblogRequest {
     public void setSiteWideFeed(boolean siteWideFeed) {
         this.siteWideFeed = siteWideFeed;
     }
+
 }

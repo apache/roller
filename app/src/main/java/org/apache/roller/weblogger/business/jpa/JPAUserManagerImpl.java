@@ -257,8 +257,8 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public List<SafeUser> getUsers(String startsWith, Boolean enabled,
-            int offset, int length) throws WebloggerException {
+    public List<SafeUser> getUsers(String startsWith, Boolean enabled, int offset, int length)
+            throws WebloggerException {
         TypedQuery<SafeUser> query;
 
         if (enabled != null) {
@@ -269,8 +269,7 @@ public class JPAUserManagerImpl implements UserManager {
                 query.setParameter(2, startsWith + '%');
                 query.setParameter(3, startsWith + '%');
             } else {
-                query = strategy.getNamedQuery(
-                        "SafeUser.getByEnabled", SafeUser.class);
+                query = strategy.getNamedQuery("SafeUser.getByEnabled", SafeUser.class);
                 query.setParameter(1, enabled);
             }
         } else {
@@ -280,22 +279,9 @@ public class JPAUserManagerImpl implements UserManager {
                 query.setParameter(1, startsWith +  '%');
             } else {
                 query = strategy.getNamedQuery("SafeUser.getAll", SafeUser.class);
+                query.setHint("javax.persistence.cache.storeMode", "REFRESH");
             }
         }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        return query.getResultList();
-    }
-
-    public List<SafeUser> getUsersByLetter(char letter, int offset, int length)
-            throws WebloggerException {
-        TypedQuery<SafeUser> query = strategy.getNamedQuery(
-                "SafeUser.getByScreenNameOrderByScreenName", SafeUser.class);
-        query.setParameter(1, letter + "%");
         if (offset != 0) {
             query.setFirstResult(offset);
         }

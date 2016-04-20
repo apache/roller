@@ -84,7 +84,7 @@
                                     <select class="form-control" name="cat">
                                         <option value="">$text.get( "macro.searchresults.incategory" )</option>
                                         #foreach( $cat in $cats )
-                                        <option #if($cat.name == $model.categoryName)selected="selected"#end>$cat.name</option>
+                                        <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
                                         #end
                                     </select>
                                 #end

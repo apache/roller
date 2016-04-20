@@ -61,8 +61,6 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Rendering processor that provides access to weblog pages.
@@ -270,7 +268,7 @@ public class PageProcessor {
             }
 
             // If request specified tags section index, then look for custom template
-        } else if ("tags".equals(pageRequest.getContext()) && pageRequest.getTags() != null) {
+        } else if ("tags".equals(pageRequest.getContext()) && pageRequest.getTag() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
             } catch (Exception e) {
@@ -352,11 +350,10 @@ public class PageProcessor {
             if (test == null) {
                 invalid = true;
             }
-        } else if (pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+        } else if (pageRequest.getTag() != null) {
             try {
                 // tags specified. make sure they exist.
-                invalid = !weblogEntryManager.getTagComboExists(pageRequest.getTags(),
-                        (isSiteWide) ? null : weblog);
+                invalid = !weblogEntryManager.getTagExists(pageRequest.getTag(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
             }
@@ -589,27 +586,24 @@ public class PageProcessor {
             key.append("/entry/").append(anchor);
         } else {
 
-            if(pageRequest.getWeblogTemplateName() != null) {
+            if (pageRequest.getWeblogTemplateName() != null) {
                 key.append("/page/").append(pageRequest.getWeblogTemplateName());
             }
 
-            if(pageRequest.getWeblogDate() != null) {
+            if (pageRequest.getWeblogDate() != null) {
                 key.append("/").append(pageRequest.getWeblogDate());
             }
 
-            if(pageRequest.getWeblogCategoryName() != null) {
+            if (pageRequest.getWeblogCategoryName() != null) {
                 String cat = pageRequest.getWeblogCategoryName();
                 cat = Utilities.encode(cat);
                 key.append("/cat/").append(cat);
             }
 
-            if("tags".equals(pageRequest.getContext())) {
-                key.append("/tags/");
-                if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
-                    Set ordered = new TreeSet<>(pageRequest.getTags());
-                    String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
-                    key.append(StringUtils.join(tags, ','));
-                }
+            if (pageRequest.getTag() != null) {
+                String tag = pageRequest.getTag();
+                tag = Utilities.encode(tag);
+                key.append("/tag/").append(tag);
             }
         }
 

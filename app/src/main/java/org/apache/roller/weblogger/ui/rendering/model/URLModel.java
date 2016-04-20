@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.Collections;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -156,7 +155,7 @@ public class URLModel implements Model {
     }
     
     public String tag(String tag) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, Collections.singletonList(tag), -1, true);
+        return urlStrategy.getWeblogCollectionURL(weblog, null, null, tag, -1, true);
     }
 
     public String getSearch() {
@@ -216,7 +215,7 @@ public class URLModel implements Model {
         }
         
         public String rssByTag(String tag) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, Collections.singletonList(tag));
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, tag);
         }
         
         public String getAtom() {
@@ -228,7 +227,7 @@ public class URLModel implements Model {
         }
         
         public String atomByTag(String tag) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, Collections.singletonList(tag));
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, tag);
         }
     }
     

@@ -22,8 +22,6 @@ package org.apache.roller.weblogger.business;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +34,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.User;
@@ -478,22 +475,19 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // we'll need these
-        List<String> tags1 = new ArrayList<>();
-        tags1.add("nonExistTag");
-        
-        List<String> tags2 = new ArrayList<>();
-        tags2.add("blahtag");
+        String tag1 = "nonExistTag";
+        String tag2 = "blahtag";
         
         // test site-wide
-        assertTrue(weblogEntryManager.getTagComboExists(tags2, null));
-        assertFalse(weblogEntryManager.getTagComboExists(tags1, null));
+        assertTrue(weblogEntryManager.getTagExists(tag2, null));
+        assertFalse(weblogEntryManager.getTagExists(tag1, null));
         
         // test weblog specific
         testWeblog = getManagedWeblog(testWeblog);
         weblog = getManagedWeblog(weblog);
-        assertTrue(weblogEntryManager.getTagComboExists(tags2, testWeblog));
-        assertFalse(weblogEntryManager.getTagComboExists(tags1, testWeblog));
-        assertFalse(weblogEntryManager.getTagComboExists(tags2, weblog));
+        assertTrue(weblogEntryManager.getTagExists(tag2, testWeblog));
+        assertFalse(weblogEntryManager.getTagExists(tag1, testWeblog));
+        assertFalse(weblogEntryManager.getTagExists(tag2, weblog));
         
         // teardown our test data
         teardownWeblogEntry(id1);

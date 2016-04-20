@@ -26,7 +26,7 @@
 	  	<div class="row">
 	  		<!-- BODY MAIN-->
 			<div id="main_content" class="col-lg-8">
-		   	  	<div class="alert alert-info"><p>Entries tagged $model.tags</p></div>
+		   	  	<div class="alert alert-info"><p>Entries tagged $model.tag</p></div>
 				#set($pager = $model.getWeblogEntriesPager())
 				#showWeblogEntriesPager($pager)
 				#if ($model.permalink)

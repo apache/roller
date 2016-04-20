@@ -29,9 +29,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interface to User and WeblogRole management.
@@ -147,13 +145,6 @@ public interface UserManager {
             Boolean enabled, int offset, int length) throws WebloggerException;
     
     
-    /**
-     * Get collection of users whose names begin with specified letter 
-     */
-    List<SafeUser> getUsersByLetter(char letter, int offset, int length)
-        throws WebloggerException;
-    
-
     //-------------------------------------------------------- WeblogRoles CRUD
 
     /**

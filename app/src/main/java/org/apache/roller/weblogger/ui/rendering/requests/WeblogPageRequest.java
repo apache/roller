@@ -25,13 +25,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +48,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogTemplateName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
-    private List<String> tags = null;
+    private String tag = null;
     private int pageNum = 0;
     private Map<String, String[]> customParams = new HashMap<>();
 
@@ -124,37 +122,22 @@ public class WeblogPageRequest extends WeblogRequest {
 
                 } else if ("page".equals(this.context)) {
                     this.weblogTemplateName = pathElements[1];
-                    String tagsString = request.getParameter("tags");
-                    if (tagsString != null) {
-                        this.tags = Utilities.splitStringAsTags(Utilities.decode(tagsString));
-                    }
 
                     // Other page, we do not want css etc stuff so filter out
                     if (!pathElements[1].contains(".")) {
                         otherPageHit = true;
                     }
-
                 } else if ("tags".equals(this.context)) {
-                    String tagsString = pathElements[1].replace(',', ' ');
-                    this.tags = Utilities.splitStringAsTags(Utilities
-                            .decode(tagsString));
-                    int maxSize = WebloggerStaticConfig.getIntProperty(
-                            "tags.queries.maxIntersectionSize", 3);
-                    if (this.tags.size() > maxSize) {
-                        throw new IllegalArgumentException(
-                                "Max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
-                    }
-
+                    tag = pathElements[1];
                     // Other page
                     otherPageHit = true;
-
                 } else {
                     throw new IllegalArgumentException("Context " + this.context + " not supported, " + request.getRequestURL());
                 }
 
             } else {
                 // empty data is only allowed for the tags section
-                if (!"tags".equals(this.context)) {
+                if (!"tag".equals(this.context)) {
                     throw new IllegalArgumentException("invalid index page, " + request.getRequestURL());
                 }
             }
@@ -190,7 +173,7 @@ public class WeblogPageRequest extends WeblogRequest {
             }
 
             // only check for other params if we didn't find an anchor above or tags
-            if (this.weblogAnchor == null && this.tags == null) {
+            if (this.weblogAnchor == null && this.tag == null) {
                 if (request.getParameter("date") != null) {
                     String date = request.getParameter("date");
                     if (this.isValidDateString(date)) {
@@ -225,16 +208,16 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("date");
         customParams.remove("cat");
         customParams.remove("page");
-        customParams.remove("tags");
+        customParams.remove("tag");
 
         if (log.isDebugEnabled()) {
-            log.debug("context = " + this.context);
-            log.debug("weblogAnchor = " + this.weblogAnchor);
-            log.debug("weblogDate = " + this.weblogDate);
-            log.debug("weblogCategory = " + this.weblogCategoryName);
-            log.debug("tags = " + this.tags);
-            log.debug("template = " + this.weblogTemplateName);
-            log.debug("pageNum = " + this.pageNum);
+            log.debug("context = " + context);
+            log.debug("weblogAnchor = " + weblogAnchor);
+            log.debug("weblogDate = " + weblogDate);
+            log.debug("weblogCategory = " + weblogCategoryName);
+            log.debug("tag = " + tag);
+            log.debug("template = " + weblogTemplateName);
+            log.debug("pageNum = " + pageNum);
         }
     }
 
@@ -276,8 +259,8 @@ public class WeblogPageRequest extends WeblogRequest {
         return customParams;
     }
 
-    public List<String> getTags() {
-        return tags;
+    public String getTag() {
+        return tag;
     }
 
     public Template getWeblogTemplate() {
