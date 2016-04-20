@@ -22,6 +22,7 @@
 package org.apache.roller.weblogger.ui.rendering.model; 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -287,8 +288,8 @@ public class PageModel implements Model {
     /**
      * Returns the list of tags specified in the request /tags/foo+bar
      */
-    public List getTags() {
-        return pageRequest.getTags();
+    public String getTag() {
+        return pageRequest.getTag();
     }
     
 
@@ -338,7 +339,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblog(),
                     pageRequest.getWeblogDate(),
                     pageRequest.getWeblogCategoryName(),
-                    pageRequest.getTags(),
+                    pageRequest.getTag(),
                     pageRequest.getPageNum());
         }
     }

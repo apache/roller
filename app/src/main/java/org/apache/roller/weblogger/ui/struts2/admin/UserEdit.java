@@ -97,7 +97,7 @@ public class UserEdit extends UIAction {
                     user = userManager.getUser(bean.getId());
                 } else if (bean.getUserName() != null) {
                     // action came from UserAdmin screen.
-                    user = userManager.getUserByUserName(bean.getUserName(), null);
+                    user = userManager.getUserByScreenName(bean.getUserName());
                 }
             } catch (Exception e) {
                 log.error("Error looking up user (id/username) :" + bean.getId() + "/" + bean.getUserName(), e);

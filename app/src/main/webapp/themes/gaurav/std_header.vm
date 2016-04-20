@@ -24,13 +24,13 @@
 				    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            #if ($model.categoryName || $model.permalink)
+                            #if ($model.category || $model.permalink)
                                 <li><a href="$url.home">$text.get("generic.all")</a></li>
                             #else
                                 <li class="selected"><a href="$url.home">$text.get("generic.all")</a></li>
                             #end
                             #foreach($cat in $cats)
-                                #if ($model.categoryName && $model.categoryName == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
+                                #if ($model.category && $model.category == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
                                     <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
                                 #else
                                     <li><a href="$url.category($cat.name)">$cat.name</a></li>

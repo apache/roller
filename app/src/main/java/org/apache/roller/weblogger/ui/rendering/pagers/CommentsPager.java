@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -45,6 +45,7 @@ public class CommentsPager extends AbstractPager {
     private Weblog weblog = null;
     private int sinceDays = -1;
     private int length = 0;
+    private String categoryName = null;
     
     // the collection for the pager
     private List<WeblogEntryComment> comments = null;
@@ -62,6 +63,7 @@ public class CommentsPager extends AbstractPager {
             URLStrategy    strat,
             String         baseUrl,
             Weblog         weblog,
+            String         categoryName,
             int            sinceDays,
             int            page,
             int            length) {
@@ -70,6 +72,7 @@ public class CommentsPager extends AbstractPager {
 
         this.weblogEntryManager = weblogEntryManager;
         this.weblog = weblog;
+        this.categoryName = categoryName;
         this.sinceDays = sinceDays;
         this.length = length;
         
@@ -97,6 +100,7 @@ public class CommentsPager extends AbstractPager {
             try {
                 CommentSearchCriteria csc = new CommentSearchCriteria();
                 csc.setWeblog(weblog);
+                csc.setCategoryName(categoryName);
                 csc.setStartDate(startDate);
                 csc.setStatus(ApprovalStatus.APPROVED);
                 csc.setOffset(offset);

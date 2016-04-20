@@ -29,6 +29,8 @@ public class CommentSearchCriteria {
     private Weblog weblog;
     // Entry or null to include all comments
     private WeblogEntry entry;
+    // Optional weblog category name to filter by
+    private String categoryName;
     // Text appearing in comment, or null for all
     private String searchText;
     // Start date or null for no restriction
@@ -50,6 +52,14 @@ public class CommentSearchCriteria {
 
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public WeblogEntry getEntry() {

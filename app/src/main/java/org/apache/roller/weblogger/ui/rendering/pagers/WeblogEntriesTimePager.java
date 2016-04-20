@@ -67,7 +67,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     Weblog weblog = null;
     String dateString = null;
     String catName = null;
-    List<String> tags = new ArrayList<>();
+    String tag = null;
     int offset = 0;
     int page = 0;
     int maxEntries = 0;
@@ -138,7 +138,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
             URLStrategy strat,
             Weblog weblog,
             String catName,
-            List<String> tags,
+            String tag,
             int page,
             int maxEntries,
             int sinceDays,
@@ -157,7 +157,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         }
 
         setup(PagingInterval.SITE_LATEST, weblogEntryManager, propertiesManager, strat, weblog, null,
-                catName, tags, page);
+                catName, tag, page);
     }
 
     public WeblogEntriesTimePager(
@@ -168,13 +168,13 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
             Weblog weblog,
             String dateString,
             String catName,
-            List<String> tags,
+            String tag,
             int page) {
 
         this.viewLocale = weblog.getLocaleInstance();
 
         setup(interval, weblogEntryManager, propertiesManager, strat, weblog, dateString,
-                catName, tags, page);
+                catName, tag, page);
     }
 
     private void setup(PagingInterval interval,
@@ -184,7 +184,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
        Weblog             weblog,
        String             dateString,
        String             catName,
-       List<String>       tags,
+       String             tag,
        int                pageNum) {
 
         this.interval = interval;
@@ -194,10 +194,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         this.dateString = dateString;
         this.catName = catName;
         this.messageUtils = I18nMessages.getMessages(viewLocale);
-
-        if (tags != null) {
-            this.tags = tags;
-        }
+        this.tag = tag;
 
         if (pageNum > 0) {
             this.page = pageNum;
@@ -300,7 +297,9 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 wesc.setStartDate(startDate);
                 wesc.setEndDate(endDate);
                 wesc.setCatName(catName);
-                wesc.setTags(tags);
+                if (tag != null) {
+                    wesc.setTags(Collections.singletonList(tag));
+                }
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(maxEntries +1);
@@ -463,7 +462,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
         int pageNum = page + pageAdd;
         return urlStrategy.getWeblogCollectionURL((interval == PagingInterval.SITE_LATEST) ? siteWeblog : weblog,
-                catName, dateString, tags, pageNum, false);
+                catName, dateString, tag, pageNum, false);
     }
 
     /** Get last updated time from items in pager */

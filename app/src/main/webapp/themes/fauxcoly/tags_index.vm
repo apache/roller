@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>$model.weblog.name: Entries tagged $model.tags</title>
+  <title>$model.weblog.name: Entries tagged $model.tag</title>
   #includeTemplate("standard_head")
 </head>
 <body>
@@ -28,7 +28,7 @@
 <div class="yui3-u-2-3">
 <div id="main_content">
 
-<h2>Entries tagged $model.tags</h2>
+<h2>Entries tagged $model.tag</h2>
 #set($pager = $model.getWeblogEntriesPager())
 #showWeblogEntriesPager($pager)
 #if ($model.permalink)
@@ -51,7 +51,7 @@
     <h3>Welcome</h3>
 
     <p class="details">
-    You're viewing entries tagged <b>$model.tags</b> in the weblog <b>$model.weblog.name</b>.</p>
+    You're viewing entries tagged <b>$model.tag</b> in the weblog <b>$model.weblog.name</b>.</p>
 
     <p class="details">
     From here you can

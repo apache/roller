@@ -146,8 +146,7 @@ public class PreviewProcessor {
             page = previewRequest.getWeblogTemplate();
 
             // If request specified tags section index, then look for custom template
-        } else if ("tags".equals(previewRequest.getContext()) &&
-                previewRequest.getTags() == null) {
+        } else if ("tags".equals(previewRequest.getContext()) && previewRequest.getTag() == null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
             } catch(Exception e) {

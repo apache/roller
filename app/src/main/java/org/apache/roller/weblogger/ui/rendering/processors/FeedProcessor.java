@@ -21,15 +21,11 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -115,7 +111,6 @@ public class FeedProcessor {
         log.debug("Entering");
 
         Weblog weblog;
-        boolean isSiteWide;
 
         WeblogFeedRequest feedRequest;
         try {
@@ -128,8 +123,7 @@ public class FeedProcessor {
             }
 
             // Is this the site-wide weblog? If so, make a combined feed using all blogs...
-            isSiteWide = propertiesManager.isSiteWideWeblog(weblog.getHandle());
-            feedRequest.setSiteWideFeed(isSiteWide);
+            feedRequest.setSiteWideFeed(propertiesManager.isSiteWideWeblog(weblog.getHandle()));
 
         } catch (Exception e) {
             // invalid feed request format or weblog doesn't exist
@@ -140,7 +134,7 @@ public class FeedProcessor {
 
         // determine the lastModified date for this content
         long lastModified = System.currentTimeMillis();
-        if (isSiteWide) {
+        if (feedRequest.isSiteWideFeed()) {
             lastModified = siteWideCache.getLastModified().getTime();
         } else if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().getTime();
@@ -176,12 +170,8 @@ public class FeedProcessor {
         String cacheKey = generateKey(feedRequest);
 
         // cached content checking
-        CachedContent cachedContent;
-        if (isSiteWide) {
-            cachedContent = (CachedContent) siteWideCache.get(cacheKey);
-        } else {
-            cachedContent = (CachedContent) weblogFeedCache.get(cacheKey, lastModified);
-        }
+        CachedContent cachedContent = (CachedContent) (feedRequest.isSiteWideFeed() ?
+                siteWideCache.get(cacheKey) : weblogFeedCache.get(cacheKey, lastModified));
 
         if (cachedContent != null) {
             log.debug("HIT " + cacheKey);
@@ -192,17 +182,17 @@ public class FeedProcessor {
             log.debug("MISS " + cacheKey);
         }
 
-        // validation. make sure that request input makes sense.
+        // Validation. To save DB processing time, detect some of the common queries that would return no rows.
         boolean invalid = false;
 
-        if (feedRequest.getCategory() != null) {
-            // category specified. category must exist.
+        if (!feedRequest.isSiteWideFeed() && feedRequest.getCategoryName() != null) {
+            // for single-weblog search, category must be defined for the weblog
             WeblogCategory test = null;
 
             try {
-                test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(), feedRequest.getCategory());
+                test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(), feedRequest.getCategoryName());
             } catch (WebloggerException ex) {
-                log.error("Error getting weblog category " + feedRequest.getCategory(), ex);
+                log.error("Error getting weblog category " + feedRequest.getCategoryName(), ex);
             }
 
             if (test == null) {
@@ -211,7 +201,7 @@ public class FeedProcessor {
         } else if (feedRequest.getTag() != null) {
             try {
                 // tags specified. make sure they exist.
-                invalid = !weblogEntryManager.getTagComboExists(Collections.singletonList(feedRequest.getTag()), (isSiteWide) ? null : weblog);
+                invalid = !weblogEntryManager.getTagExists(feedRequest.getTag(), (feedRequest.isSiteWideFeed()) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
             }
@@ -293,7 +283,7 @@ public class FeedProcessor {
 
         // cache rendered content. only cache if user is not logged in?
         log.debug("PUT " + cacheKey);
-        if (isSiteWide) {
+        if (feedRequest.isSiteWideFeed()) {
             siteWideCache.put(cacheKey, rendererOutput);
         } else {
             weblogFeedCache.put(cacheKey, rendererOutput);
@@ -324,8 +314,8 @@ public class FeedProcessor {
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
 
-        if(feedRequest.getCategory() != null) {
-            String cat = feedRequest.getCategory();
+        if(feedRequest.getCategoryName() != null) {
+            String cat = feedRequest.getCategoryName();
             cat = Utilities.encode(cat);
             key.append("/cat/").append(cat);
         }

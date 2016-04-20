@@ -193,19 +193,17 @@ public interface WeblogEntryManager {
             throws WebloggerException;    
     
     /**
-     * Does the specified tag combination exist?  Optionally confined to a specific weblog.
+     * Does the specified tag exist?  Optionally confined to a specific weblog.
      *
-     * This tests if the intersection of the tags listed will yield any results
-     * and returns a true/false value if so.  This means that if the tags list
-     * is "foo", "bar" and only the tag "foo" has been used then this method
-     * should return false.
+     * This checks if the Weblog (or all weblogs) has at least one blog entry with
+     * the given tag.
      *
-     * @param tags The List of tags to check for.
+     * @param tag The tag to search for.
      * @param weblog The weblog to confine the check to.
-     * @return True if tags exist, false otherwise.
+     * @return True if the tag exists, false otherwise.
      * @throws WebloggerException If there is any problem doing the operation.
      */
-    boolean getTagComboExists(List tags, Weblog weblog)
+    boolean getTagExists(String tag, Weblog weblog)
         throws WebloggerException;
     
     /**
