@@ -300,9 +300,8 @@ alter table planet_subscription add constraint ps_planetid_fk
 create table planet_subscription_entry (
     id               varchar(48) not null primary key,
     subscription_id  varchar(48) not null,
-    handle           varchar(255),
     title            varchar(255),
-    guid             varchar(255),
+    uri              varchar(255),
     permalink        $db.TEXT_SQL_TYPE not null,
     author           varchar(255),
     content          $db.TEXT_SQL_TYPE,
