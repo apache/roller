@@ -132,8 +132,7 @@ public class FeedModel implements Model {
 
         @Override
         public String getHomeLink() {
-            return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null);
+            return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), feedRequest.getType(), null, null);
         }
 
     }
@@ -144,7 +143,7 @@ public class FeedModel implements Model {
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
-                    feedRequest.getType(), feedRequest.getFormat(), null, null),
+                    feedRequest.getType(), null, null),
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), -1, feedRequest.getPage(),
                     propertiesManager.getIntProperty("site.newsfeeds.maxEntries"));

@@ -166,11 +166,10 @@ public class PlanetFeedProcessor {
             // populate the rendering model
             model.put("planetManager", planetManager);
             model.put("planet", planet);
-            model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
             model.put("lastModified", lastModified);
             model.put("absoluteSite", WebloggerStaticConfig.getAbsoluteContextURL());
-            model.put("feedStyle", propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds"));
+            model.put("generatorVersion", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
             model.put("maxEntries", propertiesManager.getIntProperty("site.newsfeeds.maxEntries"));
             model.put("page", page);
 
@@ -188,8 +187,7 @@ public class PlanetFeedProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            Template template = new SharedTemplate(
-                    "templates/feeds/planet-rss.vm", TemplateLanguage.VELOCITY);
+            Template template = new SharedTemplate("templates/feeds/planet-atom.vm", TemplateLanguage.VELOCITY);
             renderer = rendererManager.getRenderer(template, DeviceType.standard);
         } catch (Exception e) {
             // nobody wants to render my content :(
@@ -236,14 +234,14 @@ public class PlanetFeedProcessor {
 
     /**
      * Generate a cache key from a parsed planet request. This generates a key
-     * of the form planet.key:{planetname}/{feed flavor}/page
+     * of the form planet.key:{planetname}/feed/{page}
      *
-     * example: planet.key:testplanet/rss/page
+     * example: planet.key:testplanet/feed/2
      */
     private String generateKey(String planet, int page) {
         String key = "planet.key:";
         key += planet;
-        key += "/rss/";
+        key += "/feed/";
         key += page;
         return key;
     }

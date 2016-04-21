@@ -206,47 +206,27 @@ public class URLModel implements Model {
     
     public class EntryFeedURLS {
         
-        public String getRss() {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, null);
-        }
-        
-        public String rss(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", catName, null);
-        }
-        
-        public String rssByTag(String tag) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "rss", null, tag);
-        }
-        
         public String getAtom() {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, null);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", null, null);
         }
         
         public String atom(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", catName, null);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", catName, null);
         }
         
         public String atomByTag(String tag) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", "atom", null, tag);
+            return urlStrategy.getWeblogFeedURL(weblog, "entries", null, tag);
         }
     }
     
     public class CommentFeedURLS {
         
-        public String getRss() {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "rss", null, null);
-        }
-        
-        public String rss(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "rss", catName, null);
-        }
-        
         public String getAtom() {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "atom", null, null);
+            return urlStrategy.getWeblogFeedURL(weblog, "comments", null, null);
         }
         
         public String atom(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", "atom", catName, null);
+            return urlStrategy.getWeblogFeedURL(weblog, "comments", catName, null);
         }
         
     }

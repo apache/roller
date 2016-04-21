@@ -15,7 +15,10 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 
-*#<?xml version="1.0" encoding='utf-8'?>
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
+
+*#<?xml version="1.0" encoding="utf-8"?>
 #if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/tb-ui/styles/atom.xsl" media="screen"?>#end
 #set($pager = $model.weblogEntriesPager)
 <feed xmlns="http://www.w3.org/2005/Atom">
