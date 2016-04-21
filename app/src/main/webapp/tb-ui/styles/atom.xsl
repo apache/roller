@@ -201,8 +201,7 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
             
             <br />      
             <hr />            
-            <p>To learn more about Atom visit <a href="http://www.ietf.org/rfc/rfc4287.txt">http://www.ietf.org/rfc/rfc4287.txt</a></p>
-            
+
         </div>
     </div>
     

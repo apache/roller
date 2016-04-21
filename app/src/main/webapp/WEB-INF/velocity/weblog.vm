@@ -42,7 +42,6 @@ Macros defined in this file:
     #showWeblogCategoryLinksList()
     #showMobileCategoryLinksList()
     #showAtomFeedsList($weblog)
-    #showRSSFeedsList($weblog)
 
     #showWeblogEntryCalendar($big)
 
@@ -78,22 +77,18 @@ Parse and include page template from weblog.
 
 
 #** 
-Show RSS, Atom and RSD auto-discovery links as HTML link elements.
+Show Atom auto-discovery links as HTML link elements.
 *#
 #macro(showAutodiscoveryLinks $weblog)
     ## main feed urls are always available
 
     <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
-    <link rel="alternate" type="application/rss+xml"  title="Recent Entries (RSS)"   href="$url.feed.entries.rss" />
     <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" href="$url.feed.comments.atom" />
-    <link rel="alternate" type="application/rss+xml"  title="Recent Comments (RSS)"  href="$url.feed.comments.rss" />
 
     #if ($model.tag)
       <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tag (Atom)"  href="$url.feed.entries.atomByTag($model.tag)" />
-      <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tag (RSS)"   href="$url.feed.entries.rssByTag($model.tag)" />
     #elseif ($model.category)
       <link rel="alternate" type="application/atom+xml" title="Entries for category $model.category (Atom)"  href="$url.feed.entries.atom($model.category)" />
-      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.category (RSS)"   href="$url.feed.entries.rss($model.category)" />
     #end
 #end
 
@@ -562,21 +557,6 @@ Show weblog's categories in specified parent category.
         <li><a href="$url.feed.entries.atom($cat.name)">$cat.name</a></li>
     #end
     <li><a href="$url.feed.comments.atom">Comments</a></li>
-    </ul>
-#end
-
-
-#**
- * Show list of all Atom feeds available for weblog.
- *#
-#macro(showRSSFeedsList $weblog)
-    <ul class="rFeeds">
-    <li><a href="$url.feed.entries.rss">$text.get("generic.all")</a></li>
-    #set($categories = $weblog.weblogCategories )
-    #foreach( $cat in $categories )
-        <li><a href="$url.feed.entries.rss($cat.name)">$cat.name</a></li>
-    #end
-    <li><a href="$url.feed.comments.rss">Comments</a></li>
     </ul>
 #end
 

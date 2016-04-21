@@ -15,16 +15,16 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
-  
 -->
 <xsl:stylesheet 
-   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-   xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.0">
+   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
+   xmlns:atom="http://www.w3.org/2005/Atom">
 <xsl:output method="xml"  />
 <xsl:template match="/">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><xsl:value-of select="rss/channel/title"/></title>
+<title><xsl:value-of select="atom:feed/atom:title"/></title>
+
 <style>
 body {
     background: white;
@@ -160,10 +160,10 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
         <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
         <tr>
         <td class="bannerLeft">
-            RSS 2.0
+            Atom 1.0
         </td>
         <td class="bannerRight">  
-            <xsl:value-of select="rss/channel/generator" />
+            <xsl:value-of select="atom:feed/atom:generator"/><xsl:text> </xsl:text><xsl:value-of select="atom:feed/atom:generator/@version"/>
         </td>
         </tr>
         </table>    
@@ -180,27 +180,25 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
     <div id="centercontent_wrap">
         <div id="centercontent"> 
             
-            <h1>RSS newsfeed</h1>
+            <h1>Atom newsfeed</h1>
 
-            <p>This page is an RSS
-            newsfeed, an XML data representation of the latest entries
-            from a TightBlog weblog. If you have a newsfeed reader or aggregator, you can
-            subscribe to this newsfeed. To subscribe, copy the URL from your browser's 
-            address bar above and paste it into your newsfeed reader.</p>
-            
-            <h1>Latest items in newsfeed [<xsl:value-of select="rss/channel/title"/>]</h1>
+            <p>This page is an RSS (Atom-format) newsfeed of a TightBlog planet, an aggregation of
+                one or more newsfeed subscriptions.  If you have a newsfeed reader or aggregator,
+                you can subscribe to this planet newsfeed. To subscribe, copy the URL from your
+                browser's address bar above and paste it into your newsfeed reader.</p>
 
+            <h1>Latest items in newsfeed [<xsl:value-of select="atom:feed/atom:title"/>]</h1>
             <ol>
-                <xsl:for-each select="rss/channel/item">       
+                <xsl:for-each select="atom:feed/atom:entry">       
                 <li>
-                    <h4><a><xsl:attribute name="href"><xsl:value-of select="guid"/></xsl:attribute><xsl:value-of select="title"/></a></h4>
-                    Published <xsl:value-of select="pubDate"/> by <xsl:value-of select="dc:creator" />
+                    <h4><a><xsl:attribute name="href"><xsl:value-of select="atom:link/@href"/></xsl:attribute><xsl:value-of select="atom:title"/></a></h4>
+                    Published <xsl:value-of select="atom:updated"/> by <xsl:value-of select="atom:author/atom:name" />
                 </li>
                 </xsl:for-each>
             </ol>
+            
             <br />      
-            <hr />
-
+            <hr />            
         </div>
     </div>
     

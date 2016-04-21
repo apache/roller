@@ -122,7 +122,7 @@ public interface URLStrategy {
     /**
      * Get url for a feed on a given weblog.
      */
-    String getWeblogFeedURL(Weblog weblog, String type, String format, String category, String tag);
+    String getWeblogFeedURL(Weblog weblog, String type, String category, String tag);
     
     /**
      * Get url to search endpoint on a given weblog.

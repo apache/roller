@@ -68,7 +68,7 @@ public class ConfigModel implements Model {
     public boolean getFeedStyle() {
         return propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds");
     }
-    
+
     public boolean getCommentHtmlAllowed() {
         return propertiesManager.getBooleanProperty("users.comments.htmlenabled");
     }

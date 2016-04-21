@@ -160,9 +160,7 @@ public class FeedProcessor {
             // browsers to load the page rather than popping up the download
             // dialog, so we provide a content-type that browsers will display
             response.setContentType("text/xml");
-        } else if ("rss".equals(feedRequest.getFormat())) {
-            response.setContentType("application/rss+xml; charset=utf-8");
-        } else if ("atom".equals(feedRequest.getFormat())) {
+        } else {
             response.setContentType("application/atom+xml; charset=utf-8");
         }
 
@@ -207,8 +205,6 @@ public class FeedProcessor {
             }
         } else if (!"entries".equals(feedRequest.getType()) && !"comments".equals(feedRequest.getType())) {
             invalid = true;
-        } else if (!"rss".equals(feedRequest.getFormat()) && !"atom".equals(feedRequest.getFormat())) {
-            invalid = true;
         }
 
         if (invalid) {
@@ -227,7 +223,7 @@ public class FeedProcessor {
             Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", feedRequest);
             model = Model.getModelMap("feedModelSet", initData);
-            pageId = feedRequest.getType() + "-" + feedRequest.getFormat() + ".vm";
+            pageId = feedRequest.getType() + "-atom.vm";
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
             if (!response.isCommitted()) {
@@ -296,14 +292,13 @@ public class FeedProcessor {
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<type>/<format>/<term>[/category]
+     * <handle>/<type>[[/cat/{category}]|[/tag/{tag}]]
      *
      * examples ...
      *
-     * foo/entries/rss
-     * foo/comments/rss/MyCategory
-     * foo/entries/atom
-     *
+     * foo/entries
+     * foo/comments/cat/technology
+     * foo/entries/tag/travel
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
         StringBuilder key = new StringBuilder();
@@ -312,18 +307,15 @@ public class FeedProcessor {
         key.append(feedRequest.getWeblogHandle());
 
         key.append("/").append(feedRequest.getType());
-        key.append("/").append(feedRequest.getFormat());
 
-        if(feedRequest.getCategoryName() != null) {
+        if (feedRequest.getCategoryName() != null) {
             String cat = feedRequest.getCategoryName();
             cat = Utilities.encode(cat);
             key.append("/cat/").append(cat);
-        }
-
-        if (feedRequest.getTag() != null) {
+        } else if (feedRequest.getTag() != null) {
             String tag = feedRequest.getTag();
             tag = Utilities.encode(tag);
-            key.append("/tags/").append(tag);
+            key.append("/tag/").append(tag);
         }
 
         return key.toString();

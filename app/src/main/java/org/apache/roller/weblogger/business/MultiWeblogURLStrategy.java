@@ -251,9 +251,9 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Get url for a feed on a given weblog.
      */
     @Override
-    public String getWeblogFeedURL(Weblog weblog, String type, String format, String category, String tag) {
+    public String getWeblogFeedURL(Weblog weblog, String type, String category, String tag) {
 
-        String url = getWeblogURL(weblog, true) + "feed/" + type + "/" + format;
+        String url = getWeblogURL(weblog, true) + "feed/" + type;
         
         Map<String, String> params = new HashMap<>();
         if (category != null && category.trim().length() > 0) {

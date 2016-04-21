@@ -38,8 +38,8 @@ public class WeblogFeedRequest extends WeblogRequest {
     
     private static Log log = LogFactory.getLog(WeblogFeedRequest.class);
     
+    // type is "entries" or "comments"
     private String type = null;
-    private String format = null;
     private String categoryName = null;
     private String tag = null;
     private boolean siteWideFeed = false;
@@ -62,18 +62,12 @@ public class WeblogFeedRequest extends WeblogRequest {
         
         /*
          * parse the path info.  Format:
-         * /<type>/<format>
+         * /<type>
          */
         if (pathInfo != null && pathInfo.trim().length() > 1) {
-            String[] pathElements = pathInfo.split("/");
-            if (pathElements.length == 2) {
-                type = pathElements[0];
-                format = pathElements[1];
-            } else {
-                throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
-            }
+            type = pathInfo.startsWith("/") ? pathInfo.substring(1) : pathInfo;
         } else {
-            throw new IllegalArgumentException("Invalid feed path info: "+ request.getRequestURL());
+            type = "entries";
         }
 
         // parse request parameters
@@ -98,7 +92,6 @@ public class WeblogFeedRequest extends WeblogRequest {
         if (log.isDebugEnabled()) {
             log.debug("type = " + type);
             log.debug("page = " + type);
-            log.debug("format = " + format);
             log.debug("category = " + categoryName);
             log.debug("tag = " + tag);
         }
@@ -106,10 +99,6 @@ public class WeblogFeedRequest extends WeblogRequest {
 
     public String getType() {
         return type;
-    }
-
-    public String getFormat() {
-        return format;
     }
 
     public String getCategoryName() {
