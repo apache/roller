@@ -694,14 +694,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         TypedQuery<TagStat> query;
         List queryResults;
         
-        if (weblog != null) {
-            query = strategy.getNamedQuery(
-                    "WeblogEntryTagAggregate.getPopularTagsByWeblog", TagStat.class);
-            query.setParameter(1, weblog);
-        } else {
-            query = strategy.getNamedQuery(
-                    "WeblogEntryTagAggregate.getPopularTagsByWeblogNull", TagStat.class);
-        }
+        query = strategy.getNamedQuery(
+                "WeblogEntryTagAggregate.getPopularTagsByWeblog", TagStat.class);
+        query.setParameter(1, weblog);
+
         if (offset != 0) {
             query.setFirstResult(offset);
         }

@@ -529,7 +529,7 @@ public class JPAUserManagerImpl implements UserManager {
             if (menu == null) {
                 User user = getUserByUserName(username);
                 UserWeblogRole uwr = getWeblogRole(username, weblogHandle);
-                menu = menuHelper.getMenu("editor", user.getGlobalRole(), uwr.getWeblogRole(), null);
+                menu = menuHelper.getMenu("editor", user.getGlobalRole(), uwr == null ? null : uwr.getWeblogRole(), null);
                 editorMenuCache.put(cacheKey, menu);
             }
             return menu;

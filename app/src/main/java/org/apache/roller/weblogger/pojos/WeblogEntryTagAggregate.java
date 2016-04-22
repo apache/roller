@@ -42,10 +42,7 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblog",
                 query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 " +
-                        "GROUP BY w.name ORDER BY SUM(w.total) DESC"),
-        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblogNull",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w GROUP BY w.name ORDER " +
-                        "BY SUM(w.total) DESC"),
+                        "GROUP BY w.name ORDER BY SUM(w.total) DESC")
 })
 public class WeblogEntryTagAggregate implements Serializable {
     

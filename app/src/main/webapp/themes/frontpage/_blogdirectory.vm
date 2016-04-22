@@ -32,6 +32,7 @@
         <thead>
             <tr>
                <th scope="col" class="name">Blog Name</th>
+               <th scope="col" class="description">Title</th>
                <th scope="col" class="description">Description</th>
             </tr>
         </thead>
@@ -40,6 +41,7 @@
            <tr>
               <th scope="row" class="name"><a href="$url.absoluteSite/$loopblog.handle">$loopblog.handle</a></th>
               <td class="description">$loopblog.name</td>
+              <td class="description">#if($loopblog.about) $loopblog.about #end</td>
            </tr>
           #end 
        </tbody>

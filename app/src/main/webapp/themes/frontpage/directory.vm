@@ -5,8 +5,8 @@
 
     <div id="centercontent_wrap">
         <div id="centercontent">  
-            <h1>$config.siteName</h1>
-            <p class="subtitle">$config.siteDescription</p> 
+            <h1>$model.weblog.name</h1>
+            <p class="subtitle">$model.weblog.tagline</p>
 
             <table class="menuTabTable" cellspacing="0"><tbody><tr>
                <td class="menuTabUnselected">
