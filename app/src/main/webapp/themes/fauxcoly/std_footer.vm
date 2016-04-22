@@ -2,5 +2,4 @@
 <div id="legal">
     <p>Copyright $model.weblog.creator.screenName</p>
     <p>Licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/2.5/">Attribution-Noncommercial-Share Alike 2.5 Generic</a></p>
-    <p>This is a personal weblog. <i>I do not speak for my employer.</i></p>
 </div>

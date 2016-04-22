@@ -12,18 +12,6 @@
     <previewImagePath>images/theme-gaurav.png</previewImagePath>
 
     <!-- templates -->
-    <template role="stylesheet">
-        <name>custom.css</name>
-        <description>Custom style sheet</description>
-        <relativePath>custom.css</relativePath>
-        <renditions>
-            <rendition>
-                <contentsFile>custom_css.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
-            </rendition>
-        </renditions>
-    </template>
-
     <template role="weblog">
         <name>Weblog</name>
         <renditions>

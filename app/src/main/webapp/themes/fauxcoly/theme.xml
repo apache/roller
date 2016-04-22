@@ -12,18 +12,6 @@
     <previewImagePath>images/fauxcoly-preview.png</previewImagePath>
 
     <!-- templates -->
-    <template role="stylesheet">
-        <name>custom.css</name>
-        <description>Custom style sheet</description>
-        <relativePath>custom.css</relativePath>
-        <renditions>
-            <rendition>
-                <templateLanguage>velocity</templateLanguage>
-                <contentsFile>custom_css.vm</contentsFile>
-            </rendition>
-        </renditions>
-    </template>
-
     <template role="weblog">
         <name>Weblog</name>
         <renditions>
