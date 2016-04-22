@@ -272,7 +272,7 @@ public class FeedManagerImpl implements FeedManager {
             // Populate subscription object with new entries
             for ( WeblogEntry rollerEntry : entries ) {
                 SubscriptionEntry entry = new SubscriptionEntry();
-                String content = "";
+                String content;
                 if (!StringUtils.isEmpty(rollerEntry.getText())) {
                     content = rollerEntry.getText();
                 } else {
@@ -283,7 +283,7 @@ public class FeedManagerImpl implements FeedManager {
                 entry.setAuthor(rollerEntry.getCreator().getScreenName());
                 entry.setTitle(rollerEntry.getTitle());
                 entry.setPubTime(rollerEntry.getPubTime());
-                entry.setText(content);
+                entry.setContent(content);
                 entry.setPermalink(rollerEntry.getPermalink());
                 entry.setCategoriesString(rollerEntry.getCategory().getName());
                 
@@ -310,6 +310,7 @@ public class FeedManagerImpl implements FeedManager {
 
         newEntry.setTitle(romeEntry.getTitle());
         newEntry.setPermalink(romeEntry.getLink());
+        newEntry.setUri(romeEntry.getUri());
 
         // Play some games to get the author
         DCModule entrydc = (DCModule)romeEntry.getModule(DCModule.URI);
@@ -324,7 +325,6 @@ public class FeedManagerImpl implements FeedManager {
         if (romeEntry.getUpdatedDate() != null) {
             newEntry.setUpdateTime(new Timestamp(romeEntry.getUpdatedDate().getTime()));
         }
-        // TODO: should we set a default update time here?
 
         // And more games getting publish date
         if (romeEntry.getPublishedDate() != null) {
@@ -339,17 +339,17 @@ public class FeedManagerImpl implements FeedManager {
 
         // get content and unescape if it is 'text/plain'
         if (romeEntry.getContents().size() > 0) {
-            SyndContent content= (SyndContent)romeEntry.getContents().get(0);
+            SyndContent content= romeEntry.getContents().get(0);
             if (content != null && content.getType().equals("text/plain")) {
-                newEntry.setText(StringEscapeUtils.unescapeHtml4(content.getValue()));
+                newEntry.setContent(StringEscapeUtils.unescapeHtml4(content.getValue()));
             } else if (content != null) {
-                newEntry.setText(content.getValue());
+                newEntry.setContent(content.getValue());
             }
         }
 
         // no content, try summary
-        if (StringUtils.isBlank(newEntry.getText()) && romeEntry.getDescription() != null)  {
-            newEntry.setText(romeEntry.getDescription().getValue());
+        if (StringUtils.isBlank(newEntry.getContent()) && romeEntry.getDescription() != null)  {
+            newEntry.setContent(romeEntry.getDescription().getValue());
         }
 
         // copy categories

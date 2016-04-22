@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -62,12 +61,11 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     
     // attributes
     private String id = WebloggerCommon.generateUUID();
-    private String handle;
     private String title;
-    private String guid;
+    private String uri;
     private String permalink;
     private String author;
-    private String text = "";
+    private String content = "";
     private Timestamp published;
     private Timestamp updated;
     private String categoriesString;
@@ -88,15 +86,6 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     }
     
     
-    public String getHandle() {
-        return handle;
-    }
-    
-    public void setHandle(String handle) {
-        this.handle = handle;
-    }
-    
-    
     public String getTitle() {
         return title;
     }
@@ -106,12 +95,12 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     }
     
     
-    public String getGuid() {
-        return guid;
+    public String getUri() {
+        return uri;
     }
     
-    public void setGuid(String guid) {
-        this.guid = guid;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
     
     @Basic(optional=false)
@@ -133,12 +122,12 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     }
 
     @Column(name="content")
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
     
-    public void setText(String content) {
-        this.text = content;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Column(name="published", nullable=false)
@@ -237,75 +226,6 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         categoriesString = sb.toString();
     }
     
-    /** 
-     * Returns creator as a UserData object.
-     * TODO: make planet model entry author name, email, and uri
-     */
-/*
-    @Transient
-    public Author getCreator() {
-        Author user = null;
-        if (getAuthor() != null) {
-            user = new Author();
-            user.setFullName(getAuthor());
-            user.setUserName(getAuthor());
-        }
-        return user;
-    } 
-*/
-    /**
-     * Returns summary (always null for planet entry)
-     */
-    @Transient
-    public String getSummary() {
-        return null;
-    } 
-    
-
-    /**
-     * Read-only synomym for getSubscription()
-     */
-    @Transient
-    public Subscription getWebsite() {
-        return getSubscription();
-    }
-    public void setWebsite() {
-        // noop
-    }
-
-    /**
-     * Return text as content, to maintain compatibility with PlanetTool templates.
-     */
-    @Transient
-    public String getContent() {
-        return getText();
-    }
-    public void setContent(String ignored) {
-        // no-op
-    }
-
-    /**
-     * Return updateTime as updated, to maintain compatibility with PlanetTool templates.
-     */
-    @Transient
-    public Timestamp getUpdated() {
-        return updated;
-    }
-    public void setUpdated(Timestamp ignored) {
-        // no-op
-    }
-
-    /**
-     * Return pubTime as published, to maintain compatibility with PlanetTool templates.
-     */
-    @Transient
-    public Timestamp getPublished() {
-        return published;
-    }
-    public void setPublished(Timestamp ignored) {
-        // no-op
-    }
-
     /**
      * Compare planet entries by comparing permalinks.
      */
@@ -324,7 +244,8 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
             return false;
         }
         final SubscriptionEntry that = (SubscriptionEntry) other;
-        return getPermalink().equals(that.getPermalink());
+        return getPermalink().equals(that.getPermalink()) ||
+                (getUri() != null && getUri().equals(that.getUri()));
     }
 
     /**

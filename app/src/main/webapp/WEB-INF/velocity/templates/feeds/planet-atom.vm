@@ -37,11 +37,11 @@
        <updated>$utils.formatIso8601Date($entry.updateTime)</updated>
     #end
     #if( $utils.isNotEmpty($entry.text) )
-       <content type="html">$utils.escapeXML($entry.text)</content>
+       <content type="html">$utils.escapeXML($entry.content)</content>
     #end
     #if($entry.categories)
         #foreach($cat in $entry.categories)
-           <category term="$utils.escapeXML($cat.name)" label="$utils.escapeXML($cat.name)" />
+           <category term="$utils.escapeXML($cat)" label="$utils.escapeXML($cat)" />
      	#end
     #end
   </entry>
