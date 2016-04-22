@@ -7,7 +7,6 @@
     <title>$model.weblog.name: $model.weblog.tagline</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
-    <link rel="stylesheet" href='$url.page("fauxcoly", "custom.css")' />
     #showMetaDescription()
 </head>
 <body>

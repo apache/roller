@@ -4,7 +4,6 @@
 	#includeTemplate("standard_head")
 	<title>$model.weblog.name: $model.weblog.tagline</title>
 	#showAutodiscoveryLinks($model.weblog)
-	<link rel="stylesheet" href='$url.page("gaurav", "custom.css")' />
     #showAnalyticsTrackingCode($model.weblog)
     #showMetaDescription()
 </head>
