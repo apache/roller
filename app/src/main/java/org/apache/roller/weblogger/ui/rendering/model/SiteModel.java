@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -264,18 +263,4 @@ public class SiteModel implements Model {
         return results;
     }
         
-    /**
-     * @param length number of tags to return
-     * @return List of most popular tags
-     */
-    public List<TagStat> getPopularTags(int length) {
-        List<TagStat> results = new ArrayList<>();
-        try {
-            results = weblogEntryManager.getPopularTags(null, 0, length);
-        } catch (Exception e) {
-            log.error("ERROR: fetching site tags list", e);
-        }
-        return results;
-    }   
-
 }

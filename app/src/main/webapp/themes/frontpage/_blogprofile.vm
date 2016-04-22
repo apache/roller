@@ -1,4 +1,4 @@
-    <h2 class="pageTitle">Weblog: $profileWeblog.name</h2> 
+    <h2 class="pageTitle">Weblog: $profileWeblog.name</h2>
     <table width="70%">
         <tr>
             <td width="25%">Handle</td>
@@ -6,7 +6,7 @@
         </tr>
         <tr>
             <td>Description</td>
-            <td>$profileWeblog.about</td>
+            <td>#if($profileWeblog.about) $profileWeblog.about #end</td>
         </tr>
         <tr>
             <td>Created by</td>
@@ -17,30 +17,23 @@
             <td>$profileWeblog.lastModified</td>
         </tr>
         <tr>
-            <td>Locale</td>
-            <td>$!profileWeblog.locale</td>
-        </tr>
-        <tr>
             <td>Timezone</td>
             <td>$profileWeblog.timeZone</td>
         </tr>
     </table>
 
     <h2 class="pageTitle">Recent posts</h2>
-    #set($entriesPager = $site.getWeblogEntriesPager($profileWeblog, $null, $null, 90, 5))
+    #set($entriesPager = $site.getWeblogEntriesPager($profileWeblog, $null, 90, 5))
     #if($entriesPager.items.size() > 0)  
         <table class="rollertable" width="70%"> 
         <tr>
-            <td width="25%">User</td>
             <td width="25%">Pub. time</td>
-            <td width="50%">Title</td>
+            <td width="75%">Title</td>
         </tr> 
         #foreach($entry in $entriesPager.items)
             <tr>
-                <td>$entry.creator.screenName</td>
                 <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
-                <td><a href="$utils.escapeHTML($entry.permalink)">
-                    $utils.removeHTML($entry.title)</a></td>
+                <td><a href="$utils.escapeHTML($entry.permalink)">$utils.removeHTML($entry.title)</a></td>
             </tr>
         #end
         </table>

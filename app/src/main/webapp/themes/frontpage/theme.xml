@@ -42,41 +42,11 @@
         </renditions>
     </template>
 
-    <template role="customInternal">
-        <name>_blogs</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_blogs.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
-            </rendition>
-        </renditions>
-    </template>
-
     <template role="stylesheet">
         <name>_css</name>
         <renditions>
             <rendition>
                 <contentsFile>_css.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
-            </rendition>
-        </renditions>
-    </template>
-
-    <template role="customInternal">
-        <name>_day</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_day.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
-            </rendition>
-        </renditions>
-    </template>
-
-    <template role="customInternal">
-        <name>_decorator</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_decorator.vm</contentsFile>
                 <templateLanguage>velocity</templateLanguage>
             </rendition>
         </renditions>

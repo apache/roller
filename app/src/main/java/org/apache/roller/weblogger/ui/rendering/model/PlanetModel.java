@@ -78,13 +78,13 @@ public class PlanetModel implements Model {
      * Get pager for WeblogEntry objects from specified Planet group in reverse chrono order.
      * @param length Max number of results to return
      */
-    public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
+    public Pager getAggregationPager(String planetHandle, int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
                 pageLink, null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(planetManager, urlStrategy, null,
-            groupHandle, pagerUrl, sinceDays, pageRequest.getPageNum(), length);
+            planetHandle, pagerUrl, sinceDays, pageRequest.getPageNum(), length);
     }
     
     

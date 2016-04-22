@@ -623,7 +623,7 @@ $model.showWeblogEntryCalendar($big)
 Show weblog editor menu with vertical or horizontal orientation.
 *#
 #macro(showEditorMenu $vertical)
-  
+
   #set( $editorMenu = $model.editorMenu )
   #if( $editorMenu )
       #if( $vertical )

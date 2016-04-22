@@ -5,8 +5,8 @@
 
     <div id="centercontent_wrap">
         <div id="centercontent">  
-            <h1>$config.siteName</h1>
-            <p class="subtitle">$config.siteDescription</p> 
+            <h1>$model.weblog.name</h1>
+            <p class="subtitle">$model.weblog.tagline</p>
 
             <table class="menuTabTable" cellspacing="0"><tbody><tr>
                <td class="menuTabSelected">
@@ -37,7 +37,7 @@
                         #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
 
                         ## 2) PLANET-entries
-                        ## set($pager = $planet.getAggregationPager($since, $maxResults))
+                        ## set($pager = $planet.getAggregationPager($planetName, $since, $maxResults))
                         ## The below pager code should work against either:
 
                         #if($pager.items.size() > 0)
@@ -134,7 +134,7 @@
            </div>
 
            <div class="searchSidebarBody">
-                <h3>Search for blogs</h3>
+                <h3>Search all blogs</h3>
                 #showWeblogSearchForm($model.weblog false)
             </div>
 
@@ -157,28 +157,6 @@
                 <br />		
             </div>
             
-            #* TODO does not work on frontpage as $url.tag($tag.name) returns the url 
-               of this weblog eg frontpage/tags/$tag.name and there is no page for this.
-            <br />
-            <div class="sidebarBodyHead">
-                <div class="menu-tr">
-                    <div class="menu-tl">
-                       <h3>Hot Tags</h3>		
-                    </div>
-                </div>
-            </div>	
-
-            <div id="tagbin" class="sidebarBody">  
-                #set($sitetags = $site.getPopularTags(100))
-                #foreach ($tag in $sitetags)
-                    #if ($tag.count > 4)
-                        <a class="tag s${tag.intensity}" href="$url.tag($tag.name)"
-                            title="$tag.count">$tag.name</a>
-                    #end
-                #end
-            </div>*#
-            
-
         </div>
     </div>
 
