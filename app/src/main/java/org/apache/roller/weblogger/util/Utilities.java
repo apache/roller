@@ -58,7 +58,9 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.springframework.mobile.device.DeviceType;
+import org.springframework.mobile.device.site.SitePreference;
+import org.springframework.mobile.device.site.SitePreferenceUtils;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -726,7 +728,7 @@ public class Utilities {
      */
     public static boolean respondIfNotModified(HttpServletRequest request,
                                                HttpServletResponse response, long lastModifiedTimeMillis,
-                                               MobileDeviceRepository.DeviceType deviceType) {
+                                               DeviceType deviceType) {
 
         long sinceDate;
         try {
@@ -775,7 +777,7 @@ public class Utilities {
      * clients to revalidate the cache each time.
      */
     public static void setLastModifiedHeader(HttpServletResponse response,
-                                             long lastModifiedTimeMillis, MobileDeviceRepository.DeviceType deviceType) {
+                                             long lastModifiedTimeMillis, DeviceType deviceType) {
 
         // Save our device type for device switching. Must use caching on headers for this to work.
         if (deviceType != null) {
@@ -791,4 +793,8 @@ public class Utilities {
         // response.setHeader("Cache-Control","must-revalidate");
     }
 
+    public static DeviceType getDeviceType(HttpServletRequest request) {
+        SitePreference sitePreference = SitePreferenceUtils.getCurrentSitePreference(request);
+        return (sitePreference != null && sitePreference.isMobile()) ? DeviceType.MOBILE : DeviceType.NORMAL;
+    }
 }

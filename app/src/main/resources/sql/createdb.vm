@@ -192,11 +192,9 @@ alter table weblog_entry_tag add constraint wtag_entryid_fk
 
 -- below index for single-blog tag clouds
 create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
--- if you plan on having a combined tag cloud for all blogs in your system
--- create index wtag_sitetagsearch_idx on weblog_entry_tag( name, entryid );
 
--- View below should work fine for most installations.  For super-large sites view can be
--- redefined to point to a data warehouse table updated via triggers or a cron job.
+-- View below should work fine for most installations.  For especially large sites view
+-- can be redefined to point to a data warehouse table updated via triggers or a cron job.
 create view weblog_entry_tag_agg as
 select weblogid, name, count(*) as total
 from weblog_entry_tag
@@ -209,7 +207,7 @@ create table weblog_entry_comment (
     email      varchar(255),
     url        varchar(255),
     content    $db.TEXT_SQL_TYPE,
-    posttime   $db.TIMESTAMP_SQL_TYPE   not null,
+    posttime   $db.TIMESTAMP_SQL_TYPE not null,
     notify     $db.BOOLEAN_SQL_TYPE_FALSE not null,
     remotehost varchar(128),
     referrer   varchar(255),

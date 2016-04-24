@@ -35,10 +35,11 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
+import org.springframework.mobile.device.DeviceType;
 
 /**
  * The ThemeResourceLoader is a Velocity template loader which loads templates
- * from shared themes.
+ * from shared themes.  See RollerVelocity javadoc for more information.
  * 
  * @author Allen Gilliland
  */
@@ -61,24 +62,23 @@ public class ThemeResourceLoader extends ResourceLoader {
         }
 
         if (name == null || name.length() < 1) {
-            throw new ResourceNotFoundException(
-                    "Need to specify a template name!");
+            throw new ResourceNotFoundException("Need to specify a template name!");
         }
 
         RenditionType renditionType = RenditionType.STANDARD;
         if (name.contains("|")) {
             String[] pair = name.split("\\|");
             name = pair[0];
-            renditionType = RenditionType.valueOf(pair[1].toUpperCase());
+            renditionType = RenditionType.deviceTypeToRenditionType(DeviceType.valueOf(pair[1].toUpperCase()));
         }
 
         try {
-            // parse the name ... theme templates name are
+            // parse the name ... shared theme template names are
             // <theme>:<template>|<deviceType>
+            // where theme:template is defined via ThemeManagerImpl.loadThemeData().
             String[] split = name.split(":", 2);
             if (split.length < 2) {
-                throw new ResourceNotFoundException("Invalid ThemeRL key "
-                        + name);
+                throw new ResourceNotFoundException("Invalid ThemeRL key " + name);
             }
 
             // lookup the template from the proper theme

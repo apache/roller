@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.springframework.mobile.device.DeviceType;
 
 
 /**
@@ -38,8 +38,7 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 public class VelocityRendererFactory implements RendererFactory {
     private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
     
-    public Renderer getRenderer(Template template,
-			MobileDeviceRepository.DeviceType deviceType) {
+    public Renderer getRenderer(Template template, DeviceType deviceType) {
         Renderer renderer = null;
         TemplateRendition tr;
 

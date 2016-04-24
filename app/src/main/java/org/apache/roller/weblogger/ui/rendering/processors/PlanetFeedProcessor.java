@@ -39,13 +39,12 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.DeviceType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -93,7 +92,7 @@ public class PlanetFeedProcessor {
 
         Planet planet;
         String planetHandle;
-        DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
+        DeviceType deviceType = Utilities.getDeviceType(request);
 
         try {
             // parse the request object and figure out what we've got
@@ -188,7 +187,7 @@ public class PlanetFeedProcessor {
         try {
             log.debug("Looking up renderer");
             Template template = new SharedTemplate("templates/feeds/planet-atom.vm", TemplateLanguage.VELOCITY);
-            renderer = rendererManager.getRenderer(template, DeviceType.standard);
+            renderer = rendererManager.getRenderer(template, DeviceType.NORMAL);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for planet rss", e);

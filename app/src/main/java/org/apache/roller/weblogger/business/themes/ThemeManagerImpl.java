@@ -286,6 +286,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 }
             }
 
+            // this template ID used by ThemeResourceLoader for template retrieval.
             template.setId(sharedTheme.getId() + ":" + template.getName());
 
             // see if a mobile rendition needs adding

@@ -45,9 +45,9 @@ import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.util.cache.SiteWideCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.DeviceType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -238,7 +238,7 @@ public class FeedProcessor {
         try {
             log.debug("Looking up renderer");
             Template template = new SharedTemplate(pageId, TemplateLanguage.VELOCITY);
-            renderer = rendererManager.getRenderer(template, MobileDeviceRepository.DeviceType.standard);
+            renderer = rendererManager.getRenderer(template, DeviceType.NORMAL);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find render feed for page " + pageId, e);

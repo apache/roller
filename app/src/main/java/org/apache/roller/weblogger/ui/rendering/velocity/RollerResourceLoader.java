@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
@@ -34,7 +37,7 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 
 /**
  * The RollerResourceLoader is a Velocity template loader which loads templates
- * from custom themes.
+ * from custom themes.  See RollerVelocity javadoc for more information.
  * 
  * RollerResourceLoader makes use of WebloggerFactory.
  * 
@@ -65,8 +68,7 @@ public class RollerResourceLoader extends ResourceLoader {
 		logger.debug("Looking for: " + name);
 
 		if (name == null || name.length() == 0) {
-			throw new ResourceNotFoundException(
-					"Need to specify a template name!");
+			throw new ResourceNotFoundException("Need to specify a template name!");
 		}
 
 		// theme templates name are <template>|<deviceType>
@@ -76,8 +78,6 @@ public class RollerResourceLoader extends ResourceLoader {
 			name = pair[0];
 			renditionType = RenditionType.valueOf(pair[1].toUpperCase());
 		}
-
-		logger.debug("   Actually, it's " + name);
 
 		try {
 			WeblogTemplate page = WebloggerFactory.getWeblogger()

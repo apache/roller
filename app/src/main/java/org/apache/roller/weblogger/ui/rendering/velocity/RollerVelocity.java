@@ -26,12 +26,20 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
+import org.springframework.mobile.device.DeviceType;
 
 /**
- * Represents the VelocityEngine used by Roller.
+ * Represents the VelocityEngine used by Roller.  In the getTemplate(name...)
+ * overrides in this class, Velocity uses the resource loaders defined
+ * in velocity.properties (in the order given in the resource.loader
+ * property value in that file) to obtain the Template to use for the
+ * given template name.
+ *
+ * Further, RollerResourceLoader and parse out the |xxxxx portion added in
+ * the getTemplate() overrides to determine the proper device type's rendition
+ * to use.
  *
  * We construct our own instance of VelocityEngine, initialize it, and provide
  * access to the instance via the Singleton getInstance() method.
@@ -90,13 +98,12 @@ public class RollerVelocity {
         return velocityEngine.getTemplate(name + "|standard");
     }
 
-    /**
+     /**
      * Convenience static method for looking up a template.
      * @throws org.apache.velocity.exception.ResourceNotFoundException,
      *       org.apache.velocity.exception.ParseErrorException
      */
-    public static Template getTemplate(String name, 
-			MobileDeviceRepository.DeviceType deviceType) {
+    public static Template getTemplate(String name, DeviceType deviceType) {
         return velocityEngine.getTemplate(name + "|" + deviceType);
     }
     
@@ -114,8 +121,7 @@ public class RollerVelocity {
      * @throws org.apache.velocity.exception.ResourceNotFoundException,
      *       org.apache.velocity.exception.ParseErrorException
      */
-    public static Template getTemplate(String name, 
-			MobileDeviceRepository.DeviceType deviceType, String encoding) {
+    public static Template getTemplate(String name, DeviceType deviceType, String encoding) {
         return velocityEngine.getTemplate(name + "|" + deviceType, encoding);
     }
 }
