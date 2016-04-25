@@ -31,14 +31,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
+import org.springframework.mobile.device.DeviceType;
 
 /**
  * Renderer that renders using the Velocity template engine.
@@ -49,7 +47,7 @@ public class VelocityRenderer implements Renderer {
 
     // the original template we are supposed to render
     private Template renderTemplate = null;
-    private MobileDeviceRepository.DeviceType deviceType = null;
+    private DeviceType deviceType = null;
 
     // the velocity templates
     private org.apache.velocity.Template velocityTemplate = null;
@@ -58,8 +56,7 @@ public class VelocityRenderer implements Renderer {
     // a possible exception
     private Exception velocityException = null;
 
-    public VelocityRenderer(Template template,
-            MobileDeviceRepository.DeviceType deviceType) throws Exception {
+    public VelocityRenderer(Template template, DeviceType deviceType) throws Exception {
 
         // the Template we are supposed to render
         this.renderTemplate = template;
@@ -68,8 +65,7 @@ public class VelocityRenderer implements Renderer {
         try {
             // make sure that we can locate the template
             // if we can't then this will throw an exception
-            velocityTemplate = RollerVelocity.getTemplate(template.getId(),
-                    deviceType, "UTF-8");
+            velocityTemplate = RollerVelocity.getTemplate(template.getId(), deviceType, "UTF-8");
 
         } catch (ResourceNotFoundException ex) {
             // velocity couldn't find the resource so lets log a warning
@@ -80,40 +76,17 @@ public class VelocityRenderer implements Renderer {
             // failed
             throw ex;
 
-        } catch (ParseErrorException ex) {
+        } catch (VelocityException ex) {
             // in the case of a parsing error we want to render an
             // error page instead so the user knows what was wrong
             velocityException = ex;
 
             // need to lookup error page template
-            velocityTemplate = RollerVelocity.getTemplate("error-page.vm",
-                    deviceType);
-
-        } catch (MethodInvocationException ex) {
-
-            // in the case of a invocation error we want to render an
-            // error page instead so the user knows what was wrong
-            velocityException = ex;
-
-            // need to lookup error page template
-            velocityTemplate = RollerVelocity.getTemplate("error-page.vm",
-                    deviceType);
-
-        } catch (VelocityException ex) {
-
-            // in the case of a parsing error including a macro we want to
-            // render an error page instead so the user knows what was wrong
-            velocityException = ex;
-
-            // need to lookup error page template
-            velocityTemplate = RollerVelocity.getTemplate("error-page.vm",
-                    deviceType);
+            velocityTemplate = RollerVelocity.getTemplate("error-page.vm", deviceType);
 
         } catch (Exception ex) {
             // some kind of generic/unknown exception, dump it to the logs
-            log.error(
-                    "Unknown exception creating renderer for "
-                            + template.getId(), ex);
+            log.error("Unknown exception creating renderer for " + template.getId(), ex);
 
             // throw if back to the caller
             throw ex;
@@ -172,24 +145,6 @@ public class VelocityRenderer implements Renderer {
             log.debug("Rendered [" + renderTemplate.getId() + "] in "
                     + renderTime + " secs");
 
-        } catch (ParseErrorException ex) {
-
-            // in the case of a parsing error including a page we want to render
-            // an error on the page instead so the user knows what was wrong
-            velocityException = ex;
-
-            // need to lookup parse error template
-            renderException(model, out, "error-parse.vm");
-
-        } catch (MethodInvocationException ex) {
-
-            // in the case of a parsing error including a page we want to render
-            // an error on the page instead so the user knows what was wrong
-            velocityException = ex;
-
-            // need to lookup parse error template
-            renderException(model, out, "error-parse.vm");
-
         } catch (VelocityException ex) {
 
             // in the case of a parsing error including a macro we want to
@@ -218,8 +173,7 @@ public class VelocityRenderer implements Renderer {
      * @throws WebloggerException
      *             the rendering exception
      */
-    private void renderException(Map<String, Object> model, Writer out,
-            String template) throws WebloggerException {
+    private void renderException(Map<String, Object> model, Writer out, String template) throws WebloggerException {
 
         try {
 

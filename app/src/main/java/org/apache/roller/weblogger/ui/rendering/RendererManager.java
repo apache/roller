@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.springframework.mobile.device.DeviceType;
 
 /**
  * Returns Renderer for Template via configured RendererFactories.
@@ -52,7 +52,7 @@ public final class RendererManager {
      * instance and tries to find a Renderer for the content.  If no Renderer
      * can be found then we throw an exception.
      */
-    public Renderer getRenderer(Template template, MobileDeviceRepository.DeviceType deviceType)
+    public Renderer getRenderer(Template template, DeviceType deviceType)
             throws WebloggerException {
 
         Renderer renderer;

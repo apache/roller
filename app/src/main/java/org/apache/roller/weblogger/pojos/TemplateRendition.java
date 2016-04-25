@@ -20,6 +20,8 @@
 */
 package org.apache.roller.weblogger.pojos;
 
+import org.springframework.mobile.device.DeviceType;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
@@ -33,7 +35,15 @@ public interface TemplateRendition {
     @XmlEnum
     public enum RenditionType {
         @XmlEnumValue("standard") STANDARD,
-        @XmlEnumValue("mobile") MOBILE }
+        @XmlEnumValue("mobile") MOBILE;
+
+        public static RenditionType deviceTypeToRenditionType(DeviceType dt) {
+            switch (dt) {
+                case MOBILE: return MOBILE;
+                default: return STANDARD;
+            }
+        }
+    }
 
     @XmlType
     @XmlEnum

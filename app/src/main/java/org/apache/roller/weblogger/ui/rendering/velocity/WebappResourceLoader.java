@@ -177,8 +177,7 @@ public class WebappResourceLoader extends ResourceLoader {
 
 		// If we never found the template
 		if (result == null) {
-			String msg = "WebappResourceLoader: Resource '" + name
-					+ "' not found.";
+			String msg = "WebappResourceLoader: Resource '" + name + "' not found.";
 
 			// convert to a general Velocity ResourceNotFoundException
 			if (exception == null) {

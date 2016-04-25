@@ -27,8 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
+import org.apache.roller.weblogger.util.Utilities;
+import org.springframework.mobile.device.DeviceType;
 
 
 /**
@@ -62,7 +62,7 @@ public class WeblogRequest {
     private String weblogHandle = null;
     private String pathInfo = null;
     private String authenticatedUser = null;
-    private DeviceType deviceType = DeviceType.standard;
+    private DeviceType deviceType = DeviceType.NORMAL;
 
     // heavyweight attributes
     private Weblog weblog = null;
@@ -78,7 +78,7 @@ public class WeblogRequest {
             this.authenticatedUser = principal.getName();
         }
         // set the detected type of the request
-        deviceType = MobileDeviceRepository.getRequestType(request);
+        deviceType = Utilities.getDeviceType(request);
 
         String path = request.getPathInfo();
         
@@ -177,5 +177,7 @@ public class WeblogRequest {
     public void setDeviceType(DeviceType type) {
         this.deviceType = type;
     }
+
+
 
 }

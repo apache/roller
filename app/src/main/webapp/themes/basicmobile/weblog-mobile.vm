@@ -28,16 +28,9 @@
   <script>
     $(document).bind("pageinit", function(){
       $('#btnStandard').on('click', function() {
-        setCookie("roller_user_request_type","standard",30);
-        $("#btnStandard").attr('href', '?deviceType=standard').click();
+        $("#btnStandard").attr('href', '?site_preference=normal').click();
       });
     });
-    function setCookie(c_name, value, exdays) {
-      var exdate = new Date();
-      exdate.setDate(exdate.getDate() + exdays);
-      var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString() + "; path=/");
-      document.cookie = c_name + "=" + c_value;
-    }
   </script>
 </head>
 <!-- weblog-mobile -->

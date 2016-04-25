@@ -22,7 +22,7 @@
 package org.apache.roller.weblogger.ui.rendering;
 
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.springframework.mobile.device.DeviceType;
 
 
 /**
@@ -43,7 +43,6 @@ public interface RendererFactory {
      * while trying to find a renderer.  It is up to the factory itself to
      * report any relevant exceptions itself.
      */
-    Renderer getRenderer(Template template,
-		MobileDeviceRepository.DeviceType deviceType);
+    Renderer getRenderer(Template template, DeviceType deviceType);
     
 }

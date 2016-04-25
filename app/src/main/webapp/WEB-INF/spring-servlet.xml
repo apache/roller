@@ -29,6 +29,11 @@
     <!-- needed for @RestController, @RequestMapping and other annotations to take effect -->
     <mvc:annotation-driven/>
 
+    <mvc:interceptors>
+        <!-- Spring Mobile: http://docs.spring.io/spring-mobile/docs/current/reference/html/device.html -->
+        <beans:bean class="org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor" />
+    </mvc:interceptors>
+
     <beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
         <!-- See CommentProcessor for an example of how URLs are combined at the class- and method-level. -->
         <beans:property name="alwaysUseFullPath" value="true"/>
