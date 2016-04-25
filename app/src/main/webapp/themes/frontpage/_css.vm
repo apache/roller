@@ -134,8 +134,6 @@ div.entriesBox {
    border-bottom-style: solid;
    padding: 4px;
 }
-div.entryBoxPinned {
-}
 .entryTitle {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;

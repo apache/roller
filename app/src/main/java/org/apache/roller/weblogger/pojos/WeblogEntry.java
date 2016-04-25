@@ -72,8 +72,6 @@ import javax.persistence.Transient;
 @NamedQueries({
         @NamedQuery(name="WeblogEntry.getByCategory",
                 query="SELECT w FROM WeblogEntry w WHERE w.category = ?1"),
-        @NamedQuery(name="WeblogEntry.getByPinnedToMain&statusOrderByPubTimeDesc",
-                query="SELECT w FROM WeblogEntry w WHERE w.pinnedToMain = ?1 AND w.status = ?2 ORDER BY w.pubTime DESC"),
         @NamedQuery(name="WeblogEntry.getByWeblog&AnchorOrderByPubTimeDesc",
                 query="SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC"),
         @NamedQuery(name="WeblogEntry.getByWeblog&Anchor",
@@ -109,7 +107,6 @@ public class WeblogEntry implements Serializable {
     private Timestamp updateTime;
     private String plugins;
     private Integer commentDays = 7;
-    private Boolean pinnedToMain = Boolean.FALSE;
     private PubStatus status;
     // Using String creatorId instead of User creator; see comments in Weblog class for info
     private String  creatorId        = null;
@@ -187,7 +184,6 @@ public class WeblogEntry implements Serializable {
         this.setStatus(other.getStatus());
         this.setPlugins(other.getPlugins());
         this.setCommentDays(other.getCommentDays());
-        this.setPinnedToMain(other.getPinnedToMain());
         this.setEnclosureUrl(other.getEnclosureUrl());
         this.setEnclosureType(other.getEnclosureType());
         this.setEnclosureLength(other.getEnclosureLength());
@@ -453,18 +449,6 @@ public class WeblogEntry implements Serializable {
         this.commentDays = commentDays;
     }
     
-    /**
-     * True if blog entry should be pinned to the top of the site main blog.
-     */
-    @Basic(optional=false)
-    public Boolean getPinnedToMain() {
-        return pinnedToMain;
-    }
-
-    public void setPinnedToMain(Boolean pinnedToMain) {
-        this.pinnedToMain = pinnedToMain;
-    }
-
     @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogEntryTag.class,
             cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="weblogEntry")
     @OrderBy("name")

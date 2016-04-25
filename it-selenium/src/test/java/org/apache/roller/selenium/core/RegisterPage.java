@@ -39,11 +39,10 @@ public class RegisterPage extends AbstractRollerPage {
         return new WelcomePage(driver);
     }
 
-    public WelcomePage submitUserRegistration(String userAndScreenName, String fullName, String email,
+    public WelcomePage submitUserRegistration(String userAndScreenName, String email,
                                        String password) {
         setUserName(userAndScreenName);
         setScreenName(userAndScreenName);
-        setFullName(fullName);
         setEmail(email);
         setPassword(password);
         setPasswordConfirm(password);
@@ -56,10 +55,6 @@ public class RegisterPage extends AbstractRollerPage {
 
     public void setScreenName(String value) {
         setFieldValue("register_bean_screenName", value);
-    }
-
-    public void setFullName(String value) {
-        setFieldValue("register_bean_fullName", value);
     }
 
     public void setEmail(String value) {

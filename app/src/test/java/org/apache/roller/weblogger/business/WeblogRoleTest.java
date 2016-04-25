@@ -200,9 +200,9 @@ public class WeblogRoleTest extends WebloggerTest {
 
         // assert that user is member of weblog
         assertNotNull(userManager.getWeblogRole(user, testWeblog));
-        List weblogs = weblogManager.getUserWeblogs(getManagedUser(user), true);
-        assertEquals(1, weblogs.size());
-        assertEquals(testWeblog.getId(), ((Weblog)weblogs.get(0)).getId());
+        List<UserWeblogRole> userRoles = userManager.getWeblogRoles(user);
+        assertEquals(1, userRoles.size());
+        assertEquals(testWeblog.getId(), userRoles.get(0).getWeblog().getId());
 
         // assert that website has user
         List users = weblogManager.getWeblogUsers(testWeblog, true);
@@ -213,8 +213,8 @@ public class WeblogRoleTest extends WebloggerTest {
         endSession(true);
 
         //user = userManager.getUser(user.getId());
-        weblogs = weblogManager.getUserWeblogs(user, true);
-        assertEquals(0, weblogs.size());
+        userRoles = userManager.getWeblogRoles(user);
+        assertEquals(0, userRoles.size());
 
         // cleanup the extra test user
         teardownUser(user.getUserName());

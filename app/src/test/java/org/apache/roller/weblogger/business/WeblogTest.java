@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.After;
 import org.junit.Before;
@@ -176,27 +177,11 @@ public class WeblogTest extends WebloggerTest {
             assertNotNull(weblog);
             
             // get all weblogs for user
-            List weblogs1 = weblogManager.getUserWeblogs(getManagedUser(testUser), true);
-            assertEquals(2, weblogs1.size());
-            weblog = (Weblog) weblogs1.get(0);
-            assertNotNull(weblog);           
-            
-            // make sure disabled weblogs are not returned
-            weblog.setVisible(Boolean.FALSE);
-            weblogManager.saveWeblog(weblog);
-            endSession(true);
-            List weblogs2 = weblogManager.getUserWeblogs(getManagedUser(testUser), true);
-            assertEquals(1, weblogs2.size());
-            weblog = (Weblog) weblogs2.get(0);
+            List<UserWeblogRole> userRoles = userManager.getWeblogRoles(testUser);
+            assertEquals(2, userRoles.size());
+            weblog = userRoles.get(0).getWeblog();
             assertNotNull(weblog);
-            
-            // make sure inactive weblogs are not returned
-            weblog.setActive(Boolean.FALSE);
-            weblogManager.saveWeblog(weblog);
-            endSession(true);
-            List weblogs3 = weblogManager.getUserWeblogs(getManagedUser(testUser), true);
-            assertEquals(0, weblogs3.size());
-            
+
         } finally {
             if (testWeblog1 != null) {
                 teardownWeblog(testWeblog1.getId());

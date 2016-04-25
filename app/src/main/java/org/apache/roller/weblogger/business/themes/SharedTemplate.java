@@ -55,7 +55,7 @@ public class SharedTemplate implements Template, Serializable {
         this.id = id;
         SharedTemplateRendition templateRendition = new SharedTemplateRendition();
         templateRendition.setTemplateLanguage(lang);
-        templateRendition.setType(RenditionType.STANDARD);
+        templateRendition.setRenditionType(RenditionType.NORMAL);
         addTemplateRendition(templateRendition);
     }
 
@@ -98,7 +98,7 @@ public class SharedTemplate implements Template, Serializable {
     }
 
     public void addTemplateRendition(SharedTemplateRendition rendition){
-        this.templateRenditionHashMap.put(rendition.getType(), rendition);
+        this.templateRenditionHashMap.put(rendition.getRenditionType(), rendition);
     }
 
     public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
@@ -126,7 +126,7 @@ public class SharedTemplate implements Template, Serializable {
         public Map<RenditionType, SharedTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
             Map<RenditionType, SharedTemplateRendition> map = new HashMap<>();
             for(SharedTemplateRendition item : list.renditions) {
-                map.put(item.getType(), item);
+                map.put(item.getRenditionType(), item);
             }
             return map;
         }

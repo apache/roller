@@ -25,13 +25,13 @@
 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
 User user = mgr.getUserByUserName(auth.getName());
-List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
+List<UserWeblogRole> roles = (user != null) ? mgr.getWeblogRoles(user) : null;
 
 if (user == null) {
     response.sendRedirect(request.getContextPath()+"/tb-ui/register.rol");
-} else if (!user.isGlobalAdmin() && weblogs.size() == 1) {
-    Weblog weblog = (Weblog) weblogs.get(0);
-    response.sendRedirect(request.getContextPath()+"/tb-ui/authoring/entryAdd.rol?weblog="+weblog.getHandle());
+} else if (!user.isGlobalAdmin() && roles != null && roles.size() == 1) {
+    Weblog weblog = roles.get(0).getWeblog();
+    response.sendRedirect(request.getContextPath()+"/tb-ui/authoring/entryAdd.rol?weblog=" + weblog.getHandle());
 } else {
     response.sendRedirect(request.getContextPath()+"/tb-ui/menu.rol");
 }

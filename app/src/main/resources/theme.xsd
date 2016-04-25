@@ -66,10 +66,11 @@
                             </xs:simpleType>
                         </xs:element>
                     </xs:all>
-                    <xs:attribute name="type" default="standard">
+                    <xs:attribute name="type" default="normal">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:enumeration value="standard"/>
+                                <xs:enumeration value="normal"/>
+                                <xs:enumeration value="tablet"/>
                                 <xs:enumeration value="mobile"/>
                             </xs:restriction>
                         </xs:simpleType>

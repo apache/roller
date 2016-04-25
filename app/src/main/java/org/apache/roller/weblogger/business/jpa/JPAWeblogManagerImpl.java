@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +36,6 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -59,7 +57,6 @@ import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -347,9 +344,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Get weblogs of a user
      */
-    public List<Weblog> getWeblogs(
-            Boolean enabled, Boolean active,
-            Date startDate, Date endDate, int offset, int length) throws WebloggerException {
+    public List<Weblog> getWeblogs(Boolean visible, Date startDate, Date endDate,
+                                   int offset, int length) throws WebloggerException {
         
         //if (endDate == null) endDate = new Date();
                       
@@ -376,21 +372,14 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             params.add(size++, end);
             whereClause.append(" w.dateCreated < ?").append(size);
         }
-        if (enabled != null) {
+        if (visible != null) {
             if (whereClause.length() > 0) {
                 whereClause.append(" AND ");
             }
-            params.add(size++, enabled);
+            params.add(size++, visible);
             whereClause.append(" w.visible = ?").append(size);
         }
-        if (active != null) {
-            if (whereClause.length() > 0) {
-                whereClause.append(" AND ");
-            }
-            params.add(size++, active);
-            whereClause.append(" w.active = ?").append(size);
-        }      
-                
+
         whereClause.append(" ORDER BY w.dateCreated DESC");
         
         TypedQuery<Weblog> query = strategy.getDynamicQuery(queryString + whereClause.toString(), Weblog.class);
@@ -407,21 +396,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return query.getResultList();
     }
 
-    public List<Weblog> getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
-        List<Weblog> weblogs = new ArrayList<>();
-        if (user == null) {
-            return weblogs;
-        }
-        List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
-        for (UserWeblogRole role : roles) {
-            Weblog weblog = role.getWeblog();
-            if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.isActive())) {
-                weblogs.add(weblog);
-            }
-        }
-        return weblogs;
-    }
-    
     public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
         List<User> users = new ArrayList<>();
         List<UserWeblogRole> roles = userManager.getWeblogRoles(weblog);
@@ -595,8 +569,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Date startDate = cal.getTime();
 
         TypedQuery<Weblog> query = strategy.getNamedQuery(
-                "Weblog.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                Weblog.class);
+                "Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc", Weblog.class);
         query.setParameter(1, startDate);
         if (offset != 0) {
             query.setFirstResult(offset);

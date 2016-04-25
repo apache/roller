@@ -48,12 +48,12 @@ public class WeblogTemplateRendition implements Serializable, TemplateRendition 
     private WeblogTemplate weblogTemplate = null;
 	// template contents
 	private String template = "";
-	private RenditionType type = null;
+	private RenditionType renditionType = null;
 	private TemplateLanguage templateLanguage = null;
 
-	public WeblogTemplateRendition(WeblogTemplate template, RenditionType type) {
+	public WeblogTemplateRendition(WeblogTemplate template, RenditionType renditionType) {
 		this.weblogTemplate = template;
-		this.type = type;
+		this.renditionType = renditionType;
         weblogTemplate.addTemplateRendition(this);
 	}
 
@@ -90,14 +90,14 @@ public class WeblogTemplateRendition implements Serializable, TemplateRendition 
 		this.template = template;
 	}
 
-	@Basic(optional=false)
+	@Column(name="device", nullable=false)
 	@Enumerated(EnumType.STRING)
-	public RenditionType getType() {
-		return type;
+	public RenditionType getRenditionType() {
+		return renditionType;
 	}
 
-	public void setType(RenditionType type) {
-		this.type = type;
+	public void setRenditionType(RenditionType renditionType) {
+		this.renditionType = renditionType;
 	}
 
 	// ------------------------------------------------------- Good citizenship
@@ -106,7 +106,7 @@ public class WeblogTemplateRendition implements Serializable, TemplateRendition 
         return "{" + getId()
                 + ", " + getWeblogTemplate().getId()
                 + ", [ " + getTemplate()
-                + "] , " + getType() + "}";
+                + "] , " + getRenditionType() + "}";
 	}
 
 	public boolean equals(Object other) {

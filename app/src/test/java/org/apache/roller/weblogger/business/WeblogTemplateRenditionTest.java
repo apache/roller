@@ -98,7 +98,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
 
         //create standard template rendition
         WeblogTemplateRendition standardTemplateCode = new WeblogTemplateRendition(testPage,
-                RenditionType.STANDARD);
+                RenditionType.NORMAL);
         standardTemplateCode.setTemplate("standard.template.code");
         standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
 
@@ -115,7 +115,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
 
         assertNotNull(testPageCheck);
 
-        standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
+        standardCode = testPageCheck.getTemplateRendition(RenditionType.NORMAL);
         assertNotNull(standardCode);
         assertEquals(standardTemplateCode.getTemplate(), standardCode.getTemplate());
 
@@ -125,7 +125,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
 
         // update template Code
         standardCode = null;
-        standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
+        standardCode = testPageCheck.getTemplateRendition(RenditionType.NORMAL);
         standardCode.setTemplate("update.standard.template");
         weblogManager.saveTemplateRendition(standardCode);
 
@@ -138,7 +138,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
 
         // check that update was successful
         standardCode = null;
-        standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
+        standardCode = testPageCheck.getTemplateRendition(RenditionType.NORMAL);
         assertEquals("update.standard.template", standardCode.getTemplate());
 
         mobileCode = null;

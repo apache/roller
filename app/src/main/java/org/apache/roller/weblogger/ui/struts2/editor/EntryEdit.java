@@ -218,7 +218,6 @@ public final class EntryEdit extends UIAction {
                 }
 
                 bean.setCommentDays(entry.getCommentDays());
-                bean.setPinnedToMain(entry.getPinnedToMain());
                 bean.setEnclosureUrl(entry.getEnclosureUrl());
                 bean.setEnclosureType(entry.getEnclosureType());
                 bean.setEnclosureLength(entry.getEnclosureLength());
@@ -340,11 +339,6 @@ public final class EntryEdit extends UIAction {
                 if (weblogEntry.isPublished() && weblogEntry.getPubTime() == null) {
                     // no time specified, use current time
                     weblogEntry.setPubTime(weblogEntry.getUpdateTime());
-                }
-
-                // if user is an admin then apply pinned to main value as well
-                if (getAuthenticatedUser().isGlobalAdmin()) {
-                    weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
                 if (!StringUtils.isEmpty(getBean().getEnclosureUrl())) {

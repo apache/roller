@@ -33,7 +33,7 @@ import java.io.Serializable;
 public class SharedTemplateRendition implements TemplateRendition, Serializable {
 
     private TemplateLanguage templateLanguage = TemplateLanguage.VELOCITY;
-    private RenditionType type = RenditionType.STANDARD;
+    private RenditionType type = RenditionType.NORMAL;
     private String contentsFile = null;
 	private String template = null;
 
@@ -48,12 +48,12 @@ public class SharedTemplateRendition implements TemplateRendition, Serializable 
         this.contentsFile = contentsFile;
     }
 
-	public RenditionType getType() {
+	public RenditionType getRenditionType() {
 		return type;
 	}
 
     @XmlAttribute
-	public void setType(RenditionType type) {
+	public void setRenditionType(RenditionType type) {
 		this.type = type;
 	}
 
@@ -83,7 +83,7 @@ public class SharedTemplateRendition implements TemplateRendition, Serializable 
 		return other == this || new EqualsBuilder()
 				.append(template, other.getTemplate())
                 .append(templateLanguage, other.getTemplateLanguage())
-                .append(type, other.getType())
+                .append(type, other.getRenditionType())
                 .isEquals();
 	}
 

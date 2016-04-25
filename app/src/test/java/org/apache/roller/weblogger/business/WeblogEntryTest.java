@@ -151,7 +151,7 @@ public class WeblogEntryTest extends WebloggerTest {
         
         // make a couple changes
         entry1.setStatus(PubStatus.PUBLISHED);
-        entry1.setPinnedToMain(Boolean.TRUE);
+        entry1.setSearchDescription("sample search description");
         weblogEntryManager.saveWeblogEntry(entry1);
         
         entry2.setStatus(PubStatus.PUBLISHED);
@@ -186,6 +186,7 @@ public class WeblogEntryTest extends WebloggerTest {
         entry = weblogEntryManager.getWeblogEntry(entry1.getId());
         assertNotNull(entry);
         assertEquals(entry1.getAnchor(), entry.getAnchor());
+        assertEquals(entry1.getSearchDescription(), "sample search description");
         
         // get entry by anchor
         entry = weblogEntryManager.getWeblogEntryByAnchor(testWeblog, entry1.getAnchor());
@@ -253,12 +254,6 @@ public class WeblogEntryTest extends WebloggerTest {
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
 
-        // get pinned entries only
-        entries = weblogEntryManager.getWeblogEntriesPinnedToMain(5);
-        assertNotNull(entries);
-        assertEquals(1, entries.size());
-        assertEquals(entry1, entries.get(0));
-        
         // get next entry
         entry = weblogEntryManager.getNextEntry(entry4, null);
         assertNotNull(entry);

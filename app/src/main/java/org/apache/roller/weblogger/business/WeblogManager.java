@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
-import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -79,8 +78,7 @@ public interface WeblogManager {
     
     /**
      * Get websites optionally restricted by user, enabled and active status.
-     * @param enabled   Get all with this enabled state (or null or all)
-     * @param active    Get all with this active state (or null or all)
+     * @param visible   Get all with this visible state (or null or all)
      * @param startDate Restrict to those created after (or null for all)
      * @param endDate   Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
@@ -88,22 +86,12 @@ public interface WeblogManager {
      * @return List of Weblog objects.
      */
     List<Weblog> getWeblogs(
-            Boolean  enabled,
-            Boolean  active,
+            Boolean  visible,
             Date     startDate,
             Date     endDate,
             int      offset,
             int      length)
             throws WebloggerException;
-    
-    
-    /**
-     * Get websites of a user.
-     * @param user        Get all weblogs for this user
-     * @param enabledOnly Include only enabled weblogs?
-     * @return List of Weblog objects.
-     */
-    List<Weblog> getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
     
     
     /**

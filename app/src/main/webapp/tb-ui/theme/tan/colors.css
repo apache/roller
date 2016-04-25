@@ -94,10 +94,6 @@ div.entryBox {
 div.entryTitleBox {
    font-size: medium;
 }
-div.entryBoxPinned {
-   background: #f1ebdf; 
-   border-bottom: 1px #c8af7b solid;
-}
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    color: #ad3537; 
    font-size: medium;

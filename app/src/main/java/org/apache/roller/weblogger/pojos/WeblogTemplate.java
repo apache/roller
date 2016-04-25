@@ -23,8 +23,6 @@ package org.apache.roller.weblogger.pojos;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.themes.SharedTemplate;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -168,7 +166,7 @@ public class WeblogTemplate implements Template, Serializable {
     public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType)
             throws WebloggerException {
         for (WeblogTemplateRendition rnd : templateRenditions) {
-            if (rnd.getType().equals(desiredType)) {
+            if (rnd.getRenditionType().equals(desiredType)) {
                 return rnd;
             }
         }
@@ -177,7 +175,7 @@ public class WeblogTemplate implements Template, Serializable {
 
     public void addTemplateRendition(WeblogTemplateRendition newRendition) {
         if (hasTemplateRendition(newRendition)) {
-            throw new IllegalArgumentException("Rendition type '" + newRendition.getType()
+            throw new IllegalArgumentException("Rendition type '" + newRendition.getRenditionType()
                     + " for template '" + this.getName() + "' already exists.");
         }
         templateRenditions.add(newRendition);
@@ -185,7 +183,7 @@ public class WeblogTemplate implements Template, Serializable {
 
     public boolean hasTemplateRendition(WeblogTemplateRendition proposed) {
         for (WeblogTemplateRendition rnd : templateRenditions) {
-            if(rnd.getType().equals(proposed.getType())) {
+            if(rnd.getRenditionType().equals(proposed.getRenditionType())) {
                 return true;
             }
         }

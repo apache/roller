@@ -57,12 +57,6 @@
     </tr>
 
     <tr>
-        <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-        <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" onkeyup="onChange()" onBlur="this.value=this.value.trim()"/></td>
-        <td class="description"><s:text name="userRegister.tip.fullName" /></td>
-    </tr>
-
-    <tr>
         <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
         <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" onkeyup="onChange()" onBlur="this.value=this.value.trim()"/></td>
         <td class="description"><s:text name="userRegister.tip.email" /></td>

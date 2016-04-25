@@ -122,13 +122,11 @@ div.entryTitleBox {
     margin: 4px 0px 4px 0px;
     font-size: medium;
 }
-div.entryBox, div.entryBoxPinned {
+div.entryBox {
     font-family: Arial, Helvetica, sans-serif;
     border-bottom-width: thin;
     border-bottom-style: solid;
     padding: 3px 0px 3px 0px;
-}
-div.entryBoxPinned {
 }
 .entryTitle {
     font-family: Arial, Helvetica, sans-serif;

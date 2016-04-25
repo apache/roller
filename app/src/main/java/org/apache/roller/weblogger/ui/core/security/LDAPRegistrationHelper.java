@@ -99,7 +99,6 @@ public class LDAPRegistrationHelper {
         ud.setDateCreated(new java.util.Date());
 
         String userName;
-        String fullName = null;
         String email = null;
         String screenName = null;
         String locale = null;
@@ -110,12 +109,11 @@ public class LDAPRegistrationHelper {
             // Try to get SSO data from HttpServletRequest
             userName = getRequestAttribute(request, ldapUidAttribute);
             screenName = getRequestAttribute(request, ldapScreennameAttribute);
-            fullName = getRequestAttribute(request, ldapNameAttribute);
             email = getRequestAttribute(request, ldapEmailAttribute);
             locale = getRequestAttribute(request, ldapLocaleAttribute);
             timezone = getRequestAttribute(request, ldapTimezoneAttribute);
 
-            if (userName == null && fullName == null && screenName == null &&
+            if (userName == null && screenName == null &&
                     email == null && locale == null && timezone == null) {
 
                 log.warn("No Authentication found in SecurityContextHolder and HttpServletRequest.");
@@ -148,7 +146,6 @@ public class LDAPRegistrationHelper {
                 RollerUserDetails rollerDetails = (RollerUserDetails) userDetails;
 
                 screenName = rollerDetails.getScreenName();
-                fullName = rollerDetails.getFullName();
                 email = rollerDetails.getEmailAddress();
                 locale = rollerDetails.getLocale();
                 timezone = rollerDetails.getTimeZone();
@@ -158,7 +155,6 @@ public class LDAPRegistrationHelper {
         ud.setEnabled(enabled ? Boolean.TRUE : Boolean.FALSE);
 
         ud.setUserName(userName);
-        ud.setFullName(fullName);
         ud.setEmailAddress(email);
         ud.setScreenName(screenName);
         if (locale != null) {
@@ -182,7 +178,7 @@ public class LDAPRegistrationHelper {
             return null;
         }
         
-        Object oValue  = null;
+        Object oValue;
         try {
             oValue = attribute.get();
         } catch (NamingException e) {

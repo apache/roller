@@ -146,7 +146,6 @@ public class Register extends UIAction implements ServletRequestAware {
                     bean.setId(fromSSOUser.getId());
                     bean.setUserName(fromSSOUser.getUserName());
                     bean.setScreenName(fromSSOUser.getScreenName());
-                    bean.setFullName(fromSSOUser.getFullName());
                     bean.setEmailAddress(fromSSOUser.getEmailAddress());
                     bean.setLocale(fromSSOUser.getLocale());
                     bean.setTimeZone(fromSSOUser.getTimeZone());
@@ -184,7 +183,6 @@ public class Register extends UIAction implements ServletRequestAware {
                 ud.setId(WebloggerCommon.generateUUID());
                 ud.setUserName(bean.getUserName().trim());
                 ud.setScreenName(bean.getScreenName().trim());
-                ud.setFullName(bean.getFullName().trim());
                 ud.setEmailAddress(bean.getEmailAddress().trim());
                 ud.setLocale(bean.getLocale());
                 ud.setTimeZone(bean.getTimeZone());

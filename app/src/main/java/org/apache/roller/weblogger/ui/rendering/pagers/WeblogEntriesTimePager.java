@@ -205,7 +205,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         } else {
             // make sure offset, maxEntries, and page are valid
             int maxLength = propertiesManager.getIntProperty("site.pages.maxEntries");
-            maxEntries = weblog.getEntryDisplayCount();
+            maxEntries = weblog.getEntriesPerPage();
             if (maxEntries > maxLength) {
                 maxEntries = maxLength;
             }

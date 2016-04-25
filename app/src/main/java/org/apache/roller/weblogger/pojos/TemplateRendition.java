@@ -33,16 +33,10 @@ public interface TemplateRendition {
 
     @XmlType
     @XmlEnum
-    public enum RenditionType {
-        @XmlEnumValue("standard") STANDARD,
+    enum RenditionType {
+        @XmlEnumValue("normal") NORMAL,
+        @XmlEnumValue("tablet") TABLET,
         @XmlEnumValue("mobile") MOBILE;
-
-        public static RenditionType deviceTypeToRenditionType(DeviceType dt) {
-            switch (dt) {
-                case MOBILE: return MOBILE;
-                default: return STANDARD;
-            }
-        }
     }
 
     @XmlType
@@ -65,11 +59,11 @@ public interface TemplateRendition {
 
     TemplateLanguage getTemplateLanguage();
 
-    RenditionType getType();
+    RenditionType getRenditionType();
 
     void setTemplate(String template);
 
     void setTemplateLanguage(TemplateLanguage templateLanguage);
 
-    void setType(RenditionType type);
+    void setRenditionType(RenditionType type);
 }

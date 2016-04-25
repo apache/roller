@@ -76,12 +76,6 @@
             <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
         </tr>
         
-        <tr>
-            <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-            <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="40" onBlur="this.value=this.value.trim()"/></td>
-            <td class="description"><s:text name="userAdmin.tip.fullName" /></td>
-        </tr>
-        
         <s:if test="authMethod == 'DATABASE'">
             <tr>
                 <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>

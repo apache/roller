@@ -24,7 +24,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.User;
@@ -133,7 +132,6 @@ abstract public class WebloggerTest {
         testUser.setPassword("password");
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         testUser.setScreenName(userName);
-        testUser.setFullName("Test User");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
         testUser.setTimeZone("America/Los_Angeles");
