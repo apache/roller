@@ -95,7 +95,7 @@ public class RollerVelocity {
      *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name) {
-        return velocityEngine.getTemplate(name + "|standard");
+        return velocityEngine.getTemplate(name + "|normal");
     }
 
      /**
@@ -113,7 +113,7 @@ public class RollerVelocity {
      *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, String encoding) {
-        return velocityEngine.getTemplate(name + "|standard", encoding);
+        return velocityEngine.getTemplate(name + "|normal", encoding);
     }
 	
     /**

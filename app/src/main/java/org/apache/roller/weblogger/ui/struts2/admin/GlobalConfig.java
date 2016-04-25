@@ -107,7 +107,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         }
         
         try {
-            setWeblogs(weblogManager.getWeblogs(true, null, null, null, 0, -1));
+            setWeblogs(weblogManager.getWeblogs(true, null, null, 0, -1));
         } catch (WebloggerException ex) {
             log.error("Error getting weblogs", ex);
             addError("frontpageConfig.weblogs.error");

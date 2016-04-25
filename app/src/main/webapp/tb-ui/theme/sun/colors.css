@@ -91,9 +91,6 @@ div.entryTitleBox {
 div.entryBox {
    border-bottom: 1px #999999 solid;
 }
-div.entryBoxPinned {
-   border-bottom: 1px grey solid;
-}
 .entryDetails {
     color: #666666;
 }

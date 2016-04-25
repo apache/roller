@@ -73,7 +73,6 @@ public class Profile extends UIAction {
         bean.setId(ud.getId());
         bean.setUserName(ud.getUserName());
         bean.setScreenName(ud.getScreenName());
-        bean.setFullName(ud.getFullName());
         bean.setEmailAddress(ud.getEmailAddress());
         bean.setLocale(ud.getLocale());
         bean.setTimeZone(ud.getTimeZone());
@@ -90,7 +89,6 @@ public class Profile extends UIAction {
 
             // copy updated attributes
             existingUser.setScreenName(bean.getScreenName().trim());
-            existingUser.setFullName(bean.getFullName().trim());
             existingUser.setEmailAddress(bean.getEmailAddress().trim());
             existingUser.setLocale(bean.getLocale());
             existingUser.setTimeZone(bean.getTimeZone());
@@ -129,9 +127,6 @@ public class Profile extends UIAction {
 
         if (StringUtils.isEmpty(bean.getScreenName())) {
             addError("Register.error.screenNameNull");
-        }
-        if (StringUtils.isEmpty(bean.getFullName())) {
-            addError("Register.error.fullNameNull");
         }
         if (StringUtils.isEmpty(bean.getEmailAddress())) {
             addError("Register.error.emailAddressNull");

@@ -65,8 +65,8 @@ import javax.persistence.Transient;
                 query="SELECT COUNT(w) FROM Weblog w"),
         @NamedQuery(name="Weblog.getCountByHandleLike",
                 query="SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
-        @NamedQuery(name="Weblog.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                query="SELECT w FROM Weblog w WHERE w.visible = true AND w.active = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
+        @NamedQuery(name="Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
+                query="SELECT w FROM Weblog w WHERE w.visible = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
         @NamedQuery(name="Weblog.updateDailyHitCountZero",
                 query="UPDATE Weblog w SET w.hitsToday = 0")
 })
@@ -89,12 +89,10 @@ public class Weblog implements Serializable {
     private String  timeZone         = null;
     private String  defaultPlugins   = null;
     private Boolean visible          = Boolean.TRUE;
-    private Boolean active           = Boolean.TRUE;
     private Date    dateCreated      = new java.util.Date();
     private int     defaultCommentDays = -1;
-    private int     entryDisplayCount = 15;
+    private int     entriesPerPage   = 15;
     private Date    lastModified     = new Date();
-    private String  iconPath         = null;
     private String  about            = null;
     /*
      * String creatorId used instead of User object to prevent models from having access to sensitive User
@@ -333,12 +331,10 @@ public class Weblog implements Serializable {
         this.setTimeZone(other.getTimeZone());
         this.setVisible(other.getVisible());
         this.setDateCreated(other.getDateCreated());
-        this.setEntryDisplayCount(other.getEntryDisplayCount());
-        this.setActive(other.isActive());
+        this.setEntriesPerPage(other.getEntriesPerPage());
         this.setLastModified(other.getLastModified());
         this.setWeblogCategories(other.getWeblogCategories());
         this.setAnalyticsCode(other.getAnalyticsCode());
-        this.setIconPath(other.getIconPath());
         this.setTempPreviewWeblog(other.isTempPreviewWeblog());
         this.setBookmarks(other.getBookmarks());
     }
@@ -364,17 +360,17 @@ public class Weblog implements Serializable {
         return TimeZone.getTimeZone(getTimeZone());
     }
 
-    @Column(name="displaycnt", nullable=false)
-    public int getEntryDisplayCount() {
-        return entryDisplayCount;
+    @Basic(optional=false)
+    public int getEntriesPerPage() {
+        return entriesPerPage;
     }
     
-    public void setEntryDisplayCount(int entryDisplayCount) {
-        this.entryDisplayCount = entryDisplayCount;
+    public void setEntriesPerPage(int entriesPerPage) {
+        this.entriesPerPage = entriesPerPage;
     }
     
     /**
-     * If false, weblog will be disabled and hidden from public view.
+     * If false, weblog will be hidden from public view.
      */
     @Basic(optional=false)
     public Boolean getVisible() {
@@ -383,18 +379,6 @@ public class Weblog implements Serializable {
     
     public void setVisible(Boolean visible) {
         this.visible = visible;
-    }
-    
-    /**
-     * If false, weblog will be excluded from community areas (front page & planet page)
-     */
-    @Column(name="isactive", nullable=false)
-    public Boolean isActive() {
-        return active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
     }
     
     /**
@@ -430,18 +414,6 @@ public class Weblog implements Serializable {
     @Transient
     public String getAbsoluteURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, true);
-    }
-
-    /**
-     * The path under the weblog's resources to an icon image.
-     */
-    @Column(name="icon")
-    public String getIconPath() {
-        return iconPath;
-    }
-
-    public void setIconPath(String iconPath) {
-        this.iconPath = iconPath;
     }
 
     public String getAnalyticsCode() {

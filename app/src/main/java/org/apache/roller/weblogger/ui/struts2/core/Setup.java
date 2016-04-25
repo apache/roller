@@ -86,7 +86,7 @@ public class Setup extends UIAction {
     public String execute() {
         
         try {
-            setWeblogs(weblogManager.getWeblogs(true, null, null, null, 0, -1));
+            setWeblogs(weblogManager.getWeblogs(true, null, null, 0, -1));
         } catch (WebloggerException ex) {
             LOG.error("Error getting weblogs", ex);
             addError("frontpageConfig.weblogs.error");

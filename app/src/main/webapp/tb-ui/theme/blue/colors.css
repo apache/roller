@@ -85,10 +85,6 @@ div.entryTitleBox {
    padding: 4px;
    font-size: medium;
 }
-div.entryBoxPinned {
-   background: #e3e3e3; 
-   border-bottom: 1px #573dea solid;
-}
 div.entriesBox {
    background: #e3e3e3;
 }

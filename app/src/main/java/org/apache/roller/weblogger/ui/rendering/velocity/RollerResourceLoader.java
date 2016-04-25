@@ -72,7 +72,7 @@ public class RollerResourceLoader extends ResourceLoader {
 		}
 
 		// theme templates name are <template>|<deviceType>
-		RenditionType renditionType = RenditionType.STANDARD;
+		RenditionType renditionType = RenditionType.NORMAL;
 		if (name.contains("|")) {
 			String[] pair = name.split("\\|");
 			name = pair[0];
@@ -89,9 +89,9 @@ public class RollerResourceLoader extends ResourceLoader {
 			}
 			String contents = "";
 			TemplateRendition templateCode = page.getTemplateRendition(renditionType);
-            if (templateCode == null && renditionType != RenditionType.STANDARD) {
+            if (templateCode == null && renditionType != RenditionType.NORMAL) {
                 // fall back to standard rendition if mobile or other unavailable
-                templateCode = page.getTemplateRendition(RenditionType.STANDARD);
+                templateCode = page.getTemplateRendition(RenditionType.NORMAL);
             }
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();

@@ -49,11 +49,6 @@
     </tr>
     
     <tr>
-        <td class="label"><s:text name="websiteSettings.icon" /></td>
-        <td class="field"><s:textfield name="bean.iconPath" size="40" onBlur="this.value=this.value.trim()"/></td>
-    </tr>
-    
-    <tr>
         <td class="label"><s:text name="websiteSettings.about" /></td>
         <td class="field"><s:textarea name="bean.about" rows="3" cols="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
     </tr>
@@ -67,7 +62,7 @@
     
     <tr>
         <td class="label"><s:text name="websiteSettings.active" /></td>
-        <td class="field"><s:checkbox name="bean.active" /></td>
+        <td class="field"><s:checkbox name="bean.visible" /></td>
     </tr>
     
     <tr>

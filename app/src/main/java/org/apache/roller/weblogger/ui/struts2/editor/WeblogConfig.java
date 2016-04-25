@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -114,10 +113,8 @@ public class WeblogConfig extends UIAction {
         bean.setLocale(currentWeblog.getLocale());
         bean.setTimeZone(currentWeblog.getTimeZone());
         bean.setDefaultPlugins(currentWeblog.getDefaultPlugins());
-        bean.setEntryDisplayCount(currentWeblog.getEntryDisplayCount());
-        bean.setActive(currentWeblog.isActive());
+        bean.setEntriesPerPage(currentWeblog.getEntriesPerPage());
         bean.setAnalyticsCode(currentWeblog.getAnalyticsCode());
-        bean.setIconPath(currentWeblog.getIconPath());
         bean.setAbout(currentWeblog.getAbout());
         return INPUT;
     }
@@ -149,18 +146,10 @@ public class WeblogConfig extends UIAction {
                 weblog.setLocale(bean.getLocale());
                 weblog.setTimeZone(bean.getTimeZone());
                 weblog.setDefaultPlugins(bean.getDefaultPlugins());
-                weblog.setEntryDisplayCount(bean.getEntryDisplayCount());
-                weblog.setActive(bean.isActive());
-                weblog.setIconPath(bean.getIconPath());
+                weblog.setEntriesPerPage(bean.getEntriesPerPage());
                 weblog.setAbout(bean.getAbout());
                 weblog.setAnalyticsCode(bean.getAnalyticsCode());
                 weblog.setDefaultCommentDays(bean.getDefaultCommentDays());
-
-                // ROL-485: comments not allowed on inactive weblogs
-                if(!weblog.isActive()) {
-                    weblog.setAllowComments(Boolean.FALSE);
-                    addMessage("websiteSettings.commentsOffForInactiveWeblog");
-                }
 
                 // save config
                 weblogManager.saveWeblog(weblog);
@@ -191,7 +180,7 @@ public class WeblogConfig extends UIAction {
 
         // make sure user didn't enter an invalid entry display count
         int maxEntries = propertiesManager.getIntProperty("site.pages.maxEntries");
-        if(bean.getEntryDisplayCount() > maxEntries) {
+        if(bean.getEntriesPerPage() > maxEntries) {
             addError("websiteSettings.error.entryDisplayCount");
         }
         

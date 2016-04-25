@@ -247,7 +247,7 @@ public class MailManager {
                     + user.getActivationCode();
             sb.append(MessageFormat.format(
                     resources.getString("user.account.activation.mail.content"),
-                    new Object[] { user.getFullName(), user.getUserName(),
+                    new Object[] { user.getScreenName(), user.getUserName(),
                     activationURL }));
             content = sb.toString();
             

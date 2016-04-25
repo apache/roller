@@ -120,7 +120,6 @@ public class UserEdit extends UIAction {
             bean.setUserName(user.getUserName());
             bean.setPassword(user.getPassword());
             bean.setScreenName(user.getScreenName());
-            bean.setFullName(user.getFullName());
             bean.setEmailAddress(user.getEmailAddress());
             bean.setLocale(user.getLocale());
             bean.setTimeZone(user.getTimeZone());
@@ -148,7 +147,6 @@ public class UserEdit extends UIAction {
         
         if (!hasActionErrors()) {
             user.setScreenName(bean.getScreenName().trim());
-            user.setFullName(bean.getFullName().trim());
             user.setEmailAddress(bean.getEmailAddress().trim());
             user.setLocale(bean.getLocale());
             user.setTimeZone(bean.getTimeZone());
@@ -212,9 +210,6 @@ public class UserEdit extends UIAction {
         }
         if (StringUtils.isEmpty(bean.getScreenName())) {
             addError("Register.error.screenNameNull");
-        }
-        if (StringUtils.isEmpty(bean.getFullName())) {
-            addError("Register.error.fullNameNull");
         }
         if (StringUtils.isEmpty(bean.getEmailAddress())) {
             addError("Register.error.emailAddressNull");

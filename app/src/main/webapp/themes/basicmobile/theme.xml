@@ -18,7 +18,7 @@
         <description>Stylesheet for Basic Mobile theme</description>
         <relativePath>basic-custom.css</relativePath>
         <renditions>
-            <rendition type="standard">
+            <rendition type="normal">
                 <templateLanguage>velocity</templateLanguage>
                 <contentsFile>basic-custom.css</contentsFile>
             </rendition>
@@ -32,7 +32,7 @@
     <template role="weblog">
         <name>Weblog</name>
         <renditions>
-            <rendition type="standard">
+            <rendition type="normal">
                 <templateLanguage>velocity</templateLanguage>
                 <contentsFile>weblog.vm</contentsFile>
             </rendition>
@@ -46,7 +46,7 @@
     <template role="permalink">
         <name>permalink</name>
         <renditions>
-            <rendition type="standard">
+            <rendition type="normal">
                 <contentsFile>permalink.vm</contentsFile>
                 <templateLanguage>velocity</templateLanguage>
             </rendition>
@@ -60,7 +60,7 @@
     <template role="search">
         <name>searchresults</name>
         <renditions>
-            <rendition type="standard">
+            <rendition type="normal">
                 <contentsFile>searchresults.vm</contentsFile>
                 <templateLanguage>velocity</templateLanguage>
             </rendition>
@@ -74,7 +74,7 @@
     <template role="customInternal">
         <name>_day</name>
         <renditions>
-            <rendition type="standard">
+            <rendition type="normal">
                 <templateLanguage>velocity</templateLanguage>
                 <contentsFile>_day.vm</contentsFile>
             </rendition>
@@ -88,7 +88,7 @@
     <template role="customInternal">
         <name>sidebar</name>
         <renditions>
-            <rendition type="standard">
+            <rendition type="normal">
                 <contentsFile>sidebar.vm</contentsFile>
                 <templateLanguage>velocity</templateLanguage>
             </rendition>

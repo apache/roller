@@ -65,11 +65,11 @@ public class ThemeResourceLoader extends ResourceLoader {
             throw new ResourceNotFoundException("Need to specify a template name!");
         }
 
-        RenditionType renditionType = RenditionType.STANDARD;
+        RenditionType renditionType = RenditionType.NORMAL;
         if (name.contains("|")) {
             String[] pair = name.split("\\|");
             name = pair[0];
-            renditionType = RenditionType.deviceTypeToRenditionType(DeviceType.valueOf(pair[1].toUpperCase()));
+            renditionType = RenditionType.valueOf(pair[1].toUpperCase());
         }
 
         try {
@@ -95,10 +95,10 @@ public class ThemeResourceLoader extends ResourceLoader {
 
             if (template.getTemplateRendition(renditionType) != null) {
                 contents = template.getTemplateRendition(renditionType).getTemplate();
-            } else if (renditionType != RenditionType.STANDARD
-                    && template.getTemplateRendition(RenditionType.STANDARD) != null) {
+            } else if (renditionType != RenditionType.NORMAL
+                    && template.getTemplateRendition(RenditionType.NORMAL) != null) {
                 // fall back to standard rendition type if others not defined
-                contents = template.getTemplateRendition(RenditionType.STANDARD).getTemplate();
+                contents = template.getTemplateRendition(RenditionType.NORMAL).getTemplate();
             } else {
                 throw new ResourceNotFoundException("Rendering [" + renditionType.name()
                         + "] of Template [" + split[1] + "] not found.");

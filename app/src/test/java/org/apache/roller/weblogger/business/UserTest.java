@@ -56,7 +56,6 @@ public class UserTest extends WebloggerTest {
         testUser.setUserName("testUser");
         testUser.setPassword("password");
         testUser.setScreenName("Test User Screen Name");
-        testUser.setFullName("Test User");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
         testUser.setTimeZone("America/Los_Angeles");
@@ -79,7 +78,6 @@ public class UserTest extends WebloggerTest {
         
         // modify user and save
         user.setScreenName("testtesttest");
-        user.setFullName("testtesttest");
         userManager.saveUser(user);
         endSession(true);
         
@@ -87,7 +85,6 @@ public class UserTest extends WebloggerTest {
         user = userManager.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals("testtesttest", user.getScreenName());
-        assertEquals("testtesttest", user.getFullName());
 
         // remove test user
         userManager.removeUser(user);

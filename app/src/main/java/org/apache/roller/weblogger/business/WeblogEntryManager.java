@@ -107,13 +107,6 @@ public interface WeblogEntryManager {
       
     
     /**
-     * Get specified number of most recent pinned and published Weblog Entries.
-     * @param max Maximum number to return.
-     * @return Collection of WeblogEntry objects.
-     */
-    List<WeblogEntry> getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
-
-    /**
      * Save comment.
      * @param refreshWeblog true if weblog should be marked for cache update, i.e., likely
      *                      rendering change to accommodate new or removed comment, vs. one

@@ -79,7 +79,6 @@ public class User implements Serializable {
     private String  password;
     private GlobalRole globalRole;
     private String  screenName;
-    private String  fullName;
     private String  emailAddress;
     private Date    dateCreated;
     private String  locale;
@@ -98,7 +97,6 @@ public class User implements Serializable {
     public User(String userName,
             String password,
             GlobalRole globalRole,
-            String fullName,
             String emailAddress,
             String locale, String timeZone,
             Date dateCreated,
@@ -107,7 +105,6 @@ public class User implements Serializable {
         this.userName = userName;
         this.password = password;
         this.globalRole = globalRole;
-        this.fullName = fullName;
         this.emailAddress = emailAddress;
         this.dateCreated = (Date)dateCreated.clone();
         this.locale = locale;
@@ -200,15 +197,6 @@ public class User implements Serializable {
     }
 
     @Basic(optional=false)
-    public String getFullName() {
-        return this.fullName;
-    }
-    
-    public void setFullName( String fullName ) {
-        this.fullName = fullName;
-    }
-
-    @Basic(optional=false)
     public String getEmailAddress() {
         return this.emailAddress;
     }
@@ -277,7 +265,7 @@ public class User implements Serializable {
     public String toString() {
         String stringVal = "{" + getId();
         stringVal += ", " + getUserName();
-        stringVal += ", " + getFullName();
+        stringVal += ", " + getScreenName();
         stringVal += ", " + getGlobalRole();
         stringVal += ", " + getEmailAddress();
         stringVal += ", " + getDateCreated();

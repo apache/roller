@@ -48,7 +48,7 @@ public class VelocityRendererFactory implements RendererFactory {
 
         // nothing we can do with null values
         try {
-            tr = template.getTemplateRendition(RenditionType.STANDARD);
+            tr = template.getTemplateRendition(RenditionType.NORMAL);
         } catch (WebloggerException e) {
             return null;
         }

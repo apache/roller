@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
@@ -209,7 +208,7 @@ public class SiteModel implements Model {
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
         try {            
-            List<Weblog> weblogs = weblogManager.getWeblogs(true, true, startDate, null, 0, length);
+            List<Weblog> weblogs = weblogManager.getWeblogs(true, startDate, null, 0, length);
             for (Weblog weblog : weblogs) {
                 results.add(weblog);
             }
@@ -244,23 +243,5 @@ public class SiteModel implements Model {
         
         return results;
     }
-    
-    
-    /**
-     * Get pinned entries.
-     * @param length    Max number of results to return
-     */
-    public List<WeblogEntry> getPinnedWeblogEntries(int length) {
-        List<WeblogEntry> results = new ArrayList<>();
-        try {            
-            List<WeblogEntry> weblogEntries = weblogEntryManager.getWeblogEntriesPinnedToMain(length);
-            for (WeblogEntry entry : weblogEntries) {
-                results.add(entry);
-            }
-        } catch (Exception e) {
-            log.error("ERROR: fetching pinned weblog entries", e);
-        }
-        return results;
-    }
-        
+
 }

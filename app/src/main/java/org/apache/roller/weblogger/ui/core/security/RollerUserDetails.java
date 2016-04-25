@@ -37,8 +37,6 @@ public interface RollerUserDetails extends UserDetails {
   
     String getScreenName();
 
-    String getFullName();
-
     String getEmailAddress();
   
 }

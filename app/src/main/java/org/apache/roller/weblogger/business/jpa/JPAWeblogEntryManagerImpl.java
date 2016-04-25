@@ -60,12 +60,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TimeZone;
 
-/**
- * JPAWeblogManagerImpl.java
- *
- * Created on May 31, 2006, 4:08 PM
- *
- */
 public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     private static final Log LOG = LogFactory.getLog(JPAWeblogEntryManagerImpl.class);
@@ -333,21 +327,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             query.setMaxResults(wesc.getMaxResults());
         }
 
-        return query.getResultList();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public List<WeblogEntry> getWeblogEntriesPinnedToMain(Integer max)
-            throws WebloggerException {
-        TypedQuery<WeblogEntry> query = strategy.getNamedQuery(
-                "WeblogEntry.getByPinnedToMain&statusOrderByPubTimeDesc", WeblogEntry.class);
-        query.setParameter(1, Boolean.TRUE);
-        query.setParameter(2, PubStatus.PUBLISHED);
-        if (max != null) {
-            query.setMaxResults(max);
-        }
         return query.getResultList();
     }
 

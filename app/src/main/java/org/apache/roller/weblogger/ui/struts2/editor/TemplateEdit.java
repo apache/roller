@@ -130,7 +130,7 @@ public class TemplateEdit extends UIAction {
             bean.setRelativePath(template.getRelativePath());
             bean.setWeblog(getActionWeblog());
 
-            WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(RenditionType.STANDARD);
+            WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(RenditionType.NORMAL);
             if (maybeTemplate != null) {
                 bean.setContentsStandard(maybeTemplate.getTemplate());
             } else {
@@ -184,7 +184,7 @@ public class TemplateEdit extends UIAction {
                 weblogManager.saveTemplate(template);
                 log.debug("Saved template: " + template.getId());
 
-                WeblogTemplateRendition wtr = template.getTemplateRendition(RenditionType.STANDARD);
+                WeblogTemplateRendition wtr = template.getTemplateRendition(RenditionType.NORMAL);
 
                 if (wtr != null) {
                     // if we have a template, then set it
@@ -192,7 +192,7 @@ public class TemplateEdit extends UIAction {
                     weblogManager.saveTemplateRendition(wtr);
                 } else {
                     // otherwise create it, then set it
-                    wtr = new WeblogTemplateRendition(template, RenditionType.STANDARD);
+                    wtr = new WeblogTemplateRendition(template, RenditionType.NORMAL);
                     wtr.setTemplate(bean.getContentsStandard());
                     wtr.setTemplateLanguage(TemplateLanguage.VELOCITY);
                     weblogManager.saveTemplateRendition(wtr);

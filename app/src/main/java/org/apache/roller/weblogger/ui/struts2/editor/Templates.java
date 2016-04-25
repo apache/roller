@@ -149,7 +149,7 @@ public class Templates extends UIAction {
 
                 // Create weblog template codes for available types.
                 WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
-                        newTemplate, RenditionType.STANDARD);
+                        newTemplate, RenditionType.NORMAL);
 				if (newTmplAction != ComponentType.STYLESHEET && newTmplAction != ComponentType.JAVASCRIPT) {
 					standardRendition.setTemplate(getText("templateEdit.newTemplateContent"));
 				}

@@ -238,9 +238,7 @@ public class MembersInvite extends UIAction {
                     for (SafeUser user : users) {
                         UserData ud = new UserData();
                         ud.setScreenName(user.getScreenName());
-                        if (authenticatedUser.isGlobalAdmin()) {
-                            ud.setAdditionalInfo(user.getEmailAddress());
-                        }
+                        ud.setAdditionalInfo(user.getEmailAddress());
                         userDataList.add(ud);
                     }
                     return userDataList;

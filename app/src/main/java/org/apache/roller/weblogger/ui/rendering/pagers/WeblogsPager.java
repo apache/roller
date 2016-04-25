@@ -121,7 +121,7 @@ public class WeblogsPager extends AbstractPager {
             try {
                 List<Weblog> rawWeblogs;
                 if (letter == null) {
-                    rawWeblogs = weblogManager.getWeblogs(Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
+                    rawWeblogs = weblogManager.getWeblogs(Boolean.TRUE, startDate, null, offset, length + 1);
                 } else {
                     rawWeblogs = weblogManager.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }

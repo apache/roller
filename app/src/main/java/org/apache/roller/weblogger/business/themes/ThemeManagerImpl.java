@@ -185,7 +185,7 @@ public class ThemeManagerImpl implements ThemeManager {
 			if (templateCode != null) {
 				// See if we already have some code for this template already (eg previous theme)
 				WeblogTemplateRendition weblogTemplateCode = new WeblogTemplateRendition(weblogTemplate, type);
-				weblogTemplateCode.setType(type);
+				weblogTemplateCode.setRenditionType(type);
 				weblogTemplateCode.setTemplate(templateCode.getTemplate());
 				weblogTemplateCode.setTemplateLanguage(templateCode.getTemplateLanguage());
 			}
@@ -276,7 +276,7 @@ public class ThemeManagerImpl implements ThemeManager {
             }
 
             // get the template's available renditions
-            SharedTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.STANDARD);
+            SharedTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.NORMAL);
 
             if (standardRendition == null) {
                 throw new WebloggerException("Cannot retrieve required standard rendition for template " + template.getName());
@@ -298,7 +298,7 @@ public class ThemeManagerImpl implements ThemeManager {
                     mobileRendition = new SharedTemplateRendition();
                     mobileRendition.setContentsFile(standardRendition.getContentsFile());
                     mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
-                    mobileRendition.setType(RenditionType.MOBILE);
+                    mobileRendition.setRenditionType(RenditionType.MOBILE);
                 }
 
                 loadRenditionSource(sharedTheme.getThemeDir(), mobileRendition);
