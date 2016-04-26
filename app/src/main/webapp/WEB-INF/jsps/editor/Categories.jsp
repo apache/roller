@@ -20,18 +20,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- JavaScript for categories table --%> 
-<script>
-function onMove()
-{
-    if ( confirm("<s:text name='categoriesForm.move.confirm' />") ) 
-    {
-        document.categories.method.value = "moveSelected";
-        document.categories.submit();
-    }
-}
-</script>
-
+<%-- JavaScript for categories table --%>
 <p class="subtitle">
     <s:text name="categoriesForm.subtitle" >
         <s:param value="weblog" />
@@ -43,7 +32,7 @@ function onMove()
 
 
 <%-- Form is a table of categories each with checkbox --%>
-<s:form action="categories!move">
+<s:form action="categories">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="categoryId" /> 

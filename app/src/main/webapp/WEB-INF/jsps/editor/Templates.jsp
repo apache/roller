@@ -16,6 +16,35 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+
+<script>
+  $(function() {
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:310,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.templatesForm.action='<s:url action="templates!remove" />';
+          document.templatesForm.submit();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+    $(".delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').dialog('open');
+    });
+  });
+</script>
 
 <p class="subtitle">
    <s:text name="templates.subtitle" >
@@ -26,7 +55,7 @@
    <s:text name="templates.tip" />
 </p>
 
-<s:form action="templatesRemove">
+<s:form id="templatesForm" action="templates!cancel">
 <s:hidden name="salt" />
 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
@@ -111,7 +140,7 @@
 
 <s:if test="!templates.isEmpty">
 	<div class="control">
-		<s:submit value="%{getText('templates.deleteselected')}" />
+		<s:submit class="delete-link" value="%{getText('templates.deleteselected')}" />
 	</div>
 </s:if>
 
@@ -120,5 +149,14 @@ function launchPage(url) {
     window.open(url, '_blank');
 }
 </script>
-
 </s:form>
+
+<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="templateRemoves.youSure" />
+	<br/>
+	<br/>
+	<span class="warning">
+		<s:text name="templateRemoves.youSureWarning" />
+	</span>
+  </p>
+</div>

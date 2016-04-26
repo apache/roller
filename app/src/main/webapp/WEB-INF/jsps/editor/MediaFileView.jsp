@@ -20,10 +20,74 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-
-<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
+<script>
+  $(function() {
+    $(".delete-file-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete-file').dialog('open');
+    });
+    $(".delete-folder-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete-folder').dialog('open');
+    });
+    $(".move-file-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-move-file').dialog('open');
+    });
+
+    $("#confirm-delete-file").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:200,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteSelected" />';
+          document.mediaFileViewForm.submit();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+    $("#confirm-delete-folder").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:200,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteFolder" />';
+          document.mediaFileViewForm.submit();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+    $("#confirm-move-file").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:200,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.yes'/>": function() {
+          document.mediaFileViewForm.action='<s:url action="mediaFileView!moveSelected" />';
+          document.mediaFileViewForm.submit();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
+</script>
 
 <style>
     .mediaObject {
@@ -74,27 +138,6 @@
         }
     }
 
-    function onDeleteSelected() {
-        if ( confirm("<s:text name='mediaFile.delete.confirm' />") ) {
-            document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteSelected" />';
-            document.mediaFileViewForm.submit();
-        }
-    }
-
-    function onDeleteFolder() {
-        if (confirm("<s:text name='mediaFile.deleteFolder.confirm' />")) {
-            document.bookmarks.action='<s:url action="mediaFileView!deleteFolder" />';
-            document.bookmarks.submit();
-        }
-    }
-
-    function onMoveSelected() {
-        if ( confirm("<s:text name='mediaFile.move.confirm' />") ) {
-            document.mediaFileViewForm.action='<s:url action="mediaFileView!moveSelected" />';
-            document.mediaFileViewForm.submit();
-        }
-    }
-    
     function onView() {
         document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
         document.mediaFileViewForm.submit();
@@ -257,10 +300,10 @@
                    value='<s:text name="generic.toggle" />' onclick="onToggle()" />
 
                 <input id="deleteButton" type="button"
-                   value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
+                   value='<s:text name="mediaFileView.deleteSelected" />' class="delete-file-link"/>
 
                 <input id="moveButton" type="button"
-                   value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
+                   value='<s:text name="mediaFileView.moveSelected" />' class="move-file-link"/>
 
                 <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
             </span>
@@ -268,12 +311,24 @@
 
         <s:if test="currentDirectory.name != 'default'">
             <span style="float:right;">
-                <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
+                <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" class="delete-folder-link"/>
             </span>
         </s:if>
     </div>
 
 </s:form>
+
+<div id="confirm-delete-file" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.delete.confirm' /></p>
+</div>
+
+<div id="confirm-delete-folder" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.deleteFolder.confirm' /></p>
+</div>
+
+<div id="confirm-move-file" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.move.confirm' /></p>
+</div>
 
 </s:if>
 

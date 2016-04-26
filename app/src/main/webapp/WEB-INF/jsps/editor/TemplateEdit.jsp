@@ -17,6 +17,37 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+
+
+<script>
+  $(function() {
+    $(".delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').dialog('open');
+    });
+
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:200,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.templateEdit.action = "<s:url action='templateEdit!delete' />";
+          document.templateEdit.submit();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+    $( "#template-code-tabs" ).tabs();
+  });
+</script>
 
 <p class="subtitle">
    <s:text name="templateEdit.subtitle" >
@@ -126,30 +157,17 @@
                 <input type="button" value='<s:text name="generic.cancel"/>'
                     onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
                 <s:if test="template != null && template.id != null">
-                    <s:submit value="%{getText('templateEdit.delete')}" onclick="deleteTemplate();return false;" />
+                    <s:submit class="delete-link" value="%{getText('templateEdit.delete')}"/>
                 </s:if>
             </td>
         </tr>
     </table>
 
-  
-    <script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
-    <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
-
-    <script>
-        function deleteTemplate() {
-            if (window.confirm('<s:text name="templateEdit.confirmDelete"/>')) {
-                document.templateEdit.action = "<s:url action='templateEdit!delete' />";
-                document.templateEdit.submit();
-            }
-        };
-        $(function() {
-            $( "#template-code-tabs" ).tabs();
-        });
-    </script>
-
 </s:form>
 
+<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="templateEdit.confirmDelete"/></p>
+</div>
 
 <script>
 var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';

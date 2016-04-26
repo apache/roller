@@ -19,22 +19,6 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-        
-<script>
-// <!--  
-function save() {
-    radios = document.getElementsByTagName("input");
-    var removing = false;
-    for (var i=0; i<radios.length; i++) {
-        if (radios[i].value == -1 && radios[i].checked) {
-            removing = true;
-        }
-    }
-    if (removing && !confirm("<s:text name='memberPermissions.confirmRemove' />")) return;
-    document.memberPermissionsForm.submit();
-}
-// -->
-</script>
 
 <p class="subtitle">
     <s:text name="memberPermissions.subtitle" >

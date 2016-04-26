@@ -33,15 +33,15 @@
     <task:scheduled-tasks scheduler="blogTaskScheduler">
         <!-- uncomment/comment and configure frequency of each task as desired -->
         <!-- midnight every day -->
-        <task:scheduled ref="weblogManager" method="resetAllHitCounts" cron="0 0 * * * *"/>
+        <task:scheduled ref="weblogManager" method="resetAllHitCounts" cron="0 0 0 * * *"/>
         <!-- every 4 hours -->
-        <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0/4 * * * *"/>
+        <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0 0/4 * * *"/>
         <!-- Uncomment below to create an "all" planet consisting of all server blogs.  An alternative
              can be had without storing entries additionally in the planet tables by viewing the RSS feed
              on the frontpage-designated blog, if the latter created. -->
-        <!--task:scheduled ref="planetManager" method="syncAllBlogsPlanet" cron="0 0/4 * * * *"/-->
+        <!--task:scheduled ref="planetManager" method="syncAllBlogsPlanet" cron="0 0 0/4 * * *"/-->
         <!-- hourly -->
-        <task:scheduled ref="planetManager" method="updateSubscriptions" cron="0 * * * * *"/>
+        <task:scheduled ref="planetManager" method="updateSubscriptions" cron="0 0 * * * *"/>
         <!-- every 15 mins, one-time startup 5 min delay -->
         <task:scheduled ref="pingTargetManager" method="sendPings" initial-delay="300000" fixed-delay="900000"/>
         <!-- every 5 mins, one-time startup 5 min delay -->

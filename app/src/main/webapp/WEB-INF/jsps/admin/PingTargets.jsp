@@ -16,6 +16,34 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+
+<script>
+  $(function() {
+    $(".delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').data('target',  $(this).attr("data-idref")).dialog('open');
+    });
+
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:200,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.location.href='<s:url action="commonPingTargets!delete" />?pingTargetId='+encodeURIComponent($(this).data('target'));
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
+</script>
 
 <p class="subtitle">
     <s:text name="commonPingTargets.subtitle" />
@@ -79,23 +107,24 @@
             <s:param name="bean.id" value="#pingTarget.id" />
         </s:url>
         <s:a href="%{editPing}">
-            <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="<s:text name="generic.edit" />" />
+            <img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="<s:text name="generic.edit" />" />
         </s:a>
     </td>
     
     <td class="rollertable" align="center">
-        <s:url var="removePing" action="commonPingTargets!deleteConfirm">
-            <s:param name="pingTargetId" value="#pingTarget.id" />
-        </s:url>
-        <s:a href="%{removePing}">
-            <img src='<c:url value="/images/delete.png"/>' border="0" alt="<s:text name="pingTarget.remove" />" />
-        </s:a>
+        <a class="delete-link" data-idref='<s:property value="#pingTarget.id"/>'>
+            <img src='<s:url value="/images/delete.png"/>' border="0" alt="<s:text name="pingTarget.remove" />" />
+        </a>
     </td>
     
     </tr>
 </s:iterator>
 
 </table>
+
+<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="pingTarget.confirmCommonRemove"/></p>
+</div>
 
 <div style="padding: 4px; font-weight: bold;">
     <s:url var="addPing" action="commonPingTargetAdd">
