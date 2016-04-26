@@ -14,9 +14,12 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
 
 <s:if test="actionName == 'comments'">
     <s:set var="mainAction">comments</s:set>
@@ -48,12 +51,6 @@
         });
     });
 </s:if>
-    function bulkDelete() {
-        if (window.confirm('<s:text name="commentManagement.confirmBulkDelete"><s:param value="bulkDeleteCount" /></s:text>')) {
-            document.commentQueryForm.method.value = "bulkDelete";
-            document.commentQueryForm.submit();
-        }
-    }
 </script>
 
 <p class="subtitle">
@@ -170,22 +167,6 @@
             <s:else><br /></s:else>
 
         </div> <%-- class="tablenav" --%>
-
-
-<%-- ============================================================= --%>
-<%-- Bulk comment delete link --%>
-<%-- ============================================================= --%>
-
-        <s:if test="bulkDeleteCount > 0">
-            <p>
-                <s:text name="commentManagement.bulkDeletePrompt1">
-                    <s:param value="bulkDeleteCount" />
-                </s:text>
-                <a href="#" onclick="bulkDelete()">
-                    <s:text name="commentManagement.bulkDeletePrompt2" />
-                </a>
-            </p>
-        </s:if>
 
 
         <table class="rollertable" width="100%">

@@ -143,23 +143,6 @@ public class PingTargets extends UIAction {
     }
 
     /**
-     * Delete a ping target (load delete confirmation view).
-     */
-    public String deleteConfirm() {
-
-        if(getPingTarget() != null) {
-            setPageTitle("pingTarget.confirmRemoveTitle");
-
-            return "confirm";
-        } else {
-            addError("pingTarget.notFound",getPingTargetId());
-        }
-
-        return LIST;
-    }
-
-
-    /**
      * Delete a ping target.
      */
     public String delete() {

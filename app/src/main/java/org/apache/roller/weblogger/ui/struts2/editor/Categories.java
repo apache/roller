@@ -74,10 +74,6 @@ public class Categories extends UIAction {
 		return LIST;
 	}
 
-	public String move() {
-		return execute();
-	}
-
 	public List<WeblogCategory> getAllCategories() {
 		return allCategories;
 	}

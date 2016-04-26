@@ -29,8 +29,10 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -67,6 +69,15 @@ public class Templates extends UIAction {
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;
 	private ComponentType newTmplAction = null;
+
+	// List of selected templates (to remove)
+	private String[] idSelections = null;
+
+	private JPAPersistenceStrategy persistenceStrategy = null;
+
+	public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+		this.persistenceStrategy = persistenceStrategy;
+	}
 
     private WeblogManager weblogManager;
 
@@ -173,6 +184,34 @@ public class Templates extends UIAction {
 		return execute();
 	}
 
+	/**
+	 * Remove Selected templates
+	 */
+	public String remove() {
+		if (getIdSelections() != null) {
+			WeblogTemplate template;
+
+			try {
+				for (String id : idSelections) {
+					template = weblogManager.getTemplate(id);
+					if (template != null) {
+						weblogManager.removeTemplate(template);
+					}
+				}
+
+				// Refresh weblog
+				Weblog weblog = getActionWeblog();
+				weblogManager.saveWeblog(weblog);
+				persistenceStrategy.flushAndInvalidateWeblog(weblog);
+
+			} catch (Exception e) {
+				log.error("Error deleting templates for weblog - " + getActionWeblog().getHandle(), e);
+				addError("error.unexpected");
+			}
+		}
+        return execute();
+	}
+
 	// validation when adding a new template
 	private void myValidate() {
 
@@ -240,4 +279,19 @@ public class Templates extends UIAction {
         ResourceBundle rb = ResourceBundle.getBundle("ApplicationResources");
         return rb.getString(desiredType.getDescriptionProperty());
     }
+
+	/**
+	 * Select check boxes for deleting records
+	 */
+	public String[] getIdSelections() {
+		return idSelections;
+	}
+
+	/**
+	 * Select check boxes for deleting records
+	 */
+	public void setIdSelections(String[] idSelections) {
+		this.idSelections = idSelections;
+	}
+
 }

@@ -19,16 +19,33 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
-<%-- JavaScript for bookmarks table --%>
 <script>
-function onDelete()
-{
-    if ( confirm("<s:text name='bookmarksForm.delete.confirm' />") ) 
-    {
-        document.bookmarks.submit();
-    }
-}
+  $(function() {
+    $(".delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').dialog('open');
+    });
+
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:200,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.bookmarks.submit();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
 </script>
 
 <p class="subtitle">
@@ -123,8 +140,12 @@ function onDelete()
 
         <s:if test="weblogObj.bookmarks.size > 0">
                 <%-- Delete-selected button --%>
-                <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete();return false;" />
+                <input type="button" value="<s:text name='bookmarksForm.delete'/>" class="delete-link" />
         </s:if>
     </div>
 
 </s:form>
+
+<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='bookmarksForm.delete.confirm' /></p>
+</div>

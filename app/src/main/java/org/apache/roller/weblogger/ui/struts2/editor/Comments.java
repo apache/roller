@@ -132,10 +132,6 @@ public class Comments extends UIAction {
     // or global comment management
     private WeblogEntry queryEntry = null;
 
-    // indicates number of comments that would be deleted by bulk removal
-    // a non-zero value here indicates bulk removal is a valid option
-    private int bulkDeleteCount = 0;
-
     public Comments() {
         this.pageTitle = "commentManagement.title";
     }
@@ -249,25 +245,14 @@ public class Comments extends UIAction {
         // load bean data using comments list
         getBean().loadCheckboxes(getPager().getItems());
 
-        try {
-            CommentSearchCriteria csc = new CommentSearchCriteria();
-            if (!isGlobalCommentManagement()) {
-                csc.setWeblog(getActionWeblog());
-            }
-            csc.setSearchText(getBean().getSearchString());
-            csc.setStartDate(getBean().getStartDate());
-            csc.setEndDate(getBean().getEndDate());
-            csc.setStatus(getBean().getStatus());
-
-            List<WeblogEntryComment> allMatchingComments = weblogEntryManager.getComments(csc);
-            if (allMatchingComments.size() > COUNT) {
-                setBulkDeleteCount(allMatchingComments.size());
-            }
-
-        } catch (WebloggerException ex) {
-            log.error("Error looking up comments", ex);
-            addError("commentManagement.lookupError");
+        CommentSearchCriteria csc = new CommentSearchCriteria();
+        if (!isGlobalCommentManagement()) {
+            csc.setWeblog(getActionWeblog());
         }
+        csc.setSearchText(getBean().getSearchString());
+        csc.setStartDate(getBean().getStartDate());
+        csc.setEndDate(getBean().getEndDate());
+        csc.setStatus(getBean().getStatus());
 
         return LIST;
     }
@@ -447,14 +432,6 @@ public class Comments extends UIAction {
 
     public void setBean(CommentsBean bean) {
         this.bean = bean;
-    }
-
-    public int getBulkDeleteCount() {
-        return bulkDeleteCount;
-    }
-
-    public void setBulkDeleteCount(int bulkDeleteCount) {
-        this.bulkDeleteCount = bulkDeleteCount;
     }
 
     public WeblogEntryComment getFirstComment() {

@@ -19,13 +19,33 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
 <script>
-function confirmSubDelete(subUrl) {
-  if (window.confirm('Are you sure you want to remove this subscription?')) {
-    document.location.href='<s:url action="planetSubscriptions!delete" />?planetHandle=<s:property value="planetHandle"/>&subUrl='+encodeURIComponent(subUrl);
-  }
-}
+  $(function() {
+    $(".delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').data('sub',  $(this).attr("data-feedURL")).dialog('open');
+    });
+
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: false,
+      height:170,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.location.href='<s:url action="planetSubscriptions!delete" />?planetHandle=<s:property value="planetHandle"/>&subUrl='+encodeURIComponent($(this).data('sub'));
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
 </script>
         
       
@@ -86,7 +106,7 @@ function confirmSubDelete(subUrl) {
         
         <td class="rollertable">
             <img src='<s:url value="/images/delete.png"/>' />
-            <a href="javascript: void(0);" onclick="confirmSubDelete('<s:property value="feedURL"/>')">
+            <a class="delete-link" data-feedURL="<s:property value='feedURL'/>">
                 <s:text name="generic.delete"/>
             </a>
         </td>       
@@ -94,3 +114,7 @@ function confirmSubDelete(subUrl) {
         </tr>
     </s:iterator>
 </table>
+
+<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="planetSubscriptions.delete.confirm"/></p>
+</div>
