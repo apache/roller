@@ -104,7 +104,7 @@ public class MainMenu extends UIAction {
             log.error("Error handling invitation accept weblog id - "+getInviteId(), ex);
             addError("yourWebsites.permNotFound");
         }
-        return SUCCESS;
+        return LIST;
     }
 
     public String decline() {
@@ -119,7 +119,7 @@ public class MainMenu extends UIAction {
             log.error("Error handling invitation decline weblog id - "+getInviteId(), ex);
             addError("yourWebsites.permNotFound");
         }
-        return SUCCESS;
+        return LIST;
     }
 
     public List<UserWeblogRole> getExistingPermissions() {
@@ -149,4 +149,20 @@ public class MainMenu extends UIAction {
     public boolean isUserIsAdmin() {
         return getAuthenticatedUser().isGlobalAdmin();
     }
+
+    /**
+     * Resign from a weblog
+     */
+    public String resign() {
+        try {
+            userManager.revokeWeblogRole(getAuthenticatedUser(), getActionWeblog());
+            WebloggerFactory.flush();
+            addMessage("yourWebsites.resigned", getWeblog());
+        } catch (WebloggerException ex) {
+            log.error("Error doing weblog resign - " + getActionWeblog().getHandle(), ex);
+            addError("Resignation failed - check system logs");
+        }
+        return LIST;
+    }
+
 }

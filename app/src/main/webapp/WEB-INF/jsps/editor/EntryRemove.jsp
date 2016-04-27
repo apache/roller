@@ -29,11 +29,11 @@
 
 <%-- Differences between deletions from EntryEdit and Entries views --%>
 <s:if test="actionName == 'entryRemove'">
-    <s:set var="deleteAction">entryRemove!remove</s:set>
+    <s:set var="deleteAction">entryEdit!remove</s:set>
     <s:set var="cancelAction">entryEdit</s:set>
 </s:if>
 <s:else>
-    <s:set var="deleteAction">entryRemoveViaList!remove</s:set>
+    <s:set var="deleteAction">entryEdit!removeViaList</s:set>
     <s:set var="cancelAction">entries</s:set>
 </s:else>
 
@@ -43,7 +43,8 @@
         <s:form action="%{#deleteAction}">
             <s:hidden name="salt" />
             <s:hidden name="weblog" />
-            <s:hidden name="removeId" />
+            <s:hidden name="bean.id" value="%{removeEntry.id}"/>
+            <%--s:hidden name="removeId" /--%>
             <s:submit value="%{getText('generic.yes')}" />
         </s:form>
     </td>

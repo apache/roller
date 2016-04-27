@@ -195,8 +195,26 @@ public class WeblogConfig extends UIAction {
             addError("websiteSettings.error.processingBlacklist", e.getMessage());
         }
     }
-    
-    
+
+    /**
+     * Remove a weblog.
+     */
+    public String remove() {
+
+        try {
+            // remove website
+            weblogManager.removeWeblog(getActionWeblog());
+            persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
+            addMessage("websiteRemove.success", getActionWeblog().getName());
+            return SUCCESS;
+        } catch (Exception ex) {
+            log.error("Error removing weblog - " + getActionWeblog().getHandle(), ex);
+            addError("websiteRemove.error", getActionWeblog().getName());
+        }
+
+        return INPUT;
+    }
+
     public Weblog getBean() {
         return bean;
     }

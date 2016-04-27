@@ -28,6 +28,7 @@
 
 <%-- PROMPT: You have invitation(s) --%>
 <s:elseif test="!pendingPermissions.isEmpty">
+
     <p><s:text name="yourWebsites.invitationsPrompt" /></p>
     
     <s:iterator id="invite" value="pendingPermissions">
@@ -60,6 +61,35 @@
 <%-- if we have weblogs, then loop through and list them --%>
 <s:if test="!existingPermissions.isEmpty">
     
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+
+<script>
+  $(function() {
+    $("#confirm-resign").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:170,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.yes'/>": function() {
+          document.location.href='<s:url action="menu!resign" />?weblog='+encodeURIComponent($(this).data('weblog'));
+          $( this ).dialog( "close" );
+        },
+        "<s:text name='generic.no'/>": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+    $(".resign-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-resign').data('weblog', $(this).attr("data-weblog")).dialog('open');
+    });
+  });
+</script>
+
     <s:iterator id="perms" value="existingPermissions">
 
         <div class="yourWeblogBox">  
@@ -163,8 +193,8 @@
                           <s:url action="memberResign" namespace="/tb-ui/authoring" id="resignWeblog">
                               <s:param name="weblog" value="#perms.weblog.handle" />
                           </s:url>
-                          <a href='<s:property value="resignWeblog" />'>
-                              <s:text name='yourWebsites.resign' />
+                          <a class="resign-link" data-weblog="<s:property value='#perms.weblog.handle'/>">
+                              <s:text name='yourWebsites.resign'/>
                           </a>
                        </s:if>
 
@@ -176,4 +206,13 @@
         
     </s:iterator>
 
+    <div id="confirm-resign" title="<s:text name='generic.confirm'/>" style="display:none">
+        <p>
+           <s:text name="yourWebsites.confirmResignation">
+               <s:param value="weblog" />
+           </s:text>
+        </p>
+    </div>
+
 </s:if>
+

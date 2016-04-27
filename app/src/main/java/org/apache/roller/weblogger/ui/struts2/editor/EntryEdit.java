@@ -167,6 +167,52 @@ public final class EntryEdit extends UIAction {
         }
     }
 
+    @SkipValidation
+    public String removeViaList() {
+        String result = removeCommon();
+        return (SUCCESS.equals(result)) ? LIST : result;
+    }
+
+    @SkipValidation
+    public String remove() {
+        String result = removeCommon();
+        return (SUCCESS.equals(result)) ? "deleted" : result;
+    }
+
+    private String removeCommon() {
+        if (getEntry() != null) {
+            try {
+                WeblogEntry entry = getEntry();
+
+                // remove from search index
+                if (entry.isPublished()) {
+                    indexManager.removeEntryIndexOperation(entry);
+                }
+
+                // flush caches
+                cacheManager.invalidate(entry);
+
+                // remove entry itself
+                weblogEntryManager.removeWeblogEntry(entry);
+                WebloggerFactory.flush();
+
+                // note to user
+                addMessage("weblogEdit.entryRemoved", entry.getTitle());
+
+                return SUCCESS;
+
+            } catch (Exception e) {
+                log.error("Error removing entry " + getEntry().getId(), e);
+                addError("generic.error.check.logs");
+            }
+        } else {
+            addError("weblogEntry.notFound");
+            return ERROR;
+        }
+
+        return INPUT;
+    }
+
     private boolean isAdd() {
         return actionName.equals("entryAdd");
     }

@@ -24,14 +24,11 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 
 /**
  * Remove a weblog entry.
@@ -40,22 +37,11 @@ public class EntryRemove extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryRemove.class);
 
-    private IndexManager indexManager;
-
-    public void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
-    }
 
     private WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
     }
 
     // id of entry to remove
@@ -81,41 +67,6 @@ public class EntryRemove extends UIAction {
     }
 
     public String execute() {
-        return INPUT;
-    }
-
-    public String remove() {
-
-        if (getRemoveEntry() != null) {
-            try {
-                WeblogEntry entry = getRemoveEntry();
-
-                // remove from search index
-                if (entry.isPublished()) {
-                    indexManager.removeEntryIndexOperation(entry);
-                }
-
-                // flush caches
-                cacheManager.invalidate(entry);
-
-                // remove entry itself
-                weblogEntryManager.removeWeblogEntry(entry);
-                WebloggerFactory.flush();
-
-                // note to user
-                addMessage("weblogEdit.entryRemoved", entry.getTitle());
-
-                return SUCCESS;
-
-            } catch (Exception e) {
-                log.error("Error removing entry " + getRemoveId(), e);
-                addError("generic.error.check.logs");
-            }
-        } else {
-            addError("weblogEntry.notFound");
-            return ERROR;
-        }
-
         return INPUT;
     }
 
