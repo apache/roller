@@ -19,11 +19,35 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-
 <script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+
+<script>
+  $(function() {
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: false,
+      height:170,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.location.href='<s:url action="entryEdit!remove" />?weblog=<s:property value="weblog"/>&bean.id=<s:property value="bean.id"/>';
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+    $("#delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').dialog('open');
+    });
+  });
+</script>
+
 
 <style>
 #tagAutoCompleteWrapper {
@@ -263,7 +287,7 @@
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="removeId" value="%{entry.id}" />
                 </s:url>
-                <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'"/>
+                <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" id="delete-link"/>
             </span>
         </s:if>
     </div>
@@ -282,6 +306,10 @@
     </s:if>
 
 </s:form>
+
+<div id="confirm-delete" title="<s:text name='weblogEdit.deleteEntry'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="weblogEntryRemove.areYouSure"/></p>
+</div>
 
 <script>
 function fullPreviewMode() {

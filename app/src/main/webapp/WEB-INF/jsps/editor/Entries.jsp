@@ -14,8 +14,40 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 -->
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+
+<script>
+  $(function() {
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: false,
+      height:170,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.location.href='<s:url action="entryEdit!removeViaList" />?weblog=<s:property value="weblog"/>&bean.id='
+            + encodeURIComponent($(this).data('entryId'));
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+    $(".delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').data('entryId',  $(this).attr("data-entryId")).dialog('open');
+    });
+  });
+</script>
 
 <p class="subtitle">
     <s:text name="weblogEntryQuery.subtitle" >
@@ -183,17 +215,16 @@
     </td>
 
     <td>
-        <s:url var="deleteUrl" action="entryRemoveViaList">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="removeId" value="#post.id" />
-        </s:url>
-        <s:a href="%{deleteUrl}"><s:text name="generic.delete" /></s:a>
+        <a href="#" class="delete-link" data-entryId="<s:property value='#post.id'/>"><s:text name="generic.delete" /></a>
     </td>
 
     </tr>
 </s:iterator>
-
 </table>
+
+<div id="confirm-delete" title="<s:text name='weblogEdit.deleteEntry'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="weblogEntryRemove.areYouSure"/></p>
+</div>
 
 <s:if test="pager.items.isEmpty">
     <s:text name="weblogEntryQuery.noneFound" />
