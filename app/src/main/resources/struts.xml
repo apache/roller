@@ -303,35 +303,6 @@
             <result name="list" type="chain">entries</result>
         </action>
         
-        <action name="entryRemove!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
-            <param name="actionName">entryRemove</param>
-            <result name="input" type="tiles">.EntryRemove</result>
-            <result name="error" type="chain">menu</result>
-            <result name="success" type="redirectAction">
-                <param name="actionName">entryAdd</param>
-                <param name="weblog">${weblog}</param>
-            </result>
-        </action>
-
-        <!-- Below activated by Entries.jsp and EntryRemove.jsp, kept separate from
-        entryRemove!* above (activated from EntryEdit.jsp) as return pages are
-        different, both in the confirm delete and cancel delete scenarios.
-
-        Note the different actionName parameters.  The actionName is used to determine
-        which menu item to highlight as configured in menus.xml and MenuHelper.
-        It's also used in EntryRemove.jsp to code the confirm delete and cancel buttons
-        to return to the appropriate pages based on the actionName.  See Struts2
-        StaticParametersInterceptor javadoc for more info on static parameters.
-        -->
-        <action name="entryRemoveViaList!*" method="{1}"
-              class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
-          <param name="actionName">entryRemoveViaList</param>
-          <result name="input" type="tiles">.EntryRemove</result>
-          <result name="error" type="chain">menu</result>
-          <result name="success" type="chain">entries</result>
-        </action>
-
         <action name="entries"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Entries">
             <result name="list" type="tiles">.Entries</result>

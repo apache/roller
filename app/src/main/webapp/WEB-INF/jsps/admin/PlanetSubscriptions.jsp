@@ -106,7 +106,7 @@
         
         <td class="rollertable">
             <img src='<s:url value="/images/delete.png"/>' />
-            <a class="delete-link" data-feedURL="<s:property value='feedURL'/>">
+            <a class="delete-link" data-feedURL="<s:property value='#sub.feedURL'/>">
                 <s:text name="generic.delete"/>
             </a>
         </td>       

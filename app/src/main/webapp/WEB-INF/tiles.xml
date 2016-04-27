@@ -233,11 +233,6 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
-    <definition name=".EntryRemove" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryRemove.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
-    </definition>
-
     <definition name=".Entries" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Entries.jsp" />

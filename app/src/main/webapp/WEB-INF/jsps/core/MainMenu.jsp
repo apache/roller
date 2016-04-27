@@ -190,9 +190,6 @@
                        <%-- don't allow last admin to resign from blog --%>
                        <s:if test='!(#perms.weblogRole.name() == "OWNER")'>
                           <img src='<s:url value="/images/delete.png"/>' />
-                          <s:url action="memberResign" namespace="/tb-ui/authoring" id="resignWeblog">
-                              <s:param name="weblog" value="#perms.weblog.handle" />
-                          </s:url>
                           <a class="resign-link" data-weblog="<s:property value='#perms.weblog.handle'/>">
                               <s:text name='yourWebsites.resign'/>
                           </a>
