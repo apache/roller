@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
@@ -243,15 +245,20 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         if (!(other instanceof SubscriptionEntry)) {
             return false;
         }
-        final SubscriptionEntry that = (SubscriptionEntry) other;
-        return getPermalink().equals(that.getPermalink()) ||
-                (getUri() != null && getUri().equals(that.getUri()));
+        SubscriptionEntry o = (SubscriptionEntry)other;
+        return new EqualsBuilder()
+                .append(getPermalink(), o.getPermalink())
+                .append(getUri(), o.getUri())
+                .isEquals();
     }
 
     /**
      * Generate hash code based on permalink.
      */
     public int hashCode() {
-        return getPermalink().hashCode();
+        return new HashCodeBuilder()
+                .append(getPermalink())
+                .append(getUri())
+                .toHashCode();
     }
 }
