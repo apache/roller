@@ -19,14 +19,44 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
 <p class="subtitle">
    <s:text name="websiteSettings.subtitle" >
        <s:param value="actionWeblog.handle" />
    </s:text>
 </p>  
-   
-<s:form action="weblogConfig!save">
+
+<script>
+  $(function() {
+    $("#confirm-delete").dialog({
+      autoOpen: false,
+      resizable: true,
+      height:310,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.delete'/>": function() {
+          document.weblogConfigForm.action='<s:url action="weblogConfig!remove" />';
+          document.weblogConfigForm.submit();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+    $(".delete-link").click(function(e) {
+      e.preventDefault();
+      $('#confirm-delete').dialog('open');
+    });
+  });
+</script>
+
+
+<s:form id="weblogConfigForm">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
@@ -170,34 +200,36 @@
 
 <br />
 <div class="control">
-    <s:submit value="%{getText('websiteSettings.button.update')}" />
+    <s:submit value="%{getText('websiteSettings.button.update')}" action="weblogConfig!save"/>
 </div>
         
 <br />
 <br />
 
+<h2><s:text name="websiteSettings.removeWebsiteHeading" /></h2>
+
+<p>
+    <s:text name="websiteSettings.removeWebsite" /><br/><br/>
+    <span class="warning">
+        <s:text name="websiteSettings.removeWebsiteWarning" />
+    </span>
+</p>
+
+<br />
+
+<s:submit value="%{getText('websiteSettings.button.remove')}" class="delete-link"/>
+    <br />
+    <br />
+    <br />
 </s:form>
 
-
-<s:form action="weblogRemove">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-    
-    <h2><s:text name="websiteSettings.removeWebsiteHeading" /></h2>
-    
-    <p>
-        <s:text name="websiteSettings.removeWebsite" /><br/><br/>
-        <span class="warning">
-            <s:text name="websiteSettings.removeWebsiteWarning" />
-        </span>
-    </p>
-    
-    <br />
-    
-    <s:submit value="%{getText('websiteSettings.button.remove')}" />
-    
-    <br />
-    <br />    
-    <br />
-    
-</s:form>
+<div id="confirm-delete" title="<s:text name='websiteRemove.title'/>" style="display:none">
+    <s:text name="websiteRemove.youSure">
+        <s:param value="actionWeblog.name" />
+    </s:text>
+    <br/>
+    <br/>
+    <span class="warning">
+        <s:text name="websiteSettings.removeWebsiteWarning" />
+    </span>
+</div>

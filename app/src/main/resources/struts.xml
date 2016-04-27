@@ -128,6 +128,9 @@
         <action name="menu!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
             <result type="tiles">.MainMenu</result>
+            <result name="list" type="redirectAction">
+                <param name="actionName">menu</param>
+            </result>
         </action>
         
     </package>
@@ -244,9 +247,9 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
             <param name="actionName">mediaFileAdd</param>
             <param name="pageTitle">mediaFileAdd.title</param>
-            <result name="input" type="tiles">.MediaFileAdd</result>
+            <result name="input" type="tiles">.MediaFileEdit</result>
             <result name="success" type="chain">mediaFileView</result>
-            <result name="error" type="tiles">.MediaFileAdd</result>
+            <result name="error" type="tiles">.MediaFileEdit</result>
         </action>
 
         <action name="mediaFileEdit!*" method="{1}"
@@ -293,6 +296,11 @@
             <param name="pageTitle">weblogEdit.title.editEntry</param>
             <result name="input" type="tiles">.EntryEdit</result>
             <result name="error" type="chain">menu</result>
+            <result name="deleted" type="redirectAction">
+                <param name="actionName">entryAdd</param>
+                <param name="weblog">${weblog}</param>
+            </result>
+            <result name="list" type="chain">entries</result>
         </action>
         
         <action name="entryRemove!*" method="{1}"
@@ -307,11 +315,11 @@
         </action>
 
         <!-- Below activated by Entries.jsp and EntryRemove.jsp, kept separate from
-        entryRemove!* above as return pages are different, both in the confirm delete
-        and cancel delete scenarios.
+        entryRemove!* above (activated from EntryEdit.jsp) as return pages are
+        different, both in the confirm delete and cancel delete scenarios.
 
         Note the different actionName parameters.  The actionName is used to determine
-        which menu item to highlight as configured in editor-menu.xml (and MenuHelper).
+        which menu item to highlight as configured in menus.xml and MenuHelper.
         It's also used in EntryRemove.jsp to code the confirm delete and cancel buttons
         to return to the appropriate pages based on the actionName.  See Struts2
         StaticParametersInterceptor javadoc for more info on static parameters.
@@ -407,11 +415,6 @@
         <action name="weblogConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
             <result name="input" type="tiles">.WeblogConfig</result>
-        </action>
-        
-        <action name="weblogRemove!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.WeblogRemove">
-            <result name="confirm" type="tiles">.WeblogRemoveConfirm</result>
             <result name="success" type="chain">menu</result>
         </action>
         
@@ -445,13 +448,6 @@
                 <param name="actionName">members</param>
                 <param name="weblog">${weblog}</param>
             </result>
-        </action>
-
-        <action name="memberResign!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MemberResign">
-            <result name="input" type="tiles">.MemberResign</result>
-            <result name="error" type="chain">menu</result>
-            <result name="success" type="chain">menu</result>
         </action>
 
         <action name="pings!*" method="{1}"
