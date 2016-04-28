@@ -123,6 +123,8 @@ create table weblog_category (
     position         integer not null
 );
 
+alter table weblog_category add constraint wc_name_uq unique (weblogid, name);
+
 alter table weblog_category add constraint wc_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 

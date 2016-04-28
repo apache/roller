@@ -272,8 +272,9 @@ public interface WeblogManager {
 
     /**
      * Save weblog category.
+     * @throws IllegalArgumentException if category name already exists for the weblog.
      */
-    void saveWeblogCategory(WeblogCategory cat) throws WebloggerException;
+    void saveWeblogCategory(WeblogCategory cat) throws IllegalArgumentException;
 
     /**
      * Remove weblog category.
@@ -283,7 +284,7 @@ public interface WeblogManager {
     /**
      * Get category by id.
      */
-    WeblogCategory getWeblogCategory(String id) throws WebloggerException;
+    WeblogCategory getWeblogCategory(String id);
 
 
     /**
@@ -296,20 +297,14 @@ public interface WeblogManager {
      * Get category specified by weblog and name.
      * @param weblog      Weblog of WeblogCategory.
      * @param categoryName Name of WeblogCategory
+     * @return WeblogCategory, or null if not found.
      */
-    WeblogCategory getWeblogCategoryByName(Weblog weblog,
-                                           String categoryName) throws WebloggerException;
+    WeblogCategory getWeblogCategoryByName(Weblog weblog, String categoryName);
 
     /**
      * Get WebLogCategory objects for a website.
      */
     List<WeblogCategory> getWeblogCategories(Weblog weblog)
-            throws WebloggerException;
-
-    /**
-     * Check for duplicate category name.
-     */
-    boolean isDuplicateWeblogCategoryName(WeblogCategory data)
             throws WebloggerException;
 
     /**

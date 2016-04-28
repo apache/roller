@@ -154,9 +154,8 @@ public class JPAPersistenceStrategy {
      * Store object using an existing transaction.
      * @param obj the object to persist
      * @return the object persisted
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public Object store(Object obj) throws WebloggerException {
+    public Object store(Object obj) {
         EntityManager em = getEntityManager(true);
         if (!em.contains(obj)) {
             // If entity is not managed we can assume it is new
@@ -204,10 +203,8 @@ public class JPAPersistenceStrategy {
      * @param clazz the class of object to retrieve
      * @param id the id of the object to retrieve
      * @return the object retrieved
-     * @throws WebloggerException on any error retrieving object
      */
-    public<R> R load(Class<R> clazz, String id)
-    throws WebloggerException {
+    public<R> R load(Class<R> clazz, String id) {
         EntityManager em = getEntityManager(false);
         return em.find(clazz, id);
     }

@@ -91,12 +91,8 @@ public class CategoryRemove extends UIAction {
     }
 
     public void prepare() {
-        try {
-            if(!StringUtils.isEmpty(getRemoveId())) {
-                setCategory(weblogManager.getWeblogCategory(getRemoveId()));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up category", ex);
+        if(!StringUtils.isEmpty(getRemoveId())) {
+            setCategory(weblogManager.getWeblogCategory(getRemoveId()));
         }
     }
     
