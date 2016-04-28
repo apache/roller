@@ -838,12 +838,8 @@ public class WeblogEntry implements Serializable {
     }
 
     public void setCategoryId(String categoryId) {
-        try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            setCategory(wmgr.getWeblogCategory(categoryId));
-        } catch (WebloggerException e) {
-            log.error("Error setting category for blog entry", e);
-        }
+        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        setCategory(wmgr.getWeblogCategory(categoryId));
     }
 
     @Transient

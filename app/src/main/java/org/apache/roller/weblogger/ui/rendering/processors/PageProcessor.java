@@ -339,14 +339,8 @@ public class PageProcessor {
             }
         } else if (pageRequest.getWeblogCategoryName() != null) {
             // category specified. category must exist.
-            WeblogCategory test = null;
-
-            try {
-                test = weblogManager.getWeblogCategoryByName(pageRequest.getWeblog(), pageRequest.getWeblogCategoryName());
-            } catch (WebloggerException ex) {
-                log.error("Error getting weblog category " + pageRequest.getWeblogCategoryName(), ex);
-            }
-
+            WeblogCategory test = weblogManager.getWeblogCategoryByName(pageRequest.getWeblog(),
+                    pageRequest.getWeblogCategoryName());
             if (test == null) {
                 invalid = true;
             }

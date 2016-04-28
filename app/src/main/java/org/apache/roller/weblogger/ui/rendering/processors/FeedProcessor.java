@@ -185,14 +185,8 @@ public class FeedProcessor {
 
         if (!feedRequest.isSiteWideFeed() && feedRequest.getCategoryName() != null) {
             // for single-weblog search, category must be defined for the weblog
-            WeblogCategory test = null;
-
-            try {
-                test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(), feedRequest.getCategoryName());
-            } catch (WebloggerException ex) {
-                log.error("Error getting weblog category " + feedRequest.getCategoryName(), ex);
-            }
-
+            WeblogCategory test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(),
+                    feedRequest.getCategoryName());
             if (test == null) {
                 invalid = true;
             }

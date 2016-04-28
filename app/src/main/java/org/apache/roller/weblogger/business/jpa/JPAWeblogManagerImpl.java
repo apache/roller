@@ -239,9 +239,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 if (split.trim().length() == 0) {
                     continue;
                 }
-                WeblogCategory c = new WeblogCategory(
-                        newWeblog,
-                        split);
+                WeblogCategory c = new WeblogCategory(newWeblog, split);
                 if (firstCat == null) {
                     firstCat = c;
                 }
@@ -717,10 +715,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void saveWeblogCategory(WeblogCategory cat) throws WebloggerException {
-        boolean exists = getWeblogCategory(cat.getId()) != null;
-        if (!exists && isDuplicateWeblogCategoryName(cat)) {
-            throw new WebloggerException("Duplicate category name, cannot save category");
+    @Override
+    public void saveWeblogCategory(WeblogCategory cat) {
+        WeblogCategory test = getWeblogCategoryByName(cat.getWeblog(), cat.getName());
+
+        if (test != null && !test.getId().equals(cat.getId())) {
+            throw new IllegalArgumentException("Duplicate category name, cannot save category");
         }
         cat.getWeblog().invalidateCache();
         this.strategy.store(cat);
@@ -786,7 +786,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategory getWeblogCategory(String id) throws WebloggerException {
+    public WeblogCategory getWeblogCategory(String id) {
         return this.strategy.load(WeblogCategory.class, id);
     }
 
@@ -795,23 +795,17 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategory getWeblogCategoryByName(Weblog weblog,
-                                                  String categoryName) throws WebloggerException {
+    public WeblogCategory getWeblogCategoryByName(Weblog weblog, String categoryName) {
         TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
                 "WeblogCategory.getByWeblog&Name", WeblogCategory.class);
         q.setParameter(1, weblog);
         q.setParameter(2, categoryName);
+        q.setHint("javax.persistence.cache.storeMode", "REFRESH");
         try {
             return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
-    }
-
-    public boolean isDuplicateWeblogCategoryName(WeblogCategory cat)
-            throws WebloggerException {
-        return (getWeblogCategoryByName(
-                cat.getWeblog(), cat.getName()) != null);
     }
 
     /**
