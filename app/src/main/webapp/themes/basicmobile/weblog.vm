@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>$model.weblog.name</title>
+    <link rel="shortcut icon" href="$url.absoluteSite/favicon.ico">
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
