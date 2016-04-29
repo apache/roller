@@ -41,8 +41,8 @@
                         '<%= request.getContextPath()%>/tb-ui/authoring/rest/categories?weblog=<s:text name="weblog"/>&salt=' + salt
                         : '<%= request.getContextPath()%>/tb-ui/authoring/rest/category/' + idToUpdate +'?salt=' + salt,
                     data: JSON.stringify(newName),
-                    processData: "false",
                     contentType: "application/json",
+                    processData: "false",
                     success: function (data, textStatus, xhr) {
                         if (idToUpdate == '') {
                             document.categoriesForm.submit();
@@ -64,6 +64,30 @@
       }
     });
 
+    $("#category-remove").dialog({
+      autoOpen: false,
+      height:275,
+      modal: true,
+      buttons: {
+        "<s:text name='generic.confirm'/>": function() {
+            var salt = $("#categories_salt").val();
+            var idToRemove = $(this).data('categoryId');
+            var targetCategoryId = $('#category-remove-targetlist').val();
+            $.ajax({
+                type: "DELETE",
+                url: '<%= request.getContextPath()%>/tb-ui/authoring/rest/category/' + idToRemove
+                    + '?targetCategoryId=' + targetCategoryId,
+                success: function (data, textStatus, xhr) {
+                    document.categoriesForm.submit();
+                }
+            });
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
     $(".edit-link").click(function(e) {
       e.preventDefault();
       $('#category-edit').dialog('option', 'title', '<s:text name="generic.edit"/>')
@@ -78,6 +102,34 @@
       $('#category-edit-name').val('');
       $('#category-edit-error').css("display", "none");
       $('#category-edit').data('categoryId',  '').dialog('open');
+    });
+
+    $(".remove-link").click(function(e) {
+      e.preventDefault();
+      var idToRemove = $(this).attr("data-id");
+        $.ajax({
+            type: "GET",
+            url: '<%= request.getContextPath()%>/tb-ui/authoring/rest/categories/inuse?categoryId=' + idToRemove,
+            success: function (data, textStatus, xhr) {
+                if (data == true) {
+                    $('#category-remove-targetlist').empty()
+                    $.ajax({
+                        type: "GET",
+                        url: '<%= request.getContextPath()%>/tb-ui/authoring/rest/categories?weblog=<s:text name="weblog"/>&skipCategoryId=' + idToRemove,
+                        dataType: "json",
+                        success: function (data, textStatus, xhr) {
+                            $.each(data, function(i, d) {
+                                $('#category-remove-targetlist').append('<option value="' + d.id + '">' + d.name + '</option>');
+                            });
+                        }
+                    });
+                    $('#category-remove-mustmove').css("display", "inline");
+                } else {
+                    $('#category-remove-mustmove').css("display", "none");
+                }
+            }
+        });
+      $('#category-remove').data('categoryId',  idToRemove).dialog('open');
     });
   });
 
@@ -122,10 +174,6 @@
                 <td class="rollertable" id='catname-<s:property value="#category.id"/>'><s:property value="#category.name" /></td>
                 
                 <td class="rollertable" align="center">
-                    <s:url var="editUrl" action="categoryEdit">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="formBean.id" value="#category.id" />
-                    </s:url>
                     <a href="#" class="edit-link" id='catid-<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>'
                         data-id='<s:property value="#category.id"/>'><img src='<s:url value="/images/page_white_edit.png"/>'
                         border="0" alt="icon" /></a>
@@ -133,11 +181,10 @@
                 
                 <td class="rollertable" align="center">
                     <s:if test="AllCategories.size() > 1">
-                        <s:url var="removeUrl" action="categoryRemove">
-                            <s:param name="weblog" value="%{actionWeblog.handle}" />
-                            <s:param name="removeId" value="#category.id" />
-                        </s:url>
-                        <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' border="0" alt="icon" /></s:a>
+                        <a href="#" class="remove-link" id='cat-remove-id-<s:property value="#category.id"/>' data-id='<s:property value="#category.id"/>'
+                           data-name='<s:property value="#category.name"/>'>
+                            <img src='<s:url value="/images/delete.png"/>' border="0" alt="icon" />
+                        <a>
                     </s:if>
                 </td>
                 
@@ -166,5 +213,17 @@
     <form>
       <label for="name"><s:text name='generic.name'/>:</label>
       <input type="text" id="category-edit-name" class="text ui-widget-content ui-corner-all">
+    </form>
+</div>
+
+<div id="category-remove" title="<s:text name='categoryDeleteOK.removeCategory'/>" style="display:none">
+    <form>
+    <div id="category-remove-mustmove" style="display:none">
+        <s:text name='categoryDeleteOK.youMustMoveEntries'/>
+        <p>
+          <s:text name="categoryDeleteOK.moveToWhere" />
+          <select id="category-remove-targetlist"/>
+        </p>
+    </div>
     </form>
 </div>

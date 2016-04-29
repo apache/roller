@@ -39,11 +39,11 @@ import org.apache.roller.weblogger.util.Blacklist;
 public interface WeblogManager {
     
     /**
-     * Add new website, give creator admin permission, creates blogroll,
-     * creates categories and other objects required for new website.
-     * @param newWebsite New website to be created, must have creator.
+     * Add new weblog, give creator admin permission, creates blogroll,
+     * creates categories and other objects required for new weblog.
+     * @param newWeblog New weblog to be created, must have creator.
      */
-    void addWeblog(Weblog newWebsite) throws WebloggerException;
+    void addWeblog(Weblog newWeblog) throws WebloggerException;
     
     /**
      * Store a single weblog.
@@ -51,33 +51,34 @@ public interface WeblogManager {
     void saveWeblog(Weblog data) throws WebloggerException;
 
     /**
-     * Remove website object.
+     * Remove weblog object.
      */
-    void removeWeblog(Weblog website) throws WebloggerException;
+    void removeWeblog(Weblog weblog) throws WebloggerException;
     
     /**
-     * Get website object by name.
+     * Get weblog object by name.
      */
     Weblog getWeblog(String id) throws WebloggerException;
     
     
     /**
-     * Get website specified by handle (or null if enabled website not found).
-     * @param handle  Handle of website
+     * Get weblog specified by handle (or null if enabled weblog not found).
+     * @param handle Handle of weblog
+     * @return Weblog instance or null if not found
      */
-    Weblog getWeblogByHandle(String handle) throws WebloggerException;
+    Weblog getWeblogByHandle(String handle);
     
     
     /**
-     * Get website specified by handle with option to return only enabled websites.
-     * @param handle  Handle of website
+     * Get weblog specified by handle with option to return only enabled weblogs.
+     * @param handle Handle of weblog
+     * @return Weblog instance or null if not found
      */
-    Weblog getWeblogByHandle(String handle, Boolean enabled)
-        throws WebloggerException;
+    Weblog getWeblogByHandle(String handle, Boolean enabled);
     
     
     /**
-     * Get websites optionally restricted by user, enabled and active status.
+     * Get weblogs optionally restricted by user, enabled and active status.
      * @param visible   Get all with this visible state (or null or all)
      * @param startDate Restrict to those created after (or null for all)
      * @param endDate   Restrict to those created before (or null for all)
@@ -98,7 +99,7 @@ public interface WeblogManager {
      * Get users of a weblog.
      * @param weblog Weblog to retrieve users for
      * @param enabledOnly Include only enabled users?
-     * @return List of WebsiteData objects.
+     * @return List of User objects.
      */
     List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
     
@@ -224,7 +225,7 @@ public interface WeblogManager {
     /**
      * Reset the hit counts for a single weblog.  This sets the count to 03.
      *
-     * @param weblog The WebsiteData object to reset the count for.
+     * @param weblog The Weblog object to reset the count for.
      * @throws WebloggerException If there was a problem with the backend.
      */
     void resetHitCount(Weblog weblog) throws WebloggerException;
@@ -302,10 +303,9 @@ public interface WeblogManager {
     WeblogCategory getWeblogCategoryByName(Weblog weblog, String categoryName);
 
     /**
-     * Get WebLogCategory objects for a website.
+     * Get WeblogCategory objects for a weblog.
      */
-    List<WeblogCategory> getWeblogCategories(Weblog weblog)
-            throws WebloggerException;
+    List<WeblogCategory> getWeblogCategories(Weblog weblog);
 
     /**
      * Check if weblog category is in use.

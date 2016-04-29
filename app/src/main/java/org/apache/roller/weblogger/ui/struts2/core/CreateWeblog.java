@@ -203,15 +203,10 @@ public class CreateWeblog extends UIAction {
         
         // make sure handle isn't already taken
         if(!StringUtils.isEmpty(getBean().getHandle())) {
-            try {
-                if (weblogManager.getWeblogByHandle(getBean().getHandle()) != null) {
-                    addError("createWeblog.error.handleExists");
-                    // reset handle
-                    getBean().setHandle(null);
-                }
-            } catch (WebloggerException ex) {
-                log.error("error checking for weblog", ex);
-                addError("Unexpected error validating weblog -- check TightBlog logs");
+            if (weblogManager.getWeblogByHandle(getBean().getHandle()) != null) {
+                addError("createWeblog.error.handleExists");
+                // reset handle
+                getBean().setHandle(null);
             }
         }
     }

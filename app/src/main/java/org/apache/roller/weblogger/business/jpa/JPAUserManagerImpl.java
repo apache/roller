@@ -137,7 +137,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getUser(String id) throws WebloggerException {
+    public User getUser(String id) {
         return this.strategy.load(User.class, id);
     }
 
@@ -152,11 +152,10 @@ public class JPAUserManagerImpl implements UserManager {
         return getUserByUserName(userName, Boolean.TRUE);
     }
 
-    public User getUserByUserName(String userName, Boolean enabled)
-            throws WebloggerException {
+    public User getUserByUserName(String userName, Boolean enabled) {
 
         if (userName==null) {
-            throw new WebloggerException("userName cannot be null");
+            throw new IllegalArgumentException("userName cannot be null");
         }
         
         // check cache first
@@ -318,10 +317,10 @@ public class JPAUserManagerImpl implements UserManager {
     //-------------------------------------------------------- permissions CRUD
  
     @Override
-    public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) throws WebloggerException {
+    public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) {
         User userToCheck = getUserByUserName(username, true);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
-        return checkWeblogRole(userToCheck, weblogToCheck, role);
+        return !(userToCheck == null || weblogToCheck == null) && checkWeblogRole(userToCheck, weblogToCheck, role);
     }
 
     @Override

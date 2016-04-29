@@ -283,10 +283,6 @@
 
         <s:if test="actionName == 'entryEdit'">
             <span style="float:right">
-                <s:url var="removeUrl" action="entryRemove">
-                    <s:param name="weblog" value="actionWeblog.handle" />
-                    <s:param name="removeId" value="%{entry.id}" />
-                </s:url>
                 <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" id="delete-link"/>
             </span>
         </s:if>

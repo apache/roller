@@ -282,22 +282,21 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     }
     
-    public Weblog getWeblog(String id) throws WebloggerException {
+    public Weblog getWeblog(String id) {
         return this.strategy.load(Weblog.class, id);
     }
     
-    public Weblog getWeblogByHandle(String handle) throws WebloggerException {
+    public Weblog getWeblogByHandle(String handle) {
         return getWeblogByHandle(handle, Boolean.TRUE);
     }
     
     /**
      * Return weblog specified by handle.
      */
-    public Weblog getWeblogByHandle(String handle, Boolean visible)
-    throws WebloggerException {
+    public Weblog getWeblogByHandle(String handle, Boolean visible) {
         
         if (handle == null) {
-            throw new WebloggerException("Handle cannot be null");
+            throw new IllegalArgumentException("Handle cannot be null");
         }
         
         // check cache first
@@ -771,10 +770,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     @Override
-    public List<WeblogCategory> getWeblogCategories(Weblog weblog)
-            throws WebloggerException {
+    public List<WeblogCategory> getWeblogCategories(Weblog weblog) {
         if (weblog == null) {
-            throw new WebloggerException("weblog is null");
+            throw new IllegalArgumentException("weblog is null");
         }
 
         TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
