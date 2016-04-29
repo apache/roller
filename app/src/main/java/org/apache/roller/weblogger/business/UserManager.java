@@ -92,9 +92,8 @@ public interface UserManager {
      *
      * @param id the id of the user to retrieve.
      * @return the user object with specified id or null if not found
-     * @throws WebloggerException
      */
-    User getUser(String id) throws WebloggerException;
+    User getUser(String id);
 
     /**
      * Retrieve a SafeUser object by its internal identifier id.
@@ -163,10 +162,10 @@ public interface UserManager {
      * @param username    Username whose role is being checked
      * @param weblogHandle target weblog handle of the role
      * @param role    Minimum WeblogRole being checked for
-     * @return true if user has WeblogRole or a more powerful one
-     * @throws WebloggerException If no weblog could be found for the handle
+     * @return true if user has WeblogRole or more powerful, or is global admin.
+     *         false if not or if either username and/or weblogHandle can't be found.
      */
-    boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) throws WebloggerException;
+    boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role);
 
     /**
      * Get user's WeblogRole within a weblog or null if none.

@@ -23,16 +23,13 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.TextNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -54,8 +51,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 public class Categories extends UIAction {
-
-	private static Log log = LogFactory.getLog(Categories.class);
 
     @Autowired
     private UserManager userManager;
@@ -98,13 +93,7 @@ public class Categories extends UIAction {
     }
 
 	public String execute() {
-		try {
-			allCategories = weblogManager.getWeblogCategories(getActionWeblog());
-		} catch (WebloggerException ex) {
-			log.error("Error building categories list", ex);
-			addError("Error building categories list");
-		}
-
+        allCategories = weblogManager.getWeblogCategories(getActionWeblog());
 		return LIST;
 	}
 
@@ -118,17 +107,12 @@ public class Categories extends UIAction {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.PUT)
     public void updateCategory(@PathVariable String id, @RequestBody TextNode newName, Principal p,
-                               HttpServletResponse response)
-            throws ServletException {
+                               HttpServletResponse response) throws ServletException {
         try {
             WeblogCategory c = weblogManager.getWeblogCategory(id);
-            if (c == null) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            } else {
-                // need owner permission to edit categories
-                User authenticatedUser = userManager.getUserByUserName(p.getName());
+            if (c != null) {
                 Weblog weblog = c.getWeblog();
-                if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.OWNER)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                     if (!c.getName().equals(newName.asText())) {
                         c.setName(newName.asText());
                         try {
@@ -143,6 +127,8 @@ public class Categories extends UIAction {
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 }
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
@@ -151,29 +137,72 @@ public class Categories extends UIAction {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.PUT)
     public void addCategory(@RequestParam(name="weblog") String weblogHandle, @RequestBody TextNode categoryName, Principal p,
-                            HttpServletResponse response)
-            throws ServletException {
+                            HttpServletResponse response) throws ServletException {
         try {
-            Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
-            if (weblog == null) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            if (userManager.checkWeblogRole(p.getName(), weblogHandle, WeblogRole.OWNER)) {
+                Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+                WeblogCategory wc = new WeblogCategory(weblog, categoryName.asText());
+                try {
+                    weblogManager.saveWeblogCategory(wc);
+                    weblog.addCategory(wc);
+                    WebloggerFactory.flush();
+                    cacheManager.invalidate(wc);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } catch (IllegalArgumentException e) {
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                }
             } else {
-                // need owner permission to edit categories
-                User authenticatedUser = userManager.getUserByUserName(p.getName());
-                if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.OWNER)) {
-                    WeblogCategory wc = new WeblogCategory(weblog, categoryName.asText());
-                    try {
-                        weblogManager.saveWeblogCategory(wc);
-                        weblog.addCategory(wc);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.GET)
+    public List<WeblogCategory> getWeblogCategories(@RequestParam(name="weblog") String weblogHandle,
+                                                    @RequestParam String skipCategoryId) {
+        List<WeblogCategory> list = weblogManager.getWeblogCategories(weblogManager.getWeblogByHandle(weblogHandle)).stream()
+                .filter(t -> !t.getId().equals(skipCategoryId))
+                .collect(Collectors.toList());
+        list.forEach(p -> p.setWeblog(null));
+        return list;
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/categories/inuse", method = RequestMethod.GET)
+    public boolean isCategoryInUse(@RequestParam String categoryId) {
+        WeblogCategory category = weblogManager.getWeblogCategory(categoryId);
+        return category != null && weblogManager.isWeblogCategoryInUse(category);
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.DELETE)
+    public void removeCategory(@PathVariable String id, @RequestParam(required = false) String targetCategoryId,
+            Principal p, HttpServletResponse response)
+            throws ServletException {
+
+        try {
+            WeblogCategory categoryToRemove = weblogManager.getWeblogCategory(id);
+            if (categoryToRemove != null) {
+                Weblog weblog = categoryToRemove.getWeblog();
+                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+
+                    WeblogCategory targetCategory = targetCategoryId == null ?
+                            null : weblogManager.getWeblogCategory(targetCategoryId);
+
+                    if (targetCategory != null) {
+                        weblogManager.moveWeblogCategoryContents(categoryToRemove, targetCategory);
                         WebloggerFactory.flush();
-                        cacheManager.invalidate(wc);
-                        response.setStatus(HttpServletResponse.SC_OK);
-                    } catch (IllegalArgumentException e) {
-                        response.setStatus(HttpServletResponse.SC_CONFLICT);
                     }
+
+                    weblogManager.removeWeblogCategory(categoryToRemove);
+                    WebloggerFactory.flush();
+                    cacheManager.invalidate(categoryToRemove);
+                    response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 }
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());

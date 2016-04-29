@@ -24,7 +24,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
@@ -135,10 +134,9 @@ public class WeblogRequest {
 
     public Weblog getWeblog() {
         if (weblog == null && weblogHandle != null) {
-            try {
-                weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogHandle, true);
-            } catch (WebloggerException ex) {
-                log.error("Error looking up weblog " + weblogHandle, ex);
+            weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogHandle, true);
+            if (weblog == null) {
+                throw new IllegalStateException("Unknown Weblog: " + weblogHandle);
             }
         }
         return weblog;
@@ -177,7 +175,5 @@ public class WeblogRequest {
     public void setDeviceType(DeviceType type) {
         this.deviceType = type;
     }
-
-
 
 }
