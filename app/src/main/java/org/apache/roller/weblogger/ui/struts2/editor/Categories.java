@@ -175,6 +175,11 @@ public class Categories extends UIAction {
         return category != null && weblogManager.isWeblogCategoryInUse(category);
     }
 
+    @RequestMapping(value = "/tb-ui/authoring/rest/categories/loggedin", method = RequestMethod.GET)
+    public boolean loggedIn() {
+        return true;
+    }
+
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.DELETE)
     public void removeCategory(@PathVariable String id, @RequestParam(required = false) String targetCategoryId,
             Principal p, HttpServletResponse response)

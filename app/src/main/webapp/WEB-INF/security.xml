@@ -43,6 +43,12 @@
         <!-- CSRF presently handled manually via TightBlog's salt filters -->
         <csrf disabled="true"/>
 
+        <!-- Detect login redirects occurring as a result of Ajax calls and send a 408 (timeout) response
+             code to the client instead, so the Ajax call can handle properly, see:
+             https://doanduyhai.wordpress.com/2012/04/21/spring-security-part-vi-session-timeout-handling-for-ajax-calls/
+        -->
+        <custom-filter ref="ajaxTimeoutRedirectFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
+
         <!-- Needed to allow for popups -->
         <headers>
             <frame-options policy="SAMEORIGIN"/>
@@ -54,6 +60,8 @@
 
     </http>
 
+    <beans:bean id="ajaxTimeoutRedirectFilter" class="org.apache.roller.weblogger.ui.core.filters.AjaxTimeoutRedirectFilter"/>
+
     <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
         <beans:constructor-arg ref="roleVoter"/>
         <beans:property name="allowIfAllAbstainDecisions" value="false"/>
@@ -63,8 +71,7 @@
         <beans:property name="rolePrefix" value=""/>
     </beans:bean>
 
-    <!-- Read users from Roller API -->
-    <authentication-manager alias='rollerAuthenticationManager'>
+    <authentication-manager>
         <!-- Uncomment one of the two below based on your preferred authentication mechanism.
              Also set authentication.method property to "ldap" in your tightblog-custom.properties
              if not using default of "db".

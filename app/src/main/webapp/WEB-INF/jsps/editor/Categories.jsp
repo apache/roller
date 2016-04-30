@@ -25,6 +25,9 @@
 
 <script>
   $(function() {
+    $.ajaxSetup({
+        statusCode: { 408: function() { document.categoriesForm.submit(); } }
+    });
     $("#category-edit").dialog({
       autoOpen: false,
       height:200,
@@ -53,6 +56,7 @@
                         }
                     },
                     error: function(xhr, status, errorThrown) {
+                        if (xhr.status in this.statusCode) return;
                         $('#category-edit-error').css("display", "inline");
                     }
                 });
@@ -93,7 +97,10 @@
       $('#category-edit').dialog('option', 'title', '<s:text name="generic.edit"/>')
       $('#category-edit-name').val($(this).attr("data-name")).select();
       $('#category-edit-error').css("display", "none");
-      $('#category-edit').data('categoryId',  $(this).attr("data-id")).dialog('open');
+      var dataId = $(this).attr("data-id");
+      $.get('<%= request.getContextPath()%>/tb-ui/authoring/rest/categories/loggedin', function () {
+         $('#category-edit').data('categoryId', dataId).dialog('open');
+      });
     });
 
     $("#add-link").click(function(e) {
@@ -101,7 +108,9 @@
       $('#category-edit').dialog('option', 'title', '<s:text name="categoryForm.add.title"/>')
       $('#category-edit-name').val('');
       $('#category-edit-error').css("display", "none");
-      $('#category-edit').data('categoryId',  '').dialog('open');
+      $.get('<%= request.getContextPath()%>/tb-ui/authoring/rest/categories/loggedin', function () {
+         $('#category-edit').data('categoryId',  '').dialog('open');
+      });
     });
 
     $(".remove-link").click(function(e) {
@@ -127,13 +136,11 @@
                 } else {
                     $('#category-remove-mustmove').css("display", "none");
                 }
+                $('#category-remove').data('categoryId',  idToRemove).dialog('open');
             }
         });
-      $('#category-remove').data('categoryId',  idToRemove).dialog('open');
     });
   });
-
-
 </script>
 
 <p class="subtitle">

@@ -88,7 +88,7 @@
 <%-- Comment table / form with checkboxes --%>
 <%-- ============================================================= --%>
 
-<s:form action="%{#mainAction}!update">
+<s:form id="commentsForm" action="%{#mainAction}">
     <s:hidden name="salt" />
     <s:hidden name="bean.ids" />
     <s:hidden name="bean.startDateString" />
@@ -349,6 +349,12 @@
 
 
     <script>
+    $(function() {
+        $.ajaxSetup({
+            statusCode: { 408: function() { document.commentsForm.submit(); } }
+        });
+    });
+
     var comments = {};
 
     function editComment(id) {
@@ -386,6 +392,9 @@
                 } else {
                     alert('<s:text name="commentManagement.saveError" />');
                 }
+            },
+            error: {
+
             }
         });
     }
@@ -419,7 +428,7 @@
 <%-- Save changes and cancel buttons --%>
 <%-- ========================================================= --%>
 
-        <s:submit value="%{getText('commentManagement.update')}" />
+        <s:submit action="%{#mainAction}!update" value="%{getText('commentManagement.update')}" />
 
     </s:form>
 
