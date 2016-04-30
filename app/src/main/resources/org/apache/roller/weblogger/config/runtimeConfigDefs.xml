@@ -53,7 +53,7 @@
    
       <property-def  name="site.name"  key="configForm.siteName">
          <type>string</type>
-         <default-value>TightBlog Site</default-value>
+         <default-value>Blog Homepage</default-value>
       </property-def>
       <property-def  name="site.frontpage.weblog.handle"  key="configForm.frontpageWeblogHandle">
          <type>string</type>
@@ -108,10 +108,14 @@
          <type>string</type>
          <default-value>30</default-value>
       </property-def>
-      <property-def name="site.newsfeeds.styledFeeds"  key="configForm.styledFeeds">
-         <type>boolean</type>
-         <default-value>true</default-value>
-      </property-def>
+       <property-def  name="users.themes.path"  key="configForm.newUserThemes">
+           <type>string</type>
+           <default-value>/themes</default-value>
+       </property-def>
+       <property-def  name="themes.customtheme.allowed"  key="configForm.allowCustomTheme">
+           <type>boolean</type>
+           <default-value>true</default-value>
+       </property-def>
 
    </display-group>
    
@@ -155,6 +159,12 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
+       <property-def  name="spam.blacklist"  key="websiteSettings.ignoreUrls">
+           <type>text</type>
+           <default-value/>
+           <rows>7</rows>
+           <cols>40</cols>
+       </property-def>
 
    </display-group >
    
@@ -184,33 +194,6 @@
 
    </display-group >
    
-   
-    <!-- Theme Settings Group -->
-   <display-group name="themeSettings" key="configForm.themeSettings">
-   
-      <property-def  name="users.themes.path"  key="configForm.newUserThemes">
-         <type>string</type>
-         <default-value>/themes</default-value>
-      </property-def>
-      <property-def  name="themes.customtheme.allowed"  key="configForm.allowCustomTheme">
-         <type>boolean</type>
-         <default-value>true</default-value>
-      </property-def>
-      
-   </display-group>
-
-   <!-- Spam Prevention Settings Group -->
-   <display-group name="spamSettings" key="websiteSettings.spamPrevention" >
-   
-      <property-def  name="spam.blacklist"  key="websiteSettings.ignoreUrls">
-         <type>text</type>
-         <default-value/>
-         <rows>7</rows>
-         <cols>40</cols>
-      </property-def>
-
-   </display-group >
-
      <!-- Web Analytics (e.g., Google Analytics) Group -->
      <display-group name="webAnalytics" key="configForm.webAnalytics">
          <property-def  name="analytics.default.tracking.code"  key="configForm.defaultAnalyticsTrackingCode">

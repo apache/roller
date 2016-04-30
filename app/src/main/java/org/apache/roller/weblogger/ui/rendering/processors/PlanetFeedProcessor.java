@@ -134,7 +134,7 @@ public class PlanetFeedProcessor {
             // dialog, so we provide a content-type that browsers will display
             response.setContentType("text/xml");
         } else {
-            response.setContentType("application/rss+xml; charset=utf-8");
+            response.setContentType("application/atom+xml; charset=utf-8");
         }
 
         // set last-modified date
