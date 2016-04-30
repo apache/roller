@@ -65,10 +65,6 @@ public class ConfigModel implements Model {
         return propertiesManager.getStringProperty("users.registration.url");
     }
 
-    public boolean getFeedStyle() {
-        return propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds");
-    }
-
     public boolean getCommentHtmlAllowed() {
         return propertiesManager.getBooleanProperty("users.comments.htmlenabled");
     }

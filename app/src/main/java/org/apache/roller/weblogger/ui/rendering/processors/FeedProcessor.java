@@ -150,24 +150,10 @@ public class FeedProcessor {
         Utilities.setLastModifiedHeader(response, lastModified, feedRequest.getDeviceType());
 
         // set content type
-        String accepts = request.getHeader("Accept");
-        String userAgent = request.getHeader("User-Agent");
-        if (propertiesManager.getBooleanProperty("site.newsfeeds.styledFeeds")
-                && accepts != null
-                && accepts.contains("*/*")
-                && userAgent != null && userAgent.startsWith("Mozilla")) {
-            // client is a browser and feed style is enabled so we want
-            // browsers to load the page rather than popping up the download
-            // dialog, so we provide a content-type that browsers will display
-            response.setContentType("text/xml");
-        } else {
-            response.setContentType("application/atom+xml; charset=utf-8");
-        }
-
-        // generate cache key
-        String cacheKey = generateKey(feedRequest);
+        response.setContentType("application/atom+xml; charset=utf-8");
 
         // cached content checking
+        String cacheKey = generateKey(feedRequest);
         CachedContent cachedContent = (CachedContent) (feedRequest.isSiteWideFeed() ?
                 siteWideCache.get(cacheKey) : weblogFeedCache.get(cacheKey, lastModified));
 
