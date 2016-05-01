@@ -125,23 +125,28 @@ public class PlanetSubscriptions extends UIAction {
 
                     // sub doesn't exist yet, so we need to fetch it
                     sub = feedManager.fetchSubscription(subUrl);
-                    sub.setPlanet(planet);
+                    if (sub != null) {
+                        sub.setPlanet(planet);
 
-                    // save new sub
-                    planetManager.saveSubscription(sub);
+                        // save new sub
+                        planetManager.saveSubscription(sub);
 
-                    // add the sub to the group
-                    planet.getSubscriptions().add(sub);
-                    subscriptions.add(sub);
-                    planetManager.savePlanet(planet);
+                        // add the sub to the group
+                        planet.getSubscriptions().add(sub);
+                        subscriptions.add(sub);
+                        planetManager.savePlanet(planet);
 
-                    // flush changes
-                    WebloggerFactory.flush();
+                        // flush changes
+                        WebloggerFactory.flush();
 
-                    // clear field after success
-                    subUrl = null;
+                        // clear field after success
+                        subUrl = null;
 
-                    addMessage("planetSubscription.success.saved");
+                        addMessage("planetSubscription.success.saved");
+                    } else {
+                        addError("planetSubscriptions.notRetrievable");
+                        return LIST;
+                    }
                 } else {
                     addError("planetSubscriptions.subscriptionAlreadyExists");
                     return LIST;

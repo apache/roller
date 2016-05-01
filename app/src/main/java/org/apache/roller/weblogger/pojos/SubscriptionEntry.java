@@ -247,7 +247,6 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         }
         SubscriptionEntry o = (SubscriptionEntry)other;
         return new EqualsBuilder()
-                .append(getPermalink(), o.getPermalink())
                 .append(getUri(), o.getUri())
                 .isEquals();
     }
@@ -257,7 +256,6 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
      */
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getPermalink())
                 .append(getUri())
                 .toHashCode();
     }

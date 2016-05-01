@@ -20,9 +20,8 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,20 +30,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.rometools.fetcher.impl.DiskFeedInfoCache;
-import com.rometools.fetcher.impl.FeedFetcherCache;
-import com.rometools.fetcher.impl.HttpURLFeedFetcher;
-import com.rometools.fetcher.impl.SyndFeedInfo;
 import com.rometools.rome.feed.module.DCModule;
 import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.io.EmptyInputStream;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -67,7 +71,6 @@ public class FeedManagerImpl implements FeedManager {
     private static Log log = LogFactory.getLog(FeedManagerImpl.class);
     
     public FeedManagerImpl() {
-        // no-op
     }
 
     public void setPlanetManager(PlanetManager planetManager) {
@@ -97,8 +100,8 @@ public class FeedManagerImpl implements FeedManager {
     /**
      * @inheritDoc
      */
-    public Subscription fetchSubscription(String feedURL)
-            throws WebloggerException {
+    @Override
+    public Subscription fetchSubscription(String feedURL) throws WebloggerException {
         return fetchSubscription(feedURL, null);
     }
 
@@ -106,8 +109,7 @@ public class FeedManagerImpl implements FeedManager {
      * @inheritDoc
      */
     @Override
-    public Subscription fetchSubscription(String feedURL, Date lastModified)
-            throws WebloggerException {
+    public Subscription fetchSubscription(String feedURL, Date lastModified) throws WebloggerException {
 
         if (feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
@@ -120,16 +122,25 @@ public class FeedManagerImpl implements FeedManager {
             return fetchWebloggerSubscription(feedURL, lastModified);
         }
 
-        // setup Rome feed fetcher
-        com.rometools.fetcher.FeedFetcher feedFetcher = getRomeFetcher();
-
-
         // fetch the feed
         log.debug("Fetching feed: " + feedURL);
         SyndFeed feed;
-        try {
-            feed = feedFetcher.retrieveFeed(new URL(feedURL));
-        } catch (Exception ex) {
+        try (CloseableHttpClient client = HttpClients.createMinimal()) {
+            HttpUriRequest method = new HttpGet(feedURL);
+            method.setHeader("User-Agent", "TightBlogPlanetAggregator");
+            try (CloseableHttpResponse response = client.execute(method);
+                InputStream stream = response.getEntity().getContent()) {
+                if (!(stream instanceof EmptyInputStream)) {
+                    SyndFeedInput input = new SyndFeedInput();
+                    feed = input.build(new XmlReader(stream));
+                } else {
+                    log.info("Feed: " + feedURL + " returned an EmptyInputStream. Status Code: " +
+                            response.getStatusLine().getStatusCode() + ", Response Text: "
+                            + response.getStatusLine().getReasonPhrase());
+                    return null;
+                }
+            }
+        } catch (FeedException | IOException ex) {
             throw new WebloggerException("Error fetching subscription - " + feedURL, ex);
         }
 
@@ -141,29 +152,6 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setSiteURL(feed.getLink());
         newSub.setTitle(feed.getTitle());
         newSub.setLastUpdated(feed.getPublishedDate());
-
-        // normalize any data that couldn't be properly extracted
-        if (newSub.getSiteURL() == null) {
-            // set the site url to the feed url then
-            newSub.setSiteURL(newSub.getFeedURL());
-        }
-        if (newSub.getLastUpdated() == null) {
-            // no update time specified in feed, so try consulting feed info cache
-            FeedFetcherCache feedCache = getRomeFetcherCache();
-            if (feedCache != null) {
-                try {
-                    SyndFeedInfo feedInfo = feedCache.getFeedInfo(new URL(newSub.getFeedURL()));
-                    if (feedInfo.getLastModified() != null) {
-                        long lastUpdatedLong = (Long) feedInfo.getLastModified();
-                        if (lastUpdatedLong != 0) {
-                            newSub.setLastUpdated(new Date(lastUpdatedLong));
-                        }
-                    }
-                } catch (MalformedURLException ex) {
-                    // should never happen since we check this above
-                }
-            }
-        }
 
         // check if feed is unchanged and bail now if so
         if (lastModified != null && newSub.getLastUpdated() != null &&
@@ -270,22 +258,23 @@ public class FeedManagerImpl implements FeedManager {
             log.debug("Found " + entries.size());
 
             // Populate subscription object with new entries
-            for ( WeblogEntry rollerEntry : entries ) {
+            for (WeblogEntry blogEntry : entries) {
                 SubscriptionEntry entry = new SubscriptionEntry();
                 String content;
-                if (!StringUtils.isEmpty(rollerEntry.getText())) {
-                    content = rollerEntry.getText();
+                if (!StringUtils.isEmpty(blogEntry.getText())) {
+                    content = blogEntry.getText();
                 } else {
-                    content = rollerEntry.getSummary();
+                    content = blogEntry.getSummary();
                 }
-                content = weblogEntryManager.applyWeblogEntryPlugins(rollerEntry, content);
+                content = weblogEntryManager.applyWeblogEntryPlugins(blogEntry, content);
 
-                entry.setAuthor(rollerEntry.getCreator().getScreenName());
-                entry.setTitle(rollerEntry.getTitle());
-                entry.setPubTime(rollerEntry.getPubTime());
+                entry.setAuthor(blogEntry.getCreator().getScreenName());
+                entry.setTitle(blogEntry.getTitle());
+                entry.setPubTime(blogEntry.getPubTime());
                 entry.setContent(content);
-                entry.setPermalink(rollerEntry.getPermalink());
-                entry.setCategoriesString(rollerEntry.getCategory().getName());
+                entry.setPermalink(blogEntry.getPermalink());
+                entry.setUri(blogEntry.getPermalink());
+                entry.setCategoriesString(blogEntry.getCategory().getName());
                 
                 newSub.addEntry(entry);
             }
@@ -364,73 +353,6 @@ public class FeedManagerImpl implements FeedManager {
         return newEntry;
     }
 
-
-    // get a feed fetcher cache, if possible
-    private FeedFetcherCache getRomeFetcherCache() {
-
-        String cacheDirPath = WebloggerStaticConfig.getProperty("planet.aggregator.cache.dir");
-
-        // can't continue without cache dir
-        if (cacheDirPath == null) {
-            log.warn("Planet cache directory not set, feeds cannot be cached.");
-            return null;
-        }
-
-        // allow ${user.home} in cache dir property
-        String cacheDirName = cacheDirPath.replaceFirst(
-                "\\$\\{user.home}",System.getProperty("user.home"));
-
-        // allow ${catalina.home} in cache dir property
-        if (System.getProperty("catalina.home") != null) {
-            cacheDirName = cacheDirName.replaceFirst(
-                    "\\$\\{catalina.home}",System.getProperty("catalina.home"));
-        }
-
-        // create cache  dir if it does not exist
-        File cacheDir = null;
-        try {
-            cacheDir = new File(cacheDirName);
-            if (!cacheDir.exists()) {
-                cacheDir.mkdirs();
-            }
-        } catch (Exception e) {
-            log.error("Unable to create planet cache directory: " +
-                    ((cacheDir != null) ? cacheDir.getPath() : null), e);
-            return null;
-        }
-
-        // abort if cache dir is not writable
-        if (!cacheDir.canWrite()) {
-            log.error("Planet cache directory is not writable: " + cacheDir.getPath());
-            return null;
-        }
-
-        return new DiskFeedInfoCache(cacheDirName);
-    }
-
-
-    // get a feed fetcher
-    private com.rometools.fetcher.FeedFetcher getRomeFetcher() {
-
-        FeedFetcherCache feedCache = getRomeFetcherCache();
-
-        com.rometools.fetcher.FeedFetcher feedFetcher;
-        if(feedCache != null) {
-            feedFetcher = new HttpURLFeedFetcher(feedCache);
-        } else {
-            feedFetcher = new HttpURLFeedFetcher();
-        }
-
-        // set options
-        feedFetcher.setUsingDeltaEncoding(false);
-        feedFetcher.setUserAgent("RollerPlanetAggregator");
-
-        return feedFetcher;
-    }
-
-    /**
-     * @inheritDoc
-     */
     private void updateSubscription(Subscription sub) throws WebloggerException {
 
         if (sub == null) {
@@ -445,7 +367,6 @@ public class FeedManagerImpl implements FeedManager {
         try {
             // fetch the latest version of the subscription
             updatedSub = fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
-
         } catch (WebloggerException ex) {
             throw new WebloggerException("Error fetching updated subscription", ex);
         }
@@ -460,7 +381,7 @@ public class FeedManagerImpl implements FeedManager {
         // if this subscription hasn't changed since last update then we're done
         if (sub.getLastUpdated() != null && updatedSub.getLastUpdated() != null &&
                 !updatedSub.getLastUpdated().after(sub.getLastUpdated())) {
-            log.debug("Skipping update, feed hasn't changed - "+sub.getFeedURL());
+            log.debug("Skipping update, feed hasn't changed - " + sub.getFeedURL());
         }
 
         // update subscription attributes
@@ -499,9 +420,7 @@ public class FeedManagerImpl implements FeedManager {
                 " entries updated.");
     }
 
-    /**
-     * @inheritDoc
-     */
+    @Override
     public void updateSubscriptions(Planet group) throws WebloggerException {
 
         if(group == null) {
@@ -521,6 +440,7 @@ public class FeedManagerImpl implements FeedManager {
                 + ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");
     }
 
+    @Override
     public void updateSubscriptions(Collection<Subscription> subscriptions) {
         updateProxySettings();
 
@@ -562,7 +482,6 @@ public class FeedManagerImpl implements FeedManager {
             }
         }
     }
-
 
     // update proxy settings for jvm based on planet configuration
     private void updateProxySettings() {

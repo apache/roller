@@ -89,6 +89,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+
         <!-- route Commons Logging to Log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
