@@ -334,9 +334,9 @@ abstract public class WebloggerTest {
         // store
         SubscriptionEntry testEntry = new SubscriptionEntry();
         testEntry.setPermalink(title);
+        testEntry.setUri(title);
         testEntry.setTitle(title);
-        testEntry
-                .setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
+        testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
         testEntry.setSubscription(testSub);
         testSub.getEntries().add(testEntry);
         planetManager.saveEntry(testEntry);
