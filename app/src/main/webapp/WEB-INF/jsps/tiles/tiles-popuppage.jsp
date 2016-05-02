@@ -21,7 +21,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="shortcut icon" href="<%= request.getContextPath() %>/favicon.ico">
+        <link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico">
         <tiles:insertAttribute name="head" />
     </head>
 

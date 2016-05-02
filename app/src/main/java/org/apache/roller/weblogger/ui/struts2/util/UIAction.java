@@ -61,14 +61,12 @@ public abstract class UIAction extends ActionSupport
     private static final List LOCALES;
     private static final List TIME_ZONES;
 
-    private static Comparator<Locale> LocaleComparator = new Comparator<Locale>() {
-        public int compare(Locale locale1, Locale locale2) {
-            int compName = locale1.getDisplayName().compareTo(locale2.getDisplayName());
-            if (compName == 0) {
-                return locale1.toString().compareTo(locale2.toString());
-            }
-            return compName;
+    private static Comparator<Locale> LocaleComparator = (locale1, locale2) -> {
+        int compName = locale1.getDisplayName().compareTo(locale2.getDisplayName());
+        if (compName == 0) {
+            return locale1.toString().compareTo(locale2.toString());
         }
+        return compName;
     };
 
     // load up the locales and time zones lists

@@ -377,7 +377,7 @@
         var salt = $("#comments_salt").val();
         $.ajax({
             type: "PUT",
-            url: '<%= request.getContextPath()%>/tb-ui/authoring/rest/comment/' + id +'?salt='+salt,
+            url: '${pageContext.request.contextPath}/tb-ui/authoring/rest/comment/' + id +'?salt='+salt,
             data: content,
             dataType: "text",
             processData: "false",
@@ -412,7 +412,7 @@
     function readMoreComment(id, callback) {
         $.ajax({
             type: "GET",
-            url: '<%= request.getContextPath()%>/tb-ui/authoring/rest/comment/' + id,
+            url: '${pageContext.request.contextPath}/tb-ui/authoring/rest/comment/' + id,
             success: function(data) {
                 var cdata = eval("(" + data + ")");
                 $("#comment-" + cdata.id).html(cdata.content);
