@@ -14,7 +14,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <link rel="stylesheet" media="all" href="<s:url value="/tb-ui/theme/"/><s:property value="getProp('editor.theme')" />/colors.css" />
 
-<script src="<s:url value="/theme/scripts/roller.js"/>"></script>
+<script src="<s:url value="/scripts/roller.js"/>"></script>
 
 <%-- struts2 head disabled until we need it --%>
 <%-- <s:head theme="ajax"/> --%>
