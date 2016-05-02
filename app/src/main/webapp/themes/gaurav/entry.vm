@@ -146,7 +146,7 @@
 								</div>
 								
 								<div class="form-group col-lg-12">
-								   <script src="$url.site/theme/scripts/clientSideInclude.js"></script>
+								   <script src="$url.site/scripts/clientSideInclude.js"></script>
 								   <div id="commentAuthenticator"></div>
 								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$text.get("macro.weblog.postpreview" )&nbsp;"
 								      onclick="this.form.method.value='preview';this.form.submit()" />
@@ -155,7 +155,7 @@
 							</div>
 						</form>
 		
-						<script src="$url.site/theme/scripts/roller.js"></script>
+						<script src="$url.site/scripts/roller.js"></script>
 						<script>
 						/* <![CDATA[ */
 						clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');

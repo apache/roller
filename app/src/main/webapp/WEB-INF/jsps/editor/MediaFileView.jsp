@@ -264,7 +264,7 @@
                                 </s:if>
 
                                 <s:else>
-                                    <s:url var="mediaFileURL" value="/images/page.png"></s:url>
+                                    <s:url var="mediaFileURL" value="/images/page_white.png"></s:url>
                                     <img border="0" src='<s:property value="%{mediaFileURL}" />'
                                          alt='<s:property value="#mediaFile.altText" />'
                                          style="padding:40px 50px;" />

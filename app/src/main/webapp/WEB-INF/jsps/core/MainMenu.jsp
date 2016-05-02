@@ -172,7 +172,7 @@
                                <s:url action="templates" namespace="/tb-ui/authoring" id="weblogTheme">
                                    <s:param name="weblog" value="#perms.weblog.handle" />
                                </s:url>
-                               <img src='<s:url value="/tb-ui/images/layout.png"/>' />
+                               <img src='<s:url value="/images/layout.png"/>' />
                                <a href='<s:property value="weblogTheme" />'>
                                    <s:text name="yourWebsites.theme" /></a> 
                                <br />
