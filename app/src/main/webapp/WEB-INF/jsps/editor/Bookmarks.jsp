@@ -73,9 +73,9 @@
             <th class="rollertable" width="5%"><s:text name="generic.edit" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
-        
+
         <s:if test="weblogObj.bookmarks.size > 0">
-        
+
         <%-- Bookmarks --%>
         <s:iterator id="bookmark" value="weblogObj.bookmarks" status="rowstatus">
             <s:if test="#rowstatus.odd == true">
@@ -84,21 +84,21 @@
             <s:else>
                 <tr class="rollertable_even">
             </s:else>
-                
+
                 <td class="rollertable center" style="vertical-align:middle">
                     <input type="checkbox" name="selectedBookmarks"
                     title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
                     value="<s:property value="#bookmark.id"/>" />
                 </td>
-                
+
                 <td class="rollertable">
                     <str:truncateNicely lower="25" upper="30" ><s:property value="#bookmark.name" /></str:truncateNicely>
                 </td>
-                
+
                 <td class="rollertable">
                     <str:truncateNicely lower="40" upper="50" ><s:property value="#bookmark.url" /></str:truncateNicely>
                 </td>
-                
+
                 <td class="rollertable">
                     <str:truncateNicely lower="60" upper="70" ><s:property value="#bookmark.description" /></str:truncateNicely>
                 </td>
@@ -109,10 +109,10 @@
                         <s:param name="formBean.id" value="#bookmark.id" />
                         <s:param name="folderId" value="%{folderId}" suppressEmptyParameters="true"/>
                     </s:url>
-                    <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
+                    <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
                              title="<s:text name='bookmarksForm.edit.tip' />" /></s:a>
                 </td>
-                
+
                 <td class="rollertable" align="center">
                     <s:if test="#bookmark.url != null" >
                         <a href="<s:property value="#bookmark.url" />">
@@ -120,10 +120,10 @@
                         </a>
                     </s:if>
                 </td>
-                
+
             </tr>
         </s:iterator>
-        
+
         </s:if>
         <s:else>
             <tr>
@@ -131,7 +131,7 @@
             </tr>
         </s:else>
     </table>
-    
+
     <div class="control clearfix">
         <s:url var="addBookmark" action="bookmarkAdd">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
