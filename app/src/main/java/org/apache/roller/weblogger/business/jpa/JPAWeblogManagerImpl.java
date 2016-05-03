@@ -260,8 +260,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                     WeblogBookmark b = new WeblogBookmark(
                             newWeblog,
                             rollitems[0],
-                            "",
-                            rollitems[1].trim());
+                            rollitems[1].trim(), ""
+                    );
                     newWeblog.addBookmark(b);
                     this.strategy.store(b);
                 }

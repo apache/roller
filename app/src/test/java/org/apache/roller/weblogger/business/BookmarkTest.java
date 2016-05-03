@@ -76,8 +76,8 @@ public class BookmarkTest extends WebloggerTest {
         WeblogBookmark bookmark1 = new WeblogBookmark(
                 testWeblog,
                 "TestBookmark1",
-                "created by testBookmarkCRUD()",
-                "http://www.example1.com");
+                "http://www.example1.com", "created by testBookmarkCRUD()"
+        );
         testWeblog.addBookmark(bookmark1);
         bookmark1.calculatePosition();
         weblogManager.saveBookmark(bookmark1);
@@ -86,8 +86,8 @@ public class BookmarkTest extends WebloggerTest {
         WeblogBookmark bookmark2 = new WeblogBookmark(
                 testWeblog,
                 "TestBookmark2",
-                "created by testBookmarkCRUD()",
-                "http://www.example2.com");
+                "http://www.example2.com", "created by testBookmarkCRUD()"
+        );
         testWeblog.addBookmark(bookmark2);
         bookmark2.calculatePosition();
         weblogManager.saveWeblog(testWeblog);
@@ -133,16 +133,16 @@ public class BookmarkTest extends WebloggerTest {
         testWeblog = getManagedWeblog(testWeblog);
 
         // add some bookmarks
-        WeblogBookmark b1 = new WeblogBookmark(testWeblog, "b1", "testbookmark13",
-                "http://example1.com");
+        WeblogBookmark b1 = new WeblogBookmark(testWeblog, "b1", "http://example1.com", "testbookmark13"
+        );
         testWeblog.addBookmark(b1);
         weblogManager.saveBookmark(b1);
-        WeblogBookmark b2 = new WeblogBookmark(testWeblog, "b2", "testbookmark14",
-                "http://example2.com");
+        WeblogBookmark b2 = new WeblogBookmark(testWeblog, "b2", "http://example2.com", "testbookmark14"
+        );
         testWeblog.addBookmark(b2);
         weblogManager.saveBookmark(b2);
-        WeblogBookmark b3 = new WeblogBookmark(testWeblog, "b3", "testbookmark16",
-                "http://example3.com");
+        WeblogBookmark b3 = new WeblogBookmark(testWeblog, "b3", "http://example3.com", "testbookmark16"
+        );
         testWeblog.addBookmark(b3);
         weblogManager.saveBookmark(b3);
         

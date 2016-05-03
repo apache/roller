@@ -22,8 +22,16 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>'/>
 <script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'/>"></script>
 <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'/>"></script>
-<script>var contextPath = "${pageContext.request.contextPath}"</script>
-<script>var locale = "<s:property value='locale'/>"</script>
+<script>
+var contextPath = "${pageContext.request.contextPath}";
+var msg= {
+    confirmLabel: '<s:text name="generic.confirm"/>',
+    saveLabel: '<s:text name="generic.save"/>',
+    cancelLabel: '<s:text name="generic.cancel"/>',
+    editTitle: '<s:text name="generic.edit"/>',
+    addTitle: '<s:text name="categoryForm.add.title"/>'
+};
+</script>
 <script src="<s:url value='/tb-ui/scripts/categories.js'/>"></script>
 
 <p class="subtitle">
@@ -82,9 +90,6 @@
                 </table>
 
                 <div class="control clearfix">
-                    <s:url var="addCategory" action="categoryAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}"/>
-                    </s:url>
                     <input type="button" value="<s:text name='categoriesForm.addCategory'/>" id="add-link"/>
                 </div>
 

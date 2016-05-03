@@ -185,7 +185,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="title"><s:text name="%{#mainAction}.fileLocation" /></label>
+                <label for="title"><s:text name="mediaFileEdit.fileLocation" /></label>
             </td>
             <td>
                 <div id="fileControldiv" class="miscControl">

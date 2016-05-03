@@ -22,31 +22,17 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
-
 <script>
-  $(function() {
-    $(".delete-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete').dialog('open');
-    });
-
-    $("#confirm-delete").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:200,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.delete'/>": function() {
-          document.bookmarks.submit();
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-  });
+var contextPath = "${pageContext.request.contextPath}";
+var msg= {
+    confirmLabel: '<s:text name="generic.confirm"/>',
+    saveLabel: '<s:text name="generic.save"/>',
+    cancelLabel: '<s:text name="generic.cancel"/>',
+    editTitle: '<s:text name="generic.edit"/>',
+    addTitle: '<s:text name="bookmarkForm.add.title"/>'
+};
 </script>
+<script src="<s:url value='/tb-ui/scripts/bookmarks.js'/>"></script>
 
 <p class="subtitle">
     <s:text name="bookmarksForm.subtitle" >
@@ -58,9 +44,9 @@
 </p>
 
 <%-- Form is a table of bookmarks, each with checkbox for deleting --%>
-<s:form action="bookmarks!delete">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" />
+<s:form id="bookmarksForm">
+  <s:hidden name="salt" />
+  <s:hidden name="weblog" id="actionWeblog" />
 
     <table class="rollertable">
 
@@ -91,26 +77,15 @@
                     value="<s:property value="#bookmark.id"/>" />
                 </td>
 
-                <td class="rollertable">
-                    <str:truncateNicely lower="25" upper="30" ><s:property value="#bookmark.name" /></str:truncateNicely>
-                </td>
+                <td class="rollertable" id='bkname-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.name"/></td>
 
-                <td class="rollertable">
-                    <str:truncateNicely lower="40" upper="50" ><s:property value="#bookmark.url" /></str:truncateNicely>
-                </td>
+                <td class="rollertable" id='bkurl-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.url"/></td>
 
-                <td class="rollertable">
-                    <str:truncateNicely lower="60" upper="70" ><s:property value="#bookmark.description" /></str:truncateNicely>
-                </td>
+                <td class="rollertable" id='bkdescription-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.description" /></td>
 
                 <td class="rollertable" align="center">
-                    <s:url var="editUrl" action="bookmarkEdit">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="formBean.id" value="#bookmark.id" />
-                        <s:param name="folderId" value="%{folderId}" suppressEmptyParameters="true"/>
-                    </s:url>
-                    <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
-                             title="<s:text name='bookmarksForm.edit.tip' />" /></s:a>
+                    <a href="#" class="edit-link" id='bkid-<s:property value="#bookmark.id"/>' data-id='<s:property value="#bookmark.id"/>'><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
+                             title="<s:text name='bookmarksForm.edit.tip' />"/></a>
                 </td>
 
                 <td class="rollertable" align="center">
@@ -133,14 +108,11 @@
     </table>
 
     <div class="control clearfix">
-        <s:url var="addBookmark" action="bookmarkAdd">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        <input type="button" value="<s:text name='bookmarksForm.addBookmark'/>" onclick="window.location='<s:property value="addBookmark" escape="false" />'"/>
+        <input type="submit" value="<s:text name='bookmarksForm.addBookmark'/>" id="add-link" formaction='<s:url action="bookmarks"/>'/>
 
         <s:if test="weblogObj.bookmarks.size > 0">
-                <%-- Delete-selected button --%>
-                <input type="button" value="<s:text name='bookmarksForm.delete'/>" class="delete-link" />
+            <%-- Delete-selected button --%>
+            <input type="submit" value="<s:text name='bookmarksForm.delete'/>" id="delete-link" formaction='<s:url action="bookmarks!delete"/>' />
         </s:if>
     </div>
 
@@ -148,4 +120,30 @@
 
 <div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='bookmarksForm.delete.confirm' /></p>
+</div>
+
+<div id="bookmark-edit" style="display:none">
+    <span id="bookmark-edit-error" style="display:none"><s:text name='bookmarkForm.error.duplicateName'/></span>
+    <p class="pagetip">
+        <s:text name="bookmarkForm.requiredFields">
+            <s:param><s:text name="generic.name"/></s:param>
+            <s:param><s:text name="bookmarkForm.url"/></s:param>
+        </s:text>
+    </p>
+    <form>
+    <table>
+        <tr>
+            <td style="width:30%"><label for="bookmark-edit-name"><s:text name='generic.name'/></label></td>
+            <td><input id="bookmark-edit-name" maxlength="80" size="50" onBlur="this.value=this.value.trim()"/></td>
+        </tr>
+        <tr>
+            <td><label for="bookmark-edit-url"><s:text name='bookmarkForm.url'/></label></td>
+            <td><input id="bookmark-edit-url" maxlength="120" size="50" onBlur="this.value=this.value.trim()"/></td>
+        </tr>
+        <tr>
+            <td><label for="bookmark-edit-description"><s:text name='generic.description'/></label></td>
+            <td><input id="bookmark-edit-description" maxlength="120" size="50" onBlur="this.value=this.value.trim()"/></td>
+        </tr>
+    </table>
+    </form>
 </div>
