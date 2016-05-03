@@ -10,67 +10,79 @@ $(function() {
       autoOpen: false,
       height: 200,
       modal: true,
-      buttons: {
-         "<s:text name='generic.save'/>": function() {
-            var salt = $("#categories_salt").val();
-            var idToUpdate = $(this).data('categoryId');
-            var newName = $('#category-edit-name').val().trim();
-            if (newName.length > 0) {
-               $.ajax({
-                  type: "PUT",
-                  url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val() + '&salt=' + salt : '/tb-ui/authoring/rest/category/' + idToUpdate + '?salt=' + salt),
-                  data: JSON.stringify(newName),
-                  contentType: "application/json",
-                  processData: "false",
-                  success: function(data, textStatus, xhr) {
-                     if (idToUpdate == '') {
-                        document.categoriesForm.submit();
-                     } else {
-                        $('#catname-' + idToUpdate).text(newName)
-                        $('#catid-' + idToUpdate).attr('data-name', newName)
-                        $("#category-edit").dialog().dialog("close");
+      buttons: [
+         {
+            text: msg.saveLabel,
+            click: function() {
+               var salt = $("#categories_salt").val();
+               var idToUpdate = $(this).data('categoryId');
+               var newName = $('#category-edit-name').val().trim();
+               if (newName.length > 0) {
+                  $.ajax({
+                     type: "PUT",
+                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val() + '&salt=' + salt : '/tb-ui/authoring/rest/category/' + idToUpdate + '?salt=' + salt),
+                     data: JSON.stringify(newName),
+                     contentType: "application/json",
+                     processData: "false",
+                     success: function(data, textStatus, xhr) {
+                        if (idToUpdate == '') {
+                           document.categoriesForm.submit();
+                        } else {
+                           $('#catname-' + idToUpdate).text(newName)
+                           $('#catid-' + idToUpdate).attr('data-name', newName)
+                           $("#category-edit").dialog().dialog("close");
+                        }
+                     },
+                     error: function(xhr, status, errorThrown) {
+                        if (xhr.status in this.statusCode)
+                           return;
+                        $('#category-edit-error').css("display", "inline");
                      }
-                  },
-                  error: function(xhr, status, errorThrown) {
-                     if (xhr.status in this.statusCode)
-                        return;
-                     $('#category-edit-error').css("display", "inline");
-                  }
-               });
+                  });
+               }
             }
-         },
-         Cancel: function() {
-            $(this).dialog("close");
-         }
-      }
+       },
+       {
+          text: msg.cancelLabel,
+          click: function() {
+             $(this).dialog("close");
+          }
+       }
+    ]
    });
 
    $("#category-remove").dialog({
       autoOpen: false,
       height: 275,
       modal: true,
-      buttons: {
-         "<s:text name='generic.confirm'/>": function() {
-            var salt = $("#categories_salt").val();
-            var idToRemove = $(this).data('categoryId');
-            var targetCategoryId = $('#category-remove-targetlist').val();
-            $.ajax({
-               type: "DELETE",
-               url: contextPath + '/tb-ui/authoring/rest/category/' + idToRemove + '?targetCategoryId=' + targetCategoryId,
-               success: function(data, textStatus, xhr) {
-                  document.categoriesForm.submit();
-               }
-            });
+      buttons: [
+         {
+            text: msg.confirmLabel,
+            click: function() {
+               var salt = $("#categories_salt").val();
+               var idToRemove = $(this).data('categoryId');
+               var targetCategoryId = $('#category-remove-targetlist').val();
+               $.ajax({
+                  type: "DELETE",
+                  url: contextPath + '/tb-ui/authoring/rest/category/' + idToRemove + '?targetCategoryId=' + targetCategoryId,
+                  success: function(data, textStatus, xhr) {
+                     document.categoriesForm.submit();
+                  }
+               });
+            },
          },
-         Cancel: function() {
-            $(this).dialog("close");
+         {
+            text: msg.cancelLabel,
+            click: function() {
+               $(this).dialog("close");
+            }
          }
-      }
+      ]
    });
 
    $(".edit-link").click(function(e) {
       e.preventDefault();
-      $('#category-edit').dialog('option', 'title', '<s:text name="generic.edit"/>')
+      $('#category-edit').dialog('option', 'title', msg.editTitle)
       $('#category-edit-name').val($(this).attr("data-name")).select();
       $('#category-edit-error').css("display", "none");
       var dataId = $(this).attr("data-id");
@@ -81,7 +93,7 @@ $(function() {
 
    $("#add-link").click(function(e) {
       e.preventDefault();
-      $('#category-edit').dialog('option', 'title', '<s:text name="categoryForm.add.title"/>')
+      $('#category-edit').dialog('option', 'title', msg.addTitle)
       $('#category-edit-name').val('');
       $('#category-edit-error').css("display", "none");
       $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {

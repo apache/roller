@@ -24,31 +24,63 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.persistence.EntityExistsException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 
 /**
  * List bookmarks and allow for moving them around and deleting them.
  */
+@RestController
 public class Bookmarks extends UIAction {
 
     private static Log log = LogFactory.getLog(Bookmarks.class);
 
+    @Autowired
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
+    @Autowired
     private JPAPersistenceStrategy persistenceStrategy = null;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
+    }
+
+    @Autowired
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     // the weblog being viewed
@@ -88,7 +120,6 @@ public class Bookmarks extends UIAction {
      * Delete bookmarks.
      */
     public String delete() {
-
         try {
             WeblogBookmark bookmark;
             String bookmarks[] = getSelectedBookmarks();
@@ -97,21 +128,19 @@ public class Bookmarks extends UIAction {
                     log.debug("Processing delete of " + bookmarks.length
                             + " bookmarks.");
                 }
-                for (int j = 0; j < bookmarks.length; j++) {
+                for (String bookmarkName : bookmarks) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Deleting bookmark - " + bookmarks[j]);
+                        log.debug("Deleting bookmark - " + bookmarkName);
                     }
-                    bookmark = weblogManager.getBookmark(bookmarks[j]);
+                    bookmark = weblogManager.getBookmark(bookmarkName);
                     if (bookmark != null) {
                         weblogManager.removeBookmark(bookmark);
                     }
-
                 }
             }
 
             // flush changes
             persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
-
         } catch (WebloggerException ex) {
             log.error("Error doing bookmark deletes", ex);
             addError("Error doing bookmark deletes");
@@ -119,6 +148,106 @@ public class Bookmarks extends UIAction {
 
         return execute();
     }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/bookmark/{id}", method = RequestMethod.PUT)
+    public void updateBookmark(@PathVariable String id, @RequestBody BookmarkData newData, Principal p,
+                               HttpServletResponse response) throws ServletException {
+        try {
+            WeblogBookmark bookmark = weblogManager.getBookmark(id);
+            if (bookmark != null) {
+                Weblog weblog = bookmark.getWeblog();
+                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                    bookmark.setName(newData.getName());
+                    bookmark.setUrl(newData.getUrl());
+                    bookmark.setDescription(newData.getDescription());
+                    try {
+                        weblogManager.saveBookmark(bookmark);
+                        WebloggerFactory.flush();
+                    } catch (WebloggerException e) {
+                        response.setStatus(HttpServletResponse.SC_CONFLICT);
+                        return;
+                    }
+                    cacheManager.invalidate(bookmark);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/bookmarks", method = RequestMethod.PUT)
+    public void addBookmark(@RequestParam(name="weblog") String weblogHandle, @RequestBody BookmarkData newData, Principal p,
+                            HttpServletResponse response) throws ServletException {
+        try {
+            if (userManager.checkWeblogRole(p.getName(), weblogHandle, WeblogRole.OWNER)) {
+                Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+                WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
+                        newData.getUrl(), newData.getDescription());
+                try {
+                    weblogManager.saveBookmark(bookmark);
+                    WebloggerFactory.flush();
+                } catch (WebloggerException e) {
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    return;
+                }
+                persistenceStrategy.refresh(weblog);
+                cacheManager.invalidate(bookmark);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private static class BookmarkData {
+        public BookmarkData() {
+        }
+
+        private String id;
+        private String name;
+        private String description;
+        private String url;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+    }
+
 
     public String[] getSelectedBookmarks() {
         return selectedBookmarks;

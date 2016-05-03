@@ -59,11 +59,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     public WeblogBookmark() {
     }
     
-    public WeblogBookmark(
-            Weblog parent,
-            String name,
-            String desc,
-            String url) {
+    public WeblogBookmark(Weblog parent, String name, String url, String desc) {
         this.id = WebloggerCommon.generateUUID();
         this.weblog = parent;
         this.name = name;
