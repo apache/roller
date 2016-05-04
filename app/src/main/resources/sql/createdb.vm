@@ -237,6 +237,10 @@ create table ping_target (
     autoenabled  $db.BOOLEAN_SQL_TYPE_FALSE not null
 );
 
+alter table ping_target add constraint pt_name_uq unique (name);
+
+alter table ping_target add constraint pt_url_uq unique (pingurl);
+
 -- ping targets configured to be pinged for each weblog
 create table weblog_ping_target (
     id            varchar(48) not null primary key,

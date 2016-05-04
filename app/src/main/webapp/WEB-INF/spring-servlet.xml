@@ -40,8 +40,8 @@
     </beans:bean>
 
     <!-- Scan components in given packages marked @Component, @Controller, etc. and register them as beans -->
-    <context:component-scan base-package="org.apache.roller.weblogger.ui.struts2.editor,
-                                          org.apache.roller.weblogger.ui.rendering.processors">
+    <context:component-scan base-package="org.apache.roller.weblogger.ui.struts2.admin,
+        org.apache.roller.weblogger.ui.struts2.editor, org.apache.roller.weblogger.ui.rendering.processors">
     </context:component-scan>
 
 </beans:beans>
