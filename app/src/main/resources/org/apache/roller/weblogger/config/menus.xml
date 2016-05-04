@@ -17,10 +17,6 @@ Defines the menus provided with Weblogger
                      titleKey="tabbedmenu.admin.commentManagement"/>
             <tabItem action="commonPingTargets"
                      titleKey="tabbedmenu.admin.pingTargets">
-                <subactions>
-                    <subaction>commonPingTargetAdd</subaction>
-                    <subaction>commonPingTargetEdit</subaction>
-                </subactions>
             </tabItem>
             <tabItem action="planets"
                      titleKey="tabbedmenu.admin.planets">
@@ -55,10 +51,6 @@ Defines the menus provided with Weblogger
             <tabItem action="bookmarks"
                      titleKey="tabbedmenu.bookmarks.allFolders"
                      weblogRole="OWNER">
-                <subactions>
-                    <subaction>bookmarkAdd</subaction>
-                    <subaction>bookmarkEdit</subaction>
-                </subactions>
             </tabItem>
             <tabItem action="mediaFileView"
                      titleKey="tabbedmenu.weblog.mediaFiles"
@@ -84,9 +76,6 @@ Defines the menus provided with Weblogger
         <tab titleKey="tabbedmenu.website" globalRole="BLOGGER" weblogRole="OWNER">
             <tabItem action="weblogConfig"
                      titleKey="tabbedmenu.website.settings">
-                <subactions>
-                    <subaction>weblogRemove</subaction>
-                </subactions>
             </tabItem>
             <tabItem action="members"
                      titleKey="tabbedmenu.website.members"

@@ -138,11 +138,11 @@ var msg= {
         </tr>
         <tr>
             <td><label for="bookmark-edit-url"><s:text name='bookmarkForm.url'/></label></td>
-            <td><input id="bookmark-edit-url" maxlength="120" size="50" onBlur="this.value=this.value.trim()"/></td>
+            <td><input id="bookmark-edit-url" maxlength="128" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
         <tr>
             <td><label for="bookmark-edit-description"><s:text name='generic.description'/></label></td>
-            <td><input id="bookmark-edit-description" maxlength="120" size="50" onBlur="this.value=this.value.trim()"/></td>
+            <td><input id="bookmark-edit-description" maxlength="128" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
     </table>
     </form>

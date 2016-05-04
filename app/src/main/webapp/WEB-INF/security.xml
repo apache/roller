@@ -38,7 +38,6 @@
         <intercept-url pattern="/tb-ui/menu**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
-        <intercept-url pattern="/rewrite-status*" access="ADMIN"/>
 
         <!-- CSRF presently handled manually via TightBlog's salt filters -->
         <csrf disabled="true"/>

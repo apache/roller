@@ -24,23 +24,37 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Admin action for managing global ping targets.
  */
+@RestController
 public class PingTargets extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(PingTargets.class);
 
+    @Autowired
     private PingTargetManager pingTargetManager;
 
     public void setPingTargetManager(PingTargetManager pingTargetManager) {
@@ -99,69 +113,114 @@ public class PingTargets extends UIAction {
         return LIST;
     }
 
-    /**
-     * Set a ping target auto enabled to true.
-     */
-    public String enable() {
-        
-        if(getPingTarget() != null) {
-            try {
-                getPingTarget().setAutoEnabled(true);
-                pingTargetManager.savePingTarget(getPingTarget());
-                WebloggerFactory.flush();
-            } catch (Exception ex) {
-                log.error("Error saving ping target", ex);
-                addError("commonPingTargets.error.saving");
+
+    @RequestMapping(value = "/tb-ui/admin/rest/pingtarget/{id}", method = RequestMethod.PUT)
+    public void updateBookmark(@PathVariable String id, @RequestBody PingTargetData newData,
+                               HttpServletResponse response) throws ServletException {
+        try {
+            PingTarget pt = pingTargetManager.getPingTarget(id);
+            if (pt != null) {
+                pt.setName(newData.getName());
+                pt.setPingUrl(newData.getUrl());
+                try {
+                    pingTargetManager.savePingTarget(pt);
+                    WebloggerFactory.flush();
+                    setPingTargets(pingTargetManager.getCommonPingTargets());
+                } catch (WebloggerException e) {
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    return;
+                }
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } else {
-            addError("commonPingTargets.error.enabling");
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
         }
-        
-        return LIST;
-    }
-    
-    
-    /**
-     * Set a ping target auto-enable to false.
-     */
-    public String disable() {
-        
-        if(getPingTarget() != null) {
-            try {
-                getPingTarget().setAutoEnabled(false);
-                pingTargetManager.savePingTarget(getPingTarget());
-                WebloggerFactory.flush();
-            } catch (Exception ex) {
-                log.error("Error saving ping target", ex);
-                addError("commonPingTargets.error.saving");
-            }
-        } else {
-            addError("commonPingTargets.error.disabling");
-        }
-        
-        return LIST;
     }
 
-    /**
-     * Delete a ping target.
-     */
-    public String delete() {
-        if(getPingTarget() != null) {
+    @RequestMapping(value = "/tb-ui/admin/rest/pingtargets", method = RequestMethod.PUT)
+    public void addPingTarget(@RequestBody PingTargetData newData, HttpServletResponse response) throws ServletException {
+        try {
+            PingTarget pt = new PingTarget();
+            pt.setId(WebloggerCommon.generateUUID());
+            pt.setAutoEnabled(false);
+            pt.setName(newData.getName());
+            pt.setPingUrl(newData.getUrl());
             try {
-                pingTargetManager.removePingTarget(getPingTarget());
+                pingTargetManager.savePingTarget(pt);
                 WebloggerFactory.flush();
-
-                // remove deleted target from list
-                getPingTargets().remove(getPingTarget());
-                addMessage("pingTarget.deleted", getPingTarget().getName());
-            } catch (WebloggerException ex) {
-                log.error("Error deleting ping target - " + getPingTargetId(), ex);
-                addError("generic.error.check.logs", getPingTargetId());
+                setPingTargets(pingTargetManager.getCommonPingTargets());
+            } catch (WebloggerException e) {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                return;
             }
-        } else {
-            addError("pingTarget.notFound", getPingTargetId());
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
         }
-        return LIST;
+    }
+
+    private static class PingTargetData {
+        public PingTargetData() {
+        }
+
+        private String name;
+        private String url;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/pingtargets/enable/{id}", method = RequestMethod.POST)
+    public boolean enable(@PathVariable String id, HttpServletResponse response) throws ServletException {
+        return changeAutoEnableState(id, response, true);
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/pingtargets/disable/{id}", method = RequestMethod.POST)
+    public boolean disable(@PathVariable String id, HttpServletResponse response) throws ServletException {
+        return changeAutoEnableState(id, response, false);
+    }
+
+    private boolean changeAutoEnableState(String pingTargetId, HttpServletResponse response, boolean state) throws ServletException {
+        try {
+            PingTarget ping = pingTargetManager.getPingTarget(pingTargetId);
+            ping.setAutoEnabled(state);
+            pingTargetManager.savePingTarget(ping);
+            WebloggerFactory.flush();
+            response.setStatus(HttpServletResponse.SC_OK);
+            return state;
+        } catch (Exception e) {
+            log.warn("Error " + (state ? "enabling" : "disabling") + " ping target: " + e.getMessage());
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/pingtarget/{id}", method = RequestMethod.DELETE)
+    public void deletePingTarget(@PathVariable String id, HttpServletResponse response) throws ServletException {
+        try {
+            PingTarget ping = pingTargetManager.getPingTarget(id);
+            pingTargetManager.removePingTarget(ping);
+            WebloggerFactory.flush();
+            getPingTargets().remove(ping);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            log.warn("Error deleting ping target: " + e.getMessage());
+            throw new ServletException(e.getMessage());
+        }
     }
 
     public List<PingTarget> getPingTargets() {
