@@ -275,7 +275,7 @@ public class FeedManagerImpl implements FeedManager {
                 entry.setPermalink(blogEntry.getPermalink());
                 entry.setUri(blogEntry.getPermalink());
                 entry.setCategoriesString(blogEntry.getCategory().getName());
-                
+                entry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
                 newSub.addEntry(entry);
             }
             
@@ -290,8 +290,13 @@ public class FeedManagerImpl implements FeedManager {
     // build a SubscriptionEntry from Rome SyndEntry and SyndFeed
     private SubscriptionEntry buildEntry(SyndEntry romeEntry) {
 
-        // if we don't have a permalink then we can't continue
-        if (romeEntry.getLink() == null) {
+        // link and uri's are required
+        if (romeEntry.getLink() == null || romeEntry.getUri() == null) {
+            return null;
+        }
+
+        // max 255 length for links
+        if (romeEntry.getLink().length() > 255 || romeEntry.getUri().length() > 255) {
             return null;
         }
 
@@ -349,7 +354,7 @@ public class FeedManagerImpl implements FeedManager {
             }
             newEntry.setCategoriesString(list);
         }
-
+        newEntry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
         return newEntry;
     }
 

@@ -39,6 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring-beans.xml")
@@ -336,8 +337,10 @@ abstract public class WebloggerTest {
         testEntry.setPermalink(title);
         testEntry.setUri(title);
         testEntry.setTitle(title);
-        testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
+        Timestamp testTS = new java.sql.Timestamp(System.currentTimeMillis());
+        testEntry.setPubTime(testTS);
         testEntry.setSubscription(testSub);
+        testEntry.setUploaded(testTS);
         testSub.getEntries().add(testEntry);
         planetManager.saveEntry(testEntry);
 

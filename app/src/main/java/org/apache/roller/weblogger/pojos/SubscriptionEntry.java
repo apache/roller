@@ -70,6 +70,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     private String content = "";
     private Timestamp published;
     private Timestamp updated;
+    private Timestamp uploaded;
     private String categoriesString;
     
     // associations
@@ -95,8 +96,8 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public void setTitle(String title) {
         this.title = title;
     }
-    
-    
+
+    @Basic(optional=false)
     public String getUri() {
         return uri;
     }
@@ -150,6 +151,14 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         this.updated = updated;
     }
 
+    @Basic(optional=false)
+    public Timestamp getUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(Timestamp uploaded) {
+        this.uploaded = uploaded;
+    }
 
     @Column(name="categories")
     public String getCategoriesString() {
@@ -226,6 +235,15 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
             }
         }
         categoriesString = sb.toString();
+
+        // 255 max.
+        if (categoriesString.length() > 255) {
+            categoriesString = categoriesString.substring(0, 255);
+            int lastComma = categoriesString.lastIndexOf(',');
+            if (lastComma > 0) {
+                categoriesString = categoriesString.substring(0, lastComma - 1);
+            }
+        }
     }
     
     /**
