@@ -273,7 +273,7 @@ create table weblogger_properties (
 create table planet (
     id               varchar(48) not null primary key,
     handle           varchar(32) not null,
-    title            varchar(255) not null,
+    title            varchar(128) not null,
     description      varchar(255),
     max_feed_entries integer default 30
 );
@@ -299,15 +299,18 @@ alter table planet_subscription add constraint ps_planetid_fk
 create table planet_subscription_entry (
     id               varchar(48) not null primary key,
     subscription_id  varchar(48) not null,
-    uri              varchar(255),
-    permalink        $db.TEXT_SQL_TYPE not null,
+    uri              varchar(255) not null,
+    permalink        varchar(255) not null,
     title            varchar(255),
-    published        $db.TIMESTAMP_SQL_TYPE not null,
-    content          $db.TEXT_SQL_TYPE,
-    categories       $db.TEXT_SQL_TYPE,
     author           varchar(255),
-    updated          $db.TIMESTAMP_SQL_TYPE
+    content          $db.TEXT_SQL_TYPE,
+    categories       varchar(255),
+    published        $db.TIMESTAMP_SQL_TYPE not null,
+    updated          $db.TIMESTAMP_SQL_TYPE,
+    uploaded         $db.TIMESTAMP_SQL_TYPE not null
 );
+
+alter table planet_subscription_entry add constraint pse_uri_uq unique (uri);
 
 alter table planet_subscription_entry add constraint pse_subscriptionid_fk
     foreign key (subscription_id) references planet_subscription(id);

@@ -65,8 +65,10 @@ public class SubscriptionEntryTest extends WebloggerTest {
 
         SubscriptionEntry testEntry = new SubscriptionEntry();
         testEntry.setPermalink("entryBasics");
+        testEntry.setUri("entryBasics");
         testEntry.setTitle("entryBasics");
         testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
+        testEntry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
         testEntry.setSubscription(sub);
 
         // add

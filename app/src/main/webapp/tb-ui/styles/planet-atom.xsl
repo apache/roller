@@ -24,6 +24,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><xsl:value-of select="atom:feed/atom:title"/></title>
+<link rel="shortcut icon" href="$url.absoluteSite/favicon.ico">
 
 <style>
 body {
