@@ -75,8 +75,9 @@ var msg= {
                             <s:if test="AllCategories.size() > 1">
                                 <a href="#" class="remove-link" id='cat-remove-id-<s:property value="#category.id"/>' data-id='<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>'>
                                     <img src='<s:url value="/images/delete.png"/>' border="0" alt="icon"/>
-                                    <a></s:if>
-                                </td>
+                                <a>
+                            </s:if>
+                        </td>
 
                             </tr>
                         </s:iterator>

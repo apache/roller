@@ -272,8 +272,8 @@ create table weblogger_properties (
 
 create table planet (
     id               varchar(48) not null primary key,
-    handle           varchar(32) not null,
-    title            varchar(128) not null,
+    title            varchar(64) not null,
+    handle           varchar(48) not null,
     description      varchar(255),
     max_feed_entries integer default 30
 );

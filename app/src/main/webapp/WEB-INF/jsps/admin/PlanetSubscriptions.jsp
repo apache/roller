@@ -20,35 +20,55 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
-
+<script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'/>"></script>
 <script>
-  $(function() {
-    $(".delete-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete').data('sub',  $(this).attr("data-feedURL")).dialog('open');
-    });
-
-    $("#confirm-delete").dialog({
-      autoOpen: false,
-      resizable: false,
-      height:170,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.delete'/>": function() {
-          document.location.href='<s:url action="planetSubscriptions!delete" />?planetHandle=<s:property value="planetHandle"/>&subUrl='+encodeURIComponent($(this).data('sub'));
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-  });
+var contextPath = "${pageContext.request.contextPath}";
+var msg= {
+    confirmLabel: '<s:text name="generic.confirm"/>',
+    saveLabel: '<s:text name="generic.save"/>',
+    cancelLabel: '<s:text name="generic.cancel"/>',
+    editTitle: '<s:text name="generic.edit"/>',
+    addTitle: '<s:text name="categoryForm.add.title"/>'
+};
 </script>
-        
-      
+<script src="<s:url value='/tb-ui/scripts/planetEdit.js'/>"></script>
+
+<s:form id="planetForm" action="planets">
+	<s:hidden name="salt" />
+    <s:hidden name="bean.id" />
+
+    <div class="formrow">
+        <label for="title" class="formrow" /><s:text name="planets.title" /></label>
+        <s:textfield name="bean.title" size="48" maxlength="64" onBlur="this.value=this.value.trim()"/>
+    </div>
+
+    <div class="formrow">
+        <label for="handle" class="formrow" /><s:text name="planets.handle" /></label>
+        <s:textfield name="bean.handle" size="48" maxlength="48" onBlur="this.value=this.value.trim()"/>
+    </div>
+
+    <div class="formrow">
+        <label for="description" class="formrow" /><s:text name="generic.description" /></label>
+        <s:textfield name="bean.description" size="90" maxlength="255" onBlur="this.value=this.value.trim()"/>
+    </div>
+
+    <p />
+
+    <div class="formrow">
+        <label class="formrow" />&nbsp;</label>
+        <s:submit value="%{getText('generic.save')}" action="planets!save"/>
+        &nbsp;
+        <input type="button" value='<s:text name="generic.cancel" />'
+               onclick="window.location='<s:url action="planetSubscriptions"/>'"/>
+    </div>
+</s:form>
+
+<s:form id="planetEditForm" action="planetSubscriptions">
+	<s:hidden name="salt" />
+  <s:hidden id="planetHandle" name="planetHandle" />
+</s:form>
+
 <p class="subtitle">
     <s:text name="planetSubscriptions.subtitle.add" >
         <s:param value="planetHandle" />
@@ -58,12 +78,12 @@
 
 <s:form action="planetSubscriptions!save">
 	<s:hidden name="salt" />
-    <s:hidden name="planetHandle" />
-    
+  <s:hidden name="planetHandle" />
+
     <div class="formrow">
         <label for="feedURL" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
-        <s:textfield name="subUrl" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/>
-        &nbsp;<s:submit value="%{getText('generic.save')}" />
+        <s:textfield id="subUrl" name="subUrl" size="60" maxlength="255" onBlur="this.value=this.value.trim()"/>
+        &nbsp;<s:submit value="%{getText('generic.save')}" id="add-link"/>
     </div>
 </s:form>
 
@@ -95,22 +115,21 @@
         <s:else>
             <tr class="rollertable_even">
         </s:else>
-        
+
         <td class="rollertable">
             <s:property value="#sub.title" />
         </td>
-        
+
         <td class="rollertable">
             <str:truncateNicely lower="70" upper="100" ><s:property value="#sub.feedURL" /></str:truncateNicely>
         </td>
-        
+
         <td class="rollertable">
-            <img src='<s:url value="/images/delete.png"/>' />
-            <a class="delete-link" data-feedURL="<s:property value='#sub.feedURL'/>">
-                <s:text name="generic.delete"/>
+            <a class="delete-link" data-id="<s:property value='#sub.id'/>">
+                <img src='<s:url value="/images/delete.png"/>' />
             </a>
-        </td>       
-        
+        </td>
+
         </tr>
     </s:iterator>
 </table>

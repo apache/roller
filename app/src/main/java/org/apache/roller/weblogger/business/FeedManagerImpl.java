@@ -450,39 +450,37 @@ public class FeedManagerImpl implements FeedManager {
         updateProxySettings();
 
         for (Subscription sub : subscriptions) {
-            try {
-                // reattach sub.  sub gets detached as we iterate
-                sub = planetManager.getSubscriptionById(sub.getId());
-            } catch (WebloggerException ex) {
-                log.warn("Subscription went missing while doing update: "+ex.getMessage());
-            }
+            // reattach sub.  sub gets detached as we iterate
+            sub = planetManager.getSubscriptionById(sub.getId());
 
             // this updates and saves
-            try {
-                updateSubscription(sub);
-            } catch(WebloggerException ex) {
-                // do a little work to get at the source of the problem
-                Throwable cause = ex;
-                if(ex.getRootCause() != null) {
-                    cause = ex.getRootCause();
-                }
-                if(cause.getCause() != null) {
-                    cause = cause.getCause();
-                }
+            if (sub != null) {
+                try {
+                    updateSubscription(sub);
+                } catch (WebloggerException ex) {
+                    // do a little work to get at the source of the problem
+                    Throwable cause = ex;
+                    if (ex.getRootCause() != null) {
+                        cause = ex.getRootCause();
+                    }
+                    if (cause.getCause() != null) {
+                        cause = cause.getCause();
+                    }
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Error updating subscription - "+sub.getFeedURL(), cause);
-                } else {
-                    log.warn("Error updating subscription - "+sub.getFeedURL()
-                            + " turn on debug logging for more info");
-                }
+                    if (log.isDebugEnabled()) {
+                        log.debug("Error updating subscription - " + sub.getFeedURL(), cause);
+                    } else {
+                        log.warn("Error updating subscription - " + sub.getFeedURL()
+                                + " turn on debug logging for more info");
+                    }
 
-            } catch(Exception ex) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
-                } else {
-                    log.warn("Error updating subscription - "+sub.getFeedURL()
-                            + " turn on debug logging for more info");
+                } catch (Exception ex) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Error updating subscription - " + sub.getFeedURL(), ex);
+                    } else {
+                        log.warn("Error updating subscription - " + sub.getFeedURL()
+                                + " turn on debug logging for more info");
+                    }
                 }
             }
         }

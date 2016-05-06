@@ -20,23 +20,35 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Manage planets.
  */
+@RestController
 public class Planets extends UIAction {
     
     private static Log log = LogFactory.getLog(Planets.class);
@@ -47,13 +59,21 @@ public class Planets extends UIAction {
     // the planet we are working on
     private Planet planet = null;
 
-    private PlanetManager planetManager;
-
     // full list of planets
     private List<Planet> planets = new ArrayList<>();
 
+    @Autowired
+    private PlanetManager planetManager;
+
     public void setPlanetManager(PlanetManager planetManager) {
         this.planetManager = planetManager;
+    }
+
+    @Autowired
+    private FeedManager feedManager;
+
+    public void setFeedManager(FeedManager feedManager) {
+        this.feedManager = feedManager;
     }
 
     public Planets() {
@@ -105,7 +125,6 @@ public class Planets extends UIAction {
     }
 
     public String save() {
-        
         myValidate();
         
         if (!hasActionErrors()) {
@@ -122,10 +141,11 @@ public class Planets extends UIAction {
                 // copy in submitted data
                 aPlanet.setTitle(bean.getTitle().trim());
                 aPlanet.setHandle(bean.getHandle().trim());
+                aPlanet.setDescription(bean.getDescription().trim());
 
                 // save and flush
                 planetManager.savePlanet(aPlanet);
-                planets.add(aPlanet);
+//                planets.add(aPlanet);
                 WebloggerFactory.flush();
 
                 addMessage("planets.success.saved");
@@ -138,29 +158,7 @@ public class Planets extends UIAction {
         return LIST;
     }
 
-    
-    /** 
-     * Delete planet, reset form
-     */
-    public String delete() {
-        
-        if(getPlanet() != null) {
-            try {
-                planetManager.deletePlanet(getPlanet());
-                planets.remove(getPlanet());
-                WebloggerFactory.flush();
-                addMessage("planets.success.deleted");
-            } catch(Exception ex) {
-                log.error("Error deleting planet - "+getBean().getId());
-                addError("Error deleting planet");
-            }
-        }
-        
-        return LIST;
-    }
-    
-    
-    /** 
+    /**
      * Validate posted planet
      */
     private void myValidate() {
@@ -200,4 +198,138 @@ public class Planets extends UIAction {
     public void setPlanet(Planet planet) {
         this.planet = planet;
     }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.PUT)
+    public void updatePlanet(@PathVariable String id, @RequestBody PlanetData newData,
+                               HttpServletResponse response) throws ServletException {
+        Planet planet = planetManager.getPlanetById(id);
+        savePlanet(planet, newData, response);
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.PUT)
+    public void addPlanet(@RequestBody PlanetData newData, HttpServletResponse response) throws ServletException {
+        Planet planet = new Planet();
+        planet.setId(WebloggerCommon.generateUUID());
+        savePlanet(planet, newData, response);
+    }
+
+    private void savePlanet(Planet planet, PlanetData newData, HttpServletResponse response) throws ServletException {
+        try {
+            if (planet != null) {
+                if ("all".equals(newData.getName())) {
+                    newData.setName("all1");
+                }
+                planet.setTitle(newData.getName());
+                planet.setHandle(newData.getHandle());
+                planet.setDescription(newData.getDescription());
+                try {
+                    planetManager.savePlanet(planet);
+                    WebloggerFactory.flush();
+                } catch (WebloggerException e) {
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    return;
+                }
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private static class PlanetData {
+        public PlanetData() {
+        }
+
+        private String name;
+        private String handle;
+        private String description;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getHandle() {
+            return handle;
+        }
+
+        public void setHandle(String handle) {
+            this.handle = handle;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
+
+    
+    @RequestMapping(value = "/tb-ui/admin/rest/planets/{id}", method = RequestMethod.DELETE)
+    public void deletePlanet(@PathVariable String id, HttpServletResponse response) throws ServletException {
+        try {
+            Planet planetToDelete = planetManager.getPlanetById(id);
+            planetManager.deletePlanet(planetToDelete);
+            planets.remove(planetToDelete);
+            WebloggerFactory.flush();
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            log.error("Error deleting planet - " + getBean().getId());
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions/{id}", method = RequestMethod.DELETE)
+    public void deletePlanetSubscription(@PathVariable String id, HttpServletResponse response) throws ServletException {
+        try {
+            Subscription subToDelete = planetManager.getSubscriptionById(id);
+            if (subToDelete != null) {
+                planetManager.deleteSubscription(subToDelete);
+                subToDelete.getPlanet().getSubscriptions().remove(subToDelete);
+                WebloggerFactory.flush();
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            log.error("Error deleting subscription - " + getBean().getId());
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions", method = RequestMethod.PUT)
+    public void addPlanetSubscription(@RequestParam(name="planet") String planetHandle, @RequestParam String subUrl,
+                                      HttpServletResponse response) throws ServletException {
+        try {
+            Planet planet = planetManager.getPlanet(planetHandle);
+            if (planet == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            Subscription sub = planetManager.getSubscription(planet, subUrl);
+            if (sub == null) {
+                sub = feedManager.fetchSubscription(subUrl);
+                if (sub != null) {
+                    sub.setPlanet(planet);
+                    planetManager.saveSubscription(sub);
+                    planet.getSubscriptions().add(sub);
+                    WebloggerFactory.flush();
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.setStatus(422);
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+
 }

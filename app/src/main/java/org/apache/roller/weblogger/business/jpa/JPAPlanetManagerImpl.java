@@ -119,7 +119,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public Subscription getSubscriptionById(String id) throws WebloggerException {
+    public Subscription getSubscriptionById(String id) {
         return strategy.load(Subscription.class, id);
     }
     
@@ -153,7 +153,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public Planet getPlanetById(String id) throws WebloggerException {
+    public Planet getPlanetById(String id) {
         return strategy.load(Planet.class, id);
     }        
     
