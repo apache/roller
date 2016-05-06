@@ -85,20 +85,11 @@ var msg= {
             <s:property value="#planet.description" />
         </td>
 
-        <!--td class="rollertable">
-            <s:url var="planetUrl" action="planets">
-                <s:param name="bean.id" value="#planet.id" />
-            </s:url>
-            <s:a href="%{planetUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
-                                         title="<s:text name='planets.edit.tip' />" /></s:a>
-        </td-->
-
-        <td class="rollertable">
-            <s:url var="subUrl" action="planetSubscriptions">
+        <td class="rollertable" align="center">
+            <s:url var="subUrl" action="planetEdit">
                 <s:param name="planetHandle" value="#planet.handle" />
             </s:url>
-            <s:a href="%{subUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
-                                       title="<s:text name='planets.subscriptions.tip' />" /></s:a>
+            <s:a href="%{subUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/></s:a>
         </td>
 
         <td class="rollertable" align="center">
@@ -117,7 +108,7 @@ var msg= {
 </s:iterator>
 </table>
 
-<s:form id="planetAddForm" action="planetSubscriptions">
+<s:form id="planetAddForm" action="planetEdit">
 	<s:hidden name="salt" />
 
 <div class="control clearfix">

@@ -33,9 +33,9 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 /**
  * Manage planet subscriptions
  */
-public class PlanetSubscriptions extends UIAction {
+public class PlanetEdit extends UIAction {
     
-    private static final Log LOGGER = LogFactory.getLog(PlanetSubscriptions.class);
+    private static final Log LOGGER = LogFactory.getLog(PlanetEdit.class);
 
     private PlanetManager planetManager;
 
@@ -49,14 +49,11 @@ public class PlanetSubscriptions extends UIAction {
     // the planet we are working in
     private Planet bean = null;
     
-    // the subscription to deal with
-    private String subUrl = null;
-
     // full list of subscriptions for the planet
     private List<Subscription> subscriptions = new ArrayList<>();
 
-    public PlanetSubscriptions() {
-        this.actionName = "planetSubscriptions";
+    public PlanetEdit() {
+        this.actionName = "planetEdit";
         this.desiredMenu = "admin";
         this.pageTitle = "planetSubscriptions.title";
     }
@@ -114,12 +111,4 @@ public class PlanetSubscriptions extends UIAction {
     public void setBean(Planet bean) {
         this.bean = bean;
     }
-
-    public String getSubUrl() {
-        return subUrl;
-    }
-
-    public void setSubUrl(String subUrl) {
-        this.subUrl = subUrl;
-    }    
 }

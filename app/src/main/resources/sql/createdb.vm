@@ -310,7 +310,7 @@ create table planet_subscription_entry (
     uploaded         $db.TIMESTAMP_SQL_TYPE not null
 );
 
-alter table planet_subscription_entry add constraint pse_uri_uq unique (uri);
+alter table planet_subscription_entry add constraint pse_suburi_uq unique (subscription_id, uri);
 
 alter table planet_subscription_entry add constraint pse_subscriptionid_fk
     foreign key (subscription_id) references planet_subscription(id);

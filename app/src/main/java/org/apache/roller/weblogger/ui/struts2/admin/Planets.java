@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -53,12 +52,6 @@ public class Planets extends UIAction {
     
     private static Log log = LogFactory.getLog(Planets.class);
     
-    // a bean to manage submitted data
-    private Planet bean = new Planet();
-    
-    // the planet we are working on
-    private Planet planet = null;
-
     // full list of planets
     private List<Planet> planets = new ArrayList<>();
 
@@ -98,15 +91,7 @@ public class Planets extends UIAction {
                 }
             }
         } catch(Exception ex) {
-            log.error("Error getting planets - " + getBean().getId(), ex);
-        }
-
-        if(getBean().getId() != null) {
-            try {
-                setPlanet(planetManager.getPlanetById(getBean().getId()));
-            } catch(Exception ex) {
-                log.error("Error looking up planet - " + getBean().getId(), ex);
-            }
+            log.error("Error getting planets: ", ex);
         }
     }
 
@@ -115,88 +100,11 @@ public class Planets extends UIAction {
      * Show planets page.
      */
     public String execute() {
-        // if we are loading an existing planet then populate the bean
-        if(getPlanet() != null) {
-            bean.setId(getPlanet().getId());
-            bean.setTitle(getPlanet().getTitle());
-            bean.setHandle(getPlanet().getHandle());
-        }
         return LIST;
     }
 
-    public String save() {
-        myValidate();
-        
-        if (!hasActionErrors()) {
-            try {
-                Planet aPlanet = getPlanet();
-                if(aPlanet == null) {
-                    log.debug("Adding New Planet");
-                    aPlanet = new Planet();
-                    aPlanet.setId(WebloggerCommon.generateUUID());
-                } else {
-                    log.debug("Updating Existing Planet");
-                }
-
-                // copy in submitted data
-                aPlanet.setTitle(bean.getTitle().trim());
-                aPlanet.setHandle(bean.getHandle().trim());
-                aPlanet.setDescription(bean.getDescription().trim());
-
-                // save and flush
-                planetManager.savePlanet(aPlanet);
-//                planets.add(aPlanet);
-                WebloggerFactory.flush();
-
-                addMessage("planets.success.saved");
-            } catch(Exception ex) {
-                log.error("Error saving planet - " + getBean().getId(), ex);
-                addError("planets.error.saved");
-            }
-        }
-        
-        return LIST;
-    }
-
-    /**
-     * Validate posted planet
-     */
-    private void myValidate() {
-        
-        if(StringUtils.isEmpty(getBean().getTitle())) {
-            addError("planets.error.title");
-        }
-        
-        if(StringUtils.isEmpty(getBean().getHandle())) {
-            addError("planets.error.handle");
-        }
-        
-        if(getBean().getHandle() != null && "all".equals(getBean().getHandle())) {
-            addError("planets.error.nameReserved");
-        }
-        
-        // make sure duplicate planet handles are prevented
-    }
-    
-    
     public List<Planet> getPlanets() {
         return planets;
-    }
-
-    public Planet getBean() {
-        return bean;
-    }
-
-    public void setBean(Planet bean) {
-        this.bean = bean;
-    }
-    
-    public Planet getPlanet() {
-        return planet;
-    }
-
-    public void setPlanet(Planet planet) {
-        this.planet = planet;
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.PUT)
@@ -207,17 +115,19 @@ public class Planets extends UIAction {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.PUT)
-    public void addPlanet(@RequestBody PlanetData newData, HttpServletResponse response) throws ServletException {
+    public String addPlanet(@RequestBody PlanetData newData, HttpServletResponse response) throws ServletException {
         Planet planet = new Planet();
         planet.setId(WebloggerCommon.generateUUID());
         savePlanet(planet, newData, response);
+        return response.getStatus() == HttpServletResponse.SC_OK ? planet.getId() : null;
     }
 
     private void savePlanet(Planet planet, PlanetData newData, HttpServletResponse response) throws ServletException {
         try {
             if (planet != null) {
                 if ("all".equals(newData.getName())) {
-                    newData.setName("all1");
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    return;
                 }
                 planet.setTitle(newData.getName());
                 planet.setHandle(newData.getHandle());
@@ -281,7 +191,7 @@ public class Planets extends UIAction {
             WebloggerFactory.flush();
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
-            log.error("Error deleting planet - " + getBean().getId());
+            log.error("Error deleting planet - " + id);
             throw new ServletException(e.getMessage());
         }
     }
@@ -297,13 +207,13 @@ public class Planets extends UIAction {
             }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
-            log.error("Error deleting subscription - " + getBean().getId());
+            log.error("Error deleting subscription - " + id);
             throw new ServletException(e.getMessage());
         }
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions", method = RequestMethod.PUT)
-    public void addPlanetSubscription(@RequestParam(name="planet") String planetHandle, @RequestParam String subUrl,
+    public void addPlanetSubscription(@RequestParam(name="planet") String planetHandle, @RequestParam String feedUrl,
                                       HttpServletResponse response) throws ServletException {
         try {
             Planet planet = planetManager.getPlanet(planetHandle);
@@ -311,9 +221,9 @@ public class Planets extends UIAction {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            Subscription sub = planetManager.getSubscription(planet, subUrl);
+            Subscription sub = planetManager.getSubscription(planet, feedUrl);
             if (sub == null) {
-                sub = feedManager.fetchSubscription(subUrl);
+                sub = feedManager.fetchSubscription(feedUrl);
                 if (sub != null) {
                     sub.setPlanet(planet);
                     planetManager.saveSubscription(sub);
@@ -330,6 +240,4 @@ public class Planets extends UIAction {
             throw new ServletException(e.getMessage());
         }
     }
-
-
 }
