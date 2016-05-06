@@ -182,8 +182,8 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
     </definition>
     
-    <definition name=".PlanetSubscriptions" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetSubscriptions.jsp" />
+    <definition name=".PlanetEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetEdit.jsp" />
     </definition>
     
     <definition name=".Planets" extends=".tiles-tabbedpage" >

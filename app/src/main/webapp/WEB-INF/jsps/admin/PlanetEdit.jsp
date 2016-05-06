@@ -34,39 +34,34 @@ var msg= {
 </script>
 <script src="<s:url value='/tb-ui/scripts/planetEdit.js'/>"></script>
 
-<s:form id="planetForm" action="planets">
-	<s:hidden name="salt" />
+<s:form id="planetEditForm" action="planets">
+	<s:hidden id="salt" name="salt" />
     <s:hidden name="bean.id" />
 
     <div class="formrow">
         <label for="title" class="formrow" /><s:text name="planets.title" /></label>
-        <s:textfield name="bean.title" size="48" maxlength="64" onBlur="this.value=this.value.trim()"/>
+        <s:textfield id="edit-title" name="bean.title" size="48" maxlength="64" onBlur="this.value=this.value.trim()"/>
     </div>
 
     <div class="formrow">
         <label for="handle" class="formrow" /><s:text name="planets.handle" /></label>
-        <s:textfield name="bean.handle" size="48" maxlength="48" onBlur="this.value=this.value.trim()"/>
+        <s:textfield id="edit-handle" name="bean.handle" size="48" maxlength="48" onBlur="this.value=this.value.trim()"/>
     </div>
 
     <div class="formrow">
         <label for="description" class="formrow" /><s:text name="generic.description" /></label>
-        <s:textfield name="bean.description" size="90" maxlength="255" onBlur="this.value=this.value.trim()"/>
+        <s:textfield id="edit-description" name="bean.description" size="90" maxlength="255" onBlur="this.value=this.value.trim()"/>
     </div>
 
     <p />
 
     <div class="formrow">
         <label class="formrow" />&nbsp;</label>
-        <s:submit value="%{getText('generic.save')}" action="planets!save"/>
+        <s:submit value="%{getText('generic.save')}" id="save-planet"/>
         &nbsp;
-        <input type="button" value='<s:text name="generic.cancel" />'
-               onclick="window.location='<s:url action="planetSubscriptions"/>'"/>
+        <input type="button" value='<s:text name="generic.cancel"/>'
+           onclick="window.location='<s:url action="planetEdit"/>'"/>
     </div>
-</s:form>
-
-<s:form id="planetEditForm" action="planetSubscriptions">
-	<s:hidden name="salt" />
-  <s:hidden id="planetHandle" name="planetHandle" />
 </s:form>
 
 <p class="subtitle">
@@ -76,13 +71,13 @@ var msg= {
 </p>
 <p><s:text name="planetSubscriptions.prompt.add" /></p>
 
-<s:form action="planetSubscriptions!save">
+<s:form id="planetFeedForm" action="planetEdit">
 	<s:hidden name="salt" />
   <s:hidden name="planetHandle" />
 
     <div class="formrow">
-        <label for="feedURL" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
-        <s:textfield id="subUrl" name="subUrl" size="60" maxlength="255" onBlur="this.value=this.value.trim()"/>
+        <label for="feedUrl" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
+        <input type="text" id="feedUrl" size="60" maxlength="255" onBlur="this.value=this.value.trim()"/>
         &nbsp;<s:submit value="%{getText('generic.save')}" id="add-link"/>
     </div>
 </s:form>
@@ -91,9 +86,6 @@ var msg= {
 
 <h2>
     <s:text name="planetSubscriptions.existingTitle" />
-    <s:if test="planetHandle != 'all'" >
-        &nbsp;[planet: <s:property value="planetHandle" />]
-    </s:if>
 </h2>
 
 <table class="rollertable">
