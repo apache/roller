@@ -16,21 +16,17 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -47,17 +43,11 @@ public class PlanetSubscriptions extends UIAction {
         this.planetManager = planetManager;
     }
 
-    private FeedManager feedManager;
-
-    public void setFeedManager(FeedManager feedManager) {
-        this.feedManager = feedManager;
-    }
-
     // planet handle we are working in
     private String planetHandle = null;
     
     // the planet we are working in
-    private Planet planet = null;
+    private Planet bean = null;
     
     // the subscription to deal with
     private String subUrl = null;
@@ -79,13 +69,13 @@ public class PlanetSubscriptions extends UIAction {
     @Override
     public void prepare() {
         try {
-            planet = planetManager.getPlanet(getPlanetHandle());
+            bean = planetManager.getPlanet(getPlanetHandle());
         } catch (WebloggerException ex) {
             LOGGER.error("Error looking up planet group - " + getPlanetHandle(), ex);
         }
 
-        if (planet != null) {
-            Set<Subscription> subsSet = planet.getSubscriptions();
+        if (bean != null) {
+            Set<Subscription> subsSet = bean.getSubscriptions();
 
             // iterate over list and build display list
             for (Subscription sub : subsSet) {
@@ -105,109 +95,10 @@ public class PlanetSubscriptions extends UIAction {
         return LIST;
     }
 
-    
-    /** 
-     * Save subscription, add to current group 
-     */
-    public String save() {
-        
-        myValidate();
-        
-        if(!hasActionErrors()) {
-            try {
-                subUrl = subUrl.trim();
-
-                // check if this subscription already exists before adding it
-                Subscription sub = planetManager.getSubscription(planet, subUrl);
-
-                if (sub == null) {
-                    LOGGER.debug("Adding New Subscription - " + subUrl);
-
-                    // sub doesn't exist yet, so we need to fetch it
-                    sub = feedManager.fetchSubscription(subUrl);
-                    if (sub != null) {
-                        sub.setPlanet(planet);
-
-                        // save new sub
-                        planetManager.saveSubscription(sub);
-
-                        // add the sub to the group
-                        planet.getSubscriptions().add(sub);
-                        subscriptions.add(sub);
-                        planetManager.savePlanet(planet);
-
-                        // flush changes
-                        WebloggerFactory.flush();
-
-                        // clear field after success
-                        subUrl = null;
-
-                        addMessage("planetSubscription.success.saved");
-                    } else {
-                        addError("planetSubscriptions.notRetrievable");
-                        return LIST;
-                    }
-                } else {
-                    addError("planetSubscriptions.subscriptionAlreadyExists");
-                    return LIST;
-                }
-            } catch (WebloggerException ex) {
-                LOGGER.error("Unexpected error saving subscription", ex);
-                addError("planetSubscriptions.error.duringSave", ex.getErrorMessageChain());
-            }
-        }
-        
-        return LIST;
-    }
-
-    
-    /** 
-     * Delete subscription, reset form  
-     */
-    public String delete() {
-        
-        if(getSubUrl() != null) {
-            try {
-
-                // remove subscription
-                Subscription sub = planetManager.getSubscription(getPlanet(), getSubUrl());
-                getPlanet().getSubscriptions().remove(sub);
-                planetManager.deleteSubscription(sub);
-                subscriptions.remove(sub);
-                planetManager.savePlanet(getPlanet());
-                WebloggerFactory.flush();
-
-                // clear field after success
-                setSubUrl(null);
-
-                addMessage("planetSubscription.success.deleted");
-
-            } catch (WebloggerException ex) {
-                LOGGER.error("Error removing planet subscription", ex);
-                addError("planetSubscription.error.deleting");
-            }
-        }
-
-        return LIST;
-    }
-    
-    
-    /** 
-     * Validate posted subscription
-     */
-    private void myValidate() {
-        
-        if(StringUtils.isEmpty(getSubUrl())) {
-            addError("planetSubscription.error.feedUrl");
-        }
-    }
-    
-    
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
-    
-    
+
     public String getPlanetHandle() {
         return planetHandle;
     }
@@ -216,12 +107,12 @@ public class PlanetSubscriptions extends UIAction {
         this.planetHandle = planetHandle;
     }
     
-    public Planet getPlanet() {
-        return planet;
+    public Planet getBean() {
+        return bean;
     }
 
-    public void setPlanet(Planet planet) {
-        this.planet = planet;
+    public void setBean(Planet bean) {
+        this.bean = bean;
     }
 
     public String getSubUrl() {

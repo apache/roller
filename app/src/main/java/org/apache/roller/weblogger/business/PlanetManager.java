@@ -56,7 +56,7 @@ public interface PlanetManager {
     /**
      * Get planet by ID rather than handle.
      */
-    Planet getPlanetById(String id) throws WebloggerException;
+    Planet getPlanetById(String id);
     
     
     /**
@@ -80,9 +80,8 @@ public interface PlanetManager {
     /**
      * Get subscription by ID rather than feedUrl.
      */
-    Subscription getSubscriptionById(String id) throws WebloggerException;
-    
-    
+    Subscription getSubscriptionById(String id);
+
     /**
      * Get all subscriptions.
      */
