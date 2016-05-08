@@ -22,9 +22,6 @@ package org.apache.roller.weblogger.ui.rendering.generators;
 
 
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -32,7 +29,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -43,8 +39,6 @@ import java.util.TimeZone;
  */
 public class BigWeblogCalendar extends WeblogCalendar {
     
-    private static Log log = LogFactory.getLog(BigWeblogCalendar.class);
-
     private Map<Date, List<WeblogEntry>> monthMap;
     protected FastDateFormat singleDayFormat;
 
@@ -57,62 +51,52 @@ public class BigWeblogCalendar extends WeblogCalendar {
 
     @Override
     protected void loadWeblogEntries(WeblogEntrySearchCriteria wesc) {
-        try {
-            monthMap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
-        } catch (WebloggerException e) {
-            log.error(e);
-            monthMap = new HashMap<>();
-        }
+        monthMap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
     }
 
     @Override
     protected String getContent(Date day) {
-        String content = null;
-        try {
-            StringBuilder sb = new StringBuilder();
 
-            // get the 8 char YYYYMMDD datestring for day, returns null if no weblog entry on that day
-            String dateString;
-            List<WeblogEntry> entries = monthMap.get(day);
-            if ( entries != null ) {
-                dateString = eightCharDateFormat.format(entries.get(0).getPubTime());
+        StringBuilder sb = new StringBuilder();
+        // get the 8 char YYYYMMDD datestring for day, returns null if no weblog entry on that day
+        String dateString;
+        List<WeblogEntry> entries = monthMap.get(day);
+        if ( entries != null ) {
+            dateString = eightCharDateFormat.format(entries.get(0).getPubTime());
 
-                // append 8 char date string on end of selfurl
-                String dayUrl = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
+            // append 8 char date string on end of selfurl
+            String dayUrl = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
 
-                sb.append("<div class=\"hCalendarDayTitleBig\"><a href=\"");
-                sb.append( dayUrl );
+            sb.append("<div class=\"hCalendarDayTitleBig\"><a href=\"");
+            sb.append( dayUrl );
+            sb.append("\">");
+            sb.append(singleDayFormat.format(day));
+            sb.append("</a></div>");
+
+            for (WeblogEntry entry : entries) {
+                sb.append("<div class=\"bCalendarDayContentBig\"><a href=\"");
+                sb.append(entry.getPermalink());
                 sb.append("\">");
-                sb.append(singleDayFormat.format(day));
-                sb.append("</a></div>");
 
-                for (WeblogEntry entry : entries) {
-                    sb.append("<div class=\"bCalendarDayContentBig\"><a href=\"");
-                    sb.append(entry.getPermalink());
-                    sb.append("\">");
-
-                    String title = entry.getTitle().trim();
-                    if ( title.length()==0 ) {
-                        title = entry.getAnchor();
-                    }
-                    if ( title.length() > 20 ) {
-                        title = title.substring(0,20)+"...";
-                    }
-
-                    sb.append( title );
-                    sb.append("</a></div>");
+                String title = entry.getTitle().trim();
+                if ( title.length()==0 ) {
+                    title = entry.getAnchor();
+                }
+                if ( title.length() > 20 ) {
+                    title = title.substring(0,20)+"...";
                 }
 
-            } else {
-                sb.append("<div class=\"hCalendarDayTitleBig\">");
-                sb.append(singleDayFormat.format(day));
-                sb.append("</div><div class=\"bCalendarDayContentBig\"/>");
+                sb.append( title );
+                sb.append("</a></div>");
             }
-            content = sb.toString();
-        } catch (Exception e) {
-            log.error("ERROR: creating URL", e);
+
+        } else {
+            sb.append("<div class=\"hCalendarDayTitleBig\">");
+            sb.append(singleDayFormat.format(day));
+            sb.append("</div><div class=\"bCalendarDayContentBig\"/>");
         }
-        return content;
+
+        return sb.toString();
     }
 
     @Override

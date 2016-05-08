@@ -20,12 +20,9 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.After;
@@ -41,8 +38,7 @@ import static org.junit.Assert.*;
  * Test custom weblogger feed fetcher.
  */
 public class FeedManagerImplTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(FeedManagerImplTest.class);
-    
+
     String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
     String expectedTitle = "Slashdot";
     String expectedSiteUrl = "https://slashdot.org/";
@@ -91,43 +87,31 @@ public class FeedManagerImplTest extends WebloggerTest {
     }
 
     @Test
-    public void testFetchFeed() throws WebloggerException {
-        try {
-            // fetch feed
-            Subscription sub = feedManager.fetchSubscription(externalFeedUrl);
-            assertNotNull(sub);
-            assertEquals(externalFeedUrl, sub.getFeedURL());
-            assertEquals(expectedSiteUrl, sub.getSiteURL());
-            assertEquals(expectedTitle, sub.getTitle());
-            assertNotNull(sub.getLastUpdated());
-            assertTrue(sub.getEntries().size() > 0);
-
-        } catch (WebloggerException ex) {
-            log.error("Error fetching feed", ex);
-            throw ex;
-        }
+    public void testFetchFeed() {
+        // fetch feed
+        Subscription sub = feedManager.fetchSubscription(externalFeedUrl);
+        assertNotNull(sub);
+        assertEquals(externalFeedUrl, sub.getFeedURL());
+        assertEquals(expectedSiteUrl, sub.getSiteURL());
+        assertEquals(expectedTitle, sub.getTitle());
+        assertNotNull(sub.getLastUpdated());
+        assertTrue(sub.getEntries().size() > 0);
     }
 
     @Test
-    public void testFetchFeedConditionally() throws WebloggerException {
-        try {
-            // fetch feed
-            Subscription sub = feedManager.fetchSubscription(externalFeedUrl);
-            assertNotNull(sub);
-            assertEquals(externalFeedUrl, sub.getFeedURL());
-            assertEquals(expectedSiteUrl, sub.getSiteURL());
-            assertEquals(expectedTitle, sub.getTitle());
-            assertNotNull(sub.getLastUpdated());
-            assertTrue(sub.getEntries().size() > 0);
+    public void testFetchFeedConditionally() {
+        // fetch feed
+        Subscription sub = feedManager.fetchSubscription(externalFeedUrl);
+        assertNotNull(sub);
+        assertEquals(externalFeedUrl, sub.getFeedURL());
+        assertEquals(expectedSiteUrl, sub.getSiteURL());
+        assertEquals(expectedTitle, sub.getTitle());
+        assertNotNull(sub.getLastUpdated());
+        assertTrue(sub.getEntries().size() > 0);
 
-            // now do a conditional fetch and we should get back null
-            Subscription updatedSub = feedManager.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
-            assertNull(updatedSub);
-
-        } catch (WebloggerException ex) {
-            log.error("Error fetching feed", ex);
-            throw ex;
-        }
+        // now do a conditional fetch and we should get back null
+        Subscription updatedSub = feedManager.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
+        assertNull(updatedSub);
     }
 
     @Test

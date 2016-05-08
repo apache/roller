@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.io.IOException;
@@ -31,29 +30,21 @@ import org.apache.xmlrpc.XmlRpcException;
 
 /**
  * Manages ping targets.
- *
- * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public interface PingTargetManager {
-    
     
     /**
      * Store a ping target.
      *
      * @param pingTarget ping target data object.
-     * @throws WebloggerException
      */
-    void savePingTarget(PingTarget pingTarget) throws WebloggerException;
-    
+    void savePingTarget(PingTarget pingTarget);
     
     /**
      * Remove a ping target.
-     *
-     * @throws WebloggerException
      */
-    void removePingTarget(PingTarget pingTarget) throws WebloggerException;
-    
-    
+    void removePingTarget(PingTarget pingTarget);
+
     /**
      * Retrieve a specific ping target by id.
      *
@@ -62,10 +53,9 @@ public interface PingTargetManager {
      */
     PingTarget getPingTarget(String id);
     
-    
     /**
      * Get a list of the common (shared) ping targets.
-     * 
+     *
      * @return the list of common ping targets as a <code>List</code> of {@link PingTarget objects
      */
     List<PingTarget> getCommonPingTargets();
@@ -75,9 +65,8 @@ public interface PingTargetManager {
      *
      * @param pingTargetName ping target name to check
      * @return true if there is already a ping target with this name, false otherwise
-     * @throws WebloggerException
      */
-    boolean targetNameExists(String pingTargetName) throws WebloggerException;
+    boolean targetNameExists(String pingTargetName);
     
     /**
      * Check if the url of a ping target is well-formed.  For this test, it must parse as a <code>java.net.URL</code>,
@@ -85,10 +74,8 @@ public interface PingTargetManager {
      *
      * @param pingTargetUrl url to check.
      * @return true if the <code>pingTargetUrl</code> property of the ping target is a well-formed url.
-     * @throws WebloggerException
      */
-    boolean isUrlWellFormed(String pingTargetUrl) throws WebloggerException;
-    
+    boolean isUrlWellFormed(String pingTargetUrl);
     
     /**
      * Check if the host portion of the url of a ping target is known, meaning it is either a well-formed IP address
@@ -98,9 +85,8 @@ public interface PingTargetManager {
      * @param pingTargetUrl url to check.
      * @return true if the <code>pingTargetUrl</code> (is well-formed and) the <code>host</code> portion of the url of the
      *         ping target is a valid IP address or a hostname that can be resolved on the server.
-     * @throws WebloggerException
      */
-    boolean isHostnameKnown(String pingTargetUrl) throws WebloggerException;
+    boolean isHostnameKnown(String pingTargetUrl);
 
     /**
      * Store an auto ping configuration.
@@ -109,15 +95,12 @@ public interface PingTargetManager {
      */
     void saveAutoPing(AutoPing autoPing);
 
-
     /**
      * Remove the auto ping configuration with given id.
      *
      * @param autoPing the auto ping configuration to remove
-     * @throws WebloggerException
      */
-    void removeAutoPing(AutoPing autoPing) throws WebloggerException;
-
+    void removeAutoPing(AutoPing autoPing);
 
     /**
      * Remove the auto ping configuration for the given ping target and weblog, if one exists.  Returns silently if it
@@ -125,28 +108,22 @@ public interface PingTargetManager {
      *
      * @param pingTarget the ping target
      * @param weblog the weblog
-     * @throws WebloggerException
      */
-    void removeAutoPing(PingTarget pingTarget, Weblog weblog) throws WebloggerException;
-
+    void removeAutoPing(PingTarget pingTarget, Weblog weblog);
 
     /**
      * Remove all auto ping configurations for all websites.
      *
-     * @throws WebloggerException
      */
-    void removeAllAutoPings() throws WebloggerException;
-
+    void removeAllAutoPings();
 
     /**
      * Retrieve an auto ping configuration by id.
      *
      * @param id the id of the auto ping configuration to retrieve.
      * @return the auto ping configuration with specified id or null if not found
-     * @throws WebloggerException
      */
-    AutoPing getAutoPing(String id) throws WebloggerException;
-
+    AutoPing getAutoPing(String id);
 
     /**
      * Get all of the auto ping configurations for the given website.
@@ -155,13 +132,12 @@ public interface PingTargetManager {
      */
     List<AutoPing> getAutoPingsByWeblog(Weblog website);
 
-
     /**
      * Get all of the auto ping configurations for a given target (across all websites).
      *
      * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
      */
-    List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
+    List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget);
 
     /**
      * Queue the auto ping configurations that should be pinged upon change to an entry in the given weblog.  This calls
@@ -170,7 +146,7 @@ public interface PingTargetManager {
      *
      * @param changedWeblog the weblog that has been changed
      */
-    void queueApplicableAutoPings(Weblog changedWeblog) throws WebloggerException;
+    void queueApplicableAutoPings(Weblog changedWeblog);
 
     /**
      * Send all pings currently in the {@link OutgoingPingQueue} to their various ping targets.
@@ -194,9 +170,7 @@ public interface PingTargetManager {
 
     /**
      * Initialize ping targets.
-     *
-     * @throws WebloggerException If there is a problem during initialization.
      */
-    void initialize() throws WebloggerException;
+    void initialize();
 
 }

@@ -29,7 +29,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,10 +38,7 @@ import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -59,8 +55,6 @@ import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
  */
 public class WeblogCalendar {
     
-    private static Log log = LogFactory.getLog(WeblogCalendar.class);
-
     protected WeblogEntryManager weblogEntryManager;
     protected URLStrategy urlStrategy;
     protected WeblogPageRequest pageRequest = null;
@@ -82,27 +76,18 @@ public class WeblogCalendar {
         this.urlStrategy = urlStrategy;
         this.pageRequest = pRequest;
 
-        try {
-            weblog = pageRequest.getWeblog();
+        weblog = pageRequest.getWeblog();
+        TimeZone tz = weblog.getTimeZoneInstance();
+        eightCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, tz);
+        sixCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_6CHARS, tz);
+        pageLink = pageRequest.getWeblogTemplateName();
 
-            TimeZone tz = weblog.getTimeZoneInstance();
-            eightCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, tz);
-            sixCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_6CHARS, tz);
-
-            pageLink = pageRequest.getWeblogTemplateName();
-
-            if (pageRequest.getWeblogCategoryName() != null) {
-                cat = pageRequest.getWeblogCategoryName();
-            }
-
-            dayInMonth = parseWeblogURLDateString(pageRequest.getWeblogDate());
-
-            initModel();
-        } catch (Exception e) {
-            // some kind of error parsing the request or looking up weblog
-            log.debug("ERROR: initializing calendar", e);
+        if (pageRequest.getWeblogCategoryName() != null) {
+            cat = pageRequest.getWeblogCategoryName();
         }
-        
+
+        dayInMonth = parseWeblogURLDateString(pageRequest.getWeblogDate());
+        initModel();
     }
 
     private Calendar newCalendarInstance() {
@@ -172,7 +157,6 @@ public class WeblogCalendar {
      * @return          URL for day, or null if no weblog entry on that day
      */
     protected String computeUrl(Date day, boolean createMonthURL, boolean alwaysURL) {
-        String url = null;
         String dateString = getDateStringOfEntryOnDay(day);
         if (dateString == null) {
             if (alwaysURL) {
@@ -181,27 +165,19 @@ public class WeblogCalendar {
                 return null;
             }
         }
-        try {
-            if (pageLink == null) {
-                // create date URL
-                url = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
-            } else {
-                // create page URL
-                url = urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, cat, dateString, null, -1, false);
-            }
-        } catch (Exception e) {
-            log.error("ERROR: creating URL",e);
+        String url;
+        if (pageLink == null) {
+            // create date URL
+            url = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
+        } else {
+            // create page URL
+            url = urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, cat, dateString, null, -1, false);
         }
         return url;
     }
 
     protected void loadWeblogEntries(WeblogEntrySearchCriteria wesc) {
-        try {
-            monthMap = weblogEntryManager.getWeblogEntryStringMap(wesc);
-        } catch (WebloggerException e) {
-            log.error(e);
-            monthMap = new HashMap<>();
-        }
+        monthMap = weblogEntryManager.getWeblogEntryStringMap(wesc);
     }
 
     /**
@@ -267,98 +243,95 @@ public class WeblogCalendar {
         String ret;
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter( sw, true );
-        try {
-            Locale locale = pageRequest.getWeblog().getLocaleInstance();
 
-            // build week day names
-            String[] dayNames = buildDayNames(locale);
+        Locale locale = pageRequest.getWeblog().getLocaleInstance();
 
-            Calendar monthToDisplay = newCalendarInstance();
-            // dayIndex will serve as the iterator, going through not just the days of the
-            // desired month but the few days before and/or after it to fill a 5 week grid.
-            Calendar dayIndex = newCalendarInstance();
-            // for today's date, allows for different formatting.
-            Calendar todayCal = new GregorianCalendar();
+        // build week day names
+        String[] dayNames = buildDayNames(locale);
 
-            // get Resource Bundle
-            ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", locale);
-            // formatter for Month-Year title of calendar
-            SimpleDateFormat formatTitle = new SimpleDateFormat(bundle.getString("calendar.dateFormat"), locale);
-            formatTitle.setTimeZone(todayCal.getTimeZone());
+        Calendar monthToDisplay = newCalendarInstance();
+        // dayIndex will serve as the iterator, going through not just the days of the
+        // desired month but the few days before and/or after it to fill a 5 week grid.
+        Calendar dayIndex = newCalendarInstance();
+        // for today's date, allows for different formatting.
+        Calendar todayCal = new GregorianCalendar();
 
-            // start with the first day of the week containing the first day of the month
-            dayIndex.set(Calendar.DAY_OF_MONTH, dayIndex.getMinimum(Calendar.DAY_OF_MONTH));
-            while (dayIndex.get( Calendar.DAY_OF_WEEK ) != dayIndex.getFirstDayOfWeek() ) {
-                dayIndex.add( Calendar.DATE, -1 );
-            }
+        // get Resource Bundle
+        ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", locale);
+        // formatter for Month-Year title of calendar
+        SimpleDateFormat formatTitle = new SimpleDateFormat(bundle.getString("calendar.dateFormat"), locale);
+        formatTitle.setTimeZone(todayCal.getTimeZone());
 
-            // create table of 5 weeks, 7 days per row
-            pw.print("<table cellspacing=\"0\" border=\"0\" ");
-            pw.print(" summary=\"" + bundle.getString("calendar.summary")
-                    + "\" class=\"hCalendarTable" + mClassSuffix+"\">");
-            pw.print("<tr><td colspan=\"7\" align=\"center\" "+
-                    "class=\"hCalendarMonthYearRow"+mClassSuffix+"\">");
-            if (prevMonth != null) {
-                pw.print("<a href=\"" + computePrevMonthUrl()
-                        + "\" title=\"" + bundle.getString("calendar.prev")
-                        + "\" class=\"hCalendarNavBar\">&laquo;</a> ");
-            }
-            pw.print( formatTitle.format(dayInMonth) );
-            if (nextMonth != null) {
-                pw.print(" <a href=\"" + computeNextMonthUrl()
-                        + "\" title=\"" + bundle.getString("calendar.next")
-                        + "\" class=\"hCalendarNavBar\">&raquo;</a>");
-            }
-            pw.print("</td></tr>");
-
-            // emit the HTML calendar
-            for ( int w=-1; w<6; w++ ) {
-                pw.print("<tr>");
-                for ( int d=0; d<7; d++ ) {
-                    if ( w == -1 ) {
-                        pw.print("<th class=\"hCalendarDayNameRow" + mClassSuffix+"\" align=\"center\">");
-                        pw.print( dayNames[d] );
-                        pw.print("</th>");
-                        continue;
-                    }
-
-                    // determine URL for this calendar day
-                    Date tddate = dayIndex.getTime();
-                    String url = computeUrl(tddate, false, false);
-                    String content = getContent( tddate );
-
-                    // day is in calendar month
-                    if ((dayIndex.get(Calendar.MONTH) == monthToDisplay.get(Calendar.MONTH))
-                            && (dayIndex.get(Calendar.YEAR) == monthToDisplay.get(Calendar.YEAR))) {
-                        if ((dayIndex.get(Calendar.DAY_OF_MONTH) == todayCal.get(Calendar.DAY_OF_MONTH))
-                                && (dayIndex.get(Calendar.MONTH) == todayCal.get(Calendar.MONTH))
-                                && (dayIndex.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR))) {
-                            printDayInThisMonth(pw, dayIndex, url, content, true);
-                        } else {
-                            printDayInThisMonth(pw, dayIndex, url, content, false);
-                        }
-                    } else {
-                        // apply day-not-in-month style ;-)
-                        printDayNotInMonth(pw);
-                    }
-
-                    // increment calendar by one day
-                    dayIndex.add( Calendar.DATE, 1 );
-                }
-                pw.print("</tr>");
-            }
-
-            pw.print("<tr class=\"hCalendarNextPrev" + mClassSuffix+"\">");
-            pw.print("<td colspan=\"7\" align=\"center\">");
-
-            pw.print("<a href=\"" + computeTodayMonthUrl()
-                    +"\" class=\"hCalendarNavBar\">" + bundle.getString("calendar.today") + "</a>");
-
-            pw.print("</td></tr></table>");
-        } catch (Exception e) {
-            pw.print("<span class=\"error\"><p><b>An ERROR has occurred generating the calendar.</b></p></span>");
-            log.error("Calendar tag exception",e);
+        // start with the first day of the week containing the first day of the month
+        dayIndex.set(Calendar.DAY_OF_MONTH, dayIndex.getMinimum(Calendar.DAY_OF_MONTH));
+        while (dayIndex.get( Calendar.DAY_OF_WEEK ) != dayIndex.getFirstDayOfWeek() ) {
+            dayIndex.add( Calendar.DATE, -1 );
         }
+
+        // create table of 5 weeks, 7 days per row
+        pw.print("<table cellspacing=\"0\" border=\"0\" ");
+        pw.print(" summary=\"" + bundle.getString("calendar.summary")
+                + "\" class=\"hCalendarTable" + mClassSuffix+"\">");
+        pw.print("<tr><td colspan=\"7\" align=\"center\" "+
+                "class=\"hCalendarMonthYearRow"+mClassSuffix+"\">");
+        if (prevMonth != null) {
+            pw.print("<a href=\"" + computePrevMonthUrl()
+                    + "\" title=\"" + bundle.getString("calendar.prev")
+                    + "\" class=\"hCalendarNavBar\">&laquo;</a> ");
+        }
+        pw.print( formatTitle.format(dayInMonth) );
+        if (nextMonth != null) {
+            pw.print(" <a href=\"" + computeNextMonthUrl()
+                    + "\" title=\"" + bundle.getString("calendar.next")
+                    + "\" class=\"hCalendarNavBar\">&raquo;</a>");
+        }
+        pw.print("</td></tr>");
+
+        // emit the HTML calendar
+        for ( int w=-1; w<6; w++ ) {
+            pw.print("<tr>");
+            for ( int d=0; d<7; d++ ) {
+                if ( w == -1 ) {
+                    pw.print("<th class=\"hCalendarDayNameRow" + mClassSuffix+"\" align=\"center\">");
+                    pw.print( dayNames[d] );
+                    pw.print("</th>");
+                    continue;
+                }
+
+                // determine URL for this calendar day
+                Date tddate = dayIndex.getTime();
+                String url = computeUrl(tddate, false, false);
+                String content = getContent( tddate );
+
+                // day is in calendar month
+                if ((dayIndex.get(Calendar.MONTH) == monthToDisplay.get(Calendar.MONTH))
+                        && (dayIndex.get(Calendar.YEAR) == monthToDisplay.get(Calendar.YEAR))) {
+                    if ((dayIndex.get(Calendar.DAY_OF_MONTH) == todayCal.get(Calendar.DAY_OF_MONTH))
+                            && (dayIndex.get(Calendar.MONTH) == todayCal.get(Calendar.MONTH))
+                            && (dayIndex.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR))) {
+                        printDayInThisMonth(pw, dayIndex, url, content, true);
+                    } else {
+                        printDayInThisMonth(pw, dayIndex, url, content, false);
+                    }
+                } else {
+                    // apply day-not-in-month style ;-)
+                    printDayNotInMonth(pw);
+                }
+
+                // increment calendar by one day
+                dayIndex.add( Calendar.DATE, 1 );
+            }
+            pw.print("</tr>");
+        }
+
+        pw.print("<tr class=\"hCalendarNextPrev" + mClassSuffix+"\">");
+        pw.print("<td colspan=\"7\" align=\"center\">");
+
+        pw.print("<a href=\"" + computeTodayMonthUrl()
+                +"\" class=\"hCalendarNavBar\">" + bundle.getString("calendar.today") + "</a>");
+
+        pw.print("</td></tr></table>");
+
         ret = sw.toString();
         return ret;
     }

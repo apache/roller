@@ -25,12 +25,10 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
-import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 
 /**
@@ -41,7 +39,7 @@ public interface WeblogEntryManager {
     /**
      * Save weblog entry.
      */
-    void saveWeblogEntry(WeblogEntry entry) throws WebloggerException;
+    void saveWeblogEntry(WeblogEntry entry);
        
     /**
      * Remove weblog entry.
@@ -70,10 +68,8 @@ public interface WeblogEntryManager {
      * Get Weblog Entries grouped by day.
      * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return Map of Lists of WeblogEntries keyed by calendar day
-     * @throws WebloggerException
      */
-    Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc)
-            throws WebloggerException;
+    Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc);
 
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
@@ -81,10 +77,8 @@ public interface WeblogEntryManager {
      * one or more blog entries.
      * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return Map of date strings keyed by Date
-     * @throws WebloggerException
      */
-    Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc)
-            throws WebloggerException;
+    Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc);
     
     /**
      * Get the WeblogEntry following, chronologically, the current entry.
@@ -92,7 +86,7 @@ public interface WeblogEntryManager {
      * @param current The "current" WeblogEntryData
      * @param catName The value of the requested Category Name
      */
-    WeblogEntry getNextEntry(WeblogEntry current, String catName) throws WebloggerException;
+    WeblogEntry getNextEntry(WeblogEntry current, String catName);
     
     /**
      * Get the WeblogEntry prior to, chronologically, the current entry.
@@ -100,26 +94,25 @@ public interface WeblogEntryManager {
      * @param current The "current" WeblogEntryData.
      * @param catName The value of the requested Category Name.
      */
-    WeblogEntry getPreviousEntry(WeblogEntry current, String catName) throws WebloggerException;
+    WeblogEntry getPreviousEntry(WeblogEntry current, String catName);
       
-    
     /**
      * Save comment.
      * @param refreshWeblog true if weblog should be marked for cache update, i.e., likely
      *                      rendering change to accommodate new or removed comment, vs. one
      *                      still requiring moderation.
      */
-    void saveComment(WeblogEntryComment comment, boolean refreshWeblog) throws WebloggerException;
+    void saveComment(WeblogEntryComment comment, boolean refreshWeblog);
     
     /**
      * Remove comment.
      */
-    void removeComment(WeblogEntryComment comment) throws WebloggerException;
+    void removeComment(WeblogEntryComment comment);
    
     /**
      * Get comment by id.
      */
-    WeblogEntryComment getComment(String id) throws WebloggerException;
+    WeblogEntryComment getComment(String id);
        
     /**
      * Generic comments query method.
@@ -129,46 +122,22 @@ public interface WeblogEntryManager {
     List<WeblogEntryComment> getComments(CommentSearchCriteria csc);
 
     /**
-     * Deletes comments that match paramters.
-     * @param website    Website or null for all comments on site
-     * @param entry      Entry or null to include all comments
-     * @param startDate  Start date or null for no restriction
-     * @param endDate    End date or null for no restriction
-     * @param status     Status of comment
-     * @return Number of comments deleted
-     */
-    int removeMatchingComments(
-            
-            Weblog          website,
-            WeblogEntry     entry,
-            String          searchString,
-            Date            startDate,
-            Date            endDate,
-            ApprovalStatus  status
-            
-            ) throws WebloggerException;
-        
-    /**
      * Create unique anchor for weblog entry.
      */
-    String createAnchor(WeblogEntry data) throws WebloggerException;
-    
+    String createAnchor(WeblogEntry data);
 
     /**
      * Apply comment default settings from website to all of website's entries.
      */
-    void applyCommentDefaultsToEntries(Weblog website)
-        throws WebloggerException;
+    void applyCommentDefaultsToEntries(Weblog website);
     
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
      * @param weblog       Weblog or null to get for all weblogs.
      * @param offset       0-based index into results
-     *@param limit         Max TagStats to return (or -1 for no limit)  @return List of most popular tags.
-     * @throws WebloggerException
+     * @param limit         Max TagStats to return (or -1 for no limit)  @return List of most popular tags.
      */
-    List<TagStat> getPopularTags(Weblog weblog, int offset, int limit)
-            throws WebloggerException;
+    List<TagStat> getPopularTags(Weblog weblog, int offset, int limit);
     
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
@@ -177,10 +146,8 @@ public interface WeblogEntryManager {
      * @param startsWith    Prefix for tags to be returned (null or a string of length > 0)
      * @param limit         Max TagStats to return (or -1 for no limit)
      * @return List of tags matching the criteria.
-     * @throws WebloggerException
      */
-    List<TagStat> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)
-            throws WebloggerException;    
+    List<TagStat> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit);
     
     /**
      * Does the specified tag exist?  Optionally confined to a specific weblog.
@@ -198,25 +165,21 @@ public interface WeblogEntryManager {
      * Get site-wide comment count 
      */
     long getCommentCount() throws WebloggerException;
-
     
     /**
      * Get weblog comment count 
      */    
-    long getCommentCount(Weblog websiteData) throws WebloggerException;
-
+    long getCommentCount(Weblog websiteData);
     
     /**
      * Get site-wide entry count 
      */    
-    long getEntryCount() throws WebloggerException;
-
+    long getEntryCount();
     
     /**
      * Get weblog entry count 
      */    
-    long getEntryCount(Weblog websiteData) throws WebloggerException;
-
+    long getEntryCount(Weblog websiteData);
 
     /**
      * Apply a set of weblog entry plugins to the specified string and
@@ -229,7 +192,6 @@ public interface WeblogEntryManager {
      */
     String applyWeblogEntryPlugins(WeblogEntry entry, String str);
 
-
     /**
      * Apply comment plugins.
      *
@@ -240,5 +202,3 @@ public interface WeblogEntryManager {
     String applyCommentPlugins(WeblogEntryComment comment, String text);
 
 }
-
-

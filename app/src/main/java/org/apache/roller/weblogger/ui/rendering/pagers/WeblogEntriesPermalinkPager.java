@@ -29,9 +29,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -46,8 +43,6 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     
-    private static Log log = LogFactory.getLog(WeblogEntriesPermalinkPager.class);
-
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
 
@@ -96,33 +91,29 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
     public Map<Date, List<WeblogEntry>> getEntries() {
         if (entries == null) {
-            try {
-                currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
-                if (!canShowDraftEntries) {
-                    if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
-                        entries = new TreeMap<>();
-                        entries.put(currEntry.getPubTime(), Collections.singletonList(currEntry));
-                    }
-                } else {
-                    // for weblog entry previews, here we allow unpublished entries to be shown
-                    if (currEntry != null) {
-
-                        // clone the entry since we don't want to work with the real pojo
-                        WeblogEntry tmpEntry = new WeblogEntry();
-                        tmpEntry.setData(currEntry);
-
-                        // for display, set the pubtime to the current time if it is not set
-                        if(tmpEntry.getPubTime() == null) {
-                            tmpEntry.setPubTime(new Timestamp(System.currentTimeMillis()));
-                        }
-
-                        // store the entry in the collection
-                        entries = new TreeMap<>();
-                        entries.put(tmpEntry.getPubTime(), Collections.singletonList(tmpEntry));
-                    }
+            currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
+            if (!canShowDraftEntries) {
+                if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
+                    entries = new TreeMap<>();
+                    entries.put(currEntry.getPubTime(), Collections.singletonList(currEntry));
                 }
-            } catch (Exception e) {
-                log.error("ERROR: fetching entry");
+            } else {
+                // for weblog entry previews, here we allow unpublished entries to be shown
+                if (currEntry != null) {
+
+                    // clone the entry since we don't want to work with the real pojo
+                    WeblogEntry tmpEntry = new WeblogEntry();
+                    tmpEntry.setData(currEntry);
+
+                    // for display, set the pubtime to the current time if it is not set
+                    if(tmpEntry.getPubTime() == null) {
+                        tmpEntry.setPubTime(new Timestamp(System.currentTimeMillis()));
+                    }
+
+                    // store the entry in the collection
+                    entries = new TreeMap<>();
+                    entries.put(tmpEntry.getPubTime(), Collections.singletonList(tmpEntry));
+                }
             }
         }
         return entries;
@@ -189,36 +180,26 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) {
-            try {
-                nextEntry = weblogEntryManager.getNextEntry(currEntry, null);
-                // make sure that entry is published and not to future
-                if (nextEntry != null && nextEntry.getPubTime().after(new Date())
-                        && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
-                    nextEntry = null;
-                }
-            } catch (WebloggerException e) {
-                log.error("ERROR: getting next entry", e);
+            nextEntry = weblogEntryManager.getNextEntry(currEntry, null);
+            // make sure that entry is published and not to future
+            if (nextEntry != null && nextEntry.getPubTime().after(new Date())
+                    && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
+                nextEntry = null;
             }
         }
-
         return nextEntry;
     }
     
     
     private WeblogEntry getPrevEntry() {
         if (prevEntry == null) {
-            try {
-                prevEntry = weblogEntryManager.getPreviousEntry(currEntry, null);
-                // make sure that entry is published and not to future
-                if (prevEntry != null && prevEntry.getPubTime().after(new Date())
-                        && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
-                    prevEntry = null;
-                }
-            } catch (WebloggerException e) {
-                log.error("ERROR: getting prev entry", e);
+            prevEntry = weblogEntryManager.getPreviousEntry(currEntry, null);
+            // make sure that entry is published and not to future
+            if (prevEntry != null && prevEntry.getPubTime().after(new Date())
+                    && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
+                prevEntry = null;
             }
         }
-
         return prevEntry;
     }
 

@@ -18,10 +18,8 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -36,8 +34,6 @@ import java.util.List;
  */
 public interface UserManager {
     
-    //--------------------------------------------------------------- user CRUD    
-    
     /**
      * Add a new user.
      * 
@@ -48,42 +44,32 @@ public interface UserManager {
      * @param newUser User object to be added.
      */
     void addUser(User newUser);
-    
-    
+
     /**
      * Save a user.
      *
      * @param user User to be saved.
      */
     void saveUser(User user);
-    
-    
+
     /**
      * Remove a user.
      *
      * @param user User to be removed.
-     * @throws WebloggerException If there is a problem.
      */
-    void removeUser(User user) throws WebloggerException;
-    
-    
+    void removeUser(User user);
+
     /**
      * Get count of enabled users
      */    
     long getUserCount();
-    
-    
+
     /**
      * get a user by activation code
      * @param activationCode activate code from email
      * @return User object
-     * @throws WebloggerException
      */
-    User getUserByActivationCode(String activationCode)
-            throws WebloggerException;
-    
-          
-    //------------------------------------------------------------ user queries
+    User getUserByActivationCode(String activationCode);
 
     /**
      * Retrieve a user by its internal identifier id.
@@ -98,9 +84,8 @@ public interface UserManager {
      *
      * @param id the id of the user to retrieve.
      * @return the SafeUser object with specified id or null if not found
-     * @throws WebloggerException
      */
-    SafeUser getSafeUser(String id) throws WebloggerException;
+    SafeUser getSafeUser(String id);
 
     /**
      * Lookup a user by UserName.
@@ -110,9 +95,8 @@ public interface UserManager {
      * 
      * @param userName User Name of user to lookup.
      * @return The user, or null if not found or not enabled.
-     * @throws WebloggerException If there is a problem.
      */
-    User getUserByUserName(String userName) throws WebloggerException;
+    User getUserByUserName(String userName);
     
     /**
      * Lookup a user by UserName with the given enabled status.
@@ -120,11 +104,15 @@ public interface UserManager {
      * @param userName User Name of user to lookup.
      * @param enabled True if user is enabled, false otherwise.
      * @return The user, or null if not found or of the proper enabled status.
-     * @throws WebloggerException If there is a problem.
      */
-    User getUserByUserName(String userName, Boolean enabled)
-        throws WebloggerException;
+    User getUserByUserName(String userName, Boolean enabled);
 
+    /**
+     * Lookup a user by ScreenName
+     *
+     * @param screenName Screen Name of user to lookup.
+     * @return The user, or null if not found or of the proper enabled status.
+     */
     User getUserByScreenName(String screenName);
 
     /**
@@ -134,14 +122,9 @@ public interface UserManager {
      * @param enabled    True if user is enabled, false disabled, null if either OK.
      * @param offset     Offset into results (for paging)
      * @param length     Max to return (for paging)
-     * @param enabled    True for only enalbed, false for disabled, null for all
      * @return List of (up to length) users that match startsWith string
      */
-    List<SafeUser> getUsers(String startsWith,
-            Boolean enabled, int offset, int length) throws WebloggerException;
-    
-    
-    //-------------------------------------------------------- WeblogRoles CRUD
+    List<SafeUser> getUsers(String startsWith, Boolean enabled, int offset, int length);
 
     /**
      * Check user's rights for a specified weblog
@@ -151,7 +134,6 @@ public interface UserManager {
      * @return true if user has WeblogRole or a more powerful one
      */
     boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role);
-
 
     /**
      * Check user's rights given username and weblog handle.  Convenience
@@ -180,10 +162,8 @@ public interface UserManager {
      * @param username    Username whose role is being checked
      * @param weblogHandle target weblog handle of the role
      * @return UserWeblogRole indicating user's role with weblog or null if no permission
-     * @throws WebloggerException If exceptions occurred during processing.
      */
-    UserWeblogRole getWeblogRole(String username, String weblogHandle) throws WebloggerException;
-
+    UserWeblogRole getWeblogRole(String username, String weblogHandle);
 
     /**
      * Grant user specific WeblogRole for a weblog.
@@ -201,15 +181,13 @@ public interface UserManager {
      */
     void grantWeblogRole(String userId, Weblog weblog, WeblogRole role);
 
-
     /**
      * Grant user a specific WeblogRole for a weblog, but pending user's acceptance of it
      * @param user    User to grant weblog role to
      * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
      */
-    void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole role)
-            throws WebloggerException;
+    void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole role);
 
     /**
      * Confirm user's participation with the specified weblog or throw exception if no pending invitation exists.
@@ -227,7 +205,6 @@ public interface UserManager {
      */
     void declineWeblogInvitation(User user, Weblog weblog);
 
-    
     /**
      * Revoke from user his WeblogRole for a given weblog.
      * @param user  User to remove WeblogRole from
@@ -235,41 +212,39 @@ public interface UserManager {
      */
     void revokeWeblogRole(User user, Weblog weblog);
 
-    
     /**
-     * Get all of user's WeblogRoles.
+     * Get user's non-pending WeblogRoles.
      */
     List<UserWeblogRole> getWeblogRoles(User user);
 
-    List<UserWeblogRole> getWeblogRolesIncludingPending(User user) throws WebloggerException;
+    /**
+     * Get all of user's WeblogRoles.
+     */
+    List<UserWeblogRole> getWeblogRolesIncludingPending(User user);
 
     /**
-     * Get all active User WeblogRoles associated with a weblog.
+     * Get all non-pending User WeblogRoles associated with a weblog.
      */
     List<UserWeblogRole> getWeblogRoles(Weblog weblog);
 
     /**
      * Get all pending User WeblogRoles associated with a weblog.
      */
-    List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog)
-            throws WebloggerException;
+    List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog);
 
     /**
      * Get all User WeblogRoles (pending or actual) for a weblog.
      */
     List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog);
 
-
     /**
      * Get user's WeblogRole (pending or actual) for a weblog
      */
-    UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog)
-            throws WebloggerException;
+    UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog);
 
     /**
      * Return the Editor menu for the given username, weblog handle, and current
      * action.
      */
     Menu getEditorMenu(String username, String weblogHandle);
-
 }

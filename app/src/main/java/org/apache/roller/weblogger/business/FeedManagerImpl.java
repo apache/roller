@@ -41,8 +41,6 @@ import com.rometools.rome.io.XmlReader;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -53,11 +51,12 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FeedManagerImpl implements FeedManager {
 
@@ -68,8 +67,8 @@ public class FeedManagerImpl implements FeedManager {
     private JPAPersistenceStrategy strategy;
     private PropertiesManager propertiesManager;
 
-    private static Log log = LogFactory.getLog(FeedManagerImpl.class);
-    
+    private static Logger log = LoggerFactory.getLogger(FeedManagerImpl.class);
+
     public FeedManagerImpl() {
     }
 
@@ -97,19 +96,13 @@ public class FeedManagerImpl implements FeedManager {
         this.propertiesManager = propertiesManager;
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
-    public Subscription fetchSubscription(String feedURL) throws WebloggerException {
+    public Subscription fetchSubscription(String feedURL) {
         return fetchSubscription(feedURL, null);
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
-    public Subscription fetchSubscription(String feedURL, Date lastModified) throws WebloggerException {
+    public Subscription fetchSubscription(String feedURL, Date lastModified) {
 
         if (feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
@@ -118,7 +111,7 @@ public class FeedManagerImpl implements FeedManager {
         // we handle special weblogger planet integrated subscriptions which have
         // feedURLs defined as ... weblogger:<blog handle>
         if (feedURL.startsWith("weblogger:")) {
-            log.debug("Feed is a local blog, handling via API - " + feedURL);
+            log.debug("Feed is a local blog, handling via API - {}", feedURL);
             return fetchWebloggerSubscription(feedURL, lastModified);
         }
 
@@ -134,14 +127,15 @@ public class FeedManagerImpl implements FeedManager {
                     SyndFeedInput input = new SyndFeedInput();
                     feed = input.build(new XmlReader(stream));
                 } else {
-                    log.info("Feed: " + feedURL + " returned an EmptyInputStream. Status Code: " +
-                            response.getStatusLine().getStatusCode() + ", Response Text: "
-                            + response.getStatusLine().getReasonPhrase());
+                    log.info("Feed: {} returned an EmptyInputStream. Status Code: {}, Response Text: ",
+                            feedURL, response.getStatusLine().getStatusCode(),
+                            response.getStatusLine().getReasonPhrase());
                     return null;
                 }
             }
         } catch (FeedException | IOException ex) {
-            throw new WebloggerException("Error fetching subscription - " + feedURL, ex);
+            log.warn("Error fetching subscription - {}", feedURL, ex);
+            return null;
         }
 
         log.debug("Feed pulled, extracting data into Subscription");
@@ -159,10 +153,7 @@ public class FeedManagerImpl implements FeedManager {
             return null;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Subscription is: " + newSub.toString());
-        }
-
+        log.debug("Subscription is: {}", newSub.toString());
 
         // some kludge to deal with feeds w/ no entry dates
         // we assign arbitrary dates chronologically by entry starting either
@@ -184,7 +175,7 @@ public class FeedManagerImpl implements FeedManager {
             // some kludge to handle feeds with no entry dates
             if (newEntry != null) {
                 if (newEntry.getPubTime() == null) {
-                    log.debug("No published date, assigning fake date for " + feedURL);
+                    log.debug("No published date, assigning fake date for {}", feedURL);
                     newEntry.setPubTime(new Timestamp(cal.getTimeInMillis()));
                     cal.add(Calendar.DATE, -1);
                 }
@@ -201,8 +192,7 @@ public class FeedManagerImpl implements FeedManager {
      * feed processing.
      * We expect local feeds to have urls of the style ... weblogger:<blog handle>
      */
-    private Subscription fetchWebloggerSubscription(String feedURL, Date lastModified)
-            throws WebloggerException {
+    private Subscription fetchWebloggerSubscription(String feedURL, Date lastModified) {
 
         // extract blog handle from our special feed url
         String weblogHandle = null;
@@ -211,21 +201,18 @@ public class FeedManagerImpl implements FeedManager {
             weblogHandle = items[1];
         }
         
-        log.debug("Handling LOCAL feed - "+feedURL);
+        log.debug("Handling LOCAL feed - {}", feedURL);
         
         Weblog localWeblog;
-        try {
-            localWeblog = weblogManager.getWeblogByHandle(weblogHandle);
-            if (localWeblog == null) {
-                throw new WebloggerException("Local feed - " + feedURL + " no longer exists in weblogger");
-            }
-        } catch (WebloggerException ex) {
-            throw new WebloggerException("Problem looking up local weblog - "+weblogHandle, ex);
+        localWeblog = weblogManager.getWeblogByHandle(weblogHandle);
+        if (localWeblog == null) {
+            log.info("Skipping feed {}, blog no longer exists", feedURL);
+            return null;
         }
 
         // if weblog hasn't changed since last fetch then bail
         if(lastModified != null && !localWeblog.getLastModified().after(lastModified)) {
-            log.debug("Skipping unmodified LOCAL weblog");
+            log.debug("Skipping unmodified local blog {}", feedURL);
             return null;
         }
         
@@ -245,7 +232,7 @@ public class FeedManagerImpl implements FeedManager {
         int entryCount = propertiesManager.getIntProperty("site.newsfeeds.maxEntries");
 
         if (log.isDebugEnabled()) {
-            log.debug("Seeking up to " + entryCount + " entries from " + localWeblog.getHandle());
+            log.debug("Seeking up to {} entries from {}", entryCount, localWeblog.getHandle());
         }
 
         // grab recent entries for this weblog
@@ -254,7 +241,7 @@ public class FeedManagerImpl implements FeedManager {
         wesc.setStatus(PubStatus.PUBLISHED);
         wesc.setMaxResults(entryCount);
         List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
-        log.debug("Found " + entries.size());
+        log.debug("Found {}", entries.size());
 
         // Populate subscription object with new entries
         for (WeblogEntry blogEntry : entries) {
@@ -353,25 +340,17 @@ public class FeedManagerImpl implements FeedManager {
         return newEntry;
     }
 
-    private void updateSubscription(Subscription sub) throws WebloggerException {
+    private void updateSubscription(Subscription sub) {
 
         if (sub == null) {
             throw new IllegalArgumentException("cannot update null subscription");
         }
 
         log.debug("updating feed: "+sub.getFeedURL());
-
         long subStartTime = System.currentTimeMillis();
 
-        Subscription updatedSub;
-        try {
-            // fetch the latest version of the subscription
-            updatedSub = fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
-        } catch (WebloggerException ex) {
-            throw new WebloggerException("Error fetching updated subscription", ex);
-        }
-
-        log.debug("Got updatedSub = " + updatedSub);
+        Subscription updatedSub = fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
+        log.debug("Got updatedSub = {}", updatedSub);
 
         // if sub was unchanged then we are done
         if (updatedSub == null) {
@@ -381,7 +360,7 @@ public class FeedManagerImpl implements FeedManager {
         // if this subscription hasn't changed since last update then we're done
         if (sub.getLastUpdated() != null && updatedSub.getLastUpdated() != null &&
                 !updatedSub.getLastUpdated().after(sub.getLastUpdated())) {
-            log.debug("Skipping update, feed hasn't changed - " + sub.getFeedURL());
+            log.debug("Skipping update, feed hasn't changed - {}", sub.getFeedURL());
         }
 
         // update subscription attributes
@@ -392,52 +371,47 @@ public class FeedManagerImpl implements FeedManager {
         // update subscription entries
         int entries = 0;
         Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
-        log.debug("newEntries.size() = " + newEntries.size());
+        log.debug("newEntries.size() = {}", newEntries.size());
         if (newEntries.size() > 0) {
-            try {
-                // clear out old entries
-                planetManager.deleteEntries(sub);
+            // clear out old entries
+            planetManager.deleteEntries(sub);
 
-                // add fresh entries
-                sub.getEntries().clear();
-                sub.addEntries(newEntries);
+            // add fresh entries
+            sub.getEntries().clear();
+            sub.addEntries(newEntries);
 
-                // save and flush
-                planetManager.saveSubscription(sub);
-                strategy.flush();
+            // save and flush
+            planetManager.saveSubscription(sub);
+            strategy.flush();
 
-                log.debug("Added entries");
-                entries += newEntries.size();
-
-            } catch(WebloggerException ex) {
-                throw new WebloggerException("Error persisting updated subscription", ex);
-            }
+            log.debug("Added entries");
+            entries += newEntries.size();
         }
 
         long subEndTime = System.currentTimeMillis();
-        log.debug("updated feed -- "+sub.getFeedURL()+" -- in " +
-                ((subEndTime-subStartTime) / DateUtils.MILLIS_PER_SECOND) + " seconds.  " + entries +
-                " entries updated.");
+        if (log.isDebugEnabled()) {
+            log.debug("updated feed -- {} -- in {} seconds.  {} entries updated.",
+                    sub.getFeedURL(), (subEndTime - subStartTime) / DateUtils.MILLIS_PER_SECOND, entries);
+        }
     }
 
     @Override
-    public void updateSubscriptions(Planet group) throws WebloggerException {
-
+    public void updateSubscriptions(Planet group) {
         if(group == null) {
             throw new IllegalArgumentException("cannot update null group");
         }
-
         updateProxySettings();
 
-        log.debug("--- BEGIN --- Updating subscriptions in group = "+group.getHandle());
-
+        log.debug("--- BEGIN --- Updating subscriptions in group = {}", group.getHandle());
         long startTime = System.currentTimeMillis();
 
         updateSubscriptions(group.getSubscriptions());
 
-        long endTime = System.currentTimeMillis();
-        log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");
+        if (log.isInfoEnabled()) {
+            long endTime = System.currentTimeMillis();
+            log.info("--- DONE --- Updated subscriptions in {} seconds",
+                    (endTime - startTime) / DateUtils.MILLIS_PER_SECOND);
+        }
     }
 
     @Override
@@ -452,29 +426,12 @@ public class FeedManagerImpl implements FeedManager {
             if (sub != null) {
                 try {
                     updateSubscription(sub);
-                } catch (WebloggerException ex) {
-                    // do a little work to get at the source of the problem
-                    Throwable cause = ex;
-                    if (ex.getRootCause() != null) {
-                        cause = ex.getRootCause();
-                    }
-                    if (cause.getCause() != null) {
-                        cause = cause.getCause();
-                    }
-
-                    if (log.isDebugEnabled()) {
-                        log.debug("Error updating subscription - " + sub.getFeedURL(), cause);
-                    } else {
-                        log.warn("Error updating subscription - " + sub.getFeedURL()
-                                + " turn on debug logging for more info");
-                    }
-
                 } catch (Exception ex) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Error updating subscription - " + sub.getFeedURL(), ex);
+                        log.warn("Error updating subscription - {}", sub.getFeedURL(), ex);
                     } else {
-                        log.warn("Error updating subscription - " + sub.getFeedURL()
-                                + " turn on debug logging for more info");
+                        log.warn("Error updating subscription - {} turn on debug logging for more info",
+                                sub.getFeedURL());
                     }
                 }
             }

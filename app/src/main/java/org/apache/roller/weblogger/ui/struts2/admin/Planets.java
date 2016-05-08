@@ -22,10 +22,7 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
@@ -33,6 +30,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,8 +49,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 public class Planets extends UIAction {
-    
-    private static Log log = LogFactory.getLog(Planets.class);
+
+    private static Logger log = LoggerFactory.getLogger(Planets.class);
     
     // full list of planets
     private List<Planet> planets = new ArrayList<>();
@@ -135,7 +135,7 @@ public class Planets extends UIAction {
                 try {
                     planetManager.savePlanet(planet);
                     WebloggerFactory.flush();
-                } catch (WebloggerException e) {
+                } catch (RollbackException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                     return;
                 }
@@ -191,7 +191,7 @@ public class Planets extends UIAction {
             WebloggerFactory.flush();
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
-            log.error("Error deleting planet - " + id);
+            log.error("Error deleting planet - {}", id);
             throw new ServletException(e.getMessage());
         }
     }
@@ -207,7 +207,7 @@ public class Planets extends UIAction {
             }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
-            log.error("Error deleting subscription - " + id);
+            log.error("Error deleting subscription - {}", id);
             throw new ServletException(e.getMessage());
         }
     }
