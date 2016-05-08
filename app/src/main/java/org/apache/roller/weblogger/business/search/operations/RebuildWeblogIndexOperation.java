@@ -20,13 +20,10 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -36,6 +33,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An index operation that rebuilds a given users index (or all indexes).
@@ -47,7 +46,7 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log log = LogFactory.getFactory().getInstance(RebuildWeblogIndexOperation.class);
+    private static Logger log = LoggerFactory.getLogger(RebuildWeblogIndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
@@ -78,7 +77,7 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
         Date start = new Date();
 
         if (this.website != null) {
-            log.debug("Reindexining weblog " + website.getHandle());
+            log.debug("Reindexining weblog {}", website.getHandle());
         } else {
             log.debug("Reindexining entire site");
         }
@@ -108,13 +107,11 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
                 wesc.setStatus(PubStatus.PUBLISHED);
                 List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
 
-                log.debug("Entries to index: " + entries.size());
+                log.debug("Entries to index: {}", entries.size());
 
                 for (WeblogEntry entry : entries) {
                     writer.addDocument(getDocument(entry));
-                    log.debug(MessageFormat.format(
-                            "Indexed entry {0}: {1}",
-                            entry.getPubTime(), entry.getAnchor()));
+                    log.debug("Indexed entry {0}: {1}", entry.getPubTime(), entry.getAnchor());
                 }
             }
         } catch (Exception e) {
@@ -127,11 +124,9 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
         double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
 
         if (website == null) {
-            log.info("Completed rebuilding index for all users in '"
-                    + length + "' secs");
+            log.info("Completed rebuilding index for all users in {} secs", length);
         } else {
-            log.info("Completed rebuilding index for website handle: '"
-                    + website.getHandle() + "' in '" + length + "' seconds");
+            log.info("Completed rebuilding index for weblog: '{}' in {} seconds", website.getHandle(), length);
         }
     }
 }

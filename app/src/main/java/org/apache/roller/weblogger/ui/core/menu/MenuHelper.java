@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.core.menu;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
@@ -33,6 +31,8 @@ import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTab;
 import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTabItem;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.xml.bind.annotation.XmlElement;
@@ -49,7 +49,9 @@ import java.util.TreeSet;
  * A helper class for dealing with UI menus.
  */
 public final class MenuHelper {
-    private static Log log = LogFactory.getLog(MenuHelper.class);
+
+    private static Logger log = LoggerFactory.getLogger(MenuHelper.class);
+
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
     private static Set<String> propertyDefNames = new TreeSet<>();
 

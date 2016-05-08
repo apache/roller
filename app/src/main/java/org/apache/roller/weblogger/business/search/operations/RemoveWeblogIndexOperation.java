@@ -24,12 +24,12 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An index operation that rebuilds a given users index (or all indexes).
@@ -41,7 +41,7 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log log = LogFactory.getFactory().getInstance(RemoveWeblogIndexOperation.class);
+    private static Logger log = LoggerFactory.getLogger(RemoveWeblogIndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
@@ -85,8 +85,6 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
 
         Date end = new Date();
         double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
-
-        log.info("Completed deleting indices for weblog with handle '"
-                + weblogHandle + "' in '" + length + "' seconds");
+        log.info("Completed deleting indices for weblog {} in {} seconds", weblogHandle, length);
     }
 }

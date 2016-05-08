@@ -24,18 +24,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Paging through a collection of weblogs.
  */
 public class WeblogsPager extends AbstractPager {
-    
-    private static Log log = LogFactory.getLog(WeblogsPager.class);
+
+    private static Logger log = LoggerFactory.getLogger(WeblogsPager.class);
     
     private String letter = null;
     private int sinceDays = -1;

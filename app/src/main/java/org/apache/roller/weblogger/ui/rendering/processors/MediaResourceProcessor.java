@@ -28,14 +28,14 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/tb-ui/rendering/media-resources/**")
 public class MediaResourceProcessor {
 
-    private static Log log = LogFactory.getLog(MediaResourceProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(MediaResourceProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/media-resources";
 
@@ -89,7 +89,7 @@ public class MediaResourceProcessor {
             String pathInfo = resourceRequest.getPathInfo();
 
             // parse the request object and figure out what we've got
-            log.debug("parsing path " + pathInfo);
+            log.debug("parsing path {}", pathInfo);
 
             // any id is okay...
             if (pathInfo != null && pathInfo.trim().length() > 1) {
@@ -105,9 +105,7 @@ public class MediaResourceProcessor {
                 thumbnail = true;
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("resourceId = " + resourceId + ", thumbnail = " + thumbnail);
-            }
+            log.debug("resourceId = {}, thumbnail = {}", resourceId, thumbnail);
         } catch (Exception e) {
             // invalid resource request or weblog doesn't exist
             log.debug("error creating weblog resource request", e);
@@ -144,9 +142,9 @@ public class MediaResourceProcessor {
                 resourceStream = mediaFile.getThumbnailInputStream();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.debug("ERROR loading thumbnail for " + mediaFile.getId(), e);
+                    log.debug("ERROR loading thumbnail for {}", mediaFile.getId(), e);
                 } else {
-                    log.warn("ERROR loading thumbnail for " + mediaFile.getId());
+                    log.warn("ERROR loading thumbnail for {}", mediaFile.getId());
                 }
             }
         }

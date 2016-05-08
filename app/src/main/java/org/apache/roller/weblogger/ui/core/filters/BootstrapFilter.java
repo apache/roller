@@ -31,10 +31,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -42,17 +42,18 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
  * type is "auto", otherwise does nothing.
  */
 public class BootstrapFilter implements Filter {
+
+    private static Logger log = LoggerFactory.getLogger(BootstrapFilter.class);
+
     private ServletContext context = null;
-    private static Log log = LogFactory.getLog(BootstrapFilter.class);
-    
-    
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         
-        log.debug("Entered "+request.getRequestURI());
+        log.debug("Entered {}", request.getRequestURI());
         
         if (!WebloggerFactory.isBootstrapped()
                 && "auto".equals(WebloggerStaticConfig.getProperty("installation.type"))
@@ -69,7 +70,7 @@ public class BootstrapFilter implements Filter {
             chain.doFilter(request, response);
         }
         
-        log.debug("Exiting "+request.getRequestURI());
+        log.debug("Exiting {}", request.getRequestURI());
     }
     
     

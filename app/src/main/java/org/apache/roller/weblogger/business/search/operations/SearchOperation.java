@@ -22,8 +22,6 @@ package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -39,6 +37,8 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An operation that searches the index.
@@ -48,8 +48,7 @@ public class SearchOperation extends ReadFromIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            SearchOperation.class);
+    private static Logger log = LoggerFactory.getLogger(SearchOperation.class);
 
     private static String[] SEARCH_FIELDS = new String[] {
             FieldConstants.CONTENT, FieldConstants.TITLE,
@@ -144,10 +143,10 @@ public class SearchOperation extends ReadFromIndexOperation {
                     SORTER);
 
         } catch (IOException e) {
-            mLogger.error("Error searching index", e);
+            log.error("Error searching index", e);
         } catch (ParseException e) {
             // who cares?
-            mLogger.error("Parser error searching index", e);
+            log.error("Parser error searching index", e);
         }
         // don't need to close the reader, since we didn't do any writing!
     }

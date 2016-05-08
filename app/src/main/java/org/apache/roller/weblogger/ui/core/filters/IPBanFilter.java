@@ -27,9 +27,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.IPBanList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -38,12 +38,10 @@ import org.apache.roller.weblogger.util.IPBanList;
  * @web.filter name="IPBanFilter"
  */
 public class IPBanFilter implements Filter {
-    
-    private static Log log = LogFactory.getLog(IPBanFilter.class);
-    
-    
+
+    private static Logger log = LoggerFactory.getLogger(IPBanFilter.class);
+
     public void init(FilterConfig filterConfig) throws ServletException {
-        
         log.info("INIT IPBanFilter");
     }
     
@@ -56,7 +54,7 @@ public class IPBanFilter implements Filter {
         
         // check if client is allowed
         if(IPBanList.getInstance().isBanned(request.getRemoteAddr())) {
-            log.debug("BANNED "+request.getRemoteAddr());
+            log.debug("BANNED {}", request.getRemoteAddr());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         } else {

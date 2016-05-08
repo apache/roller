@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.File;
@@ -26,12 +28,12 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.collections.ExtendedProperties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads Velocity resources from the webapp.
@@ -59,7 +61,7 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
  */
 public class WebappResourceLoader extends ResourceLoader {
 
-	private static Log log = LogFactory.getLog(WebappResourceLoader.class);
+	private static Logger logger = LoggerFactory.getLogger(WebappResourceLoader.class);
 
 	// The root paths for templates (relative to webapp's root).
 	protected String[] paths = null;
@@ -78,9 +80,7 @@ public class WebappResourceLoader extends ResourceLoader {
 	 */
 	public void init(ExtendedProperties configuration) {
 
-		if (log.isDebugEnabled()) {
-			log.debug("WebappResourceLoader: initialization starting.");
-        }
+		logger.debug("WebappResourceLoader: initialization starting.");
 
 		// get configured paths
 		paths = configuration.getStringArray("path");
@@ -93,27 +93,21 @@ public class WebappResourceLoader extends ResourceLoader {
 				if (!paths[i].endsWith("/")) {
 					paths[i] += '/';
 				}
-				if (log.isDebugEnabled()) {
-                    log.debug("WebappResourceLoader: added template path - '"
-                            + paths[i] + "'");
-                }
+				logger.debug("WebappResourceLoader: added template path - {}", paths[i]);
 			}
 		}
 
 		// get the ServletContext
 		servletContext = RollerContext.getServletContext();
 
-		if (log.isDebugEnabled()) {
-			log.debug("Servlet Context = "
-					+ servletContext.getRealPath("/WEB-INF/velocity/"));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Servlet Context = {}", servletContext.getRealPath("/WEB-INF/velocity/"));
         }
 
 		// init the template paths map
-		templatePaths = new HashMap<String, String>();
+		templatePaths = new HashMap<>();
 
-		if (log.isDebugEnabled()) {
-            log.debug("WebappResourceLoader: initialization complete.");
-        }
+		logger.debug("WebappResourceLoader: initialization complete.");
 	}
 
 	/**
@@ -165,10 +159,7 @@ public class WebappResourceLoader extends ResourceLoader {
 				} catch (Exception e) {
 					// only save the first one for later throwing
 					if (exception == null) {
-						if (log.isDebugEnabled()) {
-							log.debug("WebappResourceLoader: Could not load "
-									+ path, e);
-						}
+  					    logger.debug("WebappResourceLoader: Could not load " + path, e);
 						exception = e;
 					}
 				}

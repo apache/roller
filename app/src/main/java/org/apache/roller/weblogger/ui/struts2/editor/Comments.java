@@ -25,8 +25,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
@@ -44,6 +42,8 @@ import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,7 +71,7 @@ public class Comments extends UIAction {
 
     private static final long serialVersionUID = -104973988372024709L;
 
-    private static Log log = LogFactory.getLog(Comments.class);
+    private static Logger log = LoggerFactory.getLogger(Comments.class);
 
     @Autowired
     private UserManager userManager;
@@ -278,7 +278,7 @@ public class Comments extends UIAction {
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
             if (deletes.size() > 0) {
-                log.debug("Processing deletes - " + deletes.size());
+                log.debug("Processing deletes - {}", deletes.size());
 
                 WeblogEntryComment deleteComment;
                 for (String deleteId : deletes) {
@@ -300,7 +300,7 @@ public class Comments extends UIAction {
             List<String> approvedIds = Arrays.asList(getBean().getApprovedComments());
 
             List<String> spamIds = Arrays.asList(getBean().getSpamComments());
-            log.debug(spamIds.size() + " comments marked as spam");
+            log.debug("{} comments marked as spam", spamIds.size());
 
             // track comments approved via moderation
             List<WeblogEntryComment> approvedComments = new ArrayList<>();
@@ -308,11 +308,11 @@ public class Comments extends UIAction {
             String[] ids = StringUtils.split(getBean().getIds(), ',');
 
             for (String id : ids) {
-                log.debug("processing id - " + id);
+                log.debug("processing id - {}", id);
 
                 // if we already deleted it then skip forward
                 if (deletes.contains(id)) {
-                    log.debug("Already deleted, skipping - " + id);
+                    log.debug("Already deleted, skipping - {}", id);
                     continue;
                 }
 
@@ -329,7 +329,7 @@ public class Comments extends UIAction {
                                 approvedComments.add(comment);
                             }
 
-                            log.debug("Marking as approved - " + comment.getId());
+                            log.debug("Marking as approved - {}", comment.getId());
                             comment.setStatus(ApprovalStatus.APPROVED);
                             weblogEntryManager.saveComment(comment, true);
 
@@ -338,7 +338,7 @@ public class Comments extends UIAction {
                         }
                     } else if (spamIds.contains(id)) {
                         if (!ApprovalStatus.SPAM.equals(comment.getStatus())) {
-                            log.debug("Marking as spam - " + comment.getId());
+                            log.debug("Marking as spam - {}", comment.getId());
                             comment.setStatus(ApprovalStatus.SPAM);
                             weblogEntryManager.saveComment(comment, true);
 
@@ -347,7 +347,7 @@ public class Comments extends UIAction {
                         }
                     } else if (!ApprovalStatus.DISAPPROVED.equals(comment.getStatus())
                             && !(isGlobalCommentManagement() && ApprovalStatus.APPROVED.equals(comment.getStatus()))) {
-                        log.debug("Marking as disapproved - " + comment.getId());
+                        log.debug("Marking as disapproved - {}", comment.getId());
                         comment.setStatus(ApprovalStatus.DISAPPROVED);
                         weblogEntryManager.saveComment(comment, true);
 

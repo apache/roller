@@ -23,22 +23,22 @@ package org.apache.roller.weblogger.ui.rendering.comment;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Responsible for loading validators and using them to validate comments.
  */
 public class CommentValidationManager {
-    private static Log log = LogFactory.getLog(CommentValidationManager.class);
+    private static Logger log = LoggerFactory.getLogger(CommentValidationManager.class);
     private List<CommentValidator> validators = new ArrayList<>();
 
     public CommentValidationManager(List<CommentValidator> validators) {
         this.validators = validators;
-        log.info("Provided " + validators.size() + " CommentValidators");
+        log.info("Provided {} CommentValidators", validators.size());
     }
 
     /**
@@ -50,7 +50,7 @@ public class CommentValidationManager {
         int total = 0;
         if (validators.size() > 0) {
             for (CommentValidator val : validators) {
-                log.debug("Invoking comment validator " + val.getName());
+                log.debug("Invoking comment validator {}", val.getName());
                 total += val.validate(comment, messages);
             }
             total = total / validators.size();

@@ -27,9 +27,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -39,10 +39,9 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * @web.filter name="PersistenceSessionFilter"
  */
 public class PersistenceSessionFilter implements Filter {
-    
-    private static Log log = LogFactory.getLog(PersistenceSessionFilter.class);
-    
-    
+
+    private static Logger log = LoggerFactory.getLogger(PersistenceSessionFilter.class);
+
     /**
      * Release Roller persistence session at end of request processing.
      */
@@ -52,7 +51,7 @@ public class PersistenceSessionFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         
-        log.debug("Entered "+request.getRequestURI());
+        log.debug("Entered {}", request.getRequestURI());
         
         try {
             chain.doFilter(request, response);
@@ -64,7 +63,7 @@ public class PersistenceSessionFilter implements Filter {
             
         }
         
-        log.debug("Exiting "+request.getRequestURI());
+        log.debug("Exiting {}", request.getRequestURI());
     }
     
     

@@ -24,8 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.collections.ExtendedProperties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -34,6 +32,8 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The ThemeResourceLoader is a Velocity template loader which loads templates
@@ -43,11 +43,12 @@ import org.apache.roller.weblogger.pojos.Template;
  */
 public class ThemeResourceLoader extends ResourceLoader {
 
-    private static Log logger = LogFactory.getFactory().getInstance(
-            ThemeResourceLoader.class);
+    private static Logger logger = LoggerFactory.getLogger(ThemeResourceLoader.class);
 
     public void init(ExtendedProperties configuration) {
-        logger.debug(configuration);
+        if (logger.isDebugEnabled()) {
+            logger.debug(configuration.toString());
+        }
     }
 
     /**
@@ -56,7 +57,7 @@ public class ThemeResourceLoader extends ResourceLoader {
     public InputStream getResourceStream(String name) {
 
         if (log.isDebugEnabled()) {
-            logger.debug("Looking for: " + name);
+            logger.debug("Looking for: {}", name);
         }
 
         if (name == null || name.length() < 1) {
@@ -102,9 +103,7 @@ public class ThemeResourceLoader extends ResourceLoader {
                         + "] of Template [" + split[1] + "] not found.");
             }
 
-            if (log.isDebugEnabled()) {
-                logger.debug("Resource found!");
-            }
+            logger.debug("Resource found!");
 
             // return the input stream
             return new ByteArrayInputStream(contents.getBytes("UTF-8"));
@@ -112,7 +111,7 @@ public class ThemeResourceLoader extends ResourceLoader {
         } catch (UnsupportedEncodingException uex) {
             // We expect UTF-8 in all JRE installation.
             // This rethrows as a Runtime exception after logging.
-            logger.error(uex);
+            logger.error("exception", uex);
             throw new RuntimeException(uex);
         }
     }

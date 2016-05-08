@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -47,6 +45,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  Pager for daily, monthly, and standard reverse chronological paging, e.g.:
@@ -55,8 +55,8 @@ import org.apache.roller.weblogger.util.I18nMessages;
  *  http://server/tightblog/myblog/ (latest, pages via ?page=X query parameter)
  */
 public class WeblogEntriesTimePager implements WeblogEntriesPager {
-    
-    private static Log log = LogFactory.getLog(WeblogEntriesTimePager.class);
+
+    private static Logger log = LoggerFactory.getLogger(WeblogEntriesTimePager.class);
 
     // url strategy for building urls
     URLStrategy urlStrategy = null;

@@ -23,14 +23,14 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 public class UISecurityInterceptor extends MethodFilterInterceptor {
 
     private static final long serialVersionUID = -7787813271277874462L;
-    private static Log log = LogFactory.getLog(UISecurityInterceptor.class);
+    private static Logger logger = LoggerFactory.getLogger(UISecurityInterceptor.class);
 
     private UserManager userManager;
 
@@ -48,18 +48,14 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
 
     public String doIntercept(ActionInvocation invocation) throws Exception {
 
-        if (log.isDebugEnabled()) {
-            log.debug("Entering UISecurityInterceptor");
-        }
+        logger.debug("Entering UISecurityInterceptor");
 
         final Object action = invocation.getAction();
 
         // is this one of our own UIAction classes?
         if (action instanceof UISecurityEnforced && action instanceof UIAction) {
 
-            if (log.isDebugEnabled()) {
-                log.debug("action is UISecurityEnforced ... enforcing security rules");
-            }
+            logger.debug("action is UISecurityEnforced ... enforcing security rules");
 
             final UISecurityEnforced theAction = (UISecurityEnforced) action;
 
@@ -68,17 +64,13 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
 
                 User authenticatedUser = ((UIAction) theAction).getAuthenticatedUser();
                 if (authenticatedUser == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("DENIED: required user not found");
-                    }
+                    logger.debug("DENIED: required user not found");
                     return "access-denied";
                 }
 
                 if (!authenticatedUser.hasEffectiveGlobalRole(theAction.requiredGlobalRole())) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("DENIED: user " + authenticatedUser.getUserName() + " does not have "
-                                        + theAction.requiredGlobalRole().name() + " role");
-                    }
+                    logger.debug("DENIED: user {} does not have {} role", authenticatedUser.getUserName(),
+                        theAction.requiredGlobalRole().name());
                     return "access-denied";
                 }
 
@@ -87,20 +79,18 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
 
                     Weblog actionWeblog = ((UIAction) theAction).getActionWeblog();
                     if (actionWeblog == null) {
-                        if (log.isWarnEnabled()) {
-                            log.warn("User " + authenticatedUser.getUserName() +
-                                    " unable to process action \"" + ((UIAction) theAction).getActionName() +
-                                    "\" because no weblog was defined (Check JSP form provided weblog value.)");
-                        }
+                        logger.warn("User {} unable to process action because no weblog was defined " +
+                                "(Check JSP form provided weblog value.)", authenticatedUser.getUserName(),
+                                ((UIAction) theAction).getActionName());
                         return "access-denied";
                     }
 
                     // are we also enforcing a specific weblog permission?
                     UserWeblogRole uwr = userManager.getWeblogRole(authenticatedUser, actionWeblog);
                     if (uwr == null || !uwr.hasEffectiveWeblogRole(theAction.requiredWeblogRole())) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("DENIED: user " + authenticatedUser + " does not have "
-                                    + theAction.requiredWeblogRole() + " on weblog " + actionWeblog.getHandle());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("DENIED: user {} does not have {} role on weblog {} ", authenticatedUser,
+                                    theAction.requiredWeblogRole(), actionWeblog.getHandle());
                         }
                         return "access-denied";
                     } else {

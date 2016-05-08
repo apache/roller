@@ -34,23 +34,23 @@ import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Initialize the Roller web application/context.
  */
 public class RollerContext extends ContextLoaderListener  
-        implements ServletContextListener { 
-    
-    private static Log log = LogFactory.getLog(RollerContext.class);
+        implements ServletContextListener {
+
+    private static Logger log = LoggerFactory.getLogger(RollerContext.class);
     
     private static ServletContext servletContext = null;
 
@@ -95,7 +95,7 @@ public class RollerContext extends ContextLoaderListener
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
         if (ctxPath == null) {
-            log.fatal("TightBlog requires an exploded WAR file to run.");
+            log.error("TightBlog requires an exploded WAR file to run.");
             return;
         }
 
@@ -104,7 +104,7 @@ public class RollerContext extends ContextLoaderListener
         try {
             autoDatabaseWorkNeeded = prepare();
         } catch (StartupException ex) {
-            log.fatal("TightBlog Weblogger startup failed during app preparation", ex);
+            log.error("TightBlog Weblogger startup failed during app preparation", ex);
             return;
         }
         
@@ -112,7 +112,7 @@ public class RollerContext extends ContextLoaderListener
         // if preparation incomplete (e.g., database tables need creating)
         // continue on - BootstrapFilter will start the database install/upgrade process
         // otherwise bootstrap the business tier
-        if (autoDatabaseWorkNeeded) {
+        if (log.isInfoEnabled() && autoDatabaseWorkNeeded) {
             String output = "\n-------------------------------------------------------------------";
             output +=       "\nTightBlog Weblogger startup INCOMPLETE, user interaction commencing";
             output +=       "\n-------------------------------------------------------------------";
@@ -125,7 +125,7 @@ public class RollerContext extends ContextLoaderListener
             // Initialize Spring Security based on Roller configuration
             initializeSecurityFeatures(servletContext);
         } catch (Exception ex) {
-            log.fatal("Error initializing TightBlog Weblogger web tier", ex);
+            log.error("Error initializing TightBlog Weblogger web tier", ex);
         }
         
     }
@@ -160,7 +160,7 @@ public class RollerContext extends ContextLoaderListener
         if (doEncrypt && ctx.containsBean(daoBeanName)) {
             DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
             String algorithm = WebloggerStaticConfig.getProperty("passwds.encryption.algorithm");
-            PasswordEncoder encoder = null;
+            PasswordEncoder encoder;
             if ("SHA".equalsIgnoreCase(algorithm)) {
                 encoder = new ShaPasswordEncoder();
             } else if ("MD5".equalsIgnoreCase(algorithm)) {
@@ -169,7 +169,7 @@ public class RollerContext extends ContextLoaderListener
                 throw new IllegalArgumentException("Encryption algorithm '" + algorithm + "' not supported, choose SHA or MD5.");
             }
             provider.setPasswordEncoder(encoder);
-            log.info("Password Encryption Algorithm set to '" + algorithm + "'");
+            log.info("Password Encryption Algorithm set to '{}'", algorithm);
         }
 
     }

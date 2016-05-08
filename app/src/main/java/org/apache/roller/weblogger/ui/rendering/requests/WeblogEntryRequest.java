@@ -20,19 +20,18 @@
  */
 package org.apache.roller.weblogger.ui.rendering.requests;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a request regarding a particular weblog entry.
  */
 public class WeblogEntryRequest extends WeblogRequest {
 
-    private static Log log = LogFactory.getLog(WeblogEntryRequest.class);
+    private static Logger log = LoggerFactory.getLogger(WeblogEntryRequest.class);
 
     private String weblogAnchor = null;
 
@@ -59,7 +58,7 @@ public class WeblogEntryRequest extends WeblogRequest {
                         this.weblogAnchor = URLDecoder.decode(pathElements[1], "UTF-8");
                     } catch (UnsupportedEncodingException ex) {
                         // should never happen
-                        log.error(ex);
+                        log.error("exception", ex);
                     }
                 }
             }

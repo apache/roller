@@ -30,8 +30,6 @@ import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -47,6 +45,8 @@ import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,7 +62,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/tb-ui/rendering/trackback/**")
 public class IncomingTrackbackProcessor {
 
-    private static Log log = LogFactory.getLog(IncomingTrackbackProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(IncomingTrackbackProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/trackback";
 
@@ -237,7 +237,7 @@ public class IncomingTrackbackProcessor {
 
                 // run new trackback through validators
                 int validationScore = commentValidationManager.validateComment(comment, messages);
-                log.debug("Comment Validation score: " + validationScore);
+                log.debug("Comment Validation score: {}", validationScore);
 
                 if (validationScore == WebloggerCommon.PERCENT_100 && commentApprovalRequired) {
                     // Valid comments go into moderation if required

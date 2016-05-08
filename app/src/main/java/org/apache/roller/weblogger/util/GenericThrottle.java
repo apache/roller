@@ -19,10 +19,10 @@
 package org.apache.roller.weblogger.util;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 
@@ -47,7 +47,7 @@ import javax.annotation.PostConstruct;
  * activating throttling in the process.
  */
 public class GenericThrottle {
-    private static Log log = LogFactory.getLog(GenericThrottle.class);
+    private static Logger log = LoggerFactory.getLogger(GenericThrottle.class);
     
     private CacheManager cacheManager;
 
@@ -87,32 +87,32 @@ public class GenericThrottle {
      */
     public boolean processHit(String clientId) {
         
-        if(clientId == null) {
+        if (clientId == null) {
             return false;
         }
         
         // see if we have any info about this client yet
         ClientInfo client = (ClientInfo) this.clientHistoryCache.get(clientId);
         if(client != null) {
-            log.debug("HIT " + clientId);
+            log.debug("HIT {}", clientId);
         } else {
-            log.debug("MISS " + clientId);
+            log.debug("MISS {}", clientId);
         }
 
         // if we already know this client then update their hit count and 
         // see if they have surpassed the threshold
         if(client != null) {
             client.hits++;
-            
-            log.debug("STATUS "+clientId+" - "+client.hits+" hits since "+client.start);
-            
+            if (log.isDebugEnabled()) {
+                log.debug("STATUS {} - {} hits since {}", clientId, client.hits, client.start);
+            }
+
             // abusive client
             if(client.hits > this.threshold) {
                 return true;
             }
-            
         } else {
-            log.debug("NEW "+clientId);
+            log.debug("NEW {}", clientId);
             
             // first timer
             ClientInfo newClient = new ClientInfo();
@@ -141,9 +141,9 @@ public class GenericThrottle {
         ClientInfo client = (ClientInfo) this.clientHistoryCache.get(clientId);
 
         if(client != null) {
-            log.debug("HIT " + clientId);
+            log.debug("HIT {}", clientId);
         } else {
-            log.debug("MISS " + clientId);
+            log.debug("MISS {}", clientId);
         }
 
         return client != null && client.hits > this.threshold;

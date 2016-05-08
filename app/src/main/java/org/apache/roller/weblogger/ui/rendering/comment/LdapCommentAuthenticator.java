@@ -29,10 +29,10 @@ import javax.naming.ldap.LdapContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Requires the commenter to authenticate to a central LDAP server.  The property "securityLevel"
@@ -41,7 +41,7 @@ import org.springframework.util.StringUtils;
  */
 public class LdapCommentAuthenticator implements CommentAuthenticator {
 
-	private static Log log = LogFactory.getLog(LdapCommentAuthenticator.class);
+	private static Logger log = LoggerFactory.getLogger(LdapCommentAuthenticator.class);
 
 	private String ldapPort;
 
@@ -115,16 +115,16 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 				env.put(Context.PROVIDER_URL, "ldap://" + ldapHost + ":" + ldapPort);  
 				context = new InitialLdapContext(env, null);
 				validUser = true;
-				log.info("LDAP Authentication Successful. user: " + ldapUser);
+				log.info("LDAP Authentication Successful. user: {}", ldapUser);
 			} catch (Exception e) {
 				// unexpected
-				log.error(e);
+				log.error("exception", e);
 			} finally {
 				if(context != null){
 					try {
 						context.close();
 					} catch (NamingException e) {
-						log.error(e);
+						log.error("exception", e);
 					}
 				}
 			}

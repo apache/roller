@@ -26,8 +26,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -35,23 +35,14 @@ import org.apache.commons.logging.LogFactory;
  * encoding is set to UTF-8 before any other processing forces request parsing 
  * using a default encoding.  It also syncs up the Struts and JSTL locales.  
  * This filter should normally be first in the chain.
- *
- * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class CharEncodingFilter implements Filter {
+
+    private static Logger log = LoggerFactory.getLogger(CharEncodingFilter.class);
     
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(CharEncodingFilter.class);
-    
-    /**
-     * init
-     */
     public void init(FilterConfig filterConfig) throws ServletException {
     }
     
-    /**
-     * destroy
-     */
     public void destroy() {
     }
     
@@ -61,9 +52,7 @@ public class CharEncodingFilter implements Filter {
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
     throws IOException, ServletException {
-        if (mLogger.isDebugEnabled()) {
-            mLogger.debug("Processing CharEncodingFilter");
-        }
+        log.debug("Processing CharEncodingFilter");
         try {
         	if (!"UTF-8".equals(req.getCharacterEncoding())) {
         		// only set encoding if not already UTF-8
@@ -71,10 +60,7 @@ public class CharEncodingFilter implements Filter {
         		// is already too late to set request encoding without getting a WARN level log message
         		req.setCharacterEncoding("UTF-8");
         	}
-            if (mLogger.isDebugEnabled()) {
-                mLogger.debug("Set request character encoding to UTF-8");
-            }
-            
+            log.debug("Set request character encoding to UTF-8");
         } catch (UnsupportedEncodingException e) {
             // This should never happen since UTF-8 is a Java-specified required encoding.
             throw new ServletException("Can't set incoming encoding to UTF-8");

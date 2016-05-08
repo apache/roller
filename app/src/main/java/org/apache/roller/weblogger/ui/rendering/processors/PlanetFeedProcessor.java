@@ -27,8 +27,6 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -43,6 +41,8 @@ import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mobile.device.DeviceType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +56,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/planetrss/**")
 public class PlanetFeedProcessor {
 
-    private static Log log = LogFactory.getLog(PlanetFeedProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(PlanetFeedProcessor.class);
 
     @Autowired
     private ExpiringCache planetCache;
@@ -96,7 +96,7 @@ public class PlanetFeedProcessor {
 
         try {
             // parse the request object and figure out what we've got
-            log.debug("parsing url: " + request.getRequestURL());
+            log.debug("parsing url: {}", request.getRequestURL());
 
             // planet to include
             planetHandle = request.getParameter("planet");

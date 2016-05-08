@@ -23,18 +23,17 @@ package org.apache.roller.weblogger.ui.rendering.comment;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Asks the commenter to answer a simple math question.
  */
 public class MathCommentAuthenticator implements CommentAuthenticator {
-    
-    private static Log mLogger = LogFactory.getLog(MathCommentAuthenticator.class);
-    
+
+    private static Logger log = LoggerFactory.getLogger(MathCommentAuthenticator.class);
     
     public String getHtml(HttpServletRequest request) {
         
@@ -92,7 +91,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
                 // ignored ... someone is just really bad at math
             } catch (Exception e) {
                 // unexpected
-                mLogger.error(e);
+                log.error("exception", e);
             }
         }
         

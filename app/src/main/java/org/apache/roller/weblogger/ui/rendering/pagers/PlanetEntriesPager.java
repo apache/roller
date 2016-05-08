@@ -24,20 +24,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Paging through a collection of planet entries.
  */
 public class PlanetEntriesPager extends AbstractPager {
-    
-    private static Log log = LogFactory.getLog(PlanetEntriesPager.class);
+
+    private static Logger log = LoggerFactory.getLogger(PlanetEntriesPager.class);
     
     private String feedURL = null;
     private String planetName = null;

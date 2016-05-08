@@ -21,8 +21,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -30,6 +28,8 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Allows user to perform maintenance operations such as flushing the page cache
@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  */
 public class Maintenance extends UIAction {
 
-    private static Log log = LogFactory.getLog(Maintenance.class);
+    private static Logger log = LoggerFactory.getLogger(Maintenance.class);
 
     private WeblogManager weblogManager;
 
@@ -109,8 +109,7 @@ public class Maintenance extends UIAction {
             persistenceStrategy.flushAndInvalidateWeblog(weblog);
             addMessage("maintenance.message.flushed");
         } catch (Exception ex) {
-            log.error("Error saving weblog - " + getActionWeblog().getHandle(),
-                    ex);
+            log.error("Error saving weblog - {}" + getActionWeblog().getHandle(), ex);
             addError("Error flushing page cache");
         }
 
@@ -129,8 +128,7 @@ public class Maintenance extends UIAction {
             persistenceStrategy.flushAndInvalidateWeblog(weblog);
             addMessage("maintenance.message.reset");
         } catch (Exception ex) {
-            log.error("Error saving weblog - " + getActionWeblog().getHandle(),
-                    ex);
+            log.error("Error saving weblog - {}", getActionWeblog().getHandle(), ex);
             addError("Error flushing page cache");
         }
 

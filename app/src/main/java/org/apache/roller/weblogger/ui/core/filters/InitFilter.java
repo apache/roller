@@ -30,9 +30,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A special initialization filter which ensures that we have an opportunity to
@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
  */
 public class InitFilter implements Filter {
 
-    private static Log log = LogFactory.getLog(InitFilter.class);
+    private static Logger log = LoggerFactory.getLogger(InitFilter.class);
 
     private boolean initialized = false;
 
@@ -62,11 +62,8 @@ public class InitFilter implements Filter {
             WebloggerStaticConfig.setAbsoluteContextURL(absPath);
             WebloggerStaticConfig.setRelativeContextURL(relPath);
 
-            if (log.isDebugEnabled()) {
-                log.debug("relPath = " + relPath);
-                log.debug("absPath = " + absPath);
-            }
-
+            log.debug("relPath = {}", relPath);
+            log.debug("absPath = {}", absPath);
             this.initialized = true;
         }
 
@@ -99,9 +96,7 @@ public class InitFilter implements Filter {
 
         // if the uri is only "/" then we are basically done
         if ("/".equals(requestURI)) {
-            if (log.isDebugEnabled()) {
-                log.debug("requestURI is only '/'. fullUrl: " + fullUrl);
-            }
+            log.debug("requestURI is only '/'. fullUrl: {}", fullUrl);
             return removeTrailingSlash(fullUrl);
         }
 

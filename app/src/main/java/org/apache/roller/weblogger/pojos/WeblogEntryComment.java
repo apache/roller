@@ -27,8 +27,6 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -57,8 +55,6 @@ import javax.persistence.Transient;
 public class WeblogEntryComment implements Serializable {
     
     public static final long serialVersionUID = -6668122596726478462L;
-
-    private static Log log = LogFactory.getLog(WeblogEntryComment.class);
 
     // approval status states
     public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}

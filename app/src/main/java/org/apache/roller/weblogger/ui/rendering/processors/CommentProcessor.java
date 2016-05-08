@@ -34,8 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -59,6 +57,8 @@ import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,7 +82,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/tb-ui/rendering/comment")
 public class CommentProcessor {
 
-    private static Log log = LogFactory.getLog(CommentProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(CommentProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/comment";
 
@@ -188,7 +188,7 @@ public class CommentProcessor {
         // throttling protection against spammers
         if (commentThrottle != null && commentThrottle.processHit(request.getRemoteAddr())) {
 
-            log.debug("ABUSIVE " + request.getRemoteAddr());
+            log.debug("ABUSIVE {}", request.getRemoteAddr());
             IPBanList.getInstance().addBannedIp(request.getRemoteAddr());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -246,7 +246,7 @@ public class CommentProcessor {
                 notify = true;
             }
 
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("name = " + commenterName);
                 log.debug("email = " + commenterEmail);
                 log.debug("url = " + commenterUrl);
@@ -267,7 +267,7 @@ public class CommentProcessor {
             return;
         }
 
-        log.debug("Doing comment posting for entry = " + entry.getPermalink());
+        log.debug("Doing comment posting for entry = {}", entry.getPermalink());
 
         // Collect input from request params and construct new comment object
         // fields: name, email, url, content, notify
@@ -315,12 +315,12 @@ public class CommentProcessor {
         // Must have an email and also must be valid
         } else if (StringUtils.isEmpty(commenterEmail) || !Utilities.isValidEmailAddress(commenterEmail)) {
             error = messageUtils.getString("error.commentPostFailedEmailAddress");
-            log.debug("Email Address is invalid : " + commenterEmail);
+            log.debug("Email Address is invalid: {}", commenterEmail);
         // if there is an URL it must be valid
         } else if (StringUtils.isNotEmpty(comment.getUrl())
                 && !new UrlValidator(new String[] { "http", "https" }).isValid(comment.getUrl())) {
             error = messageUtils.getString("error.commentPostFailedURL");
-            log.debug("URL is invalid : " + comment.getUrl());
+            log.debug("URL is invalid: {}", comment.getUrl());
        // if this is a real comment post then authenticate request
         } else if (!preview && !this.commentAuthenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
@@ -338,7 +338,7 @@ public class CommentProcessor {
         }
 
         int validationScore = commentValidationManager.validateComment(comment, messages);
-        log.debug("Comment Validation score: " + validationScore);
+        log.debug("Comment Validation score: {}", validationScore);
 
         if (!preview) {
             if (validationScore == WebloggerCommon.PERCENT_100 && commentApprovalRequired) {
@@ -420,7 +420,7 @@ public class CommentProcessor {
         }
         request.setAttribute("commentForm", cf);
 
-        log.debug("comment processed, forwarding to " + dispatch_url);
+        log.debug("comment processed, forwarding to {}", dispatch_url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
         dispatcher.forward(request, response);
     }

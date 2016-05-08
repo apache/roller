@@ -201,12 +201,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaFile mediaFile1 = mediaFileManager.getMediaFile(id);
 
         assertEquals("test4.jpg", mediaFile1.getName());
-
-        try {
-            mediaFileManager.removeMediaFile(testWeblog, mediaFile1);
-        } catch (Exception ignorable) {
-            log.debug("ERROR removing media file", ignorable);
-        }
+        mediaFileManager.removeMediaFile(testWeblog, mediaFile1);
         endSession(true);
 
         MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);

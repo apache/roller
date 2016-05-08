@@ -20,10 +20,9 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An operation that writes to index.
@@ -33,19 +32,18 @@ public abstract class WriteToIndexOperation extends IndexOperation {
     public WriteToIndexOperation(IndexManager mgr) {
         super(mgr);
     }
-    
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(WriteToIndexOperation.class);
+
+    private static Logger log = LoggerFactory.getLogger(WriteToIndexOperation.class);
     
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();
-            mLogger.debug("Starting search index operation");
+            log.debug("Starting search index operation");
             doRun();
-            mLogger.debug("Search index operation complete");
+            log.debug("Search index operation complete");
 
         } catch (Exception e) {
-            mLogger.error("Error acquiring write lock on index", e);
+            log.error("Error acquiring write lock on index", e);
             
         } finally {
             manager.getReadWriteLock().writeLock().unlock();

@@ -57,7 +57,7 @@ public class Planet implements Serializable, Comparable<Planet> {
     private String title;
     private String description;
     private int maxFeedEntries = 45;
-    
+
     // associations
     private Set<Subscription> subscriptions = new TreeSet<>();
 
@@ -116,7 +116,7 @@ public class Planet implements Serializable, Comparable<Planet> {
     public int getMaxFeedEntries() {
         return maxFeedEntries;
     }
-    
+
     public void setMaxFeedEntries(int maxFeedEntries) {
         this.maxFeedEntries = maxFeedEntries;
     }

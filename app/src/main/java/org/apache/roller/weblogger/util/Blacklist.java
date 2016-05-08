@@ -27,8 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Allows callers to test strings against site-level and weblog-level defined blacklist terms.
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  * <br />
  */
 public final class Blacklist {
-    private static Log log = LogFactory.getLog(Blacklist.class);
+    private static Logger log = LoggerFactory.getLogger(Blacklist.class);
 
     private List<String> stringRules = new ArrayList<>();
     private List<Pattern> regexRules = new ArrayList<>();
@@ -75,7 +75,7 @@ public final class Blacklist {
             if (log.isDebugEnabled()) {
                 Matcher matcher = testPattern.matcher(str);
                 if (matcher.find()) {
-                    log.debug(matcher.group() + " matched by " + testPattern.pattern());
+                    log.debug("{} matched by {}", matcher.group(), testPattern.pattern());
                     return true;
                 }
             } else {
@@ -120,14 +120,14 @@ public final class Blacklist {
 
                 matches = matcher.find();
                 if (matches) {
-                    log.debug("matched:" + rule + ":");
+                    log.debug("matched: {}:", rule);
                     break;
                 }
             }
             catch (PatternSyntaxException e) {
                 matches = source.contains(rule);
                 if (matches) {
-                    log.debug("matched:" + rule + ":");
+                    log.debug("matched: {}:", rule);
                     break;
                 }
             }

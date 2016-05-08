@@ -25,8 +25,6 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
@@ -36,6 +34,8 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.factory.access.BootstrapException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -43,7 +43,7 @@ import org.springframework.beans.factory.access.BootstrapException;
  */
 public class Install extends UIAction {
 
-    private static Log log = LogFactory.getLog(Install.class);
+    private static Logger log = LoggerFactory.getLogger(Install.class);
 
     private static final String DATABASE_ERROR = "database_error";
     private static final String CREATE_DATABASE = "create_database";
@@ -189,7 +189,7 @@ public class Install extends UIAction {
             if (con != null) {
                 try {
                     con.close();
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
             }
         }

@@ -17,9 +17,9 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author aim4min
@@ -28,8 +28,8 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
     public ReadFromIndexOperation(IndexManagerImpl mgr) {
         super(mgr);
     }
-    
-    private static Log log = LogFactory.getFactory().getInstance(ReadFromIndexOperation.class);
+
+    private static Logger log = LoggerFactory.getLogger(ReadFromIndexOperation.class);
     
     public final void run() {
         try {

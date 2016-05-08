@@ -26,10 +26,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -37,8 +37,8 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
  * has configured their installation type to 'auto'.
  */
 public class DatabaseInstaller {
-    
-    private static Log log = LogFactory.getLog(DatabaseInstaller.class);
+
+    private static Logger log = LoggerFactory.getLogger(DatabaseInstaller.class);
     
     private final DatabaseProvider db;
     private final String targetVersion;
@@ -214,7 +214,7 @@ public class DatabaseInstaller {
                 return null;
             }
 
-            log.info("Database is old, beginning upgrade to version " + targetVersionInt);
+            log.info("Database is old, beginning upgrade to version {}", targetVersionInt);
 
             // iterate through each upgrade as needed
             // to add to the upgrade sequence simply add a new "if" statement for whatever version needed
@@ -249,7 +249,7 @@ public class DatabaseInstaller {
             runner.runScript(con, true);
             messages.addAll(runner.getMessages());
         } catch(Exception ex) {
-            log.error("ERROR running " + versionStr + " database upgrade script", ex);
+            log.error("ERROR running {} database upgrade script", versionStr, ex);
             if (runner != null) {
                 messages.addAll(runner.getMessages());
             }
@@ -363,7 +363,7 @@ public class DatabaseInstaller {
             stmt.executeUpdate("insert into weblogger_properties values('"
                     + DBVERSION_PROP + "', '" + version + "')");
             
-            log.debug("Set database version to "+version);
+            log.debug("Set database version to {}", version);
         } catch(SQLException se) {
             throw new StartupException("Error setting database version.", se);
         }
@@ -381,7 +381,7 @@ public class DatabaseInstaller {
             stmt.executeUpdate("update weblogger_properties set value = '"
                     + version + "' where name = '" + DBVERSION_PROP + "'");
             
-            log.debug("Updated database version to " + version);
+            log.debug("Updated database version to {}", version);
         } catch(SQLException se) {
             throw new StartupException("Error setting database version.", se);
         } 
