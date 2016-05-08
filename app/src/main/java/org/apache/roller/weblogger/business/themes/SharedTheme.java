@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * theme related attributes such as name, last modified date, etc.
  */
 @XmlRootElement(name="sharedtheme")
-public class SharedTheme implements Comparable<SharedTheme>, Serializable {
+public class SharedTheme implements Serializable {
 
     private String id = null;
     private String name = null;
@@ -204,7 +204,4 @@ public class SharedTheme implements Comparable<SharedTheme>, Serializable {
         return sb.toString();
     }
 
-    public int compareTo(SharedTheme other) {
-        return getName().compareTo(other.getName());
-    }
 }

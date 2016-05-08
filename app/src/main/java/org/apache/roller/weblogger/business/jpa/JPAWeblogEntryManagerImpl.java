@@ -147,10 +147,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException {
+    @Override
+    public void removeWeblogEntry(WeblogEntry entry) {
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setEntry(entry);
 
@@ -233,10 +231,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return query.getResultList();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc) throws WebloggerException {
+    @Override
+    public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc) {
 
         List<Object> params = new ArrayList<>();
         int size = 0;
@@ -330,22 +326,20 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return query.getResultList();
     }
 
-    private void removeWeblogEntryTag(WeblogEntryTag tag) throws WebloggerException {
+    private void removeWeblogEntryTag(WeblogEntryTag tag) {
         this.strategy.remove(tag);
     }
 
-    /**
-     * @inheritDoc
-     */
+    @Override
     public WeblogEntry getWeblogEntryByAnchor(Weblog website,
-                                              String anchor) throws WebloggerException {
+                                              String anchor) {
 
         if (website == null) {
-            throw new WebloggerException("Website is null");
+            throw new IllegalArgumentException("Website is null");
         }
 
         if (anchor == null) {
-            throw new WebloggerException("Anchor is null");
+            throw new IllegalArgumentException("Anchor is null");
         }
 
         // mapping key is combo of weblog + anchor
@@ -453,10 +447,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return base;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) throws WebloggerException {
+    @Override
+    public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) {
 
         List<Object> params = new ArrayList<>();
         int size = 0;
@@ -563,10 +555,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return this.strategy.load(WeblogEntryComment.class, id);
     }
     
-    /**
-     * @inheritDoc
-     */
-    public WeblogEntry getWeblogEntry(String id) throws WebloggerException {
+    @Override
+    public WeblogEntry getWeblogEntry(String id) {
         return strategy.load(WeblogEntry.class, id);
     }
     
@@ -786,7 +776,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     @Override
-    public boolean getTagExists(String tag, Weblog weblog) throws WebloggerException{
+    public boolean getTagExists(String tag, Weblog weblog) {
         
         if (tag == null) {
             return false;

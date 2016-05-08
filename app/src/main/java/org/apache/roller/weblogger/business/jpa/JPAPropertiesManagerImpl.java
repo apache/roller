@@ -102,11 +102,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         
     }
     
-    
-    /**
-     * Retrieve a single property by name.
-     */
-    public RuntimeConfigProperty getProperty(String name) throws WebloggerException {
+    @Override
+    public RuntimeConfigProperty getProperty(String name) {
         return strategy.load(RuntimeConfigProperty.class, name);
     }
 
@@ -118,7 +115,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
      */
-    public Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException {
+    @Override
+    public Map<String, RuntimeConfigProperty> getProperties() {
 
         HashMap<String, RuntimeConfigProperty> props = new HashMap<>();
         List<RuntimeConfigProperty> list = strategy.getNamedQuery("RuntimeConfigProperty.getAll",
@@ -135,20 +133,14 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         return props;
     }
 
-
-    /**
-     * Save a single property.
-     */
-    public void saveProperty(RuntimeConfigProperty property) 
-            throws WebloggerException {
+    @Override
+    public void saveProperty(RuntimeConfigProperty property) {
         this.strategy.store(property);
     }
 
 
-    /**
-     * Save all properties.
-     */
-    public void saveProperties(Map properties) throws WebloggerException {
+    @Override
+    public void saveProperties(Map properties) {
         // just go through the list and saveProperties each property
         for (Object prop : properties.values()) {
             this.strategy.store(prop);

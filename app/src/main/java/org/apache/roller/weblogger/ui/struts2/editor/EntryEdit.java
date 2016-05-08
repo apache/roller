@@ -23,10 +23,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -52,6 +49,8 @@ import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +64,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +74,7 @@ import java.util.List;
 @RestController
 public final class EntryEdit extends UIAction {
 
-    private static Log log = LogFactory.getLog(EntryEdit.class);
+    private static Logger log = LoggerFactory.getLogger(EntryEdit.class);
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
@@ -158,12 +156,7 @@ public final class EntryEdit extends UIAction {
             entry.setWeblog(getActionWeblog());
         } else {
             // already saved entry
-            try {
-                // retrieve from DB WeblogEntry based on ID
-                setEntry(weblogEntryManager.getWeblogEntry(getBean().getId()));
-            } catch (WebloggerException ex) {
-                log.error("Error looking up entry by id - " + getBean().getId(), ex);
-            }
+            setEntry(weblogEntryManager.getWeblogEntry(getBean().getId()));
         }
     }
 
@@ -202,7 +195,7 @@ public final class EntryEdit extends UIAction {
                 return SUCCESS;
 
             } catch (Exception e) {
-                log.error("Error removing entry " + getEntry().getId(), e);
+                log.error("Error removing entry {}", getEntry().getId(), e);
                 addError("generic.error.check.logs");
             }
         } else {
@@ -224,53 +217,50 @@ public final class EntryEdit extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        try {
-            if (isAdd()) {
-                // set weblog defaults
-                bean.setCommentDays(getActionWeblog().getDefaultCommentDays());
-                // apply weblog default plugins
-                if (getActionWeblog().getDefaultPlugins() != null) {
-                    bean.setPlugins(getActionWeblog().getDefaultPlugins());
-                }
-            } else {
-                // load bean with pojo data
-                bean.setId(entry.getId());
-                bean.setTitle(entry.getTitle());
-                bean.setStatus(entry.getStatus());
-                bean.setText(entry.getText());
-                bean.setSummary(entry.getSummary());
-                bean.setNotes(entry.getNotes());
-                bean.setCategory(entry.getCategory());
-                bean.setTagsAsString(entry.getTagsAsString());
-                bean.setSearchDescription(entry.getSearchDescription());
-                bean.setPlugins(entry.getPlugins());
+        if (isAdd()) {
+            // set weblog defaults
+            bean.setCommentDays(getActionWeblog().getDefaultCommentDays());
+            // apply weblog default plugins
+            if (getActionWeblog().getDefaultPlugins() != null) {
+                bean.setPlugins(getActionWeblog().getDefaultPlugins());
+            }
+        } else {
+            // load bean with pojo data
+            bean.setId(entry.getId());
+            bean.setTitle(entry.getTitle());
+            bean.setStatus(entry.getStatus());
+            bean.setText(entry.getText());
+            bean.setSummary(entry.getSummary());
+            bean.setNotes(entry.getNotes());
+            bean.setCategory(entry.getCategory());
+            bean.setTagsAsString(entry.getTagsAsString());
+            bean.setSearchDescription(entry.getSearchDescription());
+            bean.setPlugins(entry.getPlugins());
 
-                // init pubtime values
-                if (entry.getPubTime() != null) {
-                    log.debug("entry pubtime is " + entry.getPubTime());
+            // init pubtime values
+            if (entry.getPubTime() != null) {
+                log.debug("entry pubtime is {}", entry.getPubTime());
 
-                    //Calendar cal = Calendar.getInstance(locale);
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(entry.getPubTime());
-                    cal.setTimeZone(entry.getWeblog().getTimeZoneInstance());
+                //Calendar cal = Calendar.getInstance(locale);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(entry.getPubTime());
+                cal.setTimeZone(entry.getWeblog().getTimeZoneInstance());
 
-                    bean.setHours(cal.get(Calendar.HOUR_OF_DAY));
-                    bean.setMinutes(cal.get(Calendar.MINUTE));
-                    bean.setSeconds(cal.get(Calendar.SECOND));
-                    DateFormat df = new SimpleDateFormat("M/d/yy");
-                    bean.setDateString(df.format(cal.getTime()));
+                bean.setHours(cal.get(Calendar.HOUR_OF_DAY));
+                bean.setMinutes(cal.get(Calendar.MINUTE));
+                bean.setSeconds(cal.get(Calendar.SECOND));
+                DateFormat df = new SimpleDateFormat("M/d/yy");
+                bean.setDateString(df.format(cal.getTime()));
 
+                if (log.isDebugEnabled()) {
                     log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", " + bean.getMinutes() + ", " + bean.getSeconds());
                 }
-
-                bean.setCommentDays(entry.getCommentDays());
-                bean.setEnclosureUrl(entry.getEnclosureUrl());
-                bean.setEnclosureType(entry.getEnclosureType());
-                bean.setEnclosureLength(entry.getEnclosureLength());
             }
-        } catch (WebloggerException e) {
-            log.error("Error saving entry", e);
-            addError("generic.error.check.logs");
+
+            bean.setCommentDays(entry.getCommentDays());
+            bean.setEnclosureUrl(entry.getEnclosureUrl());
+            bean.setEnclosureType(entry.getEnclosureType());
+            bean.setEnclosureLength(entry.getEnclosureLength());
         }
         return INPUT;
     }
@@ -539,15 +529,11 @@ public final class EntryEdit extends UIAction {
         if (!StringUtils.isEmpty(getTrackbackUrl())) {
             RollerMessages results = null;
             try {
-                Trackback trackback = new Trackback(getEntry(),
-                        getTrackbackUrl());
+                Trackback trackback = new Trackback(getEntry(), getTrackbackUrl());
                 results = trackback.send();
             } catch (IllegalArgumentException ex) {
+                log.error("Error sending trackback", ex);
                 addError("error.trackbackNotAllowed");
-            } catch (WebloggerException e) {
-                log.error("Error sending trackback", e);
-                // TODO: error handling
-                addError("error.general", e.getMessage());
             }
 
             if (results != null) {
@@ -638,18 +624,12 @@ public final class EntryEdit extends UIAction {
     }
 
     private List<WeblogEntry> getRecentEntries(PubStatus pubStatus, WeblogEntrySearchCriteria.SortBy sortBy) {
-        List<WeblogEntry> entries = Collections.emptyList();
-        try {
-            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-            wesc.setWeblog(getActionWeblog());
-            wesc.setMaxResults(20);
-            wesc.setStatus(pubStatus);
-            wesc.setSortBy(sortBy);
-            entries = weblogEntryManager.getWeblogEntries(wesc);
-        } catch (WebloggerException ex) {
-            log.error("Error getting entries list", ex);
-        }
-        return entries;
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(getActionWeblog());
+        wesc.setMaxResults(20);
+        wesc.setStatus(pubStatus);
+        wesc.setSortBy(sortBy);
+        return weblogEntryManager.getWeblogEntries(wesc);
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/tagdata/{handle}", method = RequestMethod.GET)

@@ -214,7 +214,8 @@ public class IndexManagerImpl implements IndexManager {
                 weblog));
     }
 
-    public void removeWeblogIndexOperation(Weblog weblog) throws WebloggerException {
+    @Override
+    public void removeWeblogIndexOperation(Weblog weblog) {
         scheduleIndexOperation(new RemoveWeblogIndexOperation(this, weblog.getHandle()));
     }
 

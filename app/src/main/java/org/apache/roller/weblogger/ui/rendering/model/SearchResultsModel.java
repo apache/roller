@@ -39,7 +39,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
@@ -48,6 +47,8 @@ import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesSearchPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Extends normal page renderer model to represent search results.
@@ -56,14 +57,15 @@ import org.apache.roller.weblogger.util.I18nMessages;
  */
 public class SearchResultsModel extends PageModel {
 
+	private static Logger log = LoggerFactory.getLogger(SearchResultsModel.class);
+
 	public static final int RESULTS_PER_PAGE = 10;
 
 	// the original search request
 	WeblogSearchRequest searchRequest = null;
 
 	// the actual search results mapped by Day -> Set of entries
-    private Map<Date, TreeSet<WeblogEntry>> results
-            = new TreeMap<>(Collections.reverseOrder());
+    private Map<Date, TreeSet<WeblogEntry>> results = new TreeMap<>(Collections.reverseOrder());
 
 	private WeblogEntriesSearchPager pager = null;
 
@@ -82,10 +84,10 @@ public class SearchResultsModel extends PageModel {
 
 	/** Init page model, requires a WeblogSearchRequest object. */
 	@Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) {
 		searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
 		if (searchRequest == null) {
-			throw new WebloggerException("expected searchRequest from init data");
+			throw new IllegalStateException("expected searchRequest from init data");
 		}
 
 		// let parent initialize
@@ -152,8 +154,7 @@ public class SearchResultsModel extends PageModel {
 	/**
 	 * Create weblog entries for each result found.
 	 */
-	private void convertHitsToEntries(ScoreDoc[] hits, SearchOperation search)
-			throws WebloggerException {
+	private void convertHitsToEntries(ScoreDoc[] hits, SearchOperation search) {
 
 		// determine offset
 		this.offset = searchRequest.getPageNum() * RESULTS_PER_PAGE;
@@ -167,37 +168,38 @@ public class SearchResultsModel extends PageModel {
 			this.limit = hits.length - this.offset;
 		}
 
-		try {
-			TreeSet<String> categorySet = new TreeSet<>();
+		TreeSet<String> categorySet = new TreeSet<>();
 
-			WeblogEntry entry;
-			Document doc;
-			String handle;
-			Timestamp now = new Timestamp(new Date().getTime());
-			for (int i = offset; i < offset + limit; i++) {
+		WeblogEntry entry;
+		Document doc;
+		String handle;
+		Timestamp now = new Timestamp(new Date().getTime());
+		for (int i = offset; i < offset + limit; i++) {
+			try {
 				doc = search.getSearcher().doc(hits[i].doc);
-				handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
+			} catch (IOException e) {
+				log.warn("IOException processing {}", hits[i].doc, e);
+				continue;
+			}
+			handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
 
-                entry = weblogEntryManager.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
+			entry = weblogEntryManager.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
 
-                if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))
-                        && doc.getField(FieldConstants.CATEGORY) != null) {
-                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
-                }
-
-				// maybe null if search result returned inactive user
-				// or entry's user is not the requested user.
-				// but don't return future posts
-				if (entry != null && entry.getPubTime().before(now)) {
-					addEntryToResults(entry);
-				}
+			if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))
+					&& doc.getField(FieldConstants.CATEGORY) != null) {
+				categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
 			}
 
-			if (categorySet.size() > 0) {
-				this.categories = categorySet;
+			// maybe null if search result returned inactive user
+			// or entry's user is not the requested user.
+			// but don't return future posts
+			if (entry != null && entry.getPubTime().before(now)) {
+				addEntryToResults(entry);
 			}
-		} catch (IOException e) {
-			throw new WebloggerException(e);
+		}
+
+		if (categorySet.size() > 0) {
+			this.categories = categorySet;
 		}
 	}
 

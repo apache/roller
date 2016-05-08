@@ -138,12 +138,12 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return q.getResultList().size();
     }
     
-    public List<Planet> getPlanets() throws WebloggerException {
+    public List<Planet> getPlanets() {
         TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getAll", Planet.class);
         return q.getResultList();
     }
 
-    public Planet getPlanet(String handle) throws WebloggerException {
+    public Planet getPlanet(String handle) {
         TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getByHandle", Planet.class);
         q.setParameter(1, handle);
         try {

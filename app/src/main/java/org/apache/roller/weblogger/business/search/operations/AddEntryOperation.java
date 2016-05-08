@@ -22,14 +22,12 @@ package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An operation that adds a new log entry into the index.
@@ -37,9 +35,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 public class AddEntryOperation extends WriteToIndexOperation {
     
     //~ Static fields/initializers =============================================
-    
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(AddEntryOperation.class);
+
+    private static Logger log = LoggerFactory.getLogger(AddEntryOperation.class);
     
     //~ Instance fields ========================================================
     
@@ -65,19 +62,14 @@ public class AddEntryOperation extends WriteToIndexOperation {
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
-        try {
-            this.data = weblogEntryManager.getWeblogEntry(this.data.getId());
-        } catch (WebloggerException ex) {
-            mLogger.error("Error getting weblogentry object", ex);
-            return;
-        }
-        
+        this.data = weblogEntryManager.getWeblogEntry(this.data.getId());
+
         try {
             if (writer != null) {
                 writer.addDocument(getDocument(data));
             }
         } catch (IOException e) {
-            mLogger.error("Problems adding doc to index", e);
+            log.error("Problems adding doc to index", e);
         } finally {
             endWriting();
         }

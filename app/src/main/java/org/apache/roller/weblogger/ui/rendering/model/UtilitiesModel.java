@@ -28,7 +28,6 @@ import java.util.TimeZone;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -46,7 +45,7 @@ public class UtilitiesModel implements Model {
 
     /** Init page model, will take but does not require a WeblogRequest object. */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) {
         weblogRequest = (WeblogRequest) initData.get("parsedRequest");
     }
 

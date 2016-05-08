@@ -36,7 +36,7 @@ public interface PlanetManager {
     /**
      * Retrieve all defined planets
      */
-    List<Planet> getPlanets() throws WebloggerException;
+    List<Planet> getPlanets();
 
     /**
      * Save new or update an existing planet
@@ -50,7 +50,7 @@ public interface PlanetManager {
     void deletePlanet(Planet planet) throws WebloggerException;
     
     
-    Planet getPlanet(String handle) throws WebloggerException;
+    Planet getPlanet(String handle);
     
     
     /**

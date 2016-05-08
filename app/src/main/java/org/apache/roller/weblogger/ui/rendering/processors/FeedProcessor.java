@@ -26,10 +26,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -46,6 +43,8 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.util.cache.SiteWideCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mobile.device.DeviceType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/tb-ui/rendering/feed/**")
 public class FeedProcessor {
 
-    private static Log log = LogFactory.getLog(FeedProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(FeedProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/feed";
 
@@ -119,7 +118,7 @@ public class FeedProcessor {
 
             weblog = feedRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: " + feedRequest.getWeblogHandle());
+                throw new IllegalStateException("unable to lookup weblog: " + feedRequest.getWeblogHandle());
             }
 
             // Is this the site-wide weblog? If so, make a combined feed using all blogs...
@@ -158,12 +157,12 @@ public class FeedProcessor {
                 siteWideCache.get(cacheKey) : weblogFeedCache.get(cacheKey, lastModified));
 
         if (cachedContent != null) {
-            log.debug("HIT " + cacheKey);
+            log.debug("HIT {}", cacheKey);
             response.setContentLength(cachedContent.getContent().length);
             response.getOutputStream().write(cachedContent.getContent());
             return;
         } else {
-            log.debug("MISS " + cacheKey);
+            log.debug("MISS {}", cacheKey);
         }
 
         // Validation. To save DB processing time, detect some of the common queries that would return no rows.
@@ -177,12 +176,8 @@ public class FeedProcessor {
                 invalid = true;
             }
         } else if (feedRequest.getTag() != null) {
-            try {
-                // tags specified. make sure they exist.
-                invalid = !weblogEntryManager.getTagExists(feedRequest.getTag(), (feedRequest.isSiteWideFeed()) ? null : weblog);
-            } catch (WebloggerException ex) {
-                invalid = true;
-            }
+            // tags specified. make sure they exist.
+            invalid = !weblogEntryManager.getTagExists(feedRequest.getTag(), (feedRequest.isSiteWideFeed()) ? null : weblog);
         } else if (!"entries".equals(feedRequest.getType()) && !"comments".equals(feedRequest.getType())) {
             invalid = true;
         }
@@ -198,20 +193,12 @@ public class FeedProcessor {
         // looks like we need to render content
         Map<String, Object> model;
         String pageId;
-        try {
-            // populate the rendering model
-            Map<String, Object> initData = new HashMap<>();
-            initData.put("parsedRequest", feedRequest);
-            model = Model.getModelMap("feedModelSet", initData);
-            pageId = feedRequest.getType() + "-atom.vm";
-        } catch (WebloggerException ex) {
-            log.error("ERROR loading model for page", ex);
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
+
+        // populate the rendering model
+        Map<String, Object> initData = new HashMap<>();
+        initData.put("parsedRequest", feedRequest);
+        model = Model.getModelMap("feedModelSet", initData);
+        pageId = feedRequest.getType() + "-atom.vm";
 
         // lookup Renderer we are going to use
         Renderer renderer;
@@ -221,7 +208,7 @@ public class FeedProcessor {
             renderer = rendererManager.getRenderer(template, DeviceType.NORMAL);
         } catch (Exception e) {
             // nobody wants to render my content :(
-            log.error("Couldn't find render feed for page " + pageId, e);
+            log.error("Couldn't find render feed for page {}", pageId, e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -241,7 +228,7 @@ public class FeedProcessor {
             rendererOutput.close();
         } catch (Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for page " + pageId, e);
+            log.error("Error during rendering for page {}", pageId, e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -258,7 +245,7 @@ public class FeedProcessor {
         response.getOutputStream().write(rendererOutput.getContent());
 
         // cache rendered content. only cache if user is not logged in?
-        log.debug("PUT " + cacheKey);
+        log.debug("PUT {}", cacheKey);
         if (feedRequest.isSiteWideFeed()) {
             siteWideCache.put(cacheKey, rendererOutput);
         } else {

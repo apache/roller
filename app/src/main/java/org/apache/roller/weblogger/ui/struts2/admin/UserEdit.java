@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.struts2.admin;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -29,10 +28,7 @@ import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -43,14 +39,16 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Action that allows an admin to modify a users profile.
  */
 public class UserEdit extends UIAction {
-    
-    private static Log log = LogFactory.getLog(UserEdit.class);
+
+    private static Logger log = LoggerFactory.getLogger(UserEdit.class);
 
     private UserManager userManager;
 
@@ -100,7 +98,8 @@ public class UserEdit extends UIAction {
                     user = userManager.getUserByScreenName(bean.getUserName());
                 }
             } catch (Exception e) {
-                log.error("Error looking up user (id/username) :" + bean.getId() + "/" + bean.getUserName(), e);
+                log.error("Error looking up user id: {} username: {}", bean.getId(), bean.getUserName());
+                log.error("Exception: ", e);
             }
         }
     }
@@ -155,43 +154,32 @@ public class UserEdit extends UIAction {
 
             // reset password if set
             if (!StringUtils.isEmpty(bean.getPassword())) {
-                try {
-                    user.resetPassword(bean.getPassword().trim());
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
+                user.resetPassword(bean.getPassword().trim());
             }
-
-            try {
-                if (isAdd()) {
-                    user.setUserName(bean.getUserName().trim());
-                    user.setDateCreated(new java.util.Date());
+            if (isAdd()) {
+                user.setUserName(bean.getUserName().trim());
+                user.setDateCreated(new java.util.Date());
+                user.setGlobalRole(bean.getGlobalRole());
+                // save new user
+                userManager.addUser(user);
+            } else {
+                if (!isUserEditingSelf()) {
                     user.setGlobalRole(bean.getGlobalRole());
-                    // save new user
-                    userManager.addUser(user);
-                } else {
-                    if (!isUserEditingSelf()) {
-                        user.setGlobalRole(bean.getGlobalRole());
-                    } else if (user.getGlobalRole() != bean.getGlobalRole()) {
-                        addError("userAdmin.cantChangeOwnRole");
-                    }
-                    userManager.saveUser(user);
+                } else if (user.getGlobalRole() != bean.getGlobalRole()) {
+                    addError("userAdmin.cantChangeOwnRole");
                 }
-
-                WebloggerFactory.flush();
-                if (isAdd()) {
-                    // now that user is saved we have an id value
-                    // store it back in bean for use in next action
-                    bean.setId(user.getId());
-                    // route to edit mode, saveFirst() provides the success message.
-                    return SUCCESS;
-                } else {
-                    addMessage("userAdmin.userSaved");
-                    return INPUT;
-                }
-            } catch (WebloggerException ex) {
-                log.error("ERROR in action", ex);
-                addError("generic.error.check.logs");
+                userManager.saveUser(user);
+            }
+            WebloggerFactory.flush();
+            if (isAdd()) {
+                // now that user is saved we have an id value
+                // store it back in bean for use in next action
+                bean.setId(user.getId());
+                // route to edit mode, saveFirst() provides the success message.
+                return SUCCESS;
+            } else {
+                addMessage("userAdmin.userSaved");
+                return INPUT;
             }
         }
         return INPUT;
@@ -242,12 +230,7 @@ public class UserEdit extends UIAction {
     }
 
     public List<UserWeblogRole> getPermissions() {
-        try {
-            return userManager.getWeblogRoles(user);
-        } catch (WebloggerException ex) {
-            log.error("ERROR getting permissions for user " + user.getUserName(), ex);
-        }
-        return new ArrayList<>();
+        return userManager.getWeblogRoles(user);
     }
 
     public String getAuthMethod() {

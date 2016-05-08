@@ -21,10 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -46,6 +43,8 @@ import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,7 +76,7 @@ import java.util.Map;
 @RequestMapping(path="/tb-ui/rendering/page/**")
 public class PageProcessor {
 
-    private static Log log = LogFactory.getLog(PageProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/page";
 
@@ -153,7 +152,7 @@ public class PageProcessor {
 
     @PostConstruct
     public void init() {
-        log.debug("PageProcessor: Referrer spam check enabled = " + this.processReferrers);
+        log.debug("PageProcessor: Referrer spam check enabled = {}", this.processReferrers);
     }
 
     /**
@@ -170,7 +169,7 @@ public class PageProcessor {
 
             weblog = pageRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: " + pageRequest.getWeblogHandle());
+                throw new IllegalStateException("unable to lookup weblog: " + pageRequest.getWeblogHandle());
             }
 
             // is this the site-wide weblog?
@@ -233,7 +232,7 @@ public class PageProcessor {
             }
 
             if (cachedContent != null) {
-                log.debug("HIT " + cacheKey);
+                log.debug("HIT {}", cacheKey);
 
                 // allow for hit counting
                 if (!isSiteWide && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
@@ -245,7 +244,7 @@ public class PageProcessor {
                 response.getOutputStream().write(cachedContent.getContent());
                 return;
             } else {
-                log.debug("MISS " + cacheKey);
+                log.debug("MISS {}", cacheKey);
             }
         }
 
@@ -299,7 +298,7 @@ public class PageProcessor {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
             } catch (Exception e) {
-                log.error("Error getting default page for weblog = " + weblog.getHandle(), e);
+                log.error("Error getting default page for weblog = {}", weblog.getHandle(), e);
             }
         }
 
@@ -323,18 +322,13 @@ public class PageProcessor {
 
             // permalink specified.
             // entry must exist and be published before current time
-            try {
-                WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogAnchor());
+            WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogAnchor());
 
-                if (entry == null) {
-                    invalid = true;
-                } else if (!entry.isPublished()) {
-                    invalid = true;
-                } else if (new Date().before(entry.getPubTime())) {
-                    invalid = true;
-                }
-            } catch (WebloggerException e) {
-                log.warn("Problem getting weblog entry: " + e.getMessage());
+            if (entry == null) {
+                invalid = true;
+            } else if (!entry.isPublished()) {
+                invalid = true;
+            } else if (new Date().before(entry.getPubTime())) {
                 invalid = true;
             }
         } else if (pageRequest.getWeblogCategoryName() != null) {
@@ -345,12 +339,8 @@ public class PageProcessor {
                 invalid = true;
             }
         } else if (pageRequest.getTag() != null) {
-            try {
-                // tags specified. make sure they exist.
-                invalid = !weblogEntryManager.getTagExists(pageRequest.getTag(), (isSiteWide) ? null : weblog);
-            } catch (WebloggerException ex) {
-                invalid = true;
-            }
+            // tags specified. make sure they exist.
+            invalid = !weblogEntryManager.getTagExists(pageRequest.getTag(), (isSiteWide) ? null : weblog);
         }
 
         if (invalid) {
@@ -371,35 +361,25 @@ public class PageProcessor {
         String contentType = page.getRole().getContentType() + "; charset=utf-8";
 
         Map<String, Object> model;
-        try {
-            // special hack for menu tag
-            request.setAttribute("pageRequest", pageRequest);
 
-            // populate the rendering model
-            Map<String, Object> initData = new HashMap<>();
-            initData.put("requestParameters", request.getParameterMap());
-            initData.put("parsedRequest", pageRequest);
+        // special hack for menu tag
+        request.setAttribute("pageRequest", pageRequest);
 
-            // if this was a comment posting, get the comment form
-            if (commentForm != null) {
-                initData.put("commentForm", commentForm);
-            }
+        // populate the rendering model
+        Map<String, Object> initData = new HashMap<>();
+        initData.put("requestParameters", request.getParameterMap());
+        initData.put("parsedRequest", pageRequest);
 
-            model = Model.getModelMap("pageModelSet", initData);
+        // if this was a comment posting, get the comment form
+        if (commentForm != null) {
+            initData.put("commentForm", commentForm);
+        }
 
-            // Load special models for site-wide blog
-            if (isSiteWide) {
-                model.putAll(Model.getModelMap("siteModelSet", initData));
-            }
+        model = Model.getModelMap("pageModelSet", initData);
 
-        } catch (WebloggerException ex) {
-            log.error("Error loading model objects for page", ex);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
+        // Load special models for site-wide blog
+        if (isSiteWide) {
+            model.putAll(Model.getModelMap("siteModelSet", initData));
         }
 
         // lookup Renderer we are going to use
@@ -409,7 +389,7 @@ public class PageProcessor {
             renderer = rendererManager.getRenderer(page, pageRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(
-            log.error("Couldn't find renderer for page " + page.getId(), e);
+            log.error("Couldn't find renderer for page {}", page.getId(), e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -430,7 +410,7 @@ public class PageProcessor {
             rendererOutput.close();
         } catch (Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for page " + page.getId(), e);
+            log.error("Error during rendering for page {}", page.getId(), e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -448,7 +428,7 @@ public class PageProcessor {
 
         // cache rendered content. only cache if user is not logged in?
         if ((cacheLoggedInPages || !pageRequest.isLoggedIn()) && request.getAttribute("skipCache") == null) {
-            log.debug("PUT " + cacheKey);
+            log.debug("PUT {}", cacheKey);
 
             // put it in the right cache
             if (isSiteWide) {
@@ -457,7 +437,7 @@ public class PageProcessor {
                 weblogPageCache.put(cacheKey, rendererOutput);
             }
         } else {
-            log.debug("SKIPPED " + cacheKey);
+            log.debug("SKIPPED {}", cacheKey);
         }
 
         log.debug("Exiting");
@@ -496,7 +476,7 @@ public class PageProcessor {
      * @return true if referrer was spam, false otherwise
      */
     private boolean processReferrer(HttpServletRequest request, WeblogPageRequest pageRequest) {
-        log.debug("processing referrer for " + request.getRequestURI());
+        log.debug("processing referrer for {}", request.getRequestURI());
 
         String referrerUrl = request.getHeader("Referer");
         StringBuffer reqsb = request.getRequestURL();
@@ -505,7 +485,7 @@ public class PageProcessor {
             reqsb.append(request.getQueryString());
         }
         String requestUrl = reqsb.toString();
-        log.debug("referrer = " + referrerUrl);
+        log.debug("referrer = {}", referrerUrl);
 
         // if this came from persons own blog then don't process it
         String selfSiteFragment = "/" + pageRequest.getWeblogHandle();
@@ -540,7 +520,7 @@ public class PageProcessor {
                 return true;
             }
         } else {
-            log.debug("Ignoring referer = " + referrerUrl);
+            log.debug("Ignoring referer = {}", referrerUrl);
             return false;
         }
 

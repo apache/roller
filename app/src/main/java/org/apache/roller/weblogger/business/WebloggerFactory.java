@@ -134,7 +134,7 @@ public final class WebloggerFactory {
         // setup mail provider, if configured
         try {
             mailProvider = new MailProvider();
-        } catch(StartupException ex) {
+        } catch (StartupException ex) {
             log.warn("Failed to setup mail provider, continuing anyways.\n"
                     + "Reason: " + ex.getMessage());
             log.info("The cause of setting up mail provider error was: ", ex);
@@ -145,7 +145,7 @@ public final class WebloggerFactory {
         log.info("   Revision: " + WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));
     }
 
-    public static void flush() throws WebloggerException {
+    public static void flush() {
         strategy.flush();
     }
 

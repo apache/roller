@@ -21,9 +21,6 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -34,8 +31,6 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Manage planet subscriptions
  */
 public class PlanetEdit extends UIAction {
-    
-    private static final Log LOGGER = LogFactory.getLog(PlanetEdit.class);
 
     private PlanetManager planetManager;
 
@@ -65,11 +60,7 @@ public class PlanetEdit extends UIAction {
 
     @Override
     public void prepare() {
-        try {
-            bean = planetManager.getPlanet(getPlanetHandle());
-        } catch (WebloggerException ex) {
-            LOGGER.error("Error looking up planet group - " + getPlanetHandle(), ex);
-        }
+        bean = planetManager.getPlanet(getPlanetHandle());
 
         if (bean != null) {
             Set<Subscription> subsSet = bean.getSubscriptions();

@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.User;
@@ -99,14 +98,14 @@ public class MediaFileTest extends WebloggerTest {
         try {
             mediaFileManager.createMediaDirectory(testWeblog, "");
             assertTrue(false);
-        } catch (WebloggerException e) {
+        } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
 
         try {
             mediaFileManager.createMediaDirectory(testWeblog, "default");
             assertTrue(false);
-        } catch (WebloggerException e) {
+        } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
 
@@ -126,7 +125,7 @@ public class MediaFileTest extends WebloggerTest {
         try {
             mediaFileManager.createMediaDirectory(testWeblog, "test1");
             assertTrue(false);
-        } catch (WebloggerException e) {
+        } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
     }

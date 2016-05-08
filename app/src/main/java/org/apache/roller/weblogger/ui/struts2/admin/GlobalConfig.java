@@ -21,11 +21,9 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.*;
+import javax.persistence.RollbackException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -37,14 +35,16 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Action which handles editing of global configuration.
  */
 public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
-    
-    private static Log log = LogFactory.getLog(GlobalConfig.class);
+
+    private static Logger log = LoggerFactory.getLogger(GlobalConfig.class);
 
     private WeblogManager weblogManager;
 
@@ -98,21 +98,9 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
      */
     @Override
     public void prepare() {
-        try {
-            // just grab our properties map and make it available to the action
-            setProperties(propertiesManager.getProperties());
-        } catch (WebloggerException ex) {
-            log.error("Error getting runtime properties map", ex);
-            addError("Unexpected error accessing TightBlog properties");
-        }
-        
-        try {
-            setWeblogs(weblogManager.getWeblogs(true, null, null, 0, -1));
-        } catch (WebloggerException ex) {
-            log.error("Error getting weblogs", ex);
-            addError("frontpageConfig.weblogs.error");
-        }
-
+        // just grab our properties map and make it available to the action
+        setProperties(propertiesManager.getProperties());
+        setWeblogs(weblogManager.getWeblogs(true, null, null, 0, -1));
         globalConfigDef = propertiesManager.getRuntimeConfigDefs();
     }
     
@@ -147,8 +135,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             updProp = getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
             
-            log.debug("Checking property ["+propName+"]");
-            log.debug("Request value is ["+incomingProp+"]");
+            log.debug("Checking property [{}]", propName);
+            log.debug("Request value is [{}]", incomingProp);
             
             // some special treatment for booleans
             // this is a bit hacky since we are assuming that any prop
@@ -168,7 +156,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             
             // only work on props that were submitted with the request
             if(incomingProp != null) {
-                log.debug("Setting new value for ["+propName+"]");
+                log.debug("Setting new value for [{}]", propName);
                 
                 // NOTE: the old way had some locale sensitive way to do this??
                 updProp.setValue(incomingProp.trim());
@@ -187,11 +175,9 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             // save 'em and flush
             propertiesManager.saveProperties(getProperties());
             WebloggerFactory.flush();
-            
             // notify user of our success
             addMessage("generic.changes.saved");
-            
-        } catch (WebloggerException ex) {
+        } catch (RollbackException ex) {
             log.error("Error saving roller properties", ex);
             addError("generic.error.check.logs");
         }

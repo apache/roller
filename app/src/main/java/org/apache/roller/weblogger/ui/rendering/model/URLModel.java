@@ -21,9 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -41,9 +38,7 @@ import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
  * $url.category("foo") instead of $url.getCategory("foo")
  */
 public class URLModel implements Model {
-    
-    private static Log log = LogFactory.getLog(URLModel.class);
-    
+
     protected Weblog weblog;
 
     private WeblogEntryManager weblogEntryManager;
@@ -67,10 +62,10 @@ public class URLModel implements Model {
 
     /** Init page model, requires a WeblogRequest object. */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if (weblogRequest == null) {
-            throw new WebloggerException("Expected 'weblogRequest' init param!");
+            throw new IllegalStateException("Expected 'weblogRequest' init param!");
         }
         
         this.weblog = weblogRequest.getWeblog();
@@ -172,14 +167,10 @@ public class URLModel implements Model {
 
     /** URL for editing a weblog entry */
     public String editEntry(String anchor) {
-        try {
-            // need to determine entryId from anchor
-            WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, anchor);
-            if(entry != null) {
-                return urlStrategy.getEntryEditURL(weblog.getHandle(), entry.getId(), false);
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up entry by anchor - "+anchor, ex);
+        // need to determine entryId from anchor
+        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, anchor);
+        if(entry != null) {
+            return urlStrategy.getEntryEditURL(weblog.getHandle(), entry.getId(), false);
         }
         return null;
     } 

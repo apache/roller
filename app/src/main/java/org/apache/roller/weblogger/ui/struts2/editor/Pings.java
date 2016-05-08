@@ -21,9 +21,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -40,14 +37,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Actions for setting up automatic ping configuration for a weblog.
  */
 public class Pings extends UIAction {
-    
-    private static Log log = LogFactory.getLog(Pings.class);
+
+    private static Logger log = LoggerFactory.getLogger(Pings.class);
 
     private PingTargetManager pingTargetManager;
 
@@ -88,20 +87,11 @@ public class Pings extends UIAction {
         
         // load selected ping target, if possible
         if(getPingTargetId() != null) {
-            try {
-                setPingTarget(pingTargetManager.getPingTarget(getPingTargetId()));
-            } catch (WebloggerException ex) {
-                log.error("Error looking up ping target - "+getPingTargetId(), ex);
-            }
+            setPingTarget(pingTargetManager.getPingTarget(getPingTargetId()));
         }
         
-        try {
-            // load common ping targets list
-            setCommonPingTargets(pingTargetManager.getCommonPingTargets());
-        } catch (WebloggerException ex) {
-            log.error("Error loading ping target lists for weblog - "+getActionWeblog().getHandle(), ex);
-            addError("Error loading ping targets");
-        }
+        // load common ping targets list
+        setCommonPingTargets(pingTargetManager.getCommonPingTargets());
     }
     
     
@@ -186,7 +176,7 @@ public class Pings extends UIAction {
                     }
                 }
             } catch (IOException|XmlRpcException ex) {
-                log.debug(ex);
+                log.debug("exception:", ex);
                 addError("ping.transmissionFailed");
                 addSpecificMessages(ex);
             }
@@ -215,13 +205,8 @@ public class Pings extends UIAction {
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map<String, Boolean> isEnabled = new HashMap<String, Boolean>();
         
-        List<AutoPing> autoPings = Collections.emptyList();
-        try {
-            autoPings = pingTargetManager.getAutoPingsByWeblog(getActionWeblog());
-        } catch (WebloggerException ex) {
-            log.error("Error looking up auto pings for weblog - "+getActionWeblog().getHandle(), ex);
-        }
-        
+        List<AutoPing> autoPings = pingTargetManager.getAutoPingsByWeblog(getActionWeblog());
+
         // Add the enabled auto ping configs with TRUE
         for (AutoPing autoPing : autoPings) {
             isEnabled.put(autoPing.getPingTarget().getId(), Boolean.TRUE);

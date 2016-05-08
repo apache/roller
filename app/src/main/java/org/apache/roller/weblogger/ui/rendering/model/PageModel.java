@@ -22,12 +22,8 @@
 package org.apache.roller.weblogger.ui.rendering.model; 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
@@ -50,14 +46,16 @@ import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Model which provides information needed to render a weblog page.
  */
 public class PageModel implements Model {
-    
-    private static Log log = LogFactory.getLog(PageModel.class);
+
+    private static Logger log = LoggerFactory.getLogger(PageModel.class);
 
     private static final int MAX_ENTRIES = 100;
 
@@ -121,11 +119,11 @@ public class PageModel implements Model {
 
     /** Init page model, requires a WeblogPageRequest object. */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) {
         this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
 
         if (pageRequest == null) {
-            throw new WebloggerException("Missing WeblogPageRequest object");
+            throw new IllegalStateException("Missing WeblogPageRequest object");
         }
 
         // see if there is a comment form
@@ -172,11 +170,7 @@ public class PageModel implements Model {
      */
     public WeblogEntry getWeblogEntry() {
         if (weblogEntry == null && pageRequest.getWeblogAnchor() != null) {
-            try {
-                weblogEntry = weblogEntryManager.getWeblogEntryByAnchor(getWeblog(), pageRequest.getWeblogAnchor());
-            } catch (WebloggerException ex) {
-                log.error("Error getting weblog entry " + pageRequest.getWeblogAnchor(), ex);
-            }
+            weblogEntry = weblogEntryManager.getWeblogEntryByAnchor(getWeblog(), pageRequest.getWeblogAnchor());
         }
         return weblogEntry;
     }
@@ -189,20 +183,15 @@ public class PageModel implements Model {
         if (pageRequest.getWeblogTemplateName() != null) {
             return pageRequest.getWeblogTemplate();
         } else {
-            try {
-                return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByAction(Template.ComponentType.WEBLOG);
-            } catch (WebloggerException ex) {
-                log.error("Error getting default page", ex);
-            }
+            return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByAction(Template.ComponentType.WEBLOG);
         }
-        return null;
     }
 
-    public List<? extends Template> getTemplates() throws WebloggerException {
+    public List<? extends Template> getTemplates() {
         return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplates();
     }
 
-    public Template getTemplateByName(String name) throws WebloggerException {
+    public Template getTemplateByName(String name) {
         return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByName(name);
     }
 
@@ -230,16 +219,12 @@ public class PageModel implements Model {
         if (length < 1) {
             return recentEntries;
         }
-        try {
-            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-            wesc.setWeblog(pageRequest.getWeblog());
-            wesc.setCatName(cat);
-            wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-            wesc.setMaxResults(length);
-            recentEntries = weblogEntryManager.getWeblogEntries(wesc);
-        } catch (WebloggerException e) {
-            log.error("ERROR: getting recent entries", e);
-        }
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(pageRequest.getWeblog());
+        wesc.setCatName(cat);
+        wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        wesc.setMaxResults(length);
+        recentEntries = weblogEntryManager.getWeblogEntries(wesc);
         return recentEntries;
     }
 
@@ -256,15 +241,11 @@ public class PageModel implements Model {
         if (length < 1) {
             return recentComments;
         }
-        try {
-            CommentSearchCriteria csc = new CommentSearchCriteria();
-            csc.setWeblog(pageRequest.getWeblog());
-            csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
-            csc.setMaxResults(length);
-            recentComments = weblogEntryManager.getComments(csc);
-        } catch (WebloggerException e) {
-            log.error("ERROR: getting recent comments", e);
-        }
+        CommentSearchCriteria csc = new CommentSearchCriteria();
+        csc.setWeblog(pageRequest.getWeblog());
+        csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
+        csc.setMaxResults(length);
+        recentComments = weblogEntryManager.getComments(csc);
         return recentComments;
     }
 
@@ -279,7 +260,7 @@ public class PageModel implements Model {
         try {
             results = weblogEntryManager.getPopularTags(pageRequest.getWeblog(), 0, length);
         } catch (Exception e) {
-            log.error("ERROR: fetching popular tags for weblog " + pageRequest.getWeblog().getName(), e);
+            log.error("ERROR: fetching popular tags for weblog {}", pageRequest.getWeblog().getName(), e);
         }
         return results;
     }

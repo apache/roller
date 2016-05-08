@@ -21,10 +21,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
@@ -40,6 +37,8 @@ import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.EnumMap;
@@ -51,7 +50,7 @@ import java.util.Map;
  */
 public class TemplateEdit extends UIAction {
 
-    private static Log log = LogFactory.getLog(TemplateEdit.class);
+    private static Logger log = LoggerFactory.getLogger(TemplateEdit.class);
 
     private WeblogManager weblogManager;
 
@@ -91,19 +90,14 @@ public class TemplateEdit extends UIAction {
     }
 
     public void prepare() {
-        try {
-            if (bean.getId() != null && bean.getId().length() > 0) {
-                // Template is overridden or blog-only
-                setTemplate(weblogManager.getTemplate(getBean().getId()));
-                // name can be changed only on blog-only templates
-                SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getTheme());
-                if (sharedTheme.getTemplateByName(template.getName()) == null) {
-                    nameChangeable = true;
-                }
+        if (bean.getId() != null && bean.getId().length() > 0) {
+            // Template is overridden or blog-only
+            setTemplate(weblogManager.getTemplate(getBean().getId()));
+            // name can be changed only on blog-only templates
+            SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getTheme());
+            if (sharedTheme.getTemplateByName(template.getName()) == null) {
+                nameChangeable = true;
             }
-
-        } catch (WebloggerException ex) {
-            log.error("Error looking up template: " + getBean(), ex);
         }
     }
 
@@ -113,40 +107,33 @@ public class TemplateEdit extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        try {
-            if (getTemplate() == null) {
-                // First-time override of a shared template
-                SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getTheme());
-                Template template = sharedTheme.getTemplateByName(bean.getName());
-                WeblogTemplate newTemplate = themeManager.createWeblogTemplate(getActionWeblog(), template);
-                setTemplate(newTemplate);
-                bean.setDerivation(TemplateDerivation.OVERRIDDEN);
-            }
-
-            bean.setId(template.getId());
-            bean.setName(template.getName());
-            bean.setRole(template.getRole());
-            bean.setDescription(template.getDescription());
-            bean.setRelativePath(template.getRelativePath());
-            bean.setWeblog(getActionWeblog());
-
-            WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(RenditionType.NORMAL);
-            if (maybeTemplate != null) {
-                bean.setContentsStandard(maybeTemplate.getTemplate());
-            } else {
-                bean.setContentsStandard("");
-            }
-
-            maybeTemplate = template.getTemplateRendition(RenditionType.MOBILE);
-            if (maybeTemplate != null) {
-                bean.setContentsMobile(maybeTemplate.getTemplate());
-            }
-
-        } catch (WebloggerException ex) {
-           log.error("Error updating page - " + getBean().getId(), ex);
-           addError("Error saving template - check TightBlog logs");
+        if (getTemplate() == null) {
+            // First-time override of a shared template
+            SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getTheme());
+            Template template = sharedTheme.getTemplateByName(bean.getName());
+            WeblogTemplate newTemplate = themeManager.createWeblogTemplate(getActionWeblog(), template);
+            setTemplate(newTemplate);
+            bean.setDerivation(TemplateDerivation.OVERRIDDEN);
         }
 
+        bean.setId(template.getId());
+        bean.setName(template.getName());
+        bean.setRole(template.getRole());
+        bean.setDescription(template.getDescription());
+        bean.setRelativePath(template.getRelativePath());
+        bean.setWeblog(getActionWeblog());
+
+        WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(RenditionType.NORMAL);
+        if (maybeTemplate != null) {
+            bean.setContentsStandard(maybeTemplate.getTemplate());
+        } else {
+            bean.setContentsStandard("");
+        }
+
+        maybeTemplate = template.getTemplateRendition(RenditionType.MOBILE);
+        if (maybeTemplate != null) {
+            bean.setContentsMobile(maybeTemplate.getTemplate());
+        }
         return INPUT;
     }
 
@@ -182,7 +169,7 @@ public class TemplateEdit extends UIAction {
 
             try {
                 weblogManager.saveTemplate(template);
-                log.debug("Saved template: " + template.getId());
+                log.debug("Saved template: {}", template.getId());
 
                 WeblogTemplateRendition wtr = template.getTemplateRendition(RenditionType.NORMAL);
 
@@ -215,12 +202,10 @@ public class TemplateEdit extends UIAction {
                 bean.setId(template.getId());
 
             } catch (Exception ex) {
-                log.error("Error updating page - " + getBean().getId(), ex);
+                log.error("Error updating page - {}", getBean().getId(), ex);
                 addError("Error updating template - check TightBlog logs");
             }
         }
-
-        log.debug("Leaving save()");
         return INPUT;
     }
 
@@ -239,31 +224,25 @@ public class TemplateEdit extends UIAction {
         }
 
         if (!earlyExit) {
-            try {
-                WeblogTheme testTheme = new WeblogTheme(weblogManager, getActionWeblog(),
-                        themeManager.getSharedTheme(getActionWeblog().getTheme()));
+            WeblogTheme testTheme = new WeblogTheme(weblogManager, getActionWeblog(),
+                    themeManager.getSharedTheme(getActionWeblog().getTheme()));
 
-                // if initial save or name changed make sure there isn't a conflict
-                if ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
-                        || (template !=null && !getBean().getName().equals(getTemplate().getName()))) {
-                    if (testTheme.getTemplateByName(getBean().getName()) != null) {
-                        addError("templates.error.nameAlreadyExists", getBean().getName());
-                    }
+            // if initial save or name changed make sure there isn't a conflict
+            if ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
+                    || (template !=null && !getBean().getName().equals(getTemplate().getName()))) {
+                if (testTheme.getTemplateByName(getBean().getName()) != null) {
+                    addError("templates.error.nameAlreadyExists", getBean().getName());
                 }
+            }
 
-                // same check for path
-                if (bean.getRole().isAccessibleViaUrl() &&
-                        ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
-                                || (template != null && !StringUtils.isEmpty(getBean().getRelativePath()) &&
-                        !getBean().getRelativePath().equals(getTemplate().getRelativePath())))) {
-                    if (testTheme.getTemplateByPath(getBean().getRelativePath()) != null) {
-                        addError("templates.error.pathAlreadyExists", getBean().getRelativePath());
-                    }
+            // same check for path
+            if (bean.getRole().isAccessibleViaUrl() &&
+                    ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
+                            || (template != null && !StringUtils.isEmpty(getBean().getRelativePath()) &&
+                    !getBean().getRelativePath().equals(getTemplate().getRelativePath())))) {
+                if (testTheme.getTemplateByPath(getBean().getRelativePath()) != null) {
+                    addError("templates.error.pathAlreadyExists", getBean().getRelativePath());
                 }
-
-            } catch (WebloggerException ex) {
-                addError("Error validating save -- check application logs.");
-                log.error("Error validating data", ex);
             }
         }
     }
@@ -292,7 +271,7 @@ public class TemplateEdit extends UIAction {
 
                 return LIST;
             } catch (Exception e) {
-                log.error("Error deleting template for weblog - " + getActionWeblog().getHandle(), e);
+                log.error("Error deleting template for weblog - {}", getActionWeblog().getHandle(), e);
                 addError("generic.error.check.logs");
             }
         }

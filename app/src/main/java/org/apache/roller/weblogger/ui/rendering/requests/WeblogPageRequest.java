@@ -21,12 +21,11 @@
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -40,7 +39,7 @@ import java.util.Map;
  */
 public class WeblogPageRequest extends WeblogRequest {
 
-    private static Log log = LogFactory.getLog(WeblogPageRequest.class);
+    private static Logger log = LoggerFactory.getLogger(WeblogPageRequest.class);
 
     // lightweight attributes
     private String context = null;
@@ -74,7 +73,7 @@ public class WeblogPageRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
 
         // parse the request object and figure out what we've got
-        log.debug("parsing path " + pathInfo);
+        log.debug("parsing path {}", pathInfo);
 
         /*
          * parse path info
@@ -266,12 +265,8 @@ public class WeblogPageRequest extends WeblogRequest {
     public Template getWeblogTemplate() {
 
         if (template == null && weblogTemplateName != null) {
-            try {
-                template = WebloggerFactory.getWeblogger().getThemeManager().
-                        getWeblogTheme(getWeblog()).getTemplateByPath(weblogTemplateName);
-            } catch (WebloggerException ex) {
-                log.error("Error getting weblog page " + weblogTemplateName, ex);
-            }
+            template = WebloggerFactory.getWeblogger().getThemeManager().
+                    getWeblogTheme(getWeblog()).getTemplateByPath(weblogTemplateName);
         }
 
         return template;

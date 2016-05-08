@@ -23,9 +23,6 @@ package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -34,13 +31,17 @@ import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.RollbackException;
 
 /**
  * Allows user to view and pick from list of his/her websites.
  */
 public class MainMenu extends UIAction {
-    
-    private static Log log = LogFactory.getLog(MainMenu.class);
+
+    private static Logger log = LoggerFactory.getLogger(MainMenu.class);
 
     private String websiteId = null;
     private String inviteId = null;
@@ -86,7 +87,7 @@ public class MainMenu extends UIAction {
                 }
             }
         } catch(Exception e) {
-            log.error("Can't retrieve permissions for " + getAuthenticatedUser().getUserName());
+            log.error("Can't retrieve permissions for {}", getAuthenticatedUser().getUserName());
         }
     }
 
@@ -95,30 +96,19 @@ public class MainMenu extends UIAction {
     }
 
     public String accept() {
-        try {
-            Weblog weblog = weblogManager.getWeblog(getInviteId());
-            userManager.acceptWeblogInvitation(getAuthenticatedUser(), weblog);
-            WebloggerFactory.flush();
-
-        } catch (WebloggerException ex) {
-            log.error("Error handling invitation accept weblog id - "+getInviteId(), ex);
-            addError("yourWebsites.permNotFound");
-        }
+        Weblog weblog = weblogManager.getWeblog(getInviteId());
+        userManager.acceptWeblogInvitation(getAuthenticatedUser(), weblog);
+        WebloggerFactory.flush();
         return LIST;
     }
 
     public String decline() {
-        try {
-            Weblog weblog = weblogManager.getWeblog(getInviteId());
-            String handle = weblog.getHandle();                       
-            // TODO: notify inviter that invitee has accepted/declined invitation
-            userManager.declineWeblogInvitation(getAuthenticatedUser(), weblog);
-            WebloggerFactory.flush();
-            addMessage("yourWebsites.declined", handle);
-        } catch (WebloggerException ex) {
-            log.error("Error handling invitation decline weblog id - "+getInviteId(), ex);
-            addError("yourWebsites.permNotFound");
-        }
+        Weblog weblog = weblogManager.getWeblog(getInviteId());
+        String handle = weblog.getHandle();
+        // TODO: notify inviter that invitee has accepted/declined invitation
+        userManager.declineWeblogInvitation(getAuthenticatedUser(), weblog);
+        WebloggerFactory.flush();
+        addMessage("yourWebsites.declined", handle);
         return LIST;
     }
 
@@ -158,8 +148,8 @@ public class MainMenu extends UIAction {
             userManager.revokeWeblogRole(getAuthenticatedUser(), getActionWeblog());
             WebloggerFactory.flush();
             addMessage("yourWebsites.resigned", getWeblog());
-        } catch (WebloggerException ex) {
-            log.error("Error doing weblog resign - " + getActionWeblog().getHandle(), ex);
+        } catch (RollbackException ex) {
+            log.error("Error doing weblog resign - {}", getActionWeblog().getHandle(), ex);
             addError("Resignation failed - check system logs");
         }
         return LIST;

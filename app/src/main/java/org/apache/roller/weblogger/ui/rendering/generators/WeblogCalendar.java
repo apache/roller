@@ -146,16 +146,12 @@ public class WeblogCalendar {
             wesc.setEndDate(targetDate);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
         }
-        try {
-            List entries = weblogEntryManager.getWeblogEntries(wesc);
-            if (entries.size() > 0) {
-                WeblogEntry nearestEntry = (WeblogEntry)entries.get(0);
-                Calendar calNext = newCalendarInstance();
-                calNext.setTime(new Date(nearestEntry.getPubTime().getTime()));
-                nearestMonth = DateUtils.truncate(calNext, Calendar.MONTH).getTime();
-            }
-        } catch (WebloggerException e) {
-            log.error("ERROR determining next non-empty month");
+        List entries = weblogEntryManager.getWeblogEntries(wesc);
+        if (entries.size() > 0) {
+            WeblogEntry nearestEntry = (WeblogEntry)entries.get(0);
+            Calendar calNext = newCalendarInstance();
+            calNext.setTime(new Date(nearestEntry.getPubTime().getTime()));
+            nearestMonth = DateUtils.truncate(calNext, Calendar.MONTH).getTime();
         }
         return nearestMonth;
     }

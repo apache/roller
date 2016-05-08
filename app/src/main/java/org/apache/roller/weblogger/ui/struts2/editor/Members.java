@@ -25,10 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -37,14 +33,16 @@ import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Allows weblog admin to list/modify member permissions.
  */
 public class Members extends UIAction implements ParameterAware {
-    
-    private static Log log = LogFactory.getLog(Members.class);
+
+    private static Logger log = LoggerFactory.getLogger(Members.class);
     
     // raw parameters from request
     private Map parameters = Collections.EMPTY_MAP;
@@ -53,12 +51,6 @@ public class Members extends UIAction implements ParameterAware {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     public Members() {
@@ -194,12 +186,6 @@ public class Members extends UIAction implements ParameterAware {
 
 
     public List<UserWeblogRole> getWeblogRoles() {
-        try {
-            return userManager.getWeblogRolesIncludingPending(getActionWeblog());
-        } catch (WebloggerException ex) {
-            // serious problem, but not much we can do here
-            log.error("ERROR getting weblog roles", ex);
-        }
-        return new ArrayList<UserWeblogRole>();
+        return userManager.getWeblogRolesIncludingPending(getActionWeblog());
     }
 }

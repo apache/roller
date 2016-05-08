@@ -27,7 +27,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
@@ -154,40 +153,36 @@ public class Comments extends UIAction {
 
         List<WeblogEntryComment> comments = Collections.emptyList();
         boolean hasMore = false;
-        try {
-            // lookup weblog entry if necessary
-            if (!StringUtils.isEmpty(getBean().getEntryId())) {
-                setQueryEntry(weblogEntryManager.getWeblogEntry(getBean().getEntryId()));
+
+        // lookup weblog entry if necessary
+        if (!StringUtils.isEmpty(getBean().getEntryId())) {
+            setQueryEntry(weblogEntryManager.getWeblogEntry(getBean().getEntryId()));
+        }
+
+        CommentSearchCriteria csc = new CommentSearchCriteria();
+        if (!isGlobalCommentManagement()) {
+            csc.setWeblog(getActionWeblog());
+            csc.setEntry(getQueryEntry());
+        }
+        csc.setSearchText(getBean().getSearchString());
+        csc.setStartDate(getBean().getStartDate());
+        csc.setEndDate(getBean().getEndDate());
+        csc.setStatus(getBean().getStatus());
+        csc.setOffset(getBean().getPage() * COUNT);
+        csc.setMaxResults(COUNT + 1);
+
+        List<WeblogEntryComment> rawComments = weblogEntryManager.getComments(csc);
+        comments = new ArrayList<>();
+        comments.addAll(rawComments);
+
+        if (comments.size() > 0) {
+            if (comments.size() > COUNT) {
+                comments.remove(comments.size() - 1);
+                hasMore = true;
             }
 
-            CommentSearchCriteria csc = new CommentSearchCriteria();
-            if (!isGlobalCommentManagement()) {
-                csc.setWeblog(getActionWeblog());
-                csc.setEntry(getQueryEntry());
-            }
-            csc.setSearchText(getBean().getSearchString());
-            csc.setStartDate(getBean().getStartDate());
-            csc.setEndDate(getBean().getEndDate());
-            csc.setStatus(getBean().getStatus());
-            csc.setOffset(getBean().getPage() * COUNT);
-            csc.setMaxResults(COUNT + 1);
-
-            List<WeblogEntryComment> rawComments = weblogEntryManager.getComments(csc);
-            comments = new ArrayList<>();
-            comments.addAll(rawComments);
-
-            if (comments.size() > 0) {
-                if (comments.size() > COUNT) {
-                    comments.remove(comments.size() - 1);
-                    hasMore = true;
-                }
-
-                setFirstComment(comments.get(0));
-                setLastComment(comments.get(comments.size() - 1));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up comments", ex);
-            addError("commentManagement.lookupError");
+            setFirstComment(comments.get(0));
+            setLastComment(comments.get(comments.size() - 1));
         }
 
         // build comments pager

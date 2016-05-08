@@ -42,25 +42,25 @@ public interface PropertiesManager {
     /**
      * Save a single property
      */
-    void saveProperty(RuntimeConfigProperty property) throws WebloggerException;
+    void saveProperty(RuntimeConfigProperty property);
     
     
     /**
      * Save a list of properties
      */
-    void saveProperties(Map properties) throws WebloggerException;
+    void saveProperties(Map properties);
     
     
     /**
      * Retrieve a single property by name
      */
-    RuntimeConfigProperty getProperty(String name) throws WebloggerException;
+    RuntimeConfigProperty getProperty(String name);
     
     
     /**
      * Retrieve a list of all properties
      */
-    Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException;
+    Map<String, RuntimeConfigProperty> getProperties();
 
     /**
      * Get the list of supported RuntimeConfigDef objects

@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +34,8 @@ import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -58,6 +56,8 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class ThemeManagerImpl implements ThemeManager {
 
+    private static Logger log = LoggerFactory.getLogger(ThemeManagerImpl.class);
+
 	static FileTypeMap map = null;
 	static {
 		// TODO: figure out why PNG is missing from Java MIME types
@@ -70,13 +70,16 @@ public class ThemeManagerImpl implements ThemeManager {
 		}
 	}
 
-	private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
 	private final WeblogManager weblogManager;
 
 	// directory where themes are kept
 	private String themeDir = null;
-	// the Map contains ... (theme id, Theme)
-	private Map<String, SharedTheme> themes = null;
+
+	// map of themes in format (theme id, Theme)
+	private Map<String, SharedTheme> themeMap = null;
+
+    // list of themes
+    private List<SharedTheme> themeList = null;
 
 	protected ThemeManagerImpl(WeblogManager wm) {
 		this.weblogManager = wm;
@@ -102,73 +105,50 @@ public class ThemeManagerImpl implements ThemeManager {
 
 	@Override
     @PostConstruct
-    public void initialize() throws WebloggerException {
-
-		log.debug("Initializing Theme Manager");
-
+    public void initialize() {
+		log.info("Initializing Theme Manager");
 		if (themeDir != null) {
-			// rather than be lazy we are going to load all themes from
-			// the disk preemptive and cache them
-			this.themes = loadAllThemesFromDisk();
+			// load all themes from disk and cache them
+			themeMap = loadAllThemesFromDisk();
 
-			log.info("Successfully loaded " + this.themes.size() + " themes from disk.");
+            // for convenience create an alphabetized list also
+            themeList = new ArrayList<>(this.themeMap.values());
+            themeList.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
+			log.info("Successfully loaded {} themes from disk.", this.themeMap.size());
 		}
 	}
 
-	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getSharedTheme(java.lang.String)
-	 */
-	public SharedTheme getSharedTheme(String id) throws WebloggerException {
-
-		// try to lookup theme from library
-		SharedTheme theme = this.themes.get(id);
-
-		// no theme? throw exception.
+    @Override
+	public SharedTheme getSharedTheme(String id) {
+		SharedTheme theme = this.themeMap.get(id);
 		if (theme == null) {
 			throw new IllegalArgumentException("Couldn't find theme [" + id + "]");
 		}
-
 		return theme;
 	}
 
-	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getWeblogTheme(Weblog)
-	 */
-	public WeblogTheme getWeblogTheme(Weblog weblog) throws WebloggerException {
-
-		if (weblog == null) {
-			return null;
-		}
-
+    @Override
+	public WeblogTheme getWeblogTheme(Weblog weblog) {
 		WeblogTheme weblogTheme = null;
 
-        SharedTheme staticTheme = this.themes.get(weblog.getTheme());
+        SharedTheme staticTheme = this.themeMap.get(weblog.getTheme());
         if (staticTheme != null) {
             weblogTheme = new WeblogTheme(weblogManager, weblog, staticTheme);
         } else {
-            log.warn("Unable to lookup theme " + weblog.getTheme());
+            log.warn("Unable to find shared theme {}", weblog.getTheme());
         }
 
-		// TODO: if somehow the theme is still null should we provide some
-		// kind of fallback option like a default theme?
-
+		// TODO: if theme is not found should we provide default theme?
 		return weblogTheme;
 	}
 
-	/**
-	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getEnabledSharedThemesList()
-	 */
-	public List<SharedTheme> getEnabledSharedThemesList() {
-		List<SharedTheme> allThemes = new ArrayList<>(this.themes.values());
-
-		// sort 'em ... default ordering for themes is by name
-		Collections.sort(allThemes);
-
-		return allThemes;
+	@Override
+    public List<SharedTheme> getEnabledSharedThemesList() {
+		return themeList;
 	}
 
 	@Override
-    public WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) throws WebloggerException {
+    public WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) {
 		WeblogTemplate weblogTemplate = new WeblogTemplate();
 		weblogTemplate.setWeblog(weblog);
 		weblogTemplate.setRole(sharedTemplate.getRole());
@@ -223,10 +203,10 @@ public class ThemeManagerImpl implements ThemeManager {
                 try {
                     SharedTheme theme = loadThemeData(themeName);
                     themeMap.put(theme.getId(), theme);
-                    log.info("Loaded theme '" + themeName + "'");
+                    log.info("Loaded theme '{}'", themeName);
                 } catch (Exception unexpected) {
                     // shouldn't happen, so let's learn why it did
-                    log.error("Unable to process theme '" + themeName + "':", unexpected);
+                    log.error("Unable to process theme '{}'", themeName, unexpected);
                 }
             }
         }
@@ -234,32 +214,21 @@ public class ThemeManagerImpl implements ThemeManager {
 		return themeMap;
 	}
 
-    private SharedTheme loadThemeData(String themeName) throws WebloggerException {
+    private SharedTheme loadThemeData(String themeName) {
         String themePath = this.themeDir + File.separator + themeName;
-        log.debug("Parsing theme descriptor for " + themePath);
+        log.debug("Parsing theme descriptor for {}", themePath);
 
-        //ThemeMetadata themeMetadata2;
-        SharedTheme sharedTheme;
-        try {
-            sharedTheme = (SharedTheme) Utilities.jaxbUnmarshall(
-                    "/theme.xsd",
-                    themePath + File.separator + "theme.xml",
-                    true,
-                    SharedTheme.class);
-            sharedTheme.setThemeDir(themePath);
-        } catch (Exception ex) {
-            throw new WebloggerException(
-                    "Unable to parse theme.xml for theme " + themePath, ex);
-        }
+        SharedTheme sharedTheme = (SharedTheme) Utilities.jaxbUnmarshall(
+                "/theme.xsd", themePath + File.separator + "theme.xml", true, SharedTheme.class);
+        sharedTheme.setThemeDir(themePath);
 
-        log.debug("Loading Theme " + sharedTheme.getName());
+        log.debug("Loading Theme {}", sharedTheme.getName());
 
         // load resource representing preview image
         File previewFile = new File(sharedTheme.getThemeDir() + File.separator + sharedTheme.getPreviewImagePath());
         if (!previewFile.exists() || !previewFile.canRead()) {
-            log.warn("Couldn't read theme [" + sharedTheme.getName()
-                    + "] preview image file ["
-                    + sharedTheme.getPreviewImagePath() + "]");
+            log.warn("Couldn't read theme [{}] preview image file [{}]", sharedTheme.getName(),
+                    sharedTheme.getPreviewImagePath());
         }
 
         // create the templates based on the theme descriptor data
@@ -269,7 +238,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // one and only one template with action "weblog" allowed
             if (ComponentType.WEBLOG.equals(template.getRole())) {
                 if (hasWeblogTemplate) {
-                    throw new WebloggerException("Theme has more than one template with action of 'weblog'");
+                    throw new IllegalStateException("Theme has more than one template with action of 'weblog'");
                 } else {
                     hasWeblogTemplate = true;
                 }
@@ -279,10 +248,10 @@ public class ThemeManagerImpl implements ThemeManager {
             SharedTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.NORMAL);
 
             if (standardRendition == null) {
-                throw new WebloggerException("Cannot retrieve required standard rendition for template " + template.getName());
+                throw new IllegalStateException("Cannot retrieve required standard rendition for template " + template.getName());
             } else {
                 if (!loadRenditionSource(sharedTheme.getThemeDir(), standardRendition)) {
-                    throw new WebloggerException("Couldn't load template rendition [" + standardRendition.getContentsFile() + "]");
+                    throw new IllegalStateException("Couldn't load template rendition [" + standardRendition.getContentsFile() + "]");
                 }
             }
 
@@ -310,7 +279,7 @@ public class ThemeManagerImpl implements ThemeManager {
         }
 
         if (!hasWeblogTemplate) {
-            throw new WebloggerException("Theme " + sharedTheme.getName() + " has no template with 'weblog' action");
+            throw new IllegalStateException("Theme " + sharedTheme.getName() + " has no template with 'weblog' action");
         }
 
         sharedTheme.getTempTemplates().clear();
@@ -321,7 +290,7 @@ public class ThemeManagerImpl implements ThemeManager {
         File renditionFile = new File(themeDir + File.separator + rendition.getContentsFile());
         String contents = loadTemplateRendition(renditionFile);
         if (contents == null) {
-            log.error("Couldn't load rendition file [" + renditionFile + "]");
+            log.error("Couldn't load rendition file [{}]", renditionFile);
             rendition.setTemplate("");
         } else {
             rendition.setTemplate(contents);
@@ -346,10 +315,7 @@ public class ThemeManagerImpl implements ThemeManager {
             InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
             length = reader.read(chars);
         } catch (Exception noprob) {
-            log.error("Exception reading theme template file [" + templateFile + "]");
-            if (log.isDebugEnabled()) {
-                log.debug(noprob);
-            }
+            log.error("Exception reading theme template file [{}]", templateFile, noprob);
             return null;
         }
 

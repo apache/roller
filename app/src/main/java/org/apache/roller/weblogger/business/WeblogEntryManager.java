@@ -46,28 +46,25 @@ public interface WeblogEntryManager {
     /**
      * Remove weblog entry.
      */
-    void removeWeblogEntry(WeblogEntry entry) throws WebloggerException;
+    void removeWeblogEntry(WeblogEntry entry);
     
     /**
      * Get weblog entry by id.
      */
-    WeblogEntry getWeblogEntry(String id) throws WebloggerException;
+    WeblogEntry getWeblogEntry(String id);
     
     /** 
      * Get weblog entry by anchor. 
      */
-    WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor)
-            throws WebloggerException;
+    WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor);
         
     /**
      * Get WeblogEntries by offset/length as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
      * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return List of WeblogEntry objects in order specified by search criteria
-     * @throws WebloggerException
      */
-    List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc)
-            throws WebloggerException;
+    List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc);
 
     /**
      * Get Weblog Entries grouped by day.
@@ -129,7 +126,7 @@ public interface WeblogEntryManager {
      * @param csc CommentSearchCriteria object with fields indicating search criteria
      * @return list of comments fitting search criteria
      */
-    List<WeblogEntryComment> getComments(CommentSearchCriteria csc) throws WebloggerException;
+    List<WeblogEntryComment> getComments(CommentSearchCriteria csc);
 
     /**
      * Deletes comments that match paramters.
@@ -194,10 +191,8 @@ public interface WeblogEntryManager {
      * @param tag The tag to search for.
      * @param weblog The weblog to confine the check to.
      * @return True if the tag exists, false otherwise.
-     * @throws WebloggerException If there is any problem doing the operation.
      */
-    boolean getTagExists(String tag, Weblog weblog)
-        throws WebloggerException;
+    boolean getTagExists(String tag, Weblog weblog);
     
     /**
      * Get site-wide comment count 

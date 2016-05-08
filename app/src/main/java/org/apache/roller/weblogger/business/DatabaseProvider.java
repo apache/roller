@@ -29,10 +29,9 @@ import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
-
 
 /**
  * Encapsulates database configuration via JDBC properties or JNDI.
@@ -42,8 +41,7 @@ import org.apache.roller.weblogger.business.startup.StartupException;
  * 
  * <p>Keeps startup exception and log so we can present useful debugging
  * information to whoever is installing the weblogger.</p>
- * 
- * 
+ *
  * <p>Reads configuration properties from WebloggerStaticConfig:</p>
  * <pre>
  * # Specify database configuration type of 'jndi' or 'jdbc'
@@ -59,9 +57,9 @@ import org.apache.roller.weblogger.business.startup.StartupException;
  * database.jdbc.password=
  * </pre>
  */
-public class DatabaseProvider  {
-    
-    private static Log log = LogFactory.getLog(DatabaseProvider.class);
+public class DatabaseProvider {
+
+    private static Logger log = LoggerFactory.getLogger(DatabaseProvider.class);
 
     public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES}
     private ConfigurationType type = ConfigurationType.JNDI_NAME;

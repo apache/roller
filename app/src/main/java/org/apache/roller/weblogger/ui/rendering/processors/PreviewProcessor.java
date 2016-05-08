@@ -122,8 +122,6 @@ public class PreviewProcessor {
                 previewTheme = themeManager.getSharedTheme(previewThemeName);
             } catch (IllegalArgumentException tnfe) {
                 // unknown theme given in URL, so default to current theme below
-            } catch (WebloggerException re) {
-                log.error("Error looking up theme " + previewThemeName, re);
             }
 
             // construct a temporary Website object for this request
@@ -173,11 +171,7 @@ public class PreviewProcessor {
         }
 
         if(page == null) {
-            try {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
-            } catch(WebloggerException re) {
-                log.error("Error getting default page for preview", re);
-            }
+            page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
         }
 
         // Still no page?  Then that is a 404
@@ -197,32 +191,21 @@ public class PreviewProcessor {
 
         // looks like we need to render content
         Map<String, Object> model;
-        try {
-            // special hack for menu tag
-            request.setAttribute("pageRequest", previewRequest);
 
-            // populate the rendering model
-            Map<String, Object> initData = new HashMap<>();
-            initData.put("parsedRequest", previewRequest);
+        // special hack for menu tag
+        request.setAttribute("pageRequest", previewRequest);
 
-            // Load models for page previewing
-            model = Model.getModelMap("previewModelSet", initData);
+        // populate the rendering model
+        Map<String, Object> initData = new HashMap<>();
+        initData.put("parsedRequest", previewRequest);
 
-            // Load special models for site-wide blog
-            if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
-                model.putAll(Model.getModelMap("siteModelSet", initData));
-            }
+        // Load models for page previewing
+        model = Model.getModelMap("previewModelSet", initData);
 
-        } catch (WebloggerException ex) {
-            log.error("ERROR loading model for page", ex);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
+        // Load special models for site-wide blog
+        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+            model.putAll(Model.getModelMap("siteModelSet", initData));
         }
-
 
         // lookup Renderer we are going to use
         Renderer renderer;

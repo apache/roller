@@ -21,9 +21,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -34,6 +31,8 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.EntityExistsException;
+import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
@@ -53,7 +52,7 @@ import java.security.Principal;
 @RestController
 public class Bookmarks extends UIAction {
 
-    private static Log log = LogFactory.getLog(Bookmarks.class);
+    private static Logger log = LoggerFactory.getLogger(MediaFileView.class);
 
     @Autowired
     private WeblogManager weblogManager;
@@ -120,32 +119,19 @@ public class Bookmarks extends UIAction {
      * Delete bookmarks.
      */
     public String delete() {
-        try {
-            WeblogBookmark bookmark;
-            String bookmarks[] = getSelectedBookmarks();
-            if (null != bookmarks && bookmarks.length > 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Processing delete of " + bookmarks.length
-                            + " bookmarks.");
-                }
-                for (String bookmarkName : bookmarks) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Deleting bookmark - " + bookmarkName);
-                    }
-                    bookmark = weblogManager.getBookmark(bookmarkName);
-                    if (bookmark != null) {
-                        weblogManager.removeBookmark(bookmark);
-                    }
+        WeblogBookmark bookmark;
+        String bookmarks[] = getSelectedBookmarks();
+        if (null != bookmarks && bookmarks.length > 0) {
+            log.debug("Processing delete of {} bookmarks.", bookmarks.length);
+            for (String bookmarkName : bookmarks) {
+                log.debug("Deleting bookmark {}", bookmarkName);
+                bookmark = weblogManager.getBookmark(bookmarkName);
+                if (bookmark != null) {
+                    weblogManager.removeBookmark(bookmark);
                 }
             }
-
-            // flush changes
-            persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
-        } catch (WebloggerException ex) {
-            log.error("Error doing bookmark deletes", ex);
-            addError("Error doing bookmark deletes");
         }
-
+        persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
         return execute();
     }
 
@@ -163,7 +149,7 @@ public class Bookmarks extends UIAction {
                     try {
                         weblogManager.saveBookmark(bookmark);
                         WebloggerFactory.flush();
-                    } catch (WebloggerException e) {
+                    } catch (RollbackException e) {
                         response.setStatus(HttpServletResponse.SC_CONFLICT);
                         return;
                     }
@@ -191,7 +177,7 @@ public class Bookmarks extends UIAction {
                 try {
                     weblogManager.saveBookmark(bookmark);
                     WebloggerFactory.flush();
-                } catch (WebloggerException e) {
+                } catch (RollbackException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                     return;
                 }

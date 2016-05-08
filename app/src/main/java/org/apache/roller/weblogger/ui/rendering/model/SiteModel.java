@@ -27,9 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -42,14 +39,16 @@ import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogsPager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Page model that provides access to site-wide users, weblogs and entries.
  */
 public class SiteModel implements Model {
-    
-    private static Log log = LogFactory.getLog(SiteModel.class);   
+
+    private static Logger log = LoggerFactory.getLogger(SiteModel.class);
     
     private WeblogPageRequest pageRequest = null;
     private String pageLink = null;
@@ -84,11 +83,11 @@ public class SiteModel implements Model {
 
     /** Init page model, requires a WeblogPageRequest object. */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) {
         this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
 
         if (pageRequest == null) {
-            throw new WebloggerException("Missing WeblogPageRequest object");
+            throw new IllegalStateException("Missing WeblogPageRequest object");
         }
 
         Template weblogPage = pageRequest.getWeblogTemplate();

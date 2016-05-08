@@ -41,7 +41,7 @@ public interface IndexManager
     boolean isInconsistentAtStartup();
     
     /** Remove weblog from index, returns immediately and operates in background */
-    void removeWeblogIndexOperation(Weblog weblog) throws WebloggerException;
+    void removeWeblogIndexOperation(Weblog weblog);
     
     /** Remove entry from index, returns immediately and operates in background */
     void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;

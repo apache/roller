@@ -116,17 +116,11 @@ public class MembersInvite extends UIAction {
         log.debug("Attempting to process weblog invitation");
         
         // user being invited
-        User user = null;
-        try {
-            user = userManager.getUserByScreenName(getUserName());
-            if (user == null) {
-                addError("inviteMember.error.userNotFound");
-            }
-        } catch(WebloggerException ex) {
-            log.error("Error looking up user by id - "+getUserName(), ex);
-            addError("Error looking up invitee");
+        User user = userManager.getUserByScreenName(getUserName());
+        if (user == null) {
+            addError("inviteMember.error.userNotFound");
         }
-        
+
         // if we already have an error then bail now
         if(hasActionErrors()) {
             return INPUT;

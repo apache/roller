@@ -101,7 +101,8 @@ public class SharedTemplate implements Template, Serializable {
         this.templateRenditionHashMap.put(rendition.getRenditionType(), rendition);
     }
 
-    public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
+    @Override
+    public TemplateRendition getTemplateRendition(RenditionType type) {
         return templateRenditionHashMap.get(type);
     }
 

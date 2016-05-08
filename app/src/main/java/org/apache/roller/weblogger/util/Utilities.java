@@ -682,8 +682,7 @@ public class Utilities {
     }
 
     public static Object jaxbUnmarshall(String xsdPath, String xmlPath, boolean xmlFromFileSystem,
-                                        Class... classesToBeBound)
-            throws WebloggerException {
+                                        Class... classesToBeBound) {
 
         try {
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -708,7 +707,7 @@ public class Utilities {
             });
             return jaxbUnmarshaller.unmarshal(is);
         } catch (Exception ex) {
-            throw new WebloggerException("JAXB Unmarshalling Error", ex);
+            throw new IllegalArgumentException("JAXB Unmarshalling Error", ex);
         }
     }
 

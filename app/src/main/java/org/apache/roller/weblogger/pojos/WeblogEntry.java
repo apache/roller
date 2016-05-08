@@ -469,7 +469,7 @@ public class WeblogEntry implements Serializable {
      * @param name tag name
      * @throws WebloggerException
      */
-    public void addTag(String name) throws WebloggerException {
+    public void addTag(String name) {
         Locale localeObject = getWeblog() != null ? getWeblog().getLocaleInstance() : Locale.getDefault();
         name = Utilities.normalizeTag(name, localeObject);
         if (name.length() == 0) {
@@ -517,7 +517,7 @@ public class WeblogEntry implements Serializable {
         return sb.toString();
     }
 
-    public void setTagsAsString(String tags) throws WebloggerException {
+    public void setTagsAsString(String tags) {
         if (StringUtils.isEmpty(tags)) {
             removedTags.addAll(tagSet);
             tagSet.clear();
@@ -634,17 +634,13 @@ public class WeblogEntry implements Serializable {
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
     public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
-        List<WeblogEntryComment> list = new ArrayList<>();
-        try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
-            CommentSearchCriteria csc = new CommentSearchCriteria();
-            csc.setWeblog(getWeblog());
-            csc.setEntry(this);
-            csc.setStatus(approvedOnly ? WeblogEntryComment.ApprovalStatus.APPROVED : null);
-            return wmgr.getComments(csc);
-        } catch (WebloggerException alreadyLogged) {}
-        return list;
+        CommentSearchCriteria csc = new CommentSearchCriteria();
+        csc.setWeblog(getWeblog());
+        csc.setEntry(this);
+        csc.setStatus(approvedOnly ? WeblogEntryComment.ApprovalStatus.APPROVED : null);
+        return wmgr.getComments(csc);
     }
 
     @Transient
