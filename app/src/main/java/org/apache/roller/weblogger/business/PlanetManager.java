@@ -18,12 +18,10 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Date;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -41,42 +39,35 @@ public interface PlanetManager {
     /**
      * Save new or update an existing planet
      */
-    void savePlanet(Planet sub) throws WebloggerException;
-    
-    
+    void savePlanet(Planet sub);
+
     /** 
      * Delete planet and any subscriptions that are orphaned.
      */
-    void deletePlanet(Planet planet) throws WebloggerException;
-    
+    void deletePlanet(Planet planet);
     
     Planet getPlanet(String handle);
-    
-    
+
     /**
      * Get planet by ID rather than handle.
      */
     Planet getPlanetById(String id);
     
-    
     /**
      * Save or update a subscription
      */
-    void saveSubscription(Subscription sub) throws WebloggerException;
-    
-    
+    void saveSubscription(Subscription sub);
+
     /** 
      * Delete subscription, remove it from planets, cache, etc.
      */
-    void deleteSubscription(Subscription subscription) throws WebloggerException;
-    
-    
+    void deleteSubscription(Subscription subscription);
+
     /**
      * Get subscription by planet and feedUrl.
      */
-    Subscription getSubscription(Planet planet, String feedUrl) throws WebloggerException;
-    
-    
+    Subscription getSubscription(Planet planet, String feedUrl);
+
     /**
      * Get subscription by ID rather than feedUrl.
      */
@@ -85,59 +76,51 @@ public interface PlanetManager {
     /**
      * Get all subscriptions.
      */
-    List<Subscription> getSubscriptions() throws WebloggerException;
-    
+    List<Subscription> getSubscriptions();
     
     /**
      * Get total number of subscriptions.
      */
-    int getSubscriptionCount() throws WebloggerException;
-    
-    
+    int getSubscriptionCount();
+
     /**
      * Save new or update existing entry
      */
-    void saveEntry(SubscriptionEntry entry) throws WebloggerException;
+    void saveEntry(SubscriptionEntry entry);
 
     /**
      * Refresh subscription entries
      */
-    void updateSubscriptions() throws WebloggerException;
+    void updateSubscriptions();
 
     /**
      * Task that will update the weblogger "all" planet (creating it first if necessary) to
      * consist of all blogs hosted by this weblogger instance, adding new and deleting old as
      * necessary.
      */
-    void syncAllBlogsPlanet() throws WebloggerException;
+    void syncAllBlogsPlanet();
 
     /**
      * Delete entry. 
      */
-    void deleteEntry(SubscriptionEntry entry) throws WebloggerException;
-    
+    void deleteEntry(SubscriptionEntry entry);
     
     /**
      * Delete all entries for a subscription.
      *
      * @param sub The subscription to delete entries from.
-     * @throws WebloggerException If there is a problem doing the delete.
      */
-    void deleteEntries(Subscription sub) throws WebloggerException;
-    
-    
+    void deleteEntries(Subscription sub);
+
     /**
      * Lookup an entry by id.
      */
-    SubscriptionEntry getEntryById(String id) throws WebloggerException;
-    
-    
+    SubscriptionEntry getEntryById(String id);
+
     /**
      * Get entries in a single feed as list of SubscriptionEntry objects.
      */
-    List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len)
-        throws WebloggerException;
-    
+    List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len);
     
     /**
      * Get Entries for a planet in reverse chronological order.
@@ -146,10 +129,8 @@ public interface PlanetManager {
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    List<SubscriptionEntry> getEntries(Planet planet, int offset, int len)
-        throws WebloggerException;
-    
-    
+    List<SubscriptionEntry> getEntries(Planet planet, int offset, int len);
+
     /**
      * Get Entries for a planet in reverse chronological order, optionally
      * constrained to a certain timeframe.
@@ -164,6 +145,5 @@ public interface PlanetManager {
                            Date startDate, 
                            Date endDate,
                            int offset, 
-                           int len) throws WebloggerException;
-    
+                           int len);
 }

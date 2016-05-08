@@ -21,9 +21,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -34,6 +31,8 @@ import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.business.MailManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,8 +51,8 @@ import java.util.List;
  */
 @RestController
 public class MembersInvite extends UIAction {
-    
-    private static Log log = LogFactory.getLog(MembersInvite.class);
+
+    private static Logger log = LoggerFactory.getLogger(MembersInvite.class);
 
     @Autowired
     private UserManager userManager;
@@ -127,20 +126,14 @@ public class MembersInvite extends UIAction {
         }
         
         // check for existing permissions or invitation
-        try {
-            UserWeblogRole perm = userManager.getWeblogRoleIncludingPending(user, getActionWeblog());
+        UserWeblogRole perm = userManager.getWeblogRoleIncludingPending(user, getActionWeblog());
 
-            if (perm != null && perm.isPending()) {
-                addError("inviteMember.error.userAlreadyInvited");
-            } else if (perm != null) {
-                addError("inviteMember.error.userAlreadyMember");
-            }
-            
-        } catch (WebloggerException ex) {
-            log.error("Error looking up permissions for weblog - "+getActionWeblog().getHandle(), ex);
-            addError("Error checking existing permissions");
+        if (perm != null && perm.isPending()) {
+            addError("inviteMember.error.userAlreadyInvited");
+        } else if (perm != null) {
+            addError("inviteMember.error.userAlreadyMember");
         }
-        
+
         // if no errors then send the invitation
         if(!hasActionErrors()) {
             try {
@@ -151,14 +144,7 @@ public class MembersInvite extends UIAction {
                 addMessage("inviteMember.userInvited");
 
                 if (mailManager.isMailConfigured()) {
-                    try {
-                        mailManager.sendWeblogInvitation(getActionWeblog(), user);
-                    } catch (WebloggerException e) {
-                        // TODO: this should be an error except that struts2 misbehaves
-                        // when we chain this action to the next one thinking that an error
-                        // means that validation broke during the chain
-                        addMessage("error.untranslated", e.getMessage());
-                    }
+                    mailManager.sendWeblogInvitation(getActionWeblog(), user);
                 }
 
                 log.debug("Invitation successfully recorded");
@@ -226,19 +212,15 @@ public class MembersInvite extends UIAction {
                 } catch (Exception ignored) {
                 }
 
-                try {
-                    List<SafeUser> users = userManager.getUsers(startsWith, enabledOnly, offset, length);
-                    List<UserData> userDataList = new ArrayList<>();
-                    for (SafeUser user : users) {
-                        UserData ud = new UserData();
-                        ud.setScreenName(user.getScreenName());
-                        ud.setAdditionalInfo(user.getEmailAddress());
-                        userDataList.add(ud);
-                    }
-                    return userDataList;
-                } catch (WebloggerException e) {
-                    throw new ServletException(e.getMessage());
+                List<SafeUser> users = userManager.getUsers(startsWith, enabledOnly, offset, length);
+                List<UserData> userDataList = new ArrayList<>();
+                for (SafeUser user : users) {
+                    UserData ud = new UserData();
+                    ud.setScreenName(user.getScreenName());
+                    ud.setAdditionalInfo(user.getEmailAddress());
+                    userDataList.add(ud);
                 }
+                return userDataList;
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return null;

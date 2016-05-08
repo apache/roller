@@ -26,11 +26,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.springframework.dao.DataRetrievalFailureException;
 
 /**
  * Spring Security UserDetailsService implemented using Weblogger API.
@@ -55,11 +53,7 @@ public class RollerUserDetailsService implements UserDetailsService {
 
         User userData;
         // standard username/password auth
-        try {
-            userData = userManager.getUserByUserName(userName);
-        } catch (WebloggerException ex) {
-            throw new DataRetrievalFailureException("ERROR in user lookup", ex);
-        }
+        userData = userManager.getUserByUserName(userName);
         if (userData == null) {
             throw new UsernameNotFoundException("ERROR no user: " + userName);
         }

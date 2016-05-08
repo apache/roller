@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Collection;
@@ -26,8 +25,6 @@ import java.util.Date;
 
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.WebloggerException;
-
 
 /**
  * A FeedManager is responsible for actually pulling subscriptions from
@@ -50,10 +47,8 @@ public interface FeedManager {
      *
      * @param feedURL The feed url to use when fetching the subscription.
      * @return Subscription The fetched subscription.
-     * @throws WebloggerException If there is an error fetching the subscription.
      */
-    Subscription fetchSubscription(String feedURL) throws WebloggerException;
-    
+    Subscription fetchSubscription(String feedURL);
     
     /**
      * Conditionally fetch a single subscription.
@@ -71,9 +66,8 @@ public interface FeedManager {
      *
      * @param feedURL The feed url to use when fetching the subscription.
      * @return Subscription The fetched subscription.
-     * @throws WebloggerException If there is an error fetching the subscription.
      */
-    Subscription fetchSubscription(String feedURL, Date lastModified) throws WebloggerException;
+    Subscription fetchSubscription(String feedURL, Date lastModified);
 
     /**
      * Update a set of subscriptions in the system
@@ -88,8 +82,6 @@ public interface FeedManager {
 
     /**
      * Update all Subscriptions that are part of the specified planet.
-     *
-     * @throws WebloggerException If there is an error during the update and the operation cannot continue.
      */
-    void updateSubscriptions(Planet planet) throws WebloggerException;
+    void updateSubscriptions(Planet planet);
 }

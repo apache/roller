@@ -20,11 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -61,15 +59,12 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
 
         User user;
         GlobalRole role;
-        try {
-            user = userManager.getUserByUserName(username, Boolean.TRUE);
-            if (user != null) {
-                role = user.getGlobalRole();
-            } else {
-                role = defaultRole;
-            }
-        } catch (WebloggerException ex) {
-            throw new DataRetrievalFailureException("ERROR in user lookup", ex);
+
+        user = userManager.getUserByUserName(username, Boolean.TRUE);
+        if (user != null) {
+            role = user.getGlobalRole();
+        } else {
+            role = defaultRole;
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>(1);

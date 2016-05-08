@@ -24,15 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class implementation reads the application's runtime properties.  At installation
@@ -47,7 +45,7 @@ import org.apache.roller.weblogger.util.Utilities;
 public class JPAPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */
-    private static Log log = LogFactory.getLog(JPAPropertiesManagerImpl.class);
+    private static Logger log = LoggerFactory.getLogger(JPAPersistenceStrategy.class);
 
     /** List of valid runtime configuration properties that can be stored in the database. */
     private static RuntimeConfigDefs configDefs = null;
@@ -82,8 +80,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     }
 
     @Override
-    public void initialize() throws WebloggerException {
-        
+    public void initialize() {
         Map<String, RuntimeConfigProperty> props;
         try {
             // retrieve properties from database
@@ -93,9 +90,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             // initialize them and save them to that table.
             initializeMissingProps(props);
             this.saveProperties(props);
-
         } catch (Exception e) {
-            log.fatal("Failed to initialize runtime configuration properties."+
+            log.error("Failed to initialize runtime configuration properties."+
                     "Please check that the database has been upgraded!", e);
             throw new RuntimeException(e);
         }
@@ -184,9 +180,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
                     props.put(propDef.getName(), newprop);
 
-                    log.info("Property " + propDef.getName() +
-                        " not yet in weblogger_properties database table, will store with " +
-                        "default value of [" + propDef.getDefaultValue() + "]");
+                    log.info("Property {} not yet in weblogger_properties database table, will store with " +
+                        "default value of [{}]", propDef.getName(), propDef.getDefaultValue());
                 }
             }
         }
@@ -198,6 +193,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * Retrieve a single property from the PropertiesManager ... returns null
      * if there is an error
      **/
+    @Override
     public String getStringProperty(String name) {
         String value = null;
         try {
@@ -206,15 +202,16 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
                 value = prop.getValue();
             }
         } catch(Exception e) {
-            log.warn("Trouble accessing property: "+name, e);
+            log.warn("Trouble accessing property: {}", name, e);
         }
-        log.debug("fetched property ["+name+"="+value+"]");
+        log.debug("fetched property [{}={}]", name, value);
         return value;
     }
 
     /**
      * Retrieve a property as a boolean ... defaults to false if there is an error
      **/
+    @Override
     public boolean getBooleanProperty(String name) {
         // get the value first, then convert
         String value = getStringProperty(name);
@@ -227,6 +224,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * Retrieve a property as an int ... defaults to -1 if there is an error
      **/
+    @Override
     public int getIntProperty(String name) {
         // get the value first, then convert
         String value = getStringProperty(name);
@@ -237,7 +235,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         try {
             intval = Integer.parseInt(value);
         } catch(Exception e) {
-            log.warn("Trouble converting to int: "+name, e);
+            log.warn("Trouble converting to integer: {}", name, e);
         }
         return intval;
     }
@@ -252,6 +250,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * weblog handle represents the front page blog and it is configured
      * to render site-wide data.
      */
+    @Override
     public boolean isSiteWideWeblog(String weblogHandle) {
         boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
         return (siteWide && isFrontPageWeblog(weblogHandle));

@@ -22,9 +22,6 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -35,6 +32,8 @@ import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -60,9 +59,9 @@ import java.util.TreeSet;
  * A utility class for helping with sending email. 
  */
 public class MailManager {
-    
-    private static Log log = LogFactory.getLog(MailManager.class);
-    
+
+    private static Logger log = LoggerFactory.getLogger(MailManager.class);
+
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
 
     private UserManager userManager;
@@ -95,13 +94,14 @@ public class MailManager {
     /**
      * Send an email notice that a new pending entry has been submitted.
      */
-    public void sendPendingEntryNotice(WeblogEntry entry) throws WebloggerException {
+    public void sendPendingEntryNotice(WeblogEntry entry) {
         
         Session mailSession = WebloggerFactory.getMailProvider() != null
                 ? WebloggerFactory.getMailProvider().getSession() : null;
 
         if (mailSession == null) {
-            throw new WebloggerException("Couldn't get mail Session");
+            log.info("Cannot send emails, no mail session configured.");
+            return;
         }
         
         try {
@@ -158,103 +158,93 @@ public class MailManager {
     /**
      * Send a weblog invitation email.
      */
-    public void sendWeblogInvitation(Weblog website, User user)
-            throws WebloggerException {
+    public void sendWeblogInvitation(Weblog website, User user) throws MessagingException {
         
         Session mailSession = WebloggerFactory.getMailProvider() != null
                 ? WebloggerFactory.getMailProvider().getSession() : null;
 
-        if(mailSession == null) {
-            throw new WebloggerException("ERROR: Notification email(s) not sent, "
-                    + "TightBlog's mail session not properly configured");
+        if (mailSession == null) {
+            log.info("Cannot send emails, no mail session configured.");
+            return;
         }
         
-        try {
-            String from = website.getCreator().getEmailAddress();
-            String cc[] = new String[] {from};
-            String bcc[] = new String[0];
-            String to[] = new String[] {user.getEmailAddress()};
-            String subject;
-            String content;
-            
-            // Figure URL to entry edit page
-            String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
-            String url = rootURL + "/tb-ui/menu.rol";
-            
-            ResourceBundle resources = ResourceBundle.getBundle(
-                    "ApplicationResources",
-                    website.getLocaleInstance());
-            StringBuilder sb = new StringBuilder();
-            sb.append(MessageFormat.format(
-                    resources.getString("inviteMember.notificationSubject"),
-                    new Object[] {
-                website.getName(),
-                website.getHandle()})
-                );
-            subject = sb.toString();
-            sb = new StringBuilder();
-            sb.append(MessageFormat.format(
-                    resources.getString("inviteMember.notificationContent"),
-                    new Object[] {
-                website.getName(),
-                website.getHandle(),
-                user.getUserName(),
-                url
-            }));
-            content = sb.toString();
-            sendTextMessage(from, to, cc, bcc, subject, content);
-        } catch (MessagingException e) {
-            throw new WebloggerException("ERROR: Notification email(s) not sent, "
-                    + "due to TightBlog configuration or mail server problem.", e);
-        }
+        String from = website.getCreator().getEmailAddress();
+        String cc[] = new String[] {from};
+        String bcc[] = new String[0];
+        String to[] = new String[] {user.getEmailAddress()};
+        String subject;
+        String content;
+
+        // Figure URL to entry edit page
+        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
+        String url = rootURL + "/tb-ui/menu.rol";
+
+        ResourceBundle resources = ResourceBundle.getBundle(
+                "ApplicationResources",
+                website.getLocaleInstance());
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(
+                resources.getString("inviteMember.notificationSubject"),
+                new Object[] {
+            website.getName(),
+            website.getHandle()})
+            );
+        subject = sb.toString();
+        sb = new StringBuilder();
+        sb.append(MessageFormat.format(
+                resources.getString("inviteMember.notificationContent"),
+                new Object[] {
+            website.getName(),
+            website.getHandle(),
+            user.getUserName(),
+            url
+        }));
+        content = sb.toString();
+        sendTextMessage(from, to, cc, bcc, subject, content);
     }
     
     
     /**
      * Send a weblog invitation email.
      */
-    public void sendUserActivationEmail(User user) throws WebloggerException {
+    public void sendUserActivationEmail(User user) throws MessagingException {
         
         Session mailSession = WebloggerFactory.getMailProvider() != null
                 ? WebloggerFactory.getMailProvider().getSession() : null;
 
-        if(mailSession == null) {
-            throw new WebloggerException("ERROR: Notification email(s) not sent, "
-                    + "TightBlog's mail session not properly configured");
+        if (mailSession == null) {
+            log.info("Cannot send emails, no mail session configured.");
+            return;
         }
         
-        try {
-            ResourceBundle resources = ResourceBundle.getBundle(
-                    "ApplicationResources", Locale.forLanguageTag(user.getLocale()));
-            
-            String from = propertiesManager.getStringProperty(
-                    "user.account.activation.mail.from");
-            
-            String cc[] = new String[0];
-            String bcc[] = new String[0];
-            String to[] = new String[] { user.getEmailAddress() };
-            String subject = resources.getString(
-                    "user.account.activation.mail.subject");
-            String content;
-            
-            String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
-            
-            StringBuilder sb = new StringBuilder();
-            
-            // activationURL=
-            String activationURL = rootURL
-                    + "/tb-ui/register!activate.rol?activationCode="
-                    + user.getActivationCode();
-            sb.append(MessageFormat.format(
-                    resources.getString("user.account.activation.mail.content"),
-                    new Object[] { user.getScreenName(), user.getUserName(),
-                    activationURL }));
-            content = sb.toString();
-            
-            sendHTMLMessage(from, to, cc, bcc, subject, content);
-        } catch (MessagingException e) {
-            throw new WebloggerException("ERROR: Problem sending activation email.", e);
-        }
+        ResourceBundle resources = ResourceBundle.getBundle(
+                "ApplicationResources", Locale.forLanguageTag(user.getLocale()));
+
+        String from = propertiesManager.getStringProperty(
+                "user.account.activation.mail.from");
+
+        String cc[] = new String[0];
+        String bcc[] = new String[0];
+        String to[] = new String[] { user.getEmailAddress() };
+        String subject = resources.getString(
+                "user.account.activation.mail.subject");
+        String content;
+
+        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
+
+        StringBuilder sb = new StringBuilder();
+
+        // activationURL=
+        String activationURL = rootURL
+                + "/tb-ui/register!activate.rol?activationCode="
+                + user.getActivationCode();
+        sb.append(MessageFormat.format(
+                resources.getString("user.account.activation.mail.content"),
+                new Object[] { user.getScreenName(), user.getUserName(),
+                activationURL }));
+        content = sb.toString();
+
+        sendHTMLMessage(from, to, cc, bcc, subject, content);
     }
     
     
@@ -269,8 +259,7 @@ public class MailManager {
     public void sendEmailNotification(WeblogEntryComment commentObject,
                                              RollerMessages messages,
                                              I18nMessages resources,
-                                             boolean notifySubscribers) 
-            throws WebloggerException {
+                                             boolean notifySubscribers) {
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
@@ -305,12 +294,12 @@ public class MailManager {
                     if (comment.getNotify() && !comment.getEmail().equals(commentObject.getEmail())) {
                         // only add those with valid email
                         if (comment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
-                            log.info("Add to subscribers list : " + comment.getEmail());
+                            log.info("Add to subscribers list: {}", comment.getEmail());
                             subscribers.add(comment.getEmail());
                         }
                     } else {
                         // remove user who doesn't want to be notified
-                        log.info("Remove from subscribers list : " + comment.getEmail());
+                        log.info("Remove from subscribers list: {}", comment.getEmail());
                         subscribers.remove(comment.getEmail());
                     }
                 }
@@ -494,18 +483,14 @@ public class MailManager {
             }
         } catch (Exception e) {
             log.warn("Exception sending comment notification mail", e);
-            // This will log the stack trace if debug is enabled
-            if (log.isDebugEnabled()) {
-                log.debug(e);
-            }
+            log.debug("", e);
         }
         
         log.debug("Done sending email message");
     }
     
 
-    public void sendEmailApprovalNotifications(List<WeblogEntryComment> comments, I18nMessages resources)
-            throws WebloggerException {
+    public void sendEmailApprovalNotifications(List<WeblogEntryComment> comments, I18nMessages resources) {
         
         RollerMessages messages = new RollerMessages();
         for (WeblogEntryComment comment : comments) {
@@ -522,8 +507,7 @@ public class MailManager {
     /**
      * Send message to author of approved comment
      */
-    public void sendEmailApprovalNotification(WeblogEntryComment cd, I18nMessages resources)
-            throws WebloggerException {
+    public void sendEmailApprovalNotification(WeblogEntryComment cd, I18nMessages resources) {
         
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
@@ -543,13 +527,9 @@ public class MailManager {
         try {
             sendTextMessage(from, new String[] {cd.getEmail()}, null, null, subject, msg.toString());
         } catch (Exception e) {
-            log.warn("Exception sending comment mail: " + e.getMessage());
-            // This will log the stack trace if debug is enabled
-            if (log.isDebugEnabled()) {
-                log.debug(e);
-            }
+            log.warn("Exception sending comment mail: {}", e.getMessage());
+            log.debug("", e);
         }
-        
         log.debug("Done sending email message");
     }
     
@@ -579,9 +559,7 @@ public class MailManager {
         if (! StringUtils.isEmpty(from)) {
             InternetAddress sentFrom = new InternetAddress(from);
             message.setFrom(sentFrom);
-            if (log.isDebugEnabled()) {
-                log.debug("e-mail from: " + sentFrom);
-            }
+            log.debug("e-mail from: {}", sentFrom);
         }
         
         if (to!=null) {
@@ -589,9 +567,7 @@ public class MailManager {
             
             for (int i = 0; i < to.length; i++) {
                 sendTo[i] = new InternetAddress(to[i]);
-                if (log.isDebugEnabled()) {
-                    log.debug("sending e-mail to: " + to[i]);
-                }
+                log.debug("sending e-mail to: {}", to[i]);
             }
             message.setRecipients(Message.RecipientType.TO, sendTo);
         }
@@ -601,9 +577,7 @@ public class MailManager {
             
             for (int i = 0; i < cc.length; i++) {
                 copyTo[i] = new InternetAddress(cc[i]);
-                if (log.isDebugEnabled()) {
-                    log.debug("copying e-mail to: " + cc[i]);
-                }
+                log.debug("copying e-mail to: {}", cc[i]);
             }
             message.setRecipients(Message.RecipientType.CC, copyTo);
         }
@@ -613,9 +587,7 @@ public class MailManager {
             
             for (int i = 0; i < bcc.length; i++) {
                 copyTo[i] = new InternetAddress(bcc[i]);
-                if (log.isDebugEnabled()) {
-                    log.debug("blind copying e-mail to: " + bcc[i]);
-                }
+                log.debug("blind copying e-mail to: {}", bcc[i]);
             }
             message.setRecipients(Message.RecipientType.BCC, copyTo);
         }

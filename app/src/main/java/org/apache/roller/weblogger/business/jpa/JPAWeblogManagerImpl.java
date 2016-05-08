@@ -89,7 +89,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.propertiesManager = propertiesManager;
     }
 
-
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
 

@@ -14,15 +14,15 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Map;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.util.Blacklist;
-
 
 /**
  * Manages global runtime properties for Roller (those which may be altered
@@ -33,30 +33,24 @@ public interface PropertiesManager {
 
     /**
      * Initialize the properties manager.
-     *
-     * @throws WebloggerException If there is a problem during initialization.
      */
-    void initialize() throws WebloggerException;
-    
-    
+    void initialize();
+
     /**
      * Save a single property
      */
     void saveProperty(RuntimeConfigProperty property);
-    
-    
+
     /**
      * Save a list of properties
      */
     void saveProperties(Map properties);
-    
-    
+
     /**
      * Retrieve a single property by name
      */
     RuntimeConfigProperty getProperty(String name);
-    
-    
+
     /**
      * Retrieve a list of all properties
      */
@@ -66,7 +60,6 @@ public interface PropertiesManager {
      * Get the list of supported RuntimeConfigDef objects
      */
     RuntimeConfigDefs getRuntimeConfigDefs();
-
 
     /**
      * Obtain String value of a property

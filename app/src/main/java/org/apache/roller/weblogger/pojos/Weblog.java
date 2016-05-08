@@ -26,10 +26,7 @@ import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
@@ -72,8 +69,6 @@ import javax.persistence.Transient;
 })
 public class Weblog implements Serializable {
     public static final long serialVersionUID = 206437645033737127L;
-
-    private static Log log = LogFactory.getFactory().getInstance(Weblog.class);
 
     private String  id               = WebloggerCommon.generateUUID();
     private String  handle           = null;
@@ -199,11 +194,7 @@ public class Weblog implements Serializable {
     @Transient
     public SafeUser getCreator() {
         if (creator == null) {
-            try {
-                creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
-            } catch (Exception ignored) {
-                log.error("Cannot find a SafeUser object for userId = " + creatorId);
-            }
+            creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
         }
         return creator;
     }
@@ -498,11 +489,11 @@ public class Weblog implements Serializable {
      */
     public void addBookmark(WeblogBookmark item) {
         // make sure blogroll item is not null
-        if(item == null || item.getName() == null) {
+        if (item == null || item.getName() == null) {
             throw new IllegalArgumentException("Bookmark cannot be null and must have a valid name");
         }
 
-        if(this.hasBookmark(item.getName())) {
+        if (this.hasBookmark(item.getName())) {
             throw new IllegalArgumentException("Duplicate bookmark name '" + item.getName() + "'");
         }
 
@@ -562,27 +553,15 @@ public class Weblog implements Serializable {
     // used by MainMenu.jsp
     @Transient
     public long getCommentCount() {
-        long count = 0;
-        try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            count = mgr.getCommentCount(this);
-        } catch (WebloggerException e) {
-            log.error("Error getting comment count for weblog " + this.getName(), e);
-        }
-        return count;
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        return mgr.getCommentCount(this);
     }
 
     // used by MainMenu.jsp
     @Transient
     public long getEntryCount() {
-        long count = 0;
-        try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            count = mgr.getEntryCount(this);
-        } catch (WebloggerException e) {
-            log.error("Error getting entry count for weblog " + this.getName(), e);
-        }
-        return count;
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        return mgr.getEntryCount(this);
     }
 
     // convenience methods for populating fields from forms

@@ -20,9 +20,6 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -34,6 +31,8 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -42,7 +41,8 @@ import java.util.List;
 import java.util.Map;
 
 public class JPAUserManagerImpl implements UserManager {
-    private static Log log = LogFactory.getLog(JPAUserManagerImpl.class);
+
+    private static Logger log = LoggerFactory.getLogger(JPAUserManagerImpl.class);
 
     private final JPAPersistenceStrategy strategy;
 
@@ -77,20 +77,17 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
-        log.debug("Instantiating JPA User Manager");
         this.strategy = strat;
     }
 
 
-    //--------------------------------------------------------------- user CRUD
- 
     @Override
     public void saveUser(User data) {
         this.strategy.store(data);
     }
 
-    
-    public void removeUser(User user) throws WebloggerException {
+    @Override
+    public void removeUser(User user) {
         String userName = user.getUserName();
         
         // remove permissions, maintaining both sides of relationship
@@ -104,7 +101,6 @@ public class JPAUserManagerImpl implements UserManager {
         this.userNameToIdMap.remove(userName);
     }
 
-    
     @Override
     public void addUser(User newUser) {
         if (newUser == null) {
@@ -144,16 +140,16 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public SafeUser getSafeUser(String id) throws WebloggerException {
+    public SafeUser getSafeUser(String id) {
         return this.strategy.load(SafeUser.class, id);
     }
 
-    //------------------------------------------------------------ user queries
-
-    public User getUserByUserName(String userName) throws WebloggerException {
+    @Override
+    public User getUserByUserName(String userName) {
         return getUserByUserName(userName, Boolean.TRUE);
     }
 
+    @Override
     public User getUserByUserName(String userName, Boolean enabled) {
 
         if (userName==null) {
@@ -169,7 +165,7 @@ public class JPAUserManagerImpl implements UserManager {
             if (user != null) {
                 // only return the user if the enabled status matches
                 if(enabled == null || enabled.equals(user.getEnabled())) {
-                    log.debug("userNameToIdMap CACHE HIT - "+userName);
+                    log.debug("userNameToIdMap CACHE HIT - {}", userName);
                     return user;
                 }
             } else {
@@ -202,7 +198,7 @@ public class JPAUserManagerImpl implements UserManager {
 
         // add mapping to cache
         if(user != null) {
-            log.debug("userNameToIdMap CACHE MISS - " + userName);
+            log.debug("userNameToIdMap CACHE MISS - {}", userName);
             this.userNameToIdMap.put(user.getUserName(), user.getId());
         }
 
@@ -221,7 +217,7 @@ public class JPAUserManagerImpl implements UserManager {
         if(this.screenNameToIdMap.containsKey(screenName)) {
             User user = this.getUser(this.screenNameToIdMap.get(screenName));
             if (user != null) {
-                log.debug("screenNameToIdMap CACHE HIT - "+screenName);
+                log.debug("screenNameToIdMap CACHE HIT - {}", screenName);
                 return user;
             } else {
                 // mapping hit with lookup miss?  mapping must be old, remove it
@@ -248,7 +244,7 @@ public class JPAUserManagerImpl implements UserManager {
 
         // add mapping to cache
         if(user != null) {
-            log.debug("screenNameToIdMap CACHE MISS - " + screenName);
+            log.debug("screenNameToIdMap CACHE MISS - {}", screenName);
             this.screenNameToIdMap.put(user.getUserName(), user.getId());
         }
 
@@ -297,9 +293,10 @@ public class JPAUserManagerImpl implements UserManager {
         return results.get(0);
     }
 
-    public User getUserByActivationCode(String activationCode) throws WebloggerException {
+    @Override
+    public User getUserByActivationCode(String activationCode) {
         if (activationCode == null) {
-            throw new WebloggerException("activationcode is null");
+            throw new IllegalArgumentException("activationcode is null");
         }
         TypedQuery<User> q = strategy.getNamedQuery("User.getUserByActivationCode", User.class);
         q.setParameter(1, activationCode);
@@ -309,10 +306,7 @@ public class JPAUserManagerImpl implements UserManager {
             return null;
         }
     }
-    
-    
-    //-------------------------------------------------------- permissions CRUD
- 
+
     @Override
     public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) {
         User userToCheck = getUserByUserName(username, true);
@@ -335,14 +329,14 @@ public class JPAUserManagerImpl implements UserManager {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("ROLE CHECK FAILED: user " + user.getUserName() + " does not have " + role.name()
-                    + " or greater rights on weblog " + weblog.getHandle());
+            log.debug("ROLE CHECK FAILED: user {} does not have {} or greater rights on weblog {}", weblog.getHandle(),
+                    user.getUserName(), role.name());
         }
         return false;
     }
 
     @Override
-    public UserWeblogRole getWeblogRole(String username, String weblogHandle) throws WebloggerException {
+    public UserWeblogRole getWeblogRole(String username, String weblogHandle) {
         User userToCheck = getUserByUserName(username, true);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
         return getWeblogRole(userToCheck, weblogToCheck);
@@ -361,7 +355,8 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
 
-    public UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog) throws WebloggerException {
+    @Override
+    public UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog) {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getId());
@@ -406,7 +401,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole desiredRole) throws WebloggerException {
+    public void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole desiredRole) {
 
         // first, see if user already has a role for the specified weblog
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogIdIncludingPending",
@@ -418,11 +413,7 @@ public class JPAUserManagerImpl implements UserManager {
             existingRole = q.getSingleResult();
         } catch (NoResultException ignored) {}
 
-        // role already exists, so complain
-        if (existingRole != null) {
-            throw new WebloggerException("User already has a role for this weblog.");
-        } else {
-            // it's a new role, so store it
+        if (existingRole == null) {
             UserWeblogRole newRole = new UserWeblogRole(user, weblog, desiredRole);
             newRole.setPending(true);
             this.strategy.store(newRole);
@@ -489,7 +480,8 @@ public class JPAUserManagerImpl implements UserManager {
         return q.getResultList();
     }
 
-    public List<UserWeblogRole> getWeblogRolesIncludingPending(User user) throws WebloggerException {
+    @Override
+    public List<UserWeblogRole> getWeblogRolesIncludingPending(User user) {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getId());
@@ -512,7 +504,8 @@ public class JPAUserManagerImpl implements UserManager {
         return q.getResultList();
     }
 
-    public List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog) throws WebloggerException {
+    @Override
+    public List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog) {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogId&Pending",
                 UserWeblogRole.class);
         q.setParameter(1, weblog.getId());
@@ -521,21 +514,15 @@ public class JPAUserManagerImpl implements UserManager {
 
     @Override
     public Menu getEditorMenu(String username, String weblogHandle) {
-        try {
-            String cacheKey = generateMenuCacheKey(username, weblogHandle);
-            Menu menu = (Menu) editorMenuCache.get(cacheKey);
-            if (menu == null) {
-                User user = getUserByUserName(username);
-                UserWeblogRole uwr = getWeblogRole(username, weblogHandle);
-                menu = menuHelper.getMenu("editor", user.getGlobalRole(), uwr == null ? null : uwr.getWeblogRole(), null);
-                editorMenuCache.put(cacheKey, menu);
-            }
-            return menu;
-        } catch (WebloggerException e) {
-            log.error("Problem generating editor window for User: "
-                    + username + " and weblog: " + weblogHandle + ", message: " + e.getMessage());
+        String cacheKey = generateMenuCacheKey(username, weblogHandle);
+        Menu menu = (Menu) editorMenuCache.get(cacheKey);
+        if (menu == null) {
+            User user = getUserByUserName(username);
+            UserWeblogRole uwr = getWeblogRole(username, weblogHandle);
+            menu = menuHelper.getMenu("editor", user.getGlobalRole(), uwr == null ? null : uwr.getWeblogRole(), null);
+            editorMenuCache.put(cacheKey, menu);
         }
-        return null;
+        return menu;
     }
 
     private String generateMenuCacheKey(String username, String weblogHandle) {
