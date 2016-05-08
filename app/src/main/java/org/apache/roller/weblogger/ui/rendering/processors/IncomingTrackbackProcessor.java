@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -147,14 +146,14 @@ public class IncomingTrackbackProcessor {
                 // check weblog specified by request
                 weblog = trackbackRequest.getWeblog();
                 if (weblog == null) {
-                    throw new WebloggerException("unable to lookup weblog: "+ trackbackRequest.getWeblogHandle());
+                    throw new IllegalArgumentException("unable to lookup weblog: " + trackbackRequest.getWeblogHandle());
                 }
 
                 // lookup entry specified by comment request
                 entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
 
                 if (entry == null) {
-                    throw new WebloggerException("unable to lookup entry: " + trackbackRequest.getWeblogAnchor());
+                    throw new IllegalArgumentException("unable to lookup entry: " + trackbackRequest.getWeblogAnchor());
                 }
 
                 /*

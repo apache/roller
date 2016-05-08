@@ -25,8 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
@@ -48,7 +46,6 @@ import static org.junit.Assert.*;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MediaFileTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(MediaFileTest.class);
 
     private User testUser = null;
     private Weblog testWeblog = null;
@@ -65,27 +62,16 @@ public class MediaFileTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        try {
-            testUser = setupUser("mediaFileTestUser");
-            testWeblog = setupWeblog("mediaFileTestWeblog", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
+        testUser = setupUser("mediaFileTestUser");
+        testWeblog = setupWeblog("mediaFileTestWeblog", testUser);
+        endSession(true);
     }
 
     @After
     public void tearDown() throws Exception {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error("ERROR in test teardown", ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
 
     /**

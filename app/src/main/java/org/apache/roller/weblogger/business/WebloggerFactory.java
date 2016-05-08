@@ -20,13 +20,12 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -37,8 +36,8 @@ import javax.servlet.ServletContext;
  * Provides access to the Weblogger instance and bootstraps the business tier.
  */
 public final class WebloggerFactory {
-    
-    private static final Log log = LogFactory.getLog(WebloggerFactory.class);
+
+    private static Logger log = LoggerFactory.getLogger(WebloggerFactory.class);
 
     // Spring Application Context
     private static ApplicationContext context = null;
@@ -95,7 +94,7 @@ public final class WebloggerFactory {
     /**
      * Variant of bootstrap() used by the running WAR (not JUnit testing).
      */
-    public static void bootstrap() throws WebloggerException {
+    public static void bootstrap() {
         ServletContext servletContext = RollerContext.getServletContext();
         if (servletContext == null) {
             throw new RuntimeException("Error bootstrapping Weblogger; no web context available.");
@@ -111,9 +110,8 @@ public final class WebloggerFactory {
      *
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws RuntimeException If the app cannot be bootstrapped.
-     * @throws WebloggerException if any manager cannot be initialized
      */
-    public static void bootstrap(ApplicationContext inContext) throws WebloggerException {
+    public static void bootstrap(ApplicationContext inContext) {
         try {
             context = inContext;
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
@@ -135,14 +133,13 @@ public final class WebloggerFactory {
         try {
             mailProvider = new MailProvider();
         } catch (StartupException ex) {
-            log.warn("Failed to setup mail provider, continuing anyways.\n"
-                    + "Reason: " + ex.getMessage());
+            log.warn("Failed to setup mail provider, continuing anyways. Reason: {}", ex.getMessage());
             log.info("The cause of setting up mail provider error was: ", ex);
         }
 
         log.info("TightBlog Weblogger business tier successfully bootstrapped");
-        log.info("   Version: " + WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
-        log.info("   Revision: " + WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));
+        log.info("   Version: {}", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
+        log.info("   Revision: {}", WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));
     }
 
     public static void flush() {

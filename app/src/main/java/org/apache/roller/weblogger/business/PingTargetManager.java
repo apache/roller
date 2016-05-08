@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.business;
 
 import java.io.IOException;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -152,7 +151,7 @@ public interface PingTargetManager {
      * Send all pings currently in the {@link OutgoingPingQueue} to their various ping targets.
      * If ping processing is suspended, this returns without doing anything.
      */
-    void sendPings() throws WebloggerException;
+    void sendPings();
 
     /**
      * Send a weblog update ping.

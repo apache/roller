@@ -36,7 +36,6 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -119,11 +118,7 @@ public class RollerContext extends ContextLoaderListener
             output +=       "\n-------------------------------------------------------------------";
             log.info(output);
         } else {
-            try {
-                WebloggerFactory.bootstrap();
-            } catch (WebloggerException ex) {
-                log.fatal("TightBlog Weblogger initialization failed", ex);
-            }
+            WebloggerFactory.bootstrap();
 		}
             
         try {

@@ -29,12 +29,12 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages contents of the file uploaded to TightBlog.
@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.util.RollerMessages;
  */
 public class FileContentManagerImpl implements FileContentManager {
 
-    private static Log log = LogFactory.getLog(FileContentManagerImpl.class);
+    private static Logger log = LoggerFactory.getLogger(FileContentManagerImpl.class);
 
     private PropertiesManager propertiesManager;
 
@@ -72,7 +72,7 @@ public class FileContentManagerImpl implements FileContentManager {
      *      String)
      */
     public FileContent getFileContent(Weblog weblog, String fileId)
-            throws FileNotFoundException, IOException {
+            throws IOException {
 
         // get a reference to the file, checks that file exists & is readable
         File resourceFile = this.getRealFile(weblog, fileId);
@@ -110,8 +110,7 @@ public class FileContentManagerImpl implements FileContentManager {
                     WebloggerCommon.EIGHT_KB_IN_BYTES)) != -1) {
                 bos.write(buffer, 0, bytesRead);
             }
-            log.debug("The file has been written to ["
-                    + saveFile.getAbsolutePath() + "]");
+            log.debug("The file has been written to [{}]", saveFile.getAbsolutePath());
         } catch (Exception e) {
             throw new IOException("ERROR uploading file", e);
         } finally {
@@ -137,7 +136,7 @@ public class FileContentManagerImpl implements FileContentManager {
         File delFile = this.getRealFile(weblog, fileId);
 
         if (!delFile.delete()) {
-            log.warn("Delete appears to have failed for [" + fileId + "]");
+            log.warn("Delete appears to have failed for [{}]", fileId);
         }
     }
 
@@ -159,8 +158,8 @@ public class FileContentManagerImpl implements FileContentManager {
                 propertiesManager.getStringProperty("uploads.file.maxsize"));
         int maxFileBytes = (int) (WebloggerCommon.ONE_MB_IN_BYTES * maxFileMB
                 .doubleValue());
-        log.debug("max allowed file size = " + maxFileBytes);
-        log.debug("attempted save file size = " + size);
+        log.debug("max allowed file size = {}", maxFileBytes);
+        log.debug("attempted save file size = {}", size);
         if (size > maxFileBytes) {
             String[] args = { fileName, maxFileMB.toString() };
             messages.addError("error.upload.filemax", args);

@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.Date;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
@@ -34,8 +32,6 @@ import static org.junit.Assert.*;
  * Test planet Entry functionality.
  */
 public class SubscriptionEntryTest extends WebloggerTest {
-    
-    public static Log log = LogFactory.getLog(SubscriptionEntryTest.class);
     
     private Planet testPlanet = null;
     private Subscription testSub = null;

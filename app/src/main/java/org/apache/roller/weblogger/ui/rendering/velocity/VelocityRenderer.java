@@ -93,9 +93,7 @@ public class VelocityRenderer implements Renderer {
         }
     }
 
-    /**
-     * @see org.apache.roller.weblogger.ui.rendering.Renderer#render(java.util.Map, java.io.Writer)
-     */
+    @Override
     public void render(Map<String, Object> model, Writer out) throws WebloggerException {
 
         try {
@@ -160,19 +158,6 @@ public class VelocityRenderer implements Renderer {
         }
     }
 
-    /**
-     * Render Velocity Exception.
-     * 
-     * @param model
-     *            the model
-     * @param out
-     *            the out
-     * @param template
-     *            the template. Null if using existing template name
-     * 
-     * @throws WebloggerException
-     *             the rendering exception
-     */
     private void renderException(Map<String, Object> model, Writer out, String template) throws WebloggerException {
 
         try {

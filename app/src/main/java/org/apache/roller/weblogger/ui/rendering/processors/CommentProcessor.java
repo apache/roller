@@ -38,7 +38,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -208,13 +207,13 @@ public class CommentProcessor {
             // check weblog specified by comment request
             weblog = commentRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: " + commentRequest.getWeblogHandle());
+                throw new IllegalArgumentException("unable to lookup weblog: " + commentRequest.getWeblogHandle());
             }
 
             // lookup entry specified by comment request
             entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, commentRequest.getWeblogAnchor());
             if (entry == null) {
-                throw new WebloggerException("unable to lookup entry: " + commentRequest.getWeblogAnchor());
+                throw new IllegalArgumentException("unable to lookup entry: " + commentRequest.getWeblogAnchor());
             }
 
             /*
@@ -381,40 +380,34 @@ public class CommentProcessor {
 
             }
 
-            try {
-                if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
-                        !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled")) {
+            if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
+                    !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled")) {
 
-                    boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(comment.getStatus());
-                    weblogEntryManager.saveComment(comment, refreshWeblog);
-                    WebloggerFactory.flush();
+                boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(comment.getStatus());
+                weblogEntryManager.saveComment(comment, refreshWeblog);
+                WebloggerFactory.flush();
 
-                    // Send email notifications only to subscribers if comment is 100% valid
-                    boolean notifySubscribers = (validationScore == WebloggerCommon.PERCENT_100);
-                    mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
+                // Send email notifications only to subscribers if comment is 100% valid
+                boolean notifySubscribers = (validationScore == WebloggerCommon.PERCENT_100);
+                mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
 
-                    // only re-index/invalidate the cache if comment isn't moderated
-                    if (!commentApprovalRequired) {
+                // only re-index/invalidate the cache if comment isn't moderated
+                if (!commentApprovalRequired) {
 
-                        // remove entry before (re)adding it, or in case it isn't Published
-                        indexManager.removeEntryIndexOperation(entry);
+                    // remove entry before (re)adding it, or in case it isn't Published
+                    indexManager.removeEntryIndexOperation(entry);
 
-                        // if published, index the entry
-                        if (entry.isPublished()) {
-                            indexManager.addEntryIndexOperation(entry);
-                        }
-
-                        // Clear all caches associated with comment
-                        cacheManager.invalidate(comment);
+                    // if published, index the entry
+                    if (entry.isPublished()) {
+                        indexManager.addEntryIndexOperation(entry);
                     }
 
-                    // comment was successful, clear the comment form
-                    cf = new WeblogEntryCommentForm();
+                    // Clear all caches associated with comment
+                    cacheManager.invalidate(comment);
                 }
 
-            } catch (WebloggerException re) {
-                log.error("Error saving comment", re);
-                error = re.getMessage();
+                // comment was successful, clear the comment form
+                cf = new WeblogEntryCommentForm();
             }
         }
 

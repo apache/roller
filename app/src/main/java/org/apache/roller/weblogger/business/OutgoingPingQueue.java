@@ -15,9 +15,9 @@
 */
 package org.apache.roller.weblogger.business;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +29,9 @@ import java.util.List;
  * for a blog whenever that blog has a new or updated blog entry.
  */
 public class OutgoingPingQueue {
-    private static Log log = LogFactory.getLog(OutgoingPingQueue.class);
+
+    private static Logger log = LoggerFactory.getLogger(OutgoingPingQueue.class);
+
     private static OutgoingPingQueue instance = null;
     private List<AutoPing> queue = Collections.synchronizedList(new ArrayList<AutoPing>());
 
@@ -48,7 +50,7 @@ public class OutgoingPingQueue {
     public void addPing(AutoPing ping) {
         for (AutoPing pingTest : queue) {
             if (pingTest.equals(ping)) {
-                log.debug("Already in ping queue, skipping: " + ping);
+                log.debug("Already in ping queue, skipping: {}", ping);
                 return;
             }
         }

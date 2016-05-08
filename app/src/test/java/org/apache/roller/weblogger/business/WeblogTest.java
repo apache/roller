@@ -21,8 +21,6 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -32,13 +30,10 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
 /**
  * Test Weblog related business operations.
  */
 public class WeblogTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(WeblogTest.class);
-    
     User testUser = null;
     
     /**
@@ -47,94 +42,68 @@ public class WeblogTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
-        try {
-            testUser = setupUser("weblogTestUser");
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
-        
-        log.info("END");
+        testUser = setupUser("weblogTestUser");
+        endSession(true);
     }
 
     @After
     public void tearDown() throws Exception {
-        
-        log.info("BEGIN");
-        
-        try {
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test teardown failed", ex);
-        }
-        
-        log.info("END");
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
-    
-    
+
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
     @Test
     public void testWeblogCRUD() throws Exception {
-        try {
-            Weblog weblog;
+        Weblog weblog;
 
-            Weblog testWeblog = new Weblog();
-            testUser = getManagedUser(testUser);
-            testWeblog.setName("Test Weblog");
-            testWeblog.setTagline("Test Weblog");
-            testWeblog.setHandle("testweblog");
-            testWeblog.setEditorPage("editor-text.jsp");
-            testWeblog.setBlacklist("");
-            testWeblog.setTheme("basic");
-            testWeblog.setLocale("en_US");
-            testWeblog.setTimeZone("America/Los_Angeles");
-            testWeblog.setDateCreated(new java.util.Date());
-            testWeblog.setCreatorId(testUser.getId());
+        Weblog testWeblog = new Weblog();
+        testUser = getManagedUser(testUser);
+        testWeblog.setName("Test Weblog");
+        testWeblog.setTagline("Test Weblog");
+        testWeblog.setHandle("testweblog");
+        testWeblog.setEditorPage("editor-text.jsp");
+        testWeblog.setBlacklist("");
+        testWeblog.setTheme("basic");
+        testWeblog.setLocale("en_US");
+        testWeblog.setTimeZone("America/Los_Angeles");
+        testWeblog.setDateCreated(new java.util.Date());
+        testWeblog.setCreatorId(testUser.getId());
 
-            // make sure test weblog does not exist
-            weblog = weblogManager.getWeblogByHandle(testWeblog.getHandle());
-            assertNull(weblog);
+        // make sure test weblog does not exist
+        weblog = weblogManager.getWeblogByHandle(testWeblog.getHandle());
+        assertNull(weblog);
 
-            // add test weblog
-            weblogManager.addWeblog(testWeblog);
-            String id = testWeblog.getId();
-            endSession(true);
+        // add test weblog
+        weblogManager.addWeblog(testWeblog);
+        String id = testWeblog.getId();
+        endSession(true);
 
-            // make sure test weblog exists
-            weblog = weblogManager.getWeblog(id);
-            assertNotNull(weblog);
-            assertEquals(testWeblog, weblog);
+        // make sure test weblog exists
+        weblog = weblogManager.getWeblog(id);
+        assertNotNull(weblog);
+        assertEquals(testWeblog, weblog);
 
-            // modify weblog and save
-            weblog.setName("testtesttest");
-            weblogManager.saveWeblog(weblog);
-            endSession(true);
+        // modify weblog and save
+        weblog.setName("testtesttest");
+        weblogManager.saveWeblog(weblog);
+        endSession(true);
 
-            // make sure changes were saved
-            weblog = weblogManager.getWeblog(id);
-            assertNotNull(weblog);
-            assertEquals("testtesttest", weblog.getName());
+        // make sure changes were saved
+        weblog = weblogManager.getWeblog(id);
+        assertNotNull(weblog);
+        assertEquals("testtesttest", weblog.getName());
 
-            // remove test weblog
-            weblogManager.removeWeblog(weblog);
-            endSession(true);
+        // remove test weblog
+        weblogManager.removeWeblog(weblog);
+        endSession(true);
 
-            // make sure weblog no longer exists
-            weblog = weblogManager.getWeblog(id);
-            assertNull(weblog);
-        
-        } catch(Exception t) {
-            log.error("Exception running test", t);
-            fail();
-        }
+        // make sure weblog no longer exists
+        weblog = weblogManager.getWeblog(id);
+        assertNull(weblog);
     }
-    
     
     /**
      * Test lookup mechanisms.
@@ -191,9 +160,5 @@ public class WeblogTest extends WebloggerTest {
             }
             endSession(true);
         }
-        
-        log.info("END");
     }
-    
 }
-

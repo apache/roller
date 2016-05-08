@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -83,7 +82,7 @@ public class MediaResourceProcessor {
 
             weblog = resourceRequest.getWeblog();
             if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: " + resourceRequest.getWeblogHandle());
+                throw new IllegalArgumentException("unable to lookup weblog: " + resourceRequest.getWeblogHandle());
             }
 
             // we want only the path info left over from after the weblog parsing

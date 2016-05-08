@@ -22,16 +22,12 @@ package org.apache.roller.weblogger.business.plugins.entry;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
-
 
 /**
  * Obfuscate email addresses in entry text.
@@ -44,19 +40,14 @@ public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
     private static Pattern EMAIL_PATTERN =
             Pattern.compile("\\b[a-zA-Z0-9\\.\\-]+(@)([a-zA-Z0-9\\.\\-]+)(\\.)([a-zA-Z0-9]+)\\b");
 
-    private static Log mLogger = LogFactory.getLog(ObfuscateEmailPlugin.class);
-    
     protected String name = "Email Scrambler";
     
     protected String description = "Automatically converts email addresses " +
             "to me-AT-mail-DOT-com format.  Also &quot;scrambles&quot; mailto: links.";
-    
-    
+
     public ObfuscateEmailPlugin() {
-        mLogger.debug("ObfuscateEmailPlugin instantiated.");
     }
-    
-    
+
     public String getName() {
         return name;
     }
@@ -68,7 +59,7 @@ public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
     
     
     @PostConstruct
-    public void init() throws WebloggerException {}
+    public void init() {}
 
     public String render(WeblogEntry entry, String str) {
         return encodeEmail(str);

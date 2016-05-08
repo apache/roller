@@ -33,31 +33,26 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
     private static final Log LOG = LogFactory.getLog(HTMLSubsetPlugin.class);
-    
-    
+
     public HTMLSubsetPlugin() {
         LOG.debug("Instantiating HTMLSubsetPlugin");
     }
-    
-    
+
     /**
      * Unique identifier.  This should never change. 
      */
     public String getId() {
         return "HTMLSubset";
     }
-    
-    
+
     public String getName() {
         return "HTML Subset Restriction";
     }
-    
-    
+
     public String getDescription() {
         return "Transforms the given comment body into a subset of HTML";
     }
-    
-    
+
     public String render(final WeblogEntryComment comment, String text) {
         String output = text;
         

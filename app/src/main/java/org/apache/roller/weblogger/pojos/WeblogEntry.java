@@ -40,7 +40,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -467,7 +466,6 @@ public class WeblogEntry implements Serializable {
      * TightBlog lowercases all tags based on locale because there's not a 1:1 mapping
      * between uppercase/lowercase characters across all languages.  
      * @param name tag name
-     * @throws WebloggerException
      */
     public void addTag(String name) {
         Locale localeObject = getWeblog() != null ? getWeblog().getLocaleInstance() : Locale.getDefault();

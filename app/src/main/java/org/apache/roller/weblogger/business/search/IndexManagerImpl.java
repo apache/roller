@@ -41,7 +41,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
@@ -139,7 +138,7 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     @Override
-    public void initialize() throws WebloggerException {
+    public void initialize() {
 
         // only initialize the index if search is enabled
         if (this.searchEnabled) {
@@ -189,11 +188,7 @@ public class IndexManagerImpl implements IndexManager {
 
             if (isInconsistentAtStartup()) {
                 log.info("Index was inconsistent. Rebuilding index in the background...");
-                try {
-                    rebuildWeblogIndex();
-                } catch (WebloggerException e) {
-                    log.error("ERROR: scheduling re-index operation");
-                }
+                rebuildWeblogIndex();
             } else {
                 log.info("Index initialized and ready for use.");
             }
@@ -204,12 +199,12 @@ public class IndexManagerImpl implements IndexManager {
     // ~ Methods
     // ================================================================
 
-    public void rebuildWeblogIndex() throws WebloggerException {
+    public void rebuildWeblogIndex() {
         scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager,
                 null));
     }
 
-    public void rebuildWeblogIndex(Weblog weblog) throws WebloggerException {
+    public void rebuildWeblogIndex(Weblog weblog) {
         scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager,
                 weblog));
     }
@@ -219,21 +214,18 @@ public class IndexManagerImpl implements IndexManager {
         scheduleIndexOperation(new RemoveWeblogIndexOperation(this, weblog.getHandle()));
     }
 
-    public void addEntryIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
+    public void addEntryIndexOperation(WeblogEntry entry) {
         AddEntryOperation addEntry = new AddEntryOperation(weblogEntryManager, this, entry);
         scheduleIndexOperation(addEntry);
     }
 
-    public void addEntryReIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
+    public void addEntryReIndexOperation(WeblogEntry entry) {
         ReIndexEntryOperation reindex = new ReIndexEntryOperation(weblogEntryManager, this,
                 entry);
         scheduleIndexOperation(reindex);
     }
 
-    public void removeEntryIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
+    public void removeEntryIndexOperation(WeblogEntry entry) {
         RemoveEntryOperation removeOp = new RemoveEntryOperation(this, entry.getId());
         executeIndexOperationNow(removeOp);
     }

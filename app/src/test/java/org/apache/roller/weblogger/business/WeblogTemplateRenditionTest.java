@@ -23,8 +23,6 @@
 */
 package org.apache.roller.weblogger.business;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -41,8 +39,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class WeblogTemplateRenditionTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(WeblogPageTest.class);
-
     User testUser = null;
     Weblog testWeblog = null;
     WeblogTemplate testPage = null;
@@ -56,14 +52,9 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        try {
-            testUser = setupUser("wtTestUser3");
-            testWeblog = setupWeblog("wtTestWeblog", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
+        testUser = setupUser("wtTestUser3");
+        testWeblog = setupWeblog("wtTestWeblog", testUser);
+        endSession(true);
 
         testPage = new WeblogTemplate();
         testPage.setId(WebloggerCommon.generateUUID());
@@ -77,14 +68,10 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
 
     @After
     public void tearDown() throws Exception {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
+
         testPage = null;
     }
 

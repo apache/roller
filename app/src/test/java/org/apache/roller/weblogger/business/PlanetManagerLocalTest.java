@@ -21,8 +21,6 @@ package org.apache.roller.weblogger.business;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
@@ -40,8 +38,7 @@ import static org.junit.Assert.*;
  * Test database implementation of PlanetManager for local feeds.
  */
 public class PlanetManagerLocalTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(PlanetManagerLocalTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
     
@@ -50,74 +47,62 @@ public class PlanetManagerLocalTest extends WebloggerTest {
      */
     @Before
     public void setUp() throws Exception {
-        
-        try {
-            super.setUp();
+        super.setUp();
 
-            testUser = setupUser("entryTestUser");
-            testWeblog = setupWeblog("entryTestWeblog", testUser);
-            endSession(true);
+        testUser = setupUser("entryTestUser");
+        testWeblog = setupWeblog("entryTestWeblog", testUser);
+        endSession(true);
 
-            testUser = getManagedUser(testUser);
-            testWeblog = getManagedWeblog(testWeblog);
+        testUser = getManagedUser(testUser);
+        testWeblog = getManagedWeblog(testWeblog);
 
-            WeblogEntry testEntry1 = new WeblogEntry();
-            testEntry1.setId(WebloggerCommon.generateUUID());
-            testEntry1.setTitle("entryTestEntry1");
-            testEntry1.setText("blah blah entry1");
-            testEntry1.setAnchor("testEntryAnchor1");
-            testEntry1.setPubTime(new Timestamp(new Date().getTime()));
-            testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
-            testEntry1.setWeblog(testWeblog);
-            testEntry1.setCreatorId(testUser.getId());
-            testEntry1.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
-            testEntry1.setStatus(PubStatus.PUBLISHED);
-            weblogEntryManager.saveWeblogEntry(testEntry1);
+        WeblogEntry testEntry1 = new WeblogEntry();
+        testEntry1.setId(WebloggerCommon.generateUUID());
+        testEntry1.setTitle("entryTestEntry1");
+        testEntry1.setText("blah blah entry1");
+        testEntry1.setAnchor("testEntryAnchor1");
+        testEntry1.setPubTime(new Timestamp(new Date().getTime()));
+        testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
+        testEntry1.setWeblog(testWeblog);
+        testEntry1.setCreatorId(testUser.getId());
+        testEntry1.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
+        testEntry1.setStatus(PubStatus.PUBLISHED);
+        weblogEntryManager.saveWeblogEntry(testEntry1);
 
-            WeblogEntry testEntry2 = new WeblogEntry();
-            testEntry2.setId(WebloggerCommon.generateUUID());
-            testEntry2.setTitle("entryTestEntry2");
-            testEntry2.setText("blah blah entry2");
-            testEntry2.setAnchor("testEntryAnchor2");
-            testEntry2.setPubTime(new Timestamp(new Date().getTime()));
-            testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
-            testEntry2.setWeblog(testWeblog);
-            testEntry2.setCreatorId(testUser.getId());
-            testEntry2.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
-            testEntry2.setStatus(PubStatus.PUBLISHED);
-            weblogEntryManager.saveWeblogEntry(testEntry2);
+        WeblogEntry testEntry2 = new WeblogEntry();
+        testEntry2.setId(WebloggerCommon.generateUUID());
+        testEntry2.setTitle("entryTestEntry2");
+        testEntry2.setText("blah blah entry2");
+        testEntry2.setAnchor("testEntryAnchor2");
+        testEntry2.setPubTime(new Timestamp(new Date().getTime()));
+        testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
+        testEntry2.setWeblog(testWeblog);
+        testEntry2.setCreatorId(testUser.getId());
+        testEntry2.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
+        testEntry2.setStatus(PubStatus.PUBLISHED);
+        weblogEntryManager.saveWeblogEntry(testEntry2);
 
-            WeblogEntry testEntry3 = new WeblogEntry();
-            testEntry3.setId(WebloggerCommon.generateUUID());
-            testEntry3.setTitle("entryTestEntry3");
-            testEntry3.setText("blah blah entry3");
-            testEntry3.setAnchor("testEntryAnchor3");
-            testEntry3.setPubTime(new Timestamp(new Date().getTime()));
-            testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
-            testEntry3.setWeblog(testWeblog);
-            testEntry3.setCreatorId(testUser.getId());
-            testEntry3.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
-            testEntry3.setStatus(PubStatus.PUBLISHED);
-            weblogEntryManager.saveWeblogEntry(testEntry3);
+        WeblogEntry testEntry3 = new WeblogEntry();
+        testEntry3.setId(WebloggerCommon.generateUUID());
+        testEntry3.setTitle("entryTestEntry3");
+        testEntry3.setText("blah blah entry3");
+        testEntry3.setAnchor("testEntryAnchor3");
+        testEntry3.setPubTime(new Timestamp(new Date().getTime()));
+        testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
+        testEntry3.setWeblog(testWeblog);
+        testEntry3.setCreatorId(testUser.getId());
+        testEntry3.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
+        testEntry3.setStatus(PubStatus.PUBLISHED);
+        weblogEntryManager.saveWeblogEntry(testEntry3);
 
-            endSession(true);
-            
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
+        endSession(true);
     }
 
     @After
     public void tearDown() throws Exception {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
     
     @Test

@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Properties;
@@ -25,18 +27,17 @@ import javax.mail.Transport;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulates weblogger mail configuration, returns mail sessions.
  */
 public class MailProvider {
-    
-    private static final Log log = LogFactory.getLog(MailProvider.class);
-    
+
+    private static Logger log = LoggerFactory.getLogger(MailProvider.class);
+
     private enum ConfigurationType {JNDI_NAME, MAIL_PROPERTIES }
     
     private Session session = null;

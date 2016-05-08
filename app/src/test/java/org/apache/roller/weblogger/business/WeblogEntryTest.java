@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -46,6 +44,9 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.junit.Assert.*;
 
 
@@ -53,7 +54,8 @@ import static org.junit.Assert.*;
  * Test WeblogEntry related business operations.
  */
 public class WeblogEntryTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(WeblogEntryTest.class);
+
+    private static Logger log = LoggerFactory.getLogger(WeblogEntryTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
@@ -63,28 +65,16 @@ public class WeblogEntryTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        try {
-            testUser = setupUser("entryTestUser");
-            testWeblog = setupWeblog("entryTestWeblog", testUser);
-            endSession(true);
-
-        } catch (Exception ex) {
-            log.error("ERROR in test setup", ex);
-            throw new Exception("Test setup failed", ex);
-        }
+        testUser = setupUser("entryTestUser");
+        testWeblog = setupWeblog("entryTestWeblog", testUser);
+        endSession(true);
     }
     
     @After
     public void tearDown() throws Exception {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error("ERROR in test teardown", ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
 
     @Test
@@ -172,10 +162,6 @@ public class WeblogEntryTest extends WebloggerTest {
         testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
 
-        log.debug("entry1 = "+entry1.getUpdateTime());
-        log.debug("entry2 = "+entry2.getUpdateTime());
-        log.debug("entry3 = "+entry3.getUpdateTime());
-        
         entry1 = getManagedWeblogEntry(entry1);
         entry2 = getManagedWeblogEntry(entry2);
         entry3 = getManagedWeblogEntry(entry3);
