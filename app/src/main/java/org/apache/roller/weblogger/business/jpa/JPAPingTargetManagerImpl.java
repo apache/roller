@@ -100,7 +100,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         strategy.store(pingTarget);
     }
 
-    public PingTarget getPingTarget(String id) throws WebloggerException {
+    @Override
+    public PingTarget getPingTarget(String id) {
         return strategy.load(PingTarget.class, id);
     }
 
@@ -159,8 +160,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
-    public List<PingTarget> getCommonPingTargets()
-            throws WebloggerException {
+    @Override
+    public List<PingTarget> getCommonPingTargets() {
         TypedQuery<PingTarget> q = strategy.getNamedQuery(
                 "PingTarget.getPingTargetsOrderByName", PingTarget.class);
         return q.getResultList();
@@ -240,7 +241,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return strategy.load(AutoPing.class, id);
     }
 
-    public void saveAutoPing(AutoPing autoPing) throws WebloggerException {
+    @Override
+    public void saveAutoPing(AutoPing autoPing) {
         strategy.store(autoPing);
     }
 
@@ -276,7 +278,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
-    public List<AutoPing> getAutoPingsByWeblog(Weblog weblog) throws WebloggerException {
+    @Override
+    public List<AutoPing> getAutoPingsByWeblog(Weblog weblog) {
         TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByWeblog", AutoPing.class);
         q.setParameter(1, weblog);
         return q.getResultList();

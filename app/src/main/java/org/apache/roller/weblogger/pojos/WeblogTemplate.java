@@ -163,8 +163,7 @@ public class WeblogTemplate implements Template, Serializable {
         this.templateRenditions = templateRenditions;
     }
 
-    public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType)
-            throws WebloggerException {
+    public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType) {
         for (WeblogTemplateRendition rnd : templateRenditions) {
             if (rnd.getRenditionType().equals(desiredType)) {
                 return rnd;

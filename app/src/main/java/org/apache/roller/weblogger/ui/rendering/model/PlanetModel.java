@@ -20,13 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Template;
@@ -38,9 +34,7 @@ import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
  * Model that provides access to planet aggregations, feeds and subscriptions.
  */
 public class PlanetModel implements Model {
-    
-    private static Log log = LogFactory.getLog(PlanetModel.class);
-    
+
     private WeblogPageRequest pageRequest = null;
     private String         pageLink = null;
 
@@ -63,11 +57,11 @@ public class PlanetModel implements Model {
 
     /** Init page model, requires a WeblogPageRequest object. */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) {
         this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
 
         if (pageRequest == null) {
-            throw new WebloggerException("Missing WeblogPageRequest object");
+            throw new IllegalStateException("Missing WeblogPageRequest object");
         }
 
         Template weblogPage = pageRequest.getWeblogTemplate();
@@ -107,13 +101,7 @@ public class PlanetModel implements Model {
      * @return List of Planet groups defined.
      */
     public List<Planet> getPlanets() {
-        List<Planet> list = new ArrayList<>();
-        try {
-            list = planetManager.getPlanets();
-        } catch (Exception e) {
-            log.error("ERROR: getting groups", e);
-        }
-        return list;
+        return planetManager.getPlanets();
     }
 
     /**
@@ -122,13 +110,7 @@ public class PlanetModel implements Model {
      * @return PlaneGroup specified by handle.
      */
     public Planet getPlanet(String groupHandle) {
-        Planet group = null;
-        try {
-            group = planetManager.getPlanet(groupHandle);
-        } catch (Exception e) {
-            log.error("ERROR: getting group", e);
-        }
-        return group;        
+        return planetManager.getPlanet(groupHandle);
     }
 
     /**

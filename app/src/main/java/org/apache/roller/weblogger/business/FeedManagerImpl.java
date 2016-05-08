@@ -242,47 +242,42 @@ public class FeedManagerImpl implements FeedManager {
         }
         
         // lookup recent entries from weblog and add them to the subscription
-        try {
-            int entryCount = propertiesManager.getIntProperty("site.newsfeeds.maxEntries");
+        int entryCount = propertiesManager.getIntProperty("site.newsfeeds.maxEntries");
 
-            if (log.isDebugEnabled()) {
-                log.debug("Seeking up to " + entryCount + " entries from " + localWeblog.getHandle());
-            }
-            
-            // grab recent entries for this weblog
-            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-            wesc.setWeblog(localWeblog);
-            wesc.setStatus(PubStatus.PUBLISHED);
-            wesc.setMaxResults(entryCount);
-            List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
-            log.debug("Found " + entries.size());
-
-            // Populate subscription object with new entries
-            for (WeblogEntry blogEntry : entries) {
-                SubscriptionEntry entry = new SubscriptionEntry();
-                String content;
-                if (!StringUtils.isEmpty(blogEntry.getText())) {
-                    content = blogEntry.getText();
-                } else {
-                    content = blogEntry.getSummary();
-                }
-                content = weblogEntryManager.applyWeblogEntryPlugins(blogEntry, content);
-
-                entry.setAuthor(blogEntry.getCreator().getScreenName());
-                entry.setTitle(blogEntry.getTitle());
-                entry.setPubTime(blogEntry.getPubTime());
-                entry.setContent(content);
-                entry.setPermalink(blogEntry.getPermalink());
-                entry.setUri(blogEntry.getPermalink());
-                entry.setCategoriesString(blogEntry.getCategory().getName());
-                entry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
-                newSub.addEntry(entry);
-            }
-            
-        } catch (WebloggerException ex) {
-            throw new WebloggerException("Error processing entries for local weblog - "+weblogHandle, ex);
+        if (log.isDebugEnabled()) {
+            log.debug("Seeking up to " + entryCount + " entries from " + localWeblog.getHandle());
         }
-        
+
+        // grab recent entries for this weblog
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(localWeblog);
+        wesc.setStatus(PubStatus.PUBLISHED);
+        wesc.setMaxResults(entryCount);
+        List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
+        log.debug("Found " + entries.size());
+
+        // Populate subscription object with new entries
+        for (WeblogEntry blogEntry : entries) {
+            SubscriptionEntry entry = new SubscriptionEntry();
+            String content;
+            if (!StringUtils.isEmpty(blogEntry.getText())) {
+                content = blogEntry.getText();
+            } else {
+                content = blogEntry.getSummary();
+            }
+            content = weblogEntryManager.applyWeblogEntryPlugins(blogEntry, content);
+
+            entry.setAuthor(blogEntry.getCreator().getScreenName());
+            entry.setTitle(blogEntry.getTitle());
+            entry.setPubTime(blogEntry.getPubTime());
+            entry.setContent(content);
+            entry.setPermalink(blogEntry.getPermalink());
+            entry.setUri(blogEntry.getPermalink());
+            entry.setCategoriesString(blogEntry.getCategory().getName());
+            entry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
+            newSub.addEntry(entry);
+        }
+
         // all done
         return newSub;
     }

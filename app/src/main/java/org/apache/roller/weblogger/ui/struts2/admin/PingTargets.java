@@ -25,15 +25,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class PingTargets extends UIAction {
 
-    private static Log log = LogFactory.getLog(PingTargets.class);
+    private static Logger log = LoggerFactory.getLogger(PingTargets.class);
 
     @Autowired
     private PingTargetManager pingTargetManager;
@@ -80,12 +80,7 @@ public class PingTargets extends UIAction {
     }
 
     public void loadPingTargets() {
-        try {
-            setPingTargets(pingTargetManager.getCommonPingTargets());
-        } catch (WebloggerException ex) {
-            log.error("Error loading common ping targets", ex);
-            addError("commonPingTargets.error.loading");
-        }
+        setPingTargets(pingTargetManager.getCommonPingTargets());
     }
 
     // prepare method needs to set ping targets list
@@ -95,12 +90,8 @@ public class PingTargets extends UIAction {
         loadPingTargets();
 
         // load specified ping target if possible
-        if(!StringUtils.isEmpty(getPingTargetId())) {
-            try {
-                setPingTarget(pingTargetManager.getPingTarget(getPingTargetId()));
-            } catch (WebloggerException ex) {
-                log.error("Error looking up ping target - " + getPingTargetId(), ex);
-            }
+        if (!StringUtils.isEmpty(getPingTargetId())) {
+            setPingTarget(pingTargetManager.getPingTarget(getPingTargetId()));
         }
     }
 
@@ -124,7 +115,7 @@ public class PingTargets extends UIAction {
                     pingTargetManager.savePingTarget(pt);
                     WebloggerFactory.flush();
                     setPingTargets(pingTargetManager.getCommonPingTargets());
-                } catch (WebloggerException e) {
+                } catch (RollbackException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                     return;
                 }
@@ -149,7 +140,7 @@ public class PingTargets extends UIAction {
                 pingTargetManager.savePingTarget(pt);
                 WebloggerFactory.flush();
                 setPingTargets(pingTargetManager.getCommonPingTargets());
-            } catch (WebloggerException e) {
+            } catch (RollbackException e) {
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
                 return;
             }
@@ -202,7 +193,7 @@ public class PingTargets extends UIAction {
             response.setStatus(HttpServletResponse.SC_OK);
             return state;
         } catch (Exception e) {
-            log.warn("Error " + (state ? "enabling" : "disabling") + " ping target: " + e.getMessage());
+            log.warn("Error {} ping target: ", state ? "enabling" : "disabling", e.getMessage());
             throw new ServletException(e.getMessage());
         }
     }
@@ -216,7 +207,7 @@ public class PingTargets extends UIAction {
             getPingTargets().remove(ping);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
-            log.warn("Error deleting ping target: " + e.getMessage());
+            log.warn("Error deleting ping target: {}", e.getMessage());
             throw new ServletException(e.getMessage());
         }
     }

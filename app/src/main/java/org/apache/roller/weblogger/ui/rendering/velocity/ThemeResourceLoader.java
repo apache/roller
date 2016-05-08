@@ -31,11 +31,9 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
-import org.springframework.mobile.device.DeviceType;
 
 /**
  * The ThemeResourceLoader is a Velocity template loader which loads templates
@@ -116,11 +114,6 @@ public class ThemeResourceLoader extends ResourceLoader {
             // This rethrows as a Runtime exception after logging.
             logger.error(uex);
             throw new RuntimeException(uex);
-
-        } catch (WebloggerException re) {
-            String msg = "RollerResourceLoader Error: " + re.getMessage();
-            logger.error(msg, re);
-            throw new ResourceNotFoundException(msg);
         }
     }
 

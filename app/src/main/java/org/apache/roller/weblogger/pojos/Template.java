@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import org.apache.roller.weblogger.WebloggerException;
-
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
@@ -139,7 +137,7 @@ public interface Template {
     /**
      * get the Template rendition object for the given type.
      */
-    TemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType type) throws WebloggerException;
+    TemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType type);
 
     /**
      * The role this template performs.

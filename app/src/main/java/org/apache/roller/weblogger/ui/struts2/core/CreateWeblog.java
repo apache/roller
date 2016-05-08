@@ -24,9 +24,6 @@ import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -48,8 +45,7 @@ import java.util.List;
  * Allows user to create a new website.
  */
 public class CreateWeblog extends UIAction {
-    
-    private static Log log = LogFactory.getLog(CreateWeblog.class);
+
     private static final String DISABLED_RETURN_CODE = "disabled";
 
     private ThemeManager themeManager;
@@ -82,12 +78,12 @@ public class CreateWeblog extends UIAction {
         this.pageTitle = "createWebsite.title";
     }
 
-    @java.lang.Override
+    @Override
     public GlobalRole requiredGlobalRole() {
         return GlobalRole.BLOGGER;
     }
 
-    @java.lang.Override
+    @Override
     public WeblogRole requiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
     }
@@ -103,22 +99,16 @@ public class CreateWeblog extends UIAction {
 
         User user = getAuthenticatedUser();
 
-        try {
-            if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
-                List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
-                if (permissions.size() > 0) {
-                    // sneaky user trying to get around 1 blog limit that applies
-                    // only when group blogging is disabled
-                    addError("createWebsite.oneBlogLimit");
-                    return DISABLED_RETURN_CODE;
-                }
+        if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
+            List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
+            if (permissions.size() > 0) {
+                // sneaky user trying to get around 1 blog limit that applies
+                // only when group blogging is disabled
+                addError("createWebsite.oneBlogLimit");
+                return DISABLED_RETURN_CODE;
             }
-        } catch (WebloggerException ex) {
-            log.error("error checking for existing weblogs count", ex);
-            addError("generic.error.check.logs");
-            return DISABLED_RETURN_CODE;
         }
-        
+
         // pre-populate with some logical defaults
         getBean().setLocale(user.getLocale());
         getBean().setTimeZone(user.getTimeZone());
@@ -129,20 +119,16 @@ public class CreateWeblog extends UIAction {
     public String save() {
         
         User user = getAuthenticatedUser();
-        try {
-            if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
-                List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
-                if (permissions.size() > 0) {
-                    // sneaky user trying to get around 1 blog limit that applies
-                    // only when group blogging is disabled
-                    addError("createWebsite.oneBlogLimit");
-                    return "menu";
-                }
+        if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
+            List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
+            if (permissions.size() > 0) {
+                // sneaky user trying to get around 1 blog limit that applies
+                // only when group blogging is disabled
+                addError("createWebsite.oneBlogLimit");
+                return "menu";
             }
-        } catch (WebloggerException ex) {
-            log.error("error checking for existing weblogs count", ex);
         }
-        
+
         myValidate();
         
         if(!hasActionErrors()) {
@@ -159,22 +145,13 @@ public class CreateWeblog extends UIAction {
             // set weblog editor to default one, can be changed by blogger on blog settings page
             wd.setEditorPage(WebloggerStaticConfig.getProperty("plugins.defaultEditor", "editor-text.jsp"));
 
-            try {
-                // add weblog and flush
-                weblogManager.addWeblog(wd);
-                WebloggerFactory.flush();
-                
-                // tell the user their weblog was created
-                addMessage("createWebsite.created", getBean().getHandle());
-                
-                return SUCCESS;
-                
-            } catch (WebloggerException e) {
-                log.error("ERROR adding weblog", e);
-                // TODO: error handling
-                addError(e.getMessage());
-            }
-            
+            // add weblog and flush
+            weblogManager.addWeblog(wd);
+            WebloggerFactory.flush();
+
+            // tell the user his weblog was created
+            addMessage("createWebsite.created", getBean().getHandle());
+            return SUCCESS;
         }
         
         return INPUT;
@@ -210,8 +187,7 @@ public class CreateWeblog extends UIAction {
             }
         }
     }
-    
-    
+
     public List getThemes() {
         return themeManager.getEnabledSharedThemesList();
     }

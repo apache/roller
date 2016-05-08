@@ -176,7 +176,7 @@ public class User implements Serializable {
      *
      * @param newPassword The new password to be set.
      */
-    public void resetPassword(String newPassword) throws WebloggerException {
+    public void resetPassword(String newPassword) {
         
         String encrypt = WebloggerStaticConfig.getProperty("passwds.encryption.enabled");
         String algorithm = WebloggerStaticConfig.getProperty("passwds.encryption.algorithm");

@@ -27,9 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -42,6 +39,8 @@ import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Adds or edits a media file.
@@ -49,7 +48,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 @SuppressWarnings("serial")
 public class MediaFileEdit extends UIAction {
 
-    private static Log log = LogFactory.getLog(MediaFileEdit.class);
+    private static Logger log = LoggerFactory.getLogger(MediaFileEdit.class);
     private MediaFile bean = new MediaFile();
     private MediaDirectory directory;
     private String mediaFileId;
@@ -100,31 +99,21 @@ public class MediaFileEdit extends UIAction {
      * Prepares action class
      */
     public void prepare() {
-        try {
-            allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
-            if (!StringUtils.isEmpty(bean.getDirectoryId())) {
-                setDirectory(mediaFileManager.getMediaDirectory(bean.getDirectoryId()));
-            } else if (StringUtils.isNotEmpty(directoryName)) {
-                setDirectory(mediaFileManager.getMediaDirectoryByName(getActionWeblog(), directoryName));
-            } else {
-                MediaDirectory root = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
-                if (root == null) {
-                    root = mediaFileManager.createDefaultMediaDirectory(getActionWeblog());
-                }
-                setDirectory(root);
+        allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
+        if (!StringUtils.isEmpty(bean.getDirectoryId())) {
+            setDirectory(mediaFileManager.getMediaDirectory(bean.getDirectoryId()));
+        } else if (StringUtils.isNotEmpty(directoryName)) {
+            setDirectory(mediaFileManager.getMediaDirectoryByName(getActionWeblog(), directoryName));
+        } else {
+            MediaDirectory root = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
+            if (root == null) {
+                root = mediaFileManager.createDefaultMediaDirectory(getActionWeblog());
             }
-            directoryName = getDirectory().getName();
-            bean.setDirectoryId(getDirectory().getId());
-        } catch (WebloggerException ex) {
-            log.error("Error looking up media file directory", ex);
-        } finally {
-            // flush
-            try {
-                WebloggerFactory.flush();
-            } catch (WebloggerException e) {
-                // ignored
-            }
+            setDirectory(root);
         }
+        directoryName = getDirectory().getName();
+        bean.setDirectoryId(getDirectory().getId());
+        WebloggerFactory.flush();
     }
 
     /**
@@ -174,7 +163,7 @@ public class MediaFileEdit extends UIAction {
                 bean.setLength(mediaFile.getLength());
                 bean.setContentType(mediaFile.getContentType());
             } catch (Exception e) {
-                log.error("Error uploading file " + bean.getName(), e);
+                log.error("Error uploading file {}", bean.getName(), e);
                 addError("uploadFiles.error.upload", bean.getName());
             }
         }
@@ -266,7 +255,7 @@ public class MediaFileEdit extends UIAction {
 
                     // Move file
                     if (!getBean().getDirectoryId().equals(mediaFile.getDirectory().getId())) {
-                        log.debug("Processing move of " + mediaFile.getId());
+                        log.debug("Processing move of {}", mediaFile.getId());
                         MediaDirectory targetDirectory = mediaFileManager.getMediaDirectory(getBean().getDirectoryId());
                         mediaFileManager.moveMediaFile(mediaFile, targetDirectory);
                     }
@@ -277,7 +266,7 @@ public class MediaFileEdit extends UIAction {
                     return SUCCESS;
                 }
             } catch (Exception e) {
-                log.error("Error uploading file " + bean.getName(), e);
+                log.error("Error uploading file {}", bean.getName(), e);
                 addError("mediaFileAdd.errorUploading", bean.getName());
             }
         }

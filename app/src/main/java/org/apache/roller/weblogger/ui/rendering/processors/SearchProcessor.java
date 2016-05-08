@@ -28,10 +28,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
@@ -42,6 +39,8 @@ import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,7 +53,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/tb-ui/rendering/search/**")
 public class SearchProcessor {
 
-    private static Log log = LogFactory.getLog(SearchProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(SearchProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/search";
 
@@ -99,7 +98,7 @@ public class SearchProcessor {
             // now make sure the specified weblog really exists
             weblog = searchRequest.getWeblog();
             if (weblog == null) {
-                log.info("Weblog not found: " + searchRequest.getWeblogHandle());
+                log.info("Weblog not found: {}", searchRequest.getWeblogHandle());
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -124,11 +123,10 @@ public class SearchProcessor {
 
             // if still null then that's a problem
             if (page == null) {
-                throw new WebloggerException("Could not lookup default page "
-                        + "for weblog " + weblog.getHandle());
+                throw new IllegalStateException("Could not lookup default page for weblog " + weblog.getHandle());
             }
         } catch (Exception e) {
-            log.error("Error getting default page for weblog " + weblog.getHandle(), e);
+            log.error("Error getting default page for weblog {}", weblog.getHandle(), e);
         }
 
         // set the content type
@@ -136,38 +134,27 @@ public class SearchProcessor {
 
         // looks like we need to render content
         Map<String, Object> model;
-        try {
-            // populate the rendering model
-            Map<String, Object> initData = new HashMap<>();
-            initData.put("request", request);
+        // populate the rendering model
+        Map<String, Object> initData = new HashMap<>();
+        initData.put("request", request);
 
-            // We need the 'parsedRequest' to be a pageRequest so other models
-            // used in a search are properly loaded, which means that searchRequest
-            // needs its own custom initData property aside from the standard
-            // weblogRequest.
-            WeblogPageRequest pageRequest = new WeblogPageRequest();
-            pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
-            pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
-            pageRequest.setDeviceType(searchRequest.getDeviceType());
-            initData.put("parsedRequest", pageRequest);
-            initData.put("searchRequest", searchRequest);
+        // We need the 'parsedRequest' to be a pageRequest so other models
+        // used in a search are properly loaded, which means that searchRequest
+        // needs its own custom initData property aside from the standard
+        // weblogRequest.
+        WeblogPageRequest pageRequest = new WeblogPageRequest();
+        pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
+        pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
+        pageRequest.setDeviceType(searchRequest.getDeviceType());
+        initData.put("parsedRequest", pageRequest);
+        initData.put("searchRequest", searchRequest);
 
-            // Load models for pages
-            model = Model.getModelMap("searchModelSet", initData);
+        // Load models for pages
+        model = Model.getModelMap("searchModelSet", initData);
 
-            // Load special models for site-wide blog
-            if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
-                model.putAll(Model.getModelMap("siteModelSet", initData));
-            }
-
-        } catch (WebloggerException ex) {
-            log.error("Error loading model objects for page", ex);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
+        // Load special models for site-wide blog
+        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+            model.putAll(Model.getModelMap("siteModelSet", initData));
         }
 
         // lookup Renderer we are going to use

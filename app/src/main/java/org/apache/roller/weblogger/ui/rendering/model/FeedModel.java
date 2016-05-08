@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -66,11 +65,11 @@ public class FeedModel implements Model {
     }
 
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) {
         this.feedRequest = (WeblogFeedRequest) initData.get("parsedRequest");
 
         if (feedRequest == null) {
-            throw new WebloggerException("Missing WeblogFeedRequest object");
+            throw new IllegalStateException("Missing WeblogFeedRequest object");
         }
     }
 

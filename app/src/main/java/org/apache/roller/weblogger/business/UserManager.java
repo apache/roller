@@ -46,18 +46,16 @@ public interface UserManager {
      * the new user is the first user and give that user the admin role if so.
      *
      * @param newUser User object to be added.
-     * @throws WebloggerException If there is a problem.
      */
-    void addUser(User newUser) throws WebloggerException;
+    void addUser(User newUser);
     
     
     /**
      * Save a user.
      *
      * @param user User to be saved.
-     * @throws WebloggerException If there is a problem.
      */
-    void saveUser(User user) throws WebloggerException;
+    void saveUser(User user);
     
     
     /**
@@ -72,7 +70,7 @@ public interface UserManager {
     /**
      * Get count of enabled users
      */    
-    long getUserCount() throws WebloggerException;
+    long getUserCount();
     
     
     /**
@@ -127,8 +125,7 @@ public interface UserManager {
     User getUserByUserName(String userName, Boolean enabled)
         throws WebloggerException;
 
-    User getUserByScreenName(String screenName)
-            throws WebloggerException;
+    User getUserByScreenName(String screenName);
 
     /**
      * Lookup users whose usernames or email addresses start with a string.
@@ -194,8 +191,7 @@ public interface UserManager {
      * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
      */
-    void grantWeblogRole(User user, Weblog weblog, WeblogRole role)
-            throws WebloggerException;
+    void grantWeblogRole(User user, Weblog weblog, WeblogRole role);
 
     /**
      * Grant user specific WeblogRole for a weblog.
@@ -203,8 +199,7 @@ public interface UserManager {
      * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
      */
-    void grantWeblogRole(String userId, Weblog weblog, WeblogRole role)
-            throws WebloggerException;
+    void grantWeblogRole(String userId, Weblog weblog, WeblogRole role);
 
 
     /**
@@ -216,16 +211,13 @@ public interface UserManager {
     void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole role)
             throws WebloggerException;
 
-    
     /**
      * Confirm user's participation with the specified weblog or throw exception if no pending invitation exists.
      * (changes state of WeblogRole record to pending = false)
      * @param user    User granted invitation
      * @param weblog  Weblog granted invitation to
      */
-    void acceptWeblogInvitation(User user, Weblog weblog)
-            throws WebloggerException;
-
+    void acceptWeblogInvitation(User user, Weblog weblog);
     
     /**
      * Decline participation within specified weblog or throw exception if no pending invitation exists.
@@ -233,8 +225,7 @@ public interface UserManager {
      * @param user    User granted invitation
      * @param weblog  Weblog granted invitation to
      */
-    void declineWeblogInvitation(User user, Weblog weblog)
-            throws WebloggerException;
+    void declineWeblogInvitation(User user, Weblog weblog);
 
     
     /**
@@ -242,24 +233,20 @@ public interface UserManager {
      * @param user  User to remove WeblogRole from
      * @param weblog  Weblog to revoke WeblogRole from
      */
-    void revokeWeblogRole(User user, Weblog weblog)
-            throws WebloggerException;
+    void revokeWeblogRole(User user, Weblog weblog);
 
     
     /**
      * Get all of user's WeblogRoles.
      */
-    List<UserWeblogRole> getWeblogRoles(User user)
-            throws WebloggerException;
-    
+    List<UserWeblogRole> getWeblogRoles(User user);
 
     List<UserWeblogRole> getWeblogRolesIncludingPending(User user) throws WebloggerException;
 
     /**
      * Get all active User WeblogRoles associated with a weblog.
      */
-    List<UserWeblogRole> getWeblogRoles(Weblog weblog)
-            throws WebloggerException;
+    List<UserWeblogRole> getWeblogRoles(Weblog weblog);
 
     /**
      * Get all pending User WeblogRoles associated with a weblog.
@@ -270,8 +257,7 @@ public interface UserManager {
     /**
      * Get all User WeblogRoles (pending or actual) for a weblog.
      */
-    List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog)
-            throws WebloggerException;
+    List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog);
 
 
     /**

@@ -26,19 +26,20 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A list view of entries of a weblog.
  */
 public class Entries extends UIAction {
+
+    private static Logger log = LoggerFactory.getLogger(Entries.class);
 
     private WeblogEntryManager weblogEntryManager;
 
@@ -52,8 +53,6 @@ public class Entries extends UIAction {
         this.urlStrategy = urlStrategy;
     }
 
-    private static Log log = LogFactory.getLog(Entries.class);
-    
     // number of comments to show per page
     private static final int COUNT = 30;
     
@@ -92,41 +91,36 @@ public class Entries extends UIAction {
             log.debug("entries bean is ...\n"+getBean().toString());
         }
         
-        List<WeblogEntry> entries = null;
+        List<WeblogEntry> entries;
         boolean hasMore = false;
-        try {
-            String status = getBean().getStatus();
-            
-            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-            wesc.setWeblog(getActionWeblog());
-            wesc.setStartDate(getBean().getStartDate());
-            wesc.setEndDate(getBean().getEndDate());
-            wesc.setCatName(getBean().getCategoryName());
-            wesc.setTags(getBean().getTags());
-            wesc.setStatus("ALL".equals(status) ? null : WeblogEntry.PubStatus.valueOf(status));
-            wesc.setText(getBean().getText());
-            wesc.setSortBy(getBean().getSortBy());
-            wesc.setOffset(getBean().getPage() * COUNT);
-            wesc.setMaxResults(COUNT + 1);
-            List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(wesc);
-            entries = new ArrayList<>();
-            entries.addAll(rawEntries);
-            if (entries.size() > 0) {
-                log.debug("query found "+rawEntries.size()+" results");
-                
-                if(rawEntries.size() > COUNT) {
-                    entries.remove(entries.size()-1);
-                    hasMore = true;
-                }
-                
-                setFirstEntry(entries.get(0));
-                setLastEntry(entries.get(entries.size()-1));
+        String status = getBean().getStatus();
+
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(getActionWeblog());
+        wesc.setStartDate(getBean().getStartDate());
+        wesc.setEndDate(getBean().getEndDate());
+        wesc.setCatName(getBean().getCategoryName());
+        wesc.setTags(getBean().getTags());
+        wesc.setStatus("ALL".equals(status) ? null : WeblogEntry.PubStatus.valueOf(status));
+        wesc.setText(getBean().getText());
+        wesc.setSortBy(getBean().getSortBy());
+        wesc.setOffset(getBean().getPage() * COUNT);
+        wesc.setMaxResults(COUNT + 1);
+        List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(wesc);
+        entries = new ArrayList<>();
+        entries.addAll(rawEntries);
+        if (entries.size() > 0) {
+            log.debug("query found "+rawEntries.size()+" results");
+
+            if(rawEntries.size() > COUNT) {
+                entries.remove(entries.size()-1);
+                hasMore = true;
             }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up entries", ex);
-            addError("Error looking up entries");
+
+            setFirstEntry(entries.get(0));
+            setLastEntry(entries.get(entries.size()-1));
         }
-        
+
         // build entries pager
         String baseUrl = buildBaseUrl();
         setPager(new EntriesPager(baseUrl, getBean().getPage(), entries, hasMore));

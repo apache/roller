@@ -41,12 +41,11 @@ public interface Model {
     
     /**
      * Initialize.
-     * @throws ClassCastException if the model is not fed the specific objects it is expecting
-     * @throws WebloggerException if required objects are null or other processing problem.
+     * @throws IllegalArgumentException if the model is not fed the specific objects it is expecting
      */
-    void init(Map params) throws ClassCastException, WebloggerException;
+    void init(Map params) throws IllegalStateException;
 
-    static Map<String, Object> getModelMap(String modelBean, Map<String, Object> initData) throws WebloggerException {
+    static Map<String, Object> getModelMap(String modelBean, Map<String, Object> initData) {
         HashMap<String, Object> modelMap = new HashMap<>();
         Set modelSet = WebloggerFactory.getContext().getBean(modelBean, Set.class);
         for (Object obj : modelSet) {

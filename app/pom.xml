@@ -66,7 +66,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.6.1</version>
+            <version>1.7.16</version>
             <scope>runtime</scope>
         </dependency-->
 
@@ -95,10 +95,16 @@
             <version>4.5.2</version>
         </dependency>
 
-        <!-- route Commons Logging to Log4j2 -->
+        <!-- route Commons Logging, SLF4j to Log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jcl</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j2.version}</version>
         </dependency>
 
@@ -141,7 +147,7 @@
 
         <dependency>
             <groupId>com.rometools</groupId>
-            <artifactId>rome-fetcher</artifactId>
+            <artifactId>rome</artifactId>
             <version>1.6.0</version>
             <scope>compile</scope>
         </dependency>

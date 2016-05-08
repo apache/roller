@@ -20,15 +20,14 @@
  */
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
 
 
@@ -36,7 +35,7 @@ import org.springframework.mobile.device.DeviceType;
  * RendererFactory for Velocity, creates VelocityRenderers.
  */
 public class VelocityRendererFactory implements RendererFactory {
-    private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
+    private static Logger log = LoggerFactory.getLogger(VelocityRendererFactory.class);
     
     public Renderer getRenderer(Template template, DeviceType deviceType) {
         Renderer renderer = null;
@@ -47,11 +46,7 @@ public class VelocityRendererFactory implements RendererFactory {
         }
 
         // nothing we can do with null values
-        try {
-            tr = template.getTemplateRendition(RenditionType.NORMAL);
-        } catch (WebloggerException e) {
-            return null;
-        }
+        tr = template.getTemplateRendition(RenditionType.NORMAL);
 
         if (tr == null) {
             return null;
@@ -61,10 +56,8 @@ public class VelocityRendererFactory implements RendererFactory {
             // standard velocity template
             try {
                renderer = new VelocityRenderer(template, deviceType);
-            } catch(Exception ex) {
+            } catch (Exception ex) {
 				log.error("ERROR creating VelocityRenderer", ex);
-                // some kind of exception so we don't have a renderer
-                // we do catching/logging in VelocityRenderer constructor
                 return null;
             }            
         }

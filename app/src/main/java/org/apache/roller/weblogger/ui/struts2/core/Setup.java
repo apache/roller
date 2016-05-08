@@ -21,9 +21,6 @@
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.Collection;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -34,13 +31,10 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
-
 /**
  * Page used to display weblogger install instructions.
  */
 public class Setup extends UIAction {
-
-    private static final Log LOG = LogFactory.getLog(Setup.class);
 
     private PropertiesManager propertiesManager;
 
@@ -84,42 +78,23 @@ public class Setup extends UIAction {
     }
 
     public String execute() {
-        
-        try {
-            setWeblogs(weblogManager.getWeblogs(true, null, null, 0, -1));
-        } catch (WebloggerException ex) {
-            LOG.error("Error getting weblogs", ex);
-            addError("frontpageConfig.weblogs.error");
-        }
-
-        try {
-            setUserCount(userManager.getUserCount());
-            setBlogCount(weblogManager.getWeblogCount());
-        } catch (WebloggerException ex) {
-            LOG.error("Error getting user/weblog counts", ex);
-        }
-        
+        setWeblogs(weblogManager.getWeblogs(true, null, null, 0, -1));
+        setUserCount(userManager.getUserCount());
+        setBlogCount(weblogManager.getWeblogCount());
         return SUCCESS;
     }
 
     public String save() {
-        try {
-            RuntimeConfigProperty frontpageBlogProp = propertiesManager.getProperty("site.frontpage.weblog.handle");
-            frontpageBlogProp.setValue(frontpageBlog);
-            propertiesManager.saveProperty(frontpageBlogProp);
+        RuntimeConfigProperty frontpageBlogProp = propertiesManager.getProperty("site.frontpage.weblog.handle");
+        frontpageBlogProp.setValue(frontpageBlog);
+        propertiesManager.saveProperty(frontpageBlogProp);
 
-            RuntimeConfigProperty aggregatedProp = propertiesManager.getProperty("site.frontpage.weblog.aggregated");
-            aggregatedProp.setValue(aggregated.toString());
-            propertiesManager.saveProperty(aggregatedProp);
+        RuntimeConfigProperty aggregatedProp = propertiesManager.getProperty("site.frontpage.weblog.aggregated");
+        aggregatedProp.setValue(aggregated.toString());
+        propertiesManager.saveProperty(aggregatedProp);
 
-            WebloggerFactory.flush();
-
-            addMessage("frontpageConfig.values.saved");
-
-        } catch (WebloggerException ex) {
-            LOG.error("ERROR saving frontpage configuration", ex);
-            addError("frontpageConfig.values.error");
-        }
+        WebloggerFactory.flush();
+        addMessage("frontpageConfig.values.saved");
         return "home";
     }
     

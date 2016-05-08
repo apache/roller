@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,8 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
@@ -34,6 +30,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,10 +48,9 @@ import java.util.stream.Collectors;
  */
 @RestController
 public class ThemeEdit extends UIAction {
-
     private static final long serialVersionUID = 4644653507344432426L;
 
-    private static Log log = LogFactory.getLog(Templates.class);
+    private static Logger log = LoggerFactory.getLogger(ThemeEdit.class);
 
     @Autowired
     private ThemeManager themeManager;
@@ -112,58 +108,47 @@ public class ThemeEdit extends UIAction {
         // make sure theme is valid and enabled
         SharedTheme newTheme;
 
-        try {
-            // before switching themes, ensure no conflict with already existing blog-only themes.
-            newTheme = themeManager.getSharedTheme(selectedThemeId);
+        // before switching themes, ensure no conflict with already existing blog-only themes.
+        newTheme = themeManager.getSharedTheme(selectedThemeId);
 
-            WeblogTheme oldTheme = new WeblogTheme(weblogManager, getActionWeblog(),
-                    themeManager.getSharedTheme(getActionWeblog().getTheme()));
+        WeblogTheme oldTheme = new WeblogTheme(weblogManager, getActionWeblog(),
+                themeManager.getSharedTheme(getActionWeblog().getTheme()));
 
-            oldTheme.getTemplates().stream().filter(
-                    old -> old.getDerivation() == TemplateDerivation.NONSHARED).forEach(old -> {
-                if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
-                    addError("themeEditor.conflicting.singleton.role", old.getRole().getReadableName());
-                } else if (newTheme.getTemplateByName(old.getName()) != null) {
-                    addError("themeEditor.conflicting.name", old.getName());
-                } else {
-                    String maybePath = old.getRelativePath();
-                    if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
-                        addError("themeEditor.conflicting.link", Arrays.asList(old.getName(), old.getRelativePath()));
-                    }
-                }
-            });
-
-            if (!hasActionErrors()) {
-                try {
-                    // Remove old template overrides and their renditions
-                    List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(getActionWeblog());
-
-                    for (WeblogTemplate template : oldTemplates) {
-                        // Remove template overrides and their renditions
-                        if (template.getDerivation() == TemplateDerivation.OVERRIDDEN) {
-                            weblogManager.removeTemplate(template);
-                        }
-                    }
-
-                    weblog.setTheme(selectedThemeId);
-
-                    log.debug("Saving theme " + selectedThemeId + " for weblog " + weblog.getHandle());
-
-                    // save updated weblog and flush
-                    weblogManager.saveWeblog(weblog);
-                    persistenceStrategy.flushAndInvalidateWeblog(weblog);
-
-                    // Theme set to..
-                    addMessage("themeEditor.setTheme.success", newTheme.getName());
-
-                } catch (WebloggerException re) {
-                    log.error("Error saving weblog - " + getActionWeblog().getHandle(), re);
-                    addError("generic.error.check.logs");
+        oldTheme.getTemplates().stream().filter(
+                old -> old.getDerivation() == TemplateDerivation.NONSHARED).forEach(old -> {
+            if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
+                addError("themeEditor.conflicting.singleton.role", old.getRole().getReadableName());
+            } else if (newTheme.getTemplateByName(old.getName()) != null) {
+                addError("themeEditor.conflicting.name", old.getName());
+            } else {
+                String maybePath = old.getRelativePath();
+                if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
+                    addError("themeEditor.conflicting.link", Arrays.asList(old.getName(), old.getRelativePath()));
                 }
             }
-        } catch (Exception ex) {
-            log.warn(ex);
-            addError("Theme not found");
+        });
+
+        if (!hasActionErrors()) {
+            // Remove old template overrides and their renditions
+            List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(getActionWeblog());
+
+            for (WeblogTemplate template : oldTemplates) {
+                // Remove template overrides and their renditions
+                if (template.getDerivation() == TemplateDerivation.OVERRIDDEN) {
+                    weblogManager.removeTemplate(template);
+                }
+            }
+
+            weblog.setTheme(selectedThemeId);
+
+            log.debug("Saving theme {} for weblog {}", selectedThemeId, weblog.getHandle());
+
+            // save updated weblog and flush
+            weblogManager.saveWeblog(weblog);
+            persistenceStrategy.flushAndInvalidateWeblog(weblog);
+
+            // Theme set to..
+            addMessage("themeEditor.setTheme.success", newTheme.getName());
         }
 
         return execute();

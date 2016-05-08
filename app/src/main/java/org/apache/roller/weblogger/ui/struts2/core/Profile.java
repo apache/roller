@@ -23,10 +23,7 @@ package org.apache.roller.weblogger.ui.struts2.core;
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -35,13 +32,17 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.RollbackException;
 
 
 /**
  * Allows user to edit his/her profile.
  */
 public class Profile extends UIAction {
-    private static Log log = LogFactory.getLog(Profile.class);
+    private static Logger log = LoggerFactory.getLogger(Profile.class);
     
     private User bean = new User();
     private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
@@ -81,9 +82,7 @@ public class Profile extends UIAction {
 
     public String save() {
         myValidate();
-
         if (!hasActionErrors()) {
-
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
 
@@ -96,13 +95,9 @@ public class Profile extends UIAction {
             // If user set both password and passwordConfirm then reset password
             if (!StringUtils.isEmpty(bean.getPasswordText()) &&
                     !StringUtils.isEmpty(bean.getPasswordConfirm())) {
-                try {
-                    existingUser.resetPassword(bean.getPasswordText().trim());
-                    bean.setPasswordText(null);
-                    bean.setPasswordConfirm(null);
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
+                existingUser.resetPassword(bean.getPasswordText().trim());
+                bean.setPasswordText(null);
+                bean.setPasswordConfirm(null);
             }
 
             try {
@@ -111,7 +106,7 @@ public class Profile extends UIAction {
                 WebloggerFactory.flush();
                 addMessage("generic.changes.saved");
                 return SUCCESS;
-            } catch (WebloggerException ex) {
+            } catch (RollbackException ex) {
                 log.error("ERROR in action", ex);
                 addError("Unexpected error doing profile save");
             }
@@ -138,14 +133,9 @@ public class Profile extends UIAction {
 
         // check that screen name is not taken
         if (!StringUtils.isEmpty(bean.getScreenName()) && !bean.getScreenName().equals(realUser.getScreenName())) {
-            try {
-                if (userManager.getUserByScreenName(bean.getScreenName()) != null) {
-                    addError("error.add.user.screenNameInUse");
-                    bean.setScreenName(null);
-                }
-            } catch (WebloggerException ex) {
-                log.error("error checking for user", ex);
-                addError("generic.error.check.logs");
+            if (userManager.getUserByScreenName(bean.getScreenName()) != null) {
+                addError("error.add.user.screenNameInUse");
+                bean.setScreenName(null);
             }
         }
     }

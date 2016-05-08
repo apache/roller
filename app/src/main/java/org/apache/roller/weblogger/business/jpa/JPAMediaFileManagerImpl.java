@@ -20,9 +20,8 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.FileContent;
@@ -42,8 +41,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -52,8 +51,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     private final JPAPersistenceStrategy strategy;
     private final FileContentManager fileContentManager;
 
-    private static Log log = LogFactory.getFactory().getInstance(
-            JPAMediaFileManagerImpl.class);
+    private static Logger log = LoggerFactory.getLogger(JPAMediaFileManagerImpl.class);
 
     /**
      * Creates a new instance of MediaFileManagerImpl
@@ -63,11 +61,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         this.strategy = persistenceStrategy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void moveMediaFiles(Collection<MediaFile> mediaFiles,
-            MediaDirectory targetDirectory) throws WebloggerException {
+    @Override
+    public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaDirectory targetDirectory) {
 
         List<MediaFile> moved = new ArrayList<>();
         moved.addAll(mediaFiles);
@@ -92,83 +87,64 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         strategy.refresh(targetDirectory);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void moveMediaFile(MediaFile mediaFile,
-            MediaDirectory targetDirectory) throws WebloggerException {
-        moveMediaFiles(Arrays.asList(mediaFile), targetDirectory);
+    @Override
+    public void moveMediaFile(MediaFile mediaFile, MediaDirectory targetDirectory) {
+        moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MediaDirectory createMediaDirectory(Weblog weblog,
-                                                   String requestedName) throws WebloggerException {
+    @Override
+    public MediaDirectory createMediaDirectory(Weblog weblog, String requestedName) {
 
         requestedName = requestedName.startsWith("/") ? requestedName.substring(1) : requestedName;
 
         if (requestedName.equals("") || requestedName.equals("default")) {
             // Default cannot be created using this method.
             // Use createDefaultMediaDirectory instead
-            throw new WebloggerException("Invalid media file directory name!");
+            throw new IllegalArgumentException("Invalid media file directory name!");
         }
 
         MediaDirectory newDirectory;
 
         if (weblog.hasMediaDirectory(requestedName)) {
-            throw new WebloggerException("Directory exists");
+            throw new IllegalArgumentException("Directory exists");
         } else {
             newDirectory = new MediaDirectory(weblog, requestedName);
             this.strategy.store(newDirectory);
             this.strategy.flush();
-            log.debug("Created new Directory " + requestedName);
+            log.debug("Created new Directory {}", requestedName);
         }
         return newDirectory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MediaDirectory createDefaultMediaDirectory(Weblog weblog)
-            throws WebloggerException {
+    @Override
+    public MediaDirectory createDefaultMediaDirectory(Weblog weblog) {
         MediaDirectory defaultDirectory = new MediaDirectory(weblog, "default");
         this.strategy.store(defaultDirectory);
         return defaultDirectory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void createMediaFile(Weblog weblog, MediaFile mediaFile,
-            RollerMessages errors) throws WebloggerException {
+    @Override
+    public void createMediaFile(Weblog weblog, MediaFile mediaFile, RollerMessages errors) throws IOException {
+        if (!fileContentManager.canSave(weblog, mediaFile.getName(),
+                mediaFile.getContentType(), mediaFile.getLength(), errors)) {
+            return;
+        }
+        strategy.store(mediaFile);
 
-        try {
-            if (!fileContentManager.canSave(weblog, mediaFile.getName(),
-                    mediaFile.getContentType(), mediaFile.getLength(), errors)) {
-                return;
-            }
-            strategy.store(mediaFile);
+        // Refresh associated parent for changes
+        strategy.flush();
+        strategy.refresh(mediaFile.getDirectory());
 
-            // Refresh associated parent for changes
-            strategy.flush();
-            strategy.refresh(mediaFile.getDirectory());
+        fileContentManager.saveFileContent(weblog, mediaFile.getId(), mediaFile.getInputStream());
 
-            fileContentManager.saveFileContent(weblog, mediaFile.getId(),
-                    mediaFile.getInputStream());
-
-            if (mediaFile.isImageFile()) {
-                updateThumbnail(mediaFile);
-            }
-        } catch (IOException e) {
-            throw new WebloggerException(e);
+        if (mediaFile.isImageFile()) {
+            updateThumbnail(mediaFile);
         }
     }
 
     private void updateThumbnail(MediaFile mediaFile) {
         try {
-            FileContent fc = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
-                    mediaFile.getId());
+            FileContent fc = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId());
             BufferedImage img;
 
             img = ImageIO.read(fc.getInputStream());
@@ -182,10 +158,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             int newHeight = mediaFile.getThumbnailHeight();
 
             // create thumbnail image
-            Image newImage = img.getScaledInstance(newWidth, newHeight,
-                    Image.SCALE_SMOOTH);
-            BufferedImage tmp = new BufferedImage(newWidth, newHeight,
-                    BufferedImage.TYPE_INT_ARGB);
+            Image newImage = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = tmp.createGraphics();
             g2.drawImage(newImage, 0, 0, newWidth, newHeight, null);
             g2.dispose();
@@ -205,11 +179,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void updateMediaFile(Weblog weblog, MediaFile mediaFile)
-            throws WebloggerException {
+    @Override
+    public void updateMediaFile(Weblog weblog, MediaFile mediaFile) {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
         strategy.store(mediaFile);
 
@@ -220,85 +191,62 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         updateWeblogLastModifiedDate(weblog);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void updateMediaFile(Weblog weblog, MediaFile mediaFile,
-            InputStream is) throws WebloggerException {
-        try {
-            mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
-            strategy.store(mediaFile);
+    @Override
+    public void updateMediaFile(Weblog weblog, MediaFile mediaFile, InputStream is) throws IOException {
+        mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+        strategy.store(mediaFile);
 
-            strategy.flush();
-            // Refresh associated parent for changes
-            strategy.refresh(mediaFile.getDirectory());
+        strategy.flush();
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
 
-            updateWeblogLastModifiedDate(weblog);
+        updateWeblogLastModifiedDate(weblog);
 
-            RollerMessages msgs = new RollerMessages();
-            if (!fileContentManager.canSave(weblog, mediaFile.getName(),
-                    mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
-                throw new IOException(msgs.toString());
-            }
-            fileContentManager.saveFileContent(weblog, mediaFile.getId(), is);
+        RollerMessages msgs = new RollerMessages();
+        if (!fileContentManager.canSave(weblog, mediaFile.getName(),
+                mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
+            throw new IOException(msgs.toString());
+        }
+        fileContentManager.saveFileContent(weblog, mediaFile.getId(), is);
 
-            if (mediaFile.isImageFile()) {
-                updateThumbnail(mediaFile);
-            }
-        } catch (IOException e) {
-            throw new WebloggerException(e);
+        if (mediaFile.isImageFile()) {
+            updateThumbnail(mediaFile);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MediaFile getMediaFile(String id) throws WebloggerException {
+    @Override
+    public MediaFile getMediaFile(String id) throws IOException {
         return getMediaFile(id, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MediaFile getMediaFile(String id, boolean includeContent)
-            throws WebloggerException {
+    @Override
+    public MediaFile getMediaFile(String id, boolean includeContent) throws IOException {
+        MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
+        if (includeContent) {
+            FileContent content = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), id);
+            mediaFile.setContent(content);
 
-        try {
-            MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
-            if (includeContent) {
-                FileContent content = fileContentManager.getFileContent(mediaFile.getDirectory()
-                        .getWeblog(), id);
-                mediaFile.setContent(content);
-
-                try {
-                    FileContent thumbnail = fileContentManager.getFileContent(mediaFile
-                            .getDirectory().getWeblog(), id + "_sm");
-                    mediaFile.setThumbnailContent(thumbnail);
-
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Cannot load thumbnail for image " + id, e);
-                    } else {
-                        log.warn("Cannot load thumbnail for image " + id);
-                    }
+            try {
+                FileContent thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
+                        id + "_sm");
+                mediaFile.setThumbnailContent(thumbnail);
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Cannot load thumbnail for image {}", id, e);
+                } else {
+                    log.warn("Cannot load thumbnail for image {}", id);
                 }
             }
-            return mediaFile;
-        } catch (IOException e) {
-            throw new WebloggerException(e);
         }
-
+        return mediaFile;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MediaDirectory getMediaDirectoryByName(Weblog weblog,
-                                                      String name) throws WebloggerException {
+    @Override
+    public MediaDirectory getMediaDirectoryByName(Weblog weblog, String name) {
 
         name = name.startsWith("/") ? name.substring(1) : name;
 
-        log.debug("Looking up weblog|media file directory: " + weblog.getHandle() + "|" + name);
+        log.debug("Looking up weblog|media file directory {}|{}", weblog.getHandle(), name);
 
         TypedQuery<MediaDirectory> q = this.strategy
                 .getNamedQuery("MediaDirectory.getByWeblogAndName", MediaDirectory.class);
@@ -311,46 +259,31 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MediaDirectory getMediaDirectory(String id)
-            throws WebloggerException {
+    @Override
+    public MediaDirectory getMediaDirectory(String id) {
         return this.strategy.load(MediaDirectory.class, id);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MediaDirectory getDefaultMediaDirectory(Weblog weblog)
-            throws WebloggerException {
+    @Override
+    public MediaDirectory getDefaultMediaDirectory(Weblog weblog) {
         MediaDirectory temp = getMediaDirectoryByName(weblog, "default");
         if (temp == null) {
-            throw new WebloggerException("Required default Media Directory for Weblog: " + weblog.getHandle() + " is missing.");
+            throw new IllegalStateException("Required default Media Directory for Weblog: " + weblog.getHandle() + " is missing.");
         }
         return temp;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<MediaDirectory> getMediaDirectories(Weblog weblog)
-            throws WebloggerException {
-
+    @Override
+    public List<MediaDirectory> getMediaDirectories(Weblog weblog) {
         TypedQuery<MediaDirectory> q = this.strategy.getNamedQuery("MediaDirectory.getByWeblog",
                 MediaDirectory.class);
         q.setParameter(1, weblog);
         return q.getResultList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void removeMediaFile(Weblog weblog, MediaFile mediaFile)
-            throws WebloggerException {
-
+    @Override
+    public void removeMediaFile(Weblog weblog, MediaFile mediaFile) {
         this.strategy.remove(mediaFile);
-
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
 
@@ -363,7 +296,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
-    public void removeAllFiles(Weblog weblog) throws WebloggerException {
+    public void removeAllFiles(Weblog weblog) {
         List<MediaDirectory> list = getMediaDirectories(weblog);
 
         for (MediaDirectory directory : list) {
@@ -371,8 +304,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
-    public void removeMediaDirectory(MediaDirectory dir)
-            throws WebloggerException {
+    public void removeMediaDirectory(MediaDirectory dir) {
         if (dir == null) {
             return;
         }
@@ -400,7 +332,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         strategy.flush();
     }
 
-    private void updateWeblogLastModifiedDate(Weblog weblog) throws WebloggerException {
+    private void updateWeblogLastModifiedDate(Weblog weblog) {
         weblog.setLastModified(new java.util.Date());
         strategy.store(weblog);
     }

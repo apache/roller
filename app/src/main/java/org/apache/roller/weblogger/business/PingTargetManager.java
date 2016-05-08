@@ -59,18 +59,16 @@ public interface PingTargetManager {
      *
      * @param id id of the ping target to be retrieved.
      * @return the ping target whose id is specified.
-     * @throws WebloggerException
      */
-    PingTarget getPingTarget(String id) throws WebloggerException;
+    PingTarget getPingTarget(String id);
     
     
     /**
      * Get a list of the common (shared) ping targets.
      * 
      * @return the list of common ping targets as a <code>List</code> of {@link PingTarget objects
-     * @throws WebloggerException
      */
-    List<PingTarget> getCommonPingTargets() throws WebloggerException;
+    List<PingTarget> getCommonPingTargets();
 
     /**
      * Check if the ping target name already exists in the weblogger instance.
@@ -108,9 +106,8 @@ public interface PingTargetManager {
      * Store an auto ping configuration.
      *
      * @param autoPing the auto ping configuration
-     * @throws WebloggerException
      */
-    void saveAutoPing(AutoPing autoPing) throws WebloggerException;
+    void saveAutoPing(AutoPing autoPing);
 
 
     /**
@@ -154,9 +151,9 @@ public interface PingTargetManager {
     /**
      * Get all of the auto ping configurations for the given website.
      *
-     * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
+     * @return a list of auto ping configurations for the given website as <code>AutoPing</code> objects.
      */
-    List<AutoPing> getAutoPingsByWeblog(Weblog website) throws WebloggerException;
+    List<AutoPing> getAutoPingsByWeblog(Weblog website);
 
 
     /**

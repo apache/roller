@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
@@ -43,23 +42,22 @@ public interface WeblogManager {
      * creates categories and other objects required for new weblog.
      * @param newWeblog New weblog to be created, must have creator.
      */
-    void addWeblog(Weblog newWeblog) throws WebloggerException;
+    void addWeblog(Weblog newWeblog);
     
     /**
      * Store a single weblog.
      */
-    void saveWeblog(Weblog data) throws WebloggerException;
+    void saveWeblog(Weblog data);
 
     /**
      * Remove weblog object.
      */
-    void removeWeblog(Weblog weblog) throws WebloggerException;
+    void removeWeblog(Weblog weblog);
     
     /**
      * Get weblog object by name.
      */
-    Weblog getWeblog(String id) throws WebloggerException;
-    
+    Weblog getWeblog(String id);
     
     /**
      * Get weblog specified by handle (or null if enabled weblog not found).
@@ -67,15 +65,13 @@ public interface WeblogManager {
      * @return Weblog instance or null if not found
      */
     Weblog getWeblogByHandle(String handle);
-    
-    
+
     /**
      * Get weblog specified by handle with option to return only enabled weblogs.
      * @param handle Handle of weblog
      * @return Weblog instance or null if not found
      */
     Weblog getWeblogByHandle(String handle, Boolean enabled);
-    
     
     /**
      * Get weblogs optionally restricted by user, enabled and active status.
@@ -91,9 +87,7 @@ public interface WeblogManager {
             Date     startDate,
             Date     endDate,
             int      offset,
-            int      length)
-            throws WebloggerException;
-    
+            int      length);
     
     /**
      * Get users of a weblog.
@@ -101,84 +95,72 @@ public interface WeblogManager {
      * @param enabledOnly Include only enabled users?
      * @return List of User objects.
      */
-    List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
-    
-    
+    List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly);
+
     /**
      * Get map with 26 entries, one for each letter A-Z and
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    Map<String, Long> getWeblogHandleLetterMap() throws WebloggerException;
-    
-    
+    Map<String, Long> getWeblogHandleLetterMap();
+
     /** 
      * Get collection of weblogs whose handles begin with specified letter 
      */
-    List<Weblog> getWeblogsByLetter(char letter, int offset, int length)
-        throws WebloggerException;
+    List<Weblog> getWeblogsByLetter(char letter, int offset, int length);
     
     /**
      * Store a custom weblog template.
      */
-    void saveTemplate(WeblogTemplate data) throws WebloggerException;
-    
+    void saveTemplate(WeblogTemplate data);
     
     /**
      * Remove a custom template.
      */
-    void removeTemplate(WeblogTemplate template) throws WebloggerException;
-    
-    
+    void removeTemplate(WeblogTemplate template);
+
     /**
      * Get a custom template by its id.
      */
-    WeblogTemplate getTemplate(String id) throws WebloggerException;
-    
-    
+    WeblogTemplate getTemplate(String id);
+
     /**
      * Get a custom template by the action it supports.
      */
-    WeblogTemplate getTemplateByAction(Weblog w, ComponentType a) throws WebloggerException;
-    
+    WeblogTemplate getTemplateByAction(Weblog w, ComponentType a);
     
     /**
      * Get a custom template by its name.
      */
-    WeblogTemplate getTemplateByName(Weblog w, String p) throws WebloggerException;
-    
-    
+    WeblogTemplate getTemplateByName(Weblog w, String p);
+
     /**
      * Get a custom template by its relative path.
      */
-    WeblogTemplate getTemplateByPath(Weblog w, String p)
-        throws WebloggerException;
+    WeblogTemplate getTemplateByPath(Weblog w, String p);
 
     /**
      * Save a custom template rendition
      */
-    void saveTemplateRendition(WeblogTemplateRendition templateCode) throws WebloggerException;
+    void saveTemplateRendition(WeblogTemplateRendition templateCode);
 
     /**
      * Get all custom templates for a weblog
      */
-    List<WeblogTemplate> getTemplates(Weblog w) throws WebloggerException;
-   
+    List<WeblogTemplate> getTemplates(Weblog w);
     
     /**
      * Get count of active weblogs
      */    
-    long getWeblogCount() throws WebloggerException;
+    long getWeblogCount();
     
     /**
      * Get a HitCountData by weblog.
      *
      * @param weblog The Weblog that you want the hit count for.
      * @return The number of hits today stored for the weblog.
-     * @throws WebloggerException If weblog does not exist or other problem with the backend.
      */
-    int getHitCount(Weblog weblog)
-            throws WebloggerException;
+    int getHitCount(Weblog weblog);
 
     /**
      * Get HitCountData objects for the hotest weblogs.
@@ -193,42 +175,32 @@ public interface WeblogManager {
      * @param offset What index in the results to begin from.
      * @param length The number of results to return.
      * @return A List of Weblogs, ranked by descending hit count.
-     * @throws WebloggerException If there was a problem with the backend.
      */
-    List<Weblog> getHotWeblogs(int sinceDays, int offset, int length)
-            throws WebloggerException;
-
+    List<Weblog> getHotWeblogs(int sinceDays, int offset, int length);
 
     /**
      * Reset the hit counts for all weblogs.  This sets the counts back to 0.
-     *
-     * @throws WebloggerException If there was a problem with the backend.
      */
-    void resetAllHitCounts() throws WebloggerException;
+    void resetAllHitCounts();
 
     /**
      * Check for any scheduled weblog entries whose publication time has been
      * reached and promote them.
-     *
-     * @throws WebloggerException If there was a problem with the backend.
      */
-    void promoteScheduledEntries() throws WebloggerException;
+    void promoteScheduledEntries();
 
     /**
      * Empty the {@link HitCountQueue}, updating individual blog counters
      * with its data.
-     *
-     * @throws WebloggerException If there was a problem with the backend.
      */
-    void updateHitCounters() throws WebloggerException;
+    void updateHitCounters();
 
     /**
      * Reset the hit counts for a single weblog.  This sets the count to 03.
      *
      * @param weblog The Weblog object to reset the count for.
-     * @throws WebloggerException If there was a problem with the backend.
      */
-    void resetHitCount(Weblog weblog) throws WebloggerException;
+    void resetHitCount(Weblog weblog);
 
     /**
      * Increment the hit count for a weblog by a certain amount.
@@ -238,61 +210,50 @@ public interface WeblogManager {
      *
      * @param weblog The weblog object to increment the count for.
      * @param amount How much to increment by.
-     * @throws WebloggerException If there was a problem with the backend.
      */
-    void incrementHitCount(Weblog weblog, int amount)
-            throws WebloggerException;
-
+    void incrementHitCount(Weblog weblog, int amount);
 
     /**
      * Save a Bookmark.
      *
      * @param bookmark The bookmark to be saved.
-     * @throws WebloggerException If there is a problem.
      */
-    void saveBookmark(WeblogBookmark bookmark) throws WebloggerException;
-
+    void saveBookmark(WeblogBookmark bookmark);
 
     /**
      * Remove a Bookmark.
      *
      * @param bookmark The bookmark to be removed.
-     * @throws WebloggerException If there is a problem.
      */
-    void removeBookmark(WeblogBookmark bookmark) throws WebloggerException;
-
+    void removeBookmark(WeblogBookmark bookmark);
 
     /**
      * Lookup a Bookmark by ID.
      *
      * @param id The id of the bookmark to lookup.
      * @return BookmarkData The bookmark, or null if not found.
-     * @throws WebloggerException If there is a problem.
      */
-    WeblogBookmark getBookmark(String id) throws WebloggerException;
+    WeblogBookmark getBookmark(String id);
 
     /**
      * Save weblog category.
-     * @throws IllegalArgumentException if category name already exists for the weblog.
      */
-    void saveWeblogCategory(WeblogCategory cat) throws IllegalArgumentException;
+    void saveWeblogCategory(WeblogCategory cat);
 
     /**
      * Remove weblog category.
      */
-    void removeWeblogCategory(WeblogCategory cat) throws WebloggerException;
+    void removeWeblogCategory(WeblogCategory cat);
 
     /**
      * Get category by id.
      */
     WeblogCategory getWeblogCategory(String id);
 
-
     /**
      * Recategorize all entries with one category to another.
      */
-    void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat)
-            throws WebloggerException;
+    void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat);
 
     /**
      * Get category specified by weblog and name.

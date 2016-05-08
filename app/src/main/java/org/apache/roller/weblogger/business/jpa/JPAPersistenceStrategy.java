@@ -24,9 +24,6 @@ package org.apache.roller.weblogger.business.jpa;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
 import javax.annotation.PreDestroy;
@@ -34,25 +31,26 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Responsible for the lowest-level interaction with the JPA API.
  */
 public class JPAPersistenceStrategy {
-    
-    private static Log log =
-        LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);
-    
+
+    private static Logger log = LoggerFactory.getLogger(JPAPersistenceStrategy.class);
+
     /**
      * The thread local EntityManager.
      */
@@ -68,19 +66,15 @@ public class JPAPersistenceStrategy {
     /**
      * Construct by finding JPA EntityManagerFactory.
      * @param dbProvider database configuration information for manual configuration.
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
+     * @throws NamingException if lookup via JNDI fails
      */
-    protected JPAPersistenceStrategy(DatabaseProvider dbProvider, CacheManager cacheManager) throws WebloggerException {
+    protected JPAPersistenceStrategy(DatabaseProvider dbProvider, CacheManager cacheManager) throws NamingException {
         this.cacheManager = cacheManager;
         String jpaConfigurationType = WebloggerStaticConfig.getProperty("jpa.configurationType");
         if ("jndi".equals(jpaConfigurationType)) {
             // Lookup EMF via JNDI: added for Geronimo
             String emfJndiName = "java:comp/env/" + WebloggerStaticConfig.getProperty("jpa.emf.jndi.name");
-            try {
-                emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
-            } catch (NamingException e) {
-                throw new WebloggerException("Could not look up EntityManagerFactory in jndi at " + emfJndiName, e);
-            }
+            emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
         } else {
 
             // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
@@ -93,7 +87,7 @@ public class JPAPersistenceStrategy {
                         || key.startsWith("eclipselink.")
                         || key.startsWith("hibernate.")) {
                     String value = WebloggerStaticConfig.getProperty(key);
-                    log.info(key + ": " + value);
+                    log.info("{}: {}", key, value);
                     emfProps.setProperty(key, value);
                 }
             }
@@ -107,21 +101,13 @@ public class JPAPersistenceStrategy {
                 emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
             }
 
-            try {
-                this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
-
-            } catch (Exception pe) {
-                log.error("ERROR: creating entity manager", pe);
-                throw new WebloggerException(pe);
-            }
+            this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
         }
     }
     /**
      * Refresh changes to the current object.
-     * 
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public void refresh(Object clazz) throws WebloggerException {
+    public void refresh(Object clazz) {
         if (clazz == null) {
             return;
         }
@@ -132,20 +118,17 @@ public class JPAPersistenceStrategy {
             // ignored;
         }
     }
+
     /**
      * Flush changes to the datastore, commit transaction, release em.
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
+     * @throws RollbackException if the commit fails
      */
-    public void flush() throws WebloggerException {
-        try {
-            EntityManager em = getEntityManager(true);
-            em.getTransaction().commit();
-        } catch (PersistenceException pe) {
-            throw new WebloggerException(pe);
-        }
+    public void flush() throws RollbackException {
+        EntityManager em = getEntityManager(true);
+        em.getTransaction().commit();
     }
 
-    public void flushAndInvalidateWeblog(Weblog weblog) throws WebloggerException {
+    public void flushAndInvalidateWeblog(Weblog weblog) {
         flush();
         cacheManager.invalidate(weblog);
     }
@@ -168,9 +151,8 @@ public class JPAPersistenceStrategy {
      * Remove object from persistence storage.
      * @param clazz the class of object to remove
      * @param id the id of the object to remove
-     * @throws WebloggerException on any error deleting object
      */
-    public void remove(Class clazz, String id) throws WebloggerException {
+    public void remove(Class clazz, String id) {
         EntityManager em = getEntityManager(true);
         Object po = em.find(clazz, id);
         em.remove(po);
@@ -179,9 +161,8 @@ public class JPAPersistenceStrategy {
     /**
      * Remove object from persistence storage.
      * @param po the persistent object to remove
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public void remove(Object po) throws WebloggerException {
+    public void remove(Object po) {
         EntityManager em = getEntityManager(true);
         em.remove(po);
     }
@@ -189,9 +170,8 @@ public class JPAPersistenceStrategy {
     /**
      * Remove object from persistence storage.
      * @param pos the persistent objects to remove
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public void removeAll(Collection pos) throws WebloggerException {
+    public void removeAll(Collection pos) {
         EntityManager em = getEntityManager(true);
         for (Object obj : pos) {
             em.remove(obj);
@@ -212,10 +192,8 @@ public class JPAPersistenceStrategy {
     /**
      * Retrieve managed version of object
      * @return the object retrieved
-     * @throws WebloggerException on any error retrieving object
      */
-    public<R> R merge(R entity)
-            throws WebloggerException {
+    public<R> R merge(R entity) {
         EntityManager em = getEntityManager(false);
         return em.merge(entity);
     }
@@ -257,21 +235,6 @@ public class JPAPersistenceStrategy {
     }
     
     /**
-     * Get named query that won't commit changes to DB first (FlushModeType.COMMIT)
-     * @param queryName the name of the query
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
-     */
-    public Query getNamedQuery(String queryName)
-    throws WebloggerException {
-        EntityManager em = getEntityManager(false);
-        Query q = em.createNamedQuery(queryName);
-        // For performance, never flush/commit prior to running queries.
-        // Roller code assumes this behavior
-        q.setFlushMode(FlushModeType.COMMIT);
-        return q;
-    }
-
-    /**
      * Get named TypedQuery that won't commit changes to DB first (FlushModeType.COMMIT)
      * @param queryName the name of the query
      * @param resultClass return type of query
@@ -291,10 +254,8 @@ public class JPAPersistenceStrategy {
      *
      * @param queryName the name of the query
      * @param resultClass return type of query
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public <T> TypedQuery<T> getNamedQueryCommitFirst(String queryName, Class<T> resultClass)
-            throws WebloggerException {
+    public <T> TypedQuery<T> getNamedQueryCommitFirst(String queryName, Class<T> resultClass) {
         EntityManager em = getEntityManager(true);
         return em.createNamedQuery(queryName, resultClass);
     }
@@ -302,10 +263,8 @@ public class JPAPersistenceStrategy {
     /**
      * Create query from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
      * @param queryString the query
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public Query getDynamicQuery(String queryString)
-    throws WebloggerException {
+    public Query getDynamicQuery(String queryString) {
         EntityManager em = getEntityManager(false);
         Query q = em.createQuery(queryString);
         // For performance, never flush/commit prior to running queries.
@@ -319,10 +278,8 @@ public class JPAPersistenceStrategy {
      * Preferred over getDynamicQuery(String) due to it being typesafe.
      * @param queryString the query
      * @param resultClass return type of query
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public <T> TypedQuery<T> getDynamicQuery(String queryString, Class<T> resultClass)
-            throws WebloggerException {
+    public <T> TypedQuery<T> getDynamicQuery(String queryString, Class<T> resultClass) {
         EntityManager em = getEntityManager(false);
         TypedQuery<T> q = em.createQuery(queryString, resultClass);
         // For performance, never flush/commit prior to running queries.
@@ -335,10 +292,8 @@ public class JPAPersistenceStrategy {
      * Get named update query with default flush mode (usually FlushModeType.AUTO)
      * FlushModeType.AUTO commits changes to DB prior to running statement
      * @param queryName the name of the query
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public Query getNamedUpdate(String queryName)
-    throws WebloggerException {
+    public Query getNamedUpdate(String queryName) {
         EntityManager em = getEntityManager(true);
         return em.createNamedQuery(queryName);
     }

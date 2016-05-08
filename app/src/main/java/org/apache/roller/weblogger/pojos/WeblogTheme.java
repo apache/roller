@@ -21,9 +21,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 
 import java.util.ArrayList;
@@ -44,8 +41,6 @@ import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
  * rendering for a given weblog design.
  */
 public class WeblogTheme {
-
-    private static Log log = LogFactory.getLog(WeblogTheme.class);
 
     protected WeblogManager weblogManager;
     protected Weblog weblog = null;
@@ -86,7 +81,7 @@ public class WeblogTheme {
      * performance reasons, this is the only method that will check the sharedTemplates
      * for the purpose of switching the NONSHARED derivation to OVERRIDDEN if appropriate.
      */
-    public List<? extends Template> getTemplates() throws WebloggerException {
+    public List<? extends Template> getTemplates() {
         Map<String, Template> pageMap = new TreeMap<>();
 
         // first get shared theme pages (non-db)
@@ -94,18 +89,13 @@ public class WeblogTheme {
 
         // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
         if (!weblog.isTempPreviewWeblog()) {
-            try {
-                for (WeblogTemplate template : weblogManager.getTemplates(this.weblog)) {
-                    if (pageMap.get(template.getName()) != null) {
-                        // mark weblog template as an override
-                        template.setDerivation(TemplateDerivation.OVERRIDDEN);
-                    }
-                    // add new or replace shared template
-                    pageMap.put(template.getName(), template);
+            for (WeblogTemplate template : weblogManager.getTemplates(this.weblog)) {
+                if (pageMap.get(template.getName()) != null) {
+                    // mark weblog template as an override
+                    template.setDerivation(TemplateDerivation.OVERRIDDEN);
                 }
-            } catch (Exception e) {
-                // db error
-                log.error(e);
+                // add new or replace shared template
+                pageMap.put(template.getName(), template);
             }
         }
 
@@ -116,7 +106,7 @@ public class WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
-    public Template getTemplateByAction(ComponentType action) throws WebloggerException {
+    public Template getTemplateByAction(ComponentType action) {
         Template template = null;
 
         if (!weblog.isTempPreviewWeblog()) {
@@ -133,7 +123,7 @@ public class WeblogTheme {
      * Lookup the specified template by name.
      * Returns null if the template cannot be found.
      */
-    public Template getTemplateByName(String name) throws WebloggerException {
+    public Template getTemplateByName(String name) {
         Template template = null;
 
         if (!weblog.isTempPreviewWeblog()) {
@@ -150,7 +140,7 @@ public class WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public Template getTemplateByPath(String path) throws WebloggerException {
+    public Template getTemplateByPath(String path) {
         Template template = null;
 
         if (!weblog.isTempPreviewWeblog()) {

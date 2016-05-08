@@ -40,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -66,8 +65,7 @@ public class Trackback {
         this.allowedUrls = allowedUrls;
     }
 
-    public Trackback(WeblogEntry tEntry, String tURL)
-            throws IllegalArgumentException, WebloggerException {
+    public Trackback(WeblogEntry tEntry, String tURL) throws IllegalArgumentException {
         
         // Make sure trackback to URL is allowed
         boolean allowTrackback = true;
@@ -92,7 +90,7 @@ public class Trackback {
             try {
                 new URL(tURL);
             } catch(MalformedURLException ex) {
-                throw new WebloggerException("malformed url: "+tURL);
+                throw new IllegalArgumentException("malformed url: " + tURL);
             }
             
             entry = tEntry;
@@ -106,7 +104,7 @@ public class Trackback {
      * Sends trackback from entry to remote URL.
      * See Trackback spec for details: http://www.sixapart.com/pronet/docs/trackback_spec
      */
-    public RollerMessages send() throws WebloggerException {
+    public RollerMessages send() {
         
         RollerMessages messages = new RollerMessages();
         

@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.business.themes;
 
 import java.util.List;
 
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -35,33 +34,24 @@ public interface ThemeManager {
 
     /**
      * Initialize the theme system.
-     *
-     * @throws WebloggerException
-     *             If there is a problem during initialization.
      */
-    void initialize() throws WebloggerException;
+    void initialize();
 
     /**
      * Get the SharedTheme object with the given id.
      *
      * @return Theme The SharedTheme object with the given id.
-     * @throws IllegalArgumentException
-     *             If the named theme cannot be found.
-     * @throws WebloggerException
-     *             If there is some kind of fatal backend error.
+     * @throws IllegalArgumentException If the named theme cannot be found.
      **/
-    SharedTheme getSharedTheme(String id) throws WebloggerException;
+    SharedTheme getSharedTheme(String id);
 
     /**
      * Get the WeblogTheme for a given weblog.
      *
-     * @param weblog
-     *            The weblog to get the theme for.
-     * @return WeblogTheme The theme to be used for the given weblog.
-     * @throws WebloggerException
-     *             If there is some kind of fatal backend error.
+     * @param weblog The weblog to get the theme for.
+     * @return WeblogTheme The theme to be used for the given weblog
      */
-    WeblogTheme getWeblogTheme(Weblog weblog) throws WebloggerException;
+    WeblogTheme getWeblogTheme(Weblog weblog);
 
     /**
      * Get a list of all shared themes that are currently enabled. This list is
@@ -81,9 +71,6 @@ public interface ThemeManager {
      *            The sharedTemplate that should copied from
      * @return WeblogTemplate instance, not persisted to the database.
      *            (Caller is expected to do persistence if and when desired.)
-     *
-     * @throws WebloggerException
-     *             If there is some kind of error in creating the weblog template
      */
-    WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) throws WebloggerException;
+    WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate);
 }
