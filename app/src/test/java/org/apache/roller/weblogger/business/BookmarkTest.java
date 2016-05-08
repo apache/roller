@@ -22,8 +22,6 @@ package org.apache.roller.weblogger.business;
 
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -37,7 +35,6 @@ import static org.junit.Assert.*;
  * Test Weblogger Bookmark Management.
  */
 public class BookmarkTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(BookmarkTest.class);
     User testUser = null;
     Weblog testWeblog = null;
 
@@ -53,7 +50,6 @@ public class BookmarkTest extends WebloggerTest {
             testWeblog = setupWeblog("bkmrkTestWeblog", testUser);
             endSession(true);
         } catch (Exception ex) {
-            log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
     }
@@ -65,7 +61,6 @@ public class BookmarkTest extends WebloggerTest {
             teardownUser(testUser.getUserName());
             endSession(true);
         } catch (Exception ex) {
-            log.error("ERROR in tearDown", ex);
             throw new Exception("Test teardown failed", ex);
         }
     }

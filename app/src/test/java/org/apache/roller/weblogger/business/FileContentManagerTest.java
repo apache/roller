@@ -24,8 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -34,7 +32,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -46,7 +43,6 @@ import static org.junit.Assert.*;
  */
 public class FileContentManagerTest extends WebloggerTest {
 
-    private static Log log = LogFactory.getLog(FileContentManagerTest.class);
     User testUser = null;
     Weblog testWeblog = null;
 
@@ -60,14 +56,9 @@ public class FileContentManagerTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        try {
-            testUser = setupUser("FCMTest_userName1");
-            testWeblog = setupWeblog("FCMTest_handle1", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-        }
+        testUser = setupUser("FCMTest_userName1");
+        testWeblog = setupWeblog("FCMTest_handle1", testUser);
+        endSession(true);
     }
 
     @After

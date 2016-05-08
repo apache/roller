@@ -21,8 +21,6 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -37,7 +35,6 @@ import static org.junit.Assert.*;
  * Test User related business operations.
  */
 public class UserTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(UserTest.class);
 
     @Before
     public void setUp() throws Exception {

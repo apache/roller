@@ -21,8 +21,6 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
@@ -38,38 +36,24 @@ import static org.junit.Assert.*;
  * Test WeblogRole related business operations.
  */
 public class WeblogRoleTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(WeblogRoleTest.class);
-    
     User testUser = null;
     Weblog testWeblog = null;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
-        try {
-            testUser = setupUser("permsTestUser");
-            testWeblog = setupWeblog("permsTestWeblog", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error("ERROR in setup", ex);
-            throw new Exception("Test setup failed", ex);
-        }
+        testUser = setupUser("permsTestUser");
+        testWeblog = setupWeblog("permsTestWeblog", testUser);
+        endSession(true);
     }
 
     @After
     public void tearDown() throws Exception {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error("ERROR in tear down", ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
-    
-    
+
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */

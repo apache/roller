@@ -25,8 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +36,6 @@ import static org.junit.Assert.*;
  * Test parsing and running of SQL scripts
  */
 public class SQLScriptRunnerTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(SQLScriptRunnerTest.class);
 
     @Before
     public void setUp() throws Exception {

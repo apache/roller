@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business.plugins.entry;
 
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 
@@ -47,7 +46,7 @@ public interface WeblogEntryPlugin {
     /**
      * Give plugin a chance to initialize and add objects to its rendering model.
      */
-    void init() throws WebloggerException;
+    void init();
     
     
     /**

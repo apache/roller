@@ -21,9 +21,6 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -41,50 +38,39 @@ import static org.junit.Assert.*;
  * Test Weblog Category related business operations.
  */
 public class WeblogCategoryFunctionalityTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(WeblogCategoryFunctionalityTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
     WeblogCategory cat1 = null;
     WeblogCategory cat2 = null;
     WeblogCategory cat3 = null;
     WeblogCategory testCat = null;
-    
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
-        try {
-            testUser = setupUser("categoryTestUser");
-            testWeblog = setupWeblog("categoryTestWeblog", testUser);
-            
-            // setup several categories for testing
-            cat1 = setupWeblogCategory(testWeblog, "catTest-cat1");
-            cat2 = setupWeblogCategory(testWeblog, "catTest-cat2");
-            cat3 = setupWeblogCategory(testWeblog, "catTest-cat3");
-            
-            // a simple test cat at the root level
-            testCat = setupWeblogCategory(testWeblog, "catTest-testCat");
-            
-            endSession(true);
-        } catch (Throwable t) {
-            log.error("ERROR in setup", t);
-        }
+        testUser = setupUser("categoryTestUser");
+        testWeblog = setupWeblog("categoryTestWeblog", testUser);
+
+        // setup several categories for testing
+        cat1 = setupWeblogCategory(testWeblog, "catTest-cat1");
+        cat2 = setupWeblogCategory(testWeblog, "catTest-cat2");
+        cat3 = setupWeblogCategory(testWeblog, "catTest-cat3");
+
+        // a simple test cat at the root level
+        testCat = setupWeblogCategory(testWeblog, "catTest-testCat");
+
+        endSession(true);
     }
     
     @After
-    public void tearDown() {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Throwable t) {
-            log.error("ERROR in teardown", t);
-        }
+    public void tearDown() throws Exception {
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
 
     @Test
@@ -177,8 +163,7 @@ public class WeblogCategoryFunctionalityTest extends WebloggerTest {
         assertEquals(0, retrieveWeblogEntries(c1, false).size());
     }
 
-    private List<WeblogEntry> retrieveWeblogEntries(WeblogCategory category, boolean publishedOnly)
-            throws WebloggerException {
+    private List<WeblogEntry> retrieveWeblogEntries(WeblogCategory category, boolean publishedOnly) {
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(category.getWeblog());
         wesc.setCatName(category.getName());
@@ -197,7 +182,7 @@ public class WeblogCategoryFunctionalityTest extends WebloggerTest {
         // query for object
         WeblogCategory cat = weblogManager.getWeblogCategory(testCat.getId());
         if (cat == null) {
-            throw new WebloggerException("error setting up weblog category");
+            throw new IllegalStateException("error setting up weblog category");
         }
         return cat;
     }

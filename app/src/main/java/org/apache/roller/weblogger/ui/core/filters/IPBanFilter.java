@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.util.IPBanList;
 
 
 /**
- * Simple IP restriction filter.  Denied clients get a 404 reponse.
+ * Simple IP restriction filter.  Denied clients get a 404 response.
  *
  * @web.filter name="IPBanFilter"
  */

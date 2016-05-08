@@ -32,8 +32,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +45,6 @@ import static org.junit.Assert.*;
  * Test Search Manager business layer operations.
  */
 public class IndexManagerTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(IndexManagerTest.class);
 
     private User testUser = null;
     private Weblog testWeblog = null;
@@ -65,28 +62,17 @@ public class IndexManagerTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
-        try {
-            testUser = setupUser("entryTestUser");
-            testWeblog = setupWeblog("entryTestWeblog", testUser);
-            endSession(true);
-            assertEquals(1, weblogManager.getWeblogCount());
-        } catch (Exception ex) {
-            log.error("ERROR in test setup", ex);
-            throw new Exception("Test setup failed", ex);
-        }
+        testUser = setupUser("entryTestUser");
+        testWeblog = setupWeblog("entryTestWeblog", testUser);
+        endSession(true);
+        assertEquals(1, weblogManager.getWeblogCount());
     }
 
     @After
     public void tearDown() throws Exception {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error("ERROR in test teardown", ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
 
     @Test

@@ -21,10 +21,7 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -43,8 +40,7 @@ import static org.junit.Assert.*;
  * Test Pings related business operations.
  */
 public class PingsTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(PingsTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
     PingTarget testCommonPing = null;
@@ -59,16 +55,11 @@ public class PingsTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
-        try {
-            testUser = setupUser("wtTestUser");
-            testWeblog = setupWeblog("wtTestWeblog", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
-        
+
+        testUser = setupUser("wtTestUser");
+        testWeblog = setupWeblog("wtTestWeblog", testUser);
+        endSession(true);
+
         testCommonPing = new PingTarget();
         testCommonPing.setId(WebloggerCommon.generateUUID());
         testCommonPing.setName("testCommonPing");
@@ -77,14 +68,10 @@ public class PingsTest extends WebloggerTest {
 
     @After
     public void tearDown() throws Exception {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
+
         testCommonPing = null;
     }
     
@@ -315,7 +302,7 @@ public class PingsTest extends WebloggerTest {
 
         PingTarget ping = pingTargetManager.getPingTarget(testPing.getId());
         if (ping == null) {
-            throw new WebloggerException("error setting up ping target");
+            throw new IllegalStateException("error setting up ping target");
         }
         return ping;
     }
@@ -333,7 +320,7 @@ public class PingsTest extends WebloggerTest {
 
         autoPing = pingTargetManager.getAutoPing(autoPing.getId());
         if (autoPing == null) {
-            throw new WebloggerException("error setting up auto ping");
+            throw new IllegalStateException("error setting up auto ping");
         }
         return autoPing;
     }

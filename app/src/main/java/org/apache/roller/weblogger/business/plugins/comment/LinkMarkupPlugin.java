@@ -25,8 +25,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.Utilities;
-
 
 /**
  * Comment plugin which turns plain text URLs into hyperlinks using
@@ -51,19 +49,16 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
         return "LinkMarkup";
     }
     
-    
     /** Returns the display name of this Plugin. */
     public String getName() {
         return "Link Markup";
     }
-    
-    
+
     /** Briefly describes the function of the Plugin.  May contain HTML. */
     public String getDescription() {
         return "Automatically creates hyperlinks out of embedded URLs.";
     }
-    
-    
+
     /**
      * Apply plugin to the specified text.
      *

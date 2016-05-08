@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.business.search;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -31,7 +30,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * Interface to Roller's Lucene-based search facility.
- * @author Dave Johnson
  */
 public interface IndexManager
 {
@@ -44,13 +42,13 @@ public interface IndexManager
     void removeWeblogIndexOperation(Weblog weblog);
     
     /** Remove entry from index, returns immediately and operates in background */
-    void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
+    void removeEntryIndexOperation(WeblogEntry entry);
     
     /** Add entry to index, returns immediately and operates in background */
-    void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
+    void addEntryIndexOperation(WeblogEntry entry);
     
     /** R-index entry, returns immediately and operates in background */
-    void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException;
+    void addEntryReIndexOperation(WeblogEntry entry);
     
     /** Execute operation immediately */
     void executeIndexOperationNow(final IndexOperation op);
@@ -68,17 +66,14 @@ public interface IndexManager
 
     /**
      * Initialize the search system.
-     *
-     * @throws WebloggerException If there is a problem during initialization.
      */
-    void initialize() throws WebloggerException;
-    
-    
+    void initialize();
+
     /** Shutdown to be called on application shutdown */
     void shutdown();
 
-    void rebuildWeblogIndex(Weblog weblog) throws WebloggerException;
+    void rebuildWeblogIndex(Weblog weblog);
 
-    void rebuildWeblogIndex() throws WebloggerException;
+    void rebuildWeblogIndex();
 
 }

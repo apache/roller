@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
@@ -44,7 +43,6 @@ public class Weblogger {
 
     /**
      * Single constructor.
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     protected Weblogger(
             IndexManager         indexManager,
@@ -54,7 +52,7 @@ public class Weblogger {
             WeblogManager        weblogManager,
             WeblogEntryManager   weblogEntryManager,
             PlanetManager        planetManager,
-            URLStrategy          urlStrategy) throws WebloggerException {
+            URLStrategy          urlStrategy) {
 
         this.indexManager        = indexManager;
         this.propertiesManager   = propertiesManager;

@@ -100,22 +100,21 @@ abstract public class WebloggerTest {
     /**
      * Convenience method that returns managed copy of given user.
      */
-    protected User getManagedUser(User user) throws WebloggerException {
+    protected User getManagedUser(User user) {
         return userManager.getUserByUserName(user.getUserName());
     }
 
     /**
      * Convenience method that returns managed copy of given WeblogEntry.
      */
-    protected WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry)
-            throws WebloggerException {
+    protected WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) {
         return weblogEntryManager.getWeblogEntry(weblogEntry.getId());
     }
 
     /**
      * Convenience method that returns managed copy of given website.
      */
-    protected Weblog getManagedWeblog(Weblog weblog) throws WebloggerException {
+    protected Weblog getManagedWeblog(Weblog weblog) {
         return weblogManager.getWeblog(weblog.getId());
     }
 
@@ -149,7 +148,7 @@ abstract public class WebloggerTest {
         User user = userManager.getUserByUserName(userName);
 
         if (user == null) {
-            throw new WebloggerException("error inserting new user");
+            throw new IllegalStateException("error inserting new user");
         }
 
         return user;
@@ -186,7 +185,7 @@ abstract public class WebloggerTest {
         Weblog weblog = weblogManager.getWeblogByHandle(handle);
 
         if (weblog == null) {
-            throw new WebloggerException("error setting up weblog");
+            throw new IllegalStateException("error setting up weblog");
         }
 
         return weblog;
@@ -232,7 +231,7 @@ abstract public class WebloggerTest {
         WeblogEntry entry = weblogEntryManager.getWeblogEntry(testEntry.getId());
 
         if (entry == null) {
-            throw new WebloggerException("error setting up weblog entry");
+            throw new IllegalStateException("error setting up weblog entry");
         }
 
         return entry;
@@ -267,7 +266,7 @@ abstract public class WebloggerTest {
         WeblogEntryComment commentTest = weblogEntryManager.getComment(testComment.getId());
 
         if (commentTest == null) {
-            throw new WebloggerException("error setting up comment");
+            throw new IllegalStateException("error setting up comment");
         }
 
         return commentTest;
@@ -287,7 +286,7 @@ abstract public class WebloggerTest {
         // query to make sure we return the persisted object
         Planet group = planetManager.getPlanetById(testPlanet.getId());
         if (group == null) {
-            throw new WebloggerException("error inserting new group");
+            throw new IllegalStateException("error inserting new group");
         }
         return group;
     }
@@ -316,7 +315,7 @@ abstract public class WebloggerTest {
         Subscription sub = planetManager.getSubscriptionById(testSub.getId());
 
         if (sub == null) {
-            throw new WebloggerException("error inserting new subscription");
+            throw new IllegalStateException("error inserting new subscription");
         }
         return sub;
     }
@@ -351,7 +350,7 @@ abstract public class WebloggerTest {
         SubscriptionEntry entry = planetManager.getEntryById(testEntry.getId());
 
         if (entry == null) {
-            throw new WebloggerException("error inserting new entry");
+            throw new IllegalStateException("error inserting new entry");
         }
         return entry;
     }

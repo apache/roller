@@ -26,9 +26,9 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class for accessing static configuration properties, those in tightblog.properties
@@ -37,7 +37,9 @@ import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
  * require an application restart in order to read any changed values.
  */
 public final class WebloggerStaticConfig {
-    
+
+    private static Logger log = LoggerFactory.getLogger(WebloggerStaticConfig.class);
+
     private static String default_config = "/org/apache/roller/weblogger/config/tightblog.properties";
     private static String custom_config = "/tightblog-custom.properties";
     private static String junit_config = "/tightblog-junit.properties";
@@ -49,8 +51,6 @@ public final class WebloggerStaticConfig {
     // special case for our context urls
     private static String relativeContextURL = null;
     private static String absoluteContextURL = null;
-
-    private static Log log = LogFactory.getLog(WebloggerStaticConfig.class);
 
     // no, you may not instantiate this class :p
     private WebloggerStaticConfig() {}
@@ -117,7 +117,7 @@ public final class WebloggerStaticConfig {
                 Enumeration keys = config.keys();
                 while(keys.hasMoreElements()) {
                     key = (String) keys.nextElement();
-                    log.debug(key+"="+config.getProperty(key));
+                    log.debug(key + " = {}", config.getProperty(key));
                 }
             }
 
@@ -133,7 +133,7 @@ public final class WebloggerStaticConfig {
      * @return    String Value of property requested, null if not found
      */
     public static String getProperty(String key) {
-        log.debug("Fetching property ["+key+"="+config.getProperty(key)+"]");
+        log.debug("Fetching property [{} = {}]", key, config.getProperty(key));
         String value = config.getProperty(key);
         return value == null ? null : value.trim();
     }
@@ -145,7 +145,7 @@ public final class WebloggerStaticConfig {
      * @return    String Value of property requested or defaultValue
      */
     public static String getProperty(String key, String defaultValue) {
-        log.debug("Fetching property ["+key+"="+config.getProperty(key)+",defaultValue="+defaultValue+"]");
+        log.debug("Fetching property [{} = {}], default value = {}", key, config.getProperty(key), defaultValue);
         String value = config.getProperty(key);
         if (value == null) {
             return defaultValue;

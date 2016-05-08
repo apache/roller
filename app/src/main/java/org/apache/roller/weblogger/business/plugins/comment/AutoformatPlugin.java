@@ -31,33 +31,26 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 public class AutoformatPlugin implements WeblogEntryCommentPlugin {
     
     private static final Log LOG = LogFactory.getLog(AutoformatPlugin.class);
-    
-    
+
     public AutoformatPlugin() {
-        // no-op
     }
-    
-    
+
     /**
      * Unique identifier.  This should never change. 
      */
     public String getId() {
         return "AutoFormat";
     }
-    
-    
+
     public String getName() {
         return "Auto Format";
     }
-    
-    
+
     public String getDescription() {
         return "Converts plain text style paragraphs into html paragraphs.";
     }
-    
-    
+
     public String render(final WeblogEntryComment comment, String text) {
-        
         LOG.debug("starting value:\n" + text);
         
         /* 
@@ -101,7 +94,6 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
         }
         
         LOG.debug("ending value:\n" + buf.toString());
-        
         return buf.toString();
     }
     

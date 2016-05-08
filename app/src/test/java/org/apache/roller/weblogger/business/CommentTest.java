@@ -23,9 +23,6 @@ package org.apache.roller.weblogger.business;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -37,6 +34,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.persistence.RollbackException;
+
 import static org.junit.Assert.*;
 
 
@@ -44,8 +43,6 @@ import static org.junit.Assert.*;
  * Test Comment related business operations.
  */
 public class CommentTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(CommentTest.class);
-    
     User testUser = null;
     Weblog testWeblog = null;
     WeblogEntry testEntry = null;
@@ -63,7 +60,6 @@ public class CommentTest extends WebloggerTest {
             testEntry = setupWeblogEntry("commentTestEntry", testWeblog, testUser);
             endSession(true);
         } catch (Exception ex) {
-            log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
     }
@@ -76,7 +72,6 @@ public class CommentTest extends WebloggerTest {
             teardownUser(testUser.getUserName());
             endSession(true);
         } catch (Exception ex) {
-            log.error(ex);
             throw new Exception("Test teardown failed", ex);
         }
     }
@@ -197,9 +192,6 @@ public class CommentTest extends WebloggerTest {
      */
     @Test
     public void testCommentParentDeletes() throws Exception {
-        
-        log.info("BEGIN");
-        
         try {
             // first make sure we can delete an entry with comments
             User user = setupUser("commentParentDeleteUser");
@@ -214,11 +206,11 @@ public class CommentTest extends WebloggerTest {
             endSession(true);
 
             // now deleting the entry should succeed and delete all comments
-            Exception ex = null;
+            RollbackException ex = null;
             try {
                 weblogEntryManager.removeWeblogEntry(getManagedWeblogEntry(entry));
                 endSession(true);
-            } catch (WebloggerException e) {
+            } catch (RollbackException e) {
                 ex = e;
             }
             assertNull(ex);
@@ -241,11 +233,10 @@ public class CommentTest extends WebloggerTest {
                 weblog = getManagedWeblog(weblog);
                 weblogManager.removeWeblog(weblog);
                 endSession(true);
-            } catch (WebloggerException e) {
+            } catch (RollbackException e) {
                 StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw); 
+                PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
-                log.info(sw.toString());
                 ex = e;
             }
             assertNull(ex);
@@ -256,8 +247,6 @@ public class CommentTest extends WebloggerTest {
         } finally {
             endSession(true);
         }
-        
-        log.info("END");
     }
 
 }

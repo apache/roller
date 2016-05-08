@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -164,7 +163,7 @@ public interface WeblogEntryManager {
     /**
      * Get site-wide comment count 
      */
-    long getCommentCount() throws WebloggerException;
+    long getCommentCount();
     
     /**
      * Get weblog comment count 

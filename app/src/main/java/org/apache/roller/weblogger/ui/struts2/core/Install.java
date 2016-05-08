@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
@@ -165,9 +164,6 @@ public class Install extends UIAction {
 
         } catch (BootstrapException ex) {
             log.error("BootstrapException", ex);
-            rootCauseException = ex;
-        } catch (WebloggerException ex) {
-            log.error("WebloggerException", ex);
             rootCauseException = ex;
         } catch (Exception e) {
             log.error("Exception", e);

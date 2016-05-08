@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -33,8 +31,7 @@ import static org.junit.Assert.*;
 
 
 public class WeblogCategoryCRUDTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(WeblogCategoryCRUDTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
     
@@ -44,25 +41,16 @@ public class WeblogCategoryCRUDTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
-        try {
-            testUser = setupUser("categoryCRUDTestUser");
-            testWeblog = setupWeblog("categoryCRUDTestWeblog", testUser);
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-        }
+        testUser = setupUser("categoryCRUDTestUser");
+        testWeblog = setupWeblog("categoryCRUDTestWeblog", testUser);
+        endSession(true);
     }
     
     @After
-    public void tearDown() {
-        try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
-            endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-        }
+    public void tearDown() throws Exception {
+        teardownWeblog(testWeblog.getId());
+        teardownUser(testUser.getUserName());
+        endSession(true);
     }
     
     

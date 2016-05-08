@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.core.menu;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
@@ -133,30 +132,24 @@ public final class MenuHelper {
         if (menu == null) {
             ParsedMenu menuConfig = menuMap.get(menuId);
             if (menuConfig != null) {
-                try {
-                    menu = buildMenu(menuConfig, userGlobalRole, userWeblogRole, currentAction);
-                    menuCache.put(cacheKey, menu);
-                } catch (WebloggerException ex) {
-                    log.error("ERROR: generating menu", ex);
-                }
+                menu = buildMenu(menuConfig, userGlobalRole, userWeblogRole, currentAction);
+                menuCache.put(cacheKey, menu);
             }
         }
         return menu;
     }
 
     /**
-     * Builds the menu.
-     * 
+     * Creates menu according to logged-in user's permissions
+     *
      * @param menuConfig the menu config
      * @param userGlobalRole - user's global role
      * @param userWeblogRole - user's role within the weblog being displayed
      * @param currentAction the current action
-     * @return the menu
-     * @throws WebloggerException the weblogger exception
+     * @return menu
      */
     private Menu buildMenu(ParsedMenu menuConfig, GlobalRole userGlobalRole, WeblogRole userWeblogRole,
-                           String currentAction)
-            throws WebloggerException {
+                           String currentAction) {
 
         Menu tabMenu = new Menu();
 

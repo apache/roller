@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
@@ -94,17 +93,12 @@ public class PreviewProcessor {
         Weblog weblog;
         WeblogPageRequest previewRequest;
 
-        try {
-            previewRequest = new WeblogPageRequest(request);
+        previewRequest = new WeblogPageRequest(request);
 
-            // lookup weblog specified by preview request
-            weblog = previewRequest.getWeblog();
-            if (weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: " + previewRequest.getWeblogHandle());
-            }
-        } catch (Exception e) {
-            // some kind of error parsing the request or getting weblog
-            log.debug("error creating preview request", e);
+        // lookup weblog specified by preview request
+        weblog = previewRequest.getWeblog();
+        if (weblog == null) {
+            log.debug("error creating preview request: " + previewRequest);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
