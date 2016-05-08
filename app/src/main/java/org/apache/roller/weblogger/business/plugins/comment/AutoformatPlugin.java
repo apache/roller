@@ -20,17 +20,17 @@ package org.apache.roller.weblogger.business.plugins.comment;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Comment plugin which turns plain text paragraph formatting into html
  * paragraph formatting using <p> and <br/> tags.
  */
 public class AutoformatPlugin implements WeblogEntryCommentPlugin {
-    
-    private static final Log LOG = LogFactory.getLog(AutoformatPlugin.class);
+
+    private static Logger log = LoggerFactory.getLogger(AutoformatPlugin.class);
 
     public AutoformatPlugin() {
     }
@@ -51,7 +51,7 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
     }
 
     public String render(final WeblogEntryComment comment, String text) {
-        LOG.debug("starting value:\n" + text);
+        log.debug("starting value: {}", text);
         
         /* 
          * setup a buffered reader and iterate through each line
@@ -63,7 +63,7 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
         try {
             BufferedReader br = new BufferedReader(new StringReader(text));
             
-            String line = null;
+            String line;
             boolean insidePara = false;
             while((line = br.readLine()) != null) {
                 
@@ -90,10 +90,10 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
             }
             
         } catch(Exception e) {
-            LOG.warn("trouble rendering text.", e);
+            log.warn("trouble rendering text.", e);
         }
         
-        LOG.debug("ending value:\n" + buf.toString());
+        log.debug("ending value:\n {}", buf.toString());
         return buf.toString();
     }
     

@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.ui.struts2.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -38,7 +36,6 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
         StrutsStatics {
 
     private static final long serialVersionUID = -6452966127207525616L;
-    private static Log log = LogFactory.getLog(UIActionInterceptor.class);
 
     private UserManager userManager;
 

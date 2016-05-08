@@ -26,13 +26,13 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ResourceBundle;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Check against Akismet service. Expects to a valid Akismet API key in the
@@ -40,8 +40,8 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * You can get a free personal use key by registering as a user at wordpress.com.
  * See Akismet site for API details (http://akismet.com/development/api/)
  */
-public class AkismetCommentValidator implements CommentValidator { 
-    private static Log log = LogFactory.getLog(AkismetCommentValidator.class);    
+public class AkismetCommentValidator implements CommentValidator {
+    private static Logger log = LoggerFactory.getLogger(AkismetCommentValidator.class);
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private String apikey;
 

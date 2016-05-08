@@ -21,14 +21,14 @@
 package org.apache.roller.weblogger.util.cache;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
 public class ExpiringCache {
-    protected static Log log = LogFactory.getLog(ExpiringCache.class);
+    private static Logger log = LoggerFactory.getLogger(ExpiringCache.class);
 
     protected String cacheHandlerId;
 
@@ -68,7 +68,7 @@ public class ExpiringCache {
         if (enabled) {
             contentCache = cacheManager.constructCache(cacheHandlerId, size, timeoutInMS);
         } else {
-            log.warn("Cache " + cacheHandlerId + " has been DISABLED");
+            log.warn("Cache {} has been DISABLED", cacheHandlerId);
         }
     }
 
@@ -77,9 +77,9 @@ public class ExpiringCache {
         if (enabled) {
             entry = contentCache.get(key);
             if (entry == null) {
-                log.debug("MISS "+key);
+                log.debug("MISS {}", key);
             } else {
-                log.debug("HIT "+key);
+                log.debug("HIT {}", key);
             }
         }
         return entry;
@@ -88,14 +88,14 @@ public class ExpiringCache {
     public void put(String key, Object value) {
         if (enabled) {
             contentCache.put(key, value);
-            log.debug("PUT "+key);
+            log.debug("PUT {}", key);
         }
     }
 
     public void remove(String key) {
         if (enabled) {
             contentCache.remove(key);
-            log.debug("REMOVE "+key);
+            log.debug("REMOVE {}", key);
         }
     }
 

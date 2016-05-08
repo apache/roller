@@ -55,8 +55,8 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
 import org.springframework.mobile.device.site.SitePreference;
 import org.springframework.mobile.device.site.SitePreferenceUtils;
@@ -66,7 +66,7 @@ import org.springframework.mobile.device.site.SitePreferenceUtils;
  */
 public class Utilities {
     /** The <code>Log</code> instance for this class. */
-    private static Log log = LogFactory.getLog(Utilities.class);
+    private static Logger log = LoggerFactory.getLogger(Utilities.class);
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
@@ -249,7 +249,7 @@ public class Utilities {
             // first create an instance, given the provider
             md = MessageDigest.getInstance(algorithm);
         } catch (Exception e) {
-            log.error("Exception: " + e);
+            log.error("Exception: ", e);
             return password;
         }
 
@@ -754,9 +754,7 @@ public class Utilities {
                 || (eTag == null || previousToken == null)
                 && lastModifiedTimeMillis <= sinceDate) {
 
-            if (log.isDebugEnabled()) {
-                log.debug("NOT MODIFIED " + request.getRequestURL());
-            }
+            log.debug("NOT MODIFIED {}", request.getRequestURL());
 
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             // use the same date we sent when we created the eTag the first time through

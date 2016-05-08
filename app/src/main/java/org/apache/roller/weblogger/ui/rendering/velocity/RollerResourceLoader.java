@@ -25,8 +25,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.collections.ExtendedProperties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -34,6 +32,8 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The RollerResourceLoader is a Velocity template loader which loads templates
@@ -47,11 +47,11 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
  */
 public class RollerResourceLoader extends ResourceLoader {
 
-	private static Log logger = LogFactory.getLog(RollerResourceLoader.class);
+	private static Logger logger = LoggerFactory.getLogger(RollerResourceLoader.class);
 
 	public void init(ExtendedProperties configuration) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(configuration);
+			logger.debug(configuration.toString());
 		}
 	}
 
@@ -65,7 +65,7 @@ public class RollerResourceLoader extends ResourceLoader {
 	 */
 	public InputStream getResourceStream(String name) {
 
-		logger.debug("Looking for: " + name);
+		logger.debug("Looking for: {}", name);
 
 		if (name == null || name.length() == 0) {
 			throw new ResourceNotFoundException("Need to specify a template name!");
@@ -102,7 +102,7 @@ public class RollerResourceLoader extends ResourceLoader {
 			// This should never actually happen. We expect UTF-8 in all JRE
 			// installation.
 			// This rethrows as a Runtime exception after logging.
-			logger.error(uex);
+			logger.error("exception", uex);
 			throw new RuntimeException(uex);
 
 		} catch (Exception re) {

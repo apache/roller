@@ -24,9 +24,9 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -37,8 +37,8 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
  * automatically re-read the file and update the list when that happens.
  */
 public final class IPBanList {
-    
-    private static Log log = LogFactory.getLog(IPBanList.class);
+
+    private static Logger log = LoggerFactory.getLogger(IPBanList.class);
     
     // set of ips that are banned, use a set to ensure uniqueness
     private Set bannedIps = new HashSet();
@@ -116,7 +116,7 @@ public final class IPBanList {
                     this.bannedIps.add(ip);
                 }
                 
-                log.debug("ADDED "+ip);
+                log.debug("ADDED {}", ip);
             } catch(Exception e) {
                 log.error("Error adding banned ip to file", e);
             }
@@ -129,8 +129,7 @@ public final class IPBanList {
      */
     private void loadBannedIpsIfNeeded(boolean forceLoad) {
         
-        if(bannedIpsFile != null && 
-                (bannedIpsFile.hasChanged() || forceLoad)) {
+        if(bannedIpsFile != null && (bannedIpsFile.hasChanged() || forceLoad)) {
             
             // need to reload
             this.loadBannedIps();
@@ -163,9 +162,9 @@ public final class IPBanList {
                 this.bannedIps = newBannedIpList;
                 this.bannedIpsFile.clearChanged();
                 
-                log.info(this.bannedIps.size()+" banned ips loaded");
+                log.info("{} banned ips loaded", this.bannedIps.size());
             } catch(Exception ex) {
-               log.error("Error loading banned ips from file", ex);
+                log.error("Error loading banned ips from file", ex);
             }
             
         }

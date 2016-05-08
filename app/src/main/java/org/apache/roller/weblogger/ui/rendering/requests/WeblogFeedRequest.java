@@ -22,9 +22,9 @@ package org.apache.roller.weblogger.ui.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a request for a Roller weblog feed.
@@ -35,8 +35,8 @@ import org.apache.roller.weblogger.util.Utilities;
  * information embedded in the url for later use.
  */
 public class WeblogFeedRequest extends WeblogRequest {
-    
-    private static Log log = LogFactory.getLog(WeblogFeedRequest.class);
+
+    private static Logger log = LoggerFactory.getLogger(WeblogFeedRequest.class);
     
     // type is "entries" or "comments"
     private String type = null;
@@ -58,7 +58,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         String pathInfo = getPathInfo();
         
         // parse the request object and figure out what we've got
-        log.debug("parsing path " + pathInfo);
+        log.debug("parsing path {}", pathInfo);
         
         /*
          * parse the path info.  Format:

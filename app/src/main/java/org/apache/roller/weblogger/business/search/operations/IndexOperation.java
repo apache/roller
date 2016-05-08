@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
@@ -45,14 +43,15 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the base class for all index operations.
  */
 public abstract class IndexOperation implements Runnable {
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            IndexOperation.class);
+    private static Logger log = LoggerFactory.getLogger(IndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
@@ -175,7 +174,7 @@ public abstract class IndexOperation implements Runnable {
             writer = new IndexWriter(manager.getIndexDirectory(), config);
 
         } catch (IOException e) {
-            mLogger.error("ERROR creating writer", e);
+            log.error("ERROR creating writer", e);
         }
 
         return writer;
@@ -189,7 +188,7 @@ public abstract class IndexOperation implements Runnable {
             try {
                 writer.close();
             } catch (IOException e) {
-                mLogger.error("ERROR closing writer", e);
+                log.error("ERROR closing writer", e);
             }
         }
     }

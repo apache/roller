@@ -26,8 +26,6 @@ import java.io.Writer;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -36,6 +34,8 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
 
 /**
@@ -43,7 +43,7 @@ import org.springframework.mobile.device.DeviceType;
  */
 public class VelocityRenderer implements Renderer {
 
-    private static Log log = LogFactory.getLog(VelocityRenderer.class);
+    private static Logger log = LoggerFactory.getLogger(VelocityRenderer.class);
 
     // the original template we are supposed to render
     private Template renderTemplate = null;
@@ -69,8 +69,7 @@ public class VelocityRenderer implements Renderer {
 
         } catch (ResourceNotFoundException ex) {
             // velocity couldn't find the resource so lets log a warning
-            log.warn("Error creating renderer for " + template.getId()
-                    + " due to [" + ex.getMessage() + "]");
+            log.warn("Error creating renderer for {} due to [{}]", template.getId(), ex.getMessage());
 
             // then just rethrow so that the caller knows this instantiation
             // failed
@@ -86,7 +85,7 @@ public class VelocityRenderer implements Renderer {
 
         } catch (Exception ex) {
             // some kind of generic/unknown exception, dump it to the logs
-            log.error("Unknown exception creating renderer for " + template.getId(), ex);
+            log.error("Unknown exception creating renderer for {}", template.getId(), ex);
 
             // throw if back to the caller
             throw ex;
@@ -126,7 +125,7 @@ public class VelocityRenderer implements Renderer {
                 // put rendered template into context
                 ctx.put("decorator_body", sw.toString());
 
-                log.debug("Applying decorator " + velocityDecorator.getName());
+                log.debug("Applying decorator {}", velocityDecorator.getName());
 
                 // now render decorator to our output writer
                 velocityDecorator.merge(ctx, out);
@@ -140,8 +139,7 @@ public class VelocityRenderer implements Renderer {
             long endTime = System.currentTimeMillis();
             long renderTime = (endTime - startTime) / DateUtils.MILLIS_PER_SECOND;
 
-            log.debug("Rendered [" + renderTemplate.getId() + "] in "
-                    + renderTime + " secs");
+            log.debug("Rendered [{}] in {} secs", renderTemplate.getId(), renderTime);
 
         } catch (VelocityException ex) {
 

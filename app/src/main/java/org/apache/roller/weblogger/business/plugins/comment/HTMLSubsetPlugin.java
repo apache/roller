@@ -22,20 +22,21 @@
 package org.apache.roller.weblogger.business.plugins.comment;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Transforms the given String into a subset of HTML.
  */
 public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
-    private static final Log LOG = LogFactory.getLog(HTMLSubsetPlugin.class);
+
+    private static Logger log = LoggerFactory.getLogger(HTMLSubsetPlugin.class);
 
     public HTMLSubsetPlugin() {
-        LOG.debug("Instantiating HTMLSubsetPlugin");
+        log.debug("Instantiating HTMLSubsetPlugin");
     }
 
     /**
@@ -58,14 +59,14 @@ public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
         
         // only do this if comment is HTML
         if ("text/html".equals(comment.getContentType())) {
-            LOG.debug("starting value:\n" + output);
+            log.debug("starting value:\n {}", output);
             	        
 	        // escape html
 	        output = StringEscapeUtils.escapeHtml4(output);
 	        
 	        // just use old utilities method
 	        output = Utilities.transformToHTMLSubset(output);
-	        LOG.debug("ending value:\n" + text);
+	        log.debug("ending value:\n {}", text);
         }
                 
         return output;

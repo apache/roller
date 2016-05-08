@@ -28,8 +28,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -52,6 +50,8 @@ import org.apache.roller.weblogger.business.search.operations.RemoveWeblogIndexO
 import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperation;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 
@@ -69,7 +69,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private final int MAX_TOKEN_COUNT = 100;
 
-    static Log log = LogFactory.getFactory().getInstance(IndexManagerImpl.class);
+    private static Logger log = LoggerFactory.getLogger(IndexManagerImpl.class);
 
     // ~ Instance fields
     // ========================================================
@@ -108,8 +108,8 @@ public class IndexManagerImpl implements IndexManager {
         this.indexDir = searchIndexDir.replace('/', File.separatorChar);
 
         // a little debugging
-        log.info("search enabled: " + this.searchEnabled);
-        log.info("index dir: " + this.indexDir);
+        log.info("search enabled: {}", searchEnabled);
+        log.info("index dir: {}", indexDir);
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
@@ -162,7 +162,7 @@ public class IndexManagerImpl implements IndexManager {
                     }
                     indexConsistencyMarker.createNewFile();
                 } catch (IOException e) {
-                    log.error(e);
+                    log.error("exception", e);
                 }
             }
 
@@ -250,7 +250,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private void scheduleIndexOperation(final IndexOperation op) {
         if (this.searchEnabled) {
-            log.debug("Starting scheduled index operation: " + op.getClass().getName());
+            log.debug("Starting scheduled index operation: {}", op.getClass().getName());
             serviceScheduler.submit(op);
         }
     }
@@ -260,7 +260,7 @@ public class IndexManagerImpl implements IndexManager {
      */
     public void executeIndexOperationNow(final IndexOperation op) {
         if (this.searchEnabled) {
-            log.debug("Executing index operation now: " + op.getClass().getName());
+            log.debug("Executing index operation now: {}", op.getClass().getName());
             op.run();
         }
     }
@@ -351,7 +351,7 @@ public class IndexManagerImpl implements IndexManager {
                 if (writer != null) {
                     writer.close();
                 }
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
     }
@@ -394,7 +394,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             serviceScheduler.awaitTermination(20, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            log.debug(e.getMessage(), e);
+            log.debug("Exception: ", e);
         }
 
         if (!useRAMIndex) {
@@ -405,7 +405,7 @@ public class IndexManagerImpl implements IndexManager {
             if (reader != null) {
                 reader.close();
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 

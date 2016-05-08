@@ -31,9 +31,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Filter checks all POST request for presence of valid salt value and rejects
@@ -42,7 +42,7 @@ import org.apache.roller.weblogger.util.cache.ExpiringCache;
  */
 public class ValidateSaltFilter implements Filter {
 
-    private static Log log = LogFactory.getLog(ValidateSaltFilter.class);
+    private static Logger log = LoggerFactory.getLogger(ValidateSaltFilter.class);
 
     private Set<String> ignoredActions = null;
 
@@ -80,11 +80,7 @@ public class ValidateSaltFilter implements Filter {
             if (salt == null || saltCache.get(salt) == null
                     || saltCache.get(salt).equals(false)) {
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Salt value not found on POST to URL : "
-                            + httpReq.getServletPath());
-                }
-
+                log.debug("Salt value not found on POST to URL: {}", httpReq.getServletPath());
                 throw new ServletException("Security Violation");
             }
         }

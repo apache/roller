@@ -20,9 +20,9 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Date;
@@ -40,7 +40,7 @@ import java.util.Map;
  * in and hence never usable.
  */
 public class ExpiringLRUCacheImpl implements Cache {
-    private static Log log = LogFactory.getLog(ExpiringLRUCacheImpl.class);
+    private static Logger log = LoggerFactory.getLogger(ExpiringLRUCacheImpl.class);
 
     private Map<String, Object> cache = null;
     private long timeoutInMS = 0;
@@ -130,7 +130,7 @@ public class ExpiringLRUCacheImpl implements Cache {
             
             // if the value is null then that means this entry expired
             if (value == null) {
-                log.debug("EXPIRED ["+key+"]");
+                log.debug("EXPIRED {}", key);
                 hits--;
                 remove(key);
             }

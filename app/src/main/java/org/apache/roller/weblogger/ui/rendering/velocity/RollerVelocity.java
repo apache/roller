@@ -23,12 +23,12 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.mobile.device.DeviceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the VelocityEngine used by Roller.  In the getTemplate(name...)
@@ -47,8 +47,8 @@ import org.springframework.mobile.device.DeviceType;
 public class RollerVelocity {
     
     public static final String VELOCITY_CONFIG = "/WEB-INF/velocity.properties";
-    
-    private static Log log = LogFactory.getLog(RollerVelocity.class);
+
+    private static Logger log = LoggerFactory.getLogger(RollerVelocity.class);
     
     private static VelocityEngine velocityEngine = null;
     
@@ -65,7 +65,7 @@ public class RollerVelocity {
             
             velocityProps.load(instream);
             
-            log.debug("Velocity engine props = " + velocityProps);
+            log.debug("Velocity engine props = {}", velocityProps);
             
             // construct the VelocityEngine
             velocityEngine = new VelocityEngine();

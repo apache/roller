@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
@@ -33,9 +31,9 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 
 /**
  * A governing class for Roller cache objects.
@@ -51,8 +49,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * process easier.
  */
 public final class CacheManager {
-    
-    private static Log log = LogFactory.getLog(CacheManager.class);
+
+    private static Logger log = LoggerFactory.getLogger(CacheManager.class);
     
     // a set of all registered cache handlers
     private Set<BlogEventListener> cacheHandlers = new HashSet<>();
@@ -85,7 +83,7 @@ public final class CacheManager {
      */
     public void registerHandler(BlogEventListener handler) {
 
-        log.debug("Registering handler "+handler);
+        log.debug("Registering handler {}", handler);
 
         if(handler != null) {
             cacheHandlers.add(handler);
@@ -95,7 +93,7 @@ public final class CacheManager {
     
     public void invalidate(WeblogEntry entry) {
         
-        log.debug("invalidating entry = "+entry.getAnchor());
+        log.debug("invalidating entry = {}", entry.getAnchor());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(entry);
         }
@@ -104,7 +102,7 @@ public final class CacheManager {
     
     public void invalidate(Weblog website) {
         
-        log.debug("invalidating website = "+website.getHandle());
+        log.debug("invalidating website {}", website.getHandle());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(website);
         }
@@ -113,7 +111,7 @@ public final class CacheManager {
     
     public void invalidate(WeblogBookmark bookmark) {
         
-        log.debug("invalidating bookmark = "+bookmark.getId());
+        log.debug("invalidating bookmark {}", bookmark.getId());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(bookmark);
         }
@@ -122,7 +120,7 @@ public final class CacheManager {
     
     public void invalidate(WeblogEntryComment comment) {
         
-        log.debug("invalidating comment = "+comment.getId());
+        log.debug("invalidating comment {}", comment.getId());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(comment);
         }
@@ -131,7 +129,7 @@ public final class CacheManager {
     
     public void invalidate(User user) {
         
-        log.debug("invalidating user = "+user.getUserName());
+        log.debug("invalidating user {}", user.getUserName());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(user);
         }
@@ -140,7 +138,7 @@ public final class CacheManager {
     
     public void invalidate(WeblogCategory category) {
         
-        log.debug("invalidating category = " + category.getId());
+        log.debug("invalidating category {}", category.getId());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(category);
         }
@@ -148,7 +146,7 @@ public final class CacheManager {
     
     
     public void invalidate(WeblogTemplate template) {
-        log.debug("invalidating template = " + template.getId());
+        log.debug("invalidating template {}", template.getId());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(template);
         }

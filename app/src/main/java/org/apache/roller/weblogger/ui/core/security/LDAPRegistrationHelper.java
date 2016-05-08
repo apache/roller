@@ -33,18 +33,18 @@ import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads LDAP authentication info and populates any available User fields with its data.
  * ROL-2042 may provide the ability to obtain more fields.
  */
 public class LDAPRegistrationHelper {
-    
-    private static final Log log = LogFactory.getLog(LDAPRegistrationHelper.class);
+
+    private static Logger log = LoggerFactory.getLogger(LDAPRegistrationHelper.class);
 
     private String ldapUidAttribute = "uid";
 
@@ -132,7 +132,7 @@ public class LDAPRegistrationHelper {
         
             if (!(oPrincipal instanceof UserDetails)) {
                 log.warn("Unsupported Principal type in Authentication. Skipping auto-registration.");
-                log.warn("oPrincipal found of type " + oPrincipal.getClass().getName() + "; needs to be UserDetails");
+                log.warn("oPrincipal found of type {}; needs to be UserDetails", oPrincipal.getClass().getName());
                 return null;
             }
         

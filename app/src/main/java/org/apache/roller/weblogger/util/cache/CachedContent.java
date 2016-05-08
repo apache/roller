@@ -7,17 +7,17 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * A utility class for storing cached content written to a java.io.Writer.
  */
 public class CachedContent implements Serializable {
-    
-    private static Log log = LogFactory.getLog(CachedContent.class);
+
+    private static Logger log = LoggerFactory.getLogger(CachedContent.class);
     
     // the byte array we use to maintain the cached content
     private byte[] content = new byte[0];
@@ -110,7 +110,7 @@ public class CachedContent implements Serializable {
         this.cachedWriter.flush();
         this.content = this.outstream.toByteArray();
         
-        log.debug("FLUSHED "+this.content.length);
+        log.debug("FLUSHED {}", content.length);
     }
     
     

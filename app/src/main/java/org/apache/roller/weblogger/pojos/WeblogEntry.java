@@ -37,8 +37,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -46,6 +44,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -86,7 +86,7 @@ import javax.persistence.Transient;
 })
 public class WeblogEntry implements Serializable {
 
-    private static Log log = LogFactory.getFactory().getInstance(WeblogEntry.class);
+    private static Logger log = LoggerFactory.getLogger(WeblogEntry.class);
     
     public static final long serialVersionUID = 2341505386843044125L;
 
@@ -283,7 +283,7 @@ public class WeblogEntry implements Serializable {
             try {
                 creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
             } catch (Exception ignored) {
-                log.error("Cannot find a SafeUser object for userId = " + creatorId);
+                log.error("Cannot find a SafeUser object for userId = {}", creatorId);
             }
         }
         return creator;

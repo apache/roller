@@ -20,10 +20,15 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Cache for weblog page content.
  */
 public class LazyExpiringCache extends ExpiringCache {
+
+    private static Logger log = LoggerFactory.getLogger(LazyExpiringCache.class);
 
     public Object get(String key, long lastModified) {
         if (enabled) {
@@ -33,12 +38,12 @@ public class LazyExpiringCache extends ExpiringCache {
                 entry = lazyEntry.getValue(lastModified);
 
                 if (entry != null) {
-                    log.debug("HIT " + key);
+                    log.debug("HIT {}", key);
                 } else {
-                    log.debug("HIT-EXPIRED " + key);
+                    log.debug("HIT-EXPIRED {}", key);
                 }
             } else {
-                log.debug("MISS " + key);
+                log.debug("MISS {}", key);
             }
             return entry;
         } else {
@@ -49,7 +54,7 @@ public class LazyExpiringCache extends ExpiringCache {
     public void put(String key, Object value) {
         if (enabled) {
             contentCache.put(key, new LazyExpiringCacheEntry(value));
-            log.debug("PUT "+key);
+            log.debug("PUT {}", key);
         }
     }
 }

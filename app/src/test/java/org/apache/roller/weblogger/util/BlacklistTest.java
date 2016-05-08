@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.Before;
@@ -32,8 +30,7 @@ import static org.junit.Assert.*;
  * Test blacklist functionality.
  */
 public class BlacklistTest extends WebloggerTest {
-    public static Log log = LogFactory.getLog(BlacklistTest.class);
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();

@@ -22,12 +22,12 @@ package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An operation that removes the weblog from the index.
@@ -37,8 +37,7 @@ public class RemoveEntryOperation extends WriteToIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            RemoveEntryOperation.class);
+    private static Logger log = LoggerFactory.getLogger(RemoveEntryOperation.class);
 
     // ~ Instance fields
     // ========================================================
@@ -64,7 +63,7 @@ public class RemoveEntryOperation extends WriteToIndexOperation {
                 writer.deleteDocuments(term);
             }
         } catch (IOException e) {
-            mLogger.error("Error deleting doc from index", e);
+            log.error("Error deleting doc from index", e);
         } finally {
             endWriting();
         }

@@ -27,8 +27,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
@@ -41,6 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/tb-ui/authoring/preview/**")
 public class PreviewProcessor {
 
-    private static Log log = LogFactory.getLog(PreviewProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
 
     @Autowired
     private RendererManager rendererManager = null;
@@ -98,7 +98,7 @@ public class PreviewProcessor {
         // lookup weblog specified by preview request
         weblog = previewRequest.getWeblog();
         if (weblog == null) {
-            log.debug("error creating preview request: " + previewRequest);
+            log.debug("error creating preview request: {}", previewRequest);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -108,7 +108,7 @@ public class PreviewProcessor {
         if (previewThemeName != null) {
 
             // try getting the preview theme
-            log.debug("preview theme = " + previewThemeName);
+            log.debug("preview theme = {}", previewThemeName);
 
             SharedTheme previewTheme = null;
 
@@ -208,7 +208,7 @@ public class PreviewProcessor {
             renderer = rendererManager.getRenderer(page, previewRequest.getDeviceType());
         } catch(Exception e) {
             // nobody wants to render my content :(
-            log.error("Couldn't find renderer for page "+page.getId(), e);
+            log.error("Couldn't find renderer for page {}", page.getId(), e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -228,7 +228,7 @@ public class PreviewProcessor {
             rendererOutput.close();
         } catch(Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for page " + page.getId(), e);
+            log.error("Error during rendering for page {}", page.getId(), e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -244,7 +244,6 @@ public class PreviewProcessor {
         response.setContentType(contentType);
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
-
         log.debug("Exiting");
     }
 

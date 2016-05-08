@@ -37,9 +37,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLEditorKit.Parser;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LinkbackExtractor
 {
-    private static Log log = LogFactory.getFactory().getInstance(LinkbackExtractor.class);
+    private static Logger log = LoggerFactory.getLogger(LinkbackExtractor.class);
     private boolean    mFound         = false;
     private String     mTitle         = "";
     private String     mRssLink       = null;
@@ -78,9 +77,7 @@ public class LinkbackExtractor
                 extractByParsingRss(mRssLink, requestURL);
             }
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Extracting linkback", e);
-            }
+            log.debug("Extracting linkback", e);
         }
     }
 
@@ -150,9 +147,7 @@ public class LinkbackExtractor
 
         int count = 0;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Feed parsed, title: " + feedTitle);
-        }
+        log.debug("Feed parsed, title: {}", feedTitle);
 
         for (Object objItem : feed.getEntries()) {
             count++;
@@ -174,9 +169,7 @@ public class LinkbackExtractor
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Parsed " + count + " articles, found linkback=" + mFound);
-        }
+        log.debug("Parsed {} articles, found linkback= {}", count, mFound);
     }
 
     //------------------------------------------------------------------------
@@ -298,17 +291,11 @@ public class LinkbackExtractor
                 // Look out for RSS autodiscovery link
                 String title = (String) atts.getAttribute(HTML.Attribute.TITLE);
                 String type = (String) atts.getAttribute(HTML.Attribute.TYPE);
-                if (title != null && type != null
-                        && type.equals("application/rss+xml")
+                if (title != null && type != null && type.equals("application/rss+xml")
                         && title.equals("RSS"))
                 {
                     mRssLink = (String) atts.getAttribute(HTML.Attribute.HREF);
-
-                    if (log.isDebugEnabled())
-                    {
-                        log.debug("Found RSS link " + mRssLink);
-                    }
-
+                    log.debug("Found RSS link {}", mRssLink);
                     if (mRssLink.startsWith("/") && mRssLink.length() > 1)
                     {
                         try
@@ -321,10 +308,7 @@ public class LinkbackExtractor
                         catch (MalformedURLException e)
                         {
                             mRssLink = null;
-                            if (log.isDebugEnabled())
-                            {
-                                log.debug("Determining RSS URL", e);
-                            }
+                            log.debug("Determining RSS URL", e);
                         }
                     }
                     else if (!mRssLink.startsWith("http"))
@@ -336,10 +320,7 @@ public class LinkbackExtractor
                                     + mRssLink;
                         }
                     }
-                    if (log.isDebugEnabled())
-                    {
-                        log.debug("Qualified RSS link is " + mRssLink);
-                    }
+                    log.debug("Qualified RSS link is {}", mRssLink);
                 }
             }
         }

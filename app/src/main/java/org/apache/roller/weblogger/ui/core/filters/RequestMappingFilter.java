@@ -31,8 +31,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.processors.CommentProcessor;
@@ -41,6 +39,8 @@ import org.apache.roller.weblogger.ui.rendering.processors.IncomingTrackbackProc
 import org.apache.roller.weblogger.ui.rendering.processors.MediaResourceProcessor;
 import org.apache.roller.weblogger.ui.rendering.processors.PageProcessor;
 import org.apache.roller.weblogger.ui.rendering.processors.SearchProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles weblog specific URLs for the form /<weblog handle>/*
@@ -48,7 +48,7 @@ import org.apache.roller.weblogger.ui.rendering.processors.SearchProcessor;
  */
 public class RequestMappingFilter implements Filter {
 
-    private static Log log = LogFactory.getLog(RequestMappingFilter.class);
+    private static Logger log = LoggerFactory.getLogger(RequestMappingFilter.class);
 
     // url patterns that are not allowed to be considered weblog handles
     Set<String> restrictedUrls;
@@ -92,7 +92,7 @@ public class RequestMappingFilter implements Filter {
         String weblogRequestContext = null;
         String weblogRequestData = null;
 
-        log.debug("evaluating ["+request.getRequestURI()+"]");
+        log.debug("evaluating [{}]", request.getRequestURI());
 
         // figure out potential weblog handle
         String servlet = request.getRequestURI();
@@ -125,11 +125,11 @@ public class RequestMappingFilter implements Filter {
             }
         }
 
-        log.debug("potential weblog handle = " + weblogHandle);
+        log.debug("potential weblog handle = {}", weblogHandle);
 
         // check if it's a valid weblog handle
         if(restrictedUrls.contains(weblogHandle) || !this.isWeblog(weblogHandle)) {
-            log.debug("SKIPPED " + weblogHandle);
+            log.debug("SKIPPED {}", weblogHandle);
             return false;
         }
 
@@ -178,7 +178,7 @@ public class RequestMappingFilter implements Filter {
         // calculate forward url
         String forwardUrl = calculateForwardUrl(request, weblogHandle, weblogRequestContext, weblogRequestData);
         if (forwardUrl != null) {
-            log.debug("forwarding to " + forwardUrl);
+            log.debug("forwarding to {}", forwardUrl);
             RequestDispatcher dispatch = request.getRequestDispatcher(forwardUrl);
             dispatch.forward(request, response);
             // we dealt with this request ourselves, so return

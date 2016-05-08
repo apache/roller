@@ -21,8 +21,6 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
@@ -30,6 +28,8 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class MediaFileImageChooser extends UIAction {
-    private static Log log = LogFactory.getLog(MediaFileImageChooser.class);
+    private static Logger log = LoggerFactory.getLogger(MediaFileImageChooser.class);
 
     private String directoryId;
     private String directoryName;

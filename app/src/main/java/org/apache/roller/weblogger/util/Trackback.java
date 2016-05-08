@@ -37,22 +37,22 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Represents a trackback request.
  */
 public class Trackback {
-    
-    private static final Log LOG = LogFactory.getLog(Trackback.class);
+
+    private static Logger log = LoggerFactory.getLogger(Trackback.class);
     
     private final WeblogEntry entry;
 
@@ -108,7 +108,7 @@ public class Trackback {
         
         RollerMessages messages = new RollerMessages();
         
-        LOG.debug("Sending trackback to url - " + trackbackURL);
+        log.debug("Sending trackback to url {}", trackbackURL);
         
         // Construct data
         String title = entry.getTitle();
@@ -125,7 +125,7 @@ public class Trackback {
         params.put("blog_name", Utilities.encode(blog_name));
         String queryString = Utilities.getQueryString(params);
         
-        LOG.debug("query string - " + queryString);
+        log.debug("query string: {}", queryString);
         
         // prepare http request
         HttpClient client = new HttpClient();
@@ -141,8 +141,8 @@ public class Trackback {
             byte[] response = method.getResponseBody();
             String responseString = StringEscapeUtils.escapeHtml4(new String(response, "UTF-8"));
             
-            LOG.debug("result = " + statusCode + " " + method.getStatusText());
-            LOG.debug("response:\n" + responseString);
+            log.debug("result = {} {}", statusCode, method.getStatusText());
+            log.debug("response:\n {}", responseString);
             
             if(statusCode == HttpStatus.SC_OK) {
                 // trackback request succeeded, message will give details
@@ -164,7 +164,7 @@ public class Trackback {
             
         } catch (IOException e) {
             // some kind of transport error sending trackback post
-            LOG.debug("Error sending trackback", e);
+            log.debug("Error sending trackback", e);
             messages.addError("weblogEdit.trackbackErrorTransport");
         } finally {
             // release used connection
@@ -191,7 +191,7 @@ public class Trackback {
             int code = -99;
             try {
                 code = Integer.parseInt(root.getChildText("error"));
-            } catch (NumberFormatException ignoredByDesign) {}
+            } catch (NumberFormatException ignored) {}
             
             String message = root.getChildText("message");
             if (code != 0) {

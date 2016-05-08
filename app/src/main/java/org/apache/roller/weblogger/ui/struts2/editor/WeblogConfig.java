@@ -26,8 +26,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -38,13 +36,15 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Action for modifying weblog configuration.
  */
 public class WeblogConfig extends UIAction {
-    
-    private static Log log = LogFactory.getLog(WeblogConfig.class);
+
+    private static Logger log = LoggerFactory.getLogger(WeblogConfig.class);
 
     private WeblogEntryManager weblogEntryManager;
 
@@ -208,7 +208,7 @@ public class WeblogConfig extends UIAction {
             addMessage("websiteRemove.success", getActionWeblog().getName());
             return SUCCESS;
         } catch (Exception ex) {
-            log.error("Error removing weblog - " + getActionWeblog().getHandle(), ex);
+            log.error("Error removing weblog - {}", getActionWeblog().getHandle(), ex);
             addError("websiteRemove.error", getActionWeblog().getName());
         }
 

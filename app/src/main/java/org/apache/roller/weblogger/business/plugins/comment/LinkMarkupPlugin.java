@@ -22,9 +22,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Comment plugin which turns plain text URLs into hyperlinks using
@@ -33,13 +33,14 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
  * Contributed by Matthew Montgomery.
  */
 public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
-    private static final Log LOG = LogFactory.getLog(LinkMarkupPlugin.class);
+
+    private static Logger log = LoggerFactory.getLogger(LinkMarkupPlugin.class);
 
     private static final Pattern PATTERN = Pattern.compile(
             "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);  
     
     public LinkMarkupPlugin() {
-        LOG.debug("Instantiating LinkMarkupPlugin");
+        log.debug("Instantiating LinkMarkupPlugin");
     }
     
     /**
