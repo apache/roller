@@ -90,13 +90,13 @@ var msg= {
 
 <table class="rollertable">
     <tr class="rHeaderTr">
-        <th class="rollertable" width="30%">
+        <th width="30%">
             <s:text name="planetSubscriptions.column.title" />
         </th>
-        <th class="rollertable" width="60%">
+        <th width="60%">
             <s:text name="planetSubscriptions.column.feedUrl" />
         </th>
-        <th class="rollertable" width="10%">
+        <th width="10%">
             <s:text name="generic.delete" />
         </th>
     </tr>
@@ -108,20 +108,13 @@ var msg= {
             <tr class="rollertable_even">
         </s:else>
 
-        <td class="rollertable">
-            <s:property value="#sub.title" />
-        </td>
-
-        <td class="rollertable">
-            <str:truncateNicely lower="70" upper="100" ><s:property value="#sub.feedURL" /></str:truncateNicely>
-        </td>
-
-        <td class="rollertable">
-            <a class="delete-link" data-id="<s:property value='#sub.id'/>">
+        <td><s:property value="#sub.title" /></td>
+        <td><str:truncateNicely lower="70" upper="100" ><s:property value="#sub.feedURL" /></str:truncateNicely></td>
+        <td>
+          <a class="delete-link" data-id="<s:property value='#sub.id'/>">
                 <img src='<s:url value="/images/delete.png"/>' />
             </a>
         </td>
-
         </tr>
     </s:iterator>
 </table>

@@ -23,14 +23,14 @@
 <script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'/>"></script>
 <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'/>"></script>
 <script>
-var contextPath = "${pageContext.request.contextPath}";
-var msg= {
-    confirmLabel: '<s:text name="generic.confirm"/>',
-    saveLabel: '<s:text name="generic.save"/>',
-    cancelLabel: '<s:text name="generic.cancel"/>',
-    editTitle: '<s:text name="generic.edit"/>',
-    addTitle: '<s:text name="categoryForm.add.title"/>'
-};
+    var contextPath = "${pageContext.request.contextPath}";
+    var msg = {
+        confirmLabel: '<s:text name="generic.confirm"/>',
+        saveLabel: '<s:text name="generic.save"/>',
+        cancelLabel: '<s:text name="generic.cancel"/>',
+        editTitle: '<s:text name="generic.edit"/>',
+        addTitle: '<s:text name="categoryForm.add.title"/>'
+    };
 </script>
 <script src="<s:url value='/tb-ui/scripts/categories.js'/>"></script>
 
@@ -50,10 +50,10 @@ var msg= {
 
     <table class="rollertable">
 
-        <tr class="rollertable">
-            <th class="rollertable" width="25%"><s:text name="generic.name"/></th>
-            <th class="rollertable" width="7%"><s:text name="generic.edit"/></th>
-            <th class="rollertable" width="7%"><s:text name="categoriesForm.remove"/></th>
+        <tr>
+            <th width="25%"><s:text name="generic.name"/></th>
+            <th width="7%"><s:text name="generic.edit"/></th>
+            <th width="7%"><s:text name="categoriesForm.remove"/></th>
         </tr>
 
         <s:if test="AllCategories != null && !AllCategories.isEmpty">
@@ -61,57 +61,57 @@ var msg= {
             <%-- Categories --%>
             <s:iterator id="category" value="AllCategories" status="rowstatus">
                 <s:if test="#rowstatus.odd == true">
-                    <tr class="rollertable_odd"></s:if>
-                    <s:else>
-                        <tr class="rollertable_even"></s:else>
+                    <tr class="rollertable_odd">
+                </s:if>
+                <s:else>
+                    <tr class="rollertable_even">
+                </s:else>
 
-                        <td class="rollertable" id='catname-<s:property value="#category.id"/>'><s:property value="#category.name"/></td>
+                <td id='catname-<s:property value="#category.id"/>'><s:property value="#category.name"/></td>
 
-                        <td class="rollertable" align="center">
-                            <a href="#" class="edit-link" id='catid-<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>' data-id='<s:property value="#category.id"/>'><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/></a>
-                        </td>
+                <td align="center">
+                    <a href="#" class="edit-link" id='catid-<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>' data-id='<s:property value="#category.id"/>'><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/></a>
+                </td>
 
-                        <td class="rollertable" align="center">
-                            <s:if test="AllCategories.size() > 1">
-                                <a href="#" class="remove-link" id='cat-remove-id-<s:property value="#category.id"/>' data-id='<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>'>
-                                    <img src='<s:url value="/images/delete.png"/>' border="0" alt="icon"/>
-                                <a>
-                            </s:if>
-                        </td>
-
-                            </tr>
-                        </s:iterator>
-
+                <td align="center">
+                    <s:if test="AllCategories.size() > 1">
+                        <a href="#" class="remove-link" id='cat-remove-id-<s:property value="#category.id"/>' data-id='<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>'>
+                            <img src='<s:url value="/images/delete.png"/>' border="0" alt="icon"/>
+                        <a>
                     </s:if>
-                    <s:else>
-                        <tr>
-                            <td style="vertical-align:middle" colspan="6"><s:text name="categoriesForm.noresults"/></td>
-                        </tr>
-                    </s:else>
-                </table>
+                </td>
+              </tr>
+            </s:iterator>
+        </s:if>
+        <s:else>
+            <tr>
+                <td style="vertical-align:middle" colspan="6"><s:text name="categoriesForm.noresults"/></td>
+            </tr>
+        </s:else>
+       </table>
 
-                <div class="control clearfix">
-                    <input type="button" value="<s:text name='categoriesForm.addCategory'/>" id="add-link"/>
-                </div>
+      <div class="control clearfix">
+          <input type="button" value="<s:text name='categoriesForm.addCategory'/>" id="add-link"/>
+      </div>
 
-            </s:form>
+</s:form>
 
-            <div id="category-edit" style="display:none">
-                <span id="category-edit-error" style="display:none"><s:text name='categoryForm.error.duplicateName'/></span>
-                <form>
-                    <label for="name"><s:text name='generic.name'/>:</label>
-                    <input type="text" id="category-edit-name" class="text ui-widget-content ui-corner-all">
-                </form>
+    <div id="category-edit" style="display:none">
+      <span id="category-edit-error" style="display:none"><s:text name='categoryForm.error.duplicateName'/></span>
+      <form>
+          <label for="name"><s:text name='generic.name'/>:</label>
+          <input type="text" id="category-edit-name" class="text ui-widget-content ui-corner-all">
+      </form>
+    </div>
+
+    <div id="category-remove" title="<s:text name='categoryDeleteOK.removeCategory'/>" style="display:none">
+        <form>
+            <div id="category-remove-mustmove" style="display:none">
+                <s:text name='categoryDeleteOK.youMustMoveEntries'/>
+                <p>
+                    <s:text name="categoryDeleteOK.moveToWhere"/>
+                    <select id="category-remove-targetlist"/>
+                </p>
             </div>
-
-            <div id="category-remove" title="<s:text name='categoryDeleteOK.removeCategory'/>" style="display:none">
-                <form>
-                    <div id="category-remove-mustmove" style="display:none">
-                        <s:text name='categoryDeleteOK.youMustMoveEntries'/>
-                        <p>
-                            <s:text name="categoryDeleteOK.moveToWhere"/>
-                            <select id="category-remove-targetlist"/>
-                        </p>
-                    </div>
-                </form>
-            </div>
+        </form>
+    </div>

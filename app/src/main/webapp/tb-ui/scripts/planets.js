@@ -36,7 +36,11 @@ $(function() {
    });
    $(".delete-link").click(function(e) {
       e.preventDefault();
-      var idToRemove = $(this).attr("data-id");
-      $('#confirm-delete').data('deleteId', idToRemove).dialog('open');
+      var tr = $(this).closest('tr');
+      var idToRemove = tr.attr('id');
+      var planetName = tr.find('td.title-cell').text();
+      $('#confirm-delete')
+          .dialog('option', 'title', planetName)
+          .data('deleteId', idToRemove).dialog('open');
    });
 });

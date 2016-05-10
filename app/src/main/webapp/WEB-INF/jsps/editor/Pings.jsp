@@ -21,7 +21,7 @@
    <s:text name="pings.subtitle" >
        <s:param value="actionWeblog.handle" />
    </s:text>
-</p>  
+</p>
 <p class="pagetip">
     <s:text name="pings.explanation"/>
 <p/>
@@ -36,11 +36,11 @@
 
 <table class="rollertable">
 <%-- Headings --%>
-<tr class="rollertable">
-    <th class="rollertable" width="20%"><s:text name="generic.name" /></th>
-    <th class="rollertable" width="40%"><s:text name="pingTarget.pingUrl" /></th>
-    <th class="rollertable" width="20%" colspan=2><s:text name="pingTarget.auto" /></th>
-    <th class="rollertable" width="20%"><s:text name="pingTarget.manual" /></th>
+<tr>
+    <th width="20%"><s:text name="generic.name" /></th>
+    <th width="40%"><s:text name="pingTarget.pingUrl" /></th>
+    <th width="20%" colspan=2><s:text name="pingTarget.auto" /></th>
+    <th width="20%"><s:text name="pingTarget.manual" /></th>
 </tr>
 
 <%-- Table of current common targets with actions --%>
@@ -51,17 +51,17 @@
     <s:else>
         <tr class="rollertable_even">
     </s:else>
-    
-    <td class="rollertable">
+
+    <td>
         <str:truncateNicely lower="15" upper="20" ><s:property value="#pingTarget.name" /></str:truncateNicely>
     </td>
-    
-    <td class="rollertable">
+
+    <td>
         <str:truncateNicely lower="70" upper="75" ><s:property value="#pingTarget.pingUrl" /></str:truncateNicely>
     </td>
-    
+
     <!-- TODO: Use icons here -->
-    <td class="rollertable" align="center" >
+    <td align="center" >
         <s:if test="pingStatus[#pingTarget.id]">
             <span style="color: #00aa00; font-weight: bold;"><s:text name="pingTarget.enabled"/></span>&nbsp;
         </s:if>
@@ -69,9 +69,9 @@
             <span style="color: #aaaaaa; font-weight: bold;"><s:text name="pingTarget.disabled"/></span>&nbsp;
         </s:else>
     </td>
-    
+
     <!-- TODO: Use icons here -->
-    <td class="rollertable" align="center" >
+    <td align="center">
         <s:if test="pingStatus[#pingTarget.id]">
             <s:url var="disableUrl" action="pings!disable" >
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -87,15 +87,15 @@
             <s:a href="%{enableUrl}"><s:text name="pingTarget.enable"/></s:a>
         </s:else>
     </td>
-    
-    <td class="rollertable">
+
+    <td>
         <s:url var="pingNowUrl" action="pings!pingNow" >
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="pingTargetId" value="#pingTarget.id" />
         </s:url>
         <s:a href="%{pingNowUrl}"><s:text name="pingTarget.sendPingNow"/></s:a>
     </td>
-    
+
     </tr>
 </s:iterator>
 </table>

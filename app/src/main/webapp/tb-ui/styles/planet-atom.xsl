@@ -16,7 +16,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
    xmlns:atom="http://www.w3.org/2005/Atom">
 <xsl:output method="xml"  />
@@ -143,10 +143,10 @@ a:visited {
 .subtitle span {
     color: #ad3431;
 }
-table.rollertable th, table.rollertable th {
+table.rollertable th {
     background: #c6ab74;
 }
-table.rollertable td, table.rollertable tbody td {
+table.rollertable td {
     border: 1px solid #c6ab74;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
@@ -154,33 +154,33 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
 }
 </style>
 </head>
-<body>	
+<body>
 
 <div id="banner">
-    <div class="bannerStatusBox">   
+    <div class="bannerStatusBox">
         <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
         <tr>
         <td class="bannerLeft">
             Atom 1.0
         </td>
-        <td class="bannerRight">  
+        <td class="bannerRight">
             <xsl:value-of select="atom:feed/atom:generator"/><xsl:text> </xsl:text><xsl:value-of select="atom:feed/atom:generator/@version"/>
         </td>
         </tr>
-        </table>    
+        </table>
     </div>
 </div>
-    
+
 <div id="wrapper">
     <div id="leftcontent_wrap">
-        <div id="leftcontent"> 
-        
+        <div id="leftcontent">
+
         </div>
     </div>
-    
+
     <div id="centercontent_wrap">
-        <div id="centercontent"> 
-            
+        <div id="centercontent">
+
             <h1>Atom newsfeed</h1>
 
             <p>This page is an RSS (Atom-format) newsfeed of a TightBlog planet, an aggregation of
@@ -190,32 +190,32 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
 
             <h1>Latest items in newsfeed [<xsl:value-of select="atom:feed/atom:title"/>]</h1>
             <ol>
-                <xsl:for-each select="atom:feed/atom:entry">       
+                <xsl:for-each select="atom:feed/atom:entry">
                 <li>
                     <h4><a><xsl:attribute name="href"><xsl:value-of select="atom:link/@href"/></xsl:attribute><xsl:value-of select="atom:title"/></a></h4>
                     Published <xsl:value-of select="atom:updated"/> by <xsl:value-of select="atom:author/atom:name" />
                 </li>
                 </xsl:for-each>
             </ol>
-            
-            <br />      
-            <hr />            
+
+            <br />
+            <hr />
         </div>
     </div>
-    
+
     <div id="rightcontent_wrap">
-        <div id="rightcontent"> 
+        <div id="rightcontent">
            <br />
         </div>
     </div>
- 
+
 </div>
 
 <div id="footer">
    <br />
-</div> 
-        
-<div id="datetagdiv" 
+</div>
+
+<div id="datetagdiv"
    style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
 </div>
 

@@ -44,12 +44,12 @@ var msg= {
 <table class="rollertable">
 
 <%-- Headings --%>
-<tr class="rollertable">
-    <th class="rollertable" width="20%%"><s:text name="generic.name" /></th>
-    <th class="rollertable" width="55%"><s:text name="pingTarget.pingUrl" /></th>
-    <th class="rollertable" width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
-    <th class="rollertable" width="5%"><s:text name="generic.edit" /></th>
-    <th class="rollertable" width="5%"><s:text name="pingTarget.remove" /></th>
+<tr>
+    <th width="20%%"><s:text name="generic.name" /></th>
+    <th width="55%"><s:text name="pingTarget.pingUrl" /></th>
+    <th width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
+    <th width="5%"><s:text name="generic.edit" /></th>
+    <th width="5%"><s:text name="pingTarget.remove" /></th>
 </tr>
 
 <s:form id="pingTargetsForm" action="commonPingTargets">
@@ -66,11 +66,11 @@ var msg= {
         <tr class="rollertable_even">
     </s:else>
 
-    <td class="rollertable" id='ptname-<s:property value="#pingTarget.id"/>'><s:property value="#pingTarget.name" /></td>
+    <td id='ptname-<s:property value="#pingTarget.id"/>'><s:property value="#pingTarget.name" /></td>
 
-    <td class="rollertable" id='pturl-<s:property value="#pingTarget.id"/>'><s:property value="#pingTarget.pingUrl" /></td>
+    <td id='pturl-<s:property value="#pingTarget.id"/>'><s:property value="#pingTarget.pingUrl" /></td>
 
-    <td class="rollertable" align="center">
+    <td align="center">
        <span style="font-weight: bold;" id="enablestate-<s:property value='#pingTarget.id'/>">
        <s:if test="#pingTarget.autoEnabled">
            <s:text name="pingTarget.enabled"/>
@@ -81,7 +81,7 @@ var msg= {
        </span>
     </td>
 
-    <td class="rollertable" align="center" >
+    <td align="center" >
        <a href="#" class="enable-toggle" data-id='<s:property value="#pingTarget.id"/>' data-enabled='<s:property value="#pingTarget.autoEnabled"/>'>
        <s:if test="#pingTarget.autoEnabled">
            <s:text name="pingTarget.disable"/>
@@ -92,13 +92,13 @@ var msg= {
        </a>
     </td>
 
-    <td class="rollertable" align="center">
+    <td align="center">
         <a class="edit-link" data-id='<s:property value="#pingTarget.id"/>'>
             <img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="<s:text name="generic.edit" />" />
         </a>
     </td>
 
-    <td class="rollertable" align="center">
+    <td align="center">
         <a class="delete-link" data-id='<s:property value="#pingTarget.id"/>'>
             <img src='<s:url value="/images/delete.png"/>' border="0" alt="<s:text name="pingTarget.remove" />" />
         </a>

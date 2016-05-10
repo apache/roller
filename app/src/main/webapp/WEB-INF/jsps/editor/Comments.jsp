@@ -176,19 +176,11 @@
 
             <tr>
                 <s:if test="actionName == 'comments'">
-                    <th class="rollertable" width="5%">
-                        <s:text name="commentManagement.columnApproved" />
-                    </th>
+                    <th width="5%"><s:text name="commentManagement.columnApproved" /></th>
                 </s:if>
-                <th class="rollertable" width="5%">
-                    <s:text name="commentManagement.columnSpam" />
-                </th>
-                <th class="rollertable" width="5%" >
-                    <s:text name="generic.delete" />
-                </th>
-                <th class="rollertable">
-                    <s:text name="commentManagement.columnComment" />
-                </th>
+                <th width="5%"><s:text name="commentManagement.columnSpam" /></th>
+                <th width="5%" ><s:text name="generic.delete" /></th>
+                <th ><s:text name="commentManagement.columnComment" /></th>
             </tr>
 
             <%-- ======================================================== --%>
@@ -198,7 +190,6 @@
                 <s:if test="actionName == 'comments'">
                     <td align="center">
                         <s:text name="commentManagement.select" /><br/>
-
                         <span id="checkallapproved"><a href="#"><s:text name="generic.all" /></a></span><br />
                         <span id="clearallapproved"><a href="#"><s:text name="generic.none" /></a></span>
                     </td>
