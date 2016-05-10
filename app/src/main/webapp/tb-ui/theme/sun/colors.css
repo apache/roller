@@ -21,7 +21,7 @@
 /* add colors and images to roller.css */
 
 #logobackground {
-    background: #e77100 !important; 
+    background: #e77100 !important;
 }
 .bannerBox {
     background: url("two-banner.gif") repeat-x top;
@@ -33,7 +33,7 @@
     color: #666666;
 }
 #footer {
-    border: none; 
+    border: none;
     color: #5d7992;
 }
 h1 {
@@ -66,27 +66,27 @@ a:hover {
 a:active {
 	color: #35556B;
 }
-table.rollertable th, table.rollertable th {
+table.rollertable th {
     background: #52829c;
 }
-table.rollertable td, table.rollertable tbody td {
+table.rollertable td {
     border: 1px solid #52829c;
 }
 div.centerTitle {
     background: #dee7ef;
 }
 div.control {
-    background: #dee7ef; 
+    background: #dee7ef;
 }
 div.controlToggle {
-    background: url("two-togglegrey.gif") repeat-x top; 
+    background: url("two-togglegrey.gif") repeat-x top;
 }
 div.entriesBox {
    background: #e3e3e3;
 }
 div.entryTitleBox {
-    color: #35556B; 
-    background: #dee7ef; 
+    color: #35556B;
+    background: #dee7ef;
 }
 div.entryBox {
    border-bottom: 1px #999999 solid;
@@ -176,10 +176,10 @@ td.mm_table_actions {
 	background: #dee7ef;
 }
 .rteImage {
-	border: 1px solid #bcc5cd; 
+	border: 1px solid #bcc5cd;
 }
 .rteImageSm {
-	border: 1px solid #bcc5cd; 
+	border: 1px solid #bcc5cd;
 }
 .rteDiv {
     border: 1px solid #bcc5cd;

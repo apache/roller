@@ -258,9 +258,7 @@
     <!-- Weblog Entry Plugins -->
     <beans:bean id="weblogEntryPlugins" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
-            <beans:list>
-                <beans:bean class="org.apache.roller.weblogger.business.plugins.entry.ObfuscateEmailPlugin"/>
-            </beans:list>
+            <beans:list/>
         </beans:property>
     </beans:bean>
 

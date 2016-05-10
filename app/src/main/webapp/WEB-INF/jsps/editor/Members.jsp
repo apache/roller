@@ -31,29 +31,19 @@
 <s:form action="members!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-    
+
     <div style="text-align: right; padding-bottom: 6px;">
         <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <s:text name="commentManagement.pending" />&nbsp;
     </div>
-    
+
     <table class="rollertable">
         <tr class="rHeaderTr">
-           <th class="rollertable" width="20%">
-               <s:text name="memberPermissions.userName" />
-           </th>
-           <th class="rollertable" width="20%">
-               <s:text name="memberPermissions.administrator" />
-           </th>
-           <th class="rollertable" width="20%">
-               <s:text name="memberPermissions.author" />
-           </th>
-           <th class="rollertable" width="20%">
-               <s:text name="memberPermissions.limited" />
-           </th>
-           <th class="rollertable" width="20%">
-               <s:text name="memberPermissions.remove" />
-           </th>
+           <th width="20%"><s:text name="memberPermissions.userName" /></th>
+           <th width="20%"><s:text name="memberPermissions.administrator" /></th>
+           <th width="20%"><s:text name="memberPermissions.author" /></th>
+           <th width="20%"><s:text name="memberPermissions.limited" /></th>
+           <th width="20%"><s:text name="memberPermissions.remove" /></th>
         </tr>
         <s:iterator id="role" value="weblogRoles" status="rowstatus">
             <s:if test="#role.pending">
@@ -65,37 +55,37 @@
             <s:else>
                 <tr class="rollertable_even">
             </s:else>
-            
-                <td class="rollertable">
+
+                <td>
                     <img src='<s:url value="/images/user.png"/>' border="0" alt="icon" />
 	                <s:property value="#role.user.userName" />
-                </td>               
-                <td class="rollertable">
-                    <input type="radio" 
+                </td>
+                <td>
+                    <input type="radio"
                         <s:if test='#role.weblogRole.name() == "OWNER"'>checked</s:if>
                         name='role-<s:property value="#role.user.id" />' value="OWNER" />
                 </td>
-                <td class="rollertable">
-	                <input type="radio" 
+                <td>
+	                <input type="radio"
                         <s:if test='#role.weblogRole.name() == "POST"'>checked</s:if>
                         name='role-<s:property value="#role.user.id" />' value="POST" />
-                </td>                
-                <td class="rollertable">
-                    <input type="radio" 
+                </td>
+                <td>
+                    <input type="radio"
                         <s:if test='#role.weblogRole.name() == "EDIT_DRAFT"'>checked</s:if>
                         name='role-<s:property value="#role.user.id" />' value="EDIT_DRAFT" />
-                </td>                
-                <td class="rollertable">
-                    <input type="radio" 
+                </td>
+                <td>
+                    <input type="radio"
                         name='role-<s:property value="#role.user.id" />' value="-1" />
                 </td>
            </tr>
        </s:iterator>
     </table>
     <br />
-     
+
     <div class="control">
        <s:submit value="%{getText('generic.save')}" />
     </div>
-    
+
 </s:form>

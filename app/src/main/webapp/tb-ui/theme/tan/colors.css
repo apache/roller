@@ -22,7 +22,7 @@
 /* add colors and images to roller.css */
 
 #logobackground {
-    background: #ad3431 !important; 
+    background: #ad3431 !important;
 }
 .bannerBox {
     background: url("two-banner.gif") repeat-x top;
@@ -63,10 +63,10 @@ a:visited {
 .subtitle span {
     color: #ad3431;
 }
-table.rollertable th, table.rollertable th {
+table.rollertable th {
     background: #c6ab74;
 }
-table.rollertable td, table.rollertable tbody td {
+table.rollertable td {
     border: 1px solid #c6ab74;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
@@ -76,17 +76,17 @@ div.centerTitle {
     background: #c6ab74;
 }
 div.control {
-    background: #c6ab74; 
+    background: #c6ab74;
 }
 div.controlToggle {
-    background: url("two-togglegrey.gif") repeat-x top; 
+    background: url("two-togglegrey.gif") repeat-x top;
 }
 div.entriesBox {
    background: #f1ebdf;
 }
 div.entryTitleBox {
-   color: white; 
-   background: #c6ab74; 
+   color: white;
+   background: #c6ab74;
 }
 div.entryBox {
    border-bottom: 1px #c8af7b solid;
@@ -95,7 +95,7 @@ div.entryTitleBox {
    font-size: medium;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #ad3537; 
+   color: #ad3537;
    font-size: medium;
    font-weight: bold;
 }
@@ -168,16 +168,14 @@ td.mm_table_actions {
 	background: #f1ebdf;
 }
 .rteImage {
-	border: 1px solid #d0cabc; 
+	border: 1px solid #d0cabc;
 }
 .rteImageSm {
-	border: 1px solid #d0cabc; 
+	border: 1px solid #d0cabc;
 }
 .rteDiv {
     border: 1px solid #d0cabc;
 }
-
-
 
 .htmlarea .toolbar {
   background: #f1ebdf;

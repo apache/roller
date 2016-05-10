@@ -64,7 +64,7 @@
 <%-- ============================================================= --%>
 
 <div class="tablenav">
-    
+
     <div style="float:left;">
         <s:text name="weblogEntryQuery.nowShowing">
             <s:param value="pager.items.size()" />
@@ -86,12 +86,12 @@
         </div>
     </s:if>
     <br />
-    
-    
+
+
     <%-- ============================================================= --%>
     <%-- Next / previous links --%>
     <%-- ============================================================= --%>
-    
+
     <s:if test="pager.prevLink != null && pager.nextLink != null">
         <br /><center>
             &laquo;
@@ -121,7 +121,7 @@
         </center><br />
     </s:elseif>
     <s:else><br /></s:else>
-    
+
 </div> <%-- class="tablenav" --%>
 
 
@@ -130,7 +130,7 @@
 <%-- ============================================================= --%>
 
 <p>
-    <span class="draftEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span> 
+    <span class="draftEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <s:text name="weblogEntryQuery.draft" />&nbsp;&nbsp;
     <span class="pendingEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <s:text name="weblogEntryQuery.pending" />&nbsp;&nbsp;
@@ -141,41 +141,30 @@
 <table class="rollertable" width="100%">
 
 <tr>
-    <th class="rollertable" width="5%">
-        <s:text name="weblogEntryQuery.pubTime" />
-    </th>
-    <th class="rollertable" width="5%">
-        <s:text name="weblogEntryQuery.updateTime" />
-    </th>
-    <th class="rollertable">
-        <s:text name="weblogEntryQuery.title" />
-    </th>
-    <th class="rollertable" width="5%">
-        <s:text name="weblogEntryQuery.category" />
-    </th>
-    <th class="rollertable" width="5%">
-    </th>
-    <th class="rollertable" width="5%">
-    </th>
-    <th class="rollertable" width="5%">
-    </th>
+    <th width="5%"><s:text name="weblogEntryQuery.pubTime" /></th>
+    <th width="5%"><s:text name="weblogEntryQuery.updateTime" /></th>
+    <th><s:text name="weblogEntryQuery.title" /></th>
+    <th width="5%"><s:text name="weblogEntryQuery.category" /></th>
+    <th width="5%"></th>
+    <th width="5%"></th>
+    <th width="5%"></th>
 </tr>
 
 <s:iterator id="post" value="pager.items">
     <%-- <td> with style if comment is spam or pending --%>
     <s:if test="#post.status.name() == 'DRAFT'">
-        <tr class="draftentry"> 
+        <tr class="draftentry">
     </s:if>
     <s:elseif test="#post.status.name() == 'PENDING'">
-        <tr class="pendingentry"> 
+        <tr class="pendingentry">
     </s:elseif>
     <s:elseif test="#post.status.name() == 'SCHEDULED'">
-        <tr class="scheduledentry"> 
+        <tr class="scheduledentry">
     </s:elseif>
     <s:else>
         <tr>
     </s:else>
-    
+
     <td>
         <s:if test="#post.pubTime != null">
             <s:text name="generic.date.toStringFormat">
@@ -183,7 +172,7 @@
             </s:text>
         </s:if>
     </td>
-    
+
     <td>
         <s:if test="#post.updateTime != null">
             <s:text name="generic.date.toStringFormat">
@@ -191,15 +180,15 @@
             </s:text>
         </s:if>
     </td>
-    
+
     <td>
         <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
     </td>
-    
+
     <td>
         <s:property value="#post.category.name" />
     </td>
-    
+
     <td>
         <s:if test="#post.status.name() == 'PUBLISHED'">
             <a href='<s:property value="#post.permalink" />'><s:text name="weblogEntryQuery.view" /></a>

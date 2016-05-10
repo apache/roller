@@ -18,10 +18,9 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.plugins;
+package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.junit.Before;
 import org.junit.Test;

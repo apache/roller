@@ -51,13 +51,13 @@ var msg= {
     <table class="rollertable">
 
         <tr class="rHeaderTr">
-            <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
+            <th width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
                 title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
-            <th class="rollertable" width="25%"><s:text name="generic.name" /></th>
-            <th class="rollertable" width="25%"><s:text name="bookmarksForm.url" /></th>
-            <th class="rollertable" width="35%"><s:text name="generic.description" /></th>
-            <th class="rollertable" width="5%"><s:text name="generic.edit" /></th>
-            <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
+            <th width="25%"><s:text name="generic.name" /></th>
+            <th width="25%"><s:text name="bookmarksForm.url" /></th>
+            <th width="35%"><s:text name="generic.description" /></th>
+            <th width="5%"><s:text name="generic.edit" /></th>
+            <th width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
 
         <s:if test="weblogObj.bookmarks.size > 0">
@@ -71,24 +71,24 @@ var msg= {
                 <tr class="rollertable_even">
             </s:else>
 
-                <td class="rollertable center" style="vertical-align:middle">
+                <td class="center" style="vertical-align:middle">
                     <input type="checkbox" name="selectedBookmarks"
                     title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
                     value="<s:property value="#bookmark.id"/>" />
                 </td>
 
-                <td class="rollertable" id='bkname-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.name"/></td>
+                <td id='bkname-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.name"/></td>
 
-                <td class="rollertable" id='bkurl-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.url"/></td>
+                <td id='bkurl-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.url"/></td>
 
-                <td class="rollertable" id='bkdescription-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.description" /></td>
+                <td id='bkdescription-<s:property value="#bookmark.id"/>'><s:property value="#bookmark.description" /></td>
 
-                <td class="rollertable" align="center">
+                <td align="center">
                     <a href="#" class="edit-link" id='bkid-<s:property value="#bookmark.id"/>' data-id='<s:property value="#bookmark.id"/>'><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
                              title="<s:text name='bookmarksForm.edit.tip' />"/></a>
                 </td>
 
-                <td class="rollertable" align="center">
+                <td align="center">
                     <s:if test="#bookmark.url != null" >
                         <a href="<s:property value="#bookmark.url" />">
                             <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon" title="<s:text name='bookmarksForm.visitLink.tip' />" />
