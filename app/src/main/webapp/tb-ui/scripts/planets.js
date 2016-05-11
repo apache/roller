@@ -10,7 +10,9 @@ $(function() {
       type: "GET",
       url: contextPath + '/tb-ui/admin/rest/planets',
       success: function(data, textStatus, xhr) {
-        $('.tableBody').loadTemplate($("#tableTemplate"), data);
+        var tmpl = $.templates('#tableTemplate');
+        var html = tmpl.render(data);
+        $("#tableBody").html(html);
         $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
       }
    });
@@ -43,7 +45,7 @@ $(function() {
          }
       ]
    });
-   $(".delete-link").click(function(e) {
+   $("#tableBody").on('click', '.delete-link', function(e) {
       e.preventDefault();
       var tr = $(this).closest('tr');
       var idToRemove = tr.attr('id');

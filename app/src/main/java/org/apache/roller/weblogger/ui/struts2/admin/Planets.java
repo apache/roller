@@ -52,9 +52,6 @@ public class Planets extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(Planets.class);
     
-    // full list of planets
-    private List<Planet> planets = new ArrayList<>();
-
     @Autowired
     private PlanetManager planetManager;
 
@@ -80,50 +77,33 @@ public class Planets extends UIAction {
         return WeblogRole.NOBLOGNEEDED;
     }
 
-    @Override
-    public void prepare() {
-        for (Planet planet : planetManager.getPlanets()) {
-            // The "all" planet is considered a special planet and cannot be managed independently
-            if (!planet.getHandle().equals("all")) {
-                planets.add(planet);
-            }
-        }
-    }
-
-    /** 
-     * Show planets page.
-     */
     public String execute() {
         return LIST;
     }
 
-    public List<Planet> getPlanets() {
-        return planets;
-    }
-
     @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.PUT)
-    public void updatePlanet(@PathVariable String id, @RequestBody PlanetData newData,
+    public void updatePlanet(@PathVariable String id, @RequestBody Planet newData,
                                HttpServletResponse response) throws ServletException {
         Planet planet = planetManager.getPlanetById(id);
         savePlanet(planet, newData, response);
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.PUT)
-    public String addPlanet(@RequestBody PlanetData newData, HttpServletResponse response) throws ServletException {
+    public String addPlanet(@RequestBody Planet newData, HttpServletResponse response) throws ServletException {
         Planet planet = new Planet();
         planet.setId(WebloggerCommon.generateUUID());
         savePlanet(planet, newData, response);
         return response.getStatus() == HttpServletResponse.SC_OK ? planet.getId() : null;
     }
 
-    private void savePlanet(Planet planet, PlanetData newData, HttpServletResponse response) throws ServletException {
+    private void savePlanet(Planet planet, Planet newData, HttpServletResponse response) throws ServletException {
         try {
             if (planet != null) {
-                if ("all".equals(newData.getName())) {
+                if ("all".equals(newData.getTitle())) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                     return;
                 }
-                planet.setTitle(newData.getName());
+                planet.setTitle(newData.getTitle());
                 planet.setHandle(newData.getHandle());
                 planet.setDescription(newData.getDescription());
                 try {
@@ -156,46 +136,11 @@ public class Planets extends UIAction {
         return planetList;
     }
 
-    private static class PlanetData {
-        public PlanetData() {
-        }
-
-        private String name;
-        private String handle;
-        private String description;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getHandle() {
-            return handle;
-        }
-
-        public void setHandle(String handle) {
-            this.handle = handle;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-    }
-
-    
     @RequestMapping(value = "/tb-ui/admin/rest/planets/{id}", method = RequestMethod.DELETE)
     public void deletePlanet(@PathVariable String id, HttpServletResponse response) throws ServletException {
         try {
             Planet planetToDelete = planetManager.getPlanetById(id);
             planetManager.deletePlanet(planetToDelete);
-            planets.remove(planetToDelete);
             WebloggerFactory.flush();
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
