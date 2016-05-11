@@ -6,6 +6,14 @@ $(function() {
          }
       }
    });
+   $.ajax({
+      type: "GET",
+      url: contextPath + '/tb-ui/admin/rest/planets',
+      success: function(data, textStatus, xhr) {
+        $('.tableBody').loadTemplate($("#tableTemplate"), data);
+        $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
+      }
+   });
    $("#confirm-delete").dialog({
       autoOpen: false,
       resizable: true,
@@ -20,7 +28,8 @@ $(function() {
                  type: "DELETE",
                  url: contextPath + '/tb-ui/admin/rest/planets/' + idToRemove,
                  success: function(data, textStatus, xhr) {
-                    document.planetsForm.submit();
+                    $('tr#' + idToRemove).remove();
+                    $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
                  }
               });
               $(this).dialog("close");

@@ -311,14 +311,23 @@ td.field span.fixedAttr {
 .rollertable_even td {
     border: 1px solid #ccc;
     background: #EEEEEE;
-    color: black;
     vertical-align: top;
+    color: black;
 }
 .rollertable_odd td{
     border: 1px solid #ccc;
     background: inherit;
     vertical-align: top;
     color: black;
+}
+.rollertable td {
+    border: 1px solid #ccc;
+    background: inherit;
+    vertical-align: top;
+    color: black;
+}
+.rollertable .altrow td {
+    background: #EEEEEE;
 }
 .rollertable_pending td {
     border: 1px solid #ccc;
