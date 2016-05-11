@@ -82,20 +82,14 @@ public class Planets extends UIAction {
 
     @Override
     public void prepare() {
-        try {
-            for (Planet planet : planetManager.getPlanets()) {
-                // The "all" planet is considered a special planet and cannot be
-                // managed independently
-                if (!planet.getHandle().equals("all")) {
-                    planets.add(planet);
-                }
+        for (Planet planet : planetManager.getPlanets()) {
+            // The "all" planet is considered a special planet and cannot be managed independently
+            if (!planet.getHandle().equals("all")) {
+                planets.add(planet);
             }
-        } catch(Exception ex) {
-            log.error("Error getting planets: ", ex);
         }
     }
 
-    
     /** 
      * Show planets page.
      */
@@ -146,6 +140,20 @@ public class Planets extends UIAction {
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.GET)
+    public List<Planet> getPlanets(HttpServletResponse response) throws ServletException {
+        List<Planet> planetList = new ArrayList<>();
+
+        for (Planet planet : planetManager.getPlanets()) {
+            // The "all" planet is considered a special planet and cannot be managed independently
+            if (!planet.getHandle().equals("all")) {
+                planetList.add(planet);
+            }
+        }
+
+        return planetList;
     }
 
     private static class PlanetData {

@@ -24,6 +24,7 @@
     <title type="html">$utils.escapeXML($planet.title)</title>
     <id>$utils.escapeXML($absoluteSite)</id>
     <link rel="alternate" type="text/html" href="$absoluteSite" />
+    <link rel="shortcut icon" href="$absoluteSite/favicon.ico"/>
     <updated>$utils.formatRfc822Date($lastModified)</updated>
     <generator uri="https://github.com/gmazza/tightblog" version="$generatorVersion">TightBlog</generator>
   #foreach( $entry in $entries )
