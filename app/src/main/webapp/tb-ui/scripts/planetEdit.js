@@ -58,7 +58,7 @@ $(function() {
      var salt = $("#salt").val();
      var idToUpdate = $("#planetEditForm_bean_id").val();
      var newData = {
-        "name": $('#edit-title').val(),
+        "title": $('#edit-title').val(),
         "handle": $('#edit-handle').val(),
         "description": $('#edit-description').val()
      };

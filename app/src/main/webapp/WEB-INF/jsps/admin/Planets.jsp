@@ -22,7 +22,7 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>'/>
 <script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'/>"></script>
 <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'/>"></script>
-<script src="<s:url value='/tb-ui/jquery.loadTemplate-1.5.7.min.js'/>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
@@ -45,28 +45,36 @@
 <br style="clear:left"/>
 
 <table class="rollertable">
-  <col style="width:15%"/>
-  <col style="width:15%"/>
-  <col style="width:49%"/>
-  <col style="width:7%"/>
-  <col style="width:7%"/>
-  <col style="width:7%"/>
 <thead>
    <tr class="rHeaderTr">
-        <th><s:text name="planets.column.title"/></th>
-        <th><s:text name="planets.column.handle"/></th>
-        <th><s:text name="generic.description"/></th>
-        <th><s:text name="generic.edit"/></th>
-        <th><s:text name="generic.view"/></th>
-        <th><s:text name="generic.delete"/></th>
+        <th style="width:15%"><s:text name="planets.column.title"/></th>
+        <th style="width:15%"><s:text name="planets.column.handle"/></th>
+        <th style="width:49%"><s:text name="generic.description"/></th>
+        <th style="width:7%"><s:text name="generic.edit"/></th>
+        <th style="width:7%"><s:text name="generic.view"/></th>
+        <th style="width:7%"><s:text name="generic.delete"/></th>
     </tr>
 </thead>
-<tbody class="tableBody">
-  <script id="tableTemplate" type="text/x-query-tmpl"/>
-    <tr data-id="id">
-      <td class="title-cell" data-content="title"></td>
-      <td data-content="handle"></td>
-      <td style="text-align:center;" data-content="description"></td>
+<tbody id="tableBody">
+  <script id="tableTemplate" type="text/x-jsrender"/>
+    <tr id="{{:id}}">
+      <td class="title-cell">{{:title}}</td>
+      <td>{{:handle}}</td>
+      <td style="text-align:center;">{{:description}}</td>
+      <td align="center">
+          <s:url var="edit" action="planetEdit"/>
+          <s:a href='%{edit}?planetHandle={{:handle}}'>
+            <img src='<s:url value="/images/page_white_edit.png"/>' alt="icon"/>
+          </s:a>
+      </td>
+      <td align="center">
+          <a href='{{:absoluteURL}}' target="_blank">
+              <img src='<s:url value="/images/world_go.png"/>' alt="icon" title="<s:text name='planets.column.viewFeed.tip' />"/>
+          </a>
+      </td>
+      <td align="center">
+          <a href="#" class="delete-link"><img src='<s:url value="/images/delete.png"/>' alt="icon"/></a>
+      </td>
      </tr>
   </script>
 </tbody>
