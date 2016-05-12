@@ -25,9 +25,9 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             #if ($model.category || $model.permalink)
-                                <li><a href="$url.home">$text.get("generic.all")</a></li>
+                                <li><a href="$url.home">$server.msg("generic.all")</a></li>
                             #else
-                                <li class="selected"><a href="$url.home">$text.get("generic.all")</a></li>
+                                <li class="selected"><a href="$url.home">$server.msg("generic.all")</a></li>
                             #end
                             #foreach($cat in $cats)
                                 #if ($model.category && $model.category == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
@@ -52,24 +52,24 @@
 				#end
 				#if ($model.isUserBlogPublisher($weblog))
 				    <li>
-				       <a href="$url.createEntry">$text.get("navigationBar.newEntry")</a>
+				       <a href="$url.createEntry">$server.msg("navigationBar.newEntry")</a>
 				    </li>
 				    #if($model.isUserBlogOwner($weblog))
 				       <li>
-				           <a href="$url.editSettings">$text.get("navigationBar.settings")</a>
+				           <a href="$url.editSettings">$server.msg("navigationBar.settings")</a>
 				       </li>
 				    #end
 				        <li>
-				            <a href="$url.logout">$text.get("navigationBar.logout")</a>
+				            <a href="$url.logout">$server.msg("navigationBar.logout")</a>
 				        </li>
 				#else
 				    #if ($model.isUserAuthenticated())
 				        <li>
-				            <a href="$url.logout">$text.get("navigationBar.logout")</a>
+				            <a href="$url.logout">$server.msg("navigationBar.logout")</a>
 				        </li>
 				    #else
 				        <li>
-				            <a href="$url.login">$text.get("navigationBar.login")</a>
+				            <a href="$url.login">$server.msg("navigationBar.login")</a>
 				        </li>
 				    #end
 				#end
@@ -82,7 +82,7 @@
 					<script>
 				    	function validateSearch(form) {
 				            if (form.q.value == "") {
-				                alert("$text.get("macro.weblog.searchalert")");
+				                alert("$server.msg("macro.weblog.searchalert")");
 				                form.q.focus();
 				                return false;
 				            }

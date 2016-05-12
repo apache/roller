@@ -39,7 +39,6 @@
 
 <s:form id="planetsForm" action="planets">
     <s:hidden name="salt"/>
-    <s:hidden name="bean.id"/>
 </s:form>
 
 <br style="clear:left"/>

@@ -46,7 +46,7 @@
 	   	<div id="main_content" class="col-lg-8">
 			<div class="alert alert-info">
 				<p>Search Results for '$model.term'</p>
-		        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
+		        $server.msg( "macro.weblog.searchhits", [$model.term, $model.hits])
         	</div>
         	#if ($model.hits > 0)
 				<div id="search_results">
@@ -81,7 +81,7 @@
                                 #set( $cats = $model.weblog.getWeblogCategories() )
                                 #if(!$site && $cats && $cats.size() > 1)
                                     <select class="form-control" name="cat">
-                                        <option value="">$text.get( "macro.searchresults.incategory" )</option>
+                                        <option value="">$server.msg( "macro.searchresults.incategory" )</option>
                                         #foreach( $cat in $cats )
                                         <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
                                         #end
@@ -92,7 +92,7 @@
 	   							<button type="submit" class="btn btn-primary">Search</button>
 						   	</div>
 						</form>	
-						$text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
+						$server.msg( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
 			    </div>
 			</div> <!-- close sidebar_content -->
 		</div> <!-- /.row -->

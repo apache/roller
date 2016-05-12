@@ -156,7 +156,7 @@
         <beans:property name="preview" value="true"/>
     </beans:bean>
 
-    <beans:bean id="configModel" class="org.apache.roller.weblogger.ui.rendering.model.ConfigModel" scope="prototype">
+    <beans:bean id="serverModel" class="org.apache.roller.weblogger.ui.rendering.model.ServerModel" scope="prototype">
         <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
@@ -170,8 +170,6 @@
     <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
         <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
     </beans:bean>
-
-    <beans:bean id="messageModel" class="org.apache.roller.weblogger.ui.rendering.model.MessageModel" scope="prototype"/>
 
     <beans:bean id="planetModel" class="org.apache.roller.weblogger.ui.rendering.model.PlanetModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
@@ -201,10 +199,9 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="pageModel"/>
-                <beans:ref bean="configModel"/>
+                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
-                <beans:ref bean="messageModel"/>
                 <beans:ref bean="planetModel"/>
             </beans:set>
         </beans:property>
@@ -215,10 +212,9 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="previewPageModel"/>
-                <beans:ref bean="configModel"/>
+                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="previewUrlModel"/>
-                <beans:ref bean="messageModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>
@@ -227,10 +223,9 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="feedModel"/>
-                <beans:ref bean="configModel"/>
+                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
-                <beans:ref bean="messageModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>
@@ -239,10 +234,9 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="searchResultsModel"/>
-                <beans:ref bean="configModel"/>
+                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
-                <beans:ref bean="messageModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>

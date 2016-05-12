@@ -20,16 +20,21 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
+import org.apache.roller.weblogger.util.I18nMessages;
 
 /**
- * Model which provides access to application config data like site
- * config properties.
+ * Model which provides access to i18n application resources and
+ * weblogger config properties.
  */
-public class ConfigModel implements Model {
-    
+public class ServerModel implements Model {
+
+    I18nMessages messages = null;
+
     private PropertiesManager propertiesManager;
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
@@ -39,14 +44,32 @@ public class ConfigModel implements Model {
     /** Template context name to be used for model */
     @Override
     public String getModelName() {
-        return "config";
+        return "server";
     }
-    
-    
-    /** Init model, uses no objects */
+
+
+    /** Init page model, requires a WeblogRequest object */
     @Override
-    public void init(Map map) {
-        // no-op
+    public void init(Map initData) {
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
+
+        if (weblogRequest == null) {
+            throw new IllegalStateException("expected weblogRequest from init data");
+        }
+
+        // get messages util based on desired locale
+        this.messages = I18nMessages.getMessages(weblogRequest.getLocaleInstance());
+    }
+
+    /** Return message string */
+    public String msg(String key) {
+        return messages.getString(key);
+    }
+
+
+    /** Return parameterized message string */
+    public String msg(String key, List args) {
+        return messages.getString(key, args);
     }
 
     public String getSiteName() {
