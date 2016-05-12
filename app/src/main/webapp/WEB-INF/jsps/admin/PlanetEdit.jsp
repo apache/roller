@@ -22,6 +22,7 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 <script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'/>"></script>
 <script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'/>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
@@ -34,53 +35,49 @@ var msg= {
 </script>
 <script src="<s:url value='/tb-ui/scripts/planetEdit.js'/>"></script>
 
-<s:form id="planetEditForm" action="planets">
+<s:form id="planetEditForm" action="planetEdit">
 	<s:hidden id="salt" name="salt" />
-    <s:hidden name="bean.id" />
+  <s:hidden name="planetId"/>
+  <div id="planetEditFields"></div>
+        <script id="formTemplate" type="text/x-jsrender">
+          <div class="formrow">
+              <label for="edit-title" class="formrow"><s:text name="planets.title"/></label>
+              <input type="text" id="edit-title" size="48" maxlength="64" value="{{:title}}" onBlur="this.value=this.value.trim()"/>
+          </div>
 
-    <div class="formrow">
-        <label for="title" class="formrow" /><s:text name="planets.title" /></label>
-        <s:textfield id="edit-title" name="bean.title" size="48" maxlength="64" onBlur="this.value=this.value.trim()"/>
-    </div>
+          <div class="formrow">
+              <label for="edit-handle" class="formrow"><s:text name="planets.handle" /></label>
+              <input type="text" id="edit-handle" size="48" maxlength="48" value="{{:handle}}" onBlur="this.value=this.value.trim()"/>
+          </div>
 
-    <div class="formrow">
-        <label for="handle" class="formrow" /><s:text name="planets.handle" /></label>
-        <s:textfield id="edit-handle" name="bean.handle" size="48" maxlength="48" onBlur="this.value=this.value.trim()"/>
-    </div>
+          <div class="formrow">
+              <label for="edit-description" class="formrow"><s:text name="generic.description" /></label>
+              <input type="text" id="edit-description" size="90" maxlength="255" value="{{:description}}" onBlur="this.value=this.value.trim()"/>
+          </div>
+        </script>
 
-    <div class="formrow">
-        <label for="description" class="formrow" /><s:text name="generic.description" /></label>
-        <s:textfield id="edit-description" name="bean.description" size="90" maxlength="255" onBlur="this.value=this.value.trim()"/>
-    </div>
-
-    <p />
-
-    <div class="formrow">
-        <label class="formrow" />&nbsp;</label>
-        <s:submit value="%{getText('generic.save')}" id="save-planet"/>
-        &nbsp;
-        <input type="button" value='<s:text name="generic.cancel"/>'
-           onclick="window.location='<s:url action="planetEdit"/>'"/>
-    </div>
+        <p/>
+        <div class="formrow">
+            <label class="formrow">&nbsp;</label>
+            <input type="button" value="<s:text name="generic.save" />" id="save-planet"/>
+            <input type="button" value='<s:text name="generic.cancel"/>'
+               onclick="window.location='<s:url action="planetEdit"/>'"/>
+        </div>
 </s:form>
 
 <p class="subtitle">
     <s:text name="planetSubscriptions.subtitle.add" >
-        <s:param value="planetHandle" />
+        <s:param value="bean.handle" />
     </s:text>
 </p>
+
 <p><s:text name="planetSubscriptions.prompt.add" /></p>
 
-<s:form id="planetFeedForm" action="planetEdit">
-	<s:hidden name="salt" />
-  <s:hidden name="planetHandle" />
-
-    <div class="formrow">
-        <label for="feedUrl" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
-        <input type="text" id="feedUrl" size="60" maxlength="255" onBlur="this.value=this.value.trim()"/>
-        &nbsp;<s:submit value="%{getText('generic.save')}" id="add-link"/>
-    </div>
-</s:form>
+<div class="formrow">
+    <label for="feedUrl" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
+    <input type="text" id="feedUrl" size="60" maxlength="255" onBlur="this.value=this.value.trim()"/>
+    <input type="button" id="add-link" value="<s:text name="generic.save" />"/>
+</div>
 
 <br style="clear:left" />
 
@@ -89,34 +86,26 @@ var msg= {
 </h2>
 
 <table class="rollertable">
+  <thead>
     <tr class="rHeaderTr">
-        <th width="30%">
-            <s:text name="planetSubscriptions.column.title" />
-        </th>
-        <th width="60%">
-            <s:text name="planetSubscriptions.column.feedUrl" />
-        </th>
-        <th width="10%">
-            <s:text name="generic.delete" />
-        </th>
+        <th style="width:30%"><s:text name="planetSubscriptions.column.title" /></th>
+        <th style="width:60%"><s:text name="planetSubscriptions.column.feedUrl" /></th>
+        <th width="width:10%"><s:text name="generic.delete" /></th>
     </tr>
-    <s:iterator id="sub" value="subscriptions" status="rowstatus">
-        <s:if test="#rowstatus.odd == true">
-            <tr class="rollertable_odd">
-        </s:if>
-        <s:else>
-            <tr class="rollertable_even">
-        </s:else>
-
-        <td><s:property value="#sub.title" /></td>
-        <td><str:truncateNicely lower="70" upper="100" ><s:property value="#sub.feedURL" /></str:truncateNicely></td>
-        <td>
-          <a class="delete-link" data-id="<s:property value='#sub.id'/>">
-                <img src='<s:url value="/images/delete.png"/>' />
-            </a>
-        </td>
-        </tr>
-    </s:iterator>
+  </thead>
+  <tbody id="tableBody">
+    <script id="tableTemplate" type="text/x-jsrender">
+      {{for subscriptions}}
+          <tr id="{{:id}}">
+            <td class="title-cell">{{:title}}</td>
+            <td>{{:feedURL}}</td>
+            <td align="center">
+                <a href="#" class="delete-link"><img src='<s:url value="/images/delete.png"/>' alt="icon"/></a>
+            </td>
+           </tr>
+      {{/for}}
+    </script>
+  </tbody>
 </table>
 
 <div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">

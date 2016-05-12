@@ -18,12 +18,6 @@
  */
 package org.apache.roller.weblogger.ui.struts2.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -32,21 +26,9 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  */
 public class PlanetEdit extends UIAction {
 
-    private PlanetManager planetManager;
-
-    public void setPlanetManager(PlanetManager planetManager) {
-        this.planetManager = planetManager;
-    }
-
-    // planet handle we are working in
-    private String planetHandle = null;
-    
     // the planet we are working in
-    private Planet bean = null;
+    private String planetId;
     
-    // full list of subscriptions for the planet
-    private List<Subscription> subscriptions = new ArrayList<>();
-
     public PlanetEdit() {
         this.actionName = "planetEdit";
         this.desiredMenu = "admin";
@@ -58,48 +40,11 @@ public class PlanetEdit extends UIAction {
         return WeblogRole.NOBLOGNEEDED;
     }
 
-    @Override
-    public void prepare() {
-        bean = planetManager.getPlanet(getPlanetHandle());
-
-        if (bean != null) {
-            Set<Subscription> subsSet = bean.getSubscriptions();
-
-            // iterate over list and build display list
-            for (Subscription sub : subsSet) {
-                // only include external subs for display
-                if(!sub.getFeedURL().startsWith("weblogger:")) {
-                    subscriptions.add(sub);
-                }
-            }
-        }
-    }
-    
-    
-    /**
-     * Populate page model and forward to subscription page
-     */
-    public String execute() {
-        return LIST;
+    public String getPlanetId() {
+        return planetId;
     }
 
-    public List<Subscription> getSubscriptions() {
-        return subscriptions;
-    }
-
-    public String getPlanetHandle() {
-        return planetHandle;
-    }
-
-    public void setPlanetHandle(String planetHandle) {
-        this.planetHandle = planetHandle;
-    }
-    
-    public Planet getBean() {
-        return bean;
-    }
-
-    public void setBean(Planet bean) {
-        this.bean = bean;
+    public void setPlanetId(String planetId) {
+        this.planetId = planetId;
     }
 }
