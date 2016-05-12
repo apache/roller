@@ -18,7 +18,9 @@
  */
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -119,9 +121,10 @@ public class Planets extends UIAction {
 
     @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.GET)
     public List<Planet> getPlanets() throws ServletException {
-        // The "all" planet is considered a special planet and cannot be managed independently
         return planetManager.getPlanets().stream()
-                .filter(planet -> !planet.getHandle().equals("all")).collect(Collectors.toList());
+                // The "all" planet is considered a special planet and cannot be managed independently
+                .filter(planet -> !planet.getHandle().equals("all"))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planets/{id}", method = RequestMethod.DELETE)
@@ -135,6 +138,11 @@ public class Planets extends UIAction {
             log.error("Error deleting planet - {}", id);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.GET)
+    public Planet getPlanet(@PathVariable String id) throws ServletException {
+        return planetManager.getPlanetById(id);
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions/{id}", method = RequestMethod.DELETE)
@@ -154,10 +162,10 @@ public class Planets extends UIAction {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions", method = RequestMethod.PUT)
-    public void addPlanetSubscription(@RequestParam(name="planet") String planetHandle, @RequestParam String feedUrl,
+    public void addPlanetSubscription(@RequestParam(name="planetId") String planetId, @RequestParam String feedUrl,
                                       HttpServletResponse response) throws ServletException {
         try {
-            Planet planet = planetManager.getPlanet(planetHandle);
+            Planet planet = planetManager.getPlanetById(planetId);
             if (planet == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;

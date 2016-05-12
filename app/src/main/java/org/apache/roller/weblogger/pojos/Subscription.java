@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
@@ -39,7 +40,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 
 /**
@@ -120,6 +120,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
 
     @ManyToOne
     @JoinColumn(name="planetid", nullable=false)
+    @JsonIgnore
     public Planet getPlanet() {
         return planet;
     }
@@ -131,12 +132,12 @@ public class Subscription implements Serializable, Comparable<Subscription> {
 
     @OneToMany(targetEntity=SubscriptionEntry.class,
             cascade=CascadeType.ALL, mappedBy="subscription")
+    @JsonIgnore
     public Set<SubscriptionEntry> getEntries() {
         return entries;
     }
     
-    // private because there is no need for people to do this
-    private void setEntries(Set<SubscriptionEntry> entries) {
+    public void setEntries(Set<SubscriptionEntry> entries) {
         this.entries = entries;
     }
     
@@ -159,18 +160,6 @@ public class Subscription implements Serializable, Comparable<Subscription> {
             entry.setSubscription(this);
         }
         this.getEntries().addAll(newEntries);
-    }
-
-    // for backwards compatability?
-    @Transient
-    public String getName() {
-        return getTitle();
-    }
-    
-    // for backwards compatability?
-    @Transient
-    public String getURL() {
-        return siteURL;
     }
 
     /**
@@ -203,16 +192,10 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     }
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-
-        buf.append("{ Feed URL:");
-        buf.append(getFeedURL()).append(", Site URL:");
-        buf.append(getSiteURL()).append(", Title:");
-        buf.append(getTitle()).append(", Last Updated:");
-        buf.append(getLastUpdated());
-        buf.append("}");
-
-        return buf.toString();
+        String str = "{ Feed URL:" + getFeedURL();
+        str += ", Site URL:" + getSiteURL();
+        str += ", Title:" + getTitle() + "}";
+        return str;
     }
 
 }

@@ -210,9 +210,9 @@
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
         
-        <action name="planetEdit!*" method="{1}"
+        <action name="planetEdit"
                 class="org.apache.roller.weblogger.ui.struts2.admin.PlanetEdit">
-            <result name="list" type="tiles">.PlanetEdit</result>
+            <result name="success" type="tiles">.PlanetEdit</result>
         </action>
         
         <action name="planets"

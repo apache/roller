@@ -55,14 +55,14 @@
     </tr>
 </thead>
 <tbody id="tableBody">
-  <script id="tableTemplate" type="text/x-jsrender"/>
+  <script id="tableTemplate" type="text/x-jsrender">
     <tr id="{{:id}}">
       <td class="title-cell">{{:title}}</td>
       <td>{{:handle}}</td>
       <td style="text-align:center;">{{:description}}</td>
       <td align="center">
           <s:url var="edit" action="planetEdit"/>
-          <s:a href='%{edit}?planetHandle={{:handle}}'>
+          <s:a href='%{edit}?planetId={{:id}}'>
             <img src='<s:url value="/images/page_white_edit.png"/>' alt="icon"/>
           </s:a>
       </td>

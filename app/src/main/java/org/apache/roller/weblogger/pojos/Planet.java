@@ -139,9 +139,11 @@ public class Planet implements Serializable, Comparable<Planet> {
     @Transient
     public Date getLastUpdated() {
         Date lastUpdated = new Date(0);
-        for (Subscription sub : getSubscriptions()) {
-            if (sub.getLastUpdated() != null && sub.getLastUpdated().after(lastUpdated)) {
-                lastUpdated = sub.getLastUpdated();
+        if (getSubscriptions() != null) {
+            for (Subscription sub : getSubscriptions()) {
+                if (sub.getLastUpdated() != null && sub.getLastUpdated().after(lastUpdated)) {
+                    lastUpdated = sub.getLastUpdated();
+                }
             }
         }
         return lastUpdated;
