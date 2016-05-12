@@ -18,7 +18,7 @@
             <tr>
                 <td class="bannerLeft"></td>
                 <td class="bannerRight">
-                   <a href="$url.absoluteSite">$config.siteName</a> |
+                   <a href="$url.absoluteSite">$server.siteName</a> |
                    <a href="$url.absoluteSite/tb-ui/menu.rol">Main Menu</a> |
                    #if(!$model.isUserAuthenticated())
                       <a href="$url.login">Login</a> |

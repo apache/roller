@@ -40,11 +40,11 @@
 					<a name="comments"></a>
 					#if($model.commentForm.preview)
 						#set($comments = [$model.commentForm.previewComment])
-						<div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
+						<div class="comments-head">$server.msg( "macro.weblog.preview" ):</div>
 					#else
 						#if($entry.commentCount > 0)
 							#set($comments = $entry.getComments(true, true))
-							<div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
+							<div class="comments-head">$server.msg( "macro.weblog.comments" ):</div>
 						#else
 							<div class="comments-head">No one has commented yet.</div>
 						#end
@@ -58,7 +58,7 @@
 								<div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
 									<p>$comment.processedContent</p>
 									<p class="comment-details">
-									$text.get("macro.weblog.postedby")
+									$server.msg("macro.weblog.postedby")
 									#if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
 										<a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
 									#elseif (!$utils.isEmpty($comment.name))
@@ -66,11 +66,11 @@
 									#elseif ($comment.remoteHost)
 										<b>$comment.remoteHost</b>
 									#else
-										<b>$text.get("macro.weblog.comment.unknown")</b>
+										<b>$server.msg("macro.weblog.comment.unknown")</b>
 									#end
-									$text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
+									$server.msg("macro.weblog.on") $utils.formatDate($comment.postTime, $server.msg( "macro.weblog.datepattern" ))
 									<a href="$url.comment($entry.anchor, $comment.timestamp)"
-									   class="entrypermalink" title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
+									   class="entrypermalink" title="$server.msg( "macro.weblog.commentpermalink.title" )">#</a>
 									</p>
 								</div>
 							#end
@@ -99,23 +99,23 @@
 							<div class="row">   
 								<input type="hidden" name="method" value="post" />
 								<div class="form-group col-lg-4">
-									<label for="input1">$text.get( "macro.weblog.name" )</label>
+									<label for="input1">$server.msg( "macro.weblog.name" )</label>
 									<input type="text" name="name" class="form-control" value="$cform.name" id="input1" required="">
 							  	</div>
 							  	<div class="form-group col-lg-4">
-									<label for="input2">$text.get( "macro.weblog.email" )</label>
+									<label for="input2">$server.msg( "macro.weblog.email" )</label>
 									<input type="text" name="email" class="form-control" value="$cform.email" id="input2" required="">
 							  	</div>
 							  	<div class="form-group col-lg-4">
-									<label for="input3">$text.get( "macro.weblog.url" )</label>
+									<label for="input3">$server.msg( "macro.weblog.url" )</label>
 									<input type="text" name="url" class="form-control" value="$cform.url" id="input3">
 							  	</div>
-							  	#if ($config.commentEmailNotify)
+							  	#if ($server.commentEmailNotify)
 							  	<div class="form-group col-lg-6">
 								  	<div class="checkbox">
 									  <label>
 										<input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end>
-										$text.get( "macro.weblog.notifyMeOfComments" )
+										$server.msg( "macro.weblog.notifyMeOfComments" )
 									  </label>
 									</div>
 								</div>
@@ -124,23 +124,23 @@
 								  	<div class="checkbox">
 									  <label>
 										<input type="checkbox" class="checkbox" id="rememberInfo" name="rememberInfo" />
-										$text.get( "macro.weblog.rememberinfo" )
+										$server.msg( "macro.weblog.rememberinfo" )
 									  </label>
 									</div>
 								</div>
 							  	<div class="clearfix"></div>
 							  	<div class="form-group col-lg-12">
-									<label for="input4">$text.get( "macro.weblog.yourcomment" )</label>
+									<label for="input4">$server.msg( "macro.weblog.yourcomment" )</label>
 									<textarea name="content" class="form-control" rows="6" id="input4" required="">$cform.content</textarea>
 							  	</div>
 								
 								<div class="form-group col-lg-12">
 								    <span class="comments-syntax-indicator">
-								    $text.get( "macro.weblog.htmlsyntax" )
-								    #if(!$config.commentHtmlAllowed)
-								        <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
+								    $server.msg( "macro.weblog.htmlsyntax" )
+								    #if(!$server.commentHtmlAllowed)
+								        <span class="disabled">$server.msg( "macro.weblog.htmldisabled" )</span>
 								    #else
-								        <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>
+								        <span class="enabled">$server.msg( "macro.weblog.htmlenabled" )</span>
 								    #end
 								    </span>
 								</div>
@@ -148,9 +148,9 @@
 								<div class="form-group col-lg-12">
 								   <script src="$url.site/scripts/clientSideInclude.js"></script>
 								   <div id="commentAuthenticator"></div>
-								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$text.get("macro.weblog.postpreview" )&nbsp;"
+								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$server.msg("macro.weblog.postpreview" )&nbsp;"
 								      onclick="this.form.method.value='preview';this.form.submit()" />
-								   <input type="submit" class="btn btn-success" name="post" value="&nbsp;$text.get( "macro.weblog.post" )&nbsp;" />
+								   <input type="submit" class="btn btn-success" name="post" value="&nbsp;$server.msg( "macro.weblog.post" )&nbsp;" />
 								</div>
 							</div>
 						</form>
@@ -196,7 +196,7 @@
 		
 						function validateComments(theForm) {
 							if (theForm.content.value == "") {
-								alert("$text.get( "macro.weblog.commentwarning" )");
+								alert("$server.msg( "macro.weblog.commentwarning" )");
 								theForm.content.focus();
 								return false;
 							}
@@ -206,7 +206,7 @@
 					</div>
 					</div>
 					#else
-						<span class="status">$text.get( "comments.disabled" )</span>
+						<span class="status">$server.msg( "comments.disabled" )</span>
 					#end
 				#end
 			</div>

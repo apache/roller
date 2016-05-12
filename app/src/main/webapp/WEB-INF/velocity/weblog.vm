@@ -94,7 +94,7 @@ Show Atom auto-discovery links as HTML link elements.
  * if trackbacks are enabled and comments are allowed for the entry.
  **#
 #macro( showTrackbackAutodiscovery $entry )
-#if($config.trackbacksEnabled && $model.weblog.allowComments && $entry.commentsStillAllowed)
+#if($server.trackbacksEnabled && $model.weblog.allowComments && $entry.commentsStillAllowed)
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
@@ -137,10 +137,10 @@ code if defined will be used.
 *#
 #macro(showAnalyticsTrackingCode $weblog)
     #if (!$model.preview)
-        #if ($config.analyticsOverrideAllowed && $utils.isNotEmpty($weblog.analyticsCode))
+        #if ($server.analyticsOverrideAllowed && $utils.isNotEmpty($weblog.analyticsCode))
             $weblog.analyticsCode
-        #elseif ($utils.isNotEmpty($config.defaultAnalyticsTrackingCode))
-            $config.defaultAnalyticsTrackingCode
+        #elseif ($utils.isNotEmpty($server.defaultAnalyticsTrackingCode))
+            $server.defaultAnalyticsTrackingCode
         #end
     #end
 #end
@@ -246,9 +246,9 @@ Show comments for weblog entry according to TightBlog configuration.
 
     #if($model.commentForm.preview)
         #set($comments = [$model.commentForm.previewComment])
-        <div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
+        <div class="comments-head">$server.msg( "macro.weblog.preview" ):</div>
     #else
-        <div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
+        <div class="comments-head">$server.msg( "macro.weblog.comments" ):</div>
         #set($comments = $entry.getComments(true, true))
     #end
 
@@ -261,7 +261,7 @@ Show comments for weblog entry according to TightBlog configuration.
                 $comment.processedContent
 
                 <p class="comment-details">
-                $text.get("macro.weblog.postedby")
+                $server.msg("macro.weblog.postedby")
                 #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
                     <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
@@ -269,13 +269,13 @@ Show comments for weblog entry according to TightBlog configuration.
                 #elseif ($comment.remoteHost)
                     <b>$comment.remoteHost</b>
                 #else
-                    <b>$text.get("macro.weblog.comment.unknown")</b>
+                    <b>$server.msg("macro.weblog.comment.unknown")</b>
                 #end
 
-                $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
+                $server.msg("macro.weblog.on") $utils.formatDate($comment.postTime, $server.msg( "macro.weblog.datepattern" ))
 
                 <a href="$url.comment($entry.anchor, $comment.timestamp)"
-                   class="entrypermalink" title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
+                   class="entrypermalink" title="$server.msg( "macro.weblog.commentpermalink.title" )">#</a>
                 </p>
 
             </div>
@@ -289,10 +289,10 @@ Show comments for weblog entry according to TightBlog configuration.
     <!-- showMobileWeblogEntryComments -->
     #if($model.commentForm.preview)
       #set($comments = [$model.commentForm.previewComment])
-      #set( $heading = $text.get( "macro.weblog.preview" ))
+      #set( $heading = $server.msg( "macro.weblog.preview" ))
     #else
       #set($comments = $entry.getComments(true, true))
-      #set( $heading = $text.get( "macro.weblog.comments" ))
+      #set( $heading = $server.msg( "macro.weblog.comments" ))
     #end
     #if($comments.size() > 0)
       <ul data-role="listview" data-divider-theme="b" data-inset="true">
@@ -310,7 +310,7 @@ Show comments for weblog entry according to TightBlog configuration.
                  $comment.processedContent
               </p>
               <p class="ui-li-desc content-textbox">
-                $text.get("macro.weblog.postedby")
+                $server.msg("macro.weblog.postedby")
                 #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
                    <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
@@ -318,11 +318,11 @@ Show comments for weblog entry according to TightBlog configuration.
                 #elseif ($comment.remoteHost)
                    <b>$comment.remoteHost</b>
                 #else
-                   <b>$text.get("macro.weblog.comment.unknown")</b>
+                   <b>$server.msg("macro.weblog.comment.unknown")</b>
                 #end
 
-                $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
-                ##<a href="$url.comment($entry.anchor, $comment.timestamp)" title="$text.get( "macro.weblog.commentpermalink.title" )" data-role="button" data-inline="true" data-mini="true">#</a>
+                $server.msg("macro.weblog.on") $utils.formatDate($comment.postTime, $server.msg( "macro.weblog.datepattern" ))
+                ##<a href="$url.comment($entry.anchor, $comment.timestamp)" title="$server.msg( "macro.weblog.commentpermalink.title" )" data-role="button" data-inline="true" data-mini="true">#</a>
               </p>
             </li>
           #end
@@ -339,7 +339,7 @@ Show comments form for weblog entry.
     #set($cform = $model.getCommentForm())
 
     <div class="comments-form">
-    <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div>
+    <div class="comments-head">$server.msg("macro.weblog.postcommentHeader")</div>
     <a name="comment-form"></a>
 
 #if( $entry.commentsStillAllowed )
@@ -355,38 +355,38 @@ Show comments form for weblog entry.
 
         <ul>
             <li>
-                <label class="desc">$text.get( "macro.weblog.name" )</label>
+                <label class="desc">$server.msg( "macro.weblog.name" )</label>
                 <input type="text" name="name" class="text large" value="$cform.name" size="50" maxlength="255" />
             </li>
 
-            <li><label class="desc">$text.get( "macro.weblog.email" )</label>
+            <li><label class="desc">$server.msg( "macro.weblog.email" )</label>
                 <input type="text" name="email" class="text large" value="$cform.email" size="50" maxlength="255" />
             </li>
 
-            <li><label class="desc">$text.get( "macro.weblog.url" )</label>
+            <li><label class="desc">$server.msg( "macro.weblog.url" )</label>
                 <input type="text" name="url" class="text large" value="$cform.url" size="50" maxlength="255" />
             </li>
 
-            #if ($config.commentEmailNotify)
+            #if ($server.commentEmailNotify)
                 <li><input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end/>
-                    <label for="notify" class="choice">$text.get( "macro.weblog.notifyMeOfComments" )</label>
+                    <label for="notify" class="choice">$server.msg( "macro.weblog.notifyMeOfComments" )</label>
                 </li>
             #end
             <li>
                 <input type="checkbox" class="checkbox" id="rememberInfo" name="rememberInfo" />
-                <label for="rememberInfo" class="choice">$text.get( "macro.weblog.rememberinfo" )</label>
+                <label for="rememberInfo" class="choice">$server.msg( "macro.weblog.rememberinfo" )</label>
             </li>
             <li>
-                <label class="desc">$text.get( "macro.weblog.yourcomment" )</label>
+                <label class="desc">$server.msg( "macro.weblog.yourcomment" )</label>
                 <textarea name="content" class="textarea large" cols="40" rows="10">$cform.content</textarea>
             </li>
             <li class="info">
                 <span class="comments-syntax-indicator">
-                $text.get( "macro.weblog.htmlsyntax" )
-                #if(!$config.commentHtmlAllowed)
-                    <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
+                $server.msg( "macro.weblog.htmlsyntax" )
+                #if(!$server.commentHtmlAllowed)
+                    <span class="disabled">$server.msg( "macro.weblog.htmldisabled" )</span>
                 #else
-                    <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>
+                    <span class="enabled">$server.msg( "macro.weblog.htmlenabled" )</span>
                 #end
                 </span>
             </li>
@@ -395,9 +395,9 @@ Show comments form for weblog entry.
                <div id="commentAuthenticator"></div>
             </li>
             <li>
-               <input type="button" class="button" name="post" value="&nbsp;$text.get("macro.weblog.postpreview" )&nbsp;"
+               <input type="button" class="button" name="post" value="&nbsp;$server.msg("macro.weblog.postpreview" )&nbsp;"
                   onclick="this.form.method.value='preview';this.form.submit()" />
-               <input type="submit" class="button" name="post" value="&nbsp;$text.get( "macro.weblog.post" )&nbsp;" />
+               <input type="submit" class="button" name="post" value="&nbsp;$server.msg( "macro.weblog.post" )&nbsp;" />
             </li>
         </ul>
 
@@ -436,7 +436,7 @@ Show comments form for weblog entry.
 
     function validateComments(theForm) {
         if (theForm.content.value == "") {
-            alert("$text.get( "macro.weblog.commentwarning" )");
+            alert("$server.msg( "macro.weblog.commentwarning" )");
             theForm.content.focus();
             return false;
         }
@@ -445,7 +445,7 @@ Show comments form for weblog entry.
     </script>
 
 #else
-    <span class="status">$text.get( "comments.disabled" )</span>
+    <span class="status">$server.msg( "comments.disabled" )</span>
 #end
     </div>
 #end
@@ -496,9 +496,9 @@ Show weblog's categories in specified parent category.
 #macro(showWeblogCategoryLinksList)
     <ul class="rCategory">
     #if ($model.category || $model.permalink)
-        <li><a href="$url.home">$text.get("generic.all")</a></li>
+        <li><a href="$url.home">$server.msg("generic.all")</a></li>
     #else
-        <li class="selected"><a href="$url.home">$text.get("generic.all")</a></li>
+        <li class="selected"><a href="$url.home">$server.msg("generic.all")</a></li>
     #end
     #set($cats = $model.weblog.getWeblogCategories())
     #foreach($cat in $cats)
@@ -520,11 +520,11 @@ Show weblog's categories in specified parent category.
           <h2>Categories</h2>
           <ul data-role="listview">
             #if ($model.category || $model.permalink)
-              <li><a href="$url.home" data-transition="fade">$text.get("generic.all")</a></li>
+              <li><a href="$url.home" data-transition="fade">$server.msg("generic.all")</a></li>
             #else
-              <li data-icon="gear" class="ui-btn-active"><a href="$url.home" data-transition="fade">$text.get("generic.all")</a></li>
+              <li data-icon="gear" class="ui-btn-active"><a href="$url.home" data-transition="fade">$server.msg("generic.all")</a></li>
             #end
-            #set($active = $text.get("generic.all"))
+            #set($active = $server.msg("generic.all"))
             #set($cats = $model.weblog.getWeblogCategories())
             #foreach($cat in $cats)
               #if ($model.category && $model.category == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
@@ -547,7 +547,7 @@ Show weblog's categories in specified parent category.
  *#
 #macro(showAtomFeedsList $weblog)
     <ul class="rFeeds">
-    <li><a href="$url.feed.entries.atom">$text.get("generic.all")</a></li>
+    <li><a href="$url.feed.entries.atom">$server.msg("generic.all")</a></li>
     #set($categories = $weblog.weblogCategories )
     #foreach( $cat in $categories )
         <li><a href="$url.feed.entries.atom($cat.name)">$cat.name</a></li>
@@ -563,7 +563,7 @@ Show weblog's categories in specified parent category.
 #macro(showPageMenu $addExternalPages)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$url.site/"><span>$config.siteName</span></a>
+            <a href="$url.site/"><span>$server.siteName</span></a>
         </li>
         <li class="rNavItem">
             <a href="$url.home"><span>Weblog</span></a>
@@ -583,24 +583,24 @@ Show weblog's categories in specified parent category.
         #end
         #if ($model.isUserBlogPublisher($model.weblog))
             <li class="rNavItem">
-               <a href="$url.createEntry"><span>$text.get("navigationBar.newEntry")</span></a>
+               <a href="$url.createEntry"><span>$server.msg("navigationBar.newEntry")</span></a>
             </li>
             #if($model.isUserBlogOwner($model.weblog))
                <li class="rNavItem">
-                   <a href="$url.editSettings"><span>$text.get("navigationBar.settings")</span></a>
+                   <a href="$url.editSettings"><span>$server.msg("navigationBar.settings")</span></a>
                </li>
             #end
                 <li class="rNavItem">
-                    <a href="$url.logout"><span>$text.get("navigationBar.logout")</span></a>
+                    <a href="$url.logout"><span>$server.msg("navigationBar.logout")</span></a>
                 </li>
         #else
             #if ($model.isUserAuthenticated())
                 <li class="rNavItem">
-                    <a href="$url.logout"><span>$text.get("navigationBar.logout")</span></a>
+                    <a href="$url.logout"><span>$server.msg("navigationBar.logout")</span></a>
                 </li>
             #else
                 <li class="rNavItem">
-                    <a href="$url.login"><span>$text.get("navigationBar.login")</span></a>
+                    <a href="$url.login"><span>$server.msg("navigationBar.login")</span></a>
                 </li>
             #end
         #end
@@ -626,7 +626,7 @@ Show weblog editor menu with vertical or horizontal orientation.
           #foreach( $menu in $editorMenu.tabs )
             <ul class="rMenu">
             #foreach( $item in $menu.items )
-                <li class="rMenuItem"><a href="$url.action($item.action, '/tb-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a></li>
+                <li class="rMenuItem"><a href="$url.action($item.action, '/tb-ui/authoring')">$server.msg( $menu.key ):$server.msg( $item.key )</a></li>
             #end
             </ul>
           #end
@@ -635,7 +635,7 @@ Show weblog editor menu with vertical or horizontal orientation.
           #foreach( $menu in $editorMenu.tabs )
             #foreach( $item in $menu.items )
                 #if ($menuCnt > 0)&nbsp;|&nbsp;#end
-                <a href="$url.action($item.action, '/tb-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a>
+                <a href="$url.action($item.action, '/tb-ui/authoring')">$server.msg( $menu.key ):$server.msg( $item.key )</a>
                 #set($menuCnt = $menuCnt + 1)
             #end
           #end
@@ -655,19 +655,19 @@ Show search form for a weblog.
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories())
             <select name="cat">
-              <option value="">- $text.get("mainPage.category") -</option>
+              <option value="">- $server.msg("mainPage.category") -</option>
               #foreach( $cat in $cats )
                 <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
               #end
             </select>
           #end
-          <input type="submit" class="button" value="$text.get( "macro.weblog.searchbutton" )" id="searchbutton" />
+          <input type="submit" class="button" value="$server.msg( "macro.weblog.searchbutton" )" id="searchbutton" />
         </p>
     </form>
     <script>
         function validateSearch(form) {
             if (form.q.value == "") {
-                alert("$text.get("macro.weblog.searchalert")");
+                alert("$server.msg("macro.weblog.searchalert")");
                 form.q.focus();
                 return false;
             }
@@ -683,13 +683,13 @@ Show search form for a weblog.
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories())
             <select name="cat">
-              <option value="">- $text.get("mainPage.category") -</option>
+              <option value="">- $server.msg("mainPage.category") -</option>
               #foreach( $cat in $cats )
                 <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
               #end
             </select>
           #end
-          <input type="submit" id="searchbutton" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchbutton" )" />
+          <input type="submit" id="searchbutton" data-role="button" data-theme="a" value="$server.msg( "macro.weblog.searchbutton" )" />
         </p>
     </form>
     <script>
@@ -705,7 +705,7 @@ Show search form for a weblog.
             return true;
         }
     </script>
-    #showMobilePopupDialog('searchDialog','Search', $text.get("macro.weblog.searchalert"))
+    #showMobilePopupDialog('searchDialog','Search', $server.msg("macro.weblog.searchalert"))
 #end
 
 
@@ -714,40 +714,40 @@ Show search again form for a weblog.
 *#
 #macro(showWeblogSearchAgainForm $weblog)
     <div id="searchAgain">
-        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
+        $server.msg( "macro.weblog.searchhits", [$model.term, $model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
           <input type="text" id="q" name="q" class="text medium" maxlength="255" value="$model.term" style="padding-left: 1px" /><br />
           #set( $cats = $model.weblog.getWeblogCategories())
           #if(!$site && $cats && $cats.size() > 1)
             <select name="cat" class="select">
-              <option value="">$text.get( "macro.searchresults.incategory" )</option>
+              <option value="">$server.msg( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
                 <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
               #end
             </select>
           #end
-          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" class="button" />
+          <input type="submit" value="$server.msg( "macro.weblog.searchbutton" )" class="button" />
         </form>
 
-        $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${weblog.handle}] )
+        $server.msg( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${weblog.handle}] )
     </div>
 #end
 ## Mobile Version
 #macro(showMobileSearchAgainForm $weblog)
     <div id="searchAgain">
-        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
+        $server.msg( "macro.weblog.searchhits", [$model.term, $model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
           <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="$model.term" />
           #set($cats = $model.weblog.getWeblogCategories())
           #if(!$site && $cats && $cats.size() > 1)
             <select name="cat" class="select">
-              <option value="">$text.get( "macro.searchresults.incategory" )</option>
+              <option value="">$server.msg( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
                 <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
               #end
             </select>
           #end
-          <input type="submit" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchbutton" )" />
+          <input type="submit" data-role="button" data-theme="a" value="$server.msg( "macro.weblog.searchbutton" )" />
         </form>
 
     </div>
@@ -762,7 +762,7 @@ Show next/prev pager for search results.
     #set( $max = $model.offset + $model.limit )
     #if( $max > $model.hits )#set( $max = $model.hits )#end
     <h3>
-       $text.get("searchSummary.text", [$min, $max, $model.hits])
+       $server.msg("searchSummary.text", [$min, $max, $model.hits])
     </h3>
 
     #set($prevLink = false)
@@ -791,7 +791,7 @@ Show next/prev pager for search results.
     #set( $max = $model.offset + $model.limit )
     #if( $max > $model.hits )#set( $max = $model.hits )#end
     <h3>
-       $text.get("searchSummary.text", [$min, $max, $model.hits])
+       $server.msg("searchSummary.text", [$min, $max, $model.hits])
     </h3>
     #set($prevLink = false)
     #set($nextLink = false)

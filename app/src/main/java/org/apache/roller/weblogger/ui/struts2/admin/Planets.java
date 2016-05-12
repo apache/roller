@@ -16,11 +16,10 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.admin;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.FeedManager;
@@ -77,10 +76,6 @@ public class Planets extends UIAction {
         return WeblogRole.NOBLOGNEEDED;
     }
 
-    public String execute() {
-        return LIST;
-    }
-
     @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.PUT)
     public void updatePlanet(@PathVariable String id, @RequestBody Planet newData,
                                HttpServletResponse response) throws ServletException {
@@ -123,17 +118,10 @@ public class Planets extends UIAction {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.GET)
-    public List<Planet> getPlanets(HttpServletResponse response) throws ServletException {
-        List<Planet> planetList = new ArrayList<>();
-
-        for (Planet planet : planetManager.getPlanets()) {
-            // The "all" planet is considered a special planet and cannot be managed independently
-            if (!planet.getHandle().equals("all")) {
-                planetList.add(planet);
-            }
-        }
-
-        return planetList;
+    public List<Planet> getPlanets() throws ServletException {
+        // The "all" planet is considered a special planet and cannot be managed independently
+        return planetManager.getPlanets().stream()
+                .filter(planet -> !planet.getHandle().equals("all")).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planets/{id}", method = RequestMethod.DELETE)

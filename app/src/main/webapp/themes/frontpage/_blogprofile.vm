@@ -32,7 +32,7 @@
         </tr> 
         #foreach($entry in $entriesPager.items)
             <tr>
-                <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
+                <td>$utils.formatDate($entry.pubTime, $server.msg("macro.weblog.date.toStringFormat"))</td>
                 <td><a href="$utils.escapeHTML($entry.permalink)">$utils.removeHTML($entry.title)</a></td>
             </tr>
         #end

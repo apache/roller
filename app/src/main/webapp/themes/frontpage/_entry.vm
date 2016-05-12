@@ -6,7 +6,7 @@
         <a href="$utils.escapeHTML($entry.weblog.URL)">$entry.weblog.name</a>
         #if($entry.tags.size() > 0) $entry.getTagsAsString() |#end
         #if($entry.category.name)$entry.category.name |#end
-        #if($entry.pubTime) $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) |#end
+        #if($entry.pubTime) $utils.formatDate($entry.pubTime, $server.msg("macro.weblog.date.toStringFormat")) |#end
         #if($entry.creator.screenName) By $entry.creator.screenName #end
         <br/> 
     </p>

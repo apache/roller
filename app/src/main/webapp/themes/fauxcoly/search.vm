@@ -47,7 +47,7 @@
 <div id="main_content">
 
 <h2>Search Results for '$model.term'</h2>
-        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
+        $server.msg( "macro.weblog.searchhits", [$model.term, $model.hits])
         <br />
         <br />
         <p>You can refine your search and/or search within one weblog category</p>
@@ -58,15 +58,15 @@
             #set( $cats = $model.weblog.getWeblogCategories() )
             #if(!$site && $cats && $cats.size() > 1)
               <select name="cat">
-                <option value="">$text.get( "macro.searchresults.incategory" )</option>
+                <option value="">$server.msg( "macro.searchresults.incategory" )</option>
                 #foreach( $cat in $cats )
                   <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
                 #end
              </select>
             #end
-           <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
+           <input type="submit" value="$server.msg( "macro.weblog.searchbutton" )" />
         </form>
-        $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
+        $server.msg( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
 
 #if ($model.hits > 0)
    <div id="search_results">
