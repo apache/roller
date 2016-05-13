@@ -19,7 +19,7 @@
 
 <s:if test="activationStatus == null">
     <p><s:text name="welcome.accountCreated" /></p>
-    <p><a id="a_clickHere" href="<s:url action="login-redirect"/>" ><s:text name="welcome.clickHere" /></a>
+    <p><a id="a_clickHere" href="<s:url action='login-redirect'/>" ><s:text name="welcome.clickHere" /></a>
     <s:text name="welcome.toLoginAndPost" /></p>
 </s:if>
 
@@ -30,7 +30,7 @@
 
 <s:elseif test="activationStatus == 'active'">
     <p><s:text name="welcome.user.account.activated" /></p>
-    <p><a href="<s:url action="login-redirect"/>" ><s:text name="welcome.clickHere" /></a>
+    <p><a href="<s:url action='login-redirect'/>" ><s:text name="welcome.clickHere" /></a>
     <s:text name="welcome.toLoginAndPost" /></p>
 </s:elseif>
 

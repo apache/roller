@@ -86,11 +86,11 @@
         </action>
         
         <action name="login-redirect">
-            <result>/tb-ui/login-redirect.jsp</result>
+            <result>/WEB-INF/jsps/core/login-redirect.jsp</result>
         </action>
         
         <action name="logout">
-            <result>/tb-ui/logout-redirect.jsp</result>
+            <result>/WEB-INF/jsps/core/logout-redirect.jsp</result>
         </action>
         
         <action name="setup"
