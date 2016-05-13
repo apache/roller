@@ -41,7 +41,7 @@ public class UserAdmin extends UIAction {
     private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
 
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
     }
 

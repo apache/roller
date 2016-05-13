@@ -56,7 +56,6 @@ public class Planet implements Serializable, Comparable<Planet> {
     private String handle;
     private String title;
     private String description;
-    private int maxFeedEntries = 45;
 
     // associations
     private Set<Subscription> subscriptions = new TreeSet<>();
@@ -110,15 +109,6 @@ public class Planet implements Serializable, Comparable<Planet> {
     
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Column(name="max_feed_entries")
-    public int getMaxFeedEntries() {
-        return maxFeedEntries;
-    }
-
-    public void setMaxFeedEntries(int maxFeedEntries) {
-        this.maxFeedEntries = maxFeedEntries;
     }
 
     @OneToMany(targetEntity=Subscription.class,

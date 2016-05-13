@@ -75,7 +75,7 @@ public class PingTargets extends UIAction {
     private String pingTargetId = null;
 
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
     }
 

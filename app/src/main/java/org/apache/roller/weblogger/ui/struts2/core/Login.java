@@ -49,7 +49,7 @@ public class Login extends UIAction {
     }
 
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
     }
 
@@ -58,7 +58,7 @@ public class Login extends UIAction {
     }
 
     @Override
-    public GlobalRole requiredGlobalRole() {
+    public GlobalRole getRequiredGlobalRole() {
         return GlobalRole.NOAUTHNEEDED;
     }
 

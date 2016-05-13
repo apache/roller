@@ -18,9 +18,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.admin;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -71,26 +69,23 @@ public class Planets extends UIAction {
         this.actionName = "planets";
         this.desiredMenu = "admin";
         this.pageTitle = "planets.pagetitle";
-    }
-
-    @Override
-    public WeblogRole requiredWeblogRole() {
-        return WeblogRole.NOBLOGNEEDED;
+        this.requiredWeblogRole = WeblogRole.NOBLOGNEEDED;
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.PUT)
-    public void updatePlanet(@PathVariable String id, @RequestBody Planet newData,
+    public Planet updatePlanet(@PathVariable String id, @RequestBody Planet newData,
                                HttpServletResponse response) throws ServletException {
         Planet planet = planetManager.getPlanetById(id);
         savePlanet(planet, newData, response);
+        return planet;
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.PUT)
-    public String addPlanet(@RequestBody Planet newData, HttpServletResponse response) throws ServletException {
+    public Planet addPlanet(@RequestBody Planet newData, HttpServletResponse response) throws ServletException {
         Planet planet = new Planet();
         planet.setId(WebloggerCommon.generateUUID());
         savePlanet(planet, newData, response);
-        return response.getStatus() == HttpServletResponse.SC_OK ? planet.getId() : null;
+        return response.getStatus() == HttpServletResponse.SC_OK ? planet : null;
     }
 
     private void savePlanet(Planet planet, Planet newData, HttpServletResponse response) throws ServletException {
@@ -106,11 +101,10 @@ public class Planets extends UIAction {
                 try {
                     planetManager.savePlanet(planet);
                     WebloggerFactory.flush();
+                    response.setStatus(HttpServletResponse.SC_OK);
                 } catch (RollbackException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    return;
                 }
-                response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
@@ -162,13 +156,13 @@ public class Planets extends UIAction {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions", method = RequestMethod.PUT)
-    public void addPlanetSubscription(@RequestParam(name="planetId") String planetId, @RequestParam String feedUrl,
+    public Subscription addPlanetSubscription(@RequestParam(name="planetId") String planetId, @RequestParam String feedUrl,
                                       HttpServletResponse response) throws ServletException {
         try {
             Planet planet = planetManager.getPlanetById(planetId);
             if (planet == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
+                return null;
             }
             Subscription sub = planetManager.getSubscription(planet, feedUrl);
             if (sub == null) {
@@ -179,6 +173,7 @@ public class Planets extends UIAction {
                     planet.getSubscriptions().add(sub);
                     WebloggerFactory.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
+                    return sub;
                 } else {
                     response.setStatus(422);
                 }
@@ -188,5 +183,6 @@ public class Planets extends UIAction {
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
+        return null;
     }
 }

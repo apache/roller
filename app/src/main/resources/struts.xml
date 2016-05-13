@@ -210,8 +210,11 @@
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
         
-        <action name="planetEdit"
-                class="org.apache.roller.weblogger.ui.struts2.admin.PlanetEdit">
+        <action name="planetEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">planetEdit</param>
+            <param name="pageTitle">planetSubscriptions.title</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.PlanetEdit</result>
         </action>
         

@@ -89,7 +89,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     
     
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
     }
     

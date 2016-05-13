@@ -6,19 +6,43 @@ $(function() {
          }
       }
    });
+   $.templates({
+     formTmpl: '#formTemplate',
+     tableTmpl: '#tableTemplate'
+   });
+   function updateEditForm(data) {
+     var html = $.render.formTmpl(data);
+     $("#planetEditFields").html(html);
+   }
+   function refreshPlanetData(tableAlso) {
+     var planetId = $('#planetEditForm_planetId').attr('value');
+     if (planetId != '') {
+       $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
+         $.ajax({
+            type: "GET",
+            url: contextPath + '/tb-ui/admin/rest/planet/' + planetId,
+            success: function(data, textStatus, xhr) {
+              updateEditForm(data);
+              if (tableAlso) {
+                var html = $.render.tableTmpl(data.subscriptions);
+                $("#tableBody").html(html);
+                $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
+              }
+              $("#feedManagement").toggle(true);
+            }
+         });
+       });
+     } else {
+       var data = { "title": '',
+         "handle": '',
+         "description": '',
+         "subscriptions": []
+       };
+       updateEditForm(data);
+     }
+   }
    $(function() {
-     $.ajax({
-        type: "GET",
-        url: contextPath + '/tb-ui/admin/rest/planet/' + $('#planetEditForm_planetId').attr('value'),
-        success: function(data, textStatus, xhr) {
-          var tmpl = $.templates({formTemplate: '#formTemplate', tableTemplate: '#tableTemplate'});
-          var html = $.render.formTemplate(data);
-          $("#planetEditFields").html(html);
-          html = $.render.tableTemplate(data);
-          $("#tableBody").html(html);
-          $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
-        }
-     });
+     refreshPlanetData(true);
    });
    $("#confirm-delete").dialog({
      autoOpen: false,
@@ -58,6 +82,9 @@ $(function() {
           .dialog('option', 'title', feedName)
           .data('deleteId', idToRemove).dialog('open');
    });
+   $("#reset-planet").click(function(e) {
+     refreshPlanetData(false);
+   });
    $("#add-link").click(function(e) {
      e.preventDefault();
      var planetId = $('#planetEditForm_planetId').val();
@@ -68,7 +95,9 @@ $(function() {
           type: "PUT",
           url: contextPath + '/tb-ui/admin/rest/planetsubscriptions?planetId=' + planetId + '&feedUrl=' + feedUrl,
           success: function(data, textStatus, xhr) {
-             document.planetEditForm.submit();
+            var html = $.render.tableTmpl(data);
+            $("#tableBody").append(html);
+            $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
           }
        });
      });
@@ -92,8 +121,10 @@ $(function() {
           processData: "false",
           success: function(data, textStatus, xhr) {
             if (idToUpdate == '') {
-               $('#planetEditForm_planetId').attr('value', data);
+               $('#planetEditForm_planetId').attr('value', data.id);
             }
+            $("#feedManagement").toggle(true);
+            updateEditForm(data);
           }
        });
      });

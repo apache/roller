@@ -16,7 +16,6 @@
 package org.apache.roller.weblogger.pojos;
 
 // Blog-specific roles for a User
-// TODO: Implement comparator
 public enum WeblogRole {
     // For non-blog related pages (initial install, user registration, login, etc.)
     NOBLOGNEEDED(0),
