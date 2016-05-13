@@ -37,7 +37,7 @@ var msg= {
 
 <s:form id="planetEditForm" action="planetEdit">
 	<s:hidden id="salt" name="salt" />
-  <s:hidden name="planetId"/>
+  <input type="hidden" name="hello" id="planetEditForm_planetId" value="<s:property value='%{#parameters.planetId}'/>"/>
   <div id="planetEditFields"></div>
         <script id="formTemplate" type="text/x-jsrender">
           <div class="formrow">
@@ -56,25 +56,21 @@ var msg= {
           </div>
         </script>
 
-        <p/>
         <div class="formrow">
             <label class="formrow">&nbsp;</label>
             <input type="button" value="<s:text name="generic.save" />" id="save-planet"/>
-            <input type="button" value='<s:text name="generic.cancel"/>'
-               onclick="window.location='<s:url action="planetEdit"/>'"/>
+            <input type="reset" id='reset-planet'/>
         </div>
 </s:form>
 
-<p class="subtitle">
-    <s:text name="planetSubscriptions.subtitle.add" >
-        <s:param value="bean.handle" />
-    </s:text>
-</p>
+<div id="feedManagement" style="display:none">
+
+<br style="clear:left"><br>
 
 <p><s:text name="planetSubscriptions.prompt.add" /></p>
 
 <div class="formrow">
-    <label for="feedUrl" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
+    <label for="feedUrl" class="formrow"><s:text name="planetSubscription.feedUrl" /></label>
     <input type="text" id="feedUrl" size="60" maxlength="255" onBlur="this.value=this.value.trim()"/>
     <input type="button" id="add-link" value="<s:text name="generic.save" />"/>
 </div>
@@ -95,19 +91,19 @@ var msg= {
   </thead>
   <tbody id="tableBody">
     <script id="tableTemplate" type="text/x-jsrender">
-      {{for subscriptions}}
-          <tr id="{{:id}}">
-            <td class="title-cell">{{:title}}</td>
-            <td>{{:feedURL}}</td>
-            <td align="center">
-                <a href="#" class="delete-link"><img src='<s:url value="/images/delete.png"/>' alt="icon"/></a>
-            </td>
-           </tr>
-      {{/for}}
+        <tr id="{{:id}}">
+          <td class="title-cell">{{:title}}</td>
+          <td>{{:feedURL}}</td>
+          <td align="center">
+              <a href="#" class="delete-link"><img src='<s:url value="/images/delete.png"/>' alt="icon"/></a>
+          </td>
+         </tr>
     </script>
   </tbody>
 </table>
 
 <div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="planetSubscriptions.delete.confirm"/></p>
+</div>
+
 </div>

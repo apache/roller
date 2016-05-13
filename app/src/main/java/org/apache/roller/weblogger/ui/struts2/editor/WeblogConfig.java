@@ -92,7 +92,7 @@ public class WeblogConfig extends UIAction {
     
     
     @Override
-    public GlobalRole requiredGlobalRole() {
+    public GlobalRole getRequiredGlobalRole() {
         return GlobalRole.BLOGGER;
     }
 

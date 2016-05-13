@@ -138,12 +138,12 @@ public final class EntryEdit extends UIAction {
     }
 
     @Override
-    public GlobalRole requiredGlobalRole() {
+    public GlobalRole getRequiredGlobalRole() {
         return GlobalRole.BLOGGER;
     }
 
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.EDIT_DRAFT;
     }
 

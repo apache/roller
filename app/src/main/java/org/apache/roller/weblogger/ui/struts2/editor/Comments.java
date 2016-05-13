@@ -140,12 +140,12 @@ public class Comments extends UIAction {
     }
 
     @Override
-    public GlobalRole requiredGlobalRole() {
+    public GlobalRole getRequiredGlobalRole() {
         return (isGlobalCommentManagement()) ? GlobalRole.ADMIN : GlobalRole.BLOGGER;
     }
 
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return (isGlobalCommentManagement()) ? WeblogRole.NOBLOGNEEDED : WeblogRole.POST;
     }
 

@@ -102,7 +102,7 @@ public class Register extends UIAction implements ServletRequestAware {
     }
     
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
     }
     
@@ -111,7 +111,7 @@ public class Register extends UIAction implements ServletRequestAware {
     }
 
     @Override
-    public GlobalRole requiredGlobalRole() {
+    public GlobalRole getRequiredGlobalRole() {
         return GlobalRole.NOAUTHNEEDED;
     }
 

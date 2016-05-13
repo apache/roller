@@ -84,7 +84,7 @@ public class ThemeEdit extends UIAction {
     }
 
     @Override
-    public GlobalRole requiredGlobalRole() {
+    public GlobalRole getRequiredGlobalRole() {
         return GlobalRole.BLOGGER;
     }
 

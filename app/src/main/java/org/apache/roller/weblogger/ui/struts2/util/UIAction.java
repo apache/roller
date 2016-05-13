@@ -49,14 +49,13 @@ import java.util.TimeZone;
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
  * error and status success.  Other actions extending this one only need to
- * calle setError() and setSuccess() accordingly.
+ * call setError() and setSuccess() accordingly.
  * 
  * NOTE: as a small convenience, all errors and messages are assumed to be keys
  * which point to a success in a resource bundle, so we automatically call
  * getText(key) on the param passed into setError() and setSuccess().
  */
-public abstract class UIAction extends ActionSupport
-        implements Preparable, UISecurityEnforced, RequestAware {
+public class UIAction extends ActionSupport implements Preparable, RequestAware {
 
     private static final List LOCALES;
     private static final List TIME_ZONES;
@@ -117,7 +116,13 @@ public abstract class UIAction extends ActionSupport
     protected String pageTitle = null;
 
     protected String salt = null;
-    
+
+    // the required minimum global role the user must have for the action to be allowed
+    protected GlobalRole requiredGlobalRole = GlobalRole.ADMIN;
+
+    // the required minimum weblog role
+    protected WeblogRole requiredWeblogRole = WeblogRole.OWNER;
+
     public void prepare() {
         // no-op
     }
@@ -139,14 +144,20 @@ public abstract class UIAction extends ActionSupport
         // no-op
     }
 
-    @Override
-    public GlobalRole requiredGlobalRole() {
-        return GlobalRole.ADMIN;
+    public GlobalRole getRequiredGlobalRole() {
+        return requiredGlobalRole;
     }
 
-    @Override
-    public WeblogRole requiredWeblogRole() {
-        return WeblogRole.OWNER;
+    public void setRequiredGlobalRole(GlobalRole requiredGlobalRole) {
+        this.requiredGlobalRole = requiredGlobalRole;
+    }
+
+    public WeblogRole getRequiredWeblogRole() {
+        return requiredWeblogRole;
+    }
+
+    public void setRequiredWeblogRole(WeblogRole requiredWeblogRole) {
+        this.requiredWeblogRole = requiredWeblogRole;
     }
 
     /**

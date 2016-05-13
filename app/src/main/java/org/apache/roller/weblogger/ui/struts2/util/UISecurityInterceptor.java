@@ -53,48 +53,48 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
         final Object action = invocation.getAction();
 
         // is this one of our own UIAction classes?
-        if (action instanceof UISecurityEnforced && action instanceof UIAction) {
+        if (action instanceof UIAction) {
 
-            logger.debug("action is UISecurityEnforced ... enforcing security rules");
+            logger.debug("Checking security rules for the action...");
 
-            final UISecurityEnforced theAction = (UISecurityEnforced) action;
+            final UIAction theAction = (UIAction) action;
 
             // are we requiring an authenticated user?
-            if (theAction.requiredGlobalRole() != GlobalRole.NOAUTHNEEDED) {
+            if (theAction.getRequiredGlobalRole() != GlobalRole.NOAUTHNEEDED) {
 
-                User authenticatedUser = ((UIAction) theAction).getAuthenticatedUser();
+                User authenticatedUser = theAction.getAuthenticatedUser();
                 if (authenticatedUser == null) {
                     logger.debug("DENIED: required user not found");
                     return "access-denied";
                 }
 
-                if (!authenticatedUser.hasEffectiveGlobalRole(theAction.requiredGlobalRole())) {
+                if (!authenticatedUser.hasEffectiveGlobalRole(theAction.getRequiredGlobalRole())) {
                     logger.debug("DENIED: user {} does not have {} role", authenticatedUser.getUserName(),
-                        theAction.requiredGlobalRole().name());
+                        theAction.getRequiredGlobalRole().name());
                     return "access-denied";
                 }
 
                 // are we requiring a valid action weblog?
-                if (theAction.requiredWeblogRole() != WeblogRole.NOBLOGNEEDED) {
+                if (theAction.getRequiredWeblogRole() != WeblogRole.NOBLOGNEEDED) {
 
-                    Weblog actionWeblog = ((UIAction) theAction).getActionWeblog();
+                    Weblog actionWeblog = theAction.getActionWeblog();
                     if (actionWeblog == null) {
                         logger.warn("User {} unable to process action because no weblog was defined " +
                                 "(Check JSP form provided weblog value.)", authenticatedUser.getUserName(),
-                                ((UIAction) theAction).getActionName());
+                                theAction.getActionName());
                         return "access-denied";
                     }
 
-                    // are we also enforcing a specific weblog permission?
+                    // are we also enforcing a specific weblog role?
                     UserWeblogRole uwr = userManager.getWeblogRole(authenticatedUser, actionWeblog);
-                    if (uwr == null || !uwr.hasEffectiveWeblogRole(theAction.requiredWeblogRole())) {
+                    if (uwr == null || !uwr.hasEffectiveWeblogRole(theAction.getRequiredWeblogRole())) {
                         if (logger.isDebugEnabled()) {
                             logger.debug("DENIED: user {} does not have {} role on weblog {} ", authenticatedUser,
-                                    theAction.requiredWeblogRole(), actionWeblog.getHandle());
+                                    theAction.getRequiredWeblogRole(), actionWeblog.getHandle());
                         }
                         return "access-denied";
                     } else {
-                        ((UIAction) theAction).setActionWeblogRole(uwr.getWeblogRole());
+                        theAction.setActionWeblogRole(uwr.getWeblogRole());
                     }
                 }
 

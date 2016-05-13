@@ -76,12 +76,12 @@ public class Entries extends UIAction {
     }
     
     @Override
-    public GlobalRole requiredGlobalRole() {
+    public GlobalRole getRequiredGlobalRole() {
         return GlobalRole.BLOGGER;
     }
 
     @Override
-    public WeblogRole requiredWeblogRole() {
+    public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.POST;
     }
 
