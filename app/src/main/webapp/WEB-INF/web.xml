@@ -186,9 +186,7 @@
     </session-config>
 
     <welcome-file-list>
-        <welcome-file>home.jsp</welcome-file>
         <welcome-file>index.jsp</welcome-file>
-        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
     <error-page>
@@ -247,7 +245,6 @@
             <url-pattern>/tb-ui/profile.rol</url-pattern>
             <url-pattern>/tb-ui/profile!save.rol</url-pattern>
             <url-pattern>/tb-ui/admin/*</url-pattern>
-            <url-pattern>/tb-ui/login-redirect.jsp</url-pattern>
             <url-pattern>/tb-ui/login-redirect.rol</url-pattern>
             <url-pattern>/tb-ui/authoring/userdata</url-pattern>
             <url-pattern>/tb-ui/authoring/membersInvite.rol</url-pattern>
