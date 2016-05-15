@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,12 +83,10 @@ import javax.persistence.Transient;
         @NamedQuery(name="WeblogEntry.updateCommentDaysByWeblog",
                 query="UPDATE WeblogEntry e SET e.commentDays = ?1 WHERE e.weblog = ?2")
 })
-public class WeblogEntry implements Serializable {
+public class WeblogEntry {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntry.class);
     
-    public static final long serialVersionUID = 2341505386843044125L;
-
     public enum PubStatus {DRAFT, PUBLISHED, PENDING, SCHEDULED}
 
     // Simple properies

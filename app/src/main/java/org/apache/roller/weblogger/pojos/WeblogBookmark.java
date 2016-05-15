@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -35,7 +34,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
- * <p>Represents a single blogroll link for a weblog.</p>
+ * Represents a single blogroll link for a weblog.
  */
 @Entity
 @Table(name="blogroll_link")
@@ -43,9 +42,7 @@ import javax.persistence.Table;
         @NamedQuery(name="Bookmark.getByWeblog",
                 query="SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.position")
 })
-public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> {
-    
-    public static final long serialVersionUID = 2315131256728236003L;
+public class WeblogBookmark implements Comparable<WeblogBookmark> {
     
     private Weblog weblog;
     

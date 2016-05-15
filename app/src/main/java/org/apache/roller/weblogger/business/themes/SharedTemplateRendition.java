@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,12 +25,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import java.io.Serializable;
 
 /**
  * A pojo that maintains device-specific renditions of a single template
  */
-public class SharedTemplateRendition implements TemplateRendition, Serializable {
+public class SharedTemplateRendition implements TemplateRendition {
 
     private TemplateLanguage templateLanguage = TemplateLanguage.VELOCITY;
     private RenditionType type = RenditionType.NORMAL;

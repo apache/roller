@@ -18,7 +18,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
@@ -28,7 +27,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -49,7 +47,7 @@ import javax.persistence.Transient;
         @NamedQuery(name="Planet.getAll",
                 query="SELECT p FROM Planet p")
 })
-public class Planet implements Serializable, Comparable<Planet> {
+public class Planet implements Comparable<Planet> {
 
     // attributes
     private String id;

@@ -48,7 +48,6 @@ import java.util.stream.Collectors;
  */
 @RestController
 public class ThemeEdit extends UIAction {
-    private static final long serialVersionUID = 4644653507344432426L;
 
     private static Logger log = LoggerFactory.getLogger(ThemeEdit.class);
 

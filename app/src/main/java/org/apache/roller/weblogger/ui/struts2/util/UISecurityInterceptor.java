@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public class UISecurityInterceptor extends MethodFilterInterceptor {
 
-    private static final long serialVersionUID = -7787813271277874462L;
     private static Logger logger = LoggerFactory.getLogger(UISecurityInterceptor.class);
 
     private UserManager userManager;

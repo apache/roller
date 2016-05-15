@@ -69,8 +69,6 @@ import java.util.Set;
 @RestController
 public class Comments extends UIAction {
 
-    private static final long serialVersionUID = -104973988372024709L;
-
     private static Logger log = LoggerFactory.getLogger(Comments.class);
 
     @Autowired

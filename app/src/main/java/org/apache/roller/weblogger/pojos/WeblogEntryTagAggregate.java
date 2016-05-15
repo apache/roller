@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -44,9 +43,8 @@ import javax.persistence.Table;
                 query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 " +
                         "GROUP BY w.name ORDER BY SUM(w.total) DESC")
 })
-public class WeblogEntryTagAggregate implements Serializable {
+public class WeblogEntryTagAggregate {
     
-    public static final long serialVersionUID = -4343500268898106982L;
     private String name = null;
     private Weblog weblog = null;
     private int total = 0;

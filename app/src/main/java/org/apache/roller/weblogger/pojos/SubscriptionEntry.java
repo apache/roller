@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,10 +47,6 @@ import javax.persistence.Transient;
 /**
  * Represents a planet entry, i.e. an entry that was parsed out of an RSS or 
  * Atom newsfeed by TightBlog's built-in planet aggregator.
- * <p>
- * The model coded in this class simple, perhaps too simple, and in the future 
- * it should be replaced by more complete model that can fully represent all 
- * forms of RSS and Atom.
  */
 @Entity
 @Table(name="planet_subscription_entry")
@@ -59,7 +54,7 @@ import javax.persistence.Transient;
         @NamedQuery(name="SubscriptionEntry.getBySubscription",
                 query="SELECT p FROM SubscriptionEntry p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC")
 })
-public class SubscriptionEntry implements Serializable, Comparable<SubscriptionEntry> {
+public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
     
     // attributes
     private String id = WebloggerCommon.generateUUID();

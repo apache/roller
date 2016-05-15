@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
-import java.io.Serializable;
-
 /**
  * A cache entry that expires.
  *
@@ -29,7 +27,8 @@ import java.io.Serializable;
  * and timeout period with them so we can know when they expire.  Negative
  * timestamp values indicate non-expiration.
  */
-public class ExpiringCacheEntry implements Serializable {
+public class ExpiringCacheEntry {
+
     private Object value;
     private long timeCached = -1;
     private long timeout = 0;

@@ -18,10 +18,8 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -44,9 +42,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 
-/**
- * User bean.
- */
 @Entity
 @Table(name="weblogger_user")
 @NamedQueries({
@@ -69,10 +64,8 @@ import javax.persistence.Transient;
         @NamedQuery(name="User.getCountEnabledDistinct",
                 query="SELECT COUNT(u) FROM User u WHERE u.enabled = ?1")
 })
-public class User implements Serializable {
+public class User {
     
-    public static final long serialVersionUID = -6354583200913127874L;
-
     private String  id;
     private String  userName;
     private String  password;

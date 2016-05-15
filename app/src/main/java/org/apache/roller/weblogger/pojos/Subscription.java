@@ -18,7 +18,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ import javax.persistence.TemporalType;
         @NamedQuery(name="Subscription.getByPlanetAndFeedURL",
                 query="SELECT s FROM Subscription s WHERE s.planet = ?1 AND s.feedURL = ?2")
 })
-public class Subscription implements Serializable, Comparable<Subscription> {
+public class Subscription implements Comparable<Subscription> {
     
     // attributes
     private String id = WebloggerCommon.generateUUID();

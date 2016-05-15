@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A utility class for storing cached content written to a java.io.Writer.
  */
-public class CachedContent implements Serializable {
+public class CachedContent {
 
     private static Logger log = LoggerFactory.getLogger(CachedContent.class);
     
