@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -35,9 +34,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-/**
- * Weblog Category.
- */
+
 @Entity
 @Table(name="weblog_category")
 @NamedQueries({
@@ -50,9 +47,7 @@ import javax.persistence.Table;
         @NamedQuery(name="WeblogCategory.removeByWeblog",
                 query="DELETE FROM WeblogCategory w WHERE w.weblog = ?1")
 })
-public class WeblogCategory implements Serializable, Comparable<WeblogCategory> {
-    
-    public static final long serialVersionUID = 1435782148712018954L;
+public class WeblogCategory implements Comparable<WeblogCategory> {
     
     // unique internal ID of object
     private String id = null;

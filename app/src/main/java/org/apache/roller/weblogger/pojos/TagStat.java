@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,18 +20,10 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-
 import java.util.Comparator;
 
-/**
- * Tag bean.
- * 
- * @author Elias Torres
- * 
- */
-public class TagStat implements java.io.Serializable {
 
-    private static final long serialVersionUID = 1142064841813545198L;
+public class TagStat {
 
     private String name;
 

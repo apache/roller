@@ -39,7 +39,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,10 +63,8 @@ import java.util.List;
     @NamedQuery(name="WeblogTemplate.getByWeblog&Name",
         query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2")
 })
-public class WeblogTemplate implements Template, Serializable {
+public class WeblogTemplate implements Template {
     
-    public static final long serialVersionUID = -613737191638263428L;
-
     // attributes
     private String id = null;
     private ComponentType role = null;

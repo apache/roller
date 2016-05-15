@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -58,9 +57,7 @@ import javax.persistence.Table;
     @NamedQuery(name="AutoPing.removeByPingTarget&Weblog",
         query="DELETE FROM AutoPing a WHERE a.pingTarget = ?1 AND a.weblog = ?2")
 })
-public class AutoPing implements Serializable {
-
-    public static final long serialVersionUID = -9105985454111986435L;
+public class AutoPing {
 
     // Unique ID of object
     private String id = WebloggerCommon.generateUUID();

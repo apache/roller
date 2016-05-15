@@ -32,7 +32,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.io.Serializable;
 import java.util.Date;
 
 
@@ -54,9 +53,7 @@ import java.util.Date;
         @NamedQuery(name="SafeUser.getByEnabled&ScreenNameOrEmailAddressStartsWith",
                 query="SELECT s FROM SafeUser s WHERE s.enabled = ?1 AND (s.screenName LIKE ?2 OR s.emailAddress LIKE ?3)")
 })
-public class SafeUser implements Serializable {
-
-    public static final long serialVersionUID = -6354583200913127874L;
+public class SafeUser {
 
     private String  id;
     private String  screenName;

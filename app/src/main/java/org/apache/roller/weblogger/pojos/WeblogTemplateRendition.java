@@ -34,16 +34,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 /**
  * A pojo that will maintain different template codes for one template
  */
 @Entity
 @Table(name="weblog_template_rendition")
-public class WeblogTemplateRendition implements Serializable, TemplateRendition {
+public class WeblogTemplateRendition implements TemplateRendition {
 
-	private static final long serialVersionUID = -1497618963802805151L;
 	private String id = WebloggerCommon.generateUUID();
     private WeblogTemplate weblogTemplate = null;
 	// template contents

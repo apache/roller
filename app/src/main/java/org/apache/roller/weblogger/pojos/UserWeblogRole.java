@@ -18,10 +18,8 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos; 
 
-import java.io.Serializable;
 import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -62,9 +60,9 @@ import javax.persistence.TemporalType;
         @NamedQuery(name="UserWeblogRole.getByUserId&WeblogIdIncludingPending",
                 query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2")
 })
-public class UserWeblogRole implements Serializable {
+public class UserWeblogRole {
 
-    private String  id = WebloggerCommon.generateUUID();
+    private String id = WebloggerCommon.generateUUID();
     private User user;
     private Weblog weblog;
     private boolean pending = false;

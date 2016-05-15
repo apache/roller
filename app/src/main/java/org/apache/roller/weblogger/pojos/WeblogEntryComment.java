@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -52,10 +51,8 @@ import javax.persistence.Transient;
         @NamedQuery(name="WeblogEntryComment.getCountDistinctByWeblog&Status",
                 query="SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2")
 })
-public class WeblogEntryComment implements Serializable {
+public class WeblogEntryComment {
     
-    public static final long serialVersionUID = -6668122596726478462L;
-
     // approval status states
     public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
 

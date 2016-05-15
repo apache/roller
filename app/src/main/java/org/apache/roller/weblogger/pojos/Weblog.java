@@ -20,7 +20,6 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -67,8 +66,7 @@ import javax.persistence.Transient;
         @NamedQuery(name="Weblog.updateDailyHitCountZero",
                 query="UPDATE Weblog w SET w.hitsToday = 0")
 })
-public class Weblog implements Serializable {
-    public static final long serialVersionUID = 206437645033737127L;
+public class Weblog {
 
     private String  id               = WebloggerCommon.generateUUID();
     private String  handle           = null;

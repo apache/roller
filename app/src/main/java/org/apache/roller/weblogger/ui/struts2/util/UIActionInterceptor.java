@@ -32,10 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
  */
-public class UIActionInterceptor extends MethodFilterInterceptor implements
-        StrutsStatics {
-
-    private static final long serialVersionUID = -6452966127207525616L;
+public class UIActionInterceptor extends MethodFilterInterceptor implements StrutsStatics {
 
     private UserManager userManager;
 

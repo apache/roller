@@ -20,9 +20,6 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
-import java.io.Serializable;
-
-
 /**
  * A cache entry that is meant to expire in a lazy fashion.
  *
@@ -44,7 +41,8 @@ import java.io.Serializable;
  * invalidate.  Instead we can just sit back and let the items be invalidated as
  * we try to use them.
  */
-public class LazyExpiringCacheEntry implements Serializable {
+public class LazyExpiringCacheEntry {
+
     private Object value = null;
     private long timeCached = -1;
 

@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -45,9 +44,7 @@ import javax.persistence.Table;
         @NamedQuery(name="PingTarget.getPingTargetsOrderByName",
                 query="SELECT p FROM PingTarget p ORDER BY p.name")
 })
-public class PingTarget implements Serializable {
-
-    public static final long serialVersionUID = -6354583200913127874L;
+public class PingTarget {
 
     private String id;
     private String name;

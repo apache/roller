@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -41,9 +40,7 @@ import javax.persistence.Table;
         @NamedQuery(name="RuntimeConfigProperty.getAll",
                 query="SELECT r FROM RuntimeConfigProperty r")
 })
-public class RuntimeConfigProperty implements Serializable {
-    
-    public static final long serialVersionUID = 6913562779484028899L;
+public class RuntimeConfigProperty {
     
     private String name;
     private String value;

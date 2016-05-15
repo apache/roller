@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import java.io.Serializable;
 import java.util.*;
 
 import org.apache.roller.weblogger.pojos.Template;
@@ -36,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * theme related attributes such as name, last modified date, etc.
  */
 @XmlRootElement(name="sharedtheme")
-public class SharedTheme implements Serializable {
+public class SharedTheme {
 
     private String id = null;
     private String name = null;

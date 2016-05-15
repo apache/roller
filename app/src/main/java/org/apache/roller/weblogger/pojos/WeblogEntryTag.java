@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -42,18 +41,15 @@ import javax.persistence.Table;
         @NamedQuery(name="WeblogEntryTag.getByWeblog",
                 query="SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1")
 })
-public class WeblogEntryTag implements Serializable {
-    private static final long serialVersionUID = -2602052289337573384L;
-    
+public class WeblogEntryTag  {
+
     private String id = WebloggerCommon.generateUUID();
     private Weblog weblog = null;
     private WeblogEntry weblogEntry = null;
     private String name = null;
 
-    
     public WeblogEntryTag() {
     }
-    
 
     /**
      * Unique ID and primary key.

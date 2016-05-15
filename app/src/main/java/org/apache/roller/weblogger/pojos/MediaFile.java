@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Comparator;
 
@@ -48,11 +47,9 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name="media_file")
-public class MediaFile implements Serializable {
+public class MediaFile {
 
     private static Logger log = LoggerFactory.getLogger(MediaFile.class);
-
-    private static final long serialVersionUID = -6704258422169734004L;
 
     private String id = WebloggerCommon.generateUUID();
     private String name;
