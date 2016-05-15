@@ -30,7 +30,6 @@
                 <a href="$link" class="commentsLink">$server.msg("macro.weblog.comments") [$commentCount]</a>
             #end
         </p>
-        #showTrackbackAutodiscovery($entry)
       </div>
     #end
 

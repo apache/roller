@@ -3,5 +3,4 @@ Disallow: /images
 Disallow: /tb-
 Disallow: /theme
 Disallow: /resources
-Disallow: /trackback
 Disallow: /comment

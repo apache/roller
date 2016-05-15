@@ -139,12 +139,6 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogCommentsURL(weblog, anchor, true);
     }
 
-
-    public String trackback(String anchor) {
-        return urlStrategy.getWeblogEntryURL(weblog, anchor, true);
-    }
-
-    
     public String category(String catName) {
         return urlStrategy.getWeblogCollectionURL(weblog, catName, null, null, -1, true);
     }

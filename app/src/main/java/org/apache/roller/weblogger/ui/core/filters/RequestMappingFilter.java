@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.processors.CommentProcessor;
 import org.apache.roller.weblogger.ui.rendering.processors.FeedProcessor;
-import org.apache.roller.weblogger.ui.rendering.processors.IncomingTrackbackProcessor;
 import org.apache.roller.weblogger.ui.rendering.processors.MediaResourceProcessor;
 import org.apache.roller.weblogger.ui.rendering.processors.PageProcessor;
 import org.apache.roller.weblogger.ui.rendering.processors.SearchProcessor;
@@ -197,20 +196,11 @@ public class RequestMappingFilter implements Filter {
     protected String calculateForwardUrl(HttpServletRequest request, String handle, String context, String data) {
         String forwardUrl = null;
 
-        // POST urls, like comment and trackback servlets
+        // POST url is presently just for commenting
         if ("POST".equals(request.getMethod())) {
-            // posting to permalink, this means comment or trackback
-            if (context.equals("entry")) {
-                // trackback requests are required to have an "excerpt" param
-                if (request.getParameter("excerpt") != null) {
-                    forwardUrl = generateForwardUrl(IncomingTrackbackProcessor.PATH, handle, context, data);
-                    // comment requests are required to have a "content" param
-                } else if (request.getParameter("content") != null) {
-                    forwardUrl = generateForwardUrl(CommentProcessor.PATH, handle, context, data);
-                }
-            } else {
-                // someone posting data where they aren't supposed to
-                return null;
+            // posting to permalink, should mean comment (which must have a content param)
+            if (context.equals("entry") && request.getParameter("content") != null) {
+                forwardUrl = generateForwardUrl(CommentProcessor.PATH, handle, context, data);
             }
         } else {
             // no context means weblog homepage

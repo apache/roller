@@ -220,11 +220,6 @@ div#searchAgain {
   border: 1px solid #999;
   font-size: 1em;
 }
-div.trackbackUrl {
-    background: transparent;
-    margin: 0px 10px 10px 10px;
-    text-align: left;
-}
 #nextEntry {
     text-align: right;
 }

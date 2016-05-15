@@ -45,8 +45,7 @@
  <!--
    The global-properties represents the base set of roller runtime properties.
    In *most* cases you should be putting your properties here and they can
-   then be changed from the admin configuration page at ...
-        /admin/rollerConfig.do
+   then be adjusted from the admin configuration page.
  -->
    <!-- Site Settings Group -->
    <display-group name="siteSettings" key="configForm.siteSettings" >
@@ -120,7 +119,7 @@
    </display-group>
    
    
-   <!-- Comment & Trackback Settings Group -->
+   <!-- Comment Settings Group -->
    <display-group name="commentSettings" key="configForm.commentSettings" >
    
       <property-def name="users.comments.enabled"  key="configForm.enableComments">
@@ -130,14 +129,6 @@
       <property-def name="comments.ignoreSpam.enabled"  key="configForm.ignoreSpamComments">
          <type>boolean</type>
          <default-value>false</default-value>
-      </property-def>
-      <property-def name="users.trackbacks.enabled"  key="configForm.enableTrackbacks">
-         <type>boolean</type>
-         <default-value>true</default-value>
-      </property-def>
-      <property-def name="trackbacks.ignoreSpam.enabled"  key="configForm.ignoreSpamTrackbacks">
-         <type>boolean</type>
-         <default-value>true</default-value>
       </property-def>
       <property-def name="users.comments.htmlenabled"  key="configForm.commentHtmlAllowed">
          <type>boolean</type>
@@ -155,16 +146,12 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
-      <property-def name="site.trackbackVerification.enabled" key="configForm.enableTrackbackValidation">
-         <type>boolean</type>
-         <default-value>false</default-value>
+      <property-def  name="spam.blacklist"  key="websiteSettings.ignoreUrls">
+         <type>text</type>
+         <default-value/>
+         <rows>7</rows>
+         <cols>40</cols>
       </property-def>
-       <property-def  name="spam.blacklist"  key="websiteSettings.ignoreUrls">
-           <type>text</type>
-           <default-value/>
-           <rows>7</rows>
-           <cols>40</cols>
-       </property-def>
 
    </display-group >
    
