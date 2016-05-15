@@ -284,16 +284,6 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="trackbackValidatorList" parent="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <beans:property name="sourceList">
-            <beans:list merge="true">
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.TrackbackLinkbackCommentValidator">
-                    <beans:property name="urlStrategy" ref="urlStrategy"/>
-                </beans:bean>
-            </beans:list>
-        </beans:property>
-    </beans:bean>
-
     <!-- The Comment Authenticator is the first-round test a commentor must do before his comment is accepted
          (answer a math question to confirm not a robot, or be already authenticated within LDAP for example.)
          The comment still needs to go through comment validation as well as (if configured for the blog) comment

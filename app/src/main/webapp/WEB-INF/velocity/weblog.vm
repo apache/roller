@@ -25,7 +25,6 @@ Macros defined in this file:
 
     #includeTemplate($pageName)
     #showAutodiscoveryLinks($weblog)
-    #showTrackbackAutodiscovery($entry)
     #showMetaDescription()
     #showAnalyticsTrackingCode($weblog)
 
@@ -88,30 +87,6 @@ Show Atom auto-discovery links as HTML link elements.
     #end
 #end
 
-
-#**
- * Display a trackback auto-discovery RDF comment for a WeblogEntry, but only
- * if trackbacks are enabled and comments are allowed for the entry.
- **#
-#macro( showTrackbackAutodiscovery $entry )
-#if($server.trackbacksEnabled && $model.weblog.allowComments && $entry.commentsStillAllowed)
-<!--
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
-         xmlns:dc="http://purl.org/dc/elements/1.1/">
-<rdf:Description
-    rdf:about="$url.entry($entry.anchor)"
-    trackback:ping="$url.trackback($entry.anchor)"
-    dc:title="$entry.title"
-    dc:identifier="$url.entry($entry.anchor)"
-    dc:subject="$entry.category.name"
-    dc:description="$entry.title"
-    dc:creator="$entry.creator.screenName"
-    dc:date="$entry.pubTime" />
-</rdf:RDF>
--->
-#end
-#end
 
 #**
 Adds a meta description tag, suitable for use in HTML header sections.  This tag is frequently used by

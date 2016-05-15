@@ -44,9 +44,6 @@ import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.MediacastException;
 import org.apache.roller.weblogger.util.MediacastResource;
 import org.apache.roller.weblogger.util.MediacastUtil;
-import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
-import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
@@ -62,10 +59,8 @@ import javax.servlet.ServletException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -124,9 +119,6 @@ public final class EntryEdit extends UIAction {
 
     // the entry we are adding or editing
     private WeblogEntry entry = null;
-
-    // url to send trackback to
-    private String trackbackUrl = null;
 
     public EntryEdit() {
         this.desiredMenu = "editor";
@@ -502,66 +494,6 @@ public final class EntryEdit extends UIAction {
         return urlStrategy.getPreviewURLStrategy(null)
                 .getWeblogEntryURL(getActionWeblog(),
                         getEntry().getAnchor(), true);
-    }
-
-    public String getTrackbackUrl() {
-        return trackbackUrl;
-    }
-
-    public void setTrackbackUrl(String trackbackUrl) {
-        this.trackbackUrl = trackbackUrl;
-    }
-
-    /**
-     * Send trackback to a specific url.
-     */
-    @SkipValidation
-    public String trackback() {
-
-        // make sure we have an entry to edit and it belongs to the action
-        // weblog
-        if (getEntry() == null) {
-            return ERROR;
-        } else if (!getEntry().getWeblog().equals(getActionWeblog())) {
-            return DENIED;
-        }
-
-        if (!StringUtils.isEmpty(getTrackbackUrl())) {
-            RollerMessages results = null;
-            try {
-                Trackback trackback = new Trackback(getEntry(), getTrackbackUrl());
-                results = trackback.send();
-            } catch (IllegalArgumentException ex) {
-                log.error("Error sending trackback", ex);
-                addError("error.trackbackNotAllowed");
-            }
-
-            if (results != null) {
-                for (Iterator mit = results.getMessages(); mit.hasNext(); ) {
-                    RollerMessage msg = (RollerMessage) mit.next();
-                    if (msg.getArgs() == null) {
-                        addMessage(msg.getKey());
-                    } else {
-                        addMessage(msg.getKey(), Arrays.asList(msg.getArgs()));
-                    }
-                }
-
-                for (Iterator eit = results.getErrors(); eit.hasNext();) {
-                    RollerMessage err = (RollerMessage) eit.next();
-                    if (err.getArgs() == null) {
-                        addError(err.getKey());
-                    } else {
-                        addError(err.getKey(), Arrays.asList(err.getArgs()));
-                    }
-                }
-            }
-
-            // reset trackback url
-            setTrackbackUrl(null);
-
-        }
-
-        return INPUT;
     }
 
     /**

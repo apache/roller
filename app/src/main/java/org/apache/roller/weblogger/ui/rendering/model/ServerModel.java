@@ -96,10 +96,6 @@ public class ServerModel implements Model {
         return propertiesManager.getBooleanProperty("users.comments.emailnotify");
     }
 
-    public boolean getTrackbacksEnabled() {
-        return propertiesManager.getBooleanProperty("users.trackbacks.enabled");
-    }
-    
     public String getSystemVersion() {
         return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
     }

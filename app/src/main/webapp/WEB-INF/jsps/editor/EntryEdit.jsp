@@ -288,19 +288,6 @@
         </s:if>
     </div>
 
-
-    <%-- ================================================================== --%>
-    <%-- Trackback control --%>
-    <s:if test="actionName == 'entryEdit' && userAnAuthor">
-        <br />
-        <h2><s:text name="weblogEdit.trackback" /></h2>
-        <s:text name="weblogEdit.trackbackUrl" />
-        <br />
-        <s:textfield name="trackbackUrl" size="80" maxlength="255" style="width:35%" onBlur="this.value=this.value.trim()"/>
-
-        <s:submit value="%{getText('weblogEdit.sendTrackback')}" action="entryEdit!trackback" />
-    </s:if>
-
 </s:form>
 
 <div id="confirm-delete" title="<s:text name='weblogEdit.deleteEntry'/>" style="display:none">

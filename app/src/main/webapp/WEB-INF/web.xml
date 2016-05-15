@@ -84,12 +84,11 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- Ip Banning is mapped for comment and trackbacks only.
+    <!-- Ip Banning is mapped for comments only.
     Note: this filter does nothing if an ip ban list is not configured. -->
     <filter-mapping>
         <filter-name>IPBanFilter</filter-name>
         <url-pattern>/tb-ui/rendering/comment/*</url-pattern>
-        <url-pattern>/tb-ui/rendering/trackback/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
@@ -174,7 +173,6 @@
         <url-pattern>/tb-ui/admin/rest/*</url-pattern>
         <url-pattern>/tb-ui/rendering/page/*</url-pattern>
         <url-pattern>/tb-ui/rendering/comment/*</url-pattern>
-        <url-pattern>/tb-ui/rendering/trackback/*</url-pattern>
         <url-pattern>/tb-ui/rendering/feed/*</url-pattern>
         <url-pattern>/tb-ui/rendering/media-resources/*</url-pattern>
         <url-pattern>/tb-ui/rendering/search/*</url-pattern>
