@@ -21,3 +21,4 @@
 <%@ taglib uri="/struts-tags" prefix="s" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>

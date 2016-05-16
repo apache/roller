@@ -20,7 +20,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 
 <style>
     .mediaObject {
@@ -79,7 +79,7 @@
 <s:if test="childFiles || allDirectories">
 
 <s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileView">
-	<s:hidden name="salt" />
+    <sec:csrfInput/>
     <s:hidden name="weblog" />
     <s:hidden name="directoryId" />
     <input type="hidden" name="mediaFileId" value="" />

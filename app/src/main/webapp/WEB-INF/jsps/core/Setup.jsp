@@ -69,7 +69,7 @@
 
           <s:if test="blogCount > 0">
             <s:form action="setup!save">
-				<s:hidden name="salt" />
+                <sec:csrfInput/>
 
                 <table style="margin-left:2em;width:70%">
                     <tr>

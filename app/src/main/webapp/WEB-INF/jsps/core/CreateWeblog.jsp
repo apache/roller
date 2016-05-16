@@ -19,7 +19,7 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
 
 <script>
@@ -40,70 +40,70 @@ function handlePreview(handle) {
 <br />
 
 <s:form action="createWeblog!save">
-<s:hidden name="salt" />
+    <sec:csrfInput/>
 
-<table class="formtable">
+    <table class="formtable">
 
-<tr>
-    <td class="label"><label for="name" /><s:text name="generic.name" /></label></td>
-    <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/></td>
-    <td class="description"><s:text name="createWebsite.tip.name" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="name" /><s:text name="generic.name" /></label></td>
+        <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/></td>
+        <td class="description"><s:text name="createWebsite.tip.name" /></td>
+    </tr>
 
-<tr>
-    <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
-    <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
-    <td class="description"><s:text name="createWebsite.tip.description" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
+        <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
+        <td class="description"><s:text name="createWebsite.tip.description" /></td>
+    </tr>
 
-<tr>
-    <td class="label"><label for="handle" /><s:text name="createWebsite.handle" /></label></td>
-    <td class="field">
-        <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" onBlur="this.value=this.value.trim()"/><br />
-        <span style="text-size:70%">
-            <s:text name="createWebsite.weblogUrl" />:&nbsp;
-            <s:property value="absoluteSiteURL" />/<span id="handlePreview" style="color:red"><s:if test="bean.handle != null"><s:property value="bean.handle"/></s:if><s:else>handle</s:else></span>
-        </span>
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.handle" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="handle" /><s:text name="createWebsite.handle" /></label></td>
+        <td class="field">
+            <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" onBlur="this.value=this.value.trim()"/><br />
+            <span style="text-size:70%">
+                <s:text name="createWebsite.weblogUrl" />:&nbsp;
+                <s:property value="absoluteSiteURL" />/<span id="handlePreview" style="color:red"><s:if test="bean.handle != null"><s:property value="bean.handle"/></s:if><s:else>handle</s:else></span>
+            </span>
+        </td>
+        <td class="description"><s:text name="createWebsite.tip.handle" /></td>
+    </tr>
 
-<tr>
-    <td class="label"><label for="locale" /><s:text name="createWebsite.locale" /></label></td>
-    <td class="field">
-       <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.locale" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="locale" /><s:text name="createWebsite.locale" /></label></td>
+        <td class="field">
+           <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
+        </td>
+        <td class="description"><s:text name="createWebsite.tip.locale" /></td>
+    </tr>
 
-<tr>
-    <td class="label"><label for="timeZone" /><s:text name="createWebsite.timeZone" /></label></td>
-    <td class="field">
-       <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.timezone" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="timeZone" /><s:text name="createWebsite.timeZone" /></label></td>
+        <td class="field">
+           <s:select name="bean.timeZone" size="1" list="timeZonesList" />
+        </td>
+        <td class="description"><s:text name="createWebsite.tip.timezone" /></td>
+    </tr>
 
-<tr>
-    <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
-    <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
-        <select id="themeSelector" name="bean.theme" size="1"
-        ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
-        <br />
-        <br />
-        <p>{{ selectedTheme.description }}</p>
-        <br />
-        <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.theme" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
+        <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
+            <select id="themeSelector" name="bean.theme" size="1"
+            ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
+            <br />
+            <br />
+            <p>{{ selectedTheme.description }}</p>
+            <br />
+            <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
+        </td>
+        <td class="description"><s:text name="createWebsite.tip.theme" /></td>
+    </tr>
 
-</table>
+    </table>
 
-<br />
+    <br />
 
-<s:submit value="%{getText('createWebsite.button.save')}" />
-<input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
+    <s:submit value="%{getText('createWebsite.button.save')}" />
+    <input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
 
 </s:form>
 

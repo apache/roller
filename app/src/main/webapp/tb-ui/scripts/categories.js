@@ -14,13 +14,12 @@ $(function() {
          {
             text: msg.saveLabel,
             click: function() {
-               var salt = $("#categories_salt").val();
                var idToUpdate = $(this).data('categoryId');
                var newName = $('#category-edit-name').val().trim();
                if (newName.length > 0) {
                   $.ajax({
                      type: "PUT",
-                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val() + '&salt=' + salt : '/tb-ui/authoring/rest/category/' + idToUpdate + '?salt=' + salt),
+                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val() : '/tb-ui/authoring/rest/category/' + idToUpdate),
                      data: JSON.stringify(newName),
                      contentType: "application/json",
                      processData: "false",
@@ -59,7 +58,6 @@ $(function() {
          {
             text: msg.confirmLabel,
             click: function() {
-               var salt = $("#categories_salt").val();
                var idToRemove = $(this).data('categoryId');
                var targetCategoryId = $('#category-remove-targetlist').val();
                $.ajax({

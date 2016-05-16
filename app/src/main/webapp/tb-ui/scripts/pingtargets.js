@@ -15,7 +15,6 @@ $(function() {
         {
            text: msg.saveLabel,
            click: function() {
-              var salt = $("#pingtarget_salt").val();
               var idToUpdate = $(this).data('pingtargetId');
               var newName = $('#pingtarget-edit-name').val().trim();
               var newUrl = $('#pingtarget-edit-url').val().trim();
@@ -26,7 +25,7 @@ $(function() {
               if (newName.length > 0 && newUrl.length > 0) {
                  $.ajax({
                     type: "PUT",
-                    url: contextPath + '/tb-ui/admin/rest/' + ((idToUpdate == '') ? 'pingtargets?weblog=' + $("#actionWeblog").val() + '&salt=' + salt : 'pingtarget/' + idToUpdate + '?salt=' + salt),
+                    url: contextPath + '/tb-ui/admin/rest/' + ((idToUpdate == '') ? 'pingtargets?weblog=' + $("#actionWeblog").val() : 'pingtarget/' + idToUpdate),
                     data: JSON.stringify(newData),
                     contentType: "application/json; charset=utf-8",
                     processData: "false",
@@ -114,8 +113,7 @@ $(function() {
      var targetId = changeStateCell.attr("data-id");
      var currentStateCell = $('#enablestate-' + targetId);
      var bEnable = !changeStateCell.data("enabled");
-     var targetUrl = contextPath + '/tb-ui/admin/rest/pingtargets/' + (bEnable ? 'enable' : 'disable') + '/' + targetId
-     + '?salt=' + $('#pingTargetsForm_salt').attr("value");
+     var targetUrl = contextPath + '/tb-ui/admin/rest/pingtargets/' + (bEnable ? 'enable' : 'disable') + '/' + targetId;
      $.ajax({
         type: "POST",
         url: targetUrl,

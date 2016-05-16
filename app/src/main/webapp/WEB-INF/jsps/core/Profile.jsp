@@ -23,8 +23,8 @@
 <p class="subtitle"><s:text name="userAdmin.title.editUser" /></p>
 
 <s:form action="profile!save">
-	<s:hidden name="salt" />
-    
+    <sec:csrfInput/>
+
     <table class="formtable">
         
         <tr>

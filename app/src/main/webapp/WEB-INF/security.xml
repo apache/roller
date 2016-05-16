@@ -39,9 +39,6 @@
         <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
 
-        <!-- CSRF presently handled manually via TightBlog's salt filters -->
-        <csrf disabled="true"/>
-
         <!-- Detect login redirects occurring as a result of Ajax calls and send a 408 (timeout) response
              code to the client instead, so the Ajax call can handle properly, see:
              https://doanduyhai.wordpress.com/2012/04/21/spring-security-part-vi-session-timeout-handling-for-ajax-calls/

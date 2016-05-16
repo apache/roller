@@ -1,4 +1,4 @@
-The JQuery UI folder (tb-ui/jquery-ui-1.11.0) was created by doing the following:
+The JQuery UI folder (tb-ui/jquery-ui-1.11.4) was created by doing the following:
 
 1. Going to the JQuery UI download builder (http://jqueryui.com/download/) and choosing the latest stable version.
 2. Under Components, unselecting "toggle all" to make sure nothing selected.
@@ -19,7 +19,7 @@ Following the above process when upgrading the JQuery UI version or changing the
 get deleted while no necessary files are accidentally removed.
 
 Notes:
-1. Recommended to keep the contents of the jquery-ui-1.11.0 folder within this folder, i.e., don't move the images or CSS' to other folders.  This way,
+1. Recommended to keep the contents of the jquery-ui-xxx folder within this folder, i.e., don't move the images or CSS' to other folders.  This way,
 when we delete this folder as a part of upgrading the JQueryUI version we'll know that all the resources of this version have also been deleted.
 
 2. Recommended not to add non-JQuery resources into this folder; again, this way, when we delete this folder we won't have to worry about other

@@ -19,9 +19,9 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 
 <script>
   $(function() {
@@ -196,7 +196,7 @@
 <s:if test="childFiles">
 
   <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
-	<s:hidden name="salt" />
+    <sec:csrfInput/>
     <s:hidden name="weblog" />
     <s:hidden name="directoryId" />
     <s:hidden name="newDirectoryName" />

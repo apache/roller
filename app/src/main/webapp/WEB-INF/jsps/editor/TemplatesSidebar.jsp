@@ -27,7 +27,7 @@
                 <hr size="1" noshade="noshade" />
                 
                 <s:form action="templates!add">
-					<s:hidden name="salt" />
+                    <sec:csrfInput/>
 					<s:hidden name="weblog" />
                     
                     <table cellpadding="0" cellspacing="6" ng-app="roleDescriptionModule"

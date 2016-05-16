@@ -21,7 +21,7 @@
 <p><s:text name="configForm.prompt" /></p>
 
 <s:form action="globalConfig!save">
-	<s:hidden name="salt" />
+    <sec:csrfInput/>
 
     <table class="formtableNoDesc">
     

@@ -33,7 +33,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
-import org.apache.struts2.interceptor.RequestAware;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,7 +42,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -55,7 +53,7 @@ import java.util.TimeZone;
  * which point to a success in a resource bundle, so we automatically call
  * getText(key) on the param passed into setError() and setSuccess().
  */
-public class UIAction extends ActionSupport implements Preparable, RequestAware {
+public class UIAction extends ActionSupport implements Preparable {
 
     private static final List LOCALES;
     private static final List TIME_ZONES;
@@ -115,8 +113,6 @@ public class UIAction extends ActionSupport implements Preparable, RequestAware 
     // page title, called by some Tiles JSPs (e.g., tiles-simplepage.jsp)
     protected String pageTitle = null;
 
-    protected String salt = null;
-
     // the required minimum global role the user must have for the action to be allowed
     protected GlobalRole requiredGlobalRole = GlobalRole.ADMIN;
 
@@ -124,23 +120,6 @@ public class UIAction extends ActionSupport implements Preparable, RequestAware 
     protected WeblogRole requiredWeblogRole = WeblogRole.OWNER;
 
     public void prepare() {
-        // no-op
-    }
-	
-	public void setRequest(Map<String, Object> map) {
-		this.salt = (String) map.get("salt");
-	}
-
-	public String getSalt() {
-		return salt;
-	}
-	
-    /**
-     * Necessary to avoid showing up "Error setting expression 'salt' with value ...".
-     * See also https://issues.apache.org/jira/browse/ROL-2068
-     * @param salt previous salt
-     */
-    public void setSalt(String salt) {
         // no-op
     }
 

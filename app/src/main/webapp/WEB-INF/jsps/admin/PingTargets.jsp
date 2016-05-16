@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
@@ -33,6 +33,7 @@ var msg= {
     pingTargetDisabledIndicator: '<s:text name="pingTarget.disabled"/>'
 };
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/pingtargets.js'/>"></script>
 
 <p class="subtitle">
@@ -53,7 +54,7 @@ var msg= {
 </tr>
 
 <s:form id="pingTargetsForm" action="commonPingTargets">
-  <s:hidden name="salt" />
+    <sec:csrfInput/>
 </s:form>
 
 <%-- Listing of current common targets --%>
@@ -119,7 +120,6 @@ var msg= {
 
 <div id="pingtarget-edit" style="display:none">
     <span id="pingtarget-edit-error" style="display:none"><s:text name='pingTarget.nameOrUrlNotUnique'/></span>
-    <form>
     <table>
         <tr>
             <td style="width:30%"><label for="pingtarget-edit-name"><s:text name='generic.name'/></label></td>
@@ -130,5 +130,4 @@ var msg= {
             <td><input id="pingtarget-edit-url" maxlength="128" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
     </table>
-    </form>
 </div>
