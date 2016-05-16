@@ -72,13 +72,6 @@
     </definition>
     
     <definition name=".tiles-popuppage" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">
-        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
-        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
-        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
-        <put-attribute name="content"      value="${content}" />
-       
-    </definition>
-    <definition name=".tiles-popuppage-only-content" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">       
         <put-attribute name="content"      value="${content}" />
     </definition>
     
@@ -168,7 +161,6 @@
     </definition>
     
     <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
@@ -192,48 +184,41 @@
 
     <!-- weblog editor pages (and associates) -->
     <definition name=".MediaFileEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
-    <definition name=".MediaFileImageChooser" extends=".tiles-popuppage-only-content" >
-        <put-attribute name="head"     value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+    <definition name=".MediaFileImageChooser" extends=".tiles-popuppage" >
         <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileImageChooser.jsp" />
         <put-attribute name="messages" value="/WEB-INF/jsps/tiles/messages.jsp" />
     </definition>
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
     <definition name=".TabularView" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TabularView.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
     <definition name=".EntryEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
     <definition name=".Entries" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Entries.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntriesSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
     <definition name=".Comments" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
@@ -259,7 +244,6 @@
     </definition>
     
     <definition name=".ThemeEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/ThemeEdit.jsp" />
     </definition>
     

@@ -37,7 +37,7 @@
             <tr>
                 <td colspan="2">
                     <s:form action="cacheInfo!clear">
-						<s:hidden name="salt" />
+                        <sec:csrfInput/>
                         <s:hidden name="cache" value="%{#cache.key}" />
                         <s:submit value="%{getText('cacheInfo.clear')}" />
                     </s:form>

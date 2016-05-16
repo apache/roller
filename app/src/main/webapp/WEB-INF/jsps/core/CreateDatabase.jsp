@@ -54,7 +54,7 @@
     <p><s:text name="installer.createTables" /></p>
 
     <s:form action="install!create">
-		<s:hidden name="salt" />
+        <sec:csrfInput/>
         <s:submit value="%{getText('installer.yesCreateTables')}" />
     </s:form>
     

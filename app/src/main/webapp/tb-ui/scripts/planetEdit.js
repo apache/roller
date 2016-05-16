@@ -104,7 +104,6 @@ $(function() {
    });
    $("#save-planet").click(function(e) {
      e.preventDefault();
-     var salt = $("#salt").val();
      var idToUpdate = $("#planetEditForm_planetId").val();
      var newData = {
         "title": $('#edit-title').val(),
@@ -115,7 +114,7 @@ $(function() {
      $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
        $.ajax({
           type: "PUT",
-          url: contextPath + '/tb-ui/admin/rest/' + ((idToUpdate == '') ? 'planets?salt=' + salt : 'planet/' + idToUpdate + '?salt=' + salt),
+          url: contextPath + '/tb-ui/admin/rest/' + ((idToUpdate == '') ? 'planets' : 'planet/' + idToUpdate),
           data: JSON.stringify(newData),
           contentType: "application/json; charset=utf-8",
           processData: "false",

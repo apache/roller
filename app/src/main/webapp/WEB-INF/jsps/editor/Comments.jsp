@@ -19,7 +19,7 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
+<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 
 <s:if test="actionName == 'comments'">
     <s:set var="mainAction">comments</s:set>
@@ -89,7 +89,7 @@
 <%-- ============================================================= --%>
 
 <s:form id="commentsForm" action="%{#mainAction}">
-    <s:hidden name="salt" />
+    <sec:csrfInput/>
     <s:hidden name="bean.ids" />
     <s:hidden name="bean.startDateString" />
     <s:hidden name="bean.endDateString" />
@@ -365,10 +365,9 @@
 
     function saveComment(id) {
         var content = $("#comment-" + id).children()[0].value;
-        var salt = $("#comments_salt").val();
         $.ajax({
             type: "PUT",
-            url: '${pageContext.request.contextPath}/tb-ui/authoring/rest/comment/' + id +'?salt='+salt,
+            url: '${pageContext.request.contextPath}/tb-ui/authoring/rest/comment/' + id,
             data: content,
             dataType: "text",
             processData: "false",

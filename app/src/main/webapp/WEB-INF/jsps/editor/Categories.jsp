@@ -19,9 +19,9 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>'/>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'/>"></script>
-<script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'/>"></script>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
@@ -32,6 +32,7 @@
         addTitle: '<s:text name="categoryForm.add.title"/>'
     };
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/categories.js'/>"></script>
 
 <p class="subtitle">
@@ -45,7 +46,7 @@
 
 <%-- Form is a table of categories each with checkbox --%>
 <s:form id="categoriesForm" action="categories">
-    <s:hidden name="salt"/>
+    <sec:csrfInput/>
     <s:hidden id="actionWeblog" name="weblog"/>
 
     <table class="rollertable">
@@ -98,20 +99,16 @@
 
     <div id="category-edit" style="display:none">
       <span id="category-edit-error" style="display:none"><s:text name='categoryForm.error.duplicateName'/></span>
-      <form>
-          <label for="name"><s:text name='generic.name'/>:</label>
-          <input type="text" id="category-edit-name" class="text ui-widget-content ui-corner-all">
-      </form>
+      <label for="name"><s:text name='generic.name'/>:</label>
+      <input type="text" id="category-edit-name" class="text ui-widget-content ui-corner-all">
     </div>
 
     <div id="category-remove" title="<s:text name='categoryDeleteOK.removeCategory'/>" style="display:none">
-        <form>
-            <div id="category-remove-mustmove" style="display:none">
-                <s:text name='categoryDeleteOK.youMustMoveEntries'/>
-                <p>
-                    <s:text name="categoryDeleteOK.moveToWhere"/>
-                    <select id="category-remove-targetlist"/>
-                </p>
-            </div>
-        </form>
+        <div id="category-remove-mustmove" style="display:none">
+            <s:text name='categoryDeleteOK.youMustMoveEntries'/>
+            <p>
+                <s:text name="categoryDeleteOK.moveToWhere"/>
+                <select id="category-remove-targetlist"/>
+            </p>
+        </div>
     </div>

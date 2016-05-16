@@ -19,7 +19,7 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js' />"></script>
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js' />"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
 
 <script>
@@ -36,7 +36,7 @@ function fullPreview(selector) {
 </p>
 
 <s:form action="themeEdit!save">
-	<s:hidden name="salt" />
+    <sec:csrfInput/>
     <s:hidden name="weblog" />
 
     <div class="optioner">

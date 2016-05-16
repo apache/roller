@@ -3,9 +3,16 @@
     "http://struts.apache.org/dtds/struts-2.3.dtd">
 <struts>
 
+    <constant name="struts.multipart.parser" value="spring"/>
+
+    <bean type="org.apache.struts2.dispatcher.multipart.MultiPartRequest"
+          name="spring"
+          class="org.apache.roller.weblogger.ui.struts2.util.SpringMultipartParser"
+          scope="default"/>
+
     <!-- Weblogger default package -->
     <package name="weblogger" namespace="/tb-ui" extends="struts-default">
-        
+
         <!-- Define Tiles result type -->
         <result-types>
             <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />

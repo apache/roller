@@ -19,7 +19,7 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 
 <script>
     $(document).ready(function() {
@@ -84,7 +84,7 @@
 </p>
 
 <s:form id="entry" action="%{#mainAction}!save" method="POST" enctype="multipart/form-data">
-	<s:hidden name="salt" />
+    <sec:csrfInput/>
     <s:hidden name="weblog" />
     <s:hidden name="directoryName" />
     <s:hidden name="mediaFileId" id="mediaFileId" />
@@ -199,10 +199,10 @@
     <br />
     <div class="control">
         <s:if test="actionName == 'mediaFileEdit'">
-           <s:submit value="%{getText('generic.save')}" action="mediaFileEdit!save" />
+           <s:submit value="%{getText('generic.save')}"/>
         </s:if>
         <s:else>
-           <s:submit value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save" />
+           <s:submit value="%{getText('mediaFileAdd.upload')}"/>
         </s:else>
         <s:submit value="%{getText('generic.cancel')}" action="mediaFileEdit!cancel" />
     </div>

@@ -29,7 +29,7 @@
 <p><s:text name="memberPermissions.description" /></p>
 
 <s:form action="members!save">
-	<s:hidden name="salt" />
+    <sec:csrfInput/>
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
     <div style="text-align: right; padding-bottom: 6px;">

@@ -43,7 +43,7 @@
 </p>
 
 <s:form>
-	<s:hidden name="salt" />
+    <sec:csrfInput/>
     <s:if test="actionName == 'modifyUser'">
         <%-- bean for add does not have a bean id yet --%>
         <s:hidden name="bean.id" />

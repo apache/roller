@@ -19,9 +19,9 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src="<s:url value='/tb-ui/scripts/jquery-2.1.1.min.js'/>"></script>
-<script src="<s:url value='/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js'/>"></script>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
@@ -33,10 +33,11 @@ var msg= {
     addTitle: '<s:text name="categoryForm.add.title"/>'
 };
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/planetEdit.js'/>"></script>
 
 <s:form id="planetEditForm" action="planetEdit">
-	<s:hidden id="salt" name="salt" />
+  <sec:csrfInput/>
   <input type="hidden" name="hello" id="planetEditForm_planetId" value="<s:property value='%{#parameters.planetId}'/>"/>
   <div id="planetEditFields"></div>
         <script id="formTemplate" type="text/x-jsrender">

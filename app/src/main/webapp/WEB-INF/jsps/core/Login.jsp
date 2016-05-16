@@ -29,6 +29,8 @@
       action="<s:url value='/roller_j_security_check'/>"
       onsubmit="saveUsername(this)">
 
+    <sec:csrfInput/>
+
     <table width="80%">
 
         <tr>

@@ -15,7 +15,6 @@ $(function() {
          {
             text: msg.saveLabel,
             click: function() {
-               var salt = $("#bookmarks_salt").val();
                var idToUpdate = $(this).data('bookmarkId');
                var newName = $('#bookmark-edit-name').val().trim();
                var newUrl = $('#bookmark-edit-url').val().trim();
@@ -28,7 +27,7 @@ $(function() {
                if (newName.length > 0 && newUrl.length > 0) {
                   $.ajax({
                      type: "PUT",
-                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/bookmarks?weblog=' + $("#actionWeblog").val() + '&salt=' + salt : '/tb-ui/authoring/rest/bookmark/' + idToUpdate + '?salt=' + salt),
+                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/bookmarks?weblog=' + $("#actionWeblog").val() : '/tb-ui/authoring/rest/bookmark/' + idToUpdate),
                      data: JSON.stringify(newData),
                      contentType: "application/json; charset=utf-8",
                      processData: "false",

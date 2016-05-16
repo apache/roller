@@ -19,9 +19,9 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.1.1.min.js" />'></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
@@ -32,6 +32,7 @@ var msg= {
     addTitle: '<s:text name="bookmarkForm.add.title"/>'
 };
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/bookmarks.js'/>"></script>
 
 <p class="subtitle">
@@ -45,7 +46,7 @@ var msg= {
 
 <%-- Form is a table of bookmarks, each with checkbox for deleting --%>
 <s:form id="bookmarksForm">
-  <s:hidden name="salt" />
+  <sec:csrfInput/>
   <s:hidden name="weblog" id="actionWeblog" />
 
     <table class="rollertable">

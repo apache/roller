@@ -39,7 +39,7 @@
     <p><s:text name="installer.upgradeTables" /></p>
 
     <s:form action="install!upgrade">
-		<s:hidden name="salt" />
+        <sec:csrfInput/>
         <s:submit value="%{getText('installer.yesUpgradeTables')}" />
     </s:form>
 
