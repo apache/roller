@@ -1,11 +1,4 @@
 $(function() {
-   $.ajaxSetup({
-      statusCode: {
-         408: function() {
-            document.bookmarksForm.submit();
-         }
-      }
-   });
    $("#bookmark-edit").dialog({
       autoOpen: false,
       height: 270,

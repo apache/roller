@@ -36,9 +36,11 @@ var msg= {
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/planetEdit.js'/>"></script>
 
-<s:form id="planetEditForm" action="planetEdit">
+<s:form id="mainForm" action="planetEdit">
   <sec:csrfInput/>
-  <input type="hidden" name="hello" id="planetEditForm_planetId" value="<s:property value='%{#parameters.planetId}'/>"/>
+  <input type="hidden" id="planetEditForm_planetId" value="<s:property value='%{#parameters.planetId}'/>"/>
+  <input type="hidden" id="refreshURL" value="<s:url action='planetEdit'/>?planetId=<s:property value='%{#parameters.planetId}'/>"/>
+
   <div id="planetEditFields"></div>
         <script id="formTemplate" type="text/x-jsrender">
           <div class="formrow">

@@ -38,8 +38,9 @@
 
 <p class="subtitle"><s:text name="planets.subtitle"/></p>
 
-<s:form id="planetsForm" action="planets">
+<s:form id="mainForm" action="planets">
     <sec:csrfInput/>
+    <input type="hidden" id="refreshURL" value="<s:url action='planets'/>"/>
 </s:form>
 
 <br style="clear:left"/>

@@ -39,12 +39,6 @@
         <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
 
-        <!-- Detect login redirects occurring as a result of Ajax calls and send a 408 (timeout) response
-             code to the client instead, so the Ajax call can handle properly, see:
-             https://doanduyhai.wordpress.com/2012/04/21/spring-security-part-vi-session-timeout-handling-for-ajax-calls/
-        -->
-        <custom-filter ref="ajaxTimeoutRedirectFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
-
         <!-- Needed to allow for popups -->
         <headers>
             <frame-options policy="SAMEORIGIN"/>
@@ -52,11 +46,22 @@
 
         <form-login login-page="/tb-ui/login.rol"
                     authentication-failure-url="/tb-ui/login.rol?error=true"
-                    login-processing-url="/roller_j_security_check"/>
+                    login-processing-url="/roller_j_security_check"
+                    authentication-success-handler-ref="authenticationSuccessHandler" />
+
+        <access-denied-handler ref="accessDeniedHandler"/>
 
     </http>
 
-    <beans:bean id="ajaxTimeoutRedirectFilter" class="org.apache.roller.weblogger.ui.core.filters.AjaxTimeoutRedirectFilter"/>
+    <beans:bean id="authenticationSuccessHandler"
+                class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+        <!-- After login, return to the last visited page -->
+        <beans:property name="useReferer" value="true"/>
+    </beans:bean>
+
+    <beans:bean id="accessDeniedHandler"
+                class="org.apache.roller.weblogger.ui.core.security.CustomAccessDeniedHandlerImpl">
+    </beans:bean>
 
     <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
         <beans:constructor-arg ref="roleVoter"/>
