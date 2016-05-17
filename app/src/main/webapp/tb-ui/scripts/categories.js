@@ -1,11 +1,4 @@
 $(function() {
-   $.ajaxSetup({
-      statusCode: {
-         408: function() {
-            document.categoriesForm.submit();
-         }
-      }
-   });
    $("#category-edit").dialog({
       autoOpen: false,
       height: 200,

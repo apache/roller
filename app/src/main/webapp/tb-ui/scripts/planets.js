@@ -1,11 +1,4 @@
 $(function() {
-   $.ajaxSetup({
-      statusCode: {
-         408: function() {
-            document.planetsForm.submit();
-         }
-      }
-   });
    $.ajax({
       type: "GET",
       url: contextPath + '/tb-ui/admin/rest/planets',

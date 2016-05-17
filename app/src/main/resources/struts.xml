@@ -225,8 +225,11 @@
             <result name="success" type="tiles">.PlanetEdit</result>
         </action>
         
-        <action name="planets"
-                class="org.apache.roller.weblogger.ui.struts2.admin.Planets">
+        <action name="planets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">planets</param>
+            <param name="pageTitle">planets.pagetitle</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.Planets</result>
         </action>
     </package>

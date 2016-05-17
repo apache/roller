@@ -48,6 +48,7 @@
 <s:form id="categoriesForm" action="categories">
     <sec:csrfInput/>
     <s:hidden id="actionWeblog" name="weblog"/>
+    <input type="hidden" id="refreshURL" value="<s:url action='categories'/>"/>
 
     <table class="rollertable">
 

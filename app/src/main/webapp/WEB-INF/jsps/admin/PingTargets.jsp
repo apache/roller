@@ -55,6 +55,7 @@ var msg= {
 
 <s:form id="pingTargetsForm" action="commonPingTargets">
     <sec:csrfInput/>
+    <input type="hidden" id="refreshURL" value="<s:url action='commonPingTargets'/>"/>
 </s:form>
 
 <%-- Listing of current common targets --%>

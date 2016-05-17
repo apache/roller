@@ -27,8 +27,6 @@ import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +45,9 @@ import javax.servlet.http.HttpServletResponse;
  * Manage planets.
  */
 @RestController
-public class Planets extends UIAction {
+public class PlanetController {
 
-    private static Logger log = LoggerFactory.getLogger(Planets.class);
+    private static Logger log = LoggerFactory.getLogger(PlanetController.class);
     
     @Autowired
     private PlanetManager planetManager;
@@ -65,11 +63,7 @@ public class Planets extends UIAction {
         this.feedManager = feedManager;
     }
 
-    public Planets() {
-        this.actionName = "planets";
-        this.desiredMenu = "admin";
-        this.pageTitle = "planets.pagetitle";
-        this.requiredWeblogRole = WeblogRole.NOBLOGNEEDED;
+    public PlanetController() {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.PUT)

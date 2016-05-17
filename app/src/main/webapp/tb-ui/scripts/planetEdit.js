@@ -1,11 +1,4 @@
 $(function() {
-   $.ajaxSetup({
-      statusCode: {
-         408: function() {
-            document.planetEditForm.submit();
-         }
-      }
-   });
    $.templates({
      formTmpl: '#formTemplate',
      tableTmpl: '#tableTemplate'
