@@ -7,7 +7,7 @@ $(function() {
      var html = $.render.formTmpl(data);
      $("#planetEditFields").html(html);
    }
-   function refreshPlanetData(tableAlso) {
+   function refreshView(tableAlso) {
      var planetId = $('#planetEditForm_planetId').attr('value');
      if (planetId != '') {
        $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
@@ -35,7 +35,7 @@ $(function() {
      }
    }
    $(function() {
-     refreshPlanetData(true);
+     refreshView(true);
    });
    $("#confirm-delete").dialog({
      autoOpen: false,
@@ -76,7 +76,7 @@ $(function() {
           .data('deleteId', idToRemove).dialog('open');
    });
    $("#reset-planet").click(function(e) {
-     refreshPlanetData(false);
+     refreshView(false);
    });
    $("#add-link").click(function(e) {
      e.preventDefault();

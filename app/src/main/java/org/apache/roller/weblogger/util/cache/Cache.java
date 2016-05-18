@@ -18,8 +18,6 @@
 
 package org.apache.roller.weblogger.util.cache;
 
-import java.util.Map;
-
 
 /**
  * Base interface representing a cache in Roller.
@@ -53,6 +51,6 @@ public interface Cache {
     /**
      * get cache stats.
      */
-    Map<String, Object> getStats();
+    CacheStats getStats();
     
 }

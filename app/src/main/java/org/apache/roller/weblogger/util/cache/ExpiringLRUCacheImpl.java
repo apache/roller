@@ -46,10 +46,10 @@ public class ExpiringLRUCacheImpl implements Cache {
     private long timeoutInMS = 0;
 
     // for metrics
-    protected double hits = 0;
-    protected double misses = 0;
-    protected double puts = 0;
-    protected double removes = 0;
+    protected int hits = 0;
+    protected int misses = 0;
+    protected int puts = 0;
+    protected int removes = 0;
     protected Date startTime = new Date();
 
     public ExpiringLRUCacheImpl(int maxsize, long timeoutInMS) {
@@ -73,18 +73,18 @@ public class ExpiringLRUCacheImpl implements Cache {
         startTime = new Date();
     }
 
-    public Map<String, Object> getStats() {
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("startTime", this.startTime);
-        stats.put("hits", this.hits);
-        stats.put("misses", this.misses);
-        stats.put("puts", this.puts);
-        stats.put("removes", this.removes);
+    public CacheStats getStats() {
+        CacheStats stats = new CacheStats();
+        stats.setStartTime(startTime);
+        stats.setHits(hits);
+        stats.setMisses(misses);
+        stats.setPuts(puts);
+        stats.setRemoves(removes);
 
         // calculate efficiency
-        if((misses - removes) > 0) {
-            double efficiency = hits / (misses + hits);
-            stats.put("efficiency", efficiency * WebloggerCommon.PERCENT_100);
+        if (misses + hits > 0) {
+            double efficiency = hits * WebloggerCommon.PERCENT_100 / (misses + hits);
+            stats.setEfficiency(efficiency);
         }
 
         return stats;

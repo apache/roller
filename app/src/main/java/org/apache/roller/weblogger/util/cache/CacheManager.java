@@ -162,7 +162,6 @@ public final class CacheManager {
         }
     }
     
-    
     /**
      * Flush a single cache.
      */
@@ -173,21 +172,20 @@ public final class CacheManager {
         }
     }
     
-    
     /**
-     * Compile stats from all registered caches.
-     *
-     * This is basically a hacky version of instrumentation which is being
-     * thrown in because we don't have a full instrumentation strategy yet.
-     * This is here with the full expectation that it will be replaced by
-     * something a bit more elaborate, like JMX.
+     * Retrieve stats from all registered caches.
      */
-    public Map<String, Map<String, Object>> getStats() {
-        Map<String, Map<String, Object>> allStats = new HashMap<>();
+    public Map<String, CacheStats> getStats() {
+        Map<String, CacheStats> allStats = new HashMap<>();
         for (Map.Entry<String, Cache> cache : caches.entrySet()) {
             allStats.put(cache.getKey(), cache.getValue().getStats());
         }
         return allStats;
+    }
+
+    public CacheStats getStats(String cacheName) {
+        Cache cache = caches.get(cacheName);
+        return cache.getStats();
     }
 
 }

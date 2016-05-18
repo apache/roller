@@ -42,7 +42,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Manage planets.
+ * Manage planets and their subscriptions.
  */
 @RestController
 public class PlanetController {
