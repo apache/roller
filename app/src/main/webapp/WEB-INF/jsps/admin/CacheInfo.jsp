@@ -16,36 +16,70 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
+<script>
+    $.views.converters("todate", function(val) {
+      return new Date(val).toISOString();
+    });
+    var contextPath = "${pageContext.request.contextPath}";
+    var msg = {
+        confirmLabel: '<s:text name="generic.confirm"/>',
+        cancelLabel: '<s:text name="generic.cancel"/>',
+    };
+</script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/cacheInfo.js'/>"></script>
 
 <p class="subtitle"><s:text name="cacheInfo.subtitle" />
 <p><s:text name="cacheInfo.prompt" />
 
-<s:iterator id="cache" value="stats">
-    <s:if test="#cache != null && !#cache.value.isEmpty">
-        <table cellspacing="3" border="1">
-            <tr>
-                <th colspan="2"><s:property value="#cache.key"/></th>
-            </tr>
+<input type="hidden" id="refreshURL" value="<s:url action='cacheInfo'/>"/>
 
-            <s:iterator id="prop" value="#cache.value">
-                <tr>
-                    <td><s:property value="#prop.key"/></td>
-                    <td><s:property value="#prop.value"/></td>
-                </tr>
-            </s:iterator>
+<br style="clear:left"/>
 
-            <tr>
-                <td colspan="2">
-                    <s:form action="cacheInfo!clear">
-                        <sec:csrfInput/>
-                        <s:hidden name="cache" value="%{#cache.key}" />
-                        <s:submit value="%{getText('cacheInfo.clear')}" />
-                    </s:form>
-                </td>
-            </tr>
-            
-        </table>
-        
-        <br>
-    </s:if>
-</s:iterator>
+<table class="rollertable">
+<thead>
+   <tr class="rHeaderTr">
+        <th style="width:20%"><s:text name="generic.name"/></th>
+        <th style="width:20%"><s:text name="cacheInfo.startTime"/></th>
+        <th style="width:10%"><s:text name="cacheInfo.puts"/></th>
+        <th style="width:10%"><s:text name="cacheInfo.removes"/></th>
+        <th style="width:10%"><s:text name="cacheInfo.hits"/></th>
+        <th style="width:10%"><s:text name="cacheInfo.misses"/></th>
+        <th style="width:10%"><s:text name="cacheInfo.efficiency"/></th>
+        <th style="width:10%"></th>
+    </tr>
+</thead>
+<tbody id="tableBody">
+  <script id="tableTemplate" type="text/x-jsrender">
+    {{props}}
+      <tr id="{{:key}}">
+        <td class="title-cell">{{:key}}</td>
+        <td>{{todate:prop.startTime}}</td>
+        <td>{{:prop.puts}}</td>
+        <td>{{:prop.removes}}</td>
+        <td>{{:prop.hits}}</td>
+        <td>{{:prop.misses}}</td>
+        <td>{{:prop.efficiency}}</td>
+        <td align="center">
+            <a href="#" class="reset-link"><s:text name="cacheInfo.clear"/></a>
+        </td>
+       </tr>
+     {{/props}}
+  </script>
+
+</tbody>
+</table>
+
+<div class="control clearfix">
+  <input type="button" value="<s:text name='generic.refresh'/>" id="refresh-link"/>
+  <input type="button" value="<s:text name='cacheInfo.clearAll'/>" id="resetall-link"/>
+</div>
+
+<div id="confirm-resetall" title="<s:text name='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+   <s:text name='cacheInfo.confirmResetAll'/></p>
+</div>

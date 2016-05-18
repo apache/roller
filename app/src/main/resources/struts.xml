@@ -211,12 +211,15 @@
                 class="org.apache.roller.weblogger.ui.struts2.admin.PingTargets">
             <result name="list" type="tiles">.PingTargets</result>
         </action>
-        
-        <action name="cacheInfo!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.CacheInfo">
+
+        <action name="cacheInfo" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">cacheInfo</param>
+            <param name="pageTitle">cacheInfo.title</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
-        
+
         <action name="planetEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">planetEdit</param>
             <param name="pageTitle">planetSubscriptions.title</param>

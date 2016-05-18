@@ -18,7 +18,7 @@ $(function() {
          {
             text: msg.confirmLabel,
             click: function() {
-              var idToRemove = $(this).data('deleteId');
+              var idToRemove = $(this).data('actionId');
               $.ajax({
                  type: "DELETE",
                  url: contextPath + '/tb-ui/admin/rest/planets/' + idToRemove,
@@ -41,10 +41,10 @@ $(function() {
    $("#tableBody").on('click', '.delete-link', function(e) {
       e.preventDefault();
       var tr = $(this).closest('tr');
-      var idToRemove = tr.attr('id');
-      var planetName = tr.find('td.title-cell').text();
+      var actionId = tr.attr('id');
+      var itemName = tr.find('td.title-cell').text();
       $('#confirm-delete')
-          .dialog('option', 'title', planetName)
-          .data('deleteId', idToRemove).dialog('open');
+          .dialog('option', 'title', itemName)
+          .data('actionId', actionId).dialog('open');
    });
 });
