@@ -10,7 +10,7 @@ $(function() {
    function refreshView(tableAlso) {
      var planetId = $('#planetEditForm_planetId').attr('value');
      if (planetId != '') {
-       $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
+       checkLoggedIn(function() {
          $.ajax({
             type: "GET",
             url: contextPath + '/tb-ui/admin/rest/planet/' + planetId,
@@ -47,13 +47,15 @@ $(function() {
            text: msg.confirmLabel,
            click: function() {
              var idToRemove = $(this).data('deleteId');
-             $.ajax({
+             checkLoggedIn(function() {
+               $.ajax({
                 type: "DELETE",
                 url: contextPath + '/tb-ui/admin/rest/planetsubscriptions/' + idToRemove,
                 success: function(data, textStatus, xhr) {
-                  $('tr#' + idToRemove).remove();
+                  $('#' + idToRemove).remove();
                   $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
                 }
+               });
              });
              $(this).dialog("close");
            }
@@ -83,16 +85,16 @@ $(function() {
      var planetId = $('#planetEditForm_planetId').val();
      var feedUrl = encodeURIComponent($('#feedUrl').val());
      if (planetId == '' || feedUrl == '') return;
-     $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
-       $.ajax({
-          type: "PUT",
-          url: contextPath + '/tb-ui/admin/rest/planetsubscriptions?planetId=' + planetId + '&feedUrl=' + feedUrl,
-          success: function(data, textStatus, xhr) {
-            var html = $.render.tableTmpl(data);
-            $("#tableBody").append(html);
-            $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
-          }
-       });
+       checkLoggedIn(function() {
+         $.ajax({
+            type: "PUT",
+            url: contextPath + '/tb-ui/admin/rest/planetsubscriptions?planetId=' + planetId + '&feedUrl=' + feedUrl,
+            success: function(data, textStatus, xhr) {
+              var html = $.render.tableTmpl(data);
+              $("#tableBody").append(html);
+              $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
+            }
+         });
      });
    });
    $("#save-planet").click(function(e) {
@@ -104,7 +106,7 @@ $(function() {
         "description": $('#edit-description').val()
      };
      if (newData.name == '' || newData.handle == '') return;
-     $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
+     checkLoggedIn(function() {
        $.ajax({
           type: "PUT",
           url: contextPath + '/tb-ui/admin/rest/' + ((idToUpdate == '') ? 'planets' : 'planet/' + idToUpdate),

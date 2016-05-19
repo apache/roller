@@ -52,9 +52,6 @@ public class PingTarget {
     private Timestamp lastSuccess;
     private boolean autoEnabled;
 
-    /**
-     * Default empty constructor.
-     */
     public PingTarget() {
     }
 

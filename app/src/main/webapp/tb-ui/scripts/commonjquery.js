@@ -14,3 +14,6 @@ $(function() {
      }
    });
 });
+function checkLoggedIn(fctnIfSuccessful) {
+  $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', fctnIfSuccessful);
+};

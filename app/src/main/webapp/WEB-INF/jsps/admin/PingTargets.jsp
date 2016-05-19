@@ -19,6 +19,7 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
@@ -26,11 +27,7 @@ var msg= {
     saveLabel: '<s:text name="generic.save"/>',
     cancelLabel: '<s:text name="generic.cancel"/>',
     editTitle: '<s:text name="generic.edit"/>',
-    addTitle: '<s:text name="pingTarget.addTarget"/>',
-    pingTargetEnable: '<s:text name="pingTarget.enable"/>',
-    pingTargetEnabledIndicator: '<s:text name="pingTarget.enabled"/>',
-    pingTargetDisable: '<s:text name="pingTarget.disable"/>',
-    pingTargetDisabledIndicator: '<s:text name="pingTarget.disabled"/>'
+    addTitle: '<s:text name="pingTarget.addTarget"/>'
 };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
@@ -42,77 +39,58 @@ var msg= {
 
 <p/><s:text name="commonPingTargets.explanation"/><p/>
 
+<input type="hidden" id="refreshURL" value="<s:url action='commonPingTargets'/>"/>
+
 <table class="rollertable">
-
-<%-- Headings --%>
-<tr>
-    <th width="20%%"><s:text name="generic.name" /></th>
-    <th width="55%"><s:text name="pingTarget.pingUrl" /></th>
-    <th width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
-    <th width="5%"><s:text name="generic.edit" /></th>
-    <th width="5%"><s:text name="pingTarget.remove" /></th>
-</tr>
-
-<s:form id="pingTargetsForm" action="commonPingTargets">
-    <sec:csrfInput/>
-    <input type="hidden" id="refreshURL" value="<s:url action='commonPingTargets'/>"/>
-</s:form>
-
-<%-- Listing of current common targets --%>
-<s:iterator id="pingTarget" value="pingTargets" status="rowstatus">
-
-    <s:if test="#rowstatus.odd == true">
-        <tr class="rollertable_odd">
-    </s:if>
-    <s:else>
-        <tr class="rollertable_even">
-    </s:else>
-
-    <td id='ptname-<s:property value="#pingTarget.id"/>'><s:property value="#pingTarget.name" /></td>
-
-    <td id='pturl-<s:property value="#pingTarget.id"/>'><s:property value="#pingTarget.pingUrl" /></td>
-
-    <td align="center">
-       <span style="font-weight: bold;" id="enablestate-<s:property value='#pingTarget.id'/>">
-       <s:if test="#pingTarget.autoEnabled">
-           <s:text name="pingTarget.enabled"/>
-       </s:if>
-       <s:else>
-           <s:text name="pingTarget.disabled"/>
-       </s:else>
-       </span>
-    </td>
-
-    <td align="center" >
-       <a href="#" class="enable-toggle" data-id='<s:property value="#pingTarget.id"/>' data-enabled='<s:property value="#pingTarget.autoEnabled"/>'>
-       <s:if test="#pingTarget.autoEnabled">
-           <s:text name="pingTarget.disable"/>
-       </s:if>
-       <s:else>
-           <s:text name="pingTarget.enable"/>
-       </s:else>
-       </a>
-    </td>
-
-    <td align="center">
-        <a class="edit-link" data-id='<s:property value="#pingTarget.id"/>'>
-            <img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="<s:text name="generic.edit" />" />
-        </a>
-    </td>
-
-    <td align="center">
-        <a class="delete-link" data-id='<s:property value="#pingTarget.id"/>'>
-            <img src='<s:url value="/images/delete.png"/>' border="0" alt="<s:text name="pingTarget.remove" />" />
-        </a>
-    </td>
-
+  <thead>
+    <tr class="rHeaderTr">
+        <th width="20%"><s:text name="generic.name" /></th>
+        <th width="55%"><s:text name="pingTarget.pingUrl" /></th>
+        <th width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
+        <th width="5%"><s:text name="generic.edit" /></th>
+        <th width="5%"><s:text name="pingTarget.remove" /></th>
     </tr>
-</s:iterator>
-
+  </thead>
+  <tbody id="tableBody">
+    <script id="tableTemplate" type="text/x-jsrender">
+      <tr id="{{:id}}">
+        <td class="name-cell">{{:name}}</td>
+        <td class="url-cell">{{:pingUrl}}</td>
+        <td class="current-state-cell" align="center">
+           <span style="font-weight: bold;">
+           {{if autoEnabled}}
+               <s:text name="pingTarget.enabled"/>
+           {{else}}
+               <s:text name="pingTarget.disabled"/>
+           {{/if}}
+           </span>
+        </td>
+        <td class="change-state-cell" align="center">
+           <a href="#" class="enable-toggle" data-enabled='{{:autoEnabled}}'>
+           {{if autoEnabled}}
+               <s:text name="pingTarget.disable"/>
+           {{else}}
+               <s:text name="pingTarget.enable"/>
+           {{/if}}
+           </a>
+        </td>
+        <td align="center">
+            <a class="edit-link">
+                <img src='<s:url value="/images/page_white_edit.png"/>' alt="<s:text name="generic.edit" />" />
+            </a>
+        </td>
+        <td align="center">
+            <a class="delete-link">
+                <img src='<s:url value="/images/delete.png"/>' alt="<s:text name="pingTarget.remove" />" />
+            </a>
+        </td>
+      </tr>
+    </script>
+  </tbody>
 </table>
 
-<div style="padding: 4px; font-weight: bold;">
-    <img src='<s:url value="/images/add.png"/>' border="0" alt="icon" /><a href="#" id="add-link"><s:text name="pingTarget.addTarget" /></a>
+<div class="control clearfix">
+    <input type="submit" id="add-link" value="<s:text name='pingTarget.addTarget'/>"/>
 </div>
 
 <div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">

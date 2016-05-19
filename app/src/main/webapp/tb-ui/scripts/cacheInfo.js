@@ -2,9 +2,11 @@ $(function() {
    $.templates({
      tableTmpl: '#tableTemplate'
    });
-   function checkLoggedIn(fctnIfSuccessful) {
-     $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', fctnIfSuccessful);
-   };
+   function updateView(data) {
+     var html = $.render.tableTmpl(data);
+     $("#tableBody").html(html);
+     $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
+   }
    function refreshData() {
      checkLoggedIn(function() {
        $.ajax({
@@ -16,14 +18,7 @@ $(function() {
        });
      });
    }
-   function updateView(data) {
-     var html = $.render.tableTmpl(data);
-     $("#tableBody").html(html);
-     $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
-   }
-   $(function() {
-     refreshData();
-   });
+   refreshData();
    $("#confirm-resetall").dialog({
       autoOpen: false,
       resizable: true,

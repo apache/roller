@@ -39,6 +39,14 @@
         <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
 
+        <!-- Detect login redirects occurring as a result of Ajax GET calls and send a 408 (timeout) response
+             code to the client instead, so the Ajax call can handle properly, see:
+             https://doanduyhai.wordpress.com/2012/04/21/spring-security-part-vi-session-timeout-handling-for-ajax-calls/
+
+             Ajax calls that trigger CSRF checking get 408s sent instead via CustomAccessDeniedHandlerImpl.
+        -->
+        <custom-filter ref="ajaxInvalidSessionRedirectFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
+
         <!-- Needed to allow for popups -->
         <headers>
             <frame-options policy="SAMEORIGIN"/>
@@ -52,6 +60,9 @@
         <access-denied-handler ref="accessDeniedHandler"/>
 
     </http>
+
+    <beans:bean id="ajaxInvalidSessionRedirectFilter"
+                class="org.apache.roller.weblogger.ui.core.filters.AjaxInvalidSessionRedirectFilter"/>
 
     <beans:bean id="authenticationSuccessHandler"
                 class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">

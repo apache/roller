@@ -36,35 +36,32 @@ var msg= {
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/planetEdit.js'/>"></script>
 
-<s:form id="mainForm" action="planetEdit">
-  <sec:csrfInput/>
-  <input type="hidden" id="planetEditForm_planetId" value="<s:property value='%{#parameters.planetId}'/>"/>
-  <input type="hidden" id="refreshURL" value="<s:url action='planetEdit'/>?planetId=<s:property value='%{#parameters.planetId}'/>"/>
+<input type="hidden" id="planetEditForm_planetId" value="<s:property value='%{#parameters.planetId}'/>"/>
+<input type="hidden" id="refreshURL" value="<s:url action='planetEdit'/>?planetId=<s:property value='%{#parameters.planetId}'/>"/>
 
-  <div id="planetEditFields"></div>
-        <script id="formTemplate" type="text/x-jsrender">
-          <div class="formrow">
-              <label for="edit-title" class="formrow"><s:text name="planets.title"/></label>
-              <input type="text" id="edit-title" size="48" maxlength="64" value="{{:title}}" onBlur="this.value=this.value.trim()"/>
-          </div>
+<div id="planetEditFields"></div>
+<script id="formTemplate" type="text/x-jsrender">
+  <div class="formrow">
+      <label for="edit-title" class="formrow"><s:text name="planets.title"/></label>
+      <input type="text" id="edit-title" size="48" maxlength="64" value="{{:title}}" onBlur="this.value=this.value.trim()"/>
+  </div>
 
-          <div class="formrow">
-              <label for="edit-handle" class="formrow"><s:text name="planets.handle" /></label>
-              <input type="text" id="edit-handle" size="48" maxlength="48" value="{{:handle}}" onBlur="this.value=this.value.trim()"/>
-          </div>
+  <div class="formrow">
+      <label for="edit-handle" class="formrow"><s:text name="planets.handle" /></label>
+      <input type="text" id="edit-handle" size="48" maxlength="48" value="{{:handle}}" onBlur="this.value=this.value.trim()"/>
+  </div>
 
-          <div class="formrow">
-              <label for="edit-description" class="formrow"><s:text name="generic.description" /></label>
-              <input type="text" id="edit-description" size="90" maxlength="255" value="{{:description}}" onBlur="this.value=this.value.trim()"/>
-          </div>
-        </script>
+  <div class="formrow">
+      <label for="edit-description" class="formrow"><s:text name="generic.description" /></label>
+      <input type="text" id="edit-description" size="90" maxlength="255" value="{{:description}}" onBlur="this.value=this.value.trim()"/>
+  </div>
+</script>
 
-        <div class="formrow">
-            <label class="formrow">&nbsp;</label>
-            <input type="button" value="<s:text name="generic.save" />" id="save-planet"/>
-            <input type="reset" id='reset-planet'/>
-        </div>
-</s:form>
+<div class="formrow">
+    <label class="formrow">&nbsp;</label>
+    <input type="button" value="<s:text name="generic.save" />" id="save-planet"/>
+    <input type="reset" id='reset-planet'/>
+</div>
 
 <div id="feedManagement" style="display:none">
 

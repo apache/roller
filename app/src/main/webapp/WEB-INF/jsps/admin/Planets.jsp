@@ -38,10 +38,7 @@
 
 <p class="subtitle"><s:text name="planets.subtitle"/></p>
 
-<s:form id="mainForm" action="planets">
-    <sec:csrfInput/>
-    <input type="hidden" id="refreshURL" value="<s:url action='planets'/>"/>
-</s:form>
+<input type="hidden" id="refreshURL" value="<s:url action='planets'/>"/>
 
 <br style="clear:left"/>
 
@@ -61,7 +58,7 @@
     <tr id="{{:id}}">
       <td class="title-cell">{{:title}}</td>
       <td>{{:handle}}</td>
-      <td style="text-align:center;">{{:description}}</td>
+      <td>{{:description}}</td>
       <td align="center">
           <s:url var="edit" action="planetEdit"/>
           <s:a href='%{edit}?planetId={{:id}}'>
