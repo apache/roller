@@ -23,7 +23,7 @@ $(function() {
                  type: "DELETE",
                  url: contextPath + '/tb-ui/admin/rest/planets/' + idToRemove,
                  success: function(data, textStatus, xhr) {
-                    $('tr#' + idToRemove).remove();
+                    $('#' + idToRemove).remove();
                     $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
                  }
               });

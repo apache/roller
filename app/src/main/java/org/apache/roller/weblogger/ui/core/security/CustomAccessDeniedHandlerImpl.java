@@ -26,6 +26,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/*
+ * Checks for CSRF violations usually due to expired session cookie.  Instead of 403 error,
+ * forwards to login page or (in the case of AJAX calls) sends a 408 signal for the front-end
+ * to handle appropriately.
+ *
+ * Note Ajax GETs do not trigger CSRF checking, so the AjaxInvalidSessionRedirectFilter is used
+ * instead for those calls to send 408s.
+ */
 public class CustomAccessDeniedHandlerImpl extends AccessDeniedHandlerImpl {
 
     @Override

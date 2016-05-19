@@ -1,11 +1,24 @@
 $(function() {
-  $.ajaxSetup({
-     statusCode: {
-        408: function() {
-           document.pingTargetsForm.submit();
-        }
-     }
+  $.templates({
+    tableTmpl: '#tableTemplate'
   });
+  function updateView(data) {
+    var html = $.render.tableTmpl(data);
+    $("#tableBody").html(html);
+    $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
+  }
+  function refreshData() {
+    checkLoggedIn(function() {
+      $.ajax({
+         type: "GET",
+         url: contextPath + '/tb-ui/admin/rest/pingtargets',
+         success: function(data, textStatus, xhr) {
+           updateView(data);
+         }
+      });
+    });
+  }
+  refreshData();
   $("#pingtarget-edit").dialog({
      autoOpen: false,
      height: 210,
@@ -15,12 +28,12 @@ $(function() {
         {
            text: msg.saveLabel,
            click: function() {
-              var idToUpdate = $(this).data('pingtargetId');
+              var idToUpdate = $(this).data('actionId');
               var newName = $('#pingtarget-edit-name').val().trim();
               var newUrl = $('#pingtarget-edit-url').val().trim();
               var newData = {
                  "name": newName,
-                 "url": newUrl
+                 "pingUrl": newUrl
               };
               if (newName.length > 0 && newUrl.length > 0) {
                  $.ajax({
@@ -30,13 +43,14 @@ $(function() {
                     contentType: "application/json; charset=utf-8",
                     processData: "false",
                     success: function(data, textStatus, xhr) {
+                       var html = $.render.tableTmpl(data);
                        if (idToUpdate == '') {
-                          document.pingTargetsForm.submit();
+                         $("#tableBody").append(html);
                        } else {
-                          $('#ptname-' + idToUpdate).text(newName.trim());
-                          $('#pturl-' + idToUpdate).text(newUrl.trim());
-                          $("#pingtarget-edit").dialog().dialog("close");
+                         $('#' + idToUpdate).prop('outerHTML', html);
                        }
+                       $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
+                       $("#pingtarget-edit").dialog("close");
                     },
                     error: function(xhr, status, errorThrown) {
                        if (xhr.status in this.statusCode)
@@ -63,14 +77,16 @@ $(function() {
         {
            text: msg.confirmLabel,
            click: function() {
-              var idToRemove = encodeURIComponent($(this).data('target'));
+              var idToRemove = $(this).data('actionId');
               $.ajax({
                  type: "DELETE",
                  url: contextPath + '/tb-ui/admin/rest/pingtarget/' + idToRemove,
                  success: function(data, textStatus, xhr) {
-                    document.pingTargetsForm.submit();
+                    $('#' + idToRemove).remove();
+                    $(".rollertable tr").removeClass("altrow").filter(":even").addClass("altrow");
                  }
               });
+              $(this).dialog("close");
            },
         },
         {
@@ -81,16 +97,16 @@ $(function() {
         }
      ]
   });
-  $(".edit-link").click(function(e) {
+  $("#tableBody").on('click', '.edit-link', function(e) {
      e.preventDefault();
+     var tr = $(this).closest('tr');
+     var actionId = tr.attr('id');
      $('#pingtarget-edit').dialog('option', 'title', msg.editTitle)
-     var idBeingUpdated = $(this).attr("data-id");
-     $('#pingtarget-edit-name').val($('#ptname-' + idBeingUpdated).text()).select();
-     $('#pingtarget-edit-url').val($('#pturl-' + idBeingUpdated).text());
+     $('#pingtarget-edit-name').val(tr.find('.name-cell').text()).select();
+     $('#pingtarget-edit-url').val(tr.find('.url-cell').text());
      $('#pingtarget-edit-error').css("display", "none");
-     var dataId = $(this).attr("data-id");
-     $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
-        $('#pingtarget-edit').data('pingtargetId', dataId).dialog('open');
+     checkLoggedIn(function() {
+        $('#pingtarget-edit').data('actionId', actionId).dialog('open');
      });
   });
   $("#add-link").click(function(e) {
@@ -99,28 +115,29 @@ $(function() {
      $('#pingtarget-edit-name').val('');
      $('#pingtarget-edit-url').val('');
      $('#pingtarget-edit-error').css("display", "none");
-     $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
-        $('#pingtarget-edit').data('pingtargetId', '').dialog('open');
+     checkLoggedIn(function() {
+        $('#pingtarget-edit').data('actionId', '').dialog('open');
      });
   });
-  $(".delete-link").click(function(e) {
+  $("#tableBody").on('click', '.delete-link', function(e) {
     e.preventDefault();
-    $('#confirm-delete').data('target',  $(this).attr("data-id")).dialog('open');
+    var actionId = $(this).closest('tr').attr('id');
+    $('#confirm-delete').data('actionId',  actionId).dialog('open');
   });
-  $(".enable-toggle").click(function(e) {
+  $("#tableBody").on('click', '.enable-toggle', function(e) {
      e.preventDefault();
+     var tr = $(this).closest('tr');
+     var targetId = tr.attr('id');
      var changeStateCell = $(this);
-     var targetId = changeStateCell.attr("data-id");
-     var currentStateCell = $('#enablestate-' + targetId);
+     var currentStateCell = tr.find('.current-state-cell');
      var bEnable = !changeStateCell.data("enabled");
      var targetUrl = contextPath + '/tb-ui/admin/rest/pingtargets/' + (bEnable ? 'enable' : 'disable') + '/' + targetId;
      $.ajax({
         type: "POST",
         url: targetUrl,
-        success: function(enabled) {
-           changeStateCell.data("enabled", enabled);
-           changeStateCell.text(enabled ? msg.pingTargetDisable : msg.pingTargetEnable);
-           currentStateCell.text(enabled ? msg.pingTargetEnabledIndicator : msg.pingTargetDisabledIndicator);
+        success: function(data) {
+          var html = $.render.tableTmpl(data);
+          tr.prop('outerHTML', html);
         }
      });
   });

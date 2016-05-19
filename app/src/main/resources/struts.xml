@@ -207,9 +207,12 @@
             </result>
         </action>
 
-        <action name="commonPingTargets!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.PingTargets">
-            <result name="list" type="tiles">.PingTargets</result>
+        <action name="commonPingTargets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">commonPingTargets</param>
+            <param name="pageTitle">commonPingTargets.commonPingTargets</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
+            <result name="success" type="tiles">.PingTargets</result>
         </action>
 
         <action name="cacheInfo" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">

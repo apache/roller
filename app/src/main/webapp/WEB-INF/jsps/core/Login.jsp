@@ -63,7 +63,9 @@
 if (document.getElementById) {
     if (getCookie("username") != null) {
         document.getElementById("j_username").value = getCookie("username");
-        document.getElementById("j_password").focus();
+        // temporary during development
+        document.getElementById("j_password").value = 'password';
+        document.getElementById("login").focus();
     } else {
         document.getElementById("j_username").focus();
     }
