@@ -159,10 +159,9 @@ public class UIAction extends ActionSupport implements Preparable {
     public String getProp(String key) {
         // first try static config
         String value = WebloggerStaticConfig.getProperty(key);
-        if(value == null) {
+        if (value == null) {
             value = WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty(key);
         }
-        
         return (value == null) ? key : value;
     }
     

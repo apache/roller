@@ -167,13 +167,14 @@
             <result name="success" type="tiles">.GlobalConfig</result>
         </action>
                
-        <action name="userAdmin"
-                class="org.apache.roller.weblogger.ui.struts2.admin.UserAdmin">
+        <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">userAdmin</param>
+            <param name="pageTitle">userAdmin.title.searchUser</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.UserAdmin</result>
-            <result name="error" type="tiles">.UserAdmin</result>
-            <result name="input" type="tiles">.UserAdmin</result>
         </action>
-        
+
         <action name="createUser!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.UserEdit">
             <param name="actionName">createUser</param>
