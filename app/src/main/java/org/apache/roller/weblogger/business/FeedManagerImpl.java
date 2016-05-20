@@ -400,7 +400,6 @@ public class FeedManagerImpl implements FeedManager {
         if(group == null) {
             throw new IllegalArgumentException("cannot update null group");
         }
-        updateProxySettings();
 
         log.debug("--- BEGIN --- Updating subscriptions in group = {}", group.getHandle());
         long startTime = System.currentTimeMillis();
@@ -416,8 +415,6 @@ public class FeedManagerImpl implements FeedManager {
 
     @Override
     public void updateSubscriptions(Collection<Subscription> subscriptions) {
-        updateProxySettings();
-
         for (Subscription sub : subscriptions) {
             // reattach sub.  sub gets detached as we iterate
             sub = planetManager.getSubscriptionById(sub.getId());
@@ -437,19 +434,4 @@ public class FeedManagerImpl implements FeedManager {
             }
         }
     }
-
-    // update proxy settings for jvm based on planet configuration
-    private void updateProxySettings() {
-        String proxyHost = propertiesManager.getStringProperty("planet.site.proxyhost");
-        int proxyPort = propertiesManager.getIntProperty("planet.site.proxyport");
-        if (proxyHost != null && proxyPort > 0) {
-            System.setProperty("proxySet", "true");
-            System.setProperty("http.proxyHost", proxyHost);
-            System.setProperty("http.proxyPort", Integer.toString(proxyPort));
-        }
-        /** a hack to set 15 sec timeouts for java.net.HttpURLConnection */
-        System.setProperty("sun.net.client.defaultConnectTimeout", "15000");
-        System.setProperty("sun.net.client.defaultReadTimeout", "15000");
-    }
-
 }

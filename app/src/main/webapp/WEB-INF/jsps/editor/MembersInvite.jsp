@@ -19,34 +19,17 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-
-<script>
-<%@ include file="/tb-ui/scripts/ajax-user.js" %>
-</script>
-
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <p class="subtitle"><s:text name="inviteMember.subtitle" /></p>
 <p><s:text name="inviteMember.prompt" /></p>
 
-<s:form action="invite!save">
+<s:form>
     <sec:csrfInput/>
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-    
-    <div class="formrow">
-       <label for="userName" class="formrow" />
-           <s:text name="inviteMember.userName" /></label>
-       <div>
-           <input name="userName" id="userName" size="30" maxlength="30"
-               onfocus="onUserNameFocus(true)" onkeyup="onUserNameChange(true)" /><br />
-       </div>
-    </div>    
-    
-    <div class="formrow">
-       <label class="formrow" />&nbsp;</label>
-       <div>
-           <select id="userList" size="10" onchange="onUserSelected()" style="width:400px"></select>
-       </div>
-    </div>    
-    
+    <s:hidden id="invite_weblog" name="weblog" value="%{actionWeblog.handle}"/>
+
+    <select name="userId" id="membersinvite-select-user"/>
+
     <div style="clear:left">
        <label for="permissionString" class="formrow" />
            <s:text name="inviteMember.permissions" /></label>
@@ -56,17 +39,28 @@
        <s:text name="inviteMember.author" />
        <input type="radio" name="permissionString" value="EDIT_DRAFT" />
        <s:text name="inviteMember.limited" />
-    </div>  
-         
-    <br />      
-    <s:submit value="%{getText('inviteMember.button.save')}" />
+    </div>
+
+    <br />
+    <s:submit id="invite_button" value="%{getText('inviteMember.button.save')}" action="invite!save"/>
     <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" />
 
 </s:form>
 
-<%-- this forces focus to the screenName field --%>
 <script>
-<!--
-document.getElementById('userName').focus();
-// -->
+var contextPath = "${pageContext.request.contextPath}";
+$(function() {
+  $.ajax({
+     type: "GET",
+     url: contextPath + '/tb-ui/authoring/rest/' + $('#invite_weblog').attr('value') + '/potentialmembers',
+     success: function(data, textStatus, xhr) {
+       for (var key in data) {
+         $('#membersinvite-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
+       }
+       if (document.getElementById('membersinvite-select-user').length == 0) {
+         document.getElementById('invite_button').disabled = true;
+       }
+     }
+  });
+});
 </script>

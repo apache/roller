@@ -195,18 +195,4 @@
          </property-def>
      </display-group>
 
-     <!-- Planet Settings Group -->
-     <display-group name="planetSettings" key="configForm.planetSettings" >
-
-         <property-def name="planet.site.proxyhost"  key="configForm.proxyHost">
-             <type>string</type>
-             <default-value></default-value>
-         </property-def>
-         <property-def name="planet.site.proxyport"  key="configForm.proxyPort">
-             <type>string</type>
-             <default-value></default-value>
-         </property-def>
-
-     </display-group >
-
 </runtime-configs>

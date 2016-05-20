@@ -18,14 +18,12 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -33,28 +31,14 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.business.MailManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Allows weblog owner to invite other members to edit the website.
  */
-@RestController
 public class MembersInvite extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(MembersInvite.class);
 
-    @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
@@ -68,13 +52,10 @@ public class MembersInvite extends UIAction {
     }
 
     // user being invited
-    private String userName = null;
+    private String userId = null;
     
     // permissions being given to user
     private String permissionString = null;
-
-    // max length of users to display in select box
-    private static final int MAX_LENGTH = 50;
 
     public MembersInvite() {
         this.actionName = "invite";
@@ -88,18 +69,13 @@ public class MembersInvite extends UIAction {
     }
 
     public String execute() {
-        
         // if group blogging is disabled then you can't change permissions
         if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
             addError("inviteMember.disabled");
             return SUCCESS;
         }
-        
-        log.debug("Showing weblog invitation form");
-        
         return INPUT;
     }
-    
     
     /**
      * Save the new invitation and notify the user.
@@ -115,7 +91,7 @@ public class MembersInvite extends UIAction {
         log.debug("Attempting to process weblog invitation");
         
         // user being invited
-        User user = userManager.getUserByScreenName(getUserName());
+        User user = userManager.getUser(getUserId());
         if (user == null) {
             addError("inviteMember.error.userNotFound");
         }
@@ -162,21 +138,12 @@ public class MembersInvite extends UIAction {
         return INPUT;
     }
     
-    /**
-     * Cancel.
-     * 
-     * @return the string
-     */
-    public String cancel() {
-        return CANCEL;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userId) {
-        this.userName = userId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getPermissionString() {
@@ -187,69 +154,4 @@ public class MembersInvite extends UIAction {
         this.permissionString = permission;
     }
 
-    @RequestMapping(path="/tb-ui/authoring/rest/userlist", method=RequestMethod.GET)
-    public List<UserData> getUserList(Principal p, HttpServletRequest request,
-                            HttpServletResponse response) throws ServletException {
-        try {
-            User authenticatedUser = userManager.getUserByUserName(p.getName());
-            if (authenticatedUser.hasEffectiveGlobalRole(GlobalRole.BLOGGER)) {
-                String startsWith = request.getParameter("startsWith");
-                Boolean enabledOnly = null;
-                int offset = 0;
-                int length = MAX_LENGTH;
-                if ("true".equals(request.getParameter("enabled"))) {
-                    enabledOnly = Boolean.TRUE;
-                }
-                if ("false".equals(request.getParameter("enabled"))) {
-                    enabledOnly = Boolean.FALSE;
-                }
-                try {
-                    offset = Integer.parseInt(request.getParameter("offset"));
-                } catch (Exception ignored) {
-                }
-                try {
-                    length = Integer.parseInt(request.getParameter("length"));
-                } catch (Exception ignored) {
-                }
-
-                List<SafeUser> users = userManager.getUsers(startsWith, enabledOnly, offset, length);
-                List<UserData> userDataList = new ArrayList<>();
-                for (SafeUser user : users) {
-                    UserData ud = new UserData();
-                    ud.setScreenName(user.getScreenName());
-                    ud.setAdditionalInfo(user.getEmailAddress());
-                    userDataList.add(ud);
-                }
-                return userDataList;
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return null;
-            }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-    private static class UserData {
-        public UserData() {}
-
-        private String screenName;
-        private String additionalInfo;
-
-        public String getScreenName() {
-            return screenName;
-        }
-
-        public void setScreenName(String screenName) {
-            this.screenName = screenName;
-        }
-
-        public String getAdditionalInfo() {
-            return additionalInfo;
-        }
-
-        public void setAdditionalInfo(String additionalInfo) {
-            this.additionalInfo = additionalInfo;
-        }
-    }
 }

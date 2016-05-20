@@ -20,40 +20,61 @@
  */
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
-/**
- * Action that allows an admin to modify a users profile.
- */
+@RestController
 public class UserEdit extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(UserEdit.class);
 
+    @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     // a bean to store our form data
@@ -62,10 +83,9 @@ public class UserEdit extends UIAction {
     // user we are creating or modifying
     private User user = null;
     
-    private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
-
     public UserEdit() {
         this.desiredMenu = "admin";
+        this.requiredWeblogRole = WeblogRole.NOBLOGNEEDED;
     }
 
     @Override
@@ -73,14 +93,48 @@ public class UserEdit extends UIAction {
         this.pageTitle = pageTitle;
     }
 
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return GlobalRole.BLOGGER;
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/userlist", method = RequestMethod.GET)
+    public Map<String, String> getUserEditList() throws ServletException {
+        return createUserMap(userManager.getUsers(null, null, 0, -1));
     }
 
-    @Override
-    public WeblogRole getRequiredWeblogRole() {
-        return WeblogRole.NOBLOGNEEDED;
+    @RequestMapping(value = "/tb-ui/authoring/rest/{weblogHandle}/potentialmembers", method = RequestMethod.GET)
+    public Map<String, String> getPotentialNewMembers(@PathVariable String weblogHandle, Principal p,
+                                                      HttpServletResponse response)
+            throws ServletException {
+
+        if (userManager.checkWeblogRole(p.getName(), weblogHandle, WeblogRole.OWNER)) {
+            // member list excludes inactive accounts
+            List<SafeUser> potentialUsers = userManager.getUsers(null, true, 0, -1);
+
+            // filter out people already members
+            Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+            ListIterator<SafeUser> potentialIter = potentialUsers.listIterator();
+            List<UserWeblogRole> currentUserList = userManager.getWeblogRolesIncludingPending(weblog);
+            while (potentialIter.hasNext() && !currentUserList.isEmpty()) {
+                ListIterator<UserWeblogRole> alreadyIter = currentUserList.listIterator();
+                while (alreadyIter.hasNext()) {
+                    UserWeblogRole au = alreadyIter.next();
+                    SafeUser su = potentialIter.next();
+                    if (su.getId().equals(au.getUser().getId())) {
+                        potentialIter.remove();
+                        alreadyIter.remove();
+                    }
+                }
+            }
+            return createUserMap(potentialUsers);
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return null;
+        }
+    }
+
+    private Map<String, String> createUserMap(List<SafeUser> users) {
+        Map<String, String> userMap = new HashMap<>();
+        for (SafeUser user : users) {
+            userMap.put(user.getId(), user.getScreenName() + " (" + user.getEmailAddress() + ")");
+        }
+        return userMap;
     }
 
     // prepare for action by loading user object we are modifying
@@ -89,13 +143,8 @@ public class UserEdit extends UIAction {
             user = new User();
         } else {
             try {
-                // load the user object we are modifying
                 if (bean.getId() != null) {
-                    // action came from CreateUser or return from ModifyUser
                     user = userManager.getUser(bean.getId());
-                } else if (bean.getUserName() != null) {
-                    // action came from UserAdmin screen.
-                    user = userManager.getUserByScreenName(bean.getUserName());
                 }
             } catch (Exception e) {
                 log.error("Error looking up user id: {} username: {}", bean.getId(), bean.getUserName());
@@ -157,6 +206,7 @@ public class UserEdit extends UIAction {
                 user.resetPassword(bean.getPassword().trim());
             }
             if (isAdd()) {
+                user.setId(WebloggerCommon.generateUUID());
                 user.setUserName(bean.getUserName().trim());
                 user.setDateCreated(new java.util.Date());
                 user.setGlobalRole(bean.getGlobalRole());
@@ -211,7 +261,7 @@ public class UserEdit extends UIAction {
             if (!safe.equals(bean.getUserName()) ) {
                 addError("error.add.user.badUserName");
             }
-            if (authMethod == AuthMethod.DATABASE && StringUtils.isEmpty(bean.getPassword())) {
+            if (WebloggerStaticConfig.getAuthMethod() == AuthMethod.DATABASE && StringUtils.isEmpty(bean.getPassword())) {
                 addError("error.add.user.missingPassword");
             }
         }
@@ -231,9 +281,5 @@ public class UserEdit extends UIAction {
 
     public List<UserWeblogRole> getPermissions() {
         return userManager.getWeblogRoles(user);
-    }
-
-    public String getAuthMethod() {
-        return authMethod.name();
     }
 }

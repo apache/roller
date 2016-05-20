@@ -16,31 +16,35 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script>
-<%@ include file="/tb-ui/scripts/ajax-user.js" %>
+var contextPath = "${pageContext.request.contextPath}";
+$(function() {
+  $.ajax({
+     type: "GET",
+     url: contextPath + '/tb-ui/admin/rest/useradmin/userlist',
+     success: function(data, textStatus, xhr) {
+       for (var key in data) {
+         $('#useradmin-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
+       }
+     }
+  });
+  $("#select-user").click(function(e) {
+     e.preventDefault();
+     var selectedUserId = $('#useradmin-select-user').val();
+     window.location.replace(contextPath + '/tb-ui/admin/modifyUser.rol?bean.id=' + selectedUserId);
+  });
+});
 </script>
-
 <p class="subtitle"><s:text name="userAdmin.subtitle.searchUser" /></p>
-<p><s:text name="userAdmin.prompt.searchUser" /></p>
+<br />
 
-<s:form action="modifyUser" method="GET">
-    <sec:csrfInput/>
- 
-    <span style="margin:4px"><s:text name="inviteMember.userName" /></span>
-    <input name="bean.userName" id="userName" size="30" maxlength="30"
-           onfocus="onUserNameFocus(null)" onkeyup="onUserNameChange(null)" 
-           style="margin:4px" />
-    <input type="submit" value='<s:text name="generic.edit" />'
-           style="margin:4px" />
-    <br />
-    <select id="userList" size="10" onchange="onUserSelected()" 
-            style="width:400px; margin:4px" ></select>
-    
-</s:form>
+<select id="useradmin-select-user"/>
+<input id="select-user" type="button" style="margin:4px" value='<s:text name="generic.edit" />'/>
 
 <%-- LDAP uses external user creation --%>
-<s:if test="authMethod != 'LDAP'">
+<s:if test="getProp('authentication.method') != 'ldap'">
     <p class="subtitle"><s:text name="userAdmin.subtitle.userCreation" /></p>
     <s:text name="userAdmin.prompt.orYouCan" />
     <s:url action="createUser" id="createUser" />
@@ -48,8 +52,3 @@
         <s:text name="userAdmin.prompt.createANewUser" />
     </a>
 </s:if>
-
-<%-- this forces focus to the userName field --%>
-<script>
-    document.getElementById('userName').focus();
-</script>

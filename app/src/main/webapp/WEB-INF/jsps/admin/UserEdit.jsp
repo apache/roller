@@ -76,7 +76,7 @@
             <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
         </tr>
         
-        <s:if test="authMethod == 'DATABASE'">
+        <s:if test="getProp('authentication.method') == 'db'">
             <tr>
                 <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
                 <td class="field"><s:password name="bean.password" size="20" maxlength="20" onBlur="this.value=this.value.trim()"/></td>
