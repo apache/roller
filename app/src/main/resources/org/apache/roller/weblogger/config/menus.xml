@@ -80,9 +80,6 @@ Defines the menus provided with Weblogger
             <tabItem action="members"
                      titleKey="tabbedmenu.website.members"
                      enabledProperty="groupblogging.enabled">
-                <subactions>
-                    <subaction>invite</subaction>
-                </subactions>
             </tabItem>
             <tabItem action="pings"
                      titleKey="tabbedmenu.weblog.pingSetup"

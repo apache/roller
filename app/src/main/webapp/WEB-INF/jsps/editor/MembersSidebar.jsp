@@ -20,34 +20,6 @@
 <div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
-            
-        <div class="sidebarInner">
-
-            <h3><s:text name="mainPage.actions" /></h3>            
-            <hr size="1" noshade="noshade" />
-            
-            <img src='<s:url value="/images/email_edit.png"/>' alt="mail-icon" align="bottom" />
-            <s:url action="invite" id="inviteUrl">
-               <s:param name="weblog" value="%{actionWeblog.handle}" />
-            </s:url>
-            <a href='<s:property value="#inviteUrl" />'>
-                <s:text name="memberPermissions.inviteMember" />
-            </a>
-            <br />
-            <s:text name="memberPermissions.whyInvite" />       
-            <br />
-            <br />
-        </div>                					
-        </div>
-    </div>
-</div>	
-
-<br />
-<br />
-
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
             <div class="sidebarBody">
             <div class="sidebarInner">
             

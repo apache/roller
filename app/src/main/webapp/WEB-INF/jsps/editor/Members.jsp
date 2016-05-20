@@ -89,3 +89,47 @@
     </div>
 
 </s:form>
+
+<br>
+<br>
+
+<p><s:text name="inviteMember.prompt" /></p>
+<s:form>
+    <sec:csrfInput/>
+    <s:hidden id="invite_weblog" name="weblog" value="%{actionWeblog.handle}"/>
+
+    <select name="userId" id="membersinvite-select-user"/><br>
+
+    <label for="permissionString" class="formrow" /><s:text name="inviteMember.permissions" /></label>
+
+    <input type="radio" name="permissionString" value="OWNER"  />
+    <s:text name="inviteMember.administrator" />
+
+    <input type="radio" name="permissionString" value="POST" checked />
+    <s:text name="inviteMember.author" />
+
+    <input type="radio" name="permissionString" value="EDIT_DRAFT" />
+    <s:text name="inviteMember.limited" /><br><br>
+
+    <s:submit id="invite_button" value="%{getText('inviteMember.button.save')}" action="members!invite"/>
+</s:form>
+
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script>
+var contextPath = "${pageContext.request.contextPath}";
+$(function() {
+  $.ajax({
+     type: "GET",
+     url: contextPath + '/tb-ui/authoring/rest/' + $('#invite_weblog').attr('value') + '/potentialmembers',
+     success: function(data, textStatus, xhr) {
+       for (var key in data) {
+         $('#membersinvite-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
+       }
+       if (document.getElementById('membersinvite-select-user').length == 0) {
+         document.getElementById('invite_button').disabled = true;
+       }
+     }
+  });
+});
+</script>
