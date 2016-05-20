@@ -357,19 +357,10 @@
         <action name="members!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Members">
             <result name="list" type="tiles">.Members</result>
+            <result name="input" type="tiles">.Members</result>
+            <result name="success" type="tiles">.Members</result>
         </action>
         
-        <action name="invite!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MembersInvite">
-            <result name="input" type="tiles">.MembersInvite</result>
-            <result name="disabled" type="tiles">.disabled</result>
-            <result name="success" type="chain">members</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">members</param>
-                <param name="weblog">${weblog}</param>
-            </result>
-        </action>
-
         <action name="pings!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Pings">
             <result name="list" type="tiles">.Pings</result>

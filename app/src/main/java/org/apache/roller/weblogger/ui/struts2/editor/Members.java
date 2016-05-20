@@ -18,15 +18,17 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -35,7 +37,6 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Allows weblog admin to list/modify member permissions.
@@ -53,6 +54,18 @@ public class Members extends UIAction implements ParameterAware {
         this.userManager = userManager;
     }
 
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
+    }
+
+    // user being invited
+    private String userId = null;
+
+    // permissions being given to invited user
+    private String permissionString = null;
+
     public Members() {
         log.debug("Instantiating members action");
         
@@ -62,13 +75,10 @@ public class Members extends UIAction implements ParameterAware {
     }
     
     public String execute() {
-        log.debug("Showing weblog members page");
         return LIST;
     }
     
-    
     public String save() {
-        
         log.debug("Attempting to process weblog permissions updates");
         int numAdmins = 0; // make sure at least one admin
         int removed = 0;
@@ -164,8 +174,8 @@ public class Members extends UIAction implements ParameterAware {
         }
         return null;
     }
-    
-    
+
+
     public Map getParameters() {
         return parameters;
     }
@@ -187,5 +197,82 @@ public class Members extends UIAction implements ParameterAware {
 
     public List<UserWeblogRole> getWeblogRoles() {
         return userManager.getWeblogRolesIncludingPending(getActionWeblog());
+    }
+
+    /**
+     * Save the new invitation and notify the user.
+     */
+    public String invite() {
+
+        // if group blogging is disabled then you can't change permissions
+        if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
+            addError("inviteMember.disabled");
+            return LIST;
+        }
+
+        log.debug("Attempting to process weblog invitation");
+
+        // user being invited
+        User user = userManager.getUser(getUserId());
+        if (user == null) {
+            addError("inviteMember.error.userNotFound");
+        }
+
+        // if we already have an error then bail now
+        if(hasActionErrors()) {
+            return INPUT;
+        }
+
+        // check for existing permissions or invitation
+        UserWeblogRole perm = userManager.getWeblogRoleIncludingPending(user, getActionWeblog());
+
+        if (perm != null && perm.isPending()) {
+            addError("inviteMember.error.userAlreadyInvited");
+        } else if (perm != null) {
+            addError("inviteMember.error.userAlreadyMember");
+        }
+
+        // if no errors then send the invitation
+        if(!hasActionErrors()) {
+            try {
+                userManager.grantPendingWeblogRole(user, getActionWeblog(),
+                        WeblogRole.valueOf(getPermissionString()));
+                WebloggerFactory.flush();
+
+                addMessage("inviteMember.userInvited");
+
+                if (mailManager.isMailConfigured()) {
+                    mailManager.sendWeblogInvitation(getActionWeblog(), user);
+                }
+
+                log.debug("Invitation successfully recorded");
+
+                return LIST;
+
+            } catch (Exception ex) {
+                log.error("Error creating user invitation", ex);
+                addError("Error creating user invitation - check TightBlog logs");
+            }
+        }
+
+        log.debug("Invitation had errors, giving user another chance");
+
+        return INPUT;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getPermissionString() {
+        return permissionString;
+    }
+
+    public void setPermissionString(String permission) {
+        this.permissionString = permission;
     }
 }

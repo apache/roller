@@ -112,13 +112,14 @@ public class UserEdit extends UIAction {
             ListIterator<SafeUser> potentialIter = potentialUsers.listIterator();
             List<UserWeblogRole> currentUserList = userManager.getWeblogRolesIncludingPending(weblog);
             while (potentialIter.hasNext() && !currentUserList.isEmpty()) {
+                SafeUser su = potentialIter.next();
                 ListIterator<UserWeblogRole> alreadyIter = currentUserList.listIterator();
                 while (alreadyIter.hasNext()) {
                     UserWeblogRole au = alreadyIter.next();
-                    SafeUser su = potentialIter.next();
                     if (su.getId().equals(au.getUser().getId())) {
                         potentialIter.remove();
                         alreadyIter.remove();
+                        break;
                     }
                 }
             }
