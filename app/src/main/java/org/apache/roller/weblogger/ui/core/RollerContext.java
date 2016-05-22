@@ -30,13 +30,12 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserCache;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.slf4j.Logger;
@@ -158,17 +157,8 @@ public class RollerContext extends ContextLoaderListener
         // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) may be provided in security.xml.
         if (doEncrypt && ctx.containsBean(daoBeanName)) {
             DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
-            String algorithm = WebloggerStaticConfig.getProperty("passwds.encryption.algorithm");
-            PasswordEncoder encoder;
-            if ("SHA".equalsIgnoreCase(algorithm)) {
-                encoder = new ShaPasswordEncoder();
-            } else if ("MD5".equalsIgnoreCase(algorithm)) {
-                encoder = new Md5PasswordEncoder();
-            } else {
-                throw new IllegalArgumentException("Encryption algorithm '" + algorithm + "' not supported, choose SHA or MD5.");
-            }
+            PasswordEncoder encoder = new BCryptPasswordEncoder();
             provider.setPasswordEncoder(encoder);
-            log.info("Password Encryption Algorithm set to '{}'", algorithm);
         }
 
     }
