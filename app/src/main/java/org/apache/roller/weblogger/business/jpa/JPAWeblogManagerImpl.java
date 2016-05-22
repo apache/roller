@@ -70,9 +70,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private UserManager userManager;
     private PropertiesManager propertiesManager;
     private LazyExpiringCache weblogBlacklistCache = null;
-    private final WeblogEntryManager weblogEntryManager;
+    private WeblogEntryManager weblogEntryManager;
+    private IndexManager indexManager;
     private final MediaFileManager mediaFileManager;
-    private final IndexManager indexManager;
     private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
@@ -89,16 +89,21 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.propertiesManager = propertiesManager;
     }
 
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
 
-    protected JPAWeblogManagerImpl(WeblogEntryManager wem, MediaFileManager mfm,
-                                   IndexManager im, PingTargetManager ptm, JPAPersistenceStrategy strat,
+    protected JPAWeblogManagerImpl(MediaFileManager mfm, PingTargetManager ptm, JPAPersistenceStrategy strat,
                                    CacheManager cacheManager) {
         log.debug("Instantiating JPA Weblog Manager");
-        this.weblogEntryManager = wem;
         this.mediaFileManager = mfm;
-        this.indexManager = im;
         this.pingTargetManager = ptm;
         this.strategy = strat;
         this.cacheManager = cacheManager;
@@ -614,7 +619,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
             for (WeblogEntry entry : scheduledEntries) {
                 entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-                entry.setRefreshAggregates(true);
                 weblogEntryManager.saveWeblogEntry(entry);
             }
 

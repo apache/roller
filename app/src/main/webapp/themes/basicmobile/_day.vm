@@ -12,10 +12,10 @@
         <a name="$utils.encode($entry.anchor)" id="$utils.encode($entry.anchor)"></a>
         <p class="entryTitle">$entry.title</p>
         <p class="entryContent">
-            #if($model.permalink)
-                $entry.displayContent
+            #if($model.permalink || $utils.isEmpty($entry.summary))
+                $entry.getTransformedText()
             #else
-                $entry.displayContent($url.entry($entry.anchor))
+                $entry.getTransformedSummary() $server.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
             #end
         </p>
         <p class="entryInfo">

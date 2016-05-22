@@ -21,27 +21,22 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
-import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +84,7 @@ public class WeblogEntry {
     
     public enum PubStatus {DRAFT, PUBLISHED, PENDING, SCHEDULED}
 
-    // Simple properies
+    // Simple properties
     private String id;
     private String title;
     private String text;
@@ -109,24 +104,19 @@ public class WeblogEntry {
     private SafeUser creator         = null;
     private String searchDescription;
 
-    // set to true when switching between pending/draft/scheduled and published
-    // either the aggregate table needs the entry's tags added (for published)
-    // or subtracted (anything else)
-    private Boolean refreshAggregates = Boolean.FALSE;
-
     // Associated objects
     private Weblog weblog;
     private WeblogCategory category;
 
-    private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
-    private Set<WeblogEntryTag> removedTags = new HashSet<WeblogEntryTag>();
-    private Set<WeblogEntryTag> addedTags = new HashSet<WeblogEntryTag>();
+    private Set<WeblogEntryTag> tagSet = new HashSet<>();
 
     // temporary non-persisted fields used for form entry
     private int hours = 0;
     private int minutes = 0;
     private int seconds = 0;
+    private String tagsAsString;
     private String dateString;
+    private String categoryId;
 
     //----------------------------------------------------------- Construction
     
@@ -189,14 +179,11 @@ public class WeblogEntry {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(this.getAnchor());
-        buf.append(", ").append(this.getTitle());
-        buf.append(", ").append(this.getPubTime());
-        buf.append("}");
-        return buf.toString();
+        String result = "{" + getId() + ", ";
+        result += this.getAnchor() + ", ";
+        result += this.getTitle() + ", ";
+        result += this.getPubTime() + "}";
+        return result;
     }
 
     public boolean equals(Object other) {
@@ -226,13 +213,8 @@ public class WeblogEntry {
     }
     
     public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) {
-            return;
-        }
         this.id = id;
     }
-
 
     @ManyToOne
     @JoinColumn(name="categoryid",nullable=false)
@@ -244,17 +226,6 @@ public class WeblogEntry {
         this.category = category;
     }
        
-    /**
-     * Return collection of WeblogCategory objects of this entry.
-     * Added for symmetry with PlanetEntryData object.
-     */
-    @Transient
-    public List<WeblogCategory> getCategories() {
-        List<WeblogCategory> cats = new ArrayList<>();
-        cats.add(getCategory());
-        return cats;
-    }
-
     @ManyToOne
     @JoinColumn(name="weblogid",nullable=false)
     public Weblog getWeblog() {
@@ -272,18 +243,6 @@ public class WeblogEntry {
 
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
-    }
-
-    @Transient
-    public SafeUser getCreator() {
-        if (creator == null) {
-            try {
-                creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
-            } catch (Exception ignored) {
-                log.error("Cannot find a SafeUser object for userId = {}", creatorId);
-            }
-        }
-        return creator;
     }
 
     @Basic(optional=false)
@@ -446,109 +405,70 @@ public class WeblogEntry {
     }
     
     @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogEntryTag.class,
-            cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="weblogEntry")
+            cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="weblogEntry", orphanRemoval=true)
     @OrderBy("name")
     public Set<WeblogEntryTag> getTags() {
          return tagSet;
     }
 
-    @SuppressWarnings("unused")
-    private void setTags(Set<WeblogEntryTag> tagSet) {
+    public void setTags(Set<WeblogEntryTag> tagSet) {
          this.tagSet = tagSet;
-         this.removedTags = new HashSet<>();
-         this.addedTags = new HashSet<>();
     }
      
-    /**
-     * TightBlog lowercases all tags based on locale because there's not a 1:1 mapping
-     * between uppercase/lowercase characters across all languages.  
-     * @param name tag name
-     */
-    public void addTag(String name) {
-        Locale localeObject = getWeblog() != null ? getWeblog().getLocaleInstance() : Locale.getDefault();
-        name = Utilities.normalizeTag(name, localeObject);
-        if (name.length() == 0) {
-            return;
-        }
-        
-        for (WeblogEntryTag tag : getTags()) {
-            if (tag.getName().equals(name)) {
-                return;
+    @Transient
+    public SafeUser getCreator() {
+        if (creator == null) {
+            try {
+                creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
+            } catch (Exception ignored) {
+                log.error("Cannot find a SafeUser object for userId = {}", creatorId);
             }
         }
-
-        WeblogEntryTag tag = new WeblogEntryTag();
-        tag.setName(name);
-        tag.setWeblog(getWeblog());
-        tag.setWeblogEntry(this);
-        tagSet.add(tag);
-        
-        addedTags.add(tag);
+        return creator;
     }
 
-    @Transient
-    public Set<WeblogEntryTag> getAddedTags() {
-        return addedTags;
-    }
-
-    @Transient
-    public Set<WeblogEntryTag> getRemovedTags() {
-        return removedTags;
+    /**
+     *  Replace the current set of tags with those in the new list.  Any WeblogEntryTags
+     *  already attached to the instance and remaining in the new list will be reused.
+     */
+    public void updateTags(Set<String> newTags) {
+        Locale localeObject = getWeblog().getLocaleInstance();
+        Set<WeblogEntryTag> newTagSet =  new HashSet<>();
+        for (String tagStr : newTags) {
+            String normalizedString = Utilities.normalizeTag(tagStr, localeObject);
+            boolean found = false;
+            for (WeblogEntryTag currentTag : getTags()) {
+                if (currentTag.getName().equals(normalizedString)) {
+                    // reuse currently existing
+                    newTagSet.add(currentTag);
+                    found = true;
+                }
+            }
+            if (!found) {
+                // new tag added by user, has to be created.
+                WeblogEntryTag tag = new WeblogEntryTag();
+                tag.setName(normalizedString);
+                tag.setWeblog(getWeblog());
+                tag.setWeblogEntry(this);
+                newTagSet.add(tag);
+            }
+        }
+        // will erase tags not in the new list, JPA will delete them from DB.
+        setTags(newTagSet);
     }
 
     @Transient
     public String getTagsAsString() {
-        StringBuilder sb = new StringBuilder();
-        // Sort by name
-        Set<WeblogEntryTag> tmp = new TreeSet<>(WeblogEntryTag.Comparator);
-        tmp.addAll(getTags());
-        for (WeblogEntryTag entryTag : tmp) {
-            sb.append(entryTag.getName()).append(" ");
-        }
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-
-        return sb.toString();
+        return tagsAsString;
     }
 
     public void setTagsAsString(String tags) {
-        if (StringUtils.isEmpty(tags)) {
-            removedTags.addAll(tagSet);
-            tagSet.clear();
-            return;
-        }
-
-        List<String> updatedTags = Utilities.splitStringAsTags(tags);
-        Set<String> newTags = new HashSet<>(updatedTags.size());
-        Locale localeObject = getWeblog() != null ? getWeblog().getLocaleInstance() : Locale.getDefault();
-
-        for (String name : updatedTags) {
-            newTags.add(Utilities.normalizeTag(name, localeObject));
-        }
-
-        // remove old ones no longer passed.
-        for (Iterator it = tagSet.iterator(); it.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) it.next();
-            if (!newTags.contains(tag.getName())) {
-                // tag no longer listed in UI, needs removal from DB
-                removedTags.add(tag);
-                it.remove();
-            } else {
-                // already in persisted set, therefore isn't new
-                newTags.remove(tag.getName());
-            }
-        }
-
-        for (String newTag : newTags) {
-            addTag(newTag);
-        }
+        tagsAsString = tags;
     }
 
     /**
      * True if comments are still allowed on this entry considering the
-     * allowComments and commentDays fields as well as the weblog and 
-     * site-wide configs.
+     * commentDays field as well as the weblog and site-wide configs.
      */
     @Transient
     public boolean getCommentsStillAllowed() {
@@ -558,7 +478,7 @@ public class WeblogEntry {
         if (!Boolean.TRUE.equals(getWeblog().getAllowComments())) {
             return false;
         }
-        if (getCommentDays() == null || getCommentDays() == 0) {
+        if (getCommentDays() == 0) {
             return false;
         }
         if (getCommentDays() < 0) {
@@ -568,8 +488,7 @@ public class WeblogEntry {
 
         Date inPubTime = getPubTime();
         if (inPubTime != null) {
-            Calendar expireCal = Calendar.getInstance(
-                    getWeblog().getLocaleInstance());
+            Calendar expireCal = Calendar.getInstance(getWeblog().getLocaleInstance());
             expireCal.setTime(inPubTime);
             expireCal.add(Calendar.DATE, getCommentDays());
             Date expireDay = expireCal.getTime();
@@ -581,69 +500,21 @@ public class WeblogEntry {
         return ret;
     }
 
-    /**
-     * Format the publish time of this weblog entry using the specified pattern.
-     * See java.text.SimpleDateFormat for more information on this format.
-     *
-     * @see java.text.SimpleDateFormat
-     * @return Publish time formatted according to pattern.
-     */
-    public String formatPubTime(String pattern) {
-        try {
-            SimpleDateFormat format = new SimpleDateFormat(pattern,
-                    this.getWeblog().getLocaleInstance());
-            
-            return format.format(getPubTime());
-        } catch (RuntimeException e) {
-            log.error("Unexpected exception", e);
-        }
-        
-        return "ERROR: formatting date";
-    }
-    
-    /**
-     * Format the update time of this weblog entry using the specified pattern.
-     * See java.text.SimpleDateFormat for more information on this format.
-     *
-     * @see java.text.SimpleDateFormat
-     * @return Update time formatted according to pattern.
-     */
-    public String formatUpdateTime(String pattern) {
-        try {
-            SimpleDateFormat format = new SimpleDateFormat(pattern);
-            
-            return format.format(getUpdateTime());
-        } catch (RuntimeException e) {
-            log.error("Unexpected exception", e);
-        }
-        
-        return "ERROR: formatting date";
-    }
-    
     @Transient
     public List<WeblogEntryComment> getComments() {
-        return getComments(true, true);
-    }
-    
-    /**
-     * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
-     */
-    public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
         WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setWeblog(getWeblog());
         csc.setEntry(this);
-        csc.setStatus(approvedOnly ? WeblogEntryComment.ApprovalStatus.APPROVED : null);
+        csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
         return wmgr.getComments(csc);
     }
-
+    
     @Transient
     public int getCommentCount() {
-        List comments = getComments(true, true);
-        return comments.size();
+        return getComments().size();
     }
-    
+
     /**
      * Returns absolute entry permalink.
      */
@@ -653,53 +524,15 @@ public class WeblogEntry {
     }
     
     /**
-     * Return the Title of this post, or the first 255 characters of the entry's text.
-     * @return String
-     */
-    @Transient
-    public String getDisplayTitle() {
-        if ( getTitle()==null || getTitle().trim().equals("") ) {
-            return StringUtils.left(Utilities.removeHTML(getText()), WebloggerCommon.TEXTWIDTH_255);
-        }
-        return Utilities.removeHTML(getTitle());
-    }
-    
-    /**
-     * A no-op. TODO: fix formbean generation so this is not needed.
-     */
-    public void setPermalink(String string) {}
-    
-    /**
-     * A no-op. TODO: fix formbean generation so this is not needed.
-     */
-    public void setPermaLink(String string) {}
-    
-    /**
-     * A no-op.
-     * TODO: fix formbean generation so this is not needed.
-     * @param string
-     */
-    public void setDisplayTitle(String string) {
-    }
-    
-    /**
-     * A no-op.
-     * TODO: fix formbean generation so this is not needed.
-     * @param string
-     */
-    public void setRss09xDescription(String string) {
-    }
-    
-    /**
      * Convenience method to transform mPlugins to a List
-     * @return
+     * @return list of plugins to be applied to this blog entry
      */
     @Transient
     public List<String> getPluginsList() {
         if (getPlugins() != null) {
             return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     // Struts Checkboxlist control needs a String[] to specify selected values
@@ -712,25 +545,7 @@ public class WeblogEntry {
         plugins = StringUtils.join(strings, ",");
     }
 
-    /** Convenience method for checking status */
-    @Transient
-    public boolean isDraft() {
-        return PubStatus.DRAFT.equals(getStatus());
-    }
-
-    /** Convenience method for checking status */
-    @Transient
-    public boolean isPending() {
-        return PubStatus.PENDING.equals(getStatus());
-    }
-
-    /** Convenience method for checking status */
-    @Transient
-    public boolean isScheduled() {
-        return PubStatus.SCHEDULED.equals(getStatus());
-    }
-
-    /** Convenience method for checking status */
+    /** Convenience method for checking published status */
     @Transient
     public boolean isPublished() {
         return PubStatus.PUBLISHED.equals(getStatus());
@@ -741,7 +556,7 @@ public class WeblogEntry {
      */
     @Transient
     public String getTransformedText() {
-        return render(getText());
+        return HTMLSanitizer.conditionallySanitize(render(getText()));
     }
 
     /**
@@ -749,7 +564,7 @@ public class WeblogEntry {
      */
     @Transient
     public String getTransformedSummary() {
-        return render(getSummary());
+        return HTMLSanitizer.conditionallySanitize(render(getSummary()));
     }
 
     /**
@@ -761,76 +576,13 @@ public class WeblogEntry {
         return mgr.applyWeblogEntryPlugins(this, str);
     }
 
-    /**
-     * Get the right transformed display content depending on the situation.
-     *
-     * If the readMoreLink is specified then we assume the caller wants to
-     * prefer summary over content and we include a "Read More" link at the
-     * end of the summary if it exists.  Otherwise, if the readMoreLink is
-     * empty or null then we assume the caller prefers content over summary.
-     */
-    public String displayContent(String readMoreLink) {
-        
-        String displayContent = null;
-        
-        if(readMoreLink == null || readMoreLink.trim().length() < 1 || 
-                "nil".equals(readMoreLink)) {
-            
-            // no readMore link means permalink, so prefer text over summary
-            if(StringUtils.isNotEmpty(this.getText())) {
-                displayContent = this.getTransformedText();
-            } else {
-                displayContent = this.getTransformedSummary();
-            }
-        } else {
-            // not a permalink, so prefer summary over text
-            // include a "read more" link if needed
-            if(StringUtils.isNotEmpty(this.getSummary())) {
-                displayContent = this.getTransformedSummary();
-                if(StringUtils.isNotEmpty(this.getText())) {
-                    // add read more
-                    List<String> args = new ArrayList<String>();
-                    args.add(readMoreLink);
-                    
-                    // TODO: we need a more appropriate way to get the view locale here
-                    String readMore = I18nMessages.getMessages(getWeblog().getLocaleInstance()).getString("macro.weblog.readMoreLink", args);
-                    
-                    displayContent += readMore;
-                }
-            } else {
-                displayContent = this.getTransformedText();
-            }
-        }
-        
-        return HTMLSanitizer.conditionallySanitize(displayContent);
-    }
-    
-    
-    /**
-     * Get the right transformed display content.
-     */
-    @Transient
-    public String getDisplayContent() {
-        return displayContent(null);
-    }
-
-    @Transient
-    public Boolean getRefreshAggregates() {
-        return refreshAggregates;
-    }
-
-    public void setRefreshAggregates(Boolean refreshAggregates) {
-        this.refreshAggregates = refreshAggregates;
-    }
-
     @Transient
     public String getCategoryId() {
-        return category.getId();
+        return categoryId;
     }
 
     public void setCategoryId(String categoryId) {
-        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        setCategory(wmgr.getWeblogCategory(categoryId));
+        this.categoryId = categoryId;
     }
 
     @Transient
@@ -868,20 +620,5 @@ public class WeblogEntry {
     public void setDateString(String dateString) {
         this.dateString = dateString;
     }
-
-    public static java.util.Comparator<WeblogEntry> Comparator = (val1, val2) -> {
-        long pubTime1 = val1.getPubTime().getTime();
-        long pubTime2 = val2.getPubTime().getTime();
-
-        if (pubTime1 > pubTime2) {
-            return -1;
-        }
-        else if (pubTime1 < pubTime2) {
-            return 1;
-        }
-
-        // if pubTimes are the same, return results of String.compareTo() on Title
-        return val1.getTitle().compareTo(val2.getTitle());
-    };
 
 }

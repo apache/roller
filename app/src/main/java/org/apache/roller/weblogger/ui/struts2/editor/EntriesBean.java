@@ -21,7 +21,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.Utilities;
@@ -46,7 +47,7 @@ public class EntriesBean {
     }
     
     // convenience method
-    public List<String> getTags() {
+    public Set<String> getTags() {
         if(getTagsAsString() != null) {
             return Utilities.splitStringAsTags(getTagsAsString());
         } else {

@@ -182,7 +182,7 @@
     </td>
 
     <td>
-        <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
+        <str:truncateNicely upper="80"><s:property value="#post.title" /></str:truncateNicely>
     </td>
 
     <td>

@@ -224,7 +224,7 @@ Show comments for weblog entry according to TightBlog configuration.
         <div class="comments-head">$server.msg( "macro.weblog.preview" ):</div>
     #else
         <div class="comments-head">$server.msg( "macro.weblog.comments" ):</div>
-        #set($comments = $entry.getComments(true, true))
+        #set($comments = $entry.getComments())
     #end
 
     <br/>
@@ -266,7 +266,7 @@ Show comments for weblog entry according to TightBlog configuration.
       #set($comments = [$model.commentForm.previewComment])
       #set( $heading = $server.msg( "macro.weblog.preview" ))
     #else
-      #set($comments = $entry.getComments(true, true))
+      #set($comments = $entry.getComments())
       #set( $heading = $server.msg( "macro.weblog.comments" ))
     #end
     #if($comments.size() > 0)

@@ -169,6 +169,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         // iterate through all the definitions and add properties
         // that are not already in our props map
 
+        log.info("Checking for new properties to add to the weblogger_properties database table...");
         for (RuntimeConfigDefs.DisplayGroup dGroup : runtimeConfigDefs.getDisplayGroups()) {
             for (RuntimeConfigDefs.PropertyDef propDef : dGroup.getPropertyDefs()) {
 
@@ -180,8 +181,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
                     props.put(propDef.getName(), newprop);
 
-                    log.info("Property {} not yet in weblogger_properties database table, will store with " +
-                        "default value of [{}]", propDef.getName(), propDef.getDefaultValue());
+                    log.info("Adding new property {} = {}", propDef.getName(), propDef.getDefaultValue());
                 }
             }
         }

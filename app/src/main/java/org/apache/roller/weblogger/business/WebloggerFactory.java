@@ -132,6 +132,8 @@ public final class WebloggerFactory {
         // setup mail provider, if configured
         try {
             mailProvider = new MailProvider();
+        } catch (IllegalArgumentException ex) {
+            log.warn("Failed to setup mail provider, continuing anyways. Reason: {}", ex.getMessage());
         } catch (StartupException ex) {
             log.warn("Failed to setup mail provider, continuing anyways. Reason: {}", ex.getMessage());
             log.info("The cause of setting up mail provider error was: ", ex);

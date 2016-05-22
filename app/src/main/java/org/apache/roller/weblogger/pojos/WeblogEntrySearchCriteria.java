@@ -18,7 +18,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 
 public class WeblogEntrySearchCriteria {
@@ -38,8 +39,8 @@ public class WeblogEntrySearchCriteria {
     private Date endDate;
     // Category name or null for all categories.
     private String catName;
-    // If provided, array of tags to search blog entries for, just one needs to match to retrieve entry
-    private List<String> tags;
+    // If provided, set of tags to search blog entries for, just one needs to match to retrieve entry
+    private Set<String> tags;
     // Publication status of the weblog entry (DRAFT, PUBLISHED, etc.)
     private PubStatus status;
     // Text appearing in the text or summary, or null for all
@@ -94,11 +95,11 @@ public class WeblogEntrySearchCriteria {
         this.catName = catName;
     }
 
-    public List<String> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(Set<String> tags) {
         this.tags = tags;
     }
 
