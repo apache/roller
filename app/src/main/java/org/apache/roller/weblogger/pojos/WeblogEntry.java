@@ -414,7 +414,7 @@ public class WeblogEntry {
     public void setTags(Set<WeblogEntryTag> tagSet) {
          this.tagSet = tagSet;
     }
-     
+
     @Transient
     public SafeUser getCreator() {
         if (creator == null) {
@@ -509,7 +509,7 @@ public class WeblogEntry {
         csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
         return wmgr.getComments(csc);
     }
-    
+
     @Transient
     public int getCommentCount() {
         return getComments().size();

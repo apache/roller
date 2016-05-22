@@ -26,7 +26,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.util.Utilities;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -169,11 +170,10 @@ public class User {
      * @param newPassword The new password to be set.
      */
     public void resetPassword(String newPassword) {
-        
         String encrypt = WebloggerStaticConfig.getProperty("passwds.encryption.enabled");
-        String algorithm = WebloggerStaticConfig.getProperty("passwds.encryption.algorithm");
         if (Boolean.valueOf(encrypt)) {
-            setPassword(Utilities.encodePassword(newPassword, algorithm));
+            PasswordEncoder encoder = new BCryptPasswordEncoder();
+            setPassword(encoder.encode(newPassword));
         } else {
             setPassword(newPassword);
         }
