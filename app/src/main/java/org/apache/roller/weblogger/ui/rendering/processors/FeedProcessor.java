@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.SharedTemplate;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -204,7 +204,7 @@ public class FeedProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            Template template = new SharedTemplate(pageId, TemplateLanguage.VELOCITY);
+            Template template = new SharedTemplate(pageId, TemplateRendition.Parser.VELOCITY);
             renderer = rendererManager.getRenderer(template, DeviceType.NORMAL);
         } catch (Exception e) {
             // nobody wants to render my content :(

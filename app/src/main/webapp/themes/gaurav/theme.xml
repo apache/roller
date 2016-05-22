@@ -17,7 +17,7 @@
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -27,7 +27,7 @@
         <renditions>
             <rendition>
                 <contentsFile>entry.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -37,7 +37,7 @@
         <renditions>
             <rendition>
                 <contentsFile>tags_index.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -47,7 +47,7 @@
         <renditions>
             <rendition>
                 <contentsFile>search.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -57,7 +57,7 @@
         <description>One day's worth of entries</description>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>day.vm</contentsFile>
             </rendition>
         </renditions>
@@ -70,7 +70,7 @@
         <renditions>
             <rendition>
                 <contentsFile>archives.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -81,7 +81,7 @@
         <renditions>
             <rendition>
                 <contentsFile>std_head.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -92,7 +92,7 @@
         <renditions>
             <rendition>
                 <contentsFile>std_header.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -103,7 +103,7 @@
         <renditions>
             <rendition>
                 <contentsFile>std_footer.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>

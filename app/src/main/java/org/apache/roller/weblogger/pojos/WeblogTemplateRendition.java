@@ -36,7 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * A pojo that will maintain different template codes for one template
+ * A pojo that will maintain different device-specific renditions for one template
  */
 @Entity
 @Table(name="weblog_template_rendition")
@@ -44,10 +44,10 @@ public class WeblogTemplateRendition implements TemplateRendition {
 
 	private String id = WebloggerCommon.generateUUID();
     private WeblogTemplate weblogTemplate = null;
-	// template contents
-	private String template = "";
+	// rendition contents
+	private String rendition = "";
 	private RenditionType renditionType = null;
-	private TemplateLanguage templateLanguage = null;
+	private Parser parser = null;
 
 	public WeblogTemplateRendition(WeblogTemplate template, RenditionType renditionType) {
 		this.weblogTemplate = template;
@@ -77,18 +77,16 @@ public class WeblogTemplateRendition implements TemplateRendition {
 		this.id = id;
 	}
 
-	@Override
 	@Basic(optional=false)
-	public String getTemplate() {
-		return template;
+	public String getRendition() {
+		return rendition;
 	}
 
-	@Override
-	public void setTemplate(String template) {
-		this.template = template;
+	public void setRendition(String rendition) {
+		this.rendition = rendition;
 	}
 
-	@Column(name="device", nullable=false)
+	@Column(name="device_type", nullable=false)
 	@Enumerated(EnumType.STRING)
 	public RenditionType getRenditionType() {
 		return renditionType;
@@ -102,9 +100,9 @@ public class WeblogTemplateRendition implements TemplateRendition {
 
 	public String toString() {
         return "{" + getId()
-                + ", " + getWeblogTemplate().getId()
-                + ", [ " + getTemplate()
-                + "] , " + getRenditionType() + "}";
+				+ ", " + getRenditionType()
+                + ", Templ: " + getWeblogTemplate()
+                + "}";
 	}
 
 	public boolean equals(Object other) {
@@ -116,22 +114,21 @@ public class WeblogTemplateRendition implements TemplateRendition {
         }
 		WeblogTemplateRendition o = (WeblogTemplateRendition) other;
 		return new EqualsBuilder().append(getWeblogTemplate().getId(), o.getWeblogTemplate().getId())
-				.append(getTemplate(), o.getTemplate()).isEquals();
+				.append(getRendition(), o.getRendition()).isEquals();
 	}
 
 	public int hashCode() {
 		return new HashCodeBuilder().append(getWeblogTemplate().getId())
-				.append(getTemplate()).toHashCode();
+				.append(getRendition()).toHashCode();
 	}
 
-	@Column(name="templatelang")
 	@Enumerated(EnumType.STRING)
-	public TemplateLanguage getTemplateLanguage() {
-		return templateLanguage;
+	public Parser getParser() {
+		return parser;
 	}
 
-	public void setTemplateLanguage(TemplateLanguage templateLanguage) {
-		this.templateLanguage = templateLanguage;
+	public void setParser(Parser renditionLanguage) {
+		this.parser = renditionLanguage;
 	}
 
 }

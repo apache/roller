@@ -91,12 +91,12 @@
     </tr>
     
     <tr>
-        <td class="label"><s:text name="websiteSettings.active" /></td>
+        <td class="label"><s:text name="websiteSettings.visible" /></td>
         <td class="field"><s:checkbox name="bean.visible" /></td>
     </tr>
     
     <tr>
-        <td class="label"><s:text name="websiteSettings.entryDisplayCount" /></td>
+        <td class="label"><s:text name="websiteSettings.entriesPerPage" /></td>
         <td class="field"><s:textfield name="bean.entryDisplayCount" size="3" onBlur="this.value=this.value.trim()"/></td>
     </tr>
 
@@ -151,6 +151,12 @@
             <td class="label"><s:text name="websiteSettings.applyCommentDefaults" /></td>
             <td class="field"><s:checkbox name="bean.applyCommentDefaults" /></td>
         </tr>
+
+        <tr>
+            <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
+            <td class="field"><s:textarea name="bean.blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"/></td>
+        </tr>
+
     </s:if>
 
     <%-- ***** Plugins "formatting" settings ***** --%>
@@ -169,18 +175,6 @@
     <s:else>
         <s:hidden name="defaultPlugins" />
     </s:else>
-
-
-    <%-- ***** Spam prevention settings ***** --%>
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.spamPrevention" /></h2></td>
-    </tr>
-
-    <tr>
-        <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
-        <td class="field"><s:textarea name="bean.blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"/></td>
-    </tr>
 
 
     <%-- ***** Web analytics settings ***** --%>

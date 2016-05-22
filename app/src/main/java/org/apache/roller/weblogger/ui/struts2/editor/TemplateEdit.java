@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.TemplateRendition.Parser;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -107,12 +107,11 @@ public class TemplateEdit extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        if (getTemplate() == null) {
+        if (template == null) {
             // First-time override of a shared template
             SharedTheme sharedTheme = themeManager.getSharedTheme(getActionWeblog().getTheme());
-            Template template = sharedTheme.getTemplateByName(bean.getName());
-            WeblogTemplate newTemplate = themeManager.createWeblogTemplate(getActionWeblog(), template);
-            setTemplate(newTemplate);
+            Template sharedTemplate = sharedTheme.getTemplateByName(bean.getName());
+            template = themeManager.createWeblogTemplate(getActionWeblog(), sharedTemplate);
             bean.setDerivation(TemplateDerivation.OVERRIDDEN);
         }
 
@@ -125,14 +124,14 @@ public class TemplateEdit extends UIAction {
 
         WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(RenditionType.NORMAL);
         if (maybeTemplate != null) {
-            bean.setContentsStandard(maybeTemplate.getTemplate());
+            bean.setContentsStandard(maybeTemplate.getRendition());
         } else {
             bean.setContentsStandard("");
         }
 
         maybeTemplate = template.getTemplateRendition(RenditionType.MOBILE);
         if (maybeTemplate != null) {
-            bean.setContentsMobile(maybeTemplate.getTemplate());
+            bean.setContentsMobile(maybeTemplate.getRendition());
         }
         return INPUT;
     }
@@ -173,22 +172,24 @@ public class TemplateEdit extends UIAction {
 
                 WeblogTemplateRendition wtr = template.getTemplateRendition(RenditionType.NORMAL);
 
-                if (wtr != null) {
-                    // if we have a template, then set it
-                    wtr.setTemplate(bean.getContentsStandard());
-                    weblogManager.saveTemplateRendition(wtr);
-                } else {
-                    // otherwise create it, then set it
+                if (wtr == null) {
+                    // initial override, nothing in DB yet
                     wtr = new WeblogTemplateRendition(template, RenditionType.NORMAL);
-                    wtr.setTemplate(bean.getContentsStandard());
-                    wtr.setTemplateLanguage(TemplateLanguage.VELOCITY);
-                    weblogManager.saveTemplateRendition(wtr);
+                    wtr.setParser(Parser.VELOCITY);
                 }
+                wtr.setRendition(bean.getContentsStandard());
+                weblogManager.saveTemplateRendition(wtr);
 
-                wtr = template.getTemplateRendition(RenditionType.MOBILE);
-                if (wtr != null) {
-                    wtr.setTemplate(bean.getContentsMobile());
-                    wtr.setTemplateLanguage(TemplateLanguage.VELOCITY);
+                // mobile contents are null if mobile tab never created (i.e. not defined in shared theme)
+                // empty string mobile contents will retain the (empty) template though, allowing for recreation later
+                if (bean.getContentsMobile() != null) {
+                    wtr = template.getTemplateRendition(RenditionType.MOBILE);
+                    if (wtr == null) {
+                        // initial override, nothing in DB yet
+                        wtr = new WeblogTemplateRendition(template, RenditionType.MOBILE);
+                        wtr.setParser(Parser.VELOCITY);
+                    }
+                    wtr.setRendition(bean.getContentsMobile());
                     weblogManager.saveTemplateRendition(wtr);
                 }
 
@@ -247,9 +248,9 @@ public class TemplateEdit extends UIAction {
         }
     }
 
-    public Map<TemplateLanguage, String> getTemplateLanguages() {
-        Map<TemplateLanguage, String> langMap = new EnumMap<>(TemplateLanguage.class);
-        for (TemplateLanguage lang : TemplateLanguage.values()) {
+    public Map<Parser, String> getTemplateLanguages() {
+        Map<Parser, String> langMap = new EnumMap<>(Parser.class);
+        for (Parser lang : Parser.values()) {
             langMap.put(lang, lang.getReadableName());
         }
         return langMap;

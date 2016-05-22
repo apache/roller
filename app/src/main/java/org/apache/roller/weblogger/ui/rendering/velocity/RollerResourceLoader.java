@@ -94,7 +94,7 @@ public class RollerResourceLoader extends ResourceLoader {
                 templateCode = page.getTemplateRendition(RenditionType.NORMAL);
             }
 			if (templateCode != null) {
-				contents = templateCode.getTemplate();
+				contents = templateCode.getRendition();
 			}
 			return new ByteArrayInputStream(contents.getBytes("UTF-8"));
 

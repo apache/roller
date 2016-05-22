@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 public class SharedTemplateRendition implements TemplateRendition {
 
-    private TemplateLanguage templateLanguage = TemplateLanguage.VELOCITY;
-    private RenditionType type = RenditionType.NORMAL;
+    private Parser parser = Parser.VELOCITY;
+    private RenditionType renditionType = RenditionType.NORMAL;
     private String contentsFile = null;
 	private String template = null;
 
@@ -48,46 +48,46 @@ public class SharedTemplateRendition implements TemplateRendition {
     }
 
 	public RenditionType getRenditionType() {
-		return type;
+		return renditionType;
 	}
 
-    @XmlAttribute
+    @XmlAttribute(name="device")
 	public void setRenditionType(RenditionType type) {
-		this.type = type;
+		this.renditionType = type;
 	}
 
-    public TemplateLanguage getTemplateLanguage() {
-        return templateLanguage;
+    public Parser getParser() {
+        return parser;
     }
 
-    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
-        this.templateLanguage = templateLanguage;
+    public void setParser(Parser renditionLanguage) {
+        this.parser = renditionLanguage;
     }
 
-    public String getTemplate() {
+    public String getRendition() {
         return template;
     }
 
-    public void setTemplate(String template) {
+    public void setRendition(String template) {
         this.template = template;
     }
 
 	// ------------------------------------------------------- Good citizenship
 
 	public String toString() {
-        return "{" + this.template + ", [ " + this.template +"] , " + this.type + "}";
+        return "{" + this.contentsFile + ", [" + this.renditionType +"], " + this.parser + "}";
 	}
 
 	public boolean equals(SharedTemplateRendition other) {
 		return other == this || new EqualsBuilder()
-				.append(template, other.getTemplate())
-                .append(templateLanguage, other.getTemplateLanguage())
-                .append(type, other.getRenditionType())
+				.append(template, other.getRendition())
+                .append(parser, other.getParser())
+                .append(renditionType, other.getRenditionType())
                 .isEquals();
 	}
 
 	public int hashCode() {
-		return new HashCodeBuilder().append(getTemplate()).toHashCode();
+		return new HashCodeBuilder().append(getRendition()).toHashCode();
 	}
 
 }

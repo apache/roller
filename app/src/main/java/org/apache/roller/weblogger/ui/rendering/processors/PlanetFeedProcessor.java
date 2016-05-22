@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.themes.SharedTemplate;
 import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
@@ -186,7 +186,7 @@ public class PlanetFeedProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            Template template = new SharedTemplate("templates/feeds/planet-atom.vm", TemplateLanguage.VELOCITY);
+            Template template = new SharedTemplate("templates/feeds/planet-atom.vm", TemplateRendition.Parser.VELOCITY);
             renderer = rendererManager.getRenderer(template, DeviceType.NORMAL);
         } catch (Exception e) {
             // nobody wants to render my content :(

@@ -90,11 +90,11 @@ alter table weblog_template add constraint wt_name_uq unique (weblogid, name);
 #end
 
 create table weblog_template_rendition (
-    id           varchar(48)  not null primary key,
-    templateid   varchar(48) not null,
-    device       varchar(16) not null,
-    template     $db.TEXT_SQL_TYPE not null,
-    templatelang varchar(48)
+    id          varchar(48)  not null primary key,
+    templateid  varchar(48) not null,
+    device_type varchar(16) not null,
+    rendition   $db.TEXT_SQL_TYPE not null,
+    parser      varchar(48)
 );
 
 alter table weblog_template_rendition add constraint wtr_templateid_fk
