@@ -25,10 +25,10 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -86,14 +86,14 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         //create standard template rendition
         WeblogTemplateRendition standardTemplateCode = new WeblogTemplateRendition(testPage,
                 RenditionType.NORMAL);
-        standardTemplateCode.setTemplate("standard.template.code");
-        standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
+        standardTemplateCode.setRendition("standard.template.code");
+        standardTemplateCode.setParser(TemplateRendition.Parser.VELOCITY);
 
         //create mobile code
         WeblogTemplateRendition mobileTemplateCode = new WeblogTemplateRendition(testPage,
                 RenditionType.MOBILE);
-        mobileTemplateCode.setTemplate("mobile.template.code");
-        mobileTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
+        mobileTemplateCode.setRendition("mobile.template.code");
+        mobileTemplateCode.setParser(TemplateRendition.Parser.VELOCITY);
 
         endSession(true);
 
@@ -104,21 +104,21 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
 
         standardCode = testPageCheck.getTemplateRendition(RenditionType.NORMAL);
         assertNotNull(standardCode);
-        assertEquals(standardTemplateCode.getTemplate(), standardCode.getTemplate());
+        assertEquals(standardTemplateCode.getRendition(), standardCode.getRendition());
 
         mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
         assertNotNull(mobileCode);
-        assertEquals(mobileTemplateCode.getTemplate(), mobileCode.getTemplate());
+        assertEquals(mobileTemplateCode.getRendition(), mobileCode.getRendition());
 
         // update template Code
         standardCode = null;
         standardCode = testPageCheck.getTemplateRendition(RenditionType.NORMAL);
-        standardCode.setTemplate("update.standard.template");
+        standardCode.setRendition("update.standard.template");
         weblogManager.saveTemplateRendition(standardCode);
 
         mobileCode = null;
         mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
-        mobileCode.setTemplate("update.mobile.template");
+        mobileCode.setRendition("update.mobile.template");
         weblogManager.saveTemplateRendition(mobileCode);
 
         endSession(true);
@@ -126,11 +126,11 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         // check that update was successful
         standardCode = null;
         standardCode = testPageCheck.getTemplateRendition(RenditionType.NORMAL);
-        assertEquals("update.standard.template", standardCode.getTemplate());
+        assertEquals("update.standard.template", standardCode.getRendition());
 
         mobileCode = null;
         mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
-        assertEquals("update.mobile.template", mobileCode.getTemplate());
+        assertEquals("update.mobile.template", mobileCode.getRendition());
 
         WeblogTemplate page = weblogManager.getTemplate(testPage.getId());
         weblogManager.removeTemplate(page);

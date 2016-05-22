@@ -49,10 +49,10 @@ public class SharedTemplate implements Template {
 
     private String contents = null;
 
-    public SharedTemplate(String id, TemplateRendition.TemplateLanguage lang) {
+    public SharedTemplate(String id, TemplateRendition.Parser lang) {
         this.id = id;
         SharedTemplateRendition templateRendition = new SharedTemplateRendition();
-        templateRendition.setTemplateLanguage(lang);
+        templateRendition.setParser(lang);
         templateRendition.setRenditionType(RenditionType.NORMAL);
         addTemplateRendition(templateRendition);
     }
@@ -142,7 +142,7 @@ public class SharedTemplate implements Template {
     }
 
     public String toString() {
-        return id + "," + name + "," + description + "," + relativePath + "\n\n" + contents + "\n";
+        return id + "," + role + "," + name + "," + relativePath;
     }
 
     public ComponentType getRole() {

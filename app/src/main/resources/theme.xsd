@@ -58,7 +58,7 @@
                 <xs:complexType>
                     <xs:all>
                         <xs:element name="contentsFile" type="xs:string"/>
-                        <xs:element name="templateLanguage" default="velocity">
+                        <xs:element name="parser" default="velocity">
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
                                     <xs:enumeration value="velocity"/>
@@ -66,7 +66,7 @@
                             </xs:simpleType>
                         </xs:element>
                     </xs:all>
-                    <xs:attribute name="type" default="normal">
+                    <xs:attribute name="device" default="normal">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="normal"/>

@@ -18,13 +18,13 @@
         <description>Stylesheet for Basic Mobile theme</description>
         <relativePath>basic-custom.css</relativePath>
         <renditions>
-            <rendition type="normal">
-                <templateLanguage>velocity</templateLanguage>
+            <rendition device="normal">
+                <parser>velocity</parser>
                 <contentsFile>basic-custom.css</contentsFile>
             </rendition>
-            <rendition type="mobile">
+            <rendition device="mobile">
                 <contentsFile>basic-mobile-custom.css</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -32,13 +32,13 @@
     <template role="weblog">
         <name>Weblog</name>
         <renditions>
-            <rendition type="normal">
-                <templateLanguage>velocity</templateLanguage>
+            <rendition device="normal">
                 <contentsFile>weblog.vm</contentsFile>
+                <parser>velocity</parser>
             </rendition>
-            <rendition type="mobile">
+            <rendition device="mobile">
                 <contentsFile>weblog-mobile.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -46,13 +46,13 @@
     <template role="permalink">
         <name>permalink</name>
         <renditions>
-            <rendition type="normal">
+            <rendition device="normal">
                 <contentsFile>permalink.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
-            <rendition type="mobile">
+            <rendition device="mobile">
                 <contentsFile>permalink-mobile.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -60,13 +60,13 @@
     <template role="search">
         <name>searchresults</name>
         <renditions>
-            <rendition type="normal">
+            <rendition device="normal">
                 <contentsFile>searchresults.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
-            <rendition type="mobile">
+            <rendition device="mobile">
                 <contentsFile>searchresults-mobile.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -74,13 +74,13 @@
     <template role="customInternal">
         <name>_day</name>
         <renditions>
-            <rendition type="normal">
-                <templateLanguage>velocity</templateLanguage>
+            <rendition device="normal">
                 <contentsFile>_day.vm</contentsFile>
+                <parser>velocity</parser>
             </rendition>
-            <rendition type="mobile">
+            <rendition device="mobile">
                 <contentsFile>_day-mobile.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -88,9 +88,9 @@
     <template role="customInternal">
         <name>sidebar</name>
         <renditions>
-            <rendition type="normal">
+            <rendition device="normal">
                 <contentsFile>sidebar.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>

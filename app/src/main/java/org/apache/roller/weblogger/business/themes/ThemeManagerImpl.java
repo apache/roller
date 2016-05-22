@@ -166,8 +166,8 @@ public class ThemeManagerImpl implements ThemeManager {
 				// See if we already have some code for this template already (eg previous theme)
 				WeblogTemplateRendition weblogTemplateCode = new WeblogTemplateRendition(weblogTemplate, type);
 				weblogTemplateCode.setRenditionType(type);
-				weblogTemplateCode.setTemplate(templateCode.getTemplate());
-				weblogTemplateCode.setTemplateLanguage(templateCode.getTemplateLanguage());
+				weblogTemplateCode.setRendition(templateCode.getRendition());
+				weblogTemplateCode.setParser(templateCode.getParser());
 			}
 
 		}
@@ -262,16 +262,10 @@ public class ThemeManagerImpl implements ThemeManager {
             if (sharedTheme.getDualTheme()) {
                 SharedTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
 
-                // cloning the standard template code if no mobile is present
-                if (mobileRendition == null) {
-                    mobileRendition = new SharedTemplateRendition();
-                    mobileRendition.setContentsFile(standardRendition.getContentsFile());
-                    mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
-                    mobileRendition.setRenditionType(RenditionType.MOBILE);
+                if (mobileRendition != null) {
+                    loadRenditionSource(sharedTheme.getThemeDir(), mobileRendition);
+                    template.addTemplateRendition(mobileRendition);
                 }
-
-                loadRenditionSource(sharedTheme.getThemeDir(), mobileRendition);
-                template.addTemplateRendition(mobileRendition);
             }
 
             // add it to the theme
@@ -291,9 +285,9 @@ public class ThemeManagerImpl implements ThemeManager {
         String contents = loadTemplateRendition(renditionFile);
         if (contents == null) {
             log.error("Couldn't load rendition file [{}]", renditionFile);
-            rendition.setTemplate("");
+            rendition.setRendition("");
         } else {
-            rendition.setTemplate(contents);
+            rendition.setRendition(contents);
         }
         return contents != null;
     }

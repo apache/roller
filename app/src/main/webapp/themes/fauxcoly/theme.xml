@@ -16,7 +16,7 @@
         <name>Weblog</name>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>weblog.vm</contentsFile>
             </rendition>
         </renditions>
@@ -26,7 +26,7 @@
         <name>Entry</name>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>entry.vm</contentsFile>
             </rendition>
         </renditions>
@@ -36,7 +36,7 @@
         <name>TagsIndex</name>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>tags_index.vm</contentsFile>
             </rendition>
         </renditions>
@@ -46,7 +46,7 @@
         <name>Search</name>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>search.vm</contentsFile>
             </rendition>
         </renditions>
@@ -57,7 +57,7 @@
         <description>One day's worth of entries</description>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>day.vm</contentsFile>
             </rendition>
         </renditions>
@@ -69,7 +69,7 @@
         <relativePath>archives</relativePath>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>archives.vm</contentsFile>
             </rendition>
         </renditions>
@@ -80,7 +80,7 @@
         <description>Contents of HTML head</description>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>std_head.vm</contentsFile>
             </rendition>
         </renditions>
@@ -91,7 +91,7 @@
         <description>Displayed in header of each page</description>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>std_header.vm</contentsFile>
             </rendition>
         </renditions>
@@ -102,7 +102,7 @@
         <description>For footer of each page</description>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>std_footer.vm</contentsFile>
             </rendition>
         </renditions>
@@ -114,7 +114,7 @@
         <relativePath>style.css</relativePath>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>style_css.vm</contentsFile>
             </rendition>
         </renditions>
@@ -126,7 +126,7 @@
         <relativePath>searchhi.js</relativePath>
         <renditions>
             <rendition>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
                 <contentsFile>searchhi.js</contentsFile>
             </rendition>
         </renditions>

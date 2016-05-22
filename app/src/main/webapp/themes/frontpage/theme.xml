@@ -17,7 +17,7 @@
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -27,7 +27,7 @@
         <renditions>
             <rendition>
                 <contentsFile>_blogdirectory.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -37,7 +37,7 @@
         <renditions>
             <rendition>
                 <contentsFile>_blogprofile.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -47,7 +47,7 @@
         <renditions>
             <rendition>
                 <contentsFile>_css.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -57,7 +57,7 @@
         <renditions>
             <rendition>
                 <contentsFile>_entry.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -67,7 +67,7 @@
         <renditions>
             <rendition>
                 <contentsFile>_footer.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -77,7 +77,7 @@
         <renditions>
             <rendition>
                 <contentsFile>_header.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -89,7 +89,7 @@
         <renditions>
             <rendition>
                 <contentsFile>directory.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>

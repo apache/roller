@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.TemplateRendition.Parser;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -151,9 +151,9 @@ public class Templates extends UIAction {
 			WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
 					newTemplate, RenditionType.NORMAL);
 			if (newTmplAction != ComponentType.STYLESHEET && newTmplAction != ComponentType.JAVASCRIPT) {
-				standardRendition.setTemplate(getText("templateEdit.newTemplateContent"));
+				standardRendition.setRendition(getText("templateEdit.newTemplateContent"));
 			}
-			standardRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
+			standardRendition.setParser(Parser.VELOCITY);
 			weblogManager.saveTemplateRendition(standardRendition);
 
 			// flush results to db

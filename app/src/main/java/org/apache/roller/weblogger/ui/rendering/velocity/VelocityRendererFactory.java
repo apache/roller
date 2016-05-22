@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.TemplateRendition.Parser;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
@@ -52,7 +52,7 @@ public class VelocityRendererFactory implements RendererFactory {
             return null;
         }
         
-        if (TemplateLanguage.VELOCITY.equals(tr.getTemplateLanguage())) {
+        if (Parser.VELOCITY.equals(tr.getParser())) {
             // standard velocity template
             try {
                renderer = new VelocityRenderer(template, deviceType);

@@ -17,7 +17,7 @@
         <renditions>
             <rendition>
                 <contentsFile>basic-custom.css</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -27,7 +27,7 @@
         <renditions>
             <rendition>
                 <contentsFile>weblog.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -37,7 +37,7 @@
         <renditions>
             <rendition>
                 <contentsFile>permalink.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -47,7 +47,7 @@
         <renditions>
             <rendition>
                 <contentsFile>searchresults.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -57,7 +57,7 @@
         <renditions>
             <rendition>
                 <contentsFile>_day.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>
@@ -67,7 +67,7 @@
         <renditions>
             <rendition>
                 <contentsFile>sidebar.vm</contentsFile>
-                <templateLanguage>velocity</templateLanguage>
+                <parser>velocity</parser>
             </rendition>
         </renditions>
     </template>

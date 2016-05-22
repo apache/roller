@@ -20,8 +20,6 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-import org.springframework.mobile.device.DeviceType;
-
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
@@ -41,12 +39,12 @@ public interface TemplateRendition {
 
     @XmlType
     @XmlEnum
-    public enum TemplateLanguage {
+    public enum Parser {
         @XmlEnumValue("velocity") VELOCITY("Velocity");
 
         private final String readableName;
 
-        TemplateLanguage(String readableName) {
+        Parser(String readableName) {
             this.readableName = readableName;
         }
 
@@ -55,15 +53,15 @@ public interface TemplateRendition {
         }
     }
 
-    String getTemplate();
+    String getRendition();
 
-    TemplateLanguage getTemplateLanguage();
+    void setRendition(String template);
+
+    Parser getParser();
+
+    void setParser(Parser parser);
 
     RenditionType getRenditionType();
-
-    void setTemplate(String template);
-
-    void setTemplateLanguage(TemplateLanguage templateLanguage);
 
     void setRenditionType(RenditionType type);
 }
