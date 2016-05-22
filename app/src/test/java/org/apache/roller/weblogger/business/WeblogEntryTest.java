@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,6 +42,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -318,7 +320,7 @@ public class WeblogEntryTest extends WebloggerTest {
             testEntry.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
 
             // shortcut
-            testEntry.addTag("testTag");
+            addTag(testEntry, "testTag");
 
             // create a weblog entry
             weblogEntryManager.saveWeblogEntry(testEntry);
@@ -353,14 +355,14 @@ public class WeblogEntryTest extends WebloggerTest {
         testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
-        entry.addTag("testTag");
-        entry.addTag("whateverTag");
+        addTag(entry, "testTag");
+        addTag(entry, "whateverTag");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
         entry = weblogEntryManager.getWeblogEntry(id);
-        entry.addTag("testTag2");
+        addTag(entry, "testTag2");
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
@@ -378,13 +380,13 @@ public class WeblogEntryTest extends WebloggerTest {
         testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
-        entry.addTag("testTag");
+        addTag(entry, "testTag");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
         entry = weblogEntryManager.getWeblogEntry(id);
-        entry.addTag("testTag");
+        addTag(entry, "testTag");
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
@@ -403,8 +405,8 @@ public class WeblogEntryTest extends WebloggerTest {
             testWeblog = getManagedWeblog(testWeblog);
             testUser = getManagedUser(testUser);
             WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
-            entry.addTag("testTag");
-            entry.addTag("testTag2");
+            addTag(entry, "testTag");
+            addTag(entry, "testTag2");
             String id = entry.getId();
             weblogEntryManager.saveWeblogEntry(entry);
             endSession(true);
@@ -414,7 +416,7 @@ public class WeblogEntryTest extends WebloggerTest {
             endSession(true);
 
             entry = weblogEntryManager.getWeblogEntry(id);
-            entry.setTagsAsString("");
+            entry.setTags(Collections.emptySet());
             weblogEntryManager.saveWeblogEntry(entry);
             endSession(true);
 
@@ -444,14 +446,14 @@ public class WeblogEntryTest extends WebloggerTest {
         // setup some test entries to use
         WeblogEntry entry = setupWeblogEntry("tagsExistEntry1", testWeblog, testUser);
         String id1 = entry.getId();
-        entry.addTag("blahTag");
-        entry.addTag("fooTag");
+        addTag(entry, "blahTag");
+        addTag(entry, "fooTag");
         weblogEntryManager.saveWeblogEntry(entry);
 
         WeblogEntry entry2 = setupWeblogEntry("tagsExistEntry2", weblog, testUser);
         String id2 = entry2.getId();
-        entry2.addTag("aaaTag");
-        entry2.addTag("bbbTag");
+        addTag(entry2, "aaaTag");
+        addTag(entry2, "bbbTag");
         weblogEntryManager.saveWeblogEntry(entry2);
         endSession(true);
         
@@ -487,7 +489,7 @@ public class WeblogEntryTest extends WebloggerTest {
             testUser = getManagedUser(testUser);
             WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
             String id = entry.getId();
-            entry.addTag("testTag");
+            addTag(entry, "testTag");
             weblogEntryManager.saveWeblogEntry(entry);
             endSession(true);
 
@@ -496,7 +498,7 @@ public class WeblogEntryTest extends WebloggerTest {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(testWeblog);
             // tags are always saved lowercase (testTag -> testtag)
-            wesc.setTags(Collections.singletonList("testtag"));
+            wesc.setTags(Collections.singleton("testtag"));
             List results = weblogEntryManager.getWeblogEntries(wesc);
             assertEquals(1, results.size());
             WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
@@ -520,7 +522,7 @@ public class WeblogEntryTest extends WebloggerTest {
         testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
-        entry.addTag("testTag");
+        addTag(entry, "testTag");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
@@ -529,7 +531,7 @@ public class WeblogEntryTest extends WebloggerTest {
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(testWeblog);
         // tags are always saved lowercase (testTag -> testtag)
-        wesc.setTags(Collections.singletonList("testtag"));
+        wesc.setTags(Collections.singleton("testtag"));
         List results = weblogEntryManager.getWeblogEntries(wesc);
         assertEquals(1, results.size());
         WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
@@ -553,8 +555,8 @@ public class WeblogEntryTest extends WebloggerTest {
         testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
-        entry.addTag("testWillStayTag");
-        entry.addTag("testTagWillBeRemoved");
+        addTag(entry, "testWillStayTag");
+        addTag(entry, "testTagWillBeRemoved");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
@@ -562,7 +564,8 @@ public class WeblogEntryTest extends WebloggerTest {
         entry = weblogEntryManager.getWeblogEntry(id);
         assertEquals(2, entry.getTags().size());
 
-        entry.setTagsAsString("testwillstaytag testnewtag testnewtag3");
+        Set<String> updatedTags = Utilities.splitStringAsTags("testwillstaytag testnewtag testnewtag3");
+        entry.updateTags(updatedTags);
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
@@ -605,14 +608,14 @@ public class WeblogEntryTest extends WebloggerTest {
 
             // setup some test entries to use
             WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
-            entry.addTag("one");
-            entry.addTag("two");
+            addTag(entry, "one");
+            addTag(entry, "two");
             weblogEntryManager.saveWeblogEntry(entry);
 
             entry = setupWeblogEntry("entry2", testWeblog, testUser);
-            entry.addTag("one");
-            entry.addTag("two");
-            entry.addTag("three");
+            addTag(entry, "one");
+            addTag(entry, "two");
+            addTag(entry, "three");
             weblogEntryManager.saveWeblogEntry(entry);
 
             endSession(true);
@@ -638,9 +641,9 @@ public class WeblogEntryTest extends WebloggerTest {
             testWeblog2 = getManagedWeblog(testWeblog2);
             testUser = getManagedUser(testUser);
             entry = setupWeblogEntry("entry3", testWeblog2, testUser);
-            entry.addTag("one");
-            entry.addTag("three");
-            entry.addTag("four");
+            addTag(entry, "one");
+            addTag(entry, "three");
+            addTag(entry, "four");
             weblogEntryManager.saveWeblogEntry(entry);
 
             endSession(true);
@@ -667,7 +670,8 @@ public class WeblogEntryTest extends WebloggerTest {
 
             testWeblog = getManagedWeblog(testWeblog);
             entry = weblogEntryManager.getWeblogEntryByAnchor(testWeblog, "entry2");
-            entry.setTagsAsString("one three five");
+            Set<String> updatedTags = Utilities.splitStringAsTags("one three five");
+            entry.updateTags(updatedTags);
             weblogEntryManager.saveWeblogEntry(entry);
 
             endSession(true);
@@ -744,9 +748,9 @@ public class WeblogEntryTest extends WebloggerTest {
 
         // setup some test entries to use
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
-        entry.addTag("one");
-        entry.addTag("two");
-        entry.addTag("ONE");
+        addTag(entry, "one");
+        addTag(entry, "two");
+        addTag(entry, "ONE");
         weblogEntryManager.saveWeblogEntry(entry);
 
         endSession(true);
@@ -768,8 +772,8 @@ public class WeblogEntryTest extends WebloggerTest {
 
         // now add another entry in another blog
         entry = setupWeblogEntry("entry3", testWeblog2, testUser);
-        entry.addTag("ONE");
-        entry.addTag("three");
+        addTag(entry, "ONE");
+        addTag(entry, "three");
         weblogEntryManager.saveWeblogEntry(entry);
         
         endSession(true);
@@ -919,6 +923,25 @@ public class WeblogEntryTest extends WebloggerTest {
             endSession(true);
         }
     }
+
+    private void addTag(WeblogEntry entry, String name) {
+        Locale localeObject = entry.getWeblog().getLocaleInstance();
+        name = Utilities.normalizeTag(name, localeObject);
+        if (name.length() == 0) {
+            return;
+        }
+        for (WeblogEntryTag tag : entry.getTags()) {
+            if (tag.getName().equals(name)) {
+                return;
+            }
+        }
+        WeblogEntryTag tag = new WeblogEntryTag();
+        tag.setName(name);
+        tag.setWeblog(entry.getWeblog());
+        tag.setWeblogEntry(entry);
+        entry.getTags().add(tag);
+    }
+
 }
 
 

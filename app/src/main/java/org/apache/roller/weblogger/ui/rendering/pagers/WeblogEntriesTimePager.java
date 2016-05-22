@@ -298,7 +298,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 wesc.setEndDate(endDate);
                 wesc.setCatName(catName);
                 if (tag != null) {
-                    wesc.setTags(Collections.singletonList(tag));
+                    wesc.setTags(Collections.singleton(tag));
                 }
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);

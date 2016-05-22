@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 public class Weblogger {
 
     // managers
-    private final IndexManager         indexManager;
     private final PropertiesManager    propertiesManager;
     private final ThemeManager         themeManager;
     private final UserManager          userManager;
@@ -45,7 +44,6 @@ public class Weblogger {
      * Single constructor.
      */
     protected Weblogger(
-            IndexManager         indexManager,
             PropertiesManager    propertiesManager,
             ThemeManager         themeManager,
             UserManager          userManager,
@@ -54,7 +52,6 @@ public class Weblogger {
             PlanetManager        planetManager,
             URLStrategy          urlStrategy) {
 
-        this.indexManager        = indexManager;
         this.propertiesManager   = propertiesManager;
         this.themeManager        = themeManager;
         this.userManager         = userManager;
@@ -62,10 +59,6 @@ public class Weblogger {
         this.weblogEntryManager  = weblogEntryManager;
         this.urlStrategy         = urlStrategy;
         this.planetManager       = planetManager;
-    }
-
-    public IndexManager getIndexManager() {
-        return indexManager;
     }
 
     public ThemeManager getThemeManager() {

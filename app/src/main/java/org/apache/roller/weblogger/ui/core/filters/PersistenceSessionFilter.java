@@ -33,10 +33,8 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Sole responsibility is to ensure that each request's Roller
+ * Sole responsibility is to ensure that each request's database
  * persistence session is released at end of the request.
- *
- * @web.filter name="PersistenceSessionFilter"
  */
 public class PersistenceSessionFilter implements Filter {
 
@@ -57,7 +55,7 @@ public class PersistenceSessionFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             if (WebloggerFactory.isBootstrapped()) {
-                log.debug("Releasing TightBlog Session");
+                log.debug("Releasing TightBlog DB Session");
                 WebloggerFactory.release();
             }
             

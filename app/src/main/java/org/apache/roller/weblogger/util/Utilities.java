@@ -32,10 +32,12 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -483,12 +485,14 @@ public class Utilities {
      * @param tags String holding space separated list of tags
      * @return List of strings, one string for each tag
      */
-    public static List<String> splitStringAsTags(String tags) {
+    public static Set<String> splitStringAsTags(String tags) {
         String[] tagsarr = StringUtils.split(tags, TAG_SPLIT_CHARS);
         if (tagsarr == null) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
-        return Arrays.asList(tagsarr);
+        Set<String> mySet = new HashSet<>();
+        Collections.addAll(mySet, tagsarr);
+        return mySet;
     }
 
     /**

@@ -43,7 +43,7 @@
 						<div class="comments-head">$server.msg( "macro.weblog.preview" ):</div>
 					#else
 						#if($entry.commentCount > 0)
-							#set($comments = $entry.getComments(true, true))
+							#set($comments = $entry.getComments())
 							<div class="comments-head">$server.msg( "macro.weblog.comments" ):</div>
 						#else
 							<div class="comments-head">No one has commented yet.</div>

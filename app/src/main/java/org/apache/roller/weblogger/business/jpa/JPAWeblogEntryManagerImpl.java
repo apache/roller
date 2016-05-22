@@ -38,7 +38,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
@@ -65,6 +64,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
+
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
@@ -73,7 +73,15 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<>();
 
+    public void setCommentPlugins(List<WeblogEntryCommentPlugin> commentPlugins) {
+        this.commentPlugins = commentPlugins;
+    }
+
     private List<WeblogEntryPlugin> weblogEntryPlugins = new ArrayList<>();
+
+    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
+        this.weblogEntryPlugins = weblogEntryPlugins;
+    }
 
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = new HashMap<>();
@@ -111,10 +119,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             entry.setAnchor(this.createAnchor(entry));
         }
 
-        for (WeblogEntryTag tag : entry.getRemovedTags()) {
-            removeWeblogEntryTag(tag);
-        }
-
         // if the entry was published to future, set status as SCHEDULED
         // we only consider an entry future published if it is scheduled
         // more than 1 minute into the future
@@ -137,6 +141,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             // Queue applicable pings for this update.
             pingTargetManager.queueApplicableAutoPings(entry.getWeblog());
         }
+
     }
 
     @Override
@@ -148,13 +153,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         List<WeblogEntryComment> comments = getComments(csc);
         for (WeblogEntryComment comment : comments) {
             this.strategy.remove(comment);
-        }
-
-        // remove tag & tag aggregates
-        if (entry.getTags() != null) {
-            for (WeblogEntryTag tag : entry.getTags()) {
-                removeWeblogEntryTag(tag);
-            }
         }
 
         // remove entry
@@ -233,12 +231,14 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append("SELECT e FROM WeblogEntry e WHERE EXISTS ( Select 1 from WeblogEntryTag t " +
                     "where t.weblogEntry.id = e.id AND ");
             queryString.append("(");
-            for (int i = 0; i < wesc.getTags().size(); i++) {
-                if (i != 0) {
+            boolean isFirst = true;
+            for (String tagName : wesc.getTags()) {
+                if (!isFirst) {
                     queryString.append(" OR ");
                 }
-                params.add(size++, wesc.getTags().get(i));
+                params.add(size++, tagName);
                 queryString.append(" t.name = ?").append(size);
+                isFirst = false;
             }
             queryString.append(")) ");
         }
@@ -312,10 +312,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         return query.getResultList();
-    }
-
-    private void removeWeblogEntryTag(WeblogEntryTag tag) {
-        this.strategy.remove(tag);
     }
 
     @Override
@@ -804,11 +800,4 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return content;
     }
 
-    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
-        this.weblogEntryPlugins = weblogEntryPlugins;
-    }
-
-    public void setCommentPlugins(List<WeblogEntryCommentPlugin> commentPlugins) {
-        this.commentPlugins = commentPlugins;
-    }
 }

@@ -14,10 +14,10 @@
         #end
 
         <div class="entryContent">
-            #if($model.permalink)
-                $entry.displayContent
+            #if($model.permalink || $utils.isEmpty($entry.summary))
+                $entry.getTransformedText()
             #else
-                $entry.displayContent($url.entry($entry.anchor))
+                $entry.getTransformedSummary() $server.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
             #end
         </div>
 

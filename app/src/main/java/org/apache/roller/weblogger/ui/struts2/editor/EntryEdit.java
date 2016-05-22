@@ -38,12 +38,14 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.MediacastException;
 import org.apache.roller.weblogger.util.MediacastResource;
 import org.apache.roller.weblogger.util.MediacastUtil;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
@@ -62,6 +64,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Edit a new or existing entry.
@@ -224,8 +228,9 @@ public final class EntryEdit extends UIAction {
             bean.setText(entry.getText());
             bean.setSummary(entry.getSummary());
             bean.setNotes(entry.getNotes());
-            bean.setCategory(entry.getCategory());
-            bean.setTagsAsString(entry.getTagsAsString());
+            bean.setCategoryId(entry.getCategoryId());
+            String tagsAsString = String.join(" ", entry.getTags().stream().map(WeblogEntryTag::getName).collect(Collectors.toSet()));
+            bean.setTagsAsString(tagsAsString);
             bean.setSearchDescription(entry.getSearchDescription());
             bean.setPlugins(entry.getPlugins());
 
@@ -245,7 +250,8 @@ public final class EntryEdit extends UIAction {
                 bean.setDateString(df.format(cal.getTime()));
 
                 if (log.isDebugEnabled()) {
-                    log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", " + bean.getMinutes() + ", " + bean.getSeconds());
+                    log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", "
+                            + bean.getMinutes() + ", " + bean.getSeconds());
                 }
             }
 
@@ -264,11 +270,6 @@ public final class EntryEdit extends UIAction {
      */
     public String saveDraft() {
         getBean().setStatus(PubStatus.DRAFT);
-        if (entry.isPublished()) {
-            // entry reverted from published to non-viewable draft
-            // so need to reduce tag aggregates
-            entry.setRefreshAggregates(true);
-        }
         return save();
     }
 
@@ -284,16 +285,8 @@ public final class EntryEdit extends UIAction {
             if (pubTime != null && pubTime.after(
                     new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE))) {
                 getBean().setStatus(PubStatus.SCHEDULED);
-                if (entry.isPublished()) {
-                    // entry went from published to scheduled, need to reduce tag aggregates
-                    entry.setRefreshAggregates(true);
-                }
             } else {
                 getBean().setStatus(PubStatus.PUBLISHED);
-                if (getBean().getId() != null && !entry.isPublished()) {
-                    // if not a new add, need to add tags to aggregates
-                    entry.setRefreshAggregates(true);
-                }
             }
         } else {
             getBean().setStatus(PubStatus.PENDING);
@@ -350,12 +343,13 @@ public final class EntryEdit extends UIAction {
                 weblogEntry.setText(bean.getText().trim());
                 weblogEntry.setSummary(bean.getSummary().trim());
                 weblogEntry.setNotes(bean.getNotes().trim());
-                weblogEntry.setTagsAsString(bean.getTagsAsString().trim());
+                Set<String> updatedTags = Utilities.splitStringAsTags(bean.getTagsAsString().trim());
+                weblogEntry.updateTags(updatedTags);
                 weblogEntry.setSearchDescription(bean.getSearchDescription().trim());
                 weblogEntry.setEnclosureUrl(bean.getEnclosureUrl().trim());
                 weblogEntry.setEnclosureType(bean.getEnclosureType());
                 weblogEntry.setEnclosureLength(bean.getEnclosureLength());
-                weblogEntry.setCategory(bean.getCategory());
+                weblogEntry.setCategory(weblogManager.getWeblogCategory(bean.getCategoryId()));
 
                 // join values from all plugins into a single string
                 weblogEntry.setPlugins(bean.getPlugins());
@@ -411,7 +405,7 @@ public final class EntryEdit extends UIAction {
                 // notify caches
                 cacheManager.invalidate(weblogEntry);
 
-                if (weblogEntry.isPending() && mailManager.isMailConfigured()) {
+                if (PubStatus.PENDING.equals(weblogEntry.getStatus()) && mailManager.isMailConfigured()) {
                     mailManager.sendPendingEntryNotice(weblogEntry);
                 }
                 if ("entryEdit".equals(actionName)) {

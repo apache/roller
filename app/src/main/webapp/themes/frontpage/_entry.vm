@@ -11,8 +11,8 @@
         <br/> 
     </p>
     <p class="entryDescription">                    
-        #if($entry.displayContent)
-             $utils.truncateText($utils.removeHTML($entry.displayContent), 240, 260, "...")
+        #if($entry.getTransformedText())
+             $utils.truncateText($utils.removeHTML($entry.getTransformedText()), 240, 260, "...")
         #else ## planet entries don't have displayContent
              $utils.truncateText($utils.removeHTML($entry.text), 240, 260, "...")
         #end
