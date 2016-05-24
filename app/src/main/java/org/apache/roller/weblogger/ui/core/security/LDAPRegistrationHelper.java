@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -95,7 +94,6 @@ public class LDAPRegistrationHelper {
         // setting default
         ud.setId(null);
         ud.setLocale(Locale.getDefault().toString());
-        ud.setTimeZone(TimeZone.getDefault().getID());
         ud.setDateCreated(new java.util.Date());
 
         String userName;
@@ -159,9 +157,6 @@ public class LDAPRegistrationHelper {
         ud.setScreenName(screenName);
         if (locale != null) {
             ud.setLocale(locale);
-        }
-        if (timezone != null) {
-            ud.setTimeZone(timezone);
         }
 
         return ud;

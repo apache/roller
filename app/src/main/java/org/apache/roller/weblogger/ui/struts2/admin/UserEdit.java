@@ -21,13 +21,10 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -46,15 +43,16 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -77,15 +75,7 @@ public class UserEdit extends UIAction {
         this.weblogManager = weblogManager;
     }
 
-    // a bean to store our form data
-    private User bean = new User();
-
-    // user we are creating or modifying
-    private User user = null;
-    
     public UserEdit() {
-        this.desiredMenu = "admin";
-        this.requiredWeblogRole = WeblogRole.NOBLOGNEEDED;
     }
 
     @Override
@@ -97,6 +87,77 @@ public class UserEdit extends UIAction {
     public Map<String, String> getUserEditList() throws ServletException {
         return createUserMap(userManager.getUsers(null, null, 0, -1));
     }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.GET)
+    public User getUserData(@PathVariable String id, HttpServletResponse response) throws ServletException {
+        User user = userManager.getUser(id);
+        if (user != null) {
+            user.setPassword(null);
+            user.setPasswordText(null);
+            user.setPasswordConfirm(null);
+            return user;
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.PUT)
+    public User updateUser(@PathVariable String id, @RequestBody User newData,
+                               HttpServletResponse response) throws ServletException {
+        User user = userManager.getUser(id);
+        saveUser(user, newData, response, false);
+        return user;
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/users", method = RequestMethod.PUT)
+    public User addUser(@RequestBody User newData, HttpServletResponse response) throws ServletException {
+        User user = new User();
+        user.setId(WebloggerCommon.generateUUID());
+        user.setUserName(newData.getUserName());
+        user.setDateCreated(new java.util.Date());
+        user.setGlobalRole(newData.getGlobalRole());
+        saveUser(user, newData, response, true);
+        return response.getStatus() == HttpServletResponse.SC_OK ? user : null;
+    }
+
+    private void saveUser(User user, User newData, HttpServletResponse response, boolean isAdd) throws ServletException {
+        try {
+            if (user != null) {
+                user.setScreenName(newData.getScreenName().trim());
+                user.setEmailAddress(newData.getEmailAddress().trim());
+                user.setLocale(newData.getLocale());
+                user.setEnabled(newData.getEnabled());
+
+                // reset password if set
+                if (!StringUtils.isEmpty(newData.getPassword())) {
+                    user.resetPassword(newData.getPassword().trim());
+                }
+                if (isAdd) {
+                    // save new user
+                    userManager.addUser(user);
+                } else {
+                    if (!user.equals(getAuthenticatedUser())) {
+                        user.setGlobalRole(newData.getGlobalRole());
+                    }
+                    userManager.saveUser(user);
+                }
+
+                try {
+                    WebloggerFactory.flush();
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } catch (RollbackException e) {
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+
 
     @RequestMapping(value = "/tb-ui/authoring/rest/{weblogHandle}/potentialmembers", method = RequestMethod.GET)
     public Map<String, String> getPotentialNewMembers(@PathVariable String weblogHandle, Principal p,
@@ -138,112 +199,13 @@ public class UserEdit extends UIAction {
         return userMap;
     }
 
-    // prepare for action by loading user object we are modifying
-    public void prepare() {
-        if (isAdd()) {
-            user = new User();
-        } else {
-            try {
-                if (bean.getId() != null) {
-                    user = userManager.getUser(bean.getId());
-                }
-            } catch (Exception e) {
-                log.error("Error looking up user id: {} username: {}", bean.getId(), bean.getUserName());
-                log.error("Exception: ", e);
-            }
-        }
-    }
-
-    /**
-     * Show admin user edit page.
-     */
-    @SkipValidation
-    public String execute() {
-        if (isAdd()) {
-            // initial user create
-            bean.setLocale(Locale.getDefault().toString());
-            bean.setTimeZone(TimeZone.getDefault().getID());
-        } else {
-            // populate form data from user profile data
-            bean.setId(user.getId());
-            bean.setUserName(user.getUserName());
-            bean.setPassword(user.getPassword());
-            bean.setScreenName(user.getScreenName());
-            bean.setEmailAddress(user.getEmailAddress());
-            bean.setLocale(user.getLocale());
-            bean.setTimeZone(user.getTimeZone());
-            bean.setEnabled(user.getEnabled());
-            bean.setActivationCode(user.getActivationCode());
-            bean.setGlobalRole(user.getGlobalRole());
-        }
-        return INPUT;
-    }
-
-    /**
-     * Post user created message after first save.
-     */
-    @SkipValidation
-    public String firstSave() {
-        addMessage("createUser.add.success", bean.getUserName());
-        return execute();
-    }
-
-    /**
-     * Save modified user profile.
-     */
-    public String save() {
-        myValidate();
-        
-        if (!hasActionErrors()) {
-            user.setScreenName(bean.getScreenName().trim());
-            user.setEmailAddress(bean.getEmailAddress().trim());
-            user.setLocale(bean.getLocale());
-            user.setTimeZone(bean.getTimeZone());
-            user.setEnabled(bean.getEnabled());
-            user.setActivationCode(bean.getActivationCode());
-
-            // reset password if set
-            if (!StringUtils.isEmpty(bean.getPassword())) {
-                user.resetPassword(bean.getPassword().trim());
-            }
-            if (isAdd()) {
-                user.setId(WebloggerCommon.generateUUID());
-                user.setUserName(bean.getUserName().trim());
-                user.setDateCreated(new java.util.Date());
-                user.setGlobalRole(bean.getGlobalRole());
-                // save new user
-                userManager.addUser(user);
-            } else {
-                if (!isUserEditingSelf()) {
-                    user.setGlobalRole(bean.getGlobalRole());
-                } else if (user.getGlobalRole() != bean.getGlobalRole()) {
-                    addError("userAdmin.cantChangeOwnRole");
-                }
-                userManager.saveUser(user);
-            }
-            WebloggerFactory.flush();
-            if (isAdd()) {
-                // now that user is saved we have an id value
-                // store it back in bean for use in next action
-                bean.setId(user.getId());
-                // route to edit mode, saveFirst() provides the success message.
-                return SUCCESS;
-            } else {
-                addMessage("userAdmin.userSaved");
-                return INPUT;
-            }
-        }
-        return INPUT;
-    }
-    
-    private boolean isAdd() {
-        return actionName.equals("createUser");
-    }
 
     @Validations(
             emails = { @EmailValidator(fieldName="bean.emailAddress", key="Register.error.emailAddressBad")}
     )
     private void myValidate() {
+        User bean = new User();
+
         if (StringUtils.isEmpty(bean.getUserName())) {
             addError("error.add.user.missingUserName");
         }
@@ -253,7 +215,7 @@ public class UserEdit extends UIAction {
         if (StringUtils.isEmpty(bean.getEmailAddress())) {
             addError("Register.error.emailAddressNull");
         }
-        if (isAdd()) {
+        // if (isAdd()) {
             String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.trim().length() == 0) {
                 allowed = Register.DEFAULT_ALLOWED_CHARS;
@@ -265,22 +227,7 @@ public class UserEdit extends UIAction {
             if (WebloggerStaticConfig.getAuthMethod() == AuthMethod.DATABASE && StringUtils.isEmpty(bean.getPassword())) {
                 addError("error.add.user.missingPassword");
             }
-        }
+       //  }
     }
 
-    public User getBean() {
-        return bean;
-    }
-
-    public void setBean(User bean) {
-        this.bean = bean;
-    }
-
-    public boolean isUserEditingSelf() {
-        return user.equals(getAuthenticatedUser());
-    }
-
-    public List<UserWeblogRole> getPermissions() {
-        return userManager.getWeblogRoles(user);
-    }
 }

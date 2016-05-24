@@ -134,7 +134,6 @@ abstract public class WebloggerTest {
         testUser.setScreenName(userName);
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
-        testUser.setTimeZone("America/Los_Angeles");
         testUser.setDateCreated(new java.util.Date());
         testUser.setEnabled(Boolean.TRUE);
 

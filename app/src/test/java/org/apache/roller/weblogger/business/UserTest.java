@@ -55,7 +55,6 @@ public class UserTest extends WebloggerTest {
         testUser.setScreenName("Test User Screen Name");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
-        testUser.setTimeZone("America/Los_Angeles");
         testUser.setDateCreated(new java.util.Date());
         testUser.setEnabled(Boolean.TRUE);
         

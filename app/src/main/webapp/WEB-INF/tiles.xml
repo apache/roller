@@ -152,10 +152,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/FrontpageConfig.jsp" />
     </definition>
     
-    <definition name=".UserAdmin" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
-    </definition>
-    
     <definition name=".UserEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserEdit.jsp" />
     </definition>
