@@ -1,9 +1,8 @@
 $(function() {
   var data = {};
-  $.templates("#formTemplate").link("#formBody", data);
+  var myTemplate = $.templates("#formTemplate");
   function updateEditForm(data) {
-    var view = $.view("#someVal");
-    view.data = data;
+    myTemplate.link("#formBody", data);
   }
   function refreshUserList() {
     checkLoggedIn(function() {
@@ -11,6 +10,7 @@ $(function() {
          type: "GET",
          url: contextPath + '/tb-ui/admin/rest/useradmin/userlist',
          success: function(data, textStatus, xhr) {
+           $('#useradmin-select-user').empty();
            for (var key in data) {
              $('#useradmin-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
            }
@@ -34,16 +34,26 @@ $(function() {
        });
      });
   });
+  $("#create-user").click(function(e) {
+     e.preventDefault();
+     var selectedId = $('#useradmin-select-user').val();
+     checkLoggedIn(function() {
+       var data = {};
+       updateEditForm(data);
+     });
+  });
   $("#save-link").click(function(e) {
     e.preventDefault();
-    var view = $.view("#someVal");
+    var view = $.view("#recordId");
     checkLoggedIn(function() {
       $.ajax({
          type: "PUT",
-         url: contextPath + '/tb-ui/admin/rest/useradmin/' + ((view.data.id == '') ? 'users' : 'user/' + view.data.id),
+         url: contextPath + '/tb-ui/admin/rest/useradmin/' + (view.data.id == null ? 'users' : ('user/' + view.data.id)),
          data: JSON.stringify(view.data),
+         contentType: "application/json",
          success: function(data, textStatus, xhr) {
            updateEditForm(data);
+           refreshUserList();
          }
       });
     });

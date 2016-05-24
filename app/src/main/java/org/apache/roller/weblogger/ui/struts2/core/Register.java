@@ -224,7 +224,7 @@ public class Register extends UIAction implements ServletRequestAware {
             }
 
             // save new user
-            userManager.addUser(ud);
+            userManager.saveUser(ud);
 
             WebloggerFactory.flush();
 

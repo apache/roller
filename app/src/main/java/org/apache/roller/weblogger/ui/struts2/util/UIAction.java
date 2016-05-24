@@ -309,8 +309,12 @@ public class UIAction extends ActionSupport implements Preparable {
     public void setPageTitle(String pageTitle) {
         // disabled by default as it causes page titles not
         // to update on chain actions defined in struts.xml
-        // override in subclasses where you want this to occur.
+        // use setPageTitleReal where you want this to occur.
         // this.pageTitle = pageTitle;
+    }
+
+    public void setPageTitleReal(String pageTitle) {
+        this.pageTitle = pageTitle;
     }
 
     public String getActionName() {

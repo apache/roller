@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 
+import javax.persistence.RollbackException;
 import java.util.List;
 
 /**
@@ -34,17 +35,6 @@ import java.util.List;
  */
 public interface UserManager {
     
-    /**
-     * Add a new user.
-     * 
-     * This method is used to provide supplemental data to new user accounts,
-     * such as adding the proper roles for the user.  This method should see if
-     * the new user is the first user and give that user the admin role if so.
-     *
-     * @param newUser User object to be added.
-     */
-    void addUser(User newUser);
-
     /**
      * Save a user.
      *
@@ -172,14 +162,6 @@ public interface UserManager {
      * @param role    WeblogRole to grant
      */
     void grantWeblogRole(User user, Weblog weblog, WeblogRole role);
-
-    /**
-     * Grant user specific WeblogRole for a weblog.
-     * @param userId    User to grant weblog role to
-     * @param weblog  Weblog being granted access to
-     * @param role    WeblogRole to grant
-     */
-    void grantWeblogRole(String userId, Weblog weblog, WeblogRole role);
 
     /**
      * Grant user a specific WeblogRole for a weblog, but pending user's acceptance of it

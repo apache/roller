@@ -80,12 +80,6 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy = strat;
     }
 
-
-    @Override
-    public void saveUser(User data) {
-        this.strategy.store(data);
-    }
-
     @Override
     public void removeUser(User user) {
         String userName = user.getUserName();
@@ -102,36 +96,44 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public void addUser(User newUser) {
-        if (newUser == null) {
-            throw new IllegalArgumentException("cannot add null user");
+    public void saveUser(User data) {
+        if (data == null) {
+            throw new IllegalArgumentException("cannot save null user");
         }
-        
+
         List existingUsers = this.getUsers(null, Boolean.TRUE, 0, 1);
 
         if (existingUsers.size() == 0 && makeFirstUserAdmin) {
             // Make first user an admin
-            newUser.setGlobalRole(GlobalRole.ADMIN);
+            data.setGlobalRole(GlobalRole.ADMIN);
 
-            //if user was disabled (because of activation user 
+            //if user was disabled (because of activation user
             // account with e-mail property), enable it for admin user
-            newUser.setEnabled(Boolean.TRUE);
-            newUser.setActivationCode(null);
-        } else {
-            newUser.setGlobalRole(GlobalRole.BLOGGER);
+            data.setEnabled(Boolean.TRUE);
+            data.setActivationCode(null);
         }
 
-        if (getUserByUserName(newUser.getUserName(), null) != null ||
-                getUserByUserName(newUser.getUserName().toLowerCase(), null) != null) {
+        User testUser = getUserByUserName(data.getUserName(), null);
+        if (testUser != null && !testUser.getId().equals(data.getId())) {
             throw new IllegalArgumentException("error.add.user.userNameInUse");
         }
 
-        if (getUserByScreenName(newUser.getScreenName()) != null ||
-                getUserByScreenName(newUser.getScreenName().toLowerCase()) != null) {
+        testUser = getUserByUserName(data.getUserName().toLowerCase(), null);
+        if (testUser != null && !testUser.getId().equals(data.getId())) {
+            throw new IllegalArgumentException("error.add.user.userNameInUse");
+        }
+
+        testUser = getUserByScreenName(data.getScreenName());
+        if (testUser != null && !testUser.getId().equals(data.getId())) {
             throw new IllegalArgumentException("error.add.user.screenNameInUse");
         }
 
-        this.strategy.store(newUser);
+        testUser = getUserByScreenName(data.getScreenName().toLowerCase());
+        if (testUser != null && !testUser.getId().equals(data.getId())) {
+            throw new IllegalArgumentException("error.add.user.screenNameInUse");
+        }
+
+        this.strategy.store(data);
     }
 
     @Override
@@ -393,11 +395,6 @@ public class JPAUserManagerImpl implements UserManager {
             this.strategy.store(perm);
         }
         editorMenuCache.remove(generateMenuCacheKey(user.getUserName(), weblog.getHandle()));
-    }
-
-    @Override
-    public void grantWeblogRole(String userId, Weblog weblog, WeblogRole role) {
-        grantWeblogRole(getUser(userId), weblog, role);
     }
 
     @Override

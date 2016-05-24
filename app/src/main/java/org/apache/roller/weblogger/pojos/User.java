@@ -25,7 +25,6 @@ import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -75,7 +74,7 @@ public class User {
     private String  emailAddress;
     private Date    dateCreated;
     private String  locale;
-    private Boolean enabled = Boolean.TRUE;
+    private Boolean enabled = Boolean.FALSE;
     private String  activationCode;
 
     // below two fields not persisted but used for password entry and confirmation
@@ -168,13 +167,8 @@ public class User {
      * @param newPassword The new password to be set.
      */
     public void resetPassword(String newPassword) {
-        String encrypt = WebloggerStaticConfig.getProperty("passwds.encryption.enabled");
-        if (Boolean.valueOf(encrypt)) {
-            PasswordEncoder encoder = new BCryptPasswordEncoder();
-            setPassword(encoder.encode(newPassword));
-        } else {
-            setPassword(newPassword);
-        }
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        setPassword(encoder.encode(newPassword));
     }
 
     @Basic(optional=false)
