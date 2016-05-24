@@ -167,29 +167,6 @@
             <result name="success" type="tiles">.GlobalConfig</result>
         </action>
                
-        <action name="createUser!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.UserEdit">
-            <param name="actionName">createUser</param>
-            <param name="pageTitle">userAdmin.title.createNewUser</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="input" type="tiles">.UserEdit</result>
-            <result name="success" type="tiles">.UserEdit</result>
-        </action>
-
-        <action name="modifyUser!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.UserEdit">
-            <param name="actionName">modifyUser</param>
-            <param name="pageTitle">userAdmin.title.editUser</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="input" type="tiles">.UserEdit</result>
-            <result name="error" type="chain">createUser</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">createUser</param>
-            </result>
-        </action>
-        
         <action name="globalCommentManagement!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Comments">
             <result name="list" type="tiles">.GlobalCommentManagement</result>
@@ -201,9 +178,17 @@
             </result>
         </action>
 
+        <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">userAdmin</param>
+            <param name="pageTitleReal">userAdmin.title.userAdministration</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
+            <result name="success" type="tiles">.UserAdmin</result>
+        </action>
+
         <action name="commonPingTargets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">commonPingTargets</param>
-            <param name="pageTitle">commonPingTargets.commonPingTargets</param>
+            <param name="pageTitleReal">commonPingTargets.commonPingTargets</param>
             <param name="desiredMenu">admin</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.PingTargets</result>
@@ -211,7 +196,7 @@
 
         <action name="cacheInfo" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">cacheInfo</param>
-            <param name="pageTitle">cacheInfo.title</param>
+            <param name="pageTitleReal">cacheInfo.title</param>
             <param name="desiredMenu">admin</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.CacheInfo</result>
@@ -219,7 +204,7 @@
 
         <action name="planetEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">planetEdit</param>
-            <param name="pageTitle">planetSubscriptions.title</param>
+            <param name="pageTitleReal">planetSubscriptions.title</param>
             <param name="desiredMenu">admin</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.PlanetEdit</result>
@@ -227,7 +212,7 @@
         
         <action name="planets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">planets</param>
-            <param name="pageTitle">planets.pagetitle</param>
+            <param name="pageTitleReal">planets.pagetitle</param>
             <param name="desiredMenu">admin</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.Planets</result>

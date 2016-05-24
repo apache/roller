@@ -57,13 +57,14 @@ public class UserTest extends WebloggerTest {
         testUser.setLocale("en_US");
         testUser.setDateCreated(new java.util.Date());
         testUser.setEnabled(Boolean.TRUE);
+        testUser.setGlobalRole(GlobalRole.BLOGGER);
         
         // make sure test user does not exist
         user = userManager.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // add test user
-        userManager.addUser(testUser);
+        userManager.saveUser(testUser);
         String userName = testUser.getUserName();
         endSession(true);
         
@@ -156,9 +157,8 @@ public class UserTest extends WebloggerTest {
         user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         
-        assertTrue(user.getGlobalRole() == GlobalRole.ADMIN);
+        assertTrue(GlobalRole.ADMIN.equals(user.getGlobalRole()));
 
-        // change role to NOAUTHNEEDED
         user.setGlobalRole(GlobalRole.LOGIN);
         userManager.saveUser(user);
         endSession(true);

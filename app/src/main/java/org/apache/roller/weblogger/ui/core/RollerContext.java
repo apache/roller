@@ -149,13 +149,10 @@ public class RollerContext extends ContextLoaderListener
         for (String name : beanNames)
             System.out.println(name);*/
 
-        String encryptPasswords = WebloggerStaticConfig.getProperty("passwds.encryption.enabled");
-        boolean doEncrypt = Boolean.valueOf(encryptPasswords);
-        
         String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
 
-        // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) may be provided in security.xml.
-        if (doEncrypt && ctx.containsBean(daoBeanName)) {
+        // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) is provided in security.xml.
+        if (ctx.containsBean(daoBeanName)) {
             DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             provider.setPasswordEncoder(encoder);

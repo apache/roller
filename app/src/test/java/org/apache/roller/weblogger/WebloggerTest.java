@@ -138,7 +138,7 @@ abstract public class WebloggerTest {
         testUser.setEnabled(Boolean.TRUE);
 
         // store the user
-        userManager.addUser(testUser);
+        userManager.saveUser(testUser);
 
         // flush to db
         strategy.flush();

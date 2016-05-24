@@ -6,11 +6,8 @@ Defines the menus provided with Weblogger
         <tab titleKey="tabbedmenu.admin" globalRole="ADMIN" weblogRole="NOBLOGNEEDED">
             <tabItem action="globalConfig"
                      titleKey="tabbedmenu.admin.config"/>
-            <tabItem action="createUser"
+            <tabItem action="userAdmin"
                      titleKey="tabbedmenu.admin.userAdmin">
-                <subactions>
-                    <subaction>modifyUser</subaction>
-                </subactions>
             </tabItem>
             <tabItem action="globalCommentManagement"
                      titleKey="tabbedmenu.admin.commentManagement"/>
