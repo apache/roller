@@ -36,10 +36,10 @@ var msg= {
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/planetEdit.js'/>"></script>
 
-<input type="hidden" id="planetEditForm_planetId" value="<s:property value='%{#parameters.planetId}'/>"/>
+<input type="hidden" id="recordId" value="<s:property value='%{#parameters.planetId}'/>"/>
 <input type="hidden" id="refreshURL" value="<s:url action='planetEdit'/>?planetId=<s:property value='%{#parameters.planetId}'/>"/>
 
-<div id="planetEditFields"></div>
+<div id="formBody"></div>
 <script id="formTemplate" type="text/x-jsrender">
   <div class="formrow">
       <label for="edit-title" class="formrow"><s:text name="planets.title"/></label>

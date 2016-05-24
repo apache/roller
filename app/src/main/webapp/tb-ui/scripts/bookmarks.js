@@ -83,7 +83,7 @@ $(function() {
       $('#bookmark-edit-description').val($('#bkdescription-' + idBeingUpdated).text());
       $('#bookmark-edit-error').css("display", "none");
       var dataId = $(this).attr("data-id");
-      $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
+      checkLoggedIn(function() {
          $('#bookmark-edit').data('bookmarkId', dataId).dialog('open');
       });
    });
@@ -94,7 +94,7 @@ $(function() {
       $('#bookmark-edit-url').val('');
       $('#bookmark-edit-description').val('');
       $('#bookmark-edit-error').css("display", "none");
-      $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
+      checkLoggedIn(function() {
          $('#bookmark-edit').data('bookmarkId', '').dialog('open');
       });
    });

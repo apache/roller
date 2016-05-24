@@ -60,7 +60,6 @@ public class SafeUser {
     private String  emailAddress;
     private Date    dateCreated;
     private String  locale;
-    private String  timeZone;
     private Boolean enabled = Boolean.TRUE;
 
     public SafeUser() {
@@ -76,7 +75,6 @@ public class SafeUser {
         this.screenName = screenName;
         this.emailAddress = emailAddress;
         this.locale = locale;
-        this.timeZone = timeZone;
         this.enabled = isEnabled;
     }
 
@@ -133,15 +131,6 @@ public class SafeUser {
         this.locale = locale;
     }
 
-    public String getTimeZone() {
-        return this.timeZone;
-    }
-    
-    public void setTimeZone(String timeZone) {
-        this.timeZone = timeZone;
-    }
-    
-    
     /**
      * Is this user account enabled?  Disabled accounts cannot login.
      */

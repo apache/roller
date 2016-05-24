@@ -5,15 +5,15 @@ $(function() {
    });
    function updateEditForm(data) {
      var html = $.render.formTmpl(data);
-     $("#planetEditFields").html(html);
+     $("#formBody").html(html);
    }
    function refreshView(tableAlso) {
-     var planetId = $('#planetEditForm_planetId').attr('value');
-     if (planetId != '') {
+     var recordId = $('#recordId').attr('value');
+     if (recordId != '') {
        checkLoggedIn(function() {
          $.ajax({
             type: "GET",
-            url: contextPath + '/tb-ui/admin/rest/planet/' + planetId,
+            url: contextPath + '/tb-ui/admin/rest/planet/' + recordId,
             success: function(data, textStatus, xhr) {
               updateEditForm(data);
               if (tableAlso) {
@@ -82,13 +82,13 @@ $(function() {
    });
    $("#add-link").click(function(e) {
      e.preventDefault();
-     var planetId = $('#planetEditForm_planetId').val();
+     var recordId = $('#recordId').val();
      var feedUrl = encodeURIComponent($('#feedUrl').val());
-     if (planetId == '' || feedUrl == '') return;
+     if (recordId == '' || feedUrl == '') return;
        checkLoggedIn(function() {
          $.ajax({
             type: "PUT",
-            url: contextPath + '/tb-ui/admin/rest/planetsubscriptions?planetId=' + planetId + '&feedUrl=' + feedUrl,
+            url: contextPath + '/tb-ui/admin/rest/planetsubscriptions?planetId=' + recordId + '&feedUrl=' + feedUrl,
             success: function(data, textStatus, xhr) {
               var html = $.render.tableTmpl(data);
               $("#tableBody").append(html);
@@ -99,7 +99,7 @@ $(function() {
    });
    $("#save-planet").click(function(e) {
      e.preventDefault();
-     var idToUpdate = $("#planetEditForm_planetId").val();
+     var idToUpdate = $("#recordId").val();
      var newData = {
         "title": $('#edit-title').val(),
         "handle": $('#edit-handle').val(),
@@ -115,7 +115,7 @@ $(function() {
           processData: "false",
           success: function(data, textStatus, xhr) {
             if (idToUpdate == '') {
-               $('#planetEditForm_planetId').attr('value', data.id);
+               $('#recordId').attr('value', data.id);
             }
             $("#feedManagement").toggle(true);
             updateEditForm(data);

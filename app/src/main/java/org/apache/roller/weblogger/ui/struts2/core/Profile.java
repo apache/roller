@@ -76,7 +76,6 @@ public class Profile extends UIAction {
         bean.setScreenName(ud.getScreenName());
         bean.setEmailAddress(ud.getEmailAddress());
         bean.setLocale(ud.getLocale());
-        bean.setTimeZone(ud.getTimeZone());
         return INPUT;
     }
 
@@ -90,7 +89,6 @@ public class Profile extends UIAction {
             existingUser.setScreenName(bean.getScreenName().trim());
             existingUser.setEmailAddress(bean.getEmailAddress().trim());
             existingUser.setLocale(bean.getLocale());
-            existingUser.setTimeZone(bean.getTimeZone());
 
             // If user set both password and passwordConfirm then reset password
             if (!StringUtils.isEmpty(bean.getPasswordText()) &&

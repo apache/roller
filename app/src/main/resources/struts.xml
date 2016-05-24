@@ -167,33 +167,26 @@
             <result name="success" type="tiles">.GlobalConfig</result>
         </action>
                
-        <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
-            <param name="actionName">userAdmin</param>
-            <param name="pageTitle">userAdmin.title.searchUser</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.UserAdmin</result>
-        </action>
-
         <action name="createUser!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.UserEdit">
             <param name="actionName">createUser</param>
             <param name="pageTitle">userAdmin.title.createNewUser</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="input" type="tiles">.UserEdit</result>
-            <result name="success" type="redirectAction">
-                <param name="actionName">modifyUser!firstSave</param>
-                <param name="bean.id">${bean.id}</param>
-            </result>
+            <result name="success" type="tiles">.UserEdit</result>
         </action>
 
         <action name="modifyUser!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.UserEdit">
             <param name="actionName">modifyUser</param>
             <param name="pageTitle">userAdmin.title.editUser</param>
+            <param name="desiredMenu">admin</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="input" type="tiles">.UserEdit</result>
-            <result name="error" type="chain">userAdmin</result>
+            <result name="error" type="chain">createUser</result>
             <result name="cancel" type="redirectAction">
-                <param name="actionName">userAdmin</param>
+                <param name="actionName">createUser</param>
             </result>
         </action>
         

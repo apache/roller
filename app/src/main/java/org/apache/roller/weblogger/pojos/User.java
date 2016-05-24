@@ -75,7 +75,6 @@ public class User {
     private String  emailAddress;
     private Date    dateCreated;
     private String  locale;
-    private String  timeZone;
     private Boolean enabled = Boolean.TRUE;
     private String  activationCode;
 
@@ -91,7 +90,7 @@ public class User {
             String password,
             GlobalRole globalRole,
             String emailAddress,
-            String locale, String timeZone,
+            String locale,
             Date dateCreated,
             Boolean isEnabled) {
         this.id = WebloggerCommon.generateUUID();
@@ -101,7 +100,6 @@ public class User {
         this.emailAddress = emailAddress;
         this.dateCreated = (Date)dateCreated.clone();
         this.locale = locale;
-        this.timeZone = timeZone;
         this.enabled = isEnabled;
     }
 
@@ -223,15 +221,6 @@ public class User {
         this.locale = locale;
     }
 
-    public String getTimeZone() {
-        return this.timeZone;
-    }
-    
-    public void setTimeZone(String timeZone) {
-        this.timeZone = timeZone;
-    }
-    
-    
     /**
      * Is this user account enabled?  Disabled accounts cannot login.
      */

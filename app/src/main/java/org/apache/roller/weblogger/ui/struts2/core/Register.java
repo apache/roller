@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import java.util.TimeZone;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -135,9 +134,6 @@ public class Register extends UIAction implements ServletRequestAware {
         // For new user default to locale set in browser
         bean.setLocale(getServletRequest().getLocale().toString());
         
-        // For new user default to timezone of server
-        bean.setTimeZone(TimeZone.getDefault().getID());
-
         try {
             if (WebloggerStaticConfig.getAuthMethod() == AuthMethod.LDAP) {
                 // See if user is already logged in via Spring Security
@@ -149,7 +145,6 @@ public class Register extends UIAction implements ServletRequestAware {
                     bean.setScreenName(fromSSOUser.getScreenName());
                     bean.setEmailAddress(fromSSOUser.getEmailAddress());
                     bean.setLocale(fromSSOUser.getLocale());
-                    bean.setTimeZone(fromSSOUser.getTimeZone());
                 }
             }
         } catch (Exception ex) {
@@ -185,7 +180,6 @@ public class Register extends UIAction implements ServletRequestAware {
             ud.setScreenName(bean.getScreenName().trim());
             ud.setEmailAddress(bean.getEmailAddress().trim());
             ud.setLocale(bean.getLocale());
-            ud.setTimeZone(bean.getTimeZone());
             ud.setDateCreated(new java.util.Date());
             ud.setEnabled(Boolean.TRUE);
             ud.setGlobalRole(GlobalRole.BLOGGER);

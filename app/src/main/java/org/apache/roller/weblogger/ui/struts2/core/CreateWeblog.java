@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.List;
+import java.util.TimeZone;
 
 
 /**
@@ -109,9 +110,8 @@ public class CreateWeblog extends UIAction {
             }
         }
 
-        // pre-populate with some logical defaults
         getBean().setLocale(user.getLocale());
-        getBean().setTimeZone(user.getTimeZone());
+        getBean().setTimeZone(TimeZone.getDefault().getID());
         return INPUT;
     }
     
