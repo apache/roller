@@ -4,7 +4,7 @@ $(function() {
   function updateEditForm(data) {
     myTemplate.link("#formBody", data);
   }
-  function refreshUserList() {
+  function refreshUserList(id) {
     checkLoggedIn(function() {
       $.ajax({
          type: "GET",
@@ -13,6 +13,9 @@ $(function() {
            $('#useradmin-select-user').empty();
            for (var key in data) {
              $('#useradmin-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
+           }
+           if (id) {
+             $('#useradmin-select-user').val(id);
            }
          }
       });
@@ -23,6 +26,7 @@ $(function() {
   });
   $("#select-user").click(function(e) {
      e.preventDefault();
+     $('#userCreate').hide();
      var selectedId = $('#useradmin-select-user').val();
      checkLoggedIn(function() {
        $.ajax({
@@ -36,13 +40,17 @@ $(function() {
   });
   $("#create-user").click(function(e) {
      e.preventDefault();
-     var selectedId = $('#useradmin-select-user').val();
+     $('#userEdit').hide();
      checkLoggedIn(function() {
        var data = {};
        updateEditForm(data);
      });
   });
-  $("#save-link").click(function(e) {
+  $("#cancel-link").click(function (e) {
+    e.preventDefault();
+    window.location.replace($('#refreshURL').attr('value'));
+  });
+  $("#myForm").submit(function(e) {
     e.preventDefault();
     var view = $.view("#recordId");
     checkLoggedIn(function() {
@@ -53,7 +61,9 @@ $(function() {
          contentType: "application/json",
          success: function(data, textStatus, xhr) {
            updateEditForm(data);
-           refreshUserList();
+           $('#userEdit').show();
+           $('#userCreate').show();
+           refreshUserList(data.id);
          }
       });
     });

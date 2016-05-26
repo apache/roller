@@ -21,19 +21,13 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -195,17 +189,10 @@ public class UserController {
         }
     }
 
-    @Validations(
-            emails = { @EmailValidator(fieldName="bean.emailAddress", key="Register.error.emailAddressBad")}
-    )
-    private void myValidate() {
-        User bean = new User();
-
-        // check: cannot add user with LDAP.
-        // check: user can't change own permissions.
-
+    private void validateData(User bean) {
+/*
         if (StringUtils.isEmpty(bean.getUserName())) {
-            //addError("error.add.user.missingUserName");
+  //        addError("error.add.user.missingUserName");
         }
         if (StringUtils.isEmpty(bean.getScreenName())) {
             //addError("Register.error.screenNameNull");
@@ -213,7 +200,7 @@ public class UserController {
         if (StringUtils.isEmpty(bean.getEmailAddress())) {
             //addError("Register.error.emailAddressNull");
         }
-        // if (isAdd()) {
+         if (isAdd()) {
             String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.trim().length() == 0) {
                 allowed = Register.DEFAULT_ALLOWED_CHARS;
@@ -225,7 +212,6 @@ public class UserController {
             if (WebloggerStaticConfig.getAuthMethod() == AuthMethod.DATABASE && StringUtils.isEmpty(bean.getPassword())) {
                 //addError("error.add.user.missingPassword");
             }
-       //  }
-    }
-
+       }
+*/   }
 }
