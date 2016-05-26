@@ -163,7 +163,7 @@
     <package name="weblogger-admin" namespace="/tb-ui/admin" extends="weblogger">
         
         <action name="globalConfig!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.GlobalConfig">
+                class="org.apache.roller.weblogger.ui.struts2.core.GlobalConfig">
             <result name="success" type="tiles">.GlobalConfig</result>
         </action>
                

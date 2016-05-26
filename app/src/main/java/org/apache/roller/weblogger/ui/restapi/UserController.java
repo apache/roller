@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.struts2.admin;
+package org.apache.roller.weblogger.ui.restapi;
 
 import java.security.Principal;
 import java.util.LinkedHashMap;
@@ -28,10 +28,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -42,19 +40,27 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.core.Register;
+import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 public class UserController {
@@ -140,20 +146,26 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.PUT)
-    public User updateUser(@PathVariable String id, @RequestBody User newData, Principal p,
-                               HttpServletResponse response) throws ServletException {
-        User user = userManager.getUser(id);
-        return saveUser(user, newData, p, response);
-    }
-
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/users", method = RequestMethod.PUT)
-    public User addUser(@RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
+    public User addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
         User user = new User();
         user.setId(WebloggerCommon.generateUUID());
         user.setUserName(newData.getUserName());
         user.setDateCreated(new java.util.Date());
         return saveUser(user, newData, p, response);
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.PUT)
+    public User updateUser(@PathVariable String id, @Valid @RequestBody User newData, Principal p,
+                           HttpServletResponse response, Errors errors) throws ServletException {
+        User user = userManager.getUser(id);
+        return saveUser(user, newData, p, response);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ValidationError handleException(MethodArgumentNotValidException exception) {
+        return ValidationError.createValidationError(exception);
     }
 
     private User saveUser(User user, User newData, Principal p, HttpServletResponse response) throws ServletException {
@@ -189,29 +201,26 @@ public class UserController {
         }
     }
 
-    private void validateData(User bean) {
-/*
-        if (StringUtils.isEmpty(bean.getUserName())) {
-  //        addError("error.add.user.missingUserName");
-        }
-        if (StringUtils.isEmpty(bean.getScreenName())) {
-            //addError("Register.error.screenNameNull");
-        }
-        if (StringUtils.isEmpty(bean.getEmailAddress())) {
-            //addError("Register.error.emailAddressNull");
-        }
-         if (isAdd()) {
-            String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
-            if(allowed == null || allowed.trim().length() == 0) {
-                allowed = Register.DEFAULT_ALLOWED_CHARS;
+    private BindException advancedValidate(User data, boolean isAdd) {
+        BindException be = new BindException(data, "new data object");
+
+        if (isAdd) {
+            if (WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.DATABASE && StringUtils.isEmpty(data.getPassword())) {
+                be.addError(new FieldError("User object", "Password", "Password is missing."));
             }
-            String safe = CharSetUtils.keep(bean.getUserName(), allowed);
-            if (!safe.equals(bean.getUserName()) ) {
-               // addError("error.add.user.badUserName");
-            }
-            if (WebloggerStaticConfig.getAuthMethod() == AuthMethod.DATABASE && StringUtils.isEmpty(bean.getPassword())) {
-                //addError("error.add.user.missingPassword");
-            }
-       }
-*/   }
+        }
+
+        User testUser = userManager.getUserByUserName(data.getUserName(), null);
+        if (testUser != null && !testUser.getId().equals(data.getId())) {
+            be.addError(new FieldError("User object", "Username", "Username already in use."));
+        }
+
+        testUser = userManager.getUserByScreenName(data.getScreenName());
+        if (testUser != null && !testUser.getId().equals(data.getId())) {
+            be.addError(new FieldError("User object", "Screen Name", "Screen name already in use."));
+        }
+
+        return be;
+    }
+
 }

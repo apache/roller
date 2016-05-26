@@ -25,6 +25,8 @@ import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -40,6 +42,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 
 @Entity
@@ -67,10 +71,18 @@ import javax.persistence.Transient;
 public class User {
     
     private String  id;
+
+    @NotBlank(message = "User Name must not be null")
+    @Pattern(regexp = "[A-Za-z0-9]*", message = "User Name must be letters and digits only.")
     private String  userName;
     private String  password;
     private GlobalRole globalRole;
+
+    @NotBlank(message = "Screen Name must not be null")
     private String  screenName;
+
+    @NotNull(message = "Email must not be null")
+    @Email(message = "Invalid Email Address")
     private String  emailAddress;
     private Date    dateCreated;
     private String  locale;

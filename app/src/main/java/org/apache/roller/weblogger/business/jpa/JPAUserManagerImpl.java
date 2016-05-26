@@ -113,26 +113,6 @@ public class JPAUserManagerImpl implements UserManager {
             data.setActivationCode(null);
         }
 
-        User testUser = getUserByUserName(data.getUserName(), null);
-        if (testUser != null && !testUser.getId().equals(data.getId())) {
-            throw new IllegalArgumentException("error.add.user.userNameInUse");
-        }
-
-        testUser = getUserByUserName(data.getUserName().toLowerCase(), null);
-        if (testUser != null && !testUser.getId().equals(data.getId())) {
-            throw new IllegalArgumentException("error.add.user.userNameInUse");
-        }
-
-        testUser = getUserByScreenName(data.getScreenName());
-        if (testUser != null && !testUser.getId().equals(data.getId())) {
-            throw new IllegalArgumentException("error.add.user.screenNameInUse");
-        }
-
-        testUser = getUserByScreenName(data.getScreenName().toLowerCase());
-        if (testUser != null && !testUser.getId().equals(data.getId())) {
-            throw new IllegalArgumentException("error.add.user.screenNameInUse");
-        }
-
         this.strategy.store(data);
     }
 

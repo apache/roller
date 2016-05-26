@@ -1,8 +1,11 @@
 $(function() {
   var data = {};
-  var myTemplate = $.templates("#formTemplate");
+  $.templates({
+    formTemplate: '#formTemplate',
+    errorMessageTemplate: '#errorMessageTemplate'
+  });
   function updateEditForm(data) {
-    myTemplate.link("#formBody", data);
+    $.link.formTemplate("#formBody", data);
   }
   function refreshUserList(id) {
     checkLoggedIn(function() {
@@ -27,6 +30,7 @@ $(function() {
   $("#select-user").click(function(e) {
      e.preventDefault();
      $('#userCreate').hide();
+     $('#errorMessageDiv').hide();
      var selectedId = $('#useradmin-select-user').val();
      checkLoggedIn(function() {
        $.ajax({
@@ -41,6 +45,7 @@ $(function() {
   $("#create-user").click(function(e) {
      e.preventDefault();
      $('#userEdit').hide();
+     $('#errorMessageDiv').hide();
      checkLoggedIn(function() {
        var data = {};
        updateEditForm(data);
@@ -52,6 +57,7 @@ $(function() {
   });
   $("#myForm").submit(function(e) {
     e.preventDefault();
+    $('#errorMessageDiv').hide();
     var view = $.view("#recordId");
     checkLoggedIn(function() {
       $.ajax({
@@ -64,6 +70,13 @@ $(function() {
            $('#userEdit').show();
            $('#userCreate').show();
            refreshUserList(data.id);
+         },
+         error: function(xhr, status, errorThrown) {
+            if (xhr.status == 400) {
+              var html = $.render.errorMessageTemplate(xhr.responseJSON);
+              $('#errorMessageDiv').html(html);
+              $('#errorMessageDiv').show();
+            }
          }
       });
     });
