@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.struts2.admin;
+package org.apache.roller.weblogger.ui.restapi;
 
 import java.util.HashMap;
 import java.util.Map;

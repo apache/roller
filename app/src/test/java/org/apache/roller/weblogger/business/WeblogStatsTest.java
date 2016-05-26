@@ -52,8 +52,8 @@ public class WeblogStatsTest extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         // create weblog with three entries and two comments per entry
-        user1 = setupUser("a_commentCountTestUser");
-        user2 = setupUser("b_commentCountTestUser");
+        user1 = setupUser("aCommentCountTestUser");
+        user2 = setupUser("bCommentCountTestUser");
 
         website1 = setupWeblog("a_testWebsite1", user1);
         WeblogEntry entry11 = setupWeblogEntry(

@@ -56,7 +56,7 @@ public class FileContentManagerTest extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        testUser = setupUser("FCMTest_userName1");
+        testUser = setupUser("FCMTestUserName1");
         testWeblog = setupWeblog("FCMTest_handle1", testUser);
         endSession(true);
     }

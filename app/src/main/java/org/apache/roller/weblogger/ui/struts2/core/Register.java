@@ -313,10 +313,8 @@ public class Register extends UIAction implements ServletRequestAware {
         }
 
         // check that username only contains safe characters
-        String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
-        if (allowed == null || allowed.trim().length() == 0) {
-            allowed = DEFAULT_ALLOWED_CHARS;
-        }
+        String allowed = DEFAULT_ALLOWED_CHARS;
+
         String safe = CharSetUtils.keep(bean.getUserName(), allowed);
         if (!safe.equals(bean.getUserName()) ) {
             addError("error.add.user.badUserName");

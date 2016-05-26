@@ -169,10 +169,8 @@ public class CreateWeblog extends UIAction {
         }
 
         // make sure handle only contains safe characters
-        String allowed = WebloggerStaticConfig.getProperty("username.allowedChars");
-        if(allowed == null || allowed.trim().length() == 0) {
-            allowed = Register.DEFAULT_ALLOWED_CHARS;
-        }
+        String allowed = Register.DEFAULT_ALLOWED_CHARS;
+
         String safe = CharSetUtils.keep(getBean().getHandle(), allowed);
         if (!safe.equals(getBean().getHandle()) ) {
             addError("createWeblog.error.invalidHandle");
