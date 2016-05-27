@@ -45,9 +45,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -147,8 +149,12 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/users", method = RequestMethod.PUT)
-    public User addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
+    public ResponseEntity addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
         User user = new User();
+        ValidationError maybeError = advancedValidate(newData, true);
+        if (maybeError != null) {
+            return ResponseEntity.badRequest().body(maybeError);
+        }
         user.setId(WebloggerCommon.generateUUID());
         user.setUserName(newData.getUserName());
         user.setDateCreated(new java.util.Date());
@@ -156,10 +162,28 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.PUT)
-    public User updateUser(@PathVariable String id, @Valid @RequestBody User newData, Principal p,
-                           HttpServletResponse response, Errors errors) throws ServletException {
+    public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody User newData, Principal p,
+                                     HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
+        ValidationError maybeError = advancedValidate(newData, false);
+        if (maybeError != null) {
+            return ResponseEntity.badRequest().body(maybeError);
+        }
         return saveUser(user, newData, p, response);
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs", method = RequestMethod.GET)
+    public List<UserWeblogRole> getUsersWeblogs(@PathVariable String id, HttpServletResponse response) throws ServletException {
+        User user = userManager.getUser(id);
+        if (user == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+        List<UserWeblogRole> uwrs = userManager.getWeblogRolesIncludingPending(user);
+        for (UserWeblogRole uwr : uwrs) {
+            uwr.setUser(null);
+        }
+        return uwrs;
     }
 
     @ExceptionHandler
@@ -168,7 +192,7 @@ public class UserController {
         return ValidationError.createValidationError(exception);
     }
 
-    private User saveUser(User user, User newData, Principal p, HttpServletResponse response) throws ServletException {
+    private ResponseEntity saveUser(User user, User newData, Principal p, HttpServletResponse response) throws ServletException {
         try {
             if (user != null) {
                 user.setScreenName(newData.getScreenName().trim());
@@ -190,37 +214,39 @@ public class UserController {
                     user.setPassword(null);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (RollbackException e) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body("Persistence Problem");
                 }
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                ResponseEntity.notFound();
             }
-            return response.getStatus() == HttpServletResponse.SC_OK ? user : null;
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
     }
 
-    private BindException advancedValidate(User data, boolean isAdd) {
+    private ValidationError advancedValidate(User data, boolean isAdd) {
         BindException be = new BindException(data, "new data object");
+
+        ValidationError.fromBindingErrors(be);
 
         if (isAdd) {
             if (WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.DATABASE && StringUtils.isEmpty(data.getPassword())) {
-                be.addError(new FieldError("User object", "Password", "Password is missing."));
+                be.addError(new ObjectError("User object", "Password is missing."));
             }
         }
 
         User testUser = userManager.getUserByUserName(data.getUserName(), null);
         if (testUser != null && !testUser.getId().equals(data.getId())) {
-            be.addError(new FieldError("User object", "Username", "Username already in use."));
+            be.addError(new ObjectError("User object", "Username already in use."));
         }
 
         testUser = userManager.getUserByScreenName(data.getScreenName());
         if (testUser != null && !testUser.getId().equals(data.getId())) {
-            be.addError(new FieldError("User object", "Screen Name", "Screen name already in use."));
+            be.addError(new ObjectError("User object", "Screen name already in use."));
         }
 
-        return be;
+        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
     }
 
 }

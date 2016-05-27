@@ -50,7 +50,7 @@ public class UserTest extends WebloggerTest {
         
         User testUser = new User();
         testUser.setId(WebloggerCommon.generateUUID());
-        testUser.setUserName("testUser");
+        testUser.setUserName("testuser");
         testUser.setPassword("password");
         testUser.setScreenName("Test User Screen Name");
         testUser.setEmailAddress("TestUser@dev.null");
@@ -102,7 +102,7 @@ public class UserTest extends WebloggerTest {
         SafeUser safeUser;
         
         // add test user
-        User testUser = setupUser("userTestUser");
+        User testUser = setupUser("usertestuser");
         endSession(true);
         
         // lookup by username
@@ -151,7 +151,7 @@ public class UserTest extends WebloggerTest {
         User user;
         
         // add test user
-        User testUser = setupUser("roleTestUser");
+        User testUser = setupUser("roletestuser");
         endSession(true);
         
         user = userManager.getUserByUserName(testUser.getUserName());

@@ -110,7 +110,7 @@
                        </tr>
                        
                        <tr>
-                           <td class="mm_subtable_label"><s:text name='yourWebsites.permission'/></td>
+                           <td class="mm_subtable_label"><s:text name='generic.role'/></td>
                            <td><s:if test='#perms.weblogRole.name() == "OWNER"'>OWNER</s:if>
                            <s:if test='#perms.weblogRole.name() == "POST"'>PUBLISHER</s:if>
                            <s:if test='#perms.weblogRole.name() == "EDIT_DRAFT"'>CONTRIBUTOR</s:if></td>

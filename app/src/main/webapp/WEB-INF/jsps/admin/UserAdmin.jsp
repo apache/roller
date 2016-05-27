@@ -23,10 +23,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
-var msg = {
-    editLabel: '<s:text name="userAdmin.subtitle.editUser"/>',
-    newUserLabel: '<s:text name="userAdmin.subtitle.createUser"/>'
-};
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/useradmin.js'/>"></script>
@@ -42,19 +38,12 @@ var msg = {
   </script>
 </div>
 
-<p class="subtitle"><s:text name="userAdmin.subtitle.searchUser" /></p><br>
+<p class="subtitle"><s:text name="userAdmin.subtitle" /></p>
 <span id="userEdit"><select id="useradmin-select-user"></select>
 <input id="select-user" type="button" style="margin:4px" value='<s:text name="generic.edit" />'/></span>
 <span id="userCreate"><input id="create-user" type="button" style="margin:4px" value='<s:text name="userAdmin.createUser" />'/></span>
 
-<input type="hidden" id="recordIdOld" value="<s:property value='%{#parameters.bean.id}'/>"/>
 <input type="hidden" id="refreshURL" value="<s:url action='userAdmin'/>"/>
-
-<p class="subtitle">
-    <s:text name="">
-        <s:param value="bean.userName" />
-    </s:text>
-</p>
 
 <s:form id="myForm" action="userAdmin">
     <table class="formtable">
@@ -132,53 +121,53 @@ var msg = {
 
     <br>
 
-    <s:if test="actionName == 'modifyUser'">
-        <p class="subtitle"><s:text name="userAdmin.userWeblogs" /></p>
+    <p><s:text name="userAdmin.userMemberOf"/></p>
+    <table class="rollertable">
+      <thead>
+        <tr class="rHeaderTr">
+            <th style="width:30%"><s:text name="generic.weblog" /></th>
+            <th style="width:10%"><s:text name="userAdmin.pending" /></th>
+            <th style="width:10%"><s:text name="generic.role" /></th>
+            <th style="width:25%"><s:text name="generic.edit" /></th>
+            <th width="width:25%"><s:text name="userAdmin.manage" /></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <script id="tableTemplate" type="text/x-jsrender">
+          <tr id="{{:id}}">
+              <td>
+                  <a href='{{:weblog.absoluteURL}}'>
+                      {{:weblog.name}} [{{:weblog.handle}}]
+                  </a>
+              </td>
+              <td>
+                  {{:pending}}
+              </td>
+              <td>
+                  {{:weblogRole}}
+              </td>
+              <td>
+                  <s:url action="entries" namespace="/tb-ui/authoring" id="editEntries">
+                      <s:param name="weblog" value="{{:weblog.handle}}" />
+                  </s:url>
+                  <img src='<s:url value="/images/page_white_edit.png"/>' />
+                  <a href='<s:property value="editEntries" />?weblog={{:weblog.handle}}'>
+                  <s:text name="userAdmin.editEntries" /></a>
+              </td>
+              <td>
+                  <s:url action="weblogConfig" namespace="/tb-ui/authoring" id="manageWeblog">
+                      <s:param name="weblog" value="{{:weblog.handle}}" />
+                  </s:url>
+                  <img src='<s:url value="/images/page_white_edit.png"/>' />
+                  <a href='<s:property value="manageWeblog"/>?weblog={{:weblog.handle}}'>
+                  <s:text name="userAdmin.manage" /></a>
+              </td>
+          </tr>
+        </script>
+      </tbody>
+    </table>
 
-        <s:if test="permissions != null && !permissions.isEmpty() > 0">
-            <p><s:text name="userAdmin.userMemberOf" />:</p>
-            <table class="rollertable" style="width: 80%">
-              <tbody id="tableBody">
-                <script id="tableTemplate" type="text/x-jsrender">
-                  <tr id="{{:id}}">
-                      <td style="width:30%">
-                          <a href='{{:weblog.absoluteURL}}'>
-                              <s:property value="{{:weblog.name}}" /> [<s:property value="{{:weblog.handle}}" />]
-                          </a>
-                      </td>
-                      <td style="width:15%">
-                          <s:url action="entryAdd" namespace="/tb-ui/authoring" id="newEntry">
-                              <s:param name="weblog" value="{{:weblog.handle}}" />
-                          </s:url>
-                          <img src='<s:url value="/images/page_white_edit.png"/>' />
-                          <a href='<s:property value="newEntry" />'>
-                          <s:text name="userAdmin.newEntry" /></a>
-                      </td>
-                      <td style="width:15%">
-                          <s:url action="entries" namespace="/tb-ui/authoring" id="editEntries">
-                              <s:param name="weblog" value="{{:weblog.handle}}" />
-                          </s:url>
-                          <img src='<s:url value="/images/page_white_edit.png"/>' />
-                          <a href='<s:property value="editEntries" />'>
-                          <s:text name="userAdmin.editEntries" /></a>
-                      </td>
-                      <td style="width:15%">
-                          <s:url action="weblogConfig" namespace="/tb-ui/authoring" id="manageWeblog">
-                              <s:param name="weblog" value="{{:weblog.handle}}" />
-                          </s:url>
-                          <img src='<s:url value="/images/page_white_edit.png"/>' />
-                          <a href='<s:property value="manageWeblog" />'>
-                          <s:text name="userAdmin.manage" /></a>
-                      </td>
-                  </tr>
-                </script>
-              </tbody>
-            </table>
-        </s:if>
-        <s:else>
-            <s:text name="userAdmin.userHasNoWeblogs" />
-        </s:else>
-    </s:if>
+
 
     <br>
     <br>

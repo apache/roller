@@ -73,7 +73,7 @@ public class User {
     private String  id;
 
     @NotBlank(message = "User Name must not be null")
-    @Pattern(regexp = "[A-Za-z0-9]*", message = "User Name must be letters and digits only.")
+    @Pattern(regexp = "[a-z0-9]*", message = "User Name must be lowercase letters and digits only.")
     private String  userName;
     private String  password;
     private GlobalRole globalRole;
@@ -81,7 +81,7 @@ public class User {
     @NotBlank(message = "Screen Name must not be null")
     private String  screenName;
 
-    @NotNull(message = "Email must not be null")
+    @NotBlank(message = "Email must not be null")
     @Email(message = "Invalid Email Address")
     private String  emailAddress;
     private Date    dateCreated;

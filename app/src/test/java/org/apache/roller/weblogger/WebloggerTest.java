@@ -128,7 +128,7 @@ abstract public class WebloggerTest {
     protected User setupUser(String userName) throws Exception {
         User testUser = new User();
         testUser.setId(WebloggerCommon.generateUUID());
-        testUser.setUserName(userName);
+        testUser.setUserName(userName.toLowerCase());
         testUser.setPassword("password");
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         testUser.setScreenName(userName);
@@ -144,7 +144,7 @@ abstract public class WebloggerTest {
         strategy.flush();
 
         // query for the user to make sure we return the persisted object
-        User user = userManager.getUserByUserName(userName);
+        User user = userManager.getUserByUserName(userName.toLowerCase());
 
         if (user == null) {
             throw new IllegalStateException("error inserting new user");
