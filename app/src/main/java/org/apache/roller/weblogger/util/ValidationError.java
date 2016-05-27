@@ -34,7 +34,7 @@ public class ValidationError {
     }
 
     public static ValidationError fromBindingErrors(Errors errors) {
-        ValidationError error = new ValidationError("Validation failed. " + errors.getErrorCount() + " error(s)");
+        ValidationError error = new ValidationError(errors.getErrorCount());
         for (ObjectError objectError : errors.getAllErrors()) {
             error.addValidationError(objectError.getDefaultMessage());
         }
@@ -45,6 +45,10 @@ public class ValidationError {
     private List<String> errors = new ArrayList<>();
 
     private final String errorMessage;
+
+    public ValidationError(int errorCount) {
+        this.errorMessage = "Validation failed. " + errorCount + " error(s)";
+    }
 
     public ValidationError(String errorMessage) {
         this.errorMessage = errorMessage;

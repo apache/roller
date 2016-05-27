@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.pojos;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -103,8 +104,11 @@ public class Weblog {
     private boolean tempPreviewWeblog = false;
 
     // Associated objects
+    @JsonIgnore
     private List<WeblogCategory> weblogCategories = new ArrayList<>();
+    @JsonIgnore
     private List<WeblogBookmark> bookmarks = new ArrayList<>();
+    @JsonIgnore
     private List<MediaDirectory> mediaDirectories = new ArrayList<>();
 
     public Weblog() {}

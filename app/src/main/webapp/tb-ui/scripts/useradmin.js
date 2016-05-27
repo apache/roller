@@ -2,10 +2,19 @@ $(function() {
   var data = {};
   $.templates({
     formTemplate: '#formTemplate',
+    tableTemplate: '#tableTemplate',
     errorMessageTemplate: '#errorMessageTemplate'
   });
   function updateEditForm(data) {
     $.link.formTemplate("#formBody", data);
+    $.ajax({
+       type: "GET",
+       url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + data.id + '/weblogs',
+       success: function(data, textStatus, xhr) {
+         var html = $.render.tableTemplate(data);
+         $('#tableBody').html(html);
+       }
+    });
   }
   function refreshUserList(id) {
     checkLoggedIn(function() {
