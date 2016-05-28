@@ -314,6 +314,7 @@
                 <beans:value>rss</beans:value>
                 <beans:value>atom</beans:value>
                 <beans:value>search</beans:value>
+                <beans:value>entrycomment</beans:value>
                 <beans:value>comments</beans:value>
                 <beans:value>resource</beans:value>
                 <beans:value>planetrss</beans:value>

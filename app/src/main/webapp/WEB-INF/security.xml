@@ -47,6 +47,8 @@
         -->
         <custom-filter ref="ajaxInvalidSessionRedirectFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
 
+        <csrf request-matcher-ref="csrfRequestMatcher"/>
+
         <!-- Needed to allow for popups -->
         <headers>
             <frame-options policy="SAMEORIGIN"/>
@@ -63,6 +65,9 @@
 
     <beans:bean id="ajaxInvalidSessionRedirectFilter"
                 class="org.apache.roller.weblogger.ui.core.filters.AjaxInvalidSessionRedirectFilter"/>
+
+    <beans:bean id="csrfRequestMatcher"
+                class="org.apache.roller.weblogger.ui.core.security.CsrfSecurityRequestMatcher"/>
 
     <beans:bean id="authenticationSuccessHandler"
                 class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">

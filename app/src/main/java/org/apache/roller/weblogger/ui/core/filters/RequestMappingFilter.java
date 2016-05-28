@@ -188,7 +188,7 @@ public class RequestMappingFilter implements Filter {
     }
 
     /**
-     * Convenience method for caculating the servlet forward url given a set
+     * Convenience method for calculating the servlet forward url given a set
      * of information to make the decision with.
      *
      * handle is always assumed valid, all other params may be null.
@@ -199,8 +199,8 @@ public class RequestMappingFilter implements Filter {
         // POST url is presently just for commenting
         if ("POST".equals(request.getMethod())) {
             // posting to permalink, should mean comment (which must have a content param)
-            if (context.equals("entry") && request.getParameter("content") != null) {
-                forwardUrl = generateForwardUrl(CommentProcessor.PATH, handle, context, data);
+            if (context.equals("entrycomment") && request.getParameter("content") != null) {
+                forwardUrl = generateForwardUrl(CommentProcessor.PATH, handle, "entry", data);
             }
         } else {
             // no context means weblog homepage
