@@ -145,7 +145,12 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     public String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute) {
         return getWeblogURL(weblog, absolute) + "entry/" + Utilities.encode(entryAnchor);
     }
-    
+
+    @Override
+    public String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean absolute) {
+        return getWeblogURL(weblog, absolute) + "entrycomment/" + Utilities.encode(entryAnchor);
+    }
+
     /**
      * Get url for a single weblog media file on a given weblog.
      */

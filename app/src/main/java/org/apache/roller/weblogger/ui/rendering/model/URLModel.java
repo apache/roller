@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Provides access to URL building functionality.
@@ -130,10 +131,13 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogEntryURL(weblog, anchor, true);
     }
 
+    public String entryComment(String anchor) {
+        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor, true);
+    }
+
     public String comment(String anchor, String timeStamp) {
         return urlStrategy.getWeblogCommentURL(weblog, anchor, timeStamp, true);
     }
-
 
     public String comments(String anchor) {
         return urlStrategy.getWeblogCommentsURL(weblog, anchor, true);

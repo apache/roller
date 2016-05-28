@@ -87,6 +87,11 @@ public interface URLStrategy {
     String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute);
 
     /**
+     * Get the POST url for a weblog entry comment.
+     */
+    String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean absolute);
+
+    /**
      * Get url for a single weblog entry comments on a given weblog.
      */
     String getWeblogCommentsURL(Weblog weblog, String entryAnchor, boolean absolute);

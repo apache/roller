@@ -451,7 +451,7 @@ public class PageProcessor {
      * want to revisit this approach in the future and see if we can do this in
      * a different way, but for now this is the easy way.
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method=RequestMethod.POST)
     public void getPageViaPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // make sure caching is disabled

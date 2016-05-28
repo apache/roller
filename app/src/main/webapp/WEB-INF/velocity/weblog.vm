@@ -325,7 +325,7 @@ Show comments form for weblog entry.
         <span class="status">$cform.message</span>
     #end
 
-    <form method="post" action="$url.entry($entry.anchor)" focus="name" name="commentForm" onsubmit="saveUserInformation(this); return validateComments(this)">
+    <form method="post" action="$url.entryComment($entry.anchor)" focus="name" name="commentForm" onsubmit="saveUserInformation(this); return validateComments(this)">
         <input type="hidden" name="method" value="post" />
 
         <ul>

@@ -86,7 +86,7 @@ public class MailProvider {
                 props.put("mail.smtp.auth", "true");   
             }
             if (mailPort != -1) {
-                props.put("mail.smtp.port", ""+mailPort);
+                props.put("mail.smtp.port", mailPort);
             }
             session = Session.getDefaultInstance(props, null);
         }
