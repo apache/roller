@@ -19,7 +19,7 @@
         <Logger name="org.apache.struts2" level="warn"/>
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="com.opensymphony.xwork2" level="error"/>
-        <Logger name="org.springframework" level="debug"/>
+        <Logger name="org.springframework" level="warn"/>
         <Logger name="org.hibernate" level="info"/>
         <!-- the struts2 file upload stuff has some overly verbose messaging -->
         <Logger name="org.apache.struts2.interceptor.FileUploadInterceptor" level="error"/>
