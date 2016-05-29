@@ -21,22 +21,20 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.Properties;
+import javax.mail.Authenticator;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulates weblogger mail configuration, returns mail sessions.
  */
 public class MailProvider {
-
-    private static Logger log = LoggerFactory.getLogger(MailProvider.class);
 
     private enum ConfigurationType {JNDI_NAME, MAIL_PROPERTIES }
     
@@ -55,21 +53,11 @@ public class MailProvider {
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
         }
-        String jndiName = WebloggerStaticConfig.getProperty("mail.jndi.name");
-        mailHostname = WebloggerStaticConfig.getProperty("mail.hostname");
-        mailUsername = WebloggerStaticConfig.getProperty("mail.username");
-        mailPassword = WebloggerStaticConfig.getProperty("mail.password");
-        try {
-            String portString = WebloggerStaticConfig.getProperty("mail.port");
-            if (portString != null) {
-                mailPort = Integer.parseInt(portString);
-            }
-        } catch (Exception e) {
-            log.warn("mail server port not a valid integer, ignoring");
-        }
-        
+
         // init and connect now so we fail early
-        if (type == ConfigurationType.JNDI_NAME) {            
+        if (type == ConfigurationType.JNDI_NAME) {
+            String jndiName = WebloggerStaticConfig.getProperty("mail.jndi.name");
+
             if (jndiName != null && !jndiName.startsWith("java:")) {
                 jndiName = "java:comp/env/" + jndiName;
             }
@@ -80,15 +68,28 @@ public class MailProvider {
                 throw new IllegalArgumentException("ERROR looking up mail-session with JNDI name: " + jndiName);
             }
         } else {
+            mailHostname = WebloggerStaticConfig.getProperty("mail.smtp.host");
+            mailUsername = WebloggerStaticConfig.getProperty("mail.smtp.user");
+            mailPassword = WebloggerStaticConfig.getProperty("mail.smtp.password");
+            mailPort = WebloggerStaticConfig.getIntProperty("mail.smtp.port", -1);
+
             Properties props = new Properties();
-            props.put("mail.smtp.host", mailHostname);
-            if (mailUsername != null && mailPassword != null) {
-                props.put("mail.smtp.auth", "true");   
-            }
+            fillProperty(props, "mail.smtp.host");
             if (mailPort != -1) {
                 props.put("mail.smtp.port", mailPort);
             }
-            session = Session.getDefaultInstance(props, null);
+            fillProperty(props, "mail.smtp.auth");
+            fillProperty(props, "mail.smtp.starttls.enable");
+            fillProperty(props, "mail.smtp.socketFactory.class");
+            fillProperty(props, "mail.smtp.socketFactory.port");
+            fillProperty(props, "mail.smtp.socketFactory.fallback");
+
+            session = Session.getDefaultInstance(props, mailPassword == null ? null : new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(mailUsername, mailPassword);
+                }
+            });
         }
         
         try {
@@ -99,7 +100,13 @@ public class MailProvider {
         }
         
     }
-    
+
+    private static void fillProperty(Properties props, String propertyName) {
+        String val = WebloggerStaticConfig.getProperty(propertyName);
+        if (val != null) {
+            props.put(propertyName, val);
+        }
+    }
     
     /**
      * Get a mail Session.

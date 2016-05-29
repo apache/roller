@@ -33,7 +33,6 @@ If you'd like to use Tomcat provided datasource and/or mail sessions then:
             mail.smtp.socketFactory.class="javax.net.ssl.SSLSocketFactory"
             mail.smtp.socketFactory.port="587"
             mail.smtp.socketFactory.fallback="false"
-            mail.debug="false"
   /-->
 
 </Context>
