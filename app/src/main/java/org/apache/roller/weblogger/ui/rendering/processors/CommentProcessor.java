@@ -178,7 +178,6 @@ public class CommentProcessor {
         final boolean preview;
         if (method != null && method.equals("preview")) {
             preview = true;
-            messages.addMessage("commentServlet.previewCommentOnly");
             log.debug("Handling comment preview post");
         } else {
             preview = false;
@@ -350,32 +349,29 @@ public class CommentProcessor {
                 comment.setStatus(ApprovalStatus.APPROVED);
                 message = messageUtils.getString("commentServlet.commentAccepted");
             } else {
-                // Invalid comments are marked as spam
-                log.debug("Comment marked as spam");
+                // Invalid comments are marked as spam, but just a moderation message sent to spammer
+                // Informing the spammer the reasons for its detection encourages the spammer to just modify
+                // the spam message so it will pass through; also indicating that the message is subject
+                // to moderation (and sure refusal) discourages future spamming attempts.
                 comment.setStatus(ApprovalStatus.SPAM);
-                error = messageUtils.getString("commentServlet.commentMarkedAsSpam");
+                message = messageUtils.getString("commentServlet.submittedToModerator");
 
-                // add specific error messages if they exist
+                // log specific error messages if they exist
+                log.debug("Comment marked as spam, reasons: ");
                 if (messages.getErrorCount() > 0) {
                     Iterator errors = messages.getErrors();
-                    RollerMessage errorKey;
 
-                    StringBuilder buf = new StringBuilder();
-                    buf.append("<ul>");
+                    RollerMessage errorKey;
                     while (errors.hasNext()) {
                         errorKey = (RollerMessage) errors.next();
-
-                        buf.append("<li>");
                         if (errorKey.getArgs() != null) {
-                            buf.append(messageUtils.getString(errorKey.getKey(), errorKey.getArgs()));
+                            log.debug(messageUtils.getString(errorKey.getKey(), errorKey.getArgs()));
                         } else {
-                            buf.append(messageUtils.getString(errorKey.getKey()));
+                            log.debug(messageUtils.getString(errorKey.getKey()));
                         }
-                        buf.append("</li>");
                     }
-                    buf.append("</ul>");
-
-                    error += buf.toString();
+                } else {
+                    log.debug("None available.");
                 }
 
             }
@@ -387,7 +383,7 @@ public class CommentProcessor {
                 weblogEntryManager.saveComment(comment, refreshWeblog);
                 WebloggerFactory.flush();
 
-                // Send email notifications only to subscribers if comment is 100% valid
+                // Send email notifications to subscribers only if comment is 100% valid
                 boolean notifySubscribers = (validationScore == WebloggerCommon.PERCENT_100);
                 mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
 
@@ -418,8 +414,11 @@ public class CommentProcessor {
         if (message != null) {
             cf.setMessage(message);
         }
+        // for subsequent processing by PageProcessor, which will put in into PageModel
+        // so the templates can work with the comments.
         request.setAttribute("commentForm", cf);
 
+        // off to PageProcessor's POST handling.
         log.debug("comment processed, forwarding to {}", dispatch_url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
         dispatcher.forward(request, response);

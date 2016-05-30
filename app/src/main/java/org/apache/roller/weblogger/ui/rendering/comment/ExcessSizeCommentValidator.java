@@ -18,18 +18,14 @@
 
 package org.apache.roller.weblogger.ui.rendering.comment;
 
-import java.util.ResourceBundle;
-
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
- * Validates comment only if it has less than comment.validator.excessSize.threshold characters
+ * Validates comment only if it does not exceed number of characters specified by the threshold property.
  */
 public class ExcessSizeCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
-
     private int threshold = 1000;
 
     public void setThreshold(int threshold) {
@@ -37,7 +33,7 @@ public class ExcessSizeCommentValidator implements CommentValidator {
     }
 
     public String getName() {
-        return bundle.getString("comment.validator.excessSizeName");
+        return "Excess Size Comment Validator";
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
