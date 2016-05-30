@@ -19,72 +19,90 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
+<script>
+var contextPath = "${pageContext.request.contextPath}";
+</script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/profile.js'/>"></script>
+
+<div id="errorMessageDiv" style="color:red;display:none">
+  <script id="errorMessageTemplate" type="text/x-jsrender">
+  <b>{{:errorMessage}}</b>
+  <ul>
+     {{for errors}}
+     <li>{{>#data}}</li>
+     {{/for}}
+  </ul>
+  </script>
+</div>
+
+<div id="successMessageDiv" style="display:none">
+  <span>Information has been saved.</span>
+</div>
+
+<input type="hidden" id="refreshURL" value="<s:url action='profile'/>?id=<s:property value='%{#parameters.id}'/>"/>
+<input type="hidden" id="cancelURL" value="<s:url action='menu'/>"/>
+<input type="hidden" id="userId" value="<s:property value='%{#parameters.id}'/>"/>
 
 <p class="subtitle"><s:text name="userAdmin.title.editUser" /></p>
 
-<s:form action="profile!save">
-    <sec:csrfInput/>
-
+<s:form id="myForm" action="profile">
     <table class="formtable">
-        
-        <tr>
-            <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-            <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" readonly="true" cssStyle="background: #e5e5e5" /></td>
-            <td class="description"><s:text name="userSettings.tip.username" /></td>
+      <tbody id="formBody">
+        <script id="formTemplate" type="text/x-jsrender">
+        <tr id="recordId" data-id="{{:id}}">
+            <td class="label"><label for="userName"><s:text name="userSettings.username" /></label></td>
+            <td class="field">
+              <input type="text" size="30" maxlength="30" data-link="userName" readonly="true" cssStyle="background: #e5e5e5">
+            </td>
+            <td class="description">
+              <s:text name="userSettings.tip.username" />
+            </td>
         </tr>
-        
-        <tr>
-            <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-            <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/></td>
-            <td class="description"><s:text name="userRegister.tip.screenName" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="50" onBlur="this.value=this.value.trim()"/></td>
-            <td class="description"><s:text name="userRegister.tip.email" /></td>
-        </tr>
-        
-        <s:if test="authMethod == 'DATABASE'">
-            <tr>
-                <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-                <td class="field">
-                    <s:password name="bean.passwordText" size="20" maxlength="20" onBlur="this.value=this.value.trim()"/>
-                </td>
-                <td class="description"><s:text name="userRegister.tip.password" /></td>
-            </tr>
 
+        <tr>
+            <td class="label"><label for="screenName"><s:text name="userSettings.screenname" /></label></td>
+            <td class="field"><input type="text" size="30" data-link="screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
+            <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
+        </tr>
+
+        <tr>
+            <td class="label"><label for="emailAddress"><s:text name="userSettings.email" /></label></td>
+            <td class="field"><input type="email" size="40" data-link="emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
+            <td class="description"><s:text name="userAdmin.tip.email" /></td>
+        </tr>
+
+        <s:if test="getProp('authentication.method') == 'db'">
             <tr>
-                <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
-                <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" onBlur="this.value=this.value.trim()"/></td>
+                <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
+                <td class="field">
+                    <input type="password" size="20" data-link="password" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
+                <td class="description"><s:text name="userAdmin.tip.password" /></td>
+            </tr>
+            <tr>
+                <td class="label"><label for="passwordConfirm"><s:text name="userSettings.passwordConfirm" /></label></td>
+                <td class="field">
+                    <input type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
                 <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
             </tr>
         </s:if>
-        <s:else>
-            <s:hidden name="bean.password" />
-        </s:else>
-        
+
         <tr>
-            <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
+            <td class="label"><label for="locale"><s:text name="userSettings.locale" /></label></td>
             <td class="field">
-                <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
+                <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="locale" required=""/>
             </td>
-            <td class="description"><s:text name="userRegister.tip.locale" /></td>
+            <td class="description"><s:text name="userAdmin.tip.locale" /></td>
         </tr>
-        
-        <tr>
-            <td class="label"><label for="timeZone" /><s:text name="userSettings.timeZone" /></label></td>
-            <td class="field">
-                <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-            </td>
-            <td class="description"><s:text name="userRegister.tip.timeZone" /></td>
-        </tr>
-        
+        </script>
+      </tbody>
     </table>
-    
+
     <br />
-    
-    <s:submit value="%{getText('generic.save')}" />
-    <input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
+
+    <s:submit id="save-link" value="%{getText('generic.save')}" />
+    <input id="cancel-link" type="button" value="<s:text name="generic.cancel"/>"/>
 
 </s:form>

@@ -236,7 +236,7 @@ public class MailManager {
 
         // activationURL=
         String activationURL = rootURL
-                + "/tb-ui/register!activate.rol?activationCode="
+                + "/tb-ui/emailResponse!activate.rol?activationCode="
                 + user.getActivationCode();
         sb.append(MessageFormat.format(
                 resources.getString("user.account.activation.mail.content"),

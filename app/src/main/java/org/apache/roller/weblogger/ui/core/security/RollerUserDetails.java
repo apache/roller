@@ -31,8 +31,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public interface RollerUserDetails extends UserDetails {
 
-    String getTimeZone();
-  
     String getLocale();
   
     String getScreenName();

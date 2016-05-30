@@ -19,50 +19,104 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
+<script>
+var contextPath = "${pageContext.request.contextPath}";
+var authMethod = '<s:property value="getProp('authentication.method')"/>';
+</script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/register.js'/>"></script>
 
+<div id="errorMessageDiv" style="color:red;display:none">
+  <script id="errorMessageTemplate" type="text/x-jsrender">
+  <b>{{:errorMessage}}</b>
+  <ul>
+     {{for errors}}
+     <li>{{>#data}}</li>
+     {{/for}}
+  </ul>
+  </script>
+</div>
+
+<div id="errorMessageNoLDAPAuth" style="color:red;display:none">
+  <span>Registration unavailable: LDAP authentication not detected.</span>
+</div>
+
+<div class="ldapok">
+
+<div id="successMessageDiv" style="display:none">
+  <p><s:text name="welcome.accountCreated" /></p>
+  <p><a id="a_clickHere" href="<s:url action='login-redirect'/>" ><s:text name="welcome.clickHere" /></a>
+  <s:text name="welcome.toLoginAndPost" /></p>
+</div>
+
+<div id="successMessageNeedActivation" style="display:none">
+  <p><s:text name="welcome.accountCreated" /></p>
+  <p><s:text name="welcome.user.account.not.activated" /></p>
+</div>
+
+<input type="hidden" id="refreshURL" value="<s:url action='register'/>"/>
+<input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
+
+<div class="notregistered">
 <p><s:text name="userRegister.prompt" /></p>
+</div>
 
-<s:form action="register!save" >
-    <sec:csrfInput/>
+<s:form id="myForm" action="register" >
     <s:hidden name="bean.id" />
     <s:hidden name="bean.enabled" />
 
 <table class="formtable">
+  <tbody id="formBody">
+    <script id="formTemplate" type="text/x-jsrender">
     <tr>
         <td colspan="3">
             <h2><s:text name="userRegister.heading.identification" /></h2>
             <p><s:text name="userRegister.tip.identification" /></p>
         </td>
     </tr>
-        
-    <s:if test="authMethod == 'LDAP'">
-        <tr>
-            <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-            <td class="field"><strong><s:property value="bean.userName" /></strong></td>
+
+    <s:if test="getProp('authentication.method') == 'ldap'">
+       <tr id="recordId" data-id="{{:id}}">
+            <td class="label"><label for="userName"><s:text name="userSettings.username" /></label></td>
+            <td class="field"><strong data-link="userName"></strong></td>
             <td class="description"><s:text name="userRegister.tip.userName" /></td>
         </tr>
     </s:if>
     <s:else>
-        <tr>
-            <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-            <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" onkeyup="onChange()" onBlur="this.value=this.value.trim()"/></td>
-            <td class="description"><s:text name="userRegister.tip.userName" /></td>
+        <tr id="recordId" data-id="{{:id}}">
+            <td class="label"><label for="userName"><s:text name="userSettings.username" /></label></td>
+            <td class="field">
+               <input type="text" size="30" data-link="userName" onBlur="this.value=this.value.trim()" minlength="5" maxlength="20" required>
+            </td>
+            <td class="description">
+               <s:text name="userAdmin.tip.userName" />
+            </td>
         </tr>
     </s:else>
-     
+
     <tr>
-        <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-        <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" onkeyup="onChange()" onBlur="this.value=this.value.trim()"/></td>
+        <td class="label"><label for="screenName"><s:text name="userSettings.screenname" /></label></td>
+        <td class="field"><input type="text" size="30" data-link="screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
         <td class="description"><s:text name="userRegister.tip.screenName" /></td>
     </tr>
 
     <tr>
-        <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-        <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" onkeyup="onChange()" onBlur="this.value=this.value.trim()"/></td>
-        <td class="description"><s:text name="userRegister.tip.email" /></td>
+        <td class="label"><label for="emailAddress"><s:text name="userSettings.email" /></label></td>
+        <td class="field"><input type="email" size="40" data-link="emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
+        <td class="description"><s:text name="userAdmin.tip.email" /></td>
     </tr>
 
-    <s:if test="authMethod != 'LDAP'">
+    <tr>
+        <td class="label"><label for="locale"><s:text name="userSettings.locale" /></label></td>
+        <td class="field">
+          <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="locale" required=""/>
+        </td>
+        <td class="description"><s:text name="userRegister.tip.locale" /></td>
+    </tr>
+
+    <s:if test="getProp('authentication.method') == 'db'">
         <tr>
             <td colspan="3">
                 <h2><s:text name="userRegister.heading.authentication" /></h2>
@@ -72,104 +126,34 @@
                 </s:if>
             </td>
         </tr>
-        
-        <s:if test="authMethod == 'DATABASE'">
-        <tr>
-            <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-            <td class="field">
-               <s:password name="bean.passwordText" size="20" maxlength="20" onkeyup="onChange()" onBlur="this.value=this.value.trim()"/>
-               <s:hidden name="bean.password" />
-           </td>
-            <td class="description"><s:text name="userRegister.tip.password" /></td>
-        </tr>
 
         <tr>
-            <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
-            <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" onkeyup="onChange()" onBlur="this.value=this.value.trim()"/></td>
+            <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
+            <td class="field">
+                <input type="password" size="20" data-link="password" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20" required></td>
+            <td class="description"><s:text name="userAdmin.tip.password" /></td>
+        </tr>
+        <tr>
+            <td class="label"><label for="passwordConfirm"><s:text name="userSettings.passwordConfirm" /></label></td>
+            <td class="field">
+                <input type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20" required></td>
             <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
         </tr>
-        </s:if>
-        <s:else>
-            <s:hidden name="bean.password" />
-            <s:hidden name="bean.passwordText" />
-            <s:hidden name="bean.passwordConfirm" />
-        </s:else>
-    </s:if>
-
-    <tr>
-        <td colspan="3">    
-            <h2><s:text name="userRegister.heading.locale" /></h2>
-            <p><s:text name="userRegister.tip.localeAndTimeZone" /></p>
-        </td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
-        <td class="field">
-           <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-        </td>
-        <td class="description"><s:text name="userRegister.tip.locale" /></td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="timeZone" /><s:text name="userSettings.timeZone" /></label></td>
-        <td class="field">
-           <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-        </td>
-        <td class="description"><s:text name="userRegister.tip.timeZone" /></td>
-    </tr>
-
+      </s:if>
+    </script>
+  </tbody>
 </table>
 
 <br />
 
+<div class="notregistered">
 <h2><s:text name="userRegister.heading.ready" /></h2>
 
 <p id="readytip"><s:text name="userRegister.tip.ready" /></p>
 
-<s:submit id="submit" key="userRegister.button.save" />
-<input type="button" value="<s:text name="generic.cancel"/>"
-    onclick="window.location='<s:url value="/"/>'" />
+<s:submit id="save-link" value="%{getText('userRegister.button.save')}" />
+<input id="cancel-link" type="button" value="<s:text name="generic.cancel"/>"/>
+</div>
 
 </s:form>
-
-<script>
-function onChange() {
-    var disabled = true;
-    var authMethod    = "<s:property value='authMethod' />";
-    var emailAddress    = document.register['bean.emailAddress'].value;
-    var userName = screenName = passwordText = passwordConfirm = "";
-
-    if (authMethod == 'LDAP') {
-        userName = '<s:property value="bean.userName" />';
-    } else {
-        userName = document.register['bean.userName'].value;
-    }
-
-    screenName = document.register['bean.screenName'].value;
-
-    if (authMethod == "DATABASE") {
-        passwordText    = document.register['bean.passwordText'].value;
-        passwordConfirm = document.register['bean.passwordConfirm'].value;
-    }
-
-    if (authMethod == "LDAP") {
-        if (emailAddress && screenName) disabled = false;
-    } else if (authMethod == "DATABASE") {
-        if (emailAddress && userName && screenName && passwordText && passwordConfirm) disabled = false;
-    }
-
-    if (authMethod != 'LDAP') {
-        if ((passwordText || passwordConfirm) && !(passwordText == passwordConfirm)) {
-            document.getElementById('readytip').innerHTML = '<s:text name="userRegister.error.mismatchedPasswords" />';
-            disabled = true;
-        } else if (disabled) {
-            document.getElementById('readytip').innerHTML = '<s:text name="userRegister.tip.ready" />'
-        } else {
-            document.getElementById('readytip').innerHTML = '<s:text name="userRegister.success.ready" />'
-        }
-    }
-    document.getElementById('submit').disabled = disabled;
-}
-document.getElementById('submit').disabled = true;
-</script>
+</div>

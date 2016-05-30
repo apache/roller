@@ -75,12 +75,6 @@ public class LDAPRegistrationHelper {
         this.ldapLocaleAttribute = ldapLocaleAttribute;
     }
 
-    private String ldapTimezoneAttribute = "timezone";
-
-    public void setLdapTimezoneAttribute(String ldapTimezoneAttribute) {
-        this.ldapTimezoneAttribute = ldapTimezoneAttribute;
-    }
-
     public User getUserDetailsFromAuthentication(HttpServletRequest request) {
 
         if (!(WebloggerStaticConfig.getAuthMethod() == AuthMethod.LDAP)) {
@@ -100,7 +94,6 @@ public class LDAPRegistrationHelper {
         String email = null;
         String screenName = null;
         String locale = null;
-        String timezone = null;
         boolean enabled;
 
         if (authentication == null) {
@@ -109,11 +102,8 @@ public class LDAPRegistrationHelper {
             screenName = getRequestAttribute(request, ldapScreennameAttribute);
             email = getRequestAttribute(request, ldapEmailAttribute);
             locale = getRequestAttribute(request, ldapLocaleAttribute);
-            timezone = getRequestAttribute(request, ldapTimezoneAttribute);
 
-            if (userName == null && screenName == null &&
-                    email == null && locale == null && timezone == null) {
-
+            if (userName == null && screenName == null && email == null && locale == null) {
                 log.warn("No Authentication found in SecurityContextHolder and HttpServletRequest.");
                 return null;
             } else {
@@ -146,7 +136,6 @@ public class LDAPRegistrationHelper {
                 screenName = rollerDetails.getScreenName();
                 email = rollerDetails.getEmailAddress();
                 locale = rollerDetails.getLocale();
-                timezone = rollerDetails.getTimeZone();
             } // Future: bring in fields from LDAP, see ROL-2042
         }
 

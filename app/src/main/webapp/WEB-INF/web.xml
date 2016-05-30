@@ -149,6 +149,7 @@
         <url-pattern>/tb-ui/authoring/rest/*</url-pattern>
         <url-pattern>/tb-ui/authoring/preview/*</url-pattern>
         <url-pattern>/tb-ui/admin/rest/*</url-pattern>
+        <url-pattern>/tb-ui/register/rest/*</url-pattern>
         <url-pattern>/tb-ui/rendering/page/*</url-pattern>
         <url-pattern>/tb-ui/rendering/comment/*</url-pattern>
         <url-pattern>/tb-ui/rendering/feed/*</url-pattern>

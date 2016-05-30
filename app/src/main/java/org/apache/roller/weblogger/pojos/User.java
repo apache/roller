@@ -78,6 +78,10 @@ public class User {
     private String  password;
     private GlobalRole globalRole;
 
+//    addError("Register.error.screenNameNull");
+//    addError("Register.error.emailAddressNull");
+
+
     @NotBlank(message = "Screen Name must not be null")
     private String  screenName;
 
