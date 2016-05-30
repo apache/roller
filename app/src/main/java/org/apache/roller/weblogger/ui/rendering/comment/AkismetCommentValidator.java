@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ResourceBundle;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -42,7 +41,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AkismetCommentValidator implements CommentValidator {
     private static Logger log = LoggerFactory.getLogger(AkismetCommentValidator.class);
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private String apikey;
 
     private URLStrategy urlStrategy;
@@ -57,7 +55,7 @@ public class AkismetCommentValidator implements CommentValidator {
     }
 
     public String getName() {
-        return bundle.getString("comment.validator.akismetName");
+        return "Akismet Comment Validator";
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {

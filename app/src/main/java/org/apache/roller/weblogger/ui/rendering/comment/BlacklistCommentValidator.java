@@ -21,8 +21,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.comment;
 
-import java.util.ResourceBundle;
-
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -33,10 +31,8 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * Validates comment if comment does not contain blacklisted words.
  */
 public class BlacklistCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");       
-
     public String getName() {
-        return bundle.getString("comment.validator.blacklistName");
+        return "Blacklist Comment Validator";
     }
 
     private WeblogManager weblogManager;

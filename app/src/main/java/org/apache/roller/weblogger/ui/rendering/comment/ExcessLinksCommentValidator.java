@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.comment;
 
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,11 +26,10 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
- * Validates comment only if it has fewer links than comment.validator.excessSize.threshold
+ * Validates comment only if its number of links don't exceed the configured threshold.
  */
 public class ExcessLinksCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");  
-    private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");    
+    private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");
     private int threshold = 3;
 
     public void setThreshold(int threshold) {
@@ -39,7 +37,7 @@ public class ExcessLinksCommentValidator implements CommentValidator {
     }
 
     public String getName() {
-        return bundle.getString("comment.validator.excessLinksName");
+        return "Excess Links Comment Validator";
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
