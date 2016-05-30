@@ -50,7 +50,6 @@ import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
 import org.apache.roller.weblogger.util.GenericThrottle;
-import org.apache.roller.weblogger.util.IPBanList;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -186,9 +185,7 @@ public class CommentProcessor {
 
         // throttling protection against spammers
         if (commentThrottle != null && commentThrottle.processHit(request.getRemoteAddr())) {
-
             log.debug("ABUSIVE {}", request.getRemoteAddr());
-            IPBanList.getInstance().addBannedIp(request.getRemoteAddr());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
