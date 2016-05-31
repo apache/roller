@@ -29,7 +29,11 @@
                 
                 <hr size="1" noshade="noshade" />
                 
-                <h3><a href="<s:url action="profile"/>"><s:text name="yourWebsites.editProfile" /></a></h3>
+                <s:url id="editProfile" action="profile">
+                    <s:param name="id" value="authenticatedUser.id" />
+                </s:url>
+
+                <h3><s:a href="%{editProfile}"><s:text name="yourWebsites.editProfile" /></s:a></h3>
                 <p><s:text name="yourWebsites.editProfile.desc" /></p>
 
                 <s:if test="getBooleanProp('site.allowUserWeblogCreation') && (getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty))">

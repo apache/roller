@@ -47,6 +47,8 @@ import java.util.TimeZone;
  */
 public class CreateWeblog extends UIAction {
 
+    public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
+
     private static final String DISABLED_RETURN_CODE = "disabled";
 
     private ThemeManager themeManager;
@@ -169,7 +171,7 @@ public class CreateWeblog extends UIAction {
         }
 
         // make sure handle only contains safe characters
-        String allowed = Register.DEFAULT_ALLOWED_CHARS;
+        String allowed = DEFAULT_ALLOWED_CHARS;
 
         String safe = CharSetUtils.keep(getBean().getHandle(), allowed);
         if (!safe.equals(getBean().getHandle()) ) {

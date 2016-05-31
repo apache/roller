@@ -27,7 +27,7 @@ var contextPath = "${pageContext.request.contextPath}";
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/useradmin.js'/>"></script>
 
-<div id="errorMessageDiv" style="color:red">
+<div id="errorMessageDiv" style="color:red;display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
   <b>{{:errorMessage}}</b>
   <ul>
@@ -38,12 +38,12 @@ var contextPath = "${pageContext.request.contextPath}";
   </script>
 </div>
 
+<input type="hidden" id="refreshURL" value="<s:url action='userAdmin'/>"/>
+
 <p class="subtitle"><s:text name="userAdmin.subtitle" /></p>
 <span id="userEdit"><select id="useradmin-select-user"></select>
 <input id="select-user" type="button" style="margin:4px" value='<s:text name="generic.edit" />'/></span>
 <span id="userCreate"><input id="create-user" type="button" style="margin:4px" value='<s:text name="userAdmin.createUser" />'/></span>
-
-<input type="hidden" id="refreshURL" value="<s:url action='userAdmin'/>"/>
 
 <s:form id="myForm" action="userAdmin">
     <table class="formtable">
@@ -55,7 +55,7 @@ var contextPath = "${pageContext.request.contextPath}";
                 {{if id != null}}
                     <input type="text" size="30" maxlength="30" data-link="userName" readonly="true" cssStyle="background: #e5e5e5">
                 {{else}}
-                    <input type="text" size="30" data-link="userName" onBlur="this.value=this.value.trim()" minlength="5" maxlength="20">
+                    <input type="text" size="30" data-link="userName" onBlur="this.value=this.value.trim()" minlength="5" maxlength="20" required>
                 {{/if}}
               </td>
               <td class="description">
@@ -69,8 +69,14 @@ var contextPath = "${pageContext.request.contextPath}";
 
           <tr>
               <td class="label"><label for="screenName"><s:text name="userSettings.screenname" /></label></td>
-              <td class="field"><input type="text" size="30" data-link="screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30"></td>
+              <td class="field"><input type="text" size="30" data-link="screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
               <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
+          </tr>
+
+          <tr>
+              <td class="label"><label for="emailAddress"><s:text name="userSettings.email" /></label></td>
+              <td class="field"><input type="email" size="40" data-link="emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
+              <td class="description"><s:text name="userAdmin.tip.email" /></td>
           </tr>
 
           <s:if test="getProp('authentication.method') == 'db'">
@@ -84,13 +90,17 @@ var contextPath = "${pageContext.request.contextPath}";
                   {{/if}}
                   <td class="description"><s:text name="userAdmin.tip.password" /></td>
               </tr>
+              <tr>
+                  <td class="label"><label for="passwordConfirm"><s:text name="userSettings.passwordConfirm" /></label></td>
+                  <td class="field">
+                  {{if id != null}}
+                      <input type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
+                  {{else}}
+                      <input type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20" required></td>
+                  {{/if}}
+                  <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
+              </tr>
           </s:if>
-
-          <tr>
-              <td class="label"><label for="emailAddress"><s:text name="userSettings.email" /></label></td>
-              <td class="field"><input type="text" size="40" data-link="emailAddress" onBlur="this.value=this.value.trim()" maxlength="40"></td>
-              <td class="description"><s:text name="userAdmin.tip.email" /></td>
-          </tr>
 
           <tr>
               <td class="label"><label for="locale"><s:text name="userSettings.locale" /></label></td>

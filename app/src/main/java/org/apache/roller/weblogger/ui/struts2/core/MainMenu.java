@@ -154,5 +154,4 @@ public class MainMenu extends UIAction {
         }
         return LIST;
     }
-
 }

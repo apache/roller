@@ -22,8 +22,11 @@
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -35,11 +38,15 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * After successful authentication, login-redirect will either route the user to
  * registration (if the user logged in via an external method such as LDAP and doesn't
  * yet have a Roller account), or directly to the user's blog.
- *
- * @see org.apache.roller.weblogger.ui.struts2.core.Register
  */
 public class Login extends UIAction {
-    
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     private String error = null;
 
     private AuthMethod authMethod = WebloggerStaticConfig.getAuthMethod();
@@ -47,6 +54,10 @@ public class Login extends UIAction {
     public Login() {
         this.pageTitle = "loginPage.title";
     }
+
+    private String activationCode = null;
+
+    private String activationStatus = null;
 
     @Override
     public WeblogRole getRequiredWeblogRole() {
@@ -72,7 +83,51 @@ public class Login extends UIAction {
         return SUCCESS;
     }
 
-    
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+    }
+
+    public String getActivationStatus() {
+        return activationStatus;
+    }
+
+    public void setActivationStatus(String activationStatus) {
+        this.activationStatus = activationStatus;
+    }
+
+    public String activate() {
+        if (getActivationCode() == null) {
+            addError("error.activate.user.missingActivationCode");
+        } else {
+            User user = userManager.getUserByActivationCode(getActivationCode());
+
+            if (user != null) {
+                // enable user account
+                user.setEnabled(Boolean.TRUE);
+                user.setActivationCode(null);
+                userManager.saveUser(user);
+                WebloggerFactory.flush();
+                setActivationStatus("active");
+            } else {
+                addError("error.activate.user.invalidActivationCode");
+            }
+        }
+
+        if (hasActionErrors()) {
+            setActivationStatus("error");
+        }
+
+        // set a special page title
+        setPageTitle("welcome.title");
+
+        return "successActivate";
+    }
+
+
     public String getError() {
         return error;
     }

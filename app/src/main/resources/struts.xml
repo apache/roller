@@ -110,18 +110,23 @@
                 class="org.apache.roller.weblogger.ui.struts2.core.Login">
             <result type="tiles">.Login</result>
         </action>
-        
-        <action name="register!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.Register">
-            <result name="input" type="tiles">.Register</result>
-            <result name="disabled" type="tiles">.GenericError</result>
-            <result name="success" type="tiles">.Welcome</result>
+
+        <action name="register" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="pageTitleReal">newUser.addNewUser</param>
+            <param name="requiredGlobalRole">NOAUTHNEEDED</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
+            <result name="success" type="tiles">.Register</result>
         </action>
-        
-        <action name="profile!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.Profile">
-            <result name="input" type="tiles">.Profile</result>
-            <result name="cancel" type="redirectAction">menu</result>
+
+        <action name="emailResponse!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.Login">
+            <result name="successActivate" type="tiles">.Welcome</result>
+        </action>
+
+        <action name="profile" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="pageTitleReal">yourProfile.title</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.Profile</result>
         </action>
 
