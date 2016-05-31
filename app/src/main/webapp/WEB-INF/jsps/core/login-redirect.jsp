@@ -28,7 +28,9 @@ User user = mgr.getUserByUserName(auth.getName());
 List<UserWeblogRole> roles = (user != null) ? mgr.getWeblogRoles(user) : null;
 
 if (user == null) {
-    response.sendRedirect(request.getContextPath()+"/tb-ui/register.rol");
+    // this will force a login, and then a Spring security redirect to the menu page.  Forwarding
+    // to login directly does not work well as no forwarding occurs (remains on login page).
+    response.sendRedirect(request.getContextPath()+"/tb-ui/menu.rol");
 } else if (!user.isGlobalAdmin() && roles != null && roles.size() == 1) {
     Weblog weblog = roles.get(0).getWeblog();
     response.sendRedirect(request.getContextPath()+"/tb-ui/authoring/entryAdd.rol?weblog=" + weblog.getHandle());

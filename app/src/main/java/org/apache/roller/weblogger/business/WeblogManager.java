@@ -150,7 +150,8 @@ public interface WeblogManager {
     List<WeblogTemplate> getTemplates(Weblog w);
     
     /**
-     * Get count of active weblogs
+     * Get count of active weblogs, returning long type as that is what the
+     * JPA COUNT aggregate returns (http://stackoverflow.com/a/3574441/1207540)
      */    
     long getWeblogCount();
     

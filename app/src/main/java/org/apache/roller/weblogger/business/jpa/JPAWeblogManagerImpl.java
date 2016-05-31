@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
@@ -230,6 +231,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     private void addWeblogContents(Weblog newWeblog) {
         
+        if (getWeblogCount() == 1) {
+            // first weblog, let's make it the frontpage one.
+            RuntimeConfigProperty frontpageBlogProp = propertiesManager.getProperty("site.frontpage.weblog.handle");
+            frontpageBlogProp.setValue(newWeblog.getHandle());
+            propertiesManager.saveProperty(frontpageBlogProp);
+        }
+
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(
                 userManager.getUser(newWeblog.getCreatorId()), newWeblog, WeblogRole.OWNER);

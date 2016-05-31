@@ -50,7 +50,8 @@ public interface UserManager {
     void removeUser(User user);
 
     /**
-     * Get count of enabled users
+     * Get count of enabled users, returning long type as that is what the
+     * JPA COUNT aggregate returns (http://stackoverflow.com/a/3574441/1207540)
      */    
     long getUserCount();
 
