@@ -99,15 +99,14 @@
         <action name="logout">
             <result>/WEB-INF/jsps/core/logout-redirect.jsp</result>
         </action>
-        
+
         <action name="setup"
                 class="org.apache.roller.weblogger.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
             <result name="home" type="redirectAction">home</result>
         </action>
-                        
-        <action name="login"
-                class="org.apache.roller.weblogger.ui.struts2.core.Login">
+
+        <action name="login" class="org.apache.roller.weblogger.ui.struts2.core.Login">
             <result type="tiles">.Login</result>
         </action>
 

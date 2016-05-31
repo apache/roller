@@ -71,7 +71,8 @@
 
     <beans:bean id="authenticationSuccessHandler"
                 class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-        <!-- After login, return to the last visited page -->
+        <!-- userReferer wprks in conjuction with CustomAccessDeniedHandlerImpl, so non-AJAX CSRF exceptions can redirect
+             back to appropriate page after re-authentication -->
         <beans:property name="useReferer" value="true"/>
     </beans:bean>
 
