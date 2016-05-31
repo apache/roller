@@ -26,8 +26,14 @@ if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
             request.getRequestDispatcher(org.apache.roller.weblogger.ui.rendering.processors.PageProcessor.PATH + '/' + frontpageBlog);
     homepage.forward(request, response);
 } else {
-    // dispatch to setup page
-    RequestDispatcher setuppage = request.getRequestDispatcher("/tb-ui/setup.rol");
+    // new install?  Redirect to register or login page based on whether a user has already been created.
+    RequestDispatcher setuppage = null;
+    long userCount = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getUserManager().getUserCount();
+    if (userCount == 0) {
+        setuppage = request.getRequestDispatcher("/tb-ui/register.rol");
+    } else {
+        setuppage = request.getRequestDispatcher("/tb-ui/login-redirect.rol");
+    }
     setuppage.forward(request, response);
 }
 

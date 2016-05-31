@@ -19,11 +19,11 @@
   Source file modified from the original ASF source; all changes made
   are also under Apache License.
 -->
-<!DOCTYPE tiles-definitions PUBLIC 
-   "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN" 
+<!DOCTYPE tiles-definitions PUBLIC
+   "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
    "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
 <tiles-definitions>
-    
+
     <definition name=".tiles-mainmenupage" template="/WEB-INF/jsps/tiles/tiles-mainmenupage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -33,7 +33,7 @@
         <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
-    
+
     <definition name=".tiles-tabbedpage" template="/WEB-INF/jsps/tiles/tiles-tabbedpage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -44,7 +44,7 @@
         <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
-    
+
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
@@ -54,7 +54,7 @@
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
-    
+
     <definition name=".tiles-installpage" template="/WEB-INF/jsps/tiles/tiles-installpage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -62,7 +62,7 @@
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
-    
+
     <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -70,30 +70,31 @@
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
-    
+
     <definition name=".tiles-popuppage" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">
         <put-attribute name="content"      value="${content}" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
     </definition>
-    
+
     <!-- error pages -->
     <definition name=".denied" extends=".tiles-errorpage" >
         <put-attribute name="content" value="/tb-ui/errors/denied.jsp" />
     </definition>
-    
-        
+
+
     <!-- core pages (and associates) -->
     <definition name=".Login" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
     </definition>
-    
+
     <definition name=".Register" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Register.jsp" />
     </definition>
-    
+
     <definition name=".Welcome" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Welcome.jsp" />
     </definition>
-    
+
     <definition name=".Profile" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
     </definition>
@@ -111,13 +112,9 @@
         <put-attribute name="sidebar" value="/WEB-INF/jsps/core/MainMenuSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
-    
-        <!-- setup pages -->
-    <definition name=".Setup" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/Setup.jsp" />
-    </definition>
-    
+
+
+    <!-- setup pages -->
     <definition name=".CreateDatabase" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/CreateDatabase.jsp" />
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
@@ -129,51 +126,47 @@
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
     </definition>
-    
+
     <definition name=".DatabaseError" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/DatabaseError.jsp" />
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
     </definition>
-    
+
     <definition name=".Bootstrap" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/UnknownError.jsp" />
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
     </definition>
-    
+
 
     <!-- global admin pages (and associates) -->
     <definition name=".GlobalConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
     </definition>
-    
-    <definition name=".FrontpageConfig" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/FrontpageConfig.jsp" />
-    </definition>
-    
+
     <definition name=".UserAdmin" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
     </definition>
-    
+
     <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
     </definition>
-    
+
     <definition name=".PingTargets" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargets.jsp" />
     </definition>
-    
+
     <definition name=".CacheInfo" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
     </definition>
-    
+
     <definition name=".PlanetEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetEdit.jsp" />
     </definition>
-    
+
     <definition name=".Planets" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/Planets.jsp" />
     </definition>
@@ -219,47 +212,47 @@
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
     </definition>
-    
+
     <definition name=".Categories" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
+
     <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
+
     <definition name=".Resources" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Resources.jsp" />
     </definition>
-    
+
     <!-- weblog admin pages (and associates) -->
     <definition name=".WeblogConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogConfig.jsp" />
     </definition>
-    
+
     <definition name=".ThemeEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/ThemeEdit.jsp" />
     </definition>
-    
+
     <definition name=".Templates" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Templates.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/TemplatesSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
+
     <definition name=".TemplateEdit" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateEdit.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
-    
+
     <definition name=".Members" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Members.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MembersSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
+
     <definition name=".Pings" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Pings.jsp" />
     </definition>
@@ -267,5 +260,5 @@
     <definition name=".Maintenance" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Maintenance.jsp" />
     </definition>
-    
+
 </tiles-definitions>
