@@ -386,4 +386,19 @@
         <beans:property name="maxUploadSize" value="-1" />
     </beans:bean>
 
+    <!-- JSR 349, resolution of validation messages in JPA entity beans -->
+    <beans:bean id="beanValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <beans:property name="validationMessageSource">
+            <beans:ref bean="messageSource"/>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean name="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <beans:property name="basenames">
+            <beans:list>
+                <beans:value>ApplicationResources</beans:value>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
 </beans:beans>

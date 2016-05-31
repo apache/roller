@@ -121,12 +121,8 @@ public class Login extends UIAction {
             setActivationStatus("error");
         }
 
-        // set a special page title
-        setPageTitle("welcome.title");
-
         return "successActivate";
     }
-
 
     public String getError() {
         return error;

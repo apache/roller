@@ -131,53 +131,53 @@ var contextPath = "${pageContext.request.contextPath}";
 
     <br>
 
-    <p><s:text name="userAdmin.userMemberOf"/></p>
-    <table class="rollertable">
-      <thead>
-        <tr class="rHeaderTr">
-            <th style="width:30%"><s:text name="generic.weblog" /></th>
-            <th style="width:10%"><s:text name="userAdmin.pending" /></th>
-            <th style="width:10%"><s:text name="generic.role" /></th>
-            <th style="width:25%"><s:text name="generic.edit" /></th>
-            <th width="width:25%"><s:text name="userAdmin.manage" /></th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        <script id="tableTemplate" type="text/x-jsrender">
-          <tr id="{{:id}}">
-              <td>
-                  <a href='{{:weblog.absoluteURL}}'>
-                      {{:weblog.name}} [{{:weblog.handle}}]
-                  </a>
-              </td>
-              <td>
-                  {{:pending}}
-              </td>
-              <td>
-                  {{:weblogRole}}
-              </td>
-              <td>
-                  <s:url action="entries" namespace="/tb-ui/authoring" id="editEntries">
-                      <s:param name="weblog" value="{{:weblog.handle}}" />
-                  </s:url>
-                  <img src='<s:url value="/images/page_white_edit.png"/>' />
-                  <a href='<s:property value="editEntries" />?weblog={{:weblog.handle}}'>
-                  <s:text name="userAdmin.editEntries" /></a>
-              </td>
-              <td>
-                  <s:url action="weblogConfig" namespace="/tb-ui/authoring" id="manageWeblog">
-                      <s:param name="weblog" value="{{:weblog.handle}}" />
-                  </s:url>
-                  <img src='<s:url value="/images/page_white_edit.png"/>' />
-                  <a href='<s:property value="manageWeblog"/>?weblog={{:weblog.handle}}'>
-                  <s:text name="userAdmin.manage" /></a>
-              </td>
-          </tr>
-        </script>
-      </tbody>
-    </table>
-
-
+    <div class="showinguser" style="display:none">
+        <p><s:text name="userAdmin.userMemberOf"/></p>
+        <table class="rollertable">
+          <thead>
+            <tr class="rHeaderTr">
+                <th style="width:30%"><s:text name="generic.weblog" /></th>
+                <th style="width:10%"><s:text name="userAdmin.pending" /></th>
+                <th style="width:10%"><s:text name="generic.role" /></th>
+                <th style="width:25%"><s:text name="generic.edit" /></th>
+                <th width="width:25%"><s:text name="userAdmin.manage" /></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <script id="tableTemplate" type="text/x-jsrender">
+              <tr id="{{:id}}">
+                  <td>
+                      <a href='{{:weblog.absoluteURL}}'>
+                          {{:weblog.name}} [{{:weblog.handle}}]
+                      </a>
+                  </td>
+                  <td>
+                      {{:pending}}
+                  </td>
+                  <td>
+                      {{:weblogRole}}
+                  </td>
+                  <td>
+                      <s:url action="entries" namespace="/tb-ui/authoring" id="editEntries">
+                          <s:param name="weblog" value="{{:weblog.handle}}" />
+                      </s:url>
+                      <img src='<s:url value="/images/page_white_edit.png"/>' />
+                      <a href='<s:property value="editEntries" />?weblog={{:weblog.handle}}'>
+                      <s:text name="userAdmin.editEntries" /></a>
+                  </td>
+                  <td>
+                      <s:url action="weblogConfig" namespace="/tb-ui/authoring" id="manageWeblog">
+                          <s:param name="weblog" value="{{:weblog.handle}}" />
+                      </s:url>
+                      <img src='<s:url value="/images/page_white_edit.png"/>' />
+                      <a href='<s:property value="manageWeblog"/>?weblog={{:weblog.handle}}'>
+                      <s:text name="userAdmin.manage" /></a>
+                  </td>
+              </tr>
+            </script>
+          </tbody>
+        </table>
+    </div>
 
     <br>
     <br>

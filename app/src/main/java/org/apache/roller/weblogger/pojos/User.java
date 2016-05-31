@@ -72,21 +72,17 @@ public class User {
     
     private String  id;
 
-    @NotBlank(message = "User Name must not be null")
-    @Pattern(regexp = "[a-z0-9]*", message = "User Name must be lowercase letters and digits only.")
+    @NotBlank(message = "{error.add.user.missingUserName}")
+    @Pattern(regexp = "[a-z0-9]*", message = "{error.add.user.badUserName}")
     private String  userName;
     private String  password;
     private GlobalRole globalRole;
 
-//    addError("Register.error.screenNameNull");
-//    addError("Register.error.emailAddressNull");
-
-
-    @NotBlank(message = "Screen Name must not be null")
+    @NotBlank(message = "{Register.error.screenNameNull}")
     private String  screenName;
 
-    @NotBlank(message = "Email must not be null")
-    @Email(message = "Invalid Email Address")
+    @NotBlank(message = "{Register.error.emailAddressNull}")
+    @Email(message = "{error.add.user.badEmail}")
     private String  emailAddress;
     private Date    dateCreated;
     private String  locale;

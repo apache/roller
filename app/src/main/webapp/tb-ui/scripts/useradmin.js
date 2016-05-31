@@ -7,6 +7,7 @@ $(function() {
   });
   function updateEditForm(data) {
     $.link.formTemplate("#formBody", data);
+
     $.ajax({
        type: "GET",
        url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + data.id + '/weblogs',
@@ -47,6 +48,7 @@ $(function() {
           url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + selectedId,
           success: function(data, textStatus, xhr) {
             updateEditForm(data);
+            $('div .showinguser').show();
           }
        });
      });
@@ -56,12 +58,14 @@ $(function() {
      $('#userEdit').hide();
      $('#errorMessageDiv').hide();
      checkLoggedIn(function() {
+       $('div .showinguser').hide();
        var data = {};
        updateEditForm(data);
      });
   });
   $("#cancel-link").click(function (e) {
     e.preventDefault();
+    $('div .showinguser').hide();
     window.location.replace($('#refreshURL').attr('value'));
   });
   $("#myForm").submit(function(e) {
@@ -75,6 +79,7 @@ $(function() {
          data: JSON.stringify(view.data),
          contentType: "application/json",
          success: function(data, textStatus, xhr) {
+           $('div .showinguser').show();
            updateEditForm(data);
            $('#userEdit').show();
            $('#userCreate').show();
@@ -82,6 +87,7 @@ $(function() {
          },
          error: function(xhr, status, errorThrown) {
             if (xhr.status == 400) {
+              $('div .showinguser').hide();
               var html = $.render.errorMessageTemplate(xhr.responseJSON);
               $('#errorMessageDiv').html(html);
               $('#errorMessageDiv').show();
