@@ -19,10 +19,6 @@ $(function() {
       });
     });
   });
-  $("#cancel-link").click(function (e) {
-    e.preventDefault();
-    window.location.replace($('#cancelURL').attr('value'));
-  });
   $("#myForm").submit(function(e) {
     e.preventDefault();
     $('#errorMessageDiv').hide();

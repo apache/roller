@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -44,6 +45,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 
 
 /**
@@ -70,7 +72,10 @@ import javax.persistence.Transient;
 public class Weblog {
 
     private String  id               = WebloggerCommon.generateUUID();
+    @NotBlank(message = "{CreateWeblog.error.handleNull}")
+    @Pattern(regexp = "[a-z0-9\\-]*", message = "{createWeblog.error.invalidHandle}")
     private String  handle           = null;
+    @NotBlank(message = "{CreateWeblog.error.nameNull}")
     private String  name             = null;
     private String  tagline          = null;
     private String  editorPage       = null;

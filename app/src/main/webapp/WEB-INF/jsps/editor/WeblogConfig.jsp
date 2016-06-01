@@ -21,182 +21,183 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script>
+var contextPath = "${pageContext.request.contextPath}";
+var msg= {
+  deleteLabel: '<s:text name="generic.delete"/>',
+  cancelLabel: '<s:text name="generic.cancel"/>'
+};
+</script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/weblogconfig.js'/>"></script>
+
+<div id="errorMessageDiv" style="color:red;display:none">
+  <script id="errorMessageTemplate" type="text/x-jsrender">
+  <b>{{:errorMessage}}</b>
+  <ul>
+     {{for errors}}
+     <li>{{>#data}}</li>
+     {{/for}}
+  </ul>
+  </script>
+</div>
+
+<div id="successMessageDiv" style="display:none">
+  <span>Information has been saved.</span>
+</div>
+
+<input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?id=<s:property value='%{#parameters.id}'/>"/>
+<input type="hidden" id="menuURL" value="<s:url action='menu'/>"/>
+<input type="hidden" id="weblogId" value="<s:property value='%{#parameters.id}'/>"/>
 
 <p class="subtitle">
    <s:text name="websiteSettings.subtitle" >
-       <s:param value="actionWeblog.handle" />
+       <s:property value='%{#parameters.weblog}'/>
    </s:text>
-</p>  
+</p>
 
-<script>
-  $(function() {
-    $("#confirm-delete").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:310,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.delete'/>": function() {
-          document.weblogConfigForm.action='<s:url action="weblogConfig!remove" />';
-          document.weblogConfigForm.submit();
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-
-    $(".delete-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete').dialog('open');
-    });
-  });
-</script>
-
-
-<s:form id="weblogConfigForm">
-    <sec:csrfInput/>
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-
+<s:form id="myForm" action="weblogConfig">
 <table class="formtableNoDesc">
+    <tbody id="formBody">
+      <script id="formTemplate" type="text/x-jsrender">
+        <%-- ***** General settings ***** --%>
 
-    <%-- ***** General settings ***** --%>
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.generalSettings" /></h2></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.websiteTitle" />
-        <td class="field"><s:textfield name="bean.name" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
-    </tr>
-
-    <tr>
-        <td class="label"><s:text name="generic.tagline" /></td>
-        <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.about" /></td>
-        <td class="field"><s:textarea name="bean.about" rows="3" cols="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.editor" /></td>
-        <td class="field">
-            <s:select name="bean.editorPage" size="1" list="editorsList" listKey="left" listValue="getText(right)" />
-       </td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.visible" /></td>
-        <td class="field"><s:checkbox name="bean.visible" /></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.entriesPerPage" /></td>
-        <td class="field"><s:textfield name="bean.entryDisplayCount" size="3" onBlur="this.value=this.value.trim()"/></td>
-    </tr>
-
-    <tr>
-        <td class="label"><s:text name="createWebsite.locale" />
-        <td class="field">
-            <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-        </td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="createWebsite.timeZone" />
-        <td class="field">
-            <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-        </td>
-    </tr>
-    
-    
-    <%-- ***** Comment settings ***** --%>
-    
-    <s:if test="getBooleanProp('users.comments.enabled')">
-        <tr>
-            <td colspan="3"><h2><s:text name="websiteSettings.commentSettings" /></h2></td>
+        <tr id="recordId" data-id="{{:id}}">
+            <td colspan="3"><h2><s:text name="websiteSettings.generalSettings" /></h2></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.allowComments" /></td>
-            <td class="field"><s:checkbox name="bean.allowComments" /></td>
+            <td class="label"><s:text name="websiteSettings.websiteTitle"/></td>
+            <td class="field"><input type="text" data-link="name" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
         </tr>
 
-        <s:if test="!getBooleanProp('users.moderation.required')">
-            <tr>
-                <td class="label"><s:text name="websiteSettings.approveComments" /></td>
-                <td class="field"><s:checkbox name="bean.approveComments" /></td>
-            </tr>
-        </s:if>
-
-        <s:if test="getBooleanProp('users.comments.emailnotify')">
-            <tr>
-                <td class="label"><s:text name="websiteSettings.emailComments" /></td>
-                <td class="field"><s:checkbox name="bean.emailComments"/></td>
-            </tr>
-        </s:if>
+        <tr>
+            <td class="label"><s:text name="generic.tagline" /></td>
+            <td class="field"><input type="text" data-link="tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
+        </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
+            <td class="label"><s:text name="websiteSettings.about" /></td>
+            <td class="field"><textarea data-link="about" rows="3" cols="40" maxlength="255" onBlur="this.value=this.value.trim()"></textarea></td>
+        </tr>
+
+        <tr>
+            <td class="label"><s:text name="websiteSettings.editor" /></td>
             <td class="field">
-                <s:select name="bean.defaultCommentDaysString" list="commentDaysList" size="1" listKey="left" listValue="right" />
+                <select data-link="editorPage" size="1">
+                    <option value="editor-text.jsp"><s:text name="editor.text.name"/></option>
+                    <option value="editor-xinha.jsp"><s:text name="editor.xinha.name"/></option>
+                </select>
+           </td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.applyCommentDefaults" /></td>
-            <td class="field"><s:checkbox name="bean.applyCommentDefaults" /></td>
+            <td class="label"><s:text name="websiteSettings.visible" /></td>
+            <td class="field"><input type="checkbox" data-link="visible"></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
-            <td class="field"><s:textarea name="bean.blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"/></td>
-        </tr>
-
-    </s:if>
-
-    <%-- ***** Plugins "formatting" settings ***** --%>
-    <s:if test="!weblogEntryPlugins.isEmpty">
-        <tr>
-            <td colspan="3"><h2><s:text name="websiteSettings.formatting" /></h2></td>
+            <td class="label"><s:text name="websiteSettings.entriesPerPage" /></td>
+            <td class="field"><input type="number" min="1" max="100" step="1" data-link="entriesPerPage" size="3" onBlur="this.value=this.value.trim()"></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
+            <td class="label"><s:text name="createWebsite.locale" /></td>
             <td class="field">
-                <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" name="bean.defaultPluginsArray"/>
+                <s:select data-link="locale" size="1" list="localesList" listValue="displayName" />
             </td>
         </tr>
-    </s:if>
-    <s:else>
-        <s:hidden name="defaultPlugins" />
-    </s:else>
-
-
-    <%-- ***** Web analytics settings ***** --%>
-
-    <s:if test="getBooleanProp('analytics.code.override.allowed')">
-        <tr>
-            <td colspan="3"><h2><s:text name="configForm.webAnalytics" /></h2></td>
-        </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.analyticsTrackingCode" /></td>
-            <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"/></td>
+            <td class="label"><s:text name="createWebsite.timeZone" /></td>
+            <td class="field">
+                <s:select data-link="timeZone" size="1" list="timeZonesList" />
+            </td>
         </tr>
-    </s:if>
 
+
+        <%-- ***** Comment settings ***** --%>
+
+        <s:if test="getBooleanProp('users.comments.enabled')">
+            <tr>
+                <td colspan="3"><h2><s:text name="websiteSettings.commentSettings" /></h2></td>
+            </tr>
+
+            <tr>
+                <td class="label"><s:text name="websiteSettings.allowComments" /></td>
+                <td class="field"><input type="checkbox" data-link="allowComments"></td>
+            </tr>
+
+            <s:if test="!getBooleanProp('users.moderation.required')">
+                <tr>
+                    <td class="label"><s:text name="websiteSettings.approveComments" /></td>
+                    <td class="field"><input type="checkbox" data-link="approveComments"></td>
+                </tr>
+            </s:if>
+
+            <s:if test="getBooleanProp('users.comments.emailnotify')">
+                <tr>
+                    <td class="label"><s:text name="websiteSettings.emailComments" /></td>
+                    <td class="field"><input type="checkbox" data-link="emailComments"></td>
+                </tr>
+            </s:if>
+
+            <tr>
+                <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
+                <td class="field">
+                    <s:select data-link="defaultCommentDaysString" list="commentDaysList" size="1" listKey="left" listValue="right" />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label"><s:text name="websiteSettings.applyCommentDefaults" /></td>
+                <td class="field"><input type="checkbox" data-link="applyCommentDefaults"></td>
+            </tr>
+
+            <tr>
+                <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
+                <td class="field"><textarea data-link="blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"></textarea></td>
+            </tr>
+
+        </s:if>
+
+        <%-- ***** Plugins "formatting" settings ***** --%>
+        <s:if test="!weblogEntryPlugins.isEmpty">
+            <tr>
+                <td colspan="3"><h2><s:text name="websiteSettings.formatting" /></h2></td>
+            </tr>
+
+            <tr>
+                <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
+                <td class="field">
+                    <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" data-link="defaultPluginsArray"/>
+                </td>
+            </tr>
+        </s:if>
+
+        <%-- ***** Web analytics settings ***** --%>
+
+        <s:if test="getBooleanProp('analytics.code.override.allowed')">
+            <tr>
+                <td colspan="3"><h2><s:text name="configForm.webAnalytics" /></h2></td>
+            </tr>
+
+            <tr>
+                <td class="label"><s:text name="websiteSettings.analyticsTrackingCode" /></td>
+                <td class="field"><textarea data-link="analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"></textarea></td>
+            </tr>
+        </s:if>
+      </script>
+    </tbody>
 </table>
 
 <br />
 <div class="control">
     <s:submit value="%{getText('websiteSettings.button.update')}" action="weblogConfig!save"/>
 </div>
-        
+
 <br />
 <br />
 

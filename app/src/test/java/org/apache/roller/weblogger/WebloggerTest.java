@@ -165,7 +165,7 @@ abstract public class WebloggerTest {
         Weblog testWeblog = new Weblog();
         testWeblog.setName("Test Weblog");
         testWeblog.setTagline("Test Weblog");
-        testWeblog.setHandle(handle);
+        testWeblog.setHandle(handle.toLowerCase());
         testWeblog.setEditorPage("editor-text.jsp");
         testWeblog.setBlacklist("");
         testWeblog.setTheme("basic");
@@ -181,7 +181,7 @@ abstract public class WebloggerTest {
         strategy.flush();
 
         // query for the new weblog and return it
-        Weblog weblog = weblogManager.getWeblogByHandle(handle);
+        Weblog weblog = weblogManager.getWeblogByHandle(handle.toLowerCase());
 
         if (weblog == null) {
             throw new IllegalStateException("error setting up weblog");

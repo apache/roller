@@ -212,7 +212,7 @@ public class Comments extends UIAction {
 
         return urlStrategy.getActionURL(actionName,
                         isGlobalCommentManagement() ? "/tb-ui/admin" : "/tb-ui/authoring",
-                        isGlobalCommentManagement() ? null : getActionWeblog().getHandle(),
+                        isGlobalCommentManagement() ? null : getActionWeblog(),
                         params, false);
     }
 

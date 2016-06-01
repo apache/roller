@@ -107,7 +107,7 @@ public class URLModel implements Model {
             if("/tb-ui".equals(namespace)) {
                 return urlStrategy.getActionURL(action, namespace, null, null, true);
             } else if("/tb-ui/authoring".equals(namespace)) {
-                return urlStrategy.getActionURL(action, namespace, weblog.getHandle(), null, true);
+                return urlStrategy.getActionURL(action, namespace, weblog, null, true);
             } else if("/tb-ui/admin".equals(namespace)) {
                 return urlStrategy.getActionURL(action, namespace, null, null, true);
             }
