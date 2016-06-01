@@ -156,7 +156,7 @@ public class Entries extends UIAction {
             params.put("bean.sortBy", getBean().getSortBy().toString());
         }
 
-        return urlStrategy.getActionURL("entries", "/tb-ui/authoring", getActionWeblog().getHandle(),
+        return urlStrategy.getActionURL("entries", "/tb-ui/authoring", getActionWeblog(),
                 params, false);
     }
     

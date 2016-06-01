@@ -406,7 +406,7 @@ public class MailManager {
             Map<String, String> parameters = new HashMap<>();
             parameters.put("bean.entryId", entry.getId());
             String deleteURL = urlStrategy.getActionURL(
-                    "comments", "/tb-ui/authoring", weblog.getHandle(), parameters, true);
+                    "comments", "/tb-ui/authoring", weblog, parameters, true);
 
             if (isPlainText) {
                 ownermsg.append(deleteURL);

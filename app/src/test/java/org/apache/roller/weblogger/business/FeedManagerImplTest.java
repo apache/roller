@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  */
 public class FeedManagerImplTest extends WebloggerTest {
 
-    String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
+    String rollerFeedUrl = "weblogger:weblogger-fetcher-test-weblog";
     String expectedTitle = "Slashdot";
     String expectedSiteUrl = "https://slashdot.org/";
     String externalFeedUrl = "http://rss.slashdot.org/Slashdot/slashdotMainatom";
@@ -62,7 +62,7 @@ public class FeedManagerImplTest extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("webloggerFetcherTestUser");
-        testWeblog = setupWeblog("webloggerFetcherTestWeblog", testUser);
+        testWeblog = setupWeblog("weblogger-fetcher-test-weblog", testUser);
 
         // add test planet
         planet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");

@@ -17,3 +17,7 @@ $(function() {
 function checkLoggedIn(fctnIfSuccessful) {
   $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', fctnIfSuccessful);
 };
+$("#cancel-link").click(function (e) {
+  e.preventDefault();
+  window.location.replace($('#cancelURL').attr('value'));
+});

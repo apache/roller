@@ -58,7 +58,7 @@ public interface URLStrategy {
      * Get a url to a UI action in a given namespace, optionally specifying
      * a weblogHandle parameter if that is needed by the action.
      */
-    String getActionURL(String action, String namespace, String weblogHandle, Map<String, String> parameters,
+    String getActionURL(String action, String namespace, Weblog weblog, Map<String, String> parameters,
                         boolean absolute);
     
     /**

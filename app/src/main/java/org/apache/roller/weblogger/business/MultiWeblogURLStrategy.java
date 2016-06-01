@@ -74,14 +74,15 @@ public class MultiWeblogURLStrategy implements URLStrategy {
      * Get a url to a UI action in a given namespace, optionally specifying
      * a weblogHandle parameter if that is needed by the action.
      */
-    public String getActionURL(String action, String namespace, String weblogHandle,
+    public String getActionURL(String action, String namespace, Weblog weblog,
                                Map<String, String> parameters, boolean absolute) {
         String url = getRootURL(absolute) + namespace + "/" + action + ".rol";
 
         // add weblog handle parameter, if provided
         Map<String, String> params = new HashMap<>();
-        if(weblogHandle != null) {
-            params.put("weblog", weblogHandle);
+        if (weblog != null) {
+            params.put("id", weblog.getId());
+            params.put("weblog", weblog.getHandle());
         }
 
         if (parameters != null) {

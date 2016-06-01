@@ -125,6 +125,7 @@
 
         <action name="createWeblog!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.CreateWeblog">
+            <param name="requiredGlobalRole">BLOGGER</param>
             <result name="input" type="tiles">.CreateWeblog</result>
             <result name="disabled" type="tiles">.GenericError</result>
             <result name="success" type="chain">menu</result>
@@ -308,12 +309,14 @@
             <result name="list" type="tiles">.Bookmarks</result>
         </action>
 
-        <action name="weblogConfig!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
-            <result name="input" type="tiles">.WeblogConfig</result>
-            <result name="success" type="chain">menu</result>
+        <action name="weblogConfig" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="actionName">weblogConfig</param>
+            <param name="desiredMenu">editor</param>
+            <param name="pageTitleReal">websiteSettings.title</param>
+            <result name="success" type="tiles">.WeblogConfig</result>
         </action>
-        
+
         <action name="themeEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.ThemeEdit">
             <result name="input" type="tiles">.ThemeEdit</result>

@@ -180,10 +180,11 @@
                            
                            <s:url action="weblogConfig" namespace="/tb-ui/authoring" id="manageWeblog">
                                <s:param name="weblog" value="#perms.weblog.handle" />
+                               <s:param name="id" value="#perms.weblog.id" />
                            </s:url>
                            <img src='<s:url value="/images/cog.png"/>' />
-                           <a href='<s:property value="manageWeblog" />'>
-                               <s:text name="yourWebsites.manage" /></a> 
+                           <s:a href='%{manageWeblog}'>
+                               <s:text name="yourWebsites.manage" /></s:a>
                            <br />
                        </s:if>
 

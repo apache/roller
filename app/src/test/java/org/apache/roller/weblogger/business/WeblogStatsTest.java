@@ -55,7 +55,7 @@ public class WeblogStatsTest extends WebloggerTest {
         user1 = setupUser("aCommentCountTestUser");
         user2 = setupUser("bCommentCountTestUser");
 
-        website1 = setupWeblog("a_testWebsite1", user1);
+        website1 = setupWeblog("a-testWebsite1", user1);
         WeblogEntry entry11 = setupWeblogEntry(
                 "anchor11", website1, user1);
         comment11 = setupComment("Comment11", entry11);
@@ -64,7 +64,7 @@ public class WeblogStatsTest extends WebloggerTest {
                 "anchor12", website1, user1);
         comment13 = setupComment("Comment13", entry12);
 
-        website2 = setupWeblog("b_testWebsite2", user1);
+        website2 = setupWeblog("b-testWebsite2", user1);
         WeblogEntry entry21 = setupWeblogEntry(
                 "anchor21", website2, user1);
         comment21 = setupComment("Comment21", entry21);
