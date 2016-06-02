@@ -24,6 +24,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -50,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -97,19 +99,20 @@ public class WeblogController {
         this.userManager = userManager;
     }
 
-    @Autowired
+    @Resource(name="weblogEntryPlugins")
     private List<WeblogEntryPlugin> weblogEntryPlugins;
 
     public List<WeblogEntryPlugin> getWeblogEntryPlugins() {
         return weblogEntryPlugins;
     }
 
-    public WeblogController() {
-    }
-
     public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
         this.weblogEntryPlugins = weblogEntryPlugins;
     }
+
+    public WeblogController() {
+    }
+
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.GET)
     public Weblog getWeblogData(@PathVariable String id, HttpServletResponse response) throws ServletException {
@@ -149,12 +152,12 @@ public class WeblogController {
                 newData.getHandle().trim(),
                 user,
                 newData.getName().trim(),
-                newData.getTagline().trim(),
+                StringUtils.trim(newData.getTagline()),
                 newData.getTheme(),
                 newData.getLocale(),
                 newData.getTimeZone());
 
-        return saveWeblog(weblog, newData, response);
+        return saveWeblog(weblog, newData, response, true);
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.POST)
@@ -167,7 +170,7 @@ public class WeblogController {
                 if (maybeError != null) {
                     return ResponseEntity.badRequest().body(maybeError);
                 }
-                return saveWeblog(weblog, newData, response);
+                return saveWeblog(weblog, newData, response, false);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
@@ -176,7 +179,7 @@ public class WeblogController {
         }
     }
 
-    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, HttpServletResponse response) throws ServletException {
+    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, HttpServletResponse response, boolean newWeblog) throws ServletException {
         try {
             if (weblog != null) {
 
@@ -209,7 +212,11 @@ public class WeblogController {
                 weblog.setDefaultCommentDays(newData.getDefaultCommentDays());
 
                 // save config
-                weblogManager.saveWeblog(weblog);
+                if (newWeblog) {
+                    weblogManager.addWeblog(weblog);
+                } else {
+                    weblogManager.saveWeblog(weblog);
+                }
 
                 // ROL-1050: apply comment defaults to existing entries
                 if(newData.isApplyCommentDefaults()) {

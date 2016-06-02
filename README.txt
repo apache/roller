@@ -4,7 +4,7 @@ Welcome to TightBlog! Starting off in May 2015 as a fork of the Apache Roller pr
 
 TightBlog has as a secondary goal to serve as an increasingly helpful sample application for the components it uses (such as the Spring Framework, EclipseLink, and Velocity), with code that can be easily leveraged by others wanting to know how to do X and Y and Z with these tools.  To that end, I'm hoping to receive feedback by fellow developers in all areas where it falls short in that regard.
 
-As of 31 May 2016, TightBlog uses 18 database tables compared to Roller V5.1.2's 33, 212 Java source files from the 493 in Roller, and 59 JSPs to Roller's 92.  However more JavaScript files have been added to accommodate TightBlog's increased emphasis on browser-side processing.  See the OpenHub statistics (https://www.openhub.net/p/tightblog/analyses/latest/languages_summary) for trending code size and language breakdown.
+As of 2 June 2016, TightBlog uses 18 database tables compared to Roller V5.1.2's 33, 211 Java source files from the 493 in Roller, and 59 JSPs to Roller's 92.  However more JavaScript files have been added to accommodate TightBlog's increased emphasis on browser-side processing.  See the OpenHub statistics (https://www.openhub.net/p/tightblog/analyses/latest/languages_summary) for trending code size and language breakdown.
 
 TightBlog is unfortunately not yet ready for release, the Milestone 1.0-tagged issues must all be complete first.
 
