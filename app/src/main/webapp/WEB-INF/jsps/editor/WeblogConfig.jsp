@@ -44,10 +44,6 @@ var msg= {
   </script>
 </div>
 
-<div id="successMessageDiv" style="display:none">
-  <span>Information has been saved.</span>
-</div>
-
 <input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?id=<s:property value='%{#parameters.id}'/>"/>
 <input type="hidden" id="menuURL" value="<s:url action='menu'/>"/>
 <input type="hidden" id="weblogId" value="<s:property value='%{#parameters.id}'/>"/>
@@ -86,7 +82,7 @@ var msg= {
         <tr>
             <td class="label"><s:text name="websiteSettings.editor" /></td>
             <td class="field">
-                <select data-link="editorPage" size="1">
+                <select data-link="editorPage trigger=true" size="1">
                     <option value="editor-text.jsp"><s:text name="editor.text.name"/></option>
                     <option value="editor-xinha.jsp"><s:text name="editor.xinha.name"/></option>
                 </select>
@@ -195,7 +191,7 @@ var msg= {
 
 <br />
 <div class="control">
-    <s:submit value="%{getText('websiteSettings.button.update')}" action="weblogConfig!save"/>
+    <s:submit value="%{getText('websiteSettings.button.update')}" action="weblogConfig"/>
 </div>
 
 <br />

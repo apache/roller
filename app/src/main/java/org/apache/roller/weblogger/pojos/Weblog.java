@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -69,13 +70,14 @@ import javax.validation.constraints.Pattern;
         @NamedQuery(name="Weblog.updateDailyHitCountZero",
                 query="UPDATE Weblog w SET w.hitsToday = 0")
 })
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Weblog {
 
     private String  id               = WebloggerCommon.generateUUID();
-    @NotBlank(message = "{CreateWeblog.error.handleNull}")
+    @NotBlank(message = "{createWeblog.error.handleNull}")
     @Pattern(regexp = "[a-z0-9\\-]*", message = "{createWeblog.error.invalidHandle}")
     private String  handle           = null;
-    @NotBlank(message = "{CreateWeblog.error.nameNull}")
+    @NotBlank(message = "{createWeblog.error.nameNull}")
     private String  name             = null;
     private String  tagline          = null;
     private String  editorPage       = null;
@@ -83,6 +85,7 @@ public class Weblog {
     private Boolean allowComments    = Boolean.TRUE;
     private Boolean emailComments    = Boolean.FALSE;
     private Boolean approveComments  = Boolean.TRUE;
+    @NotBlank(message = "{createWeblog.error.themeNull}")
     private String  theme            = null;
     private String  locale           = null;
     private String  timeZone         = null;
@@ -342,6 +345,7 @@ public class Weblog {
      * @return Locale
      */
     @Transient
+    @JsonIgnore
     public Locale getLocaleInstance() {
         return Locale.forLanguageTag(getLocale());
     }
@@ -351,6 +355,7 @@ public class Weblog {
      * @return TimeZone
      */
     @Transient
+    @JsonIgnore
     public TimeZone getTimeZoneInstance() {
         if (getTimeZone() == null) {
             this.setTimeZone( TimeZone.getDefault().getID() );

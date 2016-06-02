@@ -123,14 +123,13 @@
             <result name="success" type="tiles">.Profile</result>
         </action>
 
-        <action name="createWeblog!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.CreateWeblog">
+        <action name="createWeblog" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="pageTitleReal">createWebsite.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
-            <result name="input" type="tiles">.CreateWeblog</result>
-            <result name="disabled" type="tiles">.GenericError</result>
-            <result name="success" type="chain">menu</result>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
+            <result name="success" type="tiles">.CreateWeblog</result>
         </action>
-        
+
         <action name="menu!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
             <result type="tiles">.MainMenu</result>

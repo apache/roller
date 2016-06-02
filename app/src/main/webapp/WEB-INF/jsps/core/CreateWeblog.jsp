@@ -20,85 +20,100 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
-function handlePreview(handle) {
-    previewSpan = document.getElementById("handlePreview");
-    var n1 = previewSpan.childNodes[0];
-    var n2 = document.createTextNode(handle.value);
-    if (handle.value == null) {
-	    previewSpan.appendChild(n2);
-    } else {
-	    previewSpan.replaceChild(n2, n1);
-    }
-}
+var contextPath = "${pageContext.request.contextPath}";
+var msg= {
+  deleteLabel: '<s:text name="generic.delete"/>',
+  cancelLabel: '<s:text name="generic.cancel"/>'
+};
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/createweblog.js'/>"></script>
+
+<div id="errorMessageDiv" style="color:red;display:none">
+  <script id="errorMessageTemplate" type="text/x-jsrender">
+  <b>{{:errorMessage}}</b>
+  <ul>
+     {{for errors}}
+     <li>{{>#data}}</li>
+     {{/for}}
+  </ul>
+  </script>
+</div>
+
+<input type="hidden" id="refreshURL" value="<s:url action='createWeblog'/>"/>
+<input type="hidden" id="menuURL" value="<s:url action='menu'/>"/>
 
 <p class="subtitle"><s:text name="createWebsite.prompt" /></p>
-
 <br />
 
-<s:form action="createWeblog!save">
-    <sec:csrfInput/>
-
+<s:form id="myForm" action="createWeblog">
     <table class="formtable">
+      <tbody id="formBody">
+        <script id="formTemplate" type="text/x-jsrender">
+          <tr id="recordId" data-id="{{:id}}">
+              <td class="label"><label for="name"><s:text name="generic.name"/></label></td>
+              <td class="field"><input type="text" data-link="newWeblog.name" size="30" maxlength="30" onBlur="this.value=this.value.trim()" required></td>
+              <td class="description"><s:text name="createWebsite.tip.name" /></td>
+          </tr>
 
-    <tr>
-        <td class="label"><label for="name" /><s:text name="generic.name" /></label></td>
-        <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" onBlur="this.value=this.value.trim()"/></td>
-        <td class="description"><s:text name="createWebsite.tip.name" /></td>
-    </tr>
+          <tr>
+              <td class="label"><label for="description"><s:text name="generic.tagline"/></label></td>
+              <td class="field"><input type="text" data-link="newWeblog.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
+              <td class="description"><s:text name="createWebsite.tip.description" /></td>
+          </tr>
 
-    <tr>
-        <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
-        <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"/></td>
-        <td class="description"><s:text name="createWebsite.tip.description" /></td>
-    </tr>
+          <tr>
+              <td class="label"><label for="handle"><s:text name="createWebsite.handle" /></label></td>
+              <td class="field">
+                  <input type="text" data-link="newWeblog.handle trigger=true" size="30" maxlength="30" onBlur="this.value=this.value.trim()" required><br />
+                  <span style="text-size:70%">
+                      <s:text name="createWebsite.weblogUrl" />:&nbsp;
+                      <s:property value="absoluteSiteURL" />/<span style="color:red" data-link="newWeblog.handle"></span>
+                  </span>
+              </td>
+              <td class="description"><s:text name="createWebsite.tip.handle" /></td>
+          </tr>
 
-    <tr>
-        <td class="label"><label for="handle" /><s:text name="createWebsite.handle" /></label></td>
-        <td class="field">
-            <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" onBlur="this.value=this.value.trim()"/><br />
-            <span style="text-size:70%">
-                <s:text name="createWebsite.weblogUrl" />:&nbsp;
-                <s:property value="absoluteSiteURL" />/<span id="handlePreview" style="color:red"><s:if test="bean.handle != null"><s:property value="bean.handle"/></s:if><s:else>handle</s:else></span>
-            </span>
-        </td>
-        <td class="description"><s:text name="createWebsite.tip.handle" /></td>
-    </tr>
+          <tr>
+              <td class="label"><label for="locale"><s:text name="createWebsite.locale" /></label></td>
+              <td class="field">
+                 <s:select data-link="newWeblog.locale" size="1" list="localesList" listValue="displayName" required=""/>
+              </td>
+              <td class="description"><s:text name="createWebsite.tip.locale" /></td>
+          </tr>
 
-    <tr>
-        <td class="label"><label for="locale" /><s:text name="createWebsite.locale" /></label></td>
-        <td class="field">
-           <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-        </td>
-        <td class="description"><s:text name="createWebsite.tip.locale" /></td>
-    </tr>
+          <tr>
+              <td class="label"><label for="timeZone"><s:text name="createWebsite.timeZone" /></label></td>
+              <td class="field">
+                 <s:select data-link="newWeblog.timeZone" size="1" list="timeZonesList" required=""/>
+              </td>
+              <td class="description"><s:text name="createWebsite.tip.timezone" /></td>
+          </tr>
 
-    <tr>
-        <td class="label"><label for="timeZone" /><s:text name="createWebsite.timeZone" /></label></td>
-        <td class="field">
-           <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-        </td>
-        <td class="description"><s:text name="createWebsite.tip.timezone" /></td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
-        <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
-            <select id="themeSelector" name="bean.theme" size="1"
-            ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
-            <br />
-            <br />
-            <p>{{ selectedTheme.description }}</p>
-            <br />
-            <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
-        </td>
-        <td class="description"><s:text name="createWebsite.tip.theme" /></td>
-    </tr>
-
+          <tr>
+              <td class="label"><label for="theme"><s:text name="createWebsite.theme" /></label></td>
+              <td class="field">
+                  <select id="themeSelector" data-link="newWeblog.theme" size="1">
+                       {{for themeList}}
+                           <option value="{{:id}}">{{:name}}</option>
+                       {{/for}}
+                  </select>
+                  <br />
+                  <br />
+                  <div id="themeDetails" style="height:400px"></div>
+              </td>
+              <td class="description"><s:text name="createWebsite.tip.theme" /></td>
+          </tr>
+          </script>
+        </tbody>
     </table>
+
+    <script id="selectedThemeTemplate" type="text/x-jsrender">
+        <p id="themeDescription">{{:description}}</p>
+        <img id="themeImage" src="<s:property value='siteURL'/>{{:previewPath}}"></img>
+    </script>
 
     <br />
 
@@ -106,16 +121,3 @@ function handlePreview(handle) {
     <input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
 
 </s:form>
-
-<script>
-    document.forms[0].elements[0].focus();
-
-    angular.module('themeSelectModule', [])
-        .controller('themeController', ['$scope', function($scope) {
-            $.ajax({ url: "<s:property value='siteURL' />/tb-ui/authoring/rest/themes/null", async:false,
-                success: function(data) { $scope.themes = data; }
-            });
-            $scope.selectedTheme = $scope.themes[0];
-    }]);
-</script>
-
