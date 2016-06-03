@@ -139,7 +139,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
         if (entry.isPublished()) {
             // Queue applicable pings for this update.
-            pingTargetManager.queueApplicableAutoPings(entry.getWeblog());
+            pingTargetManager.addToPingSet(entry.getWeblog());
         }
 
     }

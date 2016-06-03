@@ -8,7 +8,6 @@
     <class>org.apache.roller.weblogger.pojos.Planet</class>
     <class>org.apache.roller.weblogger.pojos.Subscription</class>
     <class>org.apache.roller.weblogger.pojos.SubscriptionEntry</class>
-    <class>org.apache.roller.weblogger.pojos.AutoPing</class>
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
     <class>org.apache.roller.weblogger.pojos.MediaDirectory</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>

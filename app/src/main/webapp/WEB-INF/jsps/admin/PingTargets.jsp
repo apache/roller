@@ -33,21 +33,30 @@ var msg= {
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/pingtargets.js'/>"></script>
 
+<div id="errorMessageDiv" style="color:red;display:none">
+  <span>Error message here.</span>
+</div>
+
+<div id="successMessageDiv" style="display:none">
+  <span>Information has been saved.</span>
+</div>
+
 <p class="subtitle">
-    <s:text name="commonPingTargets.subtitle" />
+    <s:text name="pingTargets.subtitle" />
 </p>
 
-<p/><s:text name="commonPingTargets.explanation"/><p/>
+<p/><s:text name="pingTargets.explanation"/><p/>
 
-<input type="hidden" id="refreshURL" value="<s:url action='commonPingTargets'/>"/>
+<input type="hidden" id="refreshURL" value="<s:url action='pingTargets'/>"/>
 
 <table class="rollertable">
   <thead>
     <tr class="rHeaderTr">
         <th width="20%"><s:text name="generic.name" /></th>
-        <th width="55%"><s:text name="pingTarget.pingUrl" /></th>
+        <th width="50%"><s:text name="pingTarget.pingUrl" /></th>
         <th width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
         <th width="5%"><s:text name="generic.edit" /></th>
+        <th width="5%"><s:text name="pingTarget.test" /></th>
         <th width="5%"><s:text name="pingTarget.remove" /></th>
     </tr>
   </thead>
@@ -58,7 +67,7 @@ var msg= {
         <td class="url-cell">{{:pingUrl}}</td>
         <td class="current-state-cell" align="center">
            <span style="font-weight: bold;">
-           {{if autoEnabled}}
+           {{if enabled}}
                <s:text name="pingTarget.enabled"/>
            {{else}}
                <s:text name="pingTarget.disabled"/>
@@ -66,8 +75,8 @@ var msg= {
            </span>
         </td>
         <td class="change-state-cell" align="center">
-           <a href="#" class="enable-toggle" data-enabled='{{:autoEnabled}}'>
-           {{if autoEnabled}}
+           <a href="#" class="enable-toggle" data-enabled='{{:enabled}}'>
+           {{if enabled}}
                <s:text name="pingTarget.disable"/>
            {{else}}
                <s:text name="pingTarget.enable"/>
@@ -77,6 +86,11 @@ var msg= {
         <td align="center">
             <a class="edit-link">
                 <img src='<s:url value="/images/page_white_edit.png"/>' alt="<s:text name="generic.edit" />" />
+            </a>
+        </td>
+        <td align="center">
+            <a href="#" class="test-link">
+                <s:text name="pingTarget.test" />
             </a>
         </td>
         <td align="center">
@@ -94,7 +108,7 @@ var msg= {
 </div>
 
 <div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="pingTarget.confirmCommonRemove"/></p>
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="pingTarget.confirmRemove"/></p>
 </div>
 
 <div id="pingtarget-edit" style="display:none">

@@ -267,8 +267,6 @@ public class WeblogController {
     private ValidationError advancedValidate(Weblog data, boolean isAdd) {
         BindException be = new BindException(data, "new data object");
 
-        ValidationError.fromBindingErrors(be);
-
         // make sure handle isn't already taken
         if(isAdd) {
             if (weblogManager.getWeblogByHandle(data.getHandle()) != null) {

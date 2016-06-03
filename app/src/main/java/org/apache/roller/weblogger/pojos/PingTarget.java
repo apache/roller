@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.sql.Timestamp;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -42,7 +43,9 @@ import javax.persistence.Table;
 @Table(name="ping_target")
 @NamedQueries({
         @NamedQuery(name="PingTarget.getPingTargetsOrderByName",
-                query="SELECT p FROM PingTarget p ORDER BY p.name")
+                query="SELECT p FROM PingTarget p ORDER BY p.name"),
+        @NamedQuery(name="PingTarget.getEnabledPingTargets",
+                query="SELECT p FROM PingTarget p where p.enabled = true")
 })
 public class PingTarget {
 
@@ -50,7 +53,7 @@ public class PingTarget {
     private String name;
     private String pingUrl;
     private Timestamp lastSuccess;
-    private boolean autoEnabled;
+    private boolean enabled;
 
     public PingTarget() {
     }
@@ -67,7 +70,7 @@ public class PingTarget {
         this.name = name;
         this.pingUrl = pingUrl;
         this.lastSuccess = null;
-        this.autoEnabled = autoEnable;
+        this.enabled = autoEnable;
     }
 
     @Id
@@ -125,17 +128,17 @@ public class PingTarget {
     }
 
     /**
-     * Is this ping target enabled by default for new weblogs?
+     * Is this ping target enabled (i.e., will send pings out on blog updates)?
      *
-     * @return true if ping target is auto enabled. False otherwise.
+     * @return true if ping target is enabled, false otherwise.
      */
     @Basic(optional=false)
-    public boolean isAutoEnabled() {
-        return autoEnabled;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setAutoEnabled(boolean autoEnabled) {
-        this.autoEnabled = autoEnabled;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
 
@@ -146,7 +149,7 @@ public class PingTarget {
         buf += ", " + getName();
         buf += ", " + getPingUrl();
         buf += ", " + getLastSuccess();
-        buf += ", " + isAutoEnabled() + "}";
+        buf += ", " + isEnabled() + "}";
         return buf;
     }
 

@@ -133,6 +133,26 @@ public class JPAPersistenceStrategy {
     }
 
     /**
+     * Retrieve object, no transaction needed.
+     * @param clazz the class of object to retrieve
+     * @param id the id of the object to retrieve
+     * @return the object retrieved
+     */
+    public<R> R load(Class<R> clazz, String id) {
+        EntityManager em = getEntityManager(false);
+        return em.find(clazz, id);
+    }
+
+    /**
+     * Retrieve managed version of object
+     * @return the object retrieved
+     */
+    public<R> R merge(R entity) {
+        EntityManager em = getEntityManager(false);
+        return em.merge(entity);
+    }
+
+    /**
      * Store object using an existing transaction.
      * @param obj the object to persist
      * @return the object persisted
@@ -177,26 +197,6 @@ public class JPAPersistenceStrategy {
         }
     }
     
-    /**
-     * Retrieve object, no transaction needed.
-     * @param clazz the class of object to retrieve
-     * @param id the id of the object to retrieve
-     * @return the object retrieved
-     */
-    public<R> R load(Class<R> clazz, String id) {
-        EntityManager em = getEntityManager(false);
-        return em.find(clazz, id);
-    }
-
-    /**
-     * Retrieve managed version of object
-     * @return the object retrieved
-     */
-    public<R> R merge(R entity) {
-        EntityManager em = getEntityManager(false);
-        return em.merge(entity);
-    }
-
     /**
      * Return true if a transaction is active on the current EntityManager.
      * @param em the persistence manager

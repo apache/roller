@@ -329,7 +329,7 @@ $( "#tagAutoComplete" )
     .autocomplete({
         delay: 500,
         source: function(request, response) {
-            $.getJSON("${pageContext.request.contextPath}/tb-ui/authoring/rest/tagdata/<s:text name='actionWeblog.handle'/>",
+            $.getJSON("${pageContext.request.contextPath}/tb-ui/authoring/rest/tagdata/<s:property value='%{actionWeblog.handle}' />",
             { prefix: extractLast( request.term ) },
             function(data) {
                 response($.map(data.tagcounts, function (dataValue) {

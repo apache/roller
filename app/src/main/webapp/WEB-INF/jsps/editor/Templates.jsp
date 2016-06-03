@@ -82,13 +82,13 @@
             <td style="vertical-align:middle">
                 <s:if test="#p.derivation.name() != 'SHARED'">
                     <s:url var="edit" action="templateEdit">
-                        <s:param name="weblog" value="actionWeblog.handle" />
+                        <s:param name="weblog" value="%{actionWeblog.handle}" />
                         <s:param name="bean.id" value="#p.id" />
                     </s:url>
                 </s:if>
                 <s:else>
                     <s:url var="edit" action="templateEdit">
-                        <s:param name="weblog" value="actionWeblog.handle" />
+                        <s:param name="weblog" value="%{actionWeblog.handle}" />
                         <s:param name="bean.name" value="#p.name" />
                     </s:url>
                 </s:else>

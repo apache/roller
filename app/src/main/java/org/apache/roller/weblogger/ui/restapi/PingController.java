@@ -20,15 +20,24 @@
  */
 package org.apache.roller.weblogger.ui.restapi;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.xmlrpc.XmlRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +53,8 @@ public class PingController {
 
     private static Logger log = LoggerFactory.getLogger(PingController.class);
 
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+
     @Autowired
     private PingTargetManager pingTargetManager;
 
@@ -51,12 +62,26 @@ public class PingController {
         this.pingTargetManager = pingTargetManager;
     }
 
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     public PingController() {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/pingtargets", method = RequestMethod.GET)
     public List<PingTarget> getPingTargets() throws ServletException {
-        return pingTargetManager.getCommonPingTargets();
+        return pingTargetManager.getPingTargets();
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/pingtarget/{id}", method = RequestMethod.PUT)
@@ -80,7 +105,7 @@ public class PingController {
         try {
             PingTarget pingTarget = new PingTarget();
             pingTarget.setId(WebloggerCommon.generateUUID());
-            pingTarget.setAutoEnabled(false);
+            pingTarget.setEnabled(false);
             return savePingTarget(pingTarget, newData, response);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
@@ -110,6 +135,26 @@ public class PingController {
         return changeAutoEnableState(id, response, true);
     }
 
+    @RequestMapping(value = "/tb-ui/admin/rest/pingtargets/test/{id}", method = RequestMethod.POST)
+    public ResponseEntity testPingTarget(@PathVariable String id, HttpServletResponse response) throws ServletException {
+
+        PingTarget target = pingTargetManager.getPingTarget(id);
+        String handle = propertiesManager.getStringProperty("site.frontpage.weblog.handle");
+        Weblog frontPageWeblog = !StringUtils.isEmpty(handle) ? weblogManager.getWeblogByHandle(handle) : null;
+
+        if (target != null && frontPageWeblog != null) {
+            try {
+                return ResponseEntity.ok(pingTargetManager.sendPing(target, frontPageWeblog));
+            } catch (IOException | XmlRpcException ex) {
+                String message = bundle.getString(ex instanceof UnknownHostException ? "ping.unknownHost" : "ping.networkConnectionFailed");
+                return ResponseEntity.badRequest().body(message);
+            }
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+    }
+
     @RequestMapping(value = "/tb-ui/admin/rest/pingtargets/disable/{id}", method = RequestMethod.POST)
     public PingTarget disable(@PathVariable String id, HttpServletResponse response) throws ServletException {
         return changeAutoEnableState(id, response, false);
@@ -118,7 +163,7 @@ public class PingController {
     private PingTarget changeAutoEnableState(String pingTargetId, HttpServletResponse response, boolean state) throws ServletException {
         try {
             PingTarget ping = pingTargetManager.getPingTarget(pingTargetId);
-            ping.setAutoEnabled(state);
+            ping.setEnabled(state);
             pingTargetManager.savePingTarget(ping);
             WebloggerFactory.flush();
             response.setStatus(HttpServletResponse.SC_OK);

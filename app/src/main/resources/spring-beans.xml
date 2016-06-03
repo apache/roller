@@ -85,7 +85,6 @@
 
     <beans:bean id="weblogManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl">
         <beans:constructor-arg ref="mediaFileManager"/>
-        <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:constructor-arg ref="cacheManager"/>
         <beans:property name="indexManager" ref="indexManager"/>

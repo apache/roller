@@ -327,8 +327,6 @@ public class UserController {
     private ValidationError advancedValidate(User data, boolean isAdd) {
         BindException be = new BindException(data, "new data object");
 
-        ValidationError.fromBindingErrors(be);
-
         if (!StringUtils.isEmpty(data.getPassword()) && !data.getPassword().equals(data.getPasswordConfirm())) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
         }
