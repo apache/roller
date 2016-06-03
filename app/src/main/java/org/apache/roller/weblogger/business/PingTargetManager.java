@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.business;
 
 import java.io.IOException;
 import java.util.List;
-import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
@@ -53,20 +52,19 @@ public interface PingTargetManager {
     PingTarget getPingTarget(String id);
     
     /**
-     * Get a list of the common (shared) ping targets.
+     * Get a list of the defined ping targets.
      *
-     * @return the list of common ping targets as a <code>List</code> of {@link PingTarget objects
+     * @return the list of ping targets as a <code>List</code> of {@link PingTarget objects
      */
-    List<PingTarget> getCommonPingTargets();
+    List<PingTarget> getPingTargets();
 
     /**
-     * Check if the ping target name already exists in the weblogger instance.
+     * Get a list of enabled ping targets.
      *
-     * @param pingTargetName ping target name to check
-     * @return true if there is already a ping target with this name, false otherwise
+     * @return the list of enabled ping targets as a <code>List</code> of {@link PingTarget objects
      */
-    boolean targetNameExists(String pingTargetName);
-    
+    List<PingTarget> getEnabledPingTargets();
+
     /**
      * Check if the url of a ping target is well-formed.  For this test, it must parse as a <code>java.net.URL</code>,
      * with protocol <code>http</code> and a non-empty <code>host</code> portion.
@@ -88,67 +86,20 @@ public interface PingTargetManager {
     boolean isHostnameKnown(String pingTargetUrl);
 
     /**
-     * Store an auto ping configuration.
+     * Add the weblog to the set whose URLs will be sent to the ping targets.  Normally called after a blog entry
+     * update so the ping targets can be made aware.  This method can be called multiple times for the same weblog
+     * (due to repeated edits) without concern of ping duplication as sets naturally discard duplicates.
      *
-     * @param autoPing the auto ping configuration
+     * If ping processing is suspended, this returns without doing anything.
+     *
+     * @param changedWeblog the weblog that has been changed.
      */
-    void saveAutoPing(AutoPing autoPing);
+    void addToPingSet(Weblog changedWeblog);
 
     /**
-     * Remove the auto ping configuration with given id.
+     * Send out pings for all weblogs added via the above addToPingSet(weblog) call to the enabled PingTargets. Set
+     * is cleared as part of the sending.
      *
-     * @param autoPing the auto ping configuration to remove
-     */
-    void removeAutoPing(AutoPing autoPing);
-
-    /**
-     * Remove the auto ping configuration for the given ping target and weblog, if one exists.  Returns silently if it
-     * doesn't exist.
-     *
-     * @param pingTarget the ping target
-     * @param weblog the weblog
-     */
-    void removeAutoPing(PingTarget pingTarget, Weblog weblog);
-
-    /**
-     * Remove all auto ping configurations for all websites.
-     *
-     */
-    void removeAllAutoPings();
-
-    /**
-     * Retrieve an auto ping configuration by id.
-     *
-     * @param id the id of the auto ping configuration to retrieve.
-     * @return the auto ping configuration with specified id or null if not found
-     */
-    AutoPing getAutoPing(String id);
-
-    /**
-     * Get all of the auto ping configurations for the given website.
-     *
-     * @return a list of auto ping configurations for the given website as <code>AutoPing</code> objects.
-     */
-    List<AutoPing> getAutoPingsByWeblog(Weblog website);
-
-    /**
-     * Get all of the auto ping configurations for a given target (across all websites).
-     *
-     * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
-     */
-    List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget);
-
-    /**
-     * Queue the auto ping configurations that should be pinged upon change to an entry in the given weblog.  This calls
-     * {@link OutgoingPingQueue} to queue ping requests for each ping configuration that should be applied on change to
-     * the given weblog.  If ping processing is suspended, this returns without doing anything.
-     *
-     * @param changedWeblog the weblog that has been changed
-     */
-    void queueApplicableAutoPings(Weblog changedWeblog);
-
-    /**
-     * Send all pings currently in the {@link OutgoingPingQueue} to their various ping targets.
      * If ping processing is suspended, this returns without doing anything.
      */
     void sendPings();

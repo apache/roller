@@ -11,7 +11,7 @@ Defines the menus provided with Weblogger
             </tabItem>
             <tabItem action="globalCommentManagement"
                      titleKey="tabbedmenu.admin.commentManagement"/>
-            <tabItem action="commonPingTargets"
+            <tabItem action="pingTargets"
                      titleKey="tabbedmenu.admin.pingTargets">
             </tabItem>
             <tabItem action="planets"
@@ -77,9 +77,6 @@ Defines the menus provided with Weblogger
                      titleKey="tabbedmenu.website.members"
                      enabledProperty="groupblogging.enabled">
             </tabItem>
-            <tabItem action="pings"
-                     titleKey="tabbedmenu.weblog.pingSetup"
-                     disabledProperty="pings.disablePingUsage"/>
             <tabItem action="maintenance"
                      titleKey="tabbedmenu.website.maintenance"/>
         </tab>

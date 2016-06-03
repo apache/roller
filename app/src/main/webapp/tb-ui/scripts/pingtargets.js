@@ -99,6 +99,8 @@ $(function() {
   });
   $("#tableBody").on('click', '.edit-link', function(e) {
      e.preventDefault();
+     $('#successMessageDiv').hide();
+     $('#errorMessageDiv').hide();
      var tr = $(this).closest('tr');
      var actionId = tr.attr('id');
      $('#pingtarget-edit').dialog('option', 'title', msg.editTitle)
@@ -109,8 +111,38 @@ $(function() {
         $('#pingtarget-edit').data('actionId', actionId).dialog('open');
      });
   });
+  $("#tableBody").on('click', '.test-link', function(e) {
+     e.preventDefault();
+     var tr = $(this).closest('tr');
+     var actionId = tr.attr('id');
+     $('#successMessageDiv').hide();
+     $('#errorMessageDiv').hide();
+     checkLoggedIn(function() {
+       $.ajax({
+          type: "POST",
+          url: contextPath + '/tb-ui/admin/rest/pingtargets/test/' + actionId,
+          success: function(data, textStatus, xhr) {
+             $('#successMessageDiv span').text('Result: error? ' + data.error + '; message: ' + data.message);
+             $('#successMessageDiv').show();
+          },
+          error: function(xhr, status, errorThrown) {
+            $('#errorMessageDiv span').text('Result: ' + xhr.responseText);
+            $('#errorMessageDiv').show();
+          }
+       });
+     });
+  });
+  $("#tableBody").on('click', '.delete-link', function(e) {
+    e.preventDefault();
+    $('#successMessageDiv').hide();
+    $('#errorMessageDiv').hide();
+    var actionId = $(this).closest('tr').attr('id');
+    $('#confirm-delete').data('actionId',  actionId).dialog('open');
+  });
   $("#add-link").click(function(e) {
      e.preventDefault();
+     $('#successMessageDiv').hide();
+     $('#errorMessageDiv').hide();
      $('#pingtarget-edit').dialog('option', 'title', msg.addTitle)
      $('#pingtarget-edit-name').val('');
      $('#pingtarget-edit-url').val('');
@@ -119,13 +151,10 @@ $(function() {
         $('#pingtarget-edit').data('actionId', '').dialog('open');
      });
   });
-  $("#tableBody").on('click', '.delete-link', function(e) {
-    e.preventDefault();
-    var actionId = $(this).closest('tr').attr('id');
-    $('#confirm-delete').data('actionId',  actionId).dialog('open');
-  });
   $("#tableBody").on('click', '.enable-toggle', function(e) {
      e.preventDefault();
+     $('#successMessageDiv').hide();
+     $('#errorMessageDiv').hide();
      var tr = $(this).closest('tr');
      var targetId = tr.attr('id');
      var changeStateCell = $(this);

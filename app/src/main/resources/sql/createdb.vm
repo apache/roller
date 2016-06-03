@@ -227,45 +227,24 @@ create index co_status_idx on weblog_entry_comment( status );
 -- name: short descriptive name of the ping target
 -- pingurl: URL to receive the ping
 -- lastsuccess: last day that a success ping response was received
--- autoenabled: whether all new blogs will have this target enabled by default
+-- enabled: whether ping target will be sent pings for each blog update
 create table ping_target (
     id           varchar(48) not null primary key,
     name         varchar(255) not null,
     pingurl      varchar(255) not null,
     lastsuccess  $db.TIMESTAMP_SQL_TYPE,
-    autoenabled  $db.BOOLEAN_SQL_TYPE_FALSE not null
+    enabled      $db.BOOLEAN_SQL_TYPE_FALSE not null
 );
 
 alter table ping_target add constraint pt_name_uq unique (name);
 
 alter table ping_target add constraint pt_url_uq unique (pingurl);
 
--- ping targets configured to be pinged for each weblog
-create table weblog_ping_target (
-    id            varchar(48) not null primary key,
-    weblogid      varchar(48) not null,
-    pingtargetid  varchar(48) not null 
-);
-
-alter table weblog_ping_target add constraint ap_weblogid_fk
-    foreign key (weblogid) references weblog(id);
-
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
-    create index ap_weblogid_idx on weblog_ping_target( weblogid );
-#end
-
-alter table weblog_ping_target add constraint ap_pingtargetid_fk
-    foreign key (pingtargetid) references ping_target(id);
-
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
-    create index ap_pingtargetid_idx on weblog_ping_target( pingtargetid );
-#end
-
+-- for server-wide properties that can be adjusted (in the Admin UI) during runtime
 create table weblogger_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE
 );
-
 
 -- PLANET FEED AGGREGATOR
 

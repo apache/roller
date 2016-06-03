@@ -27,13 +27,10 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
-import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -74,7 +71,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private WeblogEntryManager weblogEntryManager;
     private IndexManager indexManager;
     private final MediaFileManager mediaFileManager;
-    private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
 
@@ -101,11 +97,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
 
-    protected JPAWeblogManagerImpl(MediaFileManager mfm, PingTargetManager ptm, JPAPersistenceStrategy strat,
+    protected JPAWeblogManagerImpl(MediaFileManager mfm, JPAPersistenceStrategy strat,
                                    CacheManager cacheManager) {
         log.debug("Instantiating JPA Weblog Manager");
         this.mediaFileManager = mfm;
-        this.pingTargetManager = ptm;
         this.strategy = strat;
         this.cacheManager = cacheManager;
     }
@@ -144,10 +139,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             this.strategy.remove(tagData);
         }
         
-        // Remove the weblog's auto ping configurations
-        List<AutoPing> autopings = pingTargetManager.getAutoPingsByWeblog(weblog);
-        this.strategy.removeAll(autopings);
-
         // remove associated templates
         TypedQuery<WeblogTemplate> templateQuery = strategy.getNamedQuery("WeblogTemplate.getByWeblog",
                 WeblogTemplate.class);
@@ -283,13 +274,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // flush so that all data up to this point can be available in db
         this.strategy.flush();
-
-        for (PingTarget pingTarget : pingTargetManager.getCommonPingTargets()) {
-            if(pingTarget.isAutoEnabled()) {
-                AutoPing autoPing = new AutoPing(pingTarget, newWeblog);
-                pingTargetManager.saveAutoPing(autoPing);
-            }
-        }
 
     }
 

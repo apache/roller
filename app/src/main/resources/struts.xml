@@ -184,9 +184,9 @@
             <result name="success" type="tiles">.UserAdmin</result>
         </action>
 
-        <action name="commonPingTargets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
-            <param name="actionName">commonPingTargets</param>
-            <param name="pageTitleReal">commonPingTargets.commonPingTargets</param>
+        <action name="pingTargets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">pingTargets</param>
+            <param name="pageTitleReal">pingTargets.pingTargets</param>
             <param name="desiredMenu">admin</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.PingTargets</result>
@@ -339,11 +339,6 @@
             <result name="success" type="tiles">.Members</result>
         </action>
         
-        <action name="pings!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Pings">
-            <result name="list" type="tiles">.Pings</result>
-        </action>
-
         <action name="maintenance!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Maintenance">
             <result name="success" type="tiles">.Maintenance</result>

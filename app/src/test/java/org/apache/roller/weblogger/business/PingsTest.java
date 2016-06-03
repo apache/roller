@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -83,33 +82,33 @@ public class PingsTest extends WebloggerTest {
     public void testPingTargetCRUD() throws Exception {
         PingTarget ping;
         
-        // create common ping
+        // create ping target
         pingTargetManager.savePingTarget(testCommonPing);
         String commonId = testCommonPing.getId();
         endSession(true);
         
-        // make sure common ping was stored
+        // make sure ping target was stored
         ping = pingTargetManager.getPingTarget(commonId);
         assertNotNull(ping);
         assertEquals(testCommonPing.getPingUrl(), ping.getPingUrl());
         
-        // update common ping
+        // update ping target
         ping = pingTargetManager.getPingTarget(commonId);
         ping.setName("testtestCommon");
         pingTargetManager.savePingTarget(ping);
         endSession(true);
         
-        // make sure common ping was updated
+        // make sure ping target was updated
         ping = pingTargetManager.getPingTarget(commonId);
         assertNotNull(ping);
         assertEquals("testtestCommon", ping.getName());
         
-        // delete common ping
+        // delete ping target
         ping = pingTargetManager.getPingTarget(commonId);
         pingTargetManager.removePingTarget(ping);
         endSession(true);
         
-        // make sure common ping was deleted
+        // make sure ping target was deleted
         ping = pingTargetManager.getPingTarget(commonId);
         assertNull(ping);
     }
@@ -133,7 +132,7 @@ public class PingsTest extends WebloggerTest {
         assertEquals(testCommonPing.getName(), ping.getName());
         
         // lookup all common pings
-        List commonPings = pingTargetManager.getCommonPingTargets();
+        List commonPings = pingTargetManager.getPingTargets();
         assertNotNull(commonPings);
         // correct answer is: 3 pings in config + 1 new one = 5
         assertEquals(4, commonPings.size());
@@ -144,184 +143,4 @@ public class PingsTest extends WebloggerTest {
         endSession(true);
     }
     
-    
-    /**
-     * Test basic persistence operations ... Create, Update, Delete
-     */
-    @Test
-    public void testAutoPingCRUD() throws Exception {
-        AutoPing autoPing;
-        
-        // create ping target to use for tests
-        PingTarget pingTarget = setupPingTarget("fooPing", "http://foo/null");
-        PingTarget pingTarget2 = setupPingTarget("blahPing", "http://blah/null");
-        endSession(true);
-        
-        // create autoPing
-        autoPing = new AutoPing(pingTarget, testWeblog);
-        pingTargetManager.saveAutoPing(autoPing);
-        String id = autoPing.getId();
-        endSession(true);
-        
-        // make sure autoPing was stored
-        autoPing = pingTargetManager.getAutoPing(id);
-        assertNotNull(autoPing);
-        assertEquals(pingTarget, autoPing.getPingTarget());
-        
-        // update autoPing
-        autoPing.setPingTarget(pingTargetManager.getPingTarget(pingTarget2.getId()));
-        pingTargetManager.saveAutoPing(autoPing);
-        endSession(true);
-        
-        // make sure autoPing was updated
-        autoPing = pingTargetManager.getAutoPing(id);
-        assertNotNull(autoPing);
-        assertEquals(pingTarget2, autoPing.getPingTarget());
-        
-        // delete autoPing
-        pingTargetManager.removeAutoPing(autoPing);
-        endSession(true);
-        
-        // make sure common autoPing was deleted
-        autoPing = pingTargetManager.getAutoPing(id);
-        assertNull(autoPing);
-        
-        // teardown test ping target
-        teardownPingTarget(pingTarget.getId());
-        teardownPingTarget(pingTarget2.getId());
-        endSession(true);
-    }
-    
-    
-    /**
-     * Test special ping target removal methods ... by weblog/target, collection, all
-     */
-    @Test
-    public void testPingTargetRemovals() throws Exception {
-        AutoPing testAutoPing;
-        
-        // create ping target to use for tests
-        PingTarget pingTarget = setupPingTarget("fooPing", "http://foo/null");
-        PingTarget pingTarget2 = setupPingTarget("blahPing", "http://blah/null");
-        PingTarget pingTarget3 = setupPingTarget("gahPing", "http://gah/null");
-        
-        try {
-        
-            // create auto pings for test
-            testWeblog = getManagedWeblog(testWeblog);
-            AutoPing autoPing = setupAutoPing(pingTarget, testWeblog);
-            setupAutoPing(pingTarget2, testWeblog);
-            setupAutoPing(pingTarget3, testWeblog);
-            endSession(true);
-
-            // remove by weblog/target
-            testWeblog = getManagedWeblog(testWeblog);
-            pingTarget = pingTargetManager.getPingTarget(pingTarget.getId());
-            pingTargetManager.removeAutoPing(pingTarget, testWeblog);
-            endSession(true);
-
-            // make sure remove succeeded
-            testAutoPing = pingTargetManager.getAutoPing(autoPing.getId());
-            assertNull(testAutoPing);
-
-            // need to create more test pings
-            setupAutoPing(pingTarget, testWeblog);
-            setupAutoPing(pingTarget2, testWeblog);
-            setupAutoPing(pingTarget3, testWeblog);
-            endSession(true);
-
-            // remove all
-            pingTargetManager.removeAllAutoPings();
-            endSession(true);
-
-            // make sure remove succeeded
-            testWeblog = getManagedWeblog(testWeblog);
-            List autoPings = pingTargetManager.getAutoPingsByWeblog(testWeblog);
-            assertNotNull(autoPings);
-            assertEquals(0, autoPings.size());
-        
-        } finally {
-            // teardown test ping target
-            teardownPingTarget(pingTarget.getId());
-            teardownPingTarget(pingTarget2.getId());
-            endSession(true);
-        }
-    }
-    
-    
-    /**
-     * Test lookup mechanisms ... id, ping target, weblog
-     */
-    @Test
-    public void testAutoPingLookups() throws Exception {
-        AutoPing autoPing;
-        
-        // create autoPing target to use for tests
-        PingTarget pingTarget = setupPingTarget("fooPing", "http://foo/null");
-        endSession(true);
-        
-        // create autoPing
-        testWeblog = getManagedWeblog(testWeblog);
-        pingTarget = pingTargetManager.getPingTarget(pingTarget.getId());
-        autoPing = new AutoPing(pingTarget, testWeblog);
-        pingTargetManager.saveAutoPing(autoPing);
-        String id = autoPing.getId();
-        endSession(true);
-        
-        // lookup by id
-        autoPing = pingTargetManager.getAutoPing(id);
-        assertNotNull(autoPing);
-        assertEquals(pingTarget, autoPing.getPingTarget());
-        
-        // lookup by ping target
-        pingTarget = pingTargetManager.getPingTarget(pingTarget.getId());
-        List autoPings = pingTargetManager.getAutoPingsByTarget(pingTarget);
-        assertNotNull(autoPings);
-        assertEquals(1, autoPings.size());
-        
-        // lookup by weblog
-        testWeblog = getManagedWeblog(testWeblog);
-        autoPings = pingTargetManager.getAutoPingsByWeblog(testWeblog);
-        assertNotNull(autoPing);
-        assertEquals(1, autoPings.size());
-        
-        // delete autoPing
-        autoPing = pingTargetManager.getAutoPing(autoPing.getId());
-        pingTargetManager.removeAutoPing(autoPing);
-        endSession(true);
-        
-        // teardown test ping target
-        teardownPingTarget(pingTarget.getId());
-        endSession(true);
-    }
-
-    private PingTarget setupPingTarget(String name, String url) throws Exception {
-        PingTarget testPing = new PingTarget(name, url, false);
-        pingTargetManager.savePingTarget(testPing);
-        strategy.flush();
-
-        PingTarget ping = pingTargetManager.getPingTarget(testPing.getId());
-        if (ping == null) {
-            throw new IllegalStateException("error setting up ping target");
-        }
-        return ping;
-    }
-
-    private void teardownPingTarget(String id) throws Exception {
-        PingTarget ping = pingTargetManager.getPingTarget(id);
-        pingTargetManager.removePingTarget(ping);
-        strategy.flush();
-    }
-
-    private AutoPing setupAutoPing(PingTarget ping, Weblog weblog) throws Exception {
-        AutoPing autoPing = new AutoPing(ping, getManagedWeblog(weblog));
-        pingTargetManager.saveAutoPing(autoPing);
-        strategy.flush();
-
-        autoPing = pingTargetManager.getAutoPing(autoPing.getId());
-        if (autoPing == null) {
-            throw new IllegalStateException("error setting up auto ping");
-        }
-        return autoPing;
-    }
 }

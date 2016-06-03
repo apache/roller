@@ -43,7 +43,7 @@
 
 <script>
     function onSelectDirectory(id) {
-        window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
+        window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="%{actionWeblog.handle}" />';
     }
 </script>
 

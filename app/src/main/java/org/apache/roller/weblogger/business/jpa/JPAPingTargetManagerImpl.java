@@ -28,22 +28,22 @@ import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PingResult;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
@@ -69,6 +69,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         logPingsOnly = boolVal;
     }
 
+    // Set of updated weblogs which will get pings sent out at the next sendPings() call.
+    private Set<Weblog> weblogPingSet = Collections.synchronizedSet(new HashSet<>());
+
     protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy, URLStrategy urlStrategy,
                                        PropertiesManager propertiesManager) {
         this.strategy = strategy;
@@ -78,20 +81,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     @Override
     public void removePingTarget(PingTarget pingTarget) {
-        // remove contents and then target
-        this.removePingTargetContents(pingTarget);
         this.strategy.remove(pingTarget);
-    }
-
-    /**
-     * Convenience method which removes any queued pings or auto pings that
-     * reference the given ping target.
-     */
-    private void removePingTargetContents(PingTarget ping) {
-        // Remove the website's auto ping configurations
-        Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget");
-        q.setParameter(1, ping);
-        q.executeUpdate();
     }
 
     @Override
@@ -102,21 +92,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     @Override
     public PingTarget getPingTarget(String id) {
         return strategy.load(PingTarget.class, id);
-    }
-
-    @Override
-    public boolean targetNameExists(String pingTargetName) {
-
-        // Within that set of targets, fail if there is a target
-        // with the same name and that target doesn't
-        // have the same id.
-        for (PingTarget pt : getCommonPingTargets()) {
-            if (pt.getName().equals(pingTargetName)) {
-                return true;
-            }
-        }
-        // No conflict found
-        return false;
     }
 
     @Override
@@ -159,48 +134,49 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     @Override
-    public List<PingTarget> getCommonPingTargets() {
+    public List<PingTarget> getPingTargets() {
         TypedQuery<PingTarget> q = strategy.getNamedQuery(
                 "PingTarget.getPingTargetsOrderByName", PingTarget.class);
         return q.getResultList();
     }
 
     @Override
-    public void initialize() {
-        initializeCommonTargets();
+    public List<PingTarget> getEnabledPingTargets() {
+        TypedQuery<PingTarget> q = strategy.getNamedQuery(
+                "PingTarget.getEnabledPingTargets", PingTarget.class);
+        return q.getResultList();
+    }
 
-        // Remove all autoping configurations if ping usage has been disabled.
-        if (WebloggerStaticConfig.getBooleanProperty("pings.disablePingUsage", false)) {
-            log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-            removeAllAutoPings();
-        }
+    @Override
+    public void initialize() {
+        initializePingTargets();
     }
 
     /**
-     * Initialize the common ping targets from the configuration properties. If the current list of common ping targets
-     * is empty, and the <code>pings.initialCommonTargets</code> property is present in the configuration then,
-     * this method will use that value to initialize the common targets.  This is called on each server startup.
+     * Initialize the ping targets from the configuration properties. If the current list of ping targets
+     * is empty, and the <code>pings.initialPingTargets</code> property is present in the configuration then
+     * this method will use that value to initialize the targets.  This is called on each server startup.
      * <p/>
      * Note: this is expected to be called during initialization with transaction demarcation being handled by the
      * caller.
      *
      * @see org.apache.roller.weblogger.ui.core.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
-    private void initializeCommonTargets() {
-        // Pattern used to parse common ping targets.
+    private void initializePingTargets() {
+        // Pattern used to parse ping targets.
         // Each initial commmon ping target is specified in the format {{name}{url}}
         Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
-        String PINGS_INITIAL_COMMON_TARGETS_PROP = "pings.initialCommonTargets";
+        String PINGS_INITIAL_PING_TARGETS_PROP = "pings.initialPingTargets";
 
-        String configuredVal = WebloggerStaticConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
-        if (configuredVal == null || configuredVal.trim().length() == 0) {
-            log.debug("No (or empty) value of {} present in the configuration.  Skipping initialization of commmon targets.",
-                    PINGS_INITIAL_COMMON_TARGETS_PROP);
+        if (!getPingTargets().isEmpty()) {
+            log.debug("Ping targets are defined in the database already, skipping initialization.");
             return;
         }
 
-        if (!getCommonPingTargets().isEmpty()) {
-            log.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+        String configuredVal = WebloggerStaticConfig.getProperty(PINGS_INITIAL_PING_TARGETS_PROP);
+        if (configuredVal == null || configuredVal.trim().length() == 0) {
+            log.debug("No (or empty) value of {} present in the configuration.  Skipping initialization of ping targets.",
+                    PINGS_INITIAL_PING_TARGETS_PROP);
             return;
         }
 
@@ -217,126 +193,81 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             if (m.matches() && m.groupCount() == 2) {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
-                log.info("Creating common ping target '{} from configuration properties.", name);
+                log.info("Creating ping target '{} from configuration properties.", name);
                 PingTarget pingTarget = new PingTarget(name, url, false);
                 savePingTarget(pingTarget);
             } else {
                 log.error("Unable to parse configured initial ping target '{}'." +
-                        ". Skipping this target. Check your setting of the property ", thisTarget, PINGS_INITIAL_COMMON_TARGETS_PROP);
+                        ". Skipping this target. Check your setting of the property ", thisTarget, PINGS_INITIAL_PING_TARGETS_PROP);
             }
         }
     }
 
     @Override
-    public AutoPing getAutoPing(String id) {
-        return strategy.load(AutoPing.class, id);
-    }
-
-    @Override
-    public void saveAutoPing(AutoPing autoPing) {
-        strategy.store(autoPing);
-    }
-
-    @Override
-    public void removeAutoPing(AutoPing autoPing) {
-        strategy.remove(autoPing);
-    }
-
-    @Override
-    public void removeAutoPing(PingTarget pingTarget, Weblog website) {
-        Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget&Weblog");
-        q.setParameter(1, pingTarget);
-        q.setParameter(2, website);
-        q.executeUpdate();
-    }
-
-    @Override
-    public void removeAllAutoPings() {
-        TypedQuery<AutoPing> q = strategy.getNamedQueryCommitFirst("AutoPing.getAll", AutoPing.class);
-        strategy.removeAll(q.getResultList());
-    }
-
-    @Override
-    public void queueApplicableAutoPings(Weblog changedWeblog) {
+    public void addToPingSet(Weblog changedWeblog) {
         if (propertiesManager.getBooleanProperty("pings.suspendPingProcessing")) {
             log.debug("Ping processing is suspended. No auto pings will be queued.");
             return;
         }
-
-        List<AutoPing> applicableAutopings = getAutoPingsByWeblog(changedWeblog);
-        OutgoingPingQueue queue = OutgoingPingQueue.getInstance();
-
-        for (AutoPing autoPing : applicableAutopings) {
-            queue.addPing(autoPing);
-        }
-    }
-
-    @Override
-    public List<AutoPing> getAutoPingsByWeblog(Weblog weblog) {
-        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByWeblog", AutoPing.class);
-        q.setParameter(1, weblog);
-        return q.getResultList();
-    }
-
-    @Override
-    public List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) {
-        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByPingTarget", AutoPing.class);
-        q.setParameter(1, pingTarget);
-        return q.getResultList();
+        weblogPingSet.add(changedWeblog);
     }
 
     @Override
     public void sendPings() {
         log.debug("ping task started");
 
-        OutgoingPingQueue opq = OutgoingPingQueue.getInstance();
-
-        List<AutoPing> pings = opq.getPings();
+        // Make a copy of the current queue
+        Set<Weblog> weblogs = new HashSet<>(weblogPingSet);
 
         // reset queue for next execution
-        opq.clearPings();
+        weblogPingSet = Collections.synchronizedSet(new HashSet<>());
 
         if (propertiesManager.getBooleanProperty("pings.suspendPingProcessing")) {
-            log.info("Ping processing suspended on admin settings page, no pings are being generated.");
+            log.warn("Ping processing suspended on admin settings page, no pings are being generated.");
             return;
         }
 
         String absoluteContextUrl = WebloggerStaticConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
-            log.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
+            log.warn("WARNING: Skipping current ping queue processing round because we cannot yet" +
+                    " determine the site's absolute context url.");
             return;
         }
 
         if (logPingsOnly) {
-            log.info("pings.logOnly set to true in properties file so no actual pinging will occur." +
-                    " To see logged pings, make sure logging at DEBUG for this class.");
+            log.warn("pings.logOnly set to true in properties file so no actual pinging will occur." +
+                    " To see all logged pings, make sure logging at DEBUG for this class, or INFO to see just failures.");
         }
 
         Timestamp startOfDay = new Timestamp(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH).getTime());
         Boolean hadDateUpdate = false;
-        for (AutoPing ping : pings) {
-            try {
-                if (logPingsOnly) {
-                    log.debug("Would have pinged: {}", ping);
-                } else {
-                    PingTarget pingTarget = ping.getPingTarget();
-                    PingResult pr = sendPing(pingTarget, ping.getWeblog());
-                    // for performance reasons, limit updates to daily
-                    if (!pr.isError() && pingTarget.getLastSuccess().before(startOfDay)) {
-                        pingTarget.setLastSuccess(startOfDay);
-                        savePingTarget(pingTarget);
-                        hadDateUpdate = true;
+        List<PingTarget> targets = getEnabledPingTargets();
+
+        for (PingTarget target : targets) {
+            for (Weblog weblog : weblogs) {
+                try {
+                    if (logPingsOnly) {
+                        log.debug("Would have pinged target {} for weblog {}", target.getName(), weblog.getHandle());
+                    } else {
+                        PingResult pr = sendPing(target, weblog);
+                        // for performance reasons, limit updates to daily
+                        if (!pr.isError() && (target.getLastSuccess() == null || target.getLastSuccess().before(startOfDay))) {
+                            target.setLastSuccess(startOfDay);
+                            savePingTarget(target);
+                            hadDateUpdate = true;
+                        }
                     }
+                } catch (IOException|XmlRpcException ex) {
+                    log.debug("exception", ex);
                 }
-            } catch (IOException|XmlRpcException ex) {
-                log.debug("exception", ex);
             }
         }
+
         if (hadDateUpdate) {
             strategy.flush();
         }
 
-        log.info("ping task completed, pings processed = {}", pings.size());
+        log.info("ping task completed, pings processed = {}", weblogs.size() * targets.size());
     }
 
     @Override
@@ -348,7 +279,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         List<String> params = new ArrayList<>();
         params.add(weblog.getName());
         params.add(websiteUrl);
-        log.debug("Executing ping to '{}' for weblog '{}' ({})", pingTargetUrl, websiteUrl, weblog.getName());
+        log.debug("Sending ping to '{}' for weblog '{}'...", pingTarget.getName(), weblog.getHandle());
 
         // Send the ping.
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
@@ -356,7 +287,15 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         XmlRpcClient client = new XmlRpcClient();
         client.setConfig(config);
         PingResult pingResult = parseResult(client.execute("weblogUpdates.ping", params.toArray()));
-        log.debug("Ping result is: {}", pingResult);
+        if (pingResult.isError()) {
+            if (log.isDebugEnabled()) {
+                log.info("Ping failed for {}.  Result is: {}", websiteUrl, pingResult);
+            } else {
+                log.info("Ping to '{}' for weblog '{}' failed.  Result is: {}", pingTargetUrl, websiteUrl, pingResult);
+            }
+        } else {
+            log.debug("Ping result is: {}", pingResult);
+        }
         return pingResult;
     }
 
@@ -372,8 +311,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         } catch (Exception ex) {
             // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
             // This effectively assumes flerror = false, and sets message = obj.toString();
-            log.debug("Invalid ping result of type: {}, proceeding with stand-in representative.",
-                    obj.getClass().getName());
+            log.info("Invalid ping result of type: {}, proceeding with stand-in representative.", obj.getClass().getName());
             return new PingResult(null,obj.toString());
         }
     }

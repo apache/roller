@@ -119,7 +119,7 @@
     toggleState = 'Off'
 
     function onSelectDirectory(id) {
-        window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
+        window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblog=" + '<s:property value="%{actionWeblog.handle}" />';
     }
 
     function onToggle() {

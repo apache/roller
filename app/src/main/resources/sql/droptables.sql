@@ -26,7 +26,6 @@ drop table planet;
 drop table weblogger_properties;
 
 -- supplemental services tables
-drop table weblog_ping_target;
 drop table ping_target;
 drop table blogroll_link;
 drop table media_file;
