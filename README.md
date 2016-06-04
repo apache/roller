@@ -1,7 +1,7 @@
 Rollarcus: bootstrap-ui branch
 ===
 
-This branch __bootstrap-ui__ rewrites the Roller editor/admin user-interface (UI) using Bootstrap.
+This branch __bootstrap-ui__ re-writes the Roller editor/admin user-interface (UI) using Bootstrap.
 
 Status
 ---
