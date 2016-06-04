@@ -1,8 +1,6 @@
 Rollarcus: bootstrap-ui branch
 ===
 
-This is Rollarcus: my experimental fork of [Apache Roller](https://github.com/apache/roller).
-
 This branch __bootstrap-ui__ rewrites the Roller editor/admin user-interface (UI) using Bootstrap.
 
 Status
