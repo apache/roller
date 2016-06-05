@@ -263,7 +263,6 @@ public class MediaFileView extends UIAction {
             MediaDirectory mediaFileDir = mediaFileManager.getMediaDirectory(directoryId);
             mediaFileManager.removeMediaDirectory(mediaFileDir);
             weblogManager.saveWeblog(getActionWeblog());
-            persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
             addMessage("mediaFile.deleteFolder.success");
 
             // re-route to default folder

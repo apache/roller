@@ -109,6 +109,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public void saveWeblog(Weblog weblog) {
         weblog.setLastModified(new java.util.Date());
         strategy.merge(weblog);
+        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+            cacheManager.invalidate(weblog);
+        }
     }
 
     @Override
@@ -116,7 +119,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove contents first, then remove weblog
         this.removeWeblogContents(weblog);
         this.strategy.remove(weblog);
-        
+        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+            cacheManager.invalidate(weblog);
+        }
+        this.strategy.flush();
+
         // remove entry from cache mapping
         this.weblogHandleToIdMap.remove(weblog.getHandle());
     }
@@ -211,6 +218,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(template);
         // update weblog last modified date.  date updated by saveWeblog()
         saveWeblog(template.getWeblog());
+        if (propertiesManager.isSiteWideWeblog(template.getWeblog().getHandle())) {
+            cacheManager.invalidate(template.getWeblog());
+        }
     }
 
     @Override
@@ -589,9 +599,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     @Override
     public void removeBookmark(WeblogBookmark bookmark) {
-        bookmark.getWeblog().getBookmarks().remove(bookmark);
-        bookmark.getWeblog().invalidateCache();
+        Weblog weblog = bookmark.getWeblog();
+        weblog.getBookmarks().remove(bookmark);
+        weblog.invalidateCache();
         this.strategy.remove(bookmark);
+        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+            cacheManager.invalidate(weblog);
+        }
     }
 
     @Override

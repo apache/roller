@@ -131,7 +131,7 @@ public class Bookmarks extends UIAction {
                 }
             }
         }
-        persistenceStrategy.flushAndInvalidateWeblog(getActionWeblog());
+        persistenceStrategy.flush();
         return execute();
     }
 

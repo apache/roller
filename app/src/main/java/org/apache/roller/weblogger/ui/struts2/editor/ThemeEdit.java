@@ -144,7 +144,7 @@ public class ThemeEdit extends UIAction {
 
             // save updated weblog and flush
             weblogManager.saveWeblog(weblog);
-            persistenceStrategy.flushAndInvalidateWeblog(weblog);
+            persistenceStrategy.flush();
 
             // Theme set to..
             addMessage("themeEditor.setTheme.success", newTheme.getName());

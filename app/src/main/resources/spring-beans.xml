@@ -44,7 +44,6 @@
 
     <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
         <beans:constructor-arg ref="databaseProvider"/>
-        <beans:constructor-arg ref="cacheManager"/>
     </beans:bean>
 
     <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">

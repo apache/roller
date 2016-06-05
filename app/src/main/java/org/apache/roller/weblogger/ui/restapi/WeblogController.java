@@ -225,7 +225,7 @@ public class WeblogController {
 
                 // flush and clear cache
                 try {
-                    persistenceStrategy.flushAndInvalidateWeblog(weblog);
+                    persistenceStrategy.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (RollbackException ex) {
                     log.error("Error updating weblog config", ex);
@@ -250,7 +250,6 @@ public class WeblogController {
                 try {
                     // remove website
                     weblogManager.removeWeblog(weblog);
-                    persistenceStrategy.flushAndInvalidateWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (Exception ex) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);

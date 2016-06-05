@@ -53,6 +53,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private static Logger log = LoggerFactory.getLogger(JPAMediaFileManagerImpl.class);
 
+
+
+
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
@@ -321,15 +324,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             this.strategy.remove(mf);
         }
 
-        dir.getWeblog().getMediaDirectories().remove(dir);
-
-        // Contained media files
+        strategy.remove(dir);
         strategy.flush();
-
-        this.strategy.remove(dir);
-
-        // Refresh associated parent
-        strategy.flush();
+        strategy.refresh(dir.getWeblog());
     }
 
     private void updateWeblogLastModifiedDate(Weblog weblog) {
