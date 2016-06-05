@@ -311,38 +311,18 @@
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CategoriesSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
-    
-    <definition name=".CategoryEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/CategoryEdit.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-    
-    <definition name=".CategoryRemove" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/CategoryRemove.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-    
+
     <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
-    
-    <definition name=".BookmarkEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarkEdit.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-    
+
     <definition name=".BookmarksImport" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarksImport.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
-    
-    <definition name=".FolderEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/FolderEdit.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-    
+
     <definition name=".Resources" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Resources.jsp" />
     </definition>

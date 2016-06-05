@@ -32,9 +32,17 @@
 <tiles:insertAttribute name="banner"/>
 <tiles:insertAttribute name="bannerStatus"/>
 
-<h1 class="roller-page-title"><s:property value="pageTitle"/></h1>
-<tiles:insertAttribute name="messages"/>
-<tiles:insertAttribute name="content"/>
+<div class="col-md-8 roller-column-left">
+    <div class="row">
+        <h1 class="roller-page-title"><s:property value="pageTitle"/></h1>
+        <tiles:insertAttribute name="messages"/>
+        <div class="panel">
+            <div class="panel-body">
+                <tiles:insertAttribute name="content"/>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
