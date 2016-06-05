@@ -13,12 +13,5 @@ Want to contribute? Shoot me a PR.
 
 Screen-shots
 ---
-Here's what the Edit-Entry and Entries pages look like with Bootstrap.
-
-Edit-Entry:
-
-![Entry-Edit page](/docs/readme-images/edit-entry.jpg "Edit-Entry page")
-
-Entries:
-
-![Entries page](/docs/readme-images/entries.jpg "Entries page")
+You can find some screenshots of the work so far on Flickr: 
+[Roller UI with Bootstrap](https://www.flickr.com/photos/snoopdave/albums/72157666773620323)
