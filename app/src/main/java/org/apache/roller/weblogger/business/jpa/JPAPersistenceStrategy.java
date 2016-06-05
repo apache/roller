@@ -20,8 +20,8 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
@@ -31,14 +31,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,48 +57,37 @@ public class JPAPersistenceStrategy {
      */
     private EntityManagerFactory emf = null;
 
-    private CacheManager cacheManager;
-
     /**
      * Construct by finding JPA EntityManagerFactory.
      * @param dbProvider database configuration information for manual configuration.
-     * @throws NamingException if lookup via JNDI fails
      */
-    protected JPAPersistenceStrategy(DatabaseProvider dbProvider, CacheManager cacheManager) throws NamingException {
-        this.cacheManager = cacheManager;
-        String jpaConfigurationType = WebloggerStaticConfig.getProperty("jpa.configurationType");
-        if ("jndi".equals(jpaConfigurationType)) {
-            // Lookup EMF via JNDI: added for Geronimo
-            String emfJndiName = "java:comp/env/" + WebloggerStaticConfig.getProperty("jpa.emf.jndi.name");
-            emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
-        } else {
+    protected JPAPersistenceStrategy(DatabaseProvider dbProvider) throws NamingException {
 
-            // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
-            Properties emfProps = new Properties();
-            Enumeration keys = WebloggerStaticConfig.keys();
-            while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
-                if (       key.startsWith("javax.persistence.") 
-                        || key.startsWith("openjpa.")
-                        || key.startsWith("eclipselink.")
-                        || key.startsWith("hibernate.")) {
-                    String value = WebloggerStaticConfig.getProperty(key);
-                    log.info("{}: {}", key, value);
-                    emfProps.setProperty(key, value);
-                }
+        // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
+        Properties emfProps = new Properties();
+        Enumeration keys = WebloggerStaticConfig.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            if (       key.startsWith("javax.persistence.")
+                    || key.startsWith("openjpa.")
+                    || key.startsWith("eclipselink.")
+                    || key.startsWith("hibernate.")) {
+                String value = WebloggerStaticConfig.getProperty(key);
+                log.info("{}: {}", key, value);
+                emfProps.setProperty(key, value);
             }
-
-            if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-                emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getFullJndiName());
-            } else {
-                emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
-                emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
-                emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
-                emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
-            }
-
-            this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
         }
+
+        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
+            emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getFullJndiName());
+        } else {
+            emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
+            emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
+            emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
+            emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
+        }
+
+        this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
     }
     /**
      * Refresh changes to the current object.
@@ -113,8 +99,7 @@ public class JPAPersistenceStrategy {
         try {
             EntityManager em = getEntityManager(true);
             em.refresh(clazz);
-        } catch (Exception e) {
-            // ignored;
+        } catch (Exception ignored) {
         }
     }
 
@@ -125,11 +110,6 @@ public class JPAPersistenceStrategy {
     public void flush() throws RollbackException {
         EntityManager em = getEntityManager(true);
         em.getTransaction().commit();
-    }
-
-    public void flushAndInvalidateWeblog(Weblog weblog) {
-        flush();
-        cacheManager.invalidate(weblog);
     }
 
     /**
@@ -188,13 +168,11 @@ public class JPAPersistenceStrategy {
     
     /**
      * Remove object from persistence storage.
-     * @param pos the persistent objects to remove
+     * @param objsToRemove the persistent objects to remove
      */
-    public void removeAll(Collection pos) {
+    public void removeAll(List<?> objsToRemove) {
         EntityManager em = getEntityManager(true);
-        for (Object obj : pos) {
-            em.remove(obj);
-        }
+        objsToRemove.forEach(em::remove);
     }
     
     /**

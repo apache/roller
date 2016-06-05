@@ -58,7 +58,6 @@ public class PersistenceSessionFilter implements Filter {
                 log.debug("Releasing TightBlog DB Session");
                 WebloggerFactory.release();
             }
-            
         }
         
         log.debug("Exiting {}", request.getRequestURI());

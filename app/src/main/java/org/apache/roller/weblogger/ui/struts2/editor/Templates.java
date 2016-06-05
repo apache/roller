@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -182,10 +181,7 @@ public class Templates extends UIAction {
 					}
 				}
 
-				// Refresh weblog
-				Weblog weblog = getActionWeblog();
-				weblogManager.saveWeblog(weblog);
-				persistenceStrategy.flushAndInvalidateWeblog(weblog);
+                persistenceStrategy.flush();
 
 			} catch (Exception e) {
 				log.error("Error deleting templates for weblog '{}'", getActionWeblog().getHandle(), e);

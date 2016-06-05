@@ -106,7 +106,6 @@ public class Maintenance extends UIAction {
         try {
             Weblog weblog = getActionWeblog();
             weblogManager.saveWeblog(weblog);
-            persistenceStrategy.flushAndInvalidateWeblog(weblog);
             addMessage("maintenance.message.flushed");
         } catch (Exception ex) {
             log.error("Error saving weblog - {}" + getActionWeblog().getHandle(), ex);
@@ -125,7 +124,6 @@ public class Maintenance extends UIAction {
             Weblog weblog = getActionWeblog();
             weblogManager.resetHitCount(weblog);
             weblogManager.saveWeblog(weblog);
-            persistenceStrategy.flushAndInvalidateWeblog(weblog);
             addMessage("maintenance.message.reset");
         } catch (Exception ex) {
             log.error("Error saving weblog - {}", getActionWeblog().getHandle(), ex);

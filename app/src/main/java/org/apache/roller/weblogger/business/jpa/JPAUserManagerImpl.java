@@ -84,11 +84,9 @@ public class JPAUserManagerImpl implements UserManager {
     public void removeUser(User user) {
         String userName = user.getUserName();
         
-        // remove permissions, maintaining both sides of relationship
-        List<UserWeblogRole> perms = getWeblogRolesIncludingPending(user);
-        for (UserWeblogRole perm : perms) {
-            this.strategy.remove(perm);
-        }
+        // remove roles, maintaining both sides of relationship
+        List<UserWeblogRole> roles = getWeblogRolesIncludingPending(user);
+        this.strategy.removeAll(roles);
         this.strategy.remove(user);
 
         // remove entry from cache mapping
