@@ -187,30 +187,8 @@
             insertAtCursor(document.getElementById('edit_content'), anchorTag);
         }
         function insertAtCursor(textAreaElement, valueForInsertion) {
-            if (document.selection) {
-                textAreaElement.focus();
-                var range = document.selection.createRange();
-                range.text = valueForInsertion;
-            }
-            else if (textAreaElement.selectionStart || textAreaElement.selectionStart == '0') {
-                var preText;
-                var postText;
-                if (textAreaElement.selectionStart == 0) {
-                    preText = '';
-                    postText = '';
-                }
-                else {
-                    preText = textAreaElement.value.substring(0, textAreaElement.selectionStart);
-                    postText = textAreaElement.value.substring(textAreaElement.selectionEnd, textAreaElement.value.length);
-                }
-                textAreaElement.value =  preText + valueForInsertion + postText;
-                textAreaElement.selectionStart = preText.length + valueForInsertion.length;
-                textAreaElement.selectionEnd = textAreaElement.selectionStart;
-                textAreaElement.focus();
-            } else {
-                textAreaElement.value += valueForInsertion;
-                textAreaElement.focus();
-            }
+            textAreaElement.value += valueForInsertion;
+            textAreaElement.focus();
         }
     </script>
 </s:else>

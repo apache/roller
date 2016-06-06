@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
@@ -34,21 +33,20 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Browse media files action.
+ * Select a media file from the blog entry edit screen.
  */
-@SuppressWarnings("serial")
 public class MediaFileImageChooser extends UIAction {
     private static Logger log = LoggerFactory.getLogger(MediaFileImageChooser.class);
 
     private String directoryId;
-    private String directoryName;
 
-    private List<MediaFile> childFiles;
     private MediaDirectory currentDirectory;
 
-    private List<MediaDirectory> allDirectories;
+    private List<MediaDirectory> otherDirectories;
+    private List<MediaFile> childFiles;
 
     private MediaFileManager mediaFileManager;
 
@@ -57,62 +55,38 @@ public class MediaFileImageChooser extends UIAction {
     }
 
     public MediaFileImageChooser() {
-        this.actionName = "mediaFileImageChooser";
-        this.desiredMenu = "editor";
-        this.pageTitle = "mediaFileImageChooser.title";
-    }
-
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return GlobalRole.BLOGGER;
-    }
-
-    @Override
-    public WeblogRole getRequiredWeblogRole() {
-        return WeblogRole.POST;
+        actionName = "mediaFileImageChooser";
+        desiredMenu = "editor";
+        pageTitle = "mediaFileImageChooser.title";
+        requiredGlobalRole = GlobalRole.BLOGGER;
+        requiredWeblogRole = WeblogRole.POST;
     }
 
     /**
-     * Prepares view action
-     */
-    public void prepare() {
-    }
-
-    /**
-     * Fetches and displays list of media file for the given directory. The
-     * directory could be chosen by ID or path.
-     * 
-     * @return String The result of the action.
+     * Fetches and displays list of media files for the given directory as well as other
+     * directories the user can switch to.
      */
     @SkipValidation
     public String execute() {
         try {
-            MediaDirectory directory;
             if (this.directoryId != null) {
-                directory = mediaFileManager.getMediaDirectory(this.directoryId);
-            } else if (this.directoryName != null) {
-                directory = mediaFileManager.getMediaDirectoryByName(
-                        getActionWeblog(), this.directoryName);
-                this.directoryId = directory.getId();
+                currentDirectory = mediaFileManager.getMediaDirectory(this.directoryId);
             } else {
-                directory = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
-                this.directoryId = directory.getId();
+                currentDirectory = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
+                this.directoryId = currentDirectory.getId();
             }
 
             this.childFiles = new ArrayList<>();
 
-            for (MediaFile mf : directory.getMediaFiles()) {
-                this.childFiles.add(mf);
-            }
+            this.childFiles.addAll(currentDirectory.getMediaFiles().stream().collect(Collectors.toList()));
 
             Collections.sort(this.childFiles, MediaFile.NameComparator);
 
-            this.currentDirectory = directory;
+            // List of other directories user can switch to
+            otherDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
+            otherDirectories.remove(currentDirectory);
 
-            // List of available directories
-            allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
             return SUCCESS;
-
         } catch (Exception e) {
             log.error("Error viewing media file directory ", e);
             addError("MediaFile.error.view");
@@ -120,88 +94,23 @@ public class MediaFileImageChooser extends UIAction {
         return SUCCESS;
     }
 
-    /**
-     * Returns the hierarchy of the current directory. This is useful in
-     * displaying path information as breadcrumb.
-     */
-    public List<Pair<String, String>> getCurrentDirectoryHierarchy() {
-        List<Pair<String, String>> directoryHierarchy = new ArrayList<>();
-
-        String fullPath = "/" + this.currentDirectory.getName();
-        if (fullPath.length() > 1) {
-            String[] directoryNames = fullPath.substring(1).split("/");
-            String dirPath = "";
-            for (String directoryName : directoryNames) {
-                dirPath = dirPath + "/" + directoryName;
-                directoryHierarchy.add(Pair.of(dirPath,
-                        directoryName));
-            }
-        }
-        return directoryHierarchy;
-    }
-
-    /**
-     * @return the directoryId
-     */
     public String getDirectoryId() {
         return directoryId;
     }
 
-    /**
-     * @param directoryId
-     *            the directoryId to set
-     */
     public void setDirectoryId(String directoryId) {
         this.directoryId = directoryId;
     }
 
-    /**
-     * @return the directory name
-     */
-    public String getDirectoryName() {
-        return directoryName;
-    }
-
-    /**
-     * @param directoryName
-     *            the directoryName to set
-     */
-    public void setDirectoryName(String directoryName) {
-        this.directoryName = directoryName;
-    }
-
-    /**
-     * @return the childFiles
-     */
     public List<MediaFile> getChildFiles() {
         return childFiles;
     }
 
-    /**
-     * @param childFiles
-     *            the childFiles to set
-     */
-    public void setChildFiles(List<MediaFile> childFiles) {
-        this.childFiles = childFiles;
-    }
-
-    /**
-     * @return the currentDirectory
-     */
     public MediaDirectory getCurrentDirectory() {
         return currentDirectory;
     }
 
-    /**
-     * @param currentDirectory
-     *            the currentDirectory to set
-     */
-    public void setCurrentDirectory(MediaDirectory currentDirectory) {
-        this.currentDirectory = currentDirectory;
+    public List<MediaDirectory> getOtherDirectories() {
+        return otherDirectories;
     }
-
-    public List<MediaDirectory> getAllDirectories() {
-        return allDirectories;
-    }
-
 }

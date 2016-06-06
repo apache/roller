@@ -53,30 +53,13 @@
 <%-- Subtitle and folder path --%>
 
 <p class="subtitle">
-    <s:if test='currentDirectory.name.equals("default")'>
-            <s:text name="mediaFileImageChooser.subtitle" >
-                <s:param value="weblog" />
-            </s:text>
-    </s:if>
-    <s:else>
-            <s:text name="mediaFileView.folderName"/>:
-            <s:iterator id="directory" value="currentDirectoryHierarchy">
-                <s:url var="getDirectoryByPathUrl" action="mediaFileImageChooser">
-                    <s:param name="directoryName" value="#directory.left" />
-                    <s:param name="weblog" value="%{actionWeblog.handle}" />
-                </s:url>
-                <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.right" /></s:a>
-            </s:iterator>
-    </s:else>
+    <s:text name="mediaFileView.folderName"/>: <s:property value="%{currentDirectory.name}" />
 </p>
 
 <p class="pagetip">
     <s:text name="mediaFileImageChooser.pageTip" />
 </p>
 
-
-<%-- || (pager && pager.items.size() > 0) --%>
-<s:if test="childFiles || allDirectories">
 
 <s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileView">
     <sec:csrfInput/>
@@ -110,7 +93,7 @@
 
             <%-- List media directories first --%>
 
-            <s:iterator id="directory" value="allDirectories">
+            <s:iterator id="directory" value="otherDirectories">
                 <li class="align-images"
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
                     <div class="mediaObject">
@@ -175,12 +158,7 @@
 
     <div style="clear:left;"></div>
 
-
 </s:form>
-
-</s:if>
-
-
 
 <script>
     function onSelectMediaFile(name, url, alt, title, anchor, isImage) {
