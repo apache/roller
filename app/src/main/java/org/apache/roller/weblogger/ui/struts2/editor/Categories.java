@@ -162,11 +162,11 @@ public class Categories extends UIAction {
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.GET)
     public List<WeblogCategory> getWeblogCategories(@RequestParam(name="weblog") String weblogHandle,
                                                     @RequestParam String skipCategoryId) {
-        List<WeblogCategory> list = weblogManager.getWeblogCategories(weblogManager.getWeblogByHandle(weblogHandle)).stream()
-                .filter(t -> !t.getId().equals(skipCategoryId))
+        return weblogManager.getWeblogCategories(weblogManager.getWeblogByHandle(weblogHandle))
+                .stream()
+                .filter(cat -> !cat.getId().equals(skipCategoryId))
+                .peek(cat -> cat.setWeblog(null))
                 .collect(Collectors.toList());
-        list.forEach(p -> p.setWeblog(null));
-        return list;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories/inuse", method = RequestMethod.GET)
