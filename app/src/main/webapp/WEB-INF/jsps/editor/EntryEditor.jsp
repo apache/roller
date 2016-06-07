@@ -187,8 +187,17 @@
             insertAtCursor(document.getElementById('edit_content'), anchorTag);
         }
         function insertAtCursor(textAreaElement, valueForInsertion) {
-            textAreaElement.value += valueForInsertion;
-            textAreaElement.focus();
+            if (textAreaElement.selectionStart || textAreaElement.selectionStart == '0') {
+                var preText = textAreaElement.value.substring(0, textAreaElement.selectionStart);
+                var postText = textAreaElement.value.substring(textAreaElement.selectionStart, textAreaElement.value.length);
+                textAreaElement.value = preText + valueForInsertion + postText;
+                textAreaElement.selectionStart = preText.length + valueForInsertion.length;
+                textAreaElement.selectionEnd = textAreaElement.selectionStart;
+                textAreaElement.focus();
+            } else {
+                textAreaElement.value += valueForInsertion;
+                textAreaElement.focus();
+            }
         }
     </script>
 </s:else>
