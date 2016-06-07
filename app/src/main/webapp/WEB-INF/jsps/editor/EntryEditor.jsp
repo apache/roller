@@ -67,10 +67,10 @@
 
 <script>
     function onClickAddImage(){
-        <s:url var="mediaFileImageChooser" action="mediaFileImageChooser">
+        <s:url var="mediaFileChooser" action="mediaFileChooser">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $( "#mediaFileEditor" ).attr('src','<s:property value="%{mediaFileImageChooser}" />');
+        $( "#mediaFileEditor" ).attr('src','<s:property value="%{mediaFileChooser}" />');
         $(function() {
             $("#mediafile_edit_lightbox").dialog({
                 modal  : true,
@@ -87,7 +87,7 @@
     function onSelectMediaFile(name, url, alt, title, anchor, isImage) {
         $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
-        if (isImage == "true") {
+        if (isImage === true) {
             insertMediaFile(
             (anchor ? '<a href="' + anchor + '">' : '') +
             '<img src="' + url + '"' +

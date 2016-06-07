@@ -787,3 +787,20 @@ div.optioner {
   display: table;
   clear: both;
 }
+
+.mediaObject {
+     width:120px;
+     height:120px;
+}
+.mediaObjectInfo {
+    clear:left;
+    width:130px;
+    margin-left:5px;
+    font-size:11px;
+}
+.mediaFileHighlight {
+    border: 1px solid #aaa;
+}
+#mediaFileList {
+    margin-left: 0;
+}

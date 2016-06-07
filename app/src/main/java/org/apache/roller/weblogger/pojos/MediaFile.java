@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Comparator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -47,6 +49,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name="media_file")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaFile {
 
     private static Logger log = LoggerFactory.getLogger(MediaFile.class);
@@ -71,7 +74,10 @@ public class MediaFile {
     private SafeUser creator         = null;
 
     private InputStream is;
+
+    @JsonIgnore
     private MediaDirectory directory;
+
     private FileContent content;
     private FileContent thumbnail;
 
@@ -262,7 +268,7 @@ public class MediaFile {
 
     @Transient
     public SafeUser getCreator() {
-        if (creator == null) {
+        if (creator == null  && creatorId != null) {
             try {
                 creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
             } catch (Exception ignored) {
