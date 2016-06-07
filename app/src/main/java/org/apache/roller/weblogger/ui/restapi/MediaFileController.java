@@ -44,12 +44,14 @@ public class MediaFileController {
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{handle}/mediadirectories", method = RequestMethod.GET)
     public List<MediaDirectory> getMediaDirectories(@PathVariable String handle, Principal p, HttpServletResponse response) {
         if (userManager.checkWeblogRole(p.getName(), handle, WeblogRole.EDIT_DRAFT)) {
-            return mediaFileManager.getMediaDirectories(weblogManager.getWeblogByHandle(handle))
+            List<MediaDirectory> temp =
+            mediaFileManager.getMediaDirectories(weblogManager.getWeblogByHandle(handle))
                     .stream()
-                    .filter(md -> md.getMediaFiles().size() > 0)
+                    .filter(md -> !md.getMediaFiles().isEmpty())
                     .peek(md -> { md.setMediaFiles(null); md.setWeblog(null); })
                     .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
                     .collect(Collectors.toList());
+            return temp;
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return null;
@@ -63,7 +65,7 @@ public class MediaFileController {
         if (permitted) {
             return md.getMediaFiles()
                     .stream()
-                    .peek(mf->{mf.setDirectory(null);mf.setCreatorId(null);})
+                    .peek(mf -> mf.setCreatorId(null))
                     .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
                     .collect(Collectors.toList());
         } else {

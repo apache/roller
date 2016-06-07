@@ -178,8 +178,8 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
-    <definition name=".MediaFileImageChooser" extends=".tiles-popuppage" >
-        <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileImageChooser.jsp" />
+    <definition name=".MediaFileChooser" extends=".tiles-popuppage" >
+        <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileChooser.jsp" />
         <put-attribute name="messages" value="/WEB-INF/jsps/tiles/messages.jsp" />
     </definition>
 

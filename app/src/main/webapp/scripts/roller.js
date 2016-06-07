@@ -25,19 +25,19 @@ function setCookie(name,value,expires,path,domain,secure) {
 
 /* This function is used to get cookies */
 function getCookie(name) {
-	var prefix = name + "=" 
-	var start = document.cookie.indexOf(prefix) 
+	var prefix = name + "="
+	var start = document.cookie.indexOf(prefix)
 
 	if (start==-1) {
 		return null;
 	}
-	
-	var end = document.cookie.indexOf(";", start+prefix.length) 
+
+	var end = document.cookie.indexOf(";", start+prefix.length)
 	if (end==-1) {
 		end=document.cookie.length;
 	}
 
-	var value=document.cookie.substring(start+prefix.length, end) 
+	var value=document.cookie.substring(start+prefix.length, end)
 	return unescape(value);
 }
 
@@ -55,7 +55,7 @@ function rememberUser(theForm) {
     var expires = new Date();
     expires.setTime(expires.getTime() + 24 * 365 * 60 * 60 * 1000); // sets it for approx 365 days.
     // sets it for entire domain, so freeroller will remember for all users
-    setCookie("commentAuthor",theForm.name.value,expires,"/"); 
+    setCookie("commentAuthor",theForm.name.value,expires,"/");
     setCookie("commentEmail",theForm.email.value,expires,"/");
     setCookie("commentUrl",theForm.url.value,expires,"/");
 }
@@ -66,15 +66,17 @@ function forgetUser(theForm) {
     deleteCookie("commentUrl","/");
 }
 
-/* This function is used to show/hide elements with a display:none style attribute */ 
+/* This function is used to show/hide elements with a display:none style attribute */
 function toggle(targetId) {
     if (document.getElementById) {
         target = document.getElementById(targetId);
-    	if (target.style.display == "none") {
-    		target.style.display = "";            
-    	} else {
-    		target.style.display = "none";
-    	}
+      if (target) {
+        if (target.style.display == "none") {
+      		target.style.display = "";
+      	} else {
+      		target.style.display = "none";
+      	}
+      }
     }
 }
 
@@ -84,14 +86,14 @@ function toggleFolder(targetId) {
     if (document.getElementById) {
         target = document.getElementById(targetId);
     	if (target.style.display == "none") {
-    		target.style.display = "";    
-            expanded = true;        
+    		target.style.display = "";
+            expanded = true;
     	} else {
     		target.style.display = "none";
             expanded = false;
     	}
         togglePlusMinus("i" + targetId);
-        
+
         // set a cookie to remember this preference
         var expires = new Date();
         expires.setTime(expires.getTime() + 24 * 365 * 60 * 60 * 1000); // sets it for approx 365 days.
@@ -102,11 +104,13 @@ function toggleFolder(targetId) {
 function togglePlusMinus(targetId) {
     if (document.getElementById) {
         target = document.getElementById(targetId);
-    	if (target.innerHTML == "+") {
-    		target.innerHTML = "-";
-    	} else {
-    		target.innerHTML = "+";
-    	}
+    	if (target) {
+            if (target.innerHTML == "+") {
+                target.innerHTML = "-";
+            } else {
+                target.innerHTML = "+";
+            }
+        }
     }
 }
 
@@ -121,7 +125,7 @@ function folderPreference(folderId) {
             plusMinus.innerHTML = "-";
         } else { // hide
             folder.style.display = "none";
-            plusMinus.innerHTML = "+"; 
+            plusMinus.innerHTML = "+";
         }
     }
 }
@@ -138,7 +142,7 @@ function toggleNextRow(e) {
     var thisRow = e.parentNode.parentNode;
     var tableBody = thisRow.parentNode;
     var nextRow = tableBody.getElementsByTagName("tr")[thisRow.rowIndex+1];
-    
+
     if (checked == true) {
         nextRow.style.display = "";
     } else {
@@ -152,15 +156,15 @@ function toggleControl(toggleId, targetId) {
         target = document.getElementById(targetId);
         toggle = document.getElementById(toggleId);
     	if (target.style.display == "none") {
-    		target.style.display = "";  
-            expanded = true;  
-                  
+    		target.style.display = "";
+            expanded = true;
+
     	} else {
-    		target.style.display = "none";  
+    		target.style.display = "none";
             expanded = false;
     	}
         togglePlusMinus("i" + targetId);
-        
+
         // set a cookie to remember this preference
         var expires = new Date();
         expires.setTime(expires.getTime() + 24 * 365 * 60 * 60 * 1000); // sets it for approx 365 days.

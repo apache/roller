@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -38,7 +39,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name="media_directory")
@@ -48,6 +48,7 @@ import javax.persistence.Transient;
         @NamedQuery(name="MediaDirectory.getByWeblogAndName",
                 query="SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
 })
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaDirectory {
 
     private String id;
@@ -102,11 +103,6 @@ public class MediaDirectory {
 
     public void setMediaFiles(Set<MediaFile> mediaFiles) {
         this.mediaFiles = mediaFiles;
-    }
-
-    @Transient
-    public boolean isEmpty() {
-        return getMediaFiles().isEmpty();
     }
 
     /**
