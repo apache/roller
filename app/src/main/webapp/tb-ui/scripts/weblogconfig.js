@@ -74,7 +74,7 @@ $(function() {
        }
     ]
   });
-  $(".delete-link").click(function(e) {
+  $("#delete-link").click(function(e) {
     e.preventDefault();
     $('#confirm-delete').dialog('open');
   });

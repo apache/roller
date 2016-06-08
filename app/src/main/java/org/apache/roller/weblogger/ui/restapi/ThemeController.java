@@ -1,0 +1,148 @@
+package org.apache.roller.weblogger.ui.restapi;
+
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.ValidationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+@RestController
+public class ThemeController {
+
+    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+
+    @Autowired
+    private ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    @Autowired
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy = null;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/themes/{currentTheme}", method = RequestMethod.GET)
+    public List<SharedTheme> getSharedThemes(@PathVariable String currentTheme) {
+        List<SharedTheme> list = themeManager.getEnabledSharedThemesList().stream()
+                .filter(t -> !t.getId().equals(currentTheme))
+                .collect(Collectors.toList());
+        return list;
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogHandle}/switchtheme/{newThemeId}", method = RequestMethod.POST)
+    public ResponseEntity switchTheme(@PathVariable String weblogHandle, @PathVariable String newThemeId,
+                                             Principal p, HttpServletResponse response) {
+
+        Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+        SharedTheme newTheme = themeManager.getSharedTheme(newThemeId);
+        User user = userManager.getUserByUserName(p.getName());
+        Locale userLocale = Locale.forLanguageTag(user.getLocale());
+        I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+        if (weblog != null && newTheme != null) {
+            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                ValidationError maybeError = advancedValidate(weblog, newTheme, messages);
+                if (maybeError != null) {
+                    return ResponseEntity.badRequest().body(maybeError);
+                }
+
+                // Remove old template overrides and their renditions
+                List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(weblog);
+
+                for (WeblogTemplate template : oldTemplates) {
+                    // Remove template overrides and their renditions
+                    if (template.getDerivation() == Template.TemplateDerivation.OVERRIDDEN) {
+                        weblogManager.removeTemplate(template);
+                    }
+                }
+
+                weblog.setTheme(newThemeId);
+
+                log.debug("Saving theme {} for weblog {}", newThemeId, weblog.getHandle());
+
+                // save updated weblog and flush
+                weblogManager.saveWeblog(weblog);
+                persistenceStrategy.flush();
+
+                // Theme set to..
+                String msg = messages.getString("themeEditor.setTheme.success", newTheme.getName());
+
+                return ResponseEntity.ok(msg);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+    }
+
+    private ValidationError advancedValidate(Weblog weblog, SharedTheme newTheme, I18nMessages messages) {
+        BindException be = new BindException(weblog, "new data object");
+
+        WeblogTheme oldTheme = new WeblogTheme(weblogManager, weblog, themeManager.getSharedTheme(weblog.getTheme()));
+
+        oldTheme.getTemplates().stream().filter(
+                old -> old.getDerivation() == Template.TemplateDerivation.NONSHARED).forEach(old -> {
+            if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
+                be.addError(new ObjectError("Weblog object", messages.getString("themeEditor.conflicting.singleton.role",
+                        old.getRole().getReadableName())));
+            } else if (newTheme.getTemplateByName(old.getName()) != null) {
+                be.addError(new ObjectError("Weblog object", messages.getString("themeEditor.conflicting.name",
+                        old.getName())));
+            } else {
+                String maybePath = old.getRelativePath();
+                if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
+                    be.addError(new ObjectError("Weblog object", messages.getString("themeEditor.conflicting.link",
+                            old.getRelativePath())));
+                }
+            }
+        });
+
+        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
+    }
+
+}

@@ -50,12 +50,12 @@
    <s:text name="templates.subtitle" >
        <s:param value="actionWeblog.handle" />
    </s:text>
-</p>  
+</p>
 <p class="pagetip">
    <s:text name="templates.tip" />
 </p>
 
-<s:form id="templatesForm" action="templates!cancel">
+<s:form id="templatesForm">
     <sec:csrfInput/>
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
@@ -141,6 +141,10 @@
 <s:if test="!templates.isEmpty">
 	<div class="control">
 		<s:submit class="delete-link" value="%{getText('templates.deleteselected')}" />
+
+    <span style="float:right">
+        <s:submit id="switch-theme-button" action="themeEdit" value="%{getText('templates.switchTheme')}" />
+    </span>
 	</div>
 </s:if>
 

@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -125,6 +126,12 @@ public class Templates extends UIAction {
 		}
 		setAvailableRoles(availableRoles);
 		return LIST;
+	}
+
+	public String newTheme() {
+		SharedTheme theme = themeManager.getSharedTheme(getActionWeblog().getTheme());
+		addMessage("themeEditor.setTheme.success", theme.getName());
+		return execute();
 	}
 
 	/**

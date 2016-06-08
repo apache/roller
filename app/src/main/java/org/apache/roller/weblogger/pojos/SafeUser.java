@@ -69,7 +69,6 @@ public class SafeUser {
                     String screenName,
                     String emailAddress,
                     String locale,
-                    String timeZone,
                     Boolean isEnabled) {
         this.id = id;
         this.screenName = screenName;

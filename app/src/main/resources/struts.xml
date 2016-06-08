@@ -318,9 +318,12 @@
             <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 
-        <action name="themeEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.ThemeEdit">
-            <result name="input" type="tiles">.ThemeEdit</result>
+        <action name="themeEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="actionName">themeEdit</param>
+            <param name="desiredMenu">editor</param>
+            <param name="pageTitleReal">themeEditor.title</param>
+            <result name="success" type="tiles">.ThemeEdit</result>
         </action>
 
         <action name="templates!*" method="{1}"

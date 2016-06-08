@@ -106,6 +106,10 @@ public class SharedTheme {
         return previewImagePath;
     }
 
+    public String getPreviewPath() {
+        return "/themes/" + getId() + "/" + getPreviewImagePath();
+    }
+
     public void setPreviewImagePath(String previewImagePath) {
         this.previewImagePath = previewImagePath;
     }
