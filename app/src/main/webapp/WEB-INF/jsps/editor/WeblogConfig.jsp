@@ -208,7 +208,7 @@ var msg= {
 
 <br />
 
-<s:submit value="%{getText('websiteSettings.button.remove')}" class="delete-link"/>
+<s:submit value="%{getText('websiteSettings.button.remove')}" id="delete-link"/>
     <br />
     <br />
     <br />

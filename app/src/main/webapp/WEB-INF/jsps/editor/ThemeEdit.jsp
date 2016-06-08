@@ -19,15 +19,39 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js' />"></script>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
-function fullPreview(selector) {
-    selected = selector.selectedIndex;
-    window.open('<s:url value="/tb-ui/authoring/preview/%{actionWeblog.handle}"/>?theme=' + selector.options[selected].value);
-}
+var contextPath = "${pageContext.request.contextPath}";
+var weblogHandle = "<s:property value='actionWeblog.handle'/>";
+var msg= {
+  confirmLabel: '<s:text name="generic.confirm"/>',
+  cancelLabel: '<s:text name="generic.cancel"/>'
+};
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/themeedit.js'/>"></script>
+
+<div id="success-message" class="messages" style="display:none">
+	<ul>
+        <li><span class="textSpan"></span></li>
+	</ul>
+</div>
+
+<div id="failure-message" class="errors" style="display:none">
+  <script id="errorMessageTemplate" type="text/x-jsrender">
+  <b>{{:errorMessage}}</b>
+  <ul>
+     {{for errors}}
+     <li>{{>#data}}</li>
+     {{/for}}
+  </ul>
+  </script>
+  <span class="textSpan"></span>
+</div>
 
 <p class="subtitle">
    <s:text name="themeEditor.subtitle" >
@@ -35,9 +59,12 @@ function fullPreview(selector) {
    </s:text>
 </p>
 
-<s:form action="themeEdit!save">
+<input type="hidden" id="recordId" value="<s:property value='%{#parameters.weblog}'/>"/>
+<input type="hidden" id="refreshURL" value="<s:url action='themeEdit'/>?weblog=%{#parameters.weblog}"/>
+
+<s:form id="themeForm" action="templates!newTheme">
     <sec:csrfInput/>
-    <s:hidden name="weblog" />
+    <s:hidden name="weblog"/>
 
     <div class="optioner">
         <p>
@@ -59,6 +86,11 @@ function fullPreview(selector) {
         <p>
             <s:text name="themeEditor.previewDescription" />
         </p>
+        <p>
+          <span class="warning">
+              <s:text name="themeEditor.switchWarning" />
+          </span>
+        </p>
     </div>
 
     <div class="control">
@@ -67,17 +99,27 @@ function fullPreview(selector) {
                             value="<s:text name='themeEditor.preview' />"
                             onclick="fullPreview($('#themeSelector').get(0))" />
 
-            <s:submit value="%{getText('themeEditor.save')}" />
+            <input type="button" id="update-button" value="<s:text name='themeEditor.save' />" />
         </span>
     </div>
 
 </s:form>
 
+<div id="confirm-switch" title="<s:text name='themeEditor.confirmTitle'/>" style="display:none">
+    <s:text name="themeEditor.youSure"/>
+    <br>
+    <br>
+    <span class="warning">
+        <s:text name="themeEditor.switchWarning" />
+    </span>
+</div>
+
 <%-- initializes the chooser/optioner/themeImport display at page load time --%>
 <script>
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
-            var myUrl = '<s:url value="/tb-ui/authoring/rest/themes/"/><s:property value="actionWeblog.theme"/>'
+            var currentTheme = $('#currentTheme').val();
+            var myUrl = '<s:url value="/tb-ui/authoring/rest/themes/"/><s:property value='actionWeblog.theme'/>'
             $.ajax({ url: myUrl, async:false,
                 success: function(data) { $scope.themes = data; }
             });
