@@ -9,6 +9,7 @@ $(function() {
             click: function() {
                var idToUpdate = $(this).data('categoryId');
                var newName = $('#category-edit-name').val().trim();
+               var dg = $(this);
                if (newName.length > 0) {
                   $.ajax({
                      type: "PUT",
@@ -17,13 +18,9 @@ $(function() {
                      contentType: "application/json",
                      processData: "false",
                      success: function(data, textStatus, xhr) {
-                        if (idToUpdate == '') {
-                           document.categoriesForm.submit();
-                        } else {
-                           $('#catname-' + idToUpdate).text(newName)
-                           $('#catid-' + idToUpdate).attr('data-name', newName)
-                           $("#category-edit").dialog().dialog("close");
-                        }
+                       dg.dialog("close");
+                       angular.element('#category-list').scope().ctrl.loadCategories();
+                       angular.element('#category-list').scope().$apply();
                      },
                      error: function(xhr, status, errorThrown) {
                         if (xhr.status in this.statusCode)
@@ -53,11 +50,14 @@ $(function() {
             click: function() {
                var idToRemove = $(this).data('categoryId');
                var targetCategoryId = $('#category-remove-targetlist').val();
+               var dg = $(this);
                $.ajax({
                   type: "DELETE",
                   url: contextPath + '/tb-ui/authoring/rest/category/' + idToRemove + '?targetCategoryId=' + targetCategoryId,
                   success: function(data, textStatus, xhr) {
-                     document.categoriesForm.submit();
+                     dg.dialog("close");
+                     angular.element('#category-list').scope().ctrl.loadCategories();
+                     angular.element('#category-list').scope().$apply();
                   }
                });
             },
@@ -71,14 +71,15 @@ $(function() {
       ]
    });
 
-   $(".edit-link").click(function(e) {
+   $("#tableBody").on('click', '.edit-link', function(e) {
       e.preventDefault();
-      $('#category-edit').dialog('option', 'title', msg.editTitle)
-      $('#category-edit-name').val($(this).attr("data-name")).select();
+      var tr = $(this).closest('tr');
+      var idToEdit = tr.attr('id');
+      $('#category-edit').dialog('option', 'title', msg.editTitle);
+      $('#category-edit-name').val(tr.find('td.category-name').html());
       $('#category-edit-error').css("display", "none");
-      var dataId = $(this).attr("data-id");
-      $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
-         $('#category-edit').data('categoryId', dataId).dialog('open');
+      checkLoggedIn(function() {
+         $('#category-edit').data('categoryId', idToEdit).dialog('open');
       });
    });
 
@@ -87,14 +88,15 @@ $(function() {
       $('#category-edit').dialog('option', 'title', msg.addTitle)
       $('#category-edit-name').val('');
       $('#category-edit-error').css("display", "none");
-      $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', function() {
+      checkLoggedIn(function() {
          $('#category-edit').data('categoryId', '').dialog('open');
       });
    });
 
-   $(".remove-link").click(function(e) {
+   $("#tableBody").on('click', '.delete-link', function(e) {
       e.preventDefault();
-      var idToRemove = $(this).attr("data-id");
+      var tr = $(this).closest('tr');
+      var idToRemove = tr.attr('id');
       $.ajax({
          type: "GET",
          url: contextPath + '/tb-ui/authoring/rest/categories/inuse?categoryId=' + idToRemove,
@@ -120,3 +122,15 @@ $(function() {
       });
    });
 });
+
+var tightBlogApp = angular.module('tightBlogApp', []);
+
+tightBlogApp.controller('CategoryController', ['$http', function CategoryController($http) {
+    var self = this;
+    this.loadCategories = function() {
+      $http.get(contextPath + '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val()).then(function(response) {
+        self.categories = response.data;
+      });
+    };
+    this.loadCategories();
+  }]);

@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.ui.struts2.editor;
+package org.apache.roller.weblogger.ui.restapi;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,11 +29,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +48,10 @@ import javax.servlet.http.HttpServletResponse;
  * Manage weblog categories.
  */
 @RestController
-public class Categories extends UIAction {
+public class CategoryController {
+
+    public CategoryController() {
+    }
 
     @Autowired
     private UserManager userManager;
@@ -72,38 +73,6 @@ public class Categories extends UIAction {
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
-
-    // all categories from the action weblog
-	private List<WeblogCategory> allCategories;
-
-	public Categories() {
-		this.actionName = "categories";
-		this.desiredMenu = "editor";
-		this.pageTitle = "categoriesForm.rootTitle";
-	}
-
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return GlobalRole.BLOGGER;
-    }
-
-    @Override
-    public WeblogRole getRequiredWeblogRole() {
-        return WeblogRole.POST;
-    }
-
-	public String execute() {
-        allCategories = weblogManager.getWeblogCategories(getActionWeblog());
-		return LIST;
-	}
-
-	public List<WeblogCategory> getAllCategories() {
-		return allCategories;
-	}
-
-	public void setAllCategories(List<WeblogCategory> allCategories) {
-		this.allCategories = allCategories;
-	}
 
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.PUT)
     public void updateCategory(@PathVariable String id, @RequestBody TextNode newName, Principal p,
@@ -161,7 +130,7 @@ public class Categories extends UIAction {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.GET)
     public List<WeblogCategory> getWeblogCategories(@RequestParam(name="weblog") String weblogHandle,
-                                                    @RequestParam String skipCategoryId) {
+                                                    @RequestParam(required=false) String skipCategoryId) {
         return weblogManager.getWeblogCategories(weblogManager.getWeblogByHandle(weblogHandle))
                 .stream()
                 .filter(cat -> !cat.getId().equals(skipCategoryId))
@@ -173,11 +142,6 @@ public class Categories extends UIAction {
     public boolean isCategoryInUse(@RequestParam String categoryId) {
         WeblogCategory category = weblogManager.getWeblogCategory(categoryId);
         return category != null && weblogManager.isWeblogCategoryInUse(category);
-    }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/categories/loggedin", method = RequestMethod.GET)
-    public boolean loggedIn() {
-        return true;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.DELETE)

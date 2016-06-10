@@ -300,9 +300,13 @@
             </result>
         </action>
 
-        <action name="categories!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Categories">
-            <result name="list" type="tiles">.Categories</result>
+        <action name="categories" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">POST</param>
+            <param name="actionName">categories</param>
+            <param name="desiredMenu">editor</param>
+            <param name="pageTitleReal">categoriesForm.rootTitle</param>
+            <result name="success" type="tiles">.Categories</result>
         </action>
 
         <action name="bookmarks!*" method="{1}"
