@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -99,6 +100,13 @@ public class WeblogController {
         this.userManager = userManager;
     }
 
+    @Autowired
+    private IndexManager indexManager;
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
     @Resource(name="weblogEntryPlugins")
     private List<WeblogEntryPlugin> weblogEntryPlugins;
 
@@ -114,13 +122,18 @@ public class WeblogController {
     }
 
 
+    @RequestMapping(value = "/tb-ui/authoring/rest/loggedin", method = RequestMethod.GET)
+    public boolean loggedIn() {
+        return true;
+    }
+
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.GET)
-    public Weblog getWeblogData(@PathVariable String id, HttpServletResponse response) throws ServletException {
-        Weblog weblog = weblogManager.getWeblog(id);
-        if (weblog != null) {
-            return weblog;
+    public Weblog getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
+        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
+        if (maybeError == null) {
+            return weblogManager.getWeblog(id);
         } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(maybeError.getStatusCode().value());
             return null;
         }
     }
@@ -135,8 +148,8 @@ public class WeblogController {
         User user = userManager.getUserByUserName(p.getName());
 
         if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
-            List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
-            if (permissions.size() > 0) {
+            List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+            if (roles.size() > 0) {
                 // sneaky user trying to get around 1 blog limit that applies
                 // only when group blogging is disabled
                 return ResponseEntity.status(403).body("createWebsite.oneBlogLimit");
@@ -163,20 +176,16 @@ public class WeblogController {
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.POST)
     public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p,
                                             HttpServletResponse response) throws ServletException {
-        Weblog weblog = weblogManager.getWeblog(id);
-        if (weblog != null) {
-            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                ValidationError maybeError = advancedValidate(newData, false);
-                if (maybeError != null) {
-                    return ResponseEntity.badRequest().body(maybeError);
-                }
-                return saveWeblog(weblog, newData, response, false);
-            } else {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
+        if (maybeError != null) {
+            return maybeError;
         }
+        Weblog weblog = weblogManager.getWeblog(id);
+        ValidationError maybeValError = advancedValidate(newData, false);
+        if (maybeValError != null) {
+            return ResponseEntity.badRequest().body(maybeValError);
+        }
+        return saveWeblog(weblog, newData, response, false);
     }
 
     private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, HttpServletResponse response, boolean newWeblog) throws ServletException {
@@ -244,22 +253,18 @@ public class WeblogController {
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.DELETE)
     public void deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
-        Weblog weblog = weblogManager.getWeblog(id);
-        if (weblog != null) {
-            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                try {
-                    // remove website
-                    weblogManager.removeWeblog(weblog);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } catch (Exception ex) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    log.error("Error removing weblog - {}", weblog.getHandle(), ex);
-                }
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
+        if (maybeError == null) {
+            Weblog weblog = weblogManager.getWeblog(id);
+            try {
+                weblogManager.removeWeblog(weblog);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } catch (Exception ex) {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                log.error("Error removing weblog - {}", weblog.getHandle(), ex);
             }
         } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(maybeError.getStatusCode().value());
         }
     }
 
@@ -284,6 +289,75 @@ public class WeblogController {
         }
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/rebuildindex", method = RequestMethod.POST)
+    public ResponseEntity rebuildIndex(@PathVariable String id, Principal p)
+            throws ServletException {
+        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
+        if (maybeError != null) {
+            return maybeError;
+        }
+        try {
+            Weblog weblog = weblogManager.getWeblog(id);
+            indexManager.rebuildWeblogIndex(weblog);
+            return new ResponseEntity<>(HttpStatus.OK);
+//          addMessage("maintenance.message.indexed");
+        } catch (Exception ex) {
+            log.error("Error doing index rebuild", ex);
+            throw new ServletException(ex);
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/flushcache", method = RequestMethod.POST)
+    public ResponseEntity flushCache(@PathVariable String id, Principal p)
+            throws ServletException {
+        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
+        if (maybeError != null) {
+            return maybeError;
+        }
+        Weblog weblog = weblogManager.getWeblog(id);
+        try {
+            weblogManager.saveWeblog(weblog);
+            return new ResponseEntity<>(HttpStatus.OK);
+//          addMessage("maintenance.message.flushed");
+        } catch (Exception ex) {
+            log.error("Error saving weblog - {}" + weblog.getHandle(), ex);
+            throw new ServletException(ex);
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/resethitcount", method = RequestMethod.POST)
+    public ResponseEntity resetHitCount(@PathVariable String id, Principal p)
+            throws ServletException {
+        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
+        if (maybeError != null) {
+            return maybeError;
+        }
+        Weblog weblog = weblogManager.getWeblog(id);
+        try {
+            weblogManager.resetHitCount(weblog);
+            weblogManager.saveWeblog(weblog);
+            return new ResponseEntity<>(HttpStatus.OK);
+//          addMessage("maintenance.message.reset");
+        } catch (Exception ex) {
+            log.error("Error resetting weblog hit count - {}" + weblog.getHandle(), ex);
+            throw new ServletException(ex);
+        }
+    }
+
+
+    private ResponseEntity checkIfOwnerOfValidWeblog(String weblogId, Principal p) {
+        Weblog weblog = weblogManager.getWeblog(weblogId);
+        if (weblog != null) {
+            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                return null;
+            } else {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 }

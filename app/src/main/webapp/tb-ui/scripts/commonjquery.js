@@ -15,7 +15,7 @@ $(function() {
    });
 });
 function checkLoggedIn(fctnIfSuccessful) {
-  $.get(contextPath + '/tb-ui/authoring/rest/categories/loggedin', fctnIfSuccessful);
+  $.get(contextPath + '/tb-ui/authoring/rest/loggedin', fctnIfSuccessful);
 };
 $("#cancel-link").click(function (e) {
   e.preventDefault();

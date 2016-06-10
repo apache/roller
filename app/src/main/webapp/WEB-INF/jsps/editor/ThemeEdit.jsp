@@ -118,7 +118,7 @@ var msg= {
 <script>
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
-            var currentTheme = $('#currentTheme').val();
+            var currentWeblog = $('#actionweblog').val();
             var myUrl = '<s:url value="/tb-ui/authoring/rest/themes/"/><s:property value='actionWeblog.theme'/>'
             $.ajax({ url: myUrl, async:false,
                 success: function(data) { $scope.themes = data; }

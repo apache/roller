@@ -21,6 +21,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
 <script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script>
     var contextPath = "${pageContext.request.contextPath}";
@@ -44,59 +45,44 @@
     <s:text name="categoriesForm.rootPrompt"/>
 </p>
 
+<input id="refreshURL" type="hidden" value="<s:url action='categories'/>"/>
+<input type="hidden" id="actionWeblog" value="<s:property value='%{#parameters.weblog}'/>"/>
+
 <%-- Form is a table of categories each with checkbox --%>
-<s:form id="categoriesForm" action="categories">
-    <sec:csrfInput/>
-    <s:hidden id="actionWeblog" name="weblog"/>
-    <input type="hidden" id="refreshURL" value="<s:url action='categories'/>"/>
+<div id="category-list" ng-app="tightBlogApp" ng-controller="CategoryController as ctrl">
 
     <table class="rollertable">
-
+        <thead>
         <tr>
             <th width="25%"><s:text name="generic.name"/></th>
             <th width="7%"><s:text name="generic.edit"/></th>
             <th width="7%"><s:text name="categoriesForm.remove"/></th>
         </tr>
-
-        <s:if test="AllCategories != null && !AllCategories.isEmpty">
-
-            <%-- Categories --%>
-            <s:iterator id="category" value="AllCategories" status="rowstatus">
-                <s:if test="#rowstatus.odd == true">
-                    <tr class="rollertable_odd">
-                </s:if>
-                <s:else>
-                    <tr class="rollertable_even">
-                </s:else>
-
-                <td id='catname-<s:property value="#category.id"/>'><s:property value="#category.name"/></td>
-
-                <td align="center">
-                    <a href="#" class="edit-link" id='catid-<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>' data-id='<s:property value="#category.id"/>'><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/></a>
-                </td>
-
-                <td align="center">
-                    <s:if test="AllCategories.size() > 1">
-                        <a href="#" class="remove-link" id='cat-remove-id-<s:property value="#category.id"/>' data-id='<s:property value="#category.id"/>' data-name='<s:property value="#category.name"/>'>
-                            <img src='<s:url value="/images/delete.png"/>' border="0" alt="icon"/>
-                        <a>
-                    </s:if>
-                </td>
-              </tr>
-            </s:iterator>
-        </s:if>
-        <s:else>
-            <tr>
-                <td style="vertical-align:middle" colspan="6"><s:text name="categoriesForm.noresults"/></td>
-            </tr>
-        </s:else>
+      </thead>
+      <tbody id="tableBody">
+        <tr id="{{category.id}}" ng-repeat="category in ctrl.categories | orderBy:'position'" ng-class-even="'altrow'">
+          <td class="category-name">{{category.name}}</td>
+          <td align="center">
+              <a href="#" class="edit-link">
+                <img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/>
+              </a>
+          </td>
+          <td align="center">
+              <span ng-if="ctrl.categories.length > 1">
+                  <a href="#" class="delete-link">
+                      <img src='<s:url value="/images/delete.png"/>' border="0" alt="icon"/>
+                  </a>
+              </span>
+          </td>
+        </tr>
+      </tbody>
        </table>
 
       <div class="control clearfix">
           <input type="button" value="<s:text name='categoriesForm.addCategory'/>" id="add-link"/>
       </div>
 
-</s:form>
+</div>
 
     <div id="category-edit" style="display:none">
       <span id="category-edit-error" style="display:none"><s:text name='categoryForm.error.duplicateName'/></span>

@@ -200,13 +200,11 @@ public class IndexManagerImpl implements IndexManager {
     // ================================================================
 
     public void rebuildWeblogIndex() {
-        scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager,
-                null));
+        scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager, null));
     }
 
     public void rebuildWeblogIndex(Weblog weblog) {
-        scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager,
-                weblog));
+        scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager, weblog));
     }
 
     @Override
@@ -220,8 +218,7 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     public void addEntryReIndexOperation(WeblogEntry entry) {
-        ReIndexEntryOperation reindex = new ReIndexEntryOperation(weblogEntryManager, this,
-                entry);
+        ReIndexEntryOperation reindex = new ReIndexEntryOperation(weblogEntryManager, this, entry);
         scheduleIndexOperation(reindex);
     }
 
@@ -244,7 +241,7 @@ public class IndexManagerImpl implements IndexManager {
      * 
      * @return Analyzer to be used in manipulating the database.
      */
-    public static final Analyzer getAnalyzer() {
+    public static Analyzer getAnalyzer() {
         return new StandardAnalyzer();
     }
 

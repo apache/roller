@@ -22,7 +22,6 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -51,16 +50,12 @@ public class Maintenance extends UIAction {
         this.indexManager = indexManager;
     }
 
-    private JPAPersistenceStrategy persistenceStrategy = null;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
-    }
-
     public Maintenance() {
         this.actionName = "maintenance";
         this.desiredMenu = "editor";
         this.pageTitle = "maintenance.title";
+        this.requiredWeblogRole = WeblogRole.POST;
+        this.requiredGlobalRole = GlobalRole.BLOGGER;
     }
 
     public String execute() {
@@ -69,17 +64,6 @@ public class Maintenance extends UIAction {
 
     public Boolean isSearchEnabled() {
         return indexManager.isSearchEnabled();
-    }
-
-
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return GlobalRole.BLOGGER;
-    }
-
-    @Override
-    public WeblogRole getRequiredWeblogRole() {
-        return WeblogRole.POST;
     }
 
     /**
