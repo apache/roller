@@ -33,6 +33,14 @@
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/cacheInfo.js'/>"></script>
 
+<div id="success-message" class="messages" style="display:none">
+    <span class="textSpan"></span>
+</div>
+
+<div id="failure-message" class="errors" style="display:none">
+    <span class="textSpan"></span>
+</div>
+
 <p class="subtitle"><s:text name="cacheInfo.subtitle" />
 <p><s:text name="cacheInfo.prompt" />
 
@@ -75,9 +83,20 @@
 </table>
 
 <div class="control clearfix">
-  <input type="button" value="<s:text name='generic.refresh'/>" id="refresh-link"/>
-  <input type="button" value="<s:text name='cacheInfo.clearAll'/>" id="resetall-link"/>
+  <input id="refresh-cache-stats" type="button" value="<s:text name='generic.refresh'/>"/>
+  <input id="clear-all-caches" type="button" value="<s:text name='cacheInfo.clearAll'/>"/>
 </div>
+
+<br><br>
+<s:text name="maintenance.prompt.reset"/>:
+<br><br>
+<input id="reset-hit-counts" type="button" value="<s:text name='maintenance.button.reset'/>"/>
+
+<br><br>
+<s:text name="maintenance.prompt.index"/>:
+<br><br>
+<select id="weblog-to-reindex"/> <input id="index-weblog" type="button" value="<s:text name='maintenance.button.index'/>"/>
+<br><br>
 
 <div id="confirm-resetall" title="<s:text name='generic.confirm'/>" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>

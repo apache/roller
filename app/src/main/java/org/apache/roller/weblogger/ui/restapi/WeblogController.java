@@ -142,7 +142,7 @@ public class WeblogController {
     public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response) throws ServletException {
 
         if(!propertiesManager.getBooleanProperty("site.allowUserWeblogCreation")) {
-            return ResponseEntity.status(403).body("createWebsite.disabled");
+            return ResponseEntity.status(403).body(bundle.getString("createWebsite.disabled"));
         }
 
         User user = userManager.getUserByUserName(p.getName());
@@ -152,7 +152,7 @@ public class WeblogController {
             if (roles.size() > 0) {
                 // sneaky user trying to get around 1 blog limit that applies
                 // only when group blogging is disabled
-                return ResponseEntity.status(403).body("createWebsite.oneBlogLimit");
+                return ResponseEntity.status(403).body(bundle.getString("createWebsite.oneBlogLimit"));
             }
         }
 
@@ -290,62 +290,6 @@ public class WeblogController {
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
     }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/rebuildindex", method = RequestMethod.POST)
-    public ResponseEntity rebuildIndex(@PathVariable String id, Principal p)
-            throws ServletException {
-        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
-        if (maybeError != null) {
-            return maybeError;
-        }
-        try {
-            Weblog weblog = weblogManager.getWeblog(id);
-            indexManager.rebuildWeblogIndex(weblog);
-            return new ResponseEntity<>(HttpStatus.OK);
-//          addMessage("maintenance.message.indexed");
-        } catch (Exception ex) {
-            log.error("Error doing index rebuild", ex);
-            throw new ServletException(ex);
-        }
-    }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/flushcache", method = RequestMethod.POST)
-    public ResponseEntity flushCache(@PathVariable String id, Principal p)
-            throws ServletException {
-        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
-        if (maybeError != null) {
-            return maybeError;
-        }
-        Weblog weblog = weblogManager.getWeblog(id);
-        try {
-            weblogManager.saveWeblog(weblog);
-            return new ResponseEntity<>(HttpStatus.OK);
-//          addMessage("maintenance.message.flushed");
-        } catch (Exception ex) {
-            log.error("Error saving weblog - {}" + weblog.getHandle(), ex);
-            throw new ServletException(ex);
-        }
-    }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/resethitcount", method = RequestMethod.POST)
-    public ResponseEntity resetHitCount(@PathVariable String id, Principal p)
-            throws ServletException {
-        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
-        if (maybeError != null) {
-            return maybeError;
-        }
-        Weblog weblog = weblogManager.getWeblog(id);
-        try {
-            weblogManager.resetHitCount(weblog);
-            weblogManager.saveWeblog(weblog);
-            return new ResponseEntity<>(HttpStatus.OK);
-//          addMessage("maintenance.message.reset");
-        } catch (Exception ex) {
-            log.error("Error resetting weblog hit count - {}" + weblog.getHandle(), ex);
-            throw new ServletException(ex);
-        }
-    }
-
 
     private ResponseEntity checkIfOwnerOfValidWeblog(String weblogId, Principal p) {
         Weblog weblog = weblogManager.getWeblog(weblogId);

@@ -353,28 +353,22 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         String queryString;
         StringBuilder whereClause = new StringBuilder();
         
-        queryString = "SELECT w FROM Weblog w WHERE ";
+        queryString = "SELECT w FROM Weblog w WHERE 1=1 ";
 
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
-            if (whereClause.length() > 0) {
-                whereClause.append(" AND ");
-            }
+            whereClause.append(" AND ");
             params.add(size++, start);
             whereClause.append(" w.dateCreated > ?").append(size);
         }
         if (endDate != null) {
             Timestamp end = new Timestamp(endDate.getTime());
-            if (whereClause.length() > 0) {
-                whereClause.append(" AND ");
-            }
+            whereClause.append(" AND ");
             params.add(size++, end);
             whereClause.append(" w.dateCreated < ?").append(size);
         }
         if (visible != null) {
-            if (whereClause.length() > 0) {
-                whereClause.append(" AND ");
-            }
+            whereClause.append(" AND ");
             params.add(size++, visible);
             whereClause.append(" w.visible = ?").append(size);
         }
@@ -572,12 +566,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         q.executeUpdate();
         strategy.flush();
         log.info("finished resetting hit count");
-    }
-
-    @Override
-    public void resetHitCount(Weblog weblog) {
-        weblog.setHitsToday(0);
-        strategy.store(weblog);
     }
 
     @Override

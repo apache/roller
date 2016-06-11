@@ -124,19 +124,6 @@ public class HitCountTest extends WebloggerTest {
             testCount = weblogManager.getHitCount(blog3);
             assertEquals(30, testCount);
 
-            // reset count for one weblog
-            blog1 = getManagedWeblog(blog1);
-            weblogManager.resetHitCount(blog1);
-            endSession(true);
-
-            // make sure it reset only one weblog
-            testCount = weblogManager.getHitCount(blog1);
-            assertEquals(0, testCount);
-            testCount = weblogManager.getHitCount(blog2);
-            assertEquals(20, testCount);
-            testCount = weblogManager.getHitCount(blog3);
-            assertEquals(30, testCount);
-
             // reset all counts
             weblogManager.resetAllHitCounts();
             endSession(true);
