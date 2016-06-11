@@ -348,11 +348,6 @@
             <result name="success" type="tiles">.Members</result>
         </action>
 
-        <action name="maintenance!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Maintenance">
-            <result name="success" type="tiles">.Maintenance</result>
-        </action>
-
     </package>
 
 </struts>

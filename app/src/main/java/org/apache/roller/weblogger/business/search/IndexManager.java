@@ -47,7 +47,7 @@ public interface IndexManager
     /** Add entry to index, returns immediately and operates in background */
     void addEntryIndexOperation(WeblogEntry entry);
     
-    /** R-index entry, returns immediately and operates in background */
+    /** Reindex entry, returns immediately and operates in background */
     void addEntryReIndexOperation(WeblogEntry entry);
     
     /** Execute operation immediately */

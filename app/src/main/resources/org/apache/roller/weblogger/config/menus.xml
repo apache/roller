@@ -75,8 +75,6 @@ Defines the menus provided with Weblogger
                      titleKey="tabbedmenu.website.members"
                      enabledProperty="groupblogging.enabled">
             </tabItem>
-            <tabItem action="maintenance"
-                     titleKey="tabbedmenu.website.maintenance"/>
         </tab>
     </menu>
 </menus>

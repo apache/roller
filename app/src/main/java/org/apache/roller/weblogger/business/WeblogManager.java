@@ -197,13 +197,6 @@ public interface WeblogManager {
     void updateHitCounters();
 
     /**
-     * Reset the hit counts for a single weblog.  This sets the count to 03.
-     *
-     * @param weblog The Weblog object to reset the count for.
-     */
-    void resetHitCount(Weblog weblog);
-
-    /**
      * Increment the hit count for a weblog by a certain amount.
      *
      * This is basically a convenience method for doing a lookup, modify, save

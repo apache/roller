@@ -253,8 +253,4 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
-    <definition name=".Maintenance" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/Maintenance.jsp" />
-    </definition>
-
 </tiles-definitions>

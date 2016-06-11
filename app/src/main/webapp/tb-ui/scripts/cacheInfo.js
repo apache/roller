@@ -19,6 +19,15 @@ $(function() {
      });
    }
    refreshData();
+   $.ajax({
+      type: "GET",
+      url: contextPath + '/tb-ui/admin/rest/server/webloglist',
+      success: function(data, textStatus, xhr) {
+        $.each(data, function(i, d) {
+           $('#weblog-to-reindex').append('<option value="' + d + '">' + d + '</option>');
+        });
+      }
+   });
    $("#confirm-resetall").dialog({
       autoOpen: false,
       resizable: true,
@@ -48,16 +57,55 @@ $(function() {
          }
       ]
    });
-   $("#resetall-link").click(function(e) {
+   $("#clear-all-caches").click(function(e) {
       e.preventDefault();
       checkLoggedIn(function() {
         $('#confirm-resetall').dialog('open');
       });
    });
-   $("#refresh-link").click(function(e) {
+   $("#refresh-cache-stats").click(function(e) {
       e.preventDefault();
       refreshData();
    });
+   $("#reset-hit-counts").click(function(e) {
+      e.preventDefault();
+      $('#success-message').hide();
+      $('#failure-message').hide();
+      checkLoggedIn(function() {
+        $.ajax({
+           type: "POST",
+           url: contextPath + '/tb-ui/admin/rest/server/resethitcount',
+           success: function(data, textStatus, xhr) {
+             $('#success-message .textSpan').text(data);
+             $('#success-message').show();
+           },
+           error: function(xhr, status, errorThrown) {
+             $('#success-message .textSpan').text(xhr.responseText);
+             $('#failure-message').show();
+           }
+        });
+      });
+    });
+    $("#index-weblog").click(function(e) {
+       e.preventDefault();
+       $('#success-message').hide();
+       $('#failure-message').hide();
+       var weblogToIndex = $('#weblog-to-reindex').val();
+       checkLoggedIn(function() {
+         $.ajax({
+            type: "POST",
+            url: contextPath + '/tb-ui/admin/rest/server/weblog/' + weblogToIndex + '/rebuildindex',
+            success: function(data, textStatus, xhr) {
+              $('#success-message .textSpan').text(data);
+              $('#success-message').show();
+            },
+            error: function(xhr, status, errorThrown) {
+              $('#success-message .textSpan').text(xhr.responseText);
+              $('#failure-message').show();
+            }
+         });
+       });
+     });
    $("#tableBody").on('click', '.reset-link', function(e) {
       e.preventDefault();
       var tr = $(this).closest('tr');
