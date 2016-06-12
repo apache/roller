@@ -145,7 +145,7 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(feed.getLink());
         newSub.setTitle(feed.getTitle());
-        newSub.setLastUpdated(feed.getPublishedDate());
+        newSub.setLastUpdated(new Timestamp(feed.getPublishedDate().getTime()));
 
         // check if feed is unchanged and bail now if so
         if (lastModified != null && newSub.getLastUpdated() != null &&
@@ -225,7 +225,7 @@ public class FeedManagerImpl implements FeedManager {
         
         // must have a last updated time
         if(newSub.getLastUpdated() == null) {
-            newSub.setLastUpdated(new Date());
+            newSub.setLastUpdated(new Timestamp(new Date().getTime()));
         }
         
         // lookup recent entries from weblog and add them to the subscription

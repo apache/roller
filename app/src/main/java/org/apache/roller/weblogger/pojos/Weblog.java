@@ -20,6 +20,7 @@
 */
 package org.apache.roller.weblogger.pojos;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,8 +44,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
@@ -91,10 +90,10 @@ public class Weblog {
     private String  timeZone         = null;
     private String  defaultPlugins   = null;
     private Boolean visible          = Boolean.TRUE;
-    private Date    dateCreated      = new java.util.Date();
+    private Timestamp dateCreated      = new Timestamp(new Date().getTime());
     private int     defaultCommentDays = -1;
     private int     entriesPerPage   = 15;
-    private Date    lastModified     = new Date();
+    private Timestamp lastModified     = new Timestamp(new Date().getTime());
     private String  about            = null;
     /*
      * String creatorId used instead of User object to prevent models from having access to sensitive User
@@ -286,18 +285,17 @@ public class Weblog {
     }
 
     @Basic(optional=false)
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getDateCreated() {
+    public Timestamp getDateCreated() {
         if (dateCreated == null) {
             return null;
         } else {
-            return (Date)dateCreated.clone();
+            return (Timestamp) dateCreated.clone();
         }
     }
 
-    public void setDateCreated(final Date date) {
+    public void setDateCreated(final Timestamp date) {
         if (date != null) {
-            dateCreated = (Date)date.clone();
+            dateCreated = (Timestamp) date.clone();
         } else {
             dateCreated = null;
         }
@@ -390,12 +388,11 @@ public class Weblog {
      * comments, categories, bookmarks, etc.  This can be used by cache managers
      * to determine if blog content should be invalidated and reloaded.
      */
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getLastModified() {
+    public Timestamp getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(Timestamp lastModified) {
         this.lastModified = lastModified;
     }
 
@@ -404,7 +401,7 @@ public class Weblog {
      * refreshing so users can see new categories, bookmarks, etc.
      */
     public void invalidateCache() {
-        setLastModified(new java.util.Date());
+        setLastModified(new Timestamp(new Date().getTime()));
     }
 
     // Used in templates

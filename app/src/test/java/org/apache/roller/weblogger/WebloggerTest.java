@@ -40,6 +40,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring-beans.xml")
@@ -134,7 +135,7 @@ abstract public class WebloggerTest {
         testUser.setScreenName(userName);
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
-        testUser.setDateCreated(new java.util.Date());
+        testUser.setDateCreated(new Timestamp(new Date().getTime()));
         testUser.setEnabled(Boolean.TRUE);
 
         // store the user
@@ -171,7 +172,7 @@ abstract public class WebloggerTest {
         testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
-        testWeblog.setDateCreated(new java.util.Date());
+        testWeblog.setDateCreated(new Timestamp(new Date().getTime()));
         testWeblog.setCreatorId(creator.getId());
 
         // add weblog

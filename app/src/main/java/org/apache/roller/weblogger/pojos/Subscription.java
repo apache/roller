@@ -18,8 +18,8 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,8 +37,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 
 /**
@@ -61,7 +59,7 @@ public class Subscription implements Comparable<Subscription> {
     private String title;
     private String feedURL;
     private String siteURL;
-    private Date lastUpdated;
+    private Timestamp lastUpdated;
 
     // associations
     private Planet planet;
@@ -108,12 +106,11 @@ public class Subscription implements Comparable<Subscription> {
 
 
     @Column(name="last_updated")
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getLastUpdated() {
+    public Timestamp getLastUpdated() {
         return lastUpdated;
     }
     
-    public void setLastUpdated(Date lastUpdated) {
+    public void setLastUpdated(Timestamp lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 

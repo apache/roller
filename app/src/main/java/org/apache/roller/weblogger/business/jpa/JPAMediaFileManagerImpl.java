@@ -330,7 +330,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     private void updateWeblogLastModifiedDate(Weblog weblog) {
-        weblog.setLastModified(new java.util.Date());
+        weblog.invalidateCache();
         strategy.store(weblog);
     }
 }

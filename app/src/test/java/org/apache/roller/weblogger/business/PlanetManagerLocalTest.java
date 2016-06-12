@@ -56,13 +56,15 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         testUser = getManagedUser(testUser);
         testWeblog = getManagedWeblog(testWeblog);
 
+        Timestamp testTime = new Timestamp(new Date().getTime());
+
         WeblogEntry testEntry1 = new WeblogEntry();
         testEntry1.setId(WebloggerCommon.generateUUID());
         testEntry1.setTitle("entryTestEntry1");
         testEntry1.setText("blah blah entry1");
         testEntry1.setAnchor("testEntryAnchor1");
-        testEntry1.setPubTime(new Timestamp(new Date().getTime()));
-        testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
+        testEntry1.setPubTime(testTime);
+        testEntry1.setUpdateTime(testTime);
         testEntry1.setWeblog(testWeblog);
         testEntry1.setCreatorId(testUser.getId());
         testEntry1.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
@@ -74,8 +76,8 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         testEntry2.setTitle("entryTestEntry2");
         testEntry2.setText("blah blah entry2");
         testEntry2.setAnchor("testEntryAnchor2");
-        testEntry2.setPubTime(new Timestamp(new Date().getTime()));
-        testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
+        testEntry2.setPubTime(testTime);
+        testEntry2.setUpdateTime(testTime);
         testEntry2.setWeblog(testWeblog);
         testEntry2.setCreatorId(testUser.getId());
         testEntry2.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
@@ -87,8 +89,8 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         testEntry3.setTitle("entryTestEntry3");
         testEntry3.setText("blah blah entry3");
         testEntry3.setAnchor("testEntryAnchor3");
-        testEntry3.setPubTime(new Timestamp(new Date().getTime()));
-        testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
+        testEntry3.setPubTime(testTime);
+        testEntry3.setUpdateTime(testTime);
         testEntry3.setWeblog(testWeblog);
         testEntry3.setCreatorId(testUser.getId());
         testEntry3.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));

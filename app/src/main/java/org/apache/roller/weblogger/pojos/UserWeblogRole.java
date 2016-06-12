@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos; 
 
+import java.sql.Timestamp;
 import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -36,8 +37,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * WeblogRole that a user has for a specific weblog
@@ -66,7 +65,7 @@ public class UserWeblogRole {
     private User user;
     private Weblog weblog;
     private boolean pending = false;
-    private Date dateCreated = new Date();
+    private Timestamp dateCreated = new Timestamp(new Date().getTime());
     private WeblogRole weblogRole;
 
     public UserWeblogRole() {
@@ -121,12 +120,11 @@ public class UserWeblogRole {
         this.weblogRole = weblogRole;
     }
 
-    @Temporal(TemporalType.DATE)
-    public Date getDateCreated() {
+    public Timestamp getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(Timestamp dateCreated) {
         this.dateCreated = dateCreated;
     }
 
