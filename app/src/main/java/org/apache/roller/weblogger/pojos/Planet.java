@@ -18,7 +18,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,7 +34,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 
 /**
  * Planet Group.
@@ -125,11 +124,11 @@ public class Planet implements Comparable<Planet> {
     }
 
     @Transient
-    public Date getLastUpdated() {
-        Date lastUpdated = new Date(0);
+    public LocalDateTime getLastUpdated() {
+        LocalDateTime lastUpdated = LocalDateTime.now().minusYears(5);
         if (getSubscriptions() != null) {
             for (Subscription sub : getSubscriptions()) {
-                if (sub.getLastUpdated() != null && sub.getLastUpdated().after(lastUpdated)) {
+                if (sub.getLastUpdated() != null && sub.getLastUpdated().isAfter(lastUpdated)) {
                     lastUpdated = sub.getLastUpdated();
                 }
             }

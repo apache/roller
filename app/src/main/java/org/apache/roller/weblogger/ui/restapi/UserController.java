@@ -21,8 +21,7 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import java.security.Principal;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -200,7 +199,7 @@ public class UserController {
         }
         user.setId(WebloggerCommon.generateUUID());
         user.setUserName(newData.getUserName());
-        user.setDateCreated(new Timestamp(new Date().getTime()));
+        user.setDateCreated(LocalDateTime.now());
         return saveUser(user, newData, p, response);
     }
 

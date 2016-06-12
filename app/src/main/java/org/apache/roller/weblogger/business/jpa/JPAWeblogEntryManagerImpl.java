@@ -456,14 +456,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         if (csc.getStartDate() != null) {
-            Timestamp start = new Timestamp(csc.getStartDate().getTime());
-            params.add(size++, start);
+            params.add(size++, csc.getStartDate());
             appendConjuctionToWhereclause(whereClause, "c.postTime >= ?").append(size);
         }
         
         if (csc.getEndDate() != null) {
-            Timestamp end = new Timestamp(csc.getEndDate().getTime());
-            params.add(size++, end);
+            params.add(size++, csc.getEndDate());
             appendConjuctionToWhereclause(whereClause, "c.postTime <= ?").append(size);
         }
         

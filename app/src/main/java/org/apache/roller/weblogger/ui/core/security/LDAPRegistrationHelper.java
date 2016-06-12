@@ -20,8 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Set;
 
@@ -90,7 +89,7 @@ public class LDAPRegistrationHelper {
         // setting default
         ud.setId(null);
         ud.setLocale(Locale.getDefault().toString());
-        ud.setDateCreated(new Timestamp(new Date().getTime()));
+        ud.setDateCreated(LocalDateTime.now());
 
         String userName;
         String email = null;

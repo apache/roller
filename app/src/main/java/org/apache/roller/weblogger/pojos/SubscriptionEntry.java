@@ -18,10 +18,9 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -63,9 +62,9 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
     private String permalink;
     private String author;
     private String content = "";
-    private Timestamp published;
-    private Timestamp updated;
-    private Timestamp uploaded;
+    private LocalDateTime published;
+    private LocalDateTime updated;
+    private LocalDateTime uploaded;
     private String categoriesString;
     
     // associations
@@ -129,29 +128,29 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
     }
 
     @Column(name="published", nullable=false)
-    public Timestamp getPubTime() {
+    public LocalDateTime getPubTime() {
         return published;
     }
     
-    public void setPubTime(Timestamp published) {
+    public void setPubTime(LocalDateTime published) {
         this.published = published;
     }
 
     @Column(name="updated")
-    public Timestamp getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updated;
     }
     
-    public void setUpdateTime(Timestamp updated) {
+    public void setUpdateTime(LocalDateTime updated) {
         this.updated = updated;
     }
 
     @Basic(optional=false)
-    public Timestamp getUploaded() {
+    public LocalDateTime getUploaded() {
         return uploaded;
     }
 
-    public void setUploaded(Timestamp uploaded) {
+    public void setUploaded(LocalDateTime uploaded) {
         this.uploaded = uploaded;
     }
 

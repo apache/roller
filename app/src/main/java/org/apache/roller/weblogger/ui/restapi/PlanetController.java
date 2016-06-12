@@ -69,7 +69,7 @@ public class PlanetController {
     @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.PUT)
     public Planet updatePlanet(@PathVariable String id, @RequestBody Planet newData,
                                HttpServletResponse response) throws ServletException {
-        Planet planet = planetManager.getPlanetById(id);
+        Planet planet = planetManager.getPlanet(id);
         savePlanet(planet, newData, response);
         return planet;
     }
@@ -118,7 +118,7 @@ public class PlanetController {
     @RequestMapping(value = "/tb-ui/admin/rest/planets/{id}", method = RequestMethod.DELETE)
     public void deletePlanet(@PathVariable String id, HttpServletResponse response) throws ServletException {
         try {
-            Planet planetToDelete = planetManager.getPlanetById(id);
+            Planet planetToDelete = planetManager.getPlanet(id);
             planetManager.deletePlanet(planetToDelete);
             WebloggerFactory.flush();
             response.setStatus(HttpServletResponse.SC_OK);
@@ -130,13 +130,13 @@ public class PlanetController {
 
     @RequestMapping(value = "/tb-ui/admin/rest/planet/{id}", method = RequestMethod.GET)
     public Planet getPlanet(@PathVariable String id) throws ServletException {
-        return planetManager.getPlanetById(id);
+        return planetManager.getPlanet(id);
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions/{id}", method = RequestMethod.DELETE)
     public void deletePlanetSubscription(@PathVariable String id, HttpServletResponse response) throws ServletException {
         try {
-            Subscription subToDelete = planetManager.getSubscriptionById(id);
+            Subscription subToDelete = planetManager.getSubscription(id);
             if (subToDelete != null) {
                 planetManager.deleteSubscription(subToDelete);
                 subToDelete.getPlanet().getSubscriptions().remove(subToDelete);
@@ -153,7 +153,7 @@ public class PlanetController {
     public Subscription addPlanetSubscription(@RequestParam(name="planetId") String planetId, @RequestParam String feedUrl,
                                       HttpServletResponse response) throws ServletException {
         try {
-            Planet planet = planetManager.getPlanetById(planetId);
+            Planet planet = planetManager.getPlanet(planetId);
             if (planet == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return null;

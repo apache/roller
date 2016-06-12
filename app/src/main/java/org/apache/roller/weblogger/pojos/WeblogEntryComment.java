@@ -22,6 +22,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -62,7 +63,7 @@ public class WeblogEntryComment {
     private String    email = null;
     private String    url = null;
     private String    content = null;
-    private Timestamp postTime = null;
+    private LocalDateTime postTime = null;
     private ApprovalStatus status = ApprovalStatus.APPROVED;
     private Boolean   notify = Boolean.FALSE;
     private String    remoteHost = null;
@@ -128,11 +129,11 @@ public class WeblogEntryComment {
     }
     
     @Basic(optional=false)
-    public Timestamp getPostTime() {
+    public LocalDateTime getPostTime() {
         return this.postTime;
     }
     
-    public void setPostTime(Timestamp postTime) {
+    public void setPostTime(LocalDateTime postTime) {
         this.postTime = postTime;
     }
 
@@ -239,7 +240,7 @@ public class WeblogEntryComment {
     @Transient
     public String getTimestamp() {
         if (getPostTime() != null) {
-            return Long.toString(getPostTime().getTime());
+            return Long.toString(Timestamp.valueOf(getPostTime()).getTime());
         }
         return null;
     }

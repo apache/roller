@@ -113,7 +113,6 @@
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="feedManager" ref="feedManager"/>
         <beans:property name="strategy" ref="persistenceStrategy"/>
     </beans:bean>
 

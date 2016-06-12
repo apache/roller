@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.business;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
@@ -89,7 +90,7 @@ public class CommentTest extends WebloggerTest {
         comment.setUrl("test");
         comment.setRemoteHost("foofoo");
         comment.setContent("this is a test comment");
-        comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        comment.setPostTime(LocalDateTime.now());
         comment.setWeblogEntry(getManagedWeblogEntry(testEntry));
         comment.setStatus(ApprovalStatus.APPROVED);
         

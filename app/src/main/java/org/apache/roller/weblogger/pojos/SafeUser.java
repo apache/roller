@@ -30,7 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 /**
@@ -56,7 +56,7 @@ public class SafeUser {
     private String  id;
     private String  screenName;
     private String  emailAddress;
-    private Timestamp dateCreated;
+    private LocalDateTime dateCreated;
     private String  locale;
     private Boolean enabled = Boolean.TRUE;
 
@@ -103,20 +103,12 @@ public class SafeUser {
     }
 
     @Basic(optional=false)
-    public Timestamp getDateCreated() {
-        if (dateCreated == null) {
-            return null;
-        } else {
-            return (Timestamp) dateCreated.clone();
-        }
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
     }
 
-    public void setDateCreated(final Timestamp date) {
-        if (date != null) {
-            dateCreated = (Timestamp) date.clone();
-        } else {
-            dateCreated = null;
-        }
+    public void setDateCreated(LocalDateTime dateTime) {
+        this.dateCreated = dateTime;
     }
 
     public String getLocale() {

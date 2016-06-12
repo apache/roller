@@ -20,21 +20,17 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.time.DateUtils;
 
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -54,7 +50,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
 
     private WeblogManager weblogManager;
     private URLStrategy urlStrategy;
-    private FeedManager feedManager;
     private JPAPersistenceStrategy strategy;
 
     protected JPAPlanetManagerImpl() {}
@@ -67,10 +62,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         this.weblogManager = weblogManager;
     }
 
-    public void setFeedManager(FeedManager feedManager) {
-        this.feedManager = feedManager;
-    }
-
     public void setStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
     }
@@ -81,11 +72,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public void saveEntry(SubscriptionEntry entry) {
-        strategy.store(entry);
-    }
-
-    @Override
     public void saveSubscription(Subscription sub) {
         Subscription existing = getSubscription(sub.getPlanet(), sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
@@ -93,11 +79,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         } else {
             throw new IllegalStateException("ERROR: duplicate feed URLs not allowed");
         }
-    }
-
-    @Override
-    public void deleteEntry(SubscriptionEntry entry) {
-        strategy.remove(entry);
     }
 
     @Override
@@ -123,25 +104,10 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public Subscription getSubscriptionById(String id) {
+    public Subscription getSubscription(String id) {
         return strategy.load(Subscription.class, id);
     }
-    
-    public Iterator getAllSubscriptions() {
-        try {
-            return (strategy.getNamedQuery(
-                    "Subscription.getAll", Subscription.class).getResultList()).iterator();
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    "ERROR fetching subscription collection", e);
-        }
-    }
 
-    @Override
-    public int getSubscriptionCount() {
-        Query q = strategy.getNamedQuery("Subscription.getAll", Subscription.class);
-        return q.getResultList().size();
-    }
 
     @Override
     public List<Planet> getPlanets() {
@@ -150,7 +116,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public Planet getPlanet(String handle) {
+    public Planet getPlanetByHandle(String handle) {
         TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getByHandle", Planet.class);
         q.setParameter(1, handle);
         try {
@@ -161,23 +127,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public Planet getPlanetById(String id) {
+    public Planet getPlanet(String id) {
         return strategy.load(Planet.class, id);
-    }
-
-    @Override
-    public void deleteEntries(Subscription sub) {
-        for (Object entry : sub.getEntries()) {
-            strategy.remove(entry);
-        }
-        // make sure and clear the other side of the association
-        sub.getEntries().clear();
-    }
-
-    @Override
-    public List<Subscription> getSubscriptions() {
-        TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL", Subscription.class);
-        return q.getResultList();
     }
 
     @Override
@@ -186,28 +137,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len) {
-        if (sub == null) {
-            throw new IllegalArgumentException("subscription cannot be null");
-        }
-        TypedQuery<SubscriptionEntry> q = strategy.getNamedQuery("SubscriptionEntry.getBySubscription", SubscriptionEntry.class);
-        q.setParameter(1, sub);
-        if (offset != 0) {
-            q.setFirstResult(offset);
-        }
-        if (len != -1) {
-            q.setMaxResults(len);
-        }
-        return q.getResultList();
-    }
-
-    @Override
-    public List<SubscriptionEntry> getEntries(Planet group, int offset, int len) {
-        return getEntries(group, null, null, offset, len);
-    }
-
-    @Override
-    public List<SubscriptionEntry> getEntries(Planet group, Date startDate, Date endDate, int offset, int len) {
+    public List<SubscriptionEntry> getEntries(Planet group, LocalDateTime startDate, int offset, int len) {
 
         if (group == null) {
             throw new IllegalArgumentException("group cannot be null or empty");
@@ -226,12 +156,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         sb.append("WHERE e.subscription.planet.handle = ?").append(size);
 
         if (startDate != null) {
-            params.add(size++, new Timestamp(startDate.getTime()));
+            params.add(size++, startDate);
             sb.append(" AND e.pubTime > ?").append(size);
-        }
-        if (endDate != null) {
-            params.add(size++, new Timestamp(endDate.getTime()));
-            sb.append(" AND e.pubTime < :?").append(size);
         }
         sb.append(" ORDER BY e.pubTime DESC");
 
@@ -259,14 +185,9 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public void updateSubscriptions() {
-        log.debug("--- BEGIN --- Updating all subscriptions");
-        long startTime = System.currentTimeMillis();
-
-        feedManager.updateSubscriptions(getSubscriptions());
-        long endTime = System.currentTimeMillis();
-        log.info("--- DONE --- Updated subscriptions in {} seconds",
-                (endTime-startTime) / DateUtils.MILLIS_PER_SECOND);
+    public List<Subscription> getSubscriptions() {
+        TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getAll", Subscription.class);
+        return q.getResultList();
     }
 
     @Override
@@ -274,7 +195,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         log.info("Syncing local weblogs with planet subscriptions list");
 
         // first, make sure there is an "all" pmgr group
-        Planet planet = getPlanet("all");
+        Planet planet = getPlanetByHandle("all");
         if (planet == null) {
             planet = new Planet();
             planet.setId(WebloggerCommon.generateUUID());
@@ -304,7 +225,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
                 sub.setTitle(weblog.getName());
                 sub.setFeedURL(feedUrl);
                 sub.setSiteURL(urlStrategy.getWeblogURL(weblog, true));
-                sub.setLastUpdated(new Timestamp(new Date(0).getTime()));
+                sub.setLastUpdated(LocalDateTime.now().minusYears(5));
                 sub.setPlanet(planet);
                 saveSubscription(sub);
 

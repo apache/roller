@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
@@ -45,13 +45,16 @@ public interface PlanetManager {
      * Delete planet and any subscriptions that are orphaned.
      */
     void deletePlanet(Planet planet);
-    
-    Planet getPlanet(String handle);
 
     /**
-     * Get planet by ID rather than handle.
+     * Get Planet by ID
      */
-    Planet getPlanetById(String id);
+    Planet getPlanet(String id);
+
+    /**
+     * Get planet by handle.
+     */
+    Planet getPlanetByHandle(String handle);
     
     /**
      * Save or update a subscription
@@ -64,53 +67,26 @@ public interface PlanetManager {
     void deleteSubscription(Subscription subscription);
 
     /**
+     * Get subscription by ID.
+     */
+    Subscription getSubscription(String id);
+
+    /**
      * Get subscription by planet and feedUrl.
      */
     Subscription getSubscription(Planet planet, String feedUrl);
 
     /**
-     * Get subscription by ID rather than feedUrl.
-     */
-    Subscription getSubscriptionById(String id);
-
-    /**
-     * Get all subscriptions.
+     * Get subscriptions for all planets.
      */
     List<Subscription> getSubscriptions();
-    
-    /**
-     * Get total number of subscriptions.
-     */
-    int getSubscriptionCount();
 
     /**
-     * Save new or update existing entry
-     */
-    void saveEntry(SubscriptionEntry entry);
-
-    /**
-     * Refresh subscription entries
-     */
-    void updateSubscriptions();
-
-    /**
-     * Task that will update the weblogger "all" planet (creating it first if necessary) to
-     * consist of all blogs hosted by this weblogger instance, adding new and deleting old as
-     * necessary.
+     * Task that will update the subscriptions for the weblogger "all" planet (creating the planet first
+     * if necessary) to consist of all blogs hosted by this weblogger instance, adding new and deleting
+     * old as necessary.  This task does not fetch any subscription entries.
      */
     void syncAllBlogsPlanet();
-
-    /**
-     * Delete entry. 
-     */
-    void deleteEntry(SubscriptionEntry entry);
-    
-    /**
-     * Delete all entries for a subscription.
-     *
-     * @param sub The subscription to delete entries from.
-     */
-    void deleteEntries(Subscription sub);
 
     /**
      * Lookup an entry by id.
@@ -118,32 +94,14 @@ public interface PlanetManager {
     SubscriptionEntry getEntryById(String id);
 
     /**
-     * Get entries in a single feed as list of SubscriptionEntry objects.
-     */
-    List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len);
-    
-    /**
-     * Get Entries for a planet in reverse chronological order.
-     *
-     * @param planet Planet to retrieve entries for.
-     * @param offset Offset into results (for paging)
-     * @param len Maximum number of results to return (for paging)
-     */
-    List<SubscriptionEntry> getEntries(Planet planet, int offset, int len);
-
-    /**
      * Get Entries for a planet in reverse chronological order, optionally
-     * constrained to a certain timeframe.
+     * constrained to a certain begin time.
      *
      * @param planet Restrict to entries from one planet.
-     * @param startDate The oldest date for entries to include.
-     * @param endDate The newest date for entries to include.
+     * @param startDate The oldest date for entries to include, null for no limit
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    List<SubscriptionEntry> getEntries(Planet planet,
-                           Date startDate, 
-                           Date endDate,
-                           int offset, 
-                           int len);
+    List<SubscriptionEntry> getEntries(Planet planet, LocalDateTime startDate, int offset, int len);
+
 }

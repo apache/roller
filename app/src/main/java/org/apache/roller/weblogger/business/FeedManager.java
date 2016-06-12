@@ -20,8 +20,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.Collection;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -67,21 +66,15 @@ public interface FeedManager {
      * @param feedURL The feed url to use when fetching the subscription.
      * @return Subscription The fetched subscription.
      */
-    Subscription fetchSubscription(String feedURL, Date lastModified);
-
-    /**
-     * Update a set of subscriptions in the system
-     *
-     * This method takes in an set of Subscriptions and updates each one
-     * with the data from the its source after fetching an updated version
-     * of the subscription.
-     *
-     * @param subscriptions A set of subscriptions to be updated
-     */
-    void updateSubscriptions(Collection<Subscription> subscriptions);
+    Subscription fetchSubscription(String feedURL, LocalDateTime lastModified);
 
     /**
      * Update all Subscriptions that are part of the specified planet.
      */
     void updateSubscriptions(Planet planet);
+
+    /**
+     * Refresh all subscription entries, intended to be used by scheduler.
+     */
+    void updateAllSubscriptions();
 }

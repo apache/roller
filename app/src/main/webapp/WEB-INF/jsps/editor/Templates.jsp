@@ -114,7 +114,7 @@
 
             <td>
                 <s:if test="#p.lastModified != null">
-                    <s:text name="generic.date.toStringFormat">
+                    <s:text name="generic.date.toStringFormatOld">
                         <s:param value="#p.lastModified" />
                     </s:text>
                 </s:if>

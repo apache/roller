@@ -20,9 +20,8 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -53,7 +52,7 @@ public class CommentsPager extends AbstractPager {
     private boolean more = false;
     
     // most recent update time of current set of entries
-    private Date lastUpdated = null;        
+    private LocalDateTime lastUpdated = null;
 
     private WeblogEntryManager weblogEntryManager;
 
@@ -88,12 +87,9 @@ public class CommentsPager extends AbstractPager {
             
             List<WeblogEntryComment> results = new ArrayList<>();
             
-            Date startDate = null;
-            if(sinceDays > 0) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.DATE, -1 * sinceDays);
-                startDate = cal.getTime();
+            LocalDateTime startDate = null;
+            if (sinceDays > 0) {
+                startDate = LocalDateTime.now().minusDays(sinceDays);
             }
             
             try {
@@ -133,7 +129,7 @@ public class CommentsPager extends AbstractPager {
     }
     
     /** Get last updated time from items in pager */
-    public Date getLastUpdated() {
+    public LocalDateTime getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by posttime, so use that
             List<WeblogEntryComment> items = getItems();
@@ -141,7 +137,7 @@ public class CommentsPager extends AbstractPager {
                 lastUpdated = items.get(0).getPostTime();
             } else {
                 // no update so we assume it's brand new
-                lastUpdated = new Date();
+                lastUpdated = LocalDateTime.now();
             }
         }
         return lastUpdated;

@@ -72,29 +72,15 @@ public class PlanetModel implements Model {
      * Get pager for WeblogEntry objects from specified Planet group in reverse chrono order.
      * @param length Max number of results to return
      */
-    public Pager getAggregationPager(String planetHandle, int sinceDays, int length) {
+    public Pager getPlanetPager(String planetHandle, int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
                 pageLink, null, null, null, null, 0, false);
         
-        return new PlanetEntriesPager(planetManager, urlStrategy, null,
+        return new PlanetEntriesPager(planetManager, urlStrategy,
             planetHandle, pagerUrl, sinceDays, pageRequest.getPageNum(), length);
     }
     
-    
-    /**
-     * Get pager for WeblogEntry objects from specified
-     * Planet feed in reverse chrono order.
-     * @param length      Max number of results to return
-     */
-    public Pager getFeedPager(String groupHandle, String feedURL, int length) {
-        
-        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
-                pageLink, null, null, null, null, 0, false);
-        
-        return new PlanetEntriesPager(planetManager, urlStrategy, feedURL,
-            groupHandle, pagerUrl, -1, pageRequest.getPageNum(), length);
-    }
     
     /**
      * Get Planets defined.
@@ -110,7 +96,7 @@ public class PlanetModel implements Model {
      * @return PlaneGroup specified by handle.
      */
     public Planet getPlanet(String groupHandle) {
-        return planetManager.getPlanet(groupHandle);
+        return planetManager.getPlanetByHandle(groupHandle);
     }
 
     /**
