@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -39,10 +39,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 
@@ -84,7 +81,7 @@ public class User {
     @NotBlank(message = "{Register.error.emailAddressNull}")
     @Email(message = "{error.add.user.badEmail}")
     private String  emailAddress;
-    private Date    dateCreated;
+    private Timestamp dateCreated;
     private String  locale;
     private Boolean enabled = Boolean.FALSE;
     private String  activationCode;
@@ -102,14 +99,14 @@ public class User {
             GlobalRole globalRole,
             String emailAddress,
             String locale,
-            Date dateCreated,
+            Timestamp dateCreated,
             Boolean isEnabled) {
         this.id = WebloggerCommon.generateUUID();
         this.userName = userName;
         this.password = password;
         this.globalRole = globalRole;
         this.emailAddress = emailAddress;
-        this.dateCreated = (Date)dateCreated.clone();
+        this.dateCreated = (Timestamp) dateCreated.clone();
         this.locale = locale;
         this.enabled = isEnabled;
     }
@@ -202,18 +199,17 @@ public class User {
     }
 
     @Basic(optional=false)
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getDateCreated() {
+    public Timestamp getDateCreated() {
         if (dateCreated == null) {
             return null;
         } else {
-            return (Date)dateCreated.clone();
+            return (Timestamp) dateCreated.clone();
         }
     }
-    
-    public void setDateCreated(final Date date) {
+
+    public void setDateCreated(final Timestamp date) {
         if (date != null) {
-            dateCreated = (Date)date.clone();
+            dateCreated = (Timestamp) date.clone();
         } else {
             dateCreated = null;
         }

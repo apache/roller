@@ -107,7 +107,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     @Override
     public void saveWeblog(Weblog weblog) {
-        weblog.setLastModified(new java.util.Date());
+        weblog.setLastModified(new Timestamp(new Date().getTime()));
         strategy.merge(weblog);
         if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
             cacheManager.invalidate(weblog);

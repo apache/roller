@@ -36,11 +36,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,7 +69,7 @@ public class WeblogTemplate implements Template {
     private String  name = null;
     private String  description = null;
     private String  relativePath = null;
-    private Date    lastModified = null;
+    private Timestamp lastModified = null;
     private TemplateDerivation derivation = TemplateDerivation.NONSHARED;
 
     private String  contentsStandard = null;
@@ -128,12 +126,11 @@ public class WeblogTemplate implements Template {
     }
 
     @Column(name="updatetime", nullable=false)
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getLastModified() {
+    public Timestamp getLastModified() {
         return lastModified;
     }
     
-    public void setLastModified(final Date newtime ) {
+    public void setLastModified(final Timestamp newtime ) {
         lastModified = newtime;
     }
 

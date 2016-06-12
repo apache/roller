@@ -20,6 +20,8 @@
 */
 package org.apache.roller.weblogger.business;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
@@ -58,7 +60,7 @@ public class WeblogPageTest extends WebloggerTest {
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setRelativePath("testTemp");
-        testPage.setLastModified(new java.util.Date());
+        testPage.setLastModified(new Timestamp(new Date().getTime()));
         testPage.setWeblog(getManagedWeblog(testWeblog));
     }
     

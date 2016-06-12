@@ -36,6 +36,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import static org.junit.Assert.*;
 
 public class WeblogTemplateRenditionTest extends WebloggerTest {
@@ -62,7 +65,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setRelativePath("testTemp");
-        testPage.setLastModified(new java.util.Date());
+        testPage.setLastModified(new Timestamp(new Date().getTime()));
         testPage.setWeblog(getManagedWeblog(testWeblog));
     }
 

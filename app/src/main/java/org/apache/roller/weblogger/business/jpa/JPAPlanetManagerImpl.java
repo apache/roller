@@ -304,7 +304,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
                 sub.setTitle(weblog.getName());
                 sub.setFeedURL(feedUrl);
                 sub.setSiteURL(urlStrategy.getWeblogURL(weblog, true));
-                sub.setLastUpdated(new Date(0));
+                sub.setLastUpdated(new Timestamp(new Date(0).getTime()));
                 sub.setPlanet(planet);
                 saveSubscription(sub);
 
