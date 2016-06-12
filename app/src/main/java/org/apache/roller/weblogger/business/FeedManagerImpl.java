@@ -23,10 +23,9 @@ package org.apache.roller.weblogger.business;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -102,7 +101,7 @@ public class FeedManagerImpl implements FeedManager {
     }
 
     @Override
-    public Subscription fetchSubscription(String feedURL, Date lastModified) {
+    public Subscription fetchSubscription(String feedURL, LocalDateTime lastModified) {
 
         if (feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
@@ -145,26 +144,15 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(feed.getLink());
         newSub.setTitle(feed.getTitle());
-        newSub.setLastUpdated(new Timestamp(feed.getPublishedDate().getTime()));
+        newSub.setLastUpdated(new Timestamp(feed.getPublishedDate().getTime()).toLocalDateTime());
 
         // check if feed is unchanged and bail now if so
         if (lastModified != null && newSub.getLastUpdated() != null &&
-                !newSub.getLastUpdated().after(lastModified)) {
+                !newSub.getLastUpdated().isAfter(lastModified)) {
             return null;
         }
 
         log.debug("Subscription is: {}", newSub.toString());
-
-        // some kludge to deal with feeds w/ no entry dates
-        // we assign arbitrary dates chronologically by entry starting either
-        // from the current time or the last update time of the subscription
-        Calendar cal = Calendar.getInstance();
-        if (newSub.getLastUpdated() != null) {
-            cal.setTime(newSub.getLastUpdated());
-        } else {
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1);
-        }
 
         // add entries
         List<SyndEntry> feedEntries = feed.getEntries();
@@ -175,9 +163,8 @@ public class FeedManagerImpl implements FeedManager {
             // some kludge to handle feeds with no entry dates
             if (newEntry != null) {
                 if (newEntry.getPubTime() == null) {
-                    log.debug("No published date, assigning fake date for {}", feedURL);
-                    newEntry.setPubTime(new Timestamp(cal.getTimeInMillis()));
-                    cal.add(Calendar.DATE, -1);
+                    log.debug("No published date, assigning today's date for {}", feedURL);
+                    newEntry.setPubTime(LocalDateTime.now());
                 }
                 newSub.addEntry(newEntry);
                 numIncluded++;
@@ -192,7 +179,7 @@ public class FeedManagerImpl implements FeedManager {
      * feed processing.
      * We expect local feeds to have urls of the style ... weblogger:<blog handle>
      */
-    private Subscription fetchWebloggerSubscription(String feedURL, Date lastModified) {
+    private Subscription fetchWebloggerSubscription(String feedURL, LocalDateTime lastModified) {
 
         // extract blog handle from our special feed url
         String weblogHandle = null;
@@ -211,7 +198,7 @@ public class FeedManagerImpl implements FeedManager {
         }
 
         // if weblog hasn't changed since last fetch then bail
-        if(lastModified != null && !localWeblog.getLastModified().after(lastModified)) {
+        if(lastModified != null && !localWeblog.getLastModified().toLocalDateTime().isAfter(lastModified)) {
             log.debug("Skipping unmodified local blog {}", feedURL);
             return null;
         }
@@ -221,11 +208,11 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(urlStrategy.getWeblogURL(localWeblog, true));
         newSub.setTitle(localWeblog.getName());
-        newSub.setLastUpdated(localWeblog.getLastModified());
+        newSub.setLastUpdated(localWeblog.getLastModified().toLocalDateTime());
         
         // must have a last updated time
         if(newSub.getLastUpdated() == null) {
-            newSub.setLastUpdated(new Timestamp(new Date().getTime()));
+            newSub.setLastUpdated(LocalDateTime.now());
         }
         
         // lookup recent entries from weblog and add them to the subscription
@@ -256,12 +243,12 @@ public class FeedManagerImpl implements FeedManager {
 
             entry.setAuthor(blogEntry.getCreator().getScreenName());
             entry.setTitle(blogEntry.getTitle());
-            entry.setPubTime(blogEntry.getPubTime());
+            entry.setPubTime(blogEntry.getPubTime().toLocalDateTime());
             entry.setContent(content);
             entry.setPermalink(blogEntry.getPermalink());
             entry.setUri(blogEntry.getPermalink());
             entry.setCategoriesString(blogEntry.getCategory().getName());
-            entry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
+            entry.setUploaded(LocalDateTime.now());
             newSub.addEntry(entry);
         }
 
@@ -299,16 +286,16 @@ public class FeedManagerImpl implements FeedManager {
 
         // Play some games to get the updated date
         if (romeEntry.getUpdatedDate() != null) {
-            newEntry.setUpdateTime(new Timestamp(romeEntry.getUpdatedDate().getTime()));
+            newEntry.setUpdateTime(new Timestamp(romeEntry.getUpdatedDate().getTime()).toLocalDateTime());
         }
 
         // And more games getting publish date
         if (romeEntry.getPublishedDate() != null) {
             // use <pubDate>
-            newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime()));
+            newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime()).toLocalDateTime());
         } else if (entrydc != null && entrydc.getDate() != null) {
             // use <dc:date>
-            newEntry.setPubTime(new Timestamp(entrydc.getDate().getTime()));
+            newEntry.setPubTime(new Timestamp(entrydc.getDate().getTime()).toLocalDateTime());
         } else {
             newEntry.setPubTime(newEntry.getUpdateTime());
         }
@@ -336,7 +323,7 @@ public class FeedManagerImpl implements FeedManager {
             }
             newEntry.setCategoriesString(list);
         }
-        newEntry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
+        newEntry.setUploaded(LocalDateTime.now());
         return newEntry;
     }
 
@@ -359,7 +346,7 @@ public class FeedManagerImpl implements FeedManager {
 
         // if this subscription hasn't changed since last update then we're done
         if (sub.getLastUpdated() != null && updatedSub.getLastUpdated() != null &&
-                !updatedSub.getLastUpdated().after(sub.getLastUpdated())) {
+                !updatedSub.getLastUpdated().isAfter(sub.getLastUpdated())) {
             log.debug("Skipping update, feed hasn't changed - {}", sub.getFeedURL());
         }
 
@@ -373,8 +360,6 @@ public class FeedManagerImpl implements FeedManager {
         Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
         log.debug("newEntries.size() = {}", newEntries.size());
         if (newEntries.size() > 0) {
-            // clear out old entries
-            planetManager.deleteEntries(sub);
 
             // add fresh entries
             sub.getEntries().clear();
@@ -414,10 +399,21 @@ public class FeedManagerImpl implements FeedManager {
     }
 
     @Override
-    public void updateSubscriptions(Collection<Subscription> subscriptions) {
+    public void updateAllSubscriptions() {
+        log.debug("--- BEGIN --- Updating all subscriptions");
+        long startTime = System.currentTimeMillis();
+
+        List<Subscription> subs = planetManager.getSubscriptions();
+        updateSubscriptions(subs);
+        long endTime = System.currentTimeMillis();
+        log.info("--- DONE --- Updated subscriptions in {} seconds",
+                (endTime-startTime) / DateUtils.MILLIS_PER_SECOND);
+    }
+
+    private void updateSubscriptions(Collection<Subscription> subscriptions) {
         for (Subscription sub : subscriptions) {
             // reattach sub.  sub gets detached as we iterate
-            sub = planetManager.getSubscriptionById(sub.getId());
+            sub = planetManager.getSubscription(sub.getId());
 
             // this updates and saves
             if (sub != null) {

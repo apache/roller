@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,8 +47,6 @@ import javax.persistence.Table;
 @Table(name="planet_subscription")
 @NamedQueries({
         @NamedQuery(name="Subscription.getAll",
-                query="SELECT p FROM Subscription p"),
-        @NamedQuery(name="Subscription.getAllOrderByFeedURL",
                 query="SELECT p FROM Subscription p ORDER BY p.feedURL DESC"),
         @NamedQuery(name="Subscription.getByPlanetAndFeedURL",
                 query="SELECT s FROM Subscription s WHERE s.planet = ?1 AND s.feedURL = ?2")
@@ -59,7 +58,7 @@ public class Subscription implements Comparable<Subscription> {
     private String title;
     private String feedURL;
     private String siteURL;
-    private Timestamp lastUpdated;
+    private LocalDateTime lastUpdated;
 
     // associations
     private Planet planet;
@@ -106,11 +105,11 @@ public class Subscription implements Comparable<Subscription> {
 
 
     @Column(name="last_updated")
-    public Timestamp getLastUpdated() {
+    public LocalDateTime getLastUpdated() {
         return lastUpdated;
     }
     
-    public void setLastUpdated(Timestamp lastUpdated) {
+    public void setLastUpdated(LocalDateTime lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
@@ -127,7 +126,7 @@ public class Subscription implements Comparable<Subscription> {
 
 
     @OneToMany(targetEntity=SubscriptionEntry.class,
-            cascade=CascadeType.ALL, mappedBy="subscription")
+            cascade=CascadeType.ALL, mappedBy="subscription", orphanRemoval=true)
     @JsonIgnore
     public Set<SubscriptionEntry> getEntries() {
         return entries;

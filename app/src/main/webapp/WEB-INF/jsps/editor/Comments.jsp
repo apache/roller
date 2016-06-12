@@ -19,6 +19,8 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 
 <s:if test="actionName == 'comments'">
@@ -117,16 +119,14 @@
                 </s:text>
             </div>
             <div style="float:right;">
+
+                <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
                 <s:if test="firstComment.postTime != null">
-                    <s:text name="generic.date.toStringFormat">
-                        <s:param value="firstComment.postTime" />
-                    </s:text>
+                    <javatime:format value="${firstComment.postTime}" pattern="${dateFormat}"/>
                 </s:if>
                 ---
                 <s:if test="lastComment.postTime != null">
-                    <s:text name="generic.date.toStringFormat">
-                        <s:param value="lastComment.postTime" />
-                    </s:text>
+                    <javatime:format value="${lastComment.postTime}" pattern="${dateFormat}"/>
                 </s:if>
             </div>
             <br />
@@ -295,7 +295,8 @@
                                     </s:if>
                                     <div class="details">
                                         <s:text name="commentManagement.postTime" />&nbsp;:&nbsp;
-                                        <s:date name="#comment.postTime"/>
+                                        <s:set var="tempTime" value="#comment.postTime"/>
+                                        <javatime:format value="${tempTime}" pattern="${dateFormat}"/>
                                     </div>
                                 </div>
                                 <div class="viewdetails bot">

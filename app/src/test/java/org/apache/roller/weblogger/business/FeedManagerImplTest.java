@@ -30,8 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
@@ -44,7 +42,6 @@ public class FeedManagerImplTest extends WebloggerTest {
     String expectedSiteUrl = "https://slashdot.org/";
     String externalFeedUrl = "http://rss.slashdot.org/Slashdot/slashdotMainatom";
     private Subscription testSub = null;
-    private Planet planet = null;
     private User testUser = null;
     private Weblog testWeblog = null;
 
@@ -65,7 +62,7 @@ public class FeedManagerImplTest extends WebloggerTest {
         testWeblog = setupWeblog("weblogger-fetcher-test-weblog", testUser);
 
         // add test planet
-        planet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
+        Planet planet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
 
         // add test subscription
         testSub = new Subscription();
@@ -133,17 +130,15 @@ public class FeedManagerImplTest extends WebloggerTest {
     }
 
     @Test
-    public void testUpdateSubscription() throws Exception {
-        Subscription sub = planetManager.getSubscriptionById(testSub.getId());
+    public void testUpdatePlanet() throws Exception {
+        Planet planet = planetManager.getPlanetByHandle("testPlanetHandle");
 
-        // update the subscription
-        Set<Subscription> subscriptionSet = new HashSet<>();
-        subscriptionSet.add(sub);
-        feedManager.updateSubscriptions(subscriptionSet);
+        // update the planet
+        feedManager.updateSubscriptions(planet);
         endSession(true);
 
         // verify the results
-        sub = planetManager.getSubscription(planet, externalFeedUrl);
+        Subscription sub = planetManager.getSubscription(planet, externalFeedUrl);
         assertNotNull(sub);
         assertEquals(externalFeedUrl, sub.getFeedURL());
         assertEquals(expectedSiteUrl, sub.getSiteURL());

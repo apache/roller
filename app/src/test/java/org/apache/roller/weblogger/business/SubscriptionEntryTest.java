@@ -18,7 +18,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
@@ -56,47 +56,6 @@ public class SubscriptionEntryTest extends WebloggerTest {
     }
 
     @Test
-    public void testEntryCRUD() throws Exception {
-        Subscription sub = planetManager.getSubscriptionById(testSub.getId());
-
-        SubscriptionEntry testEntry = new SubscriptionEntry();
-        testEntry.setPermalink("entryBasics");
-        testEntry.setUri("entryBasics");
-        testEntry.setTitle("entryBasics");
-        testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
-        testEntry.setUploaded(new java.sql.Timestamp(System.currentTimeMillis()));
-        testEntry.setSubscription(sub);
-
-        // add
-        planetManager.saveEntry(testEntry);
-        endSession(true);
-
-        // verify
-        SubscriptionEntry entry;
-        entry = planetManager.getEntryById(testEntry.getId());
-        assertNotNull(entry);
-        assertEquals("entryBasics", entry.getPermalink());
-
-        // modify
-        entry.setTitle("foo");
-        planetManager.saveEntry(entry);
-        endSession(true);
-
-        // verify
-        entry = planetManager.getEntryById(testEntry.getId());
-        assertNotNull(entry);
-        assertEquals("foo", entry.getTitle());
-
-        // remove
-        planetManager.deleteEntry(entry);
-        endSession(true);
-
-        // verify
-        entry = planetManager.getEntryById(testEntry.getId());
-        assertNull(entry);
-    }
-
-    @Test
     public void testEntryLookups() throws Exception {
         // by id
         SubscriptionEntry entry = planetManager.getEntryById(testEntry.getId());
@@ -104,33 +63,30 @@ public class SubscriptionEntryTest extends WebloggerTest {
         assertEquals("testEntry", entry.getPermalink());
         
         // by subscription
-        Subscription sub = planetManager.getSubscriptionById(testSub.getId());
+        Subscription sub = planetManager.getSubscription(testSub.getId());
         assertEquals(2, sub.getEntries().size());
         
-        // by subscription through manager
-        assertEquals(2, planetManager.getEntries(sub, 0, 10).size());
-        
         // by planet
-        Planet planet = planetManager.getPlanetById(testPlanet.getId());
-        assertEquals(2, planetManager.getEntries(planet, 0, 10).size());
+        Planet planet = planetManager.getPlanet(testPlanet.getId());
+        assertEquals(2, planetManager.getEntries(planet, null, 0, 10).size());
         
         // by planet with timeframe constraint
-        assertEquals(0, planetManager.getEntries(planet, new Date(), null, 0, 10).size());
+        assertEquals(0, planetManager.getEntries(planet, LocalDateTime.now(), 0, 10).size());
     }
     
     @Test
     public void testDeleteEntries() throws Exception {
-        Subscription sub = planetManager.getSubscriptionById(testSub.getId());
+        Subscription sub = planetManager.getSubscription(testSub.getId());
         
         // make sure entries are there
         assertEquals(2, sub.getEntries().size());
         
         // purge entries
-        planetManager.deleteEntries(sub);
+        sub.getEntries().clear();
         endSession(true);
         
         // verify
-        sub = planetManager.getSubscriptionById(testSub.getId());
+        sub = planetManager.getSubscription(testSub.getId());
         assertEquals(0, sub.getEntries().size());
     }
     

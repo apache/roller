@@ -31,6 +31,9 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.annotation.Resource;
+
 import static org.junit.Assert.*;
 
 
@@ -41,7 +44,14 @@ public class PlanetManagerLocalTest extends WebloggerTest {
 
     User testUser = null;
     Weblog testWeblog = null;
-    
+
+    @Resource
+    protected FeedManager feedManager;
+
+    public void setFeedManager(FeedManager feedManager) {
+        this.feedManager = feedManager;
+    }
+
     /**
      * All tests in this suite require a user and a weblog.
      */
@@ -113,13 +123,16 @@ public class PlanetManagerLocalTest extends WebloggerTest {
             // run sync task to fill aggregator with websites created by super
             planetManager.syncAllBlogsPlanet();
 
-            Planet planet = planetManager.getPlanet("all");
+            Planet planet = planetManager.getPlanetByHandle("all");
             assertEquals(1, planet.getSubscriptions().size());
 
-            planetManager.updateSubscriptions();
+            List agg = planetManager.getEntries(planet, null, 0, -1);
+            assertEquals(0, agg.size());
 
-            planet = planetManager.getPlanet("all");
-            List agg = planetManager.getEntries(planet, 0, -1);
+            feedManager.updateSubscriptions(planet);
+
+            planet = planetManager.getPlanetByHandle("all");
+            agg = planetManager.getEntries(planet, null, 0, -1);
             assertEquals(3, agg.size());
 
             teardownPlanet(planet.getHandle());

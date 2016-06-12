@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 
@@ -284,7 +284,7 @@ public class CommentProcessor {
         comment.setNotify(notify);
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
-        comment.setPostTime(new Timestamp(System.currentTimeMillis()));
+        comment.setPostTime(LocalDateTime.now());
 
         // set comment content-type depending on if html is allowed
         if (propertiesManager.getBooleanProperty("users.comments.htmlenabled")) {

@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -81,7 +81,7 @@ public class User {
     @NotBlank(message = "{Register.error.emailAddressNull}")
     @Email(message = "{error.add.user.badEmail}")
     private String  emailAddress;
-    private Timestamp dateCreated;
+    private LocalDateTime dateCreated;
     private String  locale;
     private Boolean enabled = Boolean.FALSE;
     private String  activationCode;
@@ -99,14 +99,14 @@ public class User {
             GlobalRole globalRole,
             String emailAddress,
             String locale,
-            Timestamp dateCreated,
+            LocalDateTime dateCreated,
             Boolean isEnabled) {
         this.id = WebloggerCommon.generateUUID();
         this.userName = userName;
         this.password = password;
         this.globalRole = globalRole;
         this.emailAddress = emailAddress;
-        this.dateCreated = (Timestamp) dateCreated.clone();
+        this.dateCreated = dateCreated;
         this.locale = locale;
         this.enabled = isEnabled;
     }
@@ -199,20 +199,12 @@ public class User {
     }
 
     @Basic(optional=false)
-    public Timestamp getDateCreated() {
-        if (dateCreated == null) {
-            return null;
-        } else {
-            return (Timestamp) dateCreated.clone();
-        }
+    public LocalDateTime getDateCreated() {
+         return dateCreated;
     }
 
-    public void setDateCreated(final Timestamp date) {
-        if (date != null) {
-            dateCreated = (Timestamp) date.clone();
-        } else {
-            dateCreated = null;
-        }
+    public void setDateCreated(LocalDateTime dateTime) {
+        this.dateCreated = dateTime;
     }
 
     public String getLocale() {

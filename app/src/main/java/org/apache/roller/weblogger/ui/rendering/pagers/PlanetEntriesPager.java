@@ -20,14 +20,12 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
-import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +37,6 @@ public class PlanetEntriesPager extends AbstractPager {
 
     private static Logger log = LoggerFactory.getLogger(PlanetEntriesPager.class);
     
-    private String feedURL = null;
     private String planetName = null;
     private int sinceDays = -1;
     private int length = 0;
@@ -55,7 +52,6 @@ public class PlanetEntriesPager extends AbstractPager {
     public PlanetEntriesPager(
             PlanetManager  planetManager,
             URLStrategy    strat,
-            String         feedURL,
             String         planetName,
             String         baseUrl,
             int            sinceDays,
@@ -65,7 +61,6 @@ public class PlanetEntriesPager extends AbstractPager {
         super(strat, baseUrl, page);
 
         this.planetManager = planetManager;
-        this.feedURL = feedURL;
         this.planetName = planetName;
         this.sinceDays = sinceDays;
         this.length = length;
@@ -84,27 +79,18 @@ public class PlanetEntriesPager extends AbstractPager {
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
-            
-            Date startDate = null;
+
+            LocalDateTime startDate = null;
             if (sinceDays > 0) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.DATE, -1 * sinceDays);
-                startDate = cal.getTime();
+                startDate = LocalDateTime.now().minusDays(sinceDays);
             }
-            
+
             List<SubscriptionEntry> results = new ArrayList<>();
             try {
                 List<SubscriptionEntry> subEntries;
-                if (feedURL != null) {
-                    Planet planet = planetManager.getPlanet(planetName);
-                    Subscription sub = planetManager.getSubscription(planet, feedURL);
-                    subEntries = planetManager.getEntries(sub, offset, length+1);
-                } else {
-                    Planet group = planetManager.getPlanet(planetName);
-                    subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
-                }
-                
+                Planet planet = planetManager.getPlanetByHandle(planetName);
+                subEntries = planetManager.getEntries(planet, startDate, offset, length + 1);
+
                 // wrap 'em
                 int count = 0;
                 for (SubscriptionEntry entry : subEntries) {

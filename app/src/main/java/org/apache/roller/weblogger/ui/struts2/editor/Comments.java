@@ -56,7 +56,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -149,7 +148,7 @@ public class Comments extends UIAction {
 
     public void loadComments() {
 
-        List<WeblogEntryComment> comments = Collections.emptyList();
+        List<WeblogEntryComment> comments = new ArrayList<>();
         boolean hasMore = false;
 
         // lookup weblog entry if necessary
@@ -170,7 +169,6 @@ public class Comments extends UIAction {
         csc.setMaxResults(COUNT + 1);
 
         List<WeblogEntryComment> rawComments = weblogEntryManager.getComments(csc);
-        comments = new ArrayList<>();
         comments.addAll(rawComments);
 
         if (comments.size() > 0) {

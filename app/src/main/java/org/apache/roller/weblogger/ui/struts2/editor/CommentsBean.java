@@ -20,14 +20,12 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 
@@ -93,27 +91,26 @@ public class CommentsBean {
         }
     }
     
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         if(!StringUtils.isEmpty(getStartDateString())) {
             try {
-                DateFormat df = new SimpleDateFormat("MM/dd/yy");
-                return df.parse(getStartDateString());
-            } catch(Exception e) { }
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
+                return LocalDateTime.parse(getStartDateString(), formatter);
+            } catch (Exception ignored) { }
         }
         return null;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         if (!StringUtils.isEmpty(getEndDateString())) {
             try {
-                DateFormat df = new SimpleDateFormat("MM/dd/yy");
-                Date day = df.parse(getEndDateString());
-                if (day == null) day = new Date();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(day);
-                // one millisecond before start of next day
-                return DateUtils.addMilliseconds(DateUtils.ceiling(cal, Calendar.DATE).getTime(), -1);
-            } catch (Exception e) {}
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
+                LocalDateTime day = LocalDateTime.parse(getStartDateString(), formatter);
+                if (day == null) {
+                    day = LocalDateTime.now();
+                }
+                return day.plusDays(1).truncatedTo(ChronoUnit.DAYS).minusNanos(1);
+            } catch (Exception ignored) {}
         }
         return null;
     }

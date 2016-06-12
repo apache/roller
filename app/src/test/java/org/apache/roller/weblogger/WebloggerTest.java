@@ -40,6 +40,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -135,7 +136,7 @@ abstract public class WebloggerTest {
         testUser.setScreenName(userName);
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
-        testUser.setDateCreated(new Timestamp(new Date().getTime()));
+        testUser.setDateCreated(LocalDateTime.now());
         testUser.setEnabled(Boolean.TRUE);
 
         // store the user
@@ -251,8 +252,7 @@ abstract public class WebloggerTest {
         testComment.setUrl("test");
         testComment.setRemoteHost("foofoo");
         testComment.setContent(comment);
-        testComment.setPostTime(new java.sql.Timestamp(new java.util.Date()
-                .getTime()));
+        testComment.setPostTime(LocalDateTime.now());
         testComment.setWeblogEntry(getManagedWeblogEntry(entry));
         testComment.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
 
@@ -284,7 +284,7 @@ abstract public class WebloggerTest {
         strategy.flush();
 
         // query to make sure we return the persisted object
-        Planet group = planetManager.getPlanetById(testPlanet.getId());
+        Planet group = planetManager.getPlanet(testPlanet.getId());
         if (group == null) {
             throw new IllegalStateException("error inserting new group");
         }
@@ -292,7 +292,7 @@ abstract public class WebloggerTest {
     }
 
     protected void teardownPlanet(String handle) throws Exception {
-        Planet planet = planetManager.getPlanet(handle);
+        Planet planet = planetManager.getPlanetByHandle(handle);
         planetManager.deletePlanet(planet);
         strategy.flush();
     }
@@ -312,7 +312,7 @@ abstract public class WebloggerTest {
         strategy.flush();
 
         // query to make sure we return the persisted object
-        Subscription sub = planetManager.getSubscriptionById(testSub.getId());
+        Subscription sub = planetManager.getSubscription(testSub.getId());
 
         if (sub == null) {
             throw new IllegalStateException("error inserting new subscription");
@@ -321,7 +321,7 @@ abstract public class WebloggerTest {
     }
 
     protected void teardownSubscription(String id) throws Exception {
-        Subscription sub = planetManager.getSubscriptionById(id);
+        Subscription sub = planetManager.getSubscription(id);
         planetManager.deleteSubscription(sub);
         strategy.flush();
     }
@@ -329,19 +329,19 @@ abstract public class WebloggerTest {
     protected SubscriptionEntry setupEntry(Subscription sub, String title)
             throws Exception {
         // make sure we are using a persistent object
-        Subscription testSub = planetManager.getSubscriptionById(sub.getId());
+        Subscription testSub = planetManager.getSubscription(sub.getId());
 
         // store
         SubscriptionEntry testEntry = new SubscriptionEntry();
         testEntry.setPermalink(title);
         testEntry.setUri(title);
         testEntry.setTitle(title);
-        Timestamp testTS = new java.sql.Timestamp(System.currentTimeMillis());
-        testEntry.setPubTime(testTS);
+        LocalDateTime testLDT = LocalDateTime.now();
+        testEntry.setPubTime(testLDT);
         testEntry.setSubscription(testSub);
-        testEntry.setUploaded(testTS);
+        testEntry.setUploaded(testLDT);
         testSub.getEntries().add(testEntry);
-        planetManager.saveEntry(testEntry);
+        planetManager.saveSubscription(testSub);
 
         // flush
         strategy.flush();

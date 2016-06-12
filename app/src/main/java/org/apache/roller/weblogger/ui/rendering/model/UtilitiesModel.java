@@ -20,9 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -64,7 +64,7 @@ public class UtilitiesModel implements Model {
     /**
      * Format date using SimpleDateFormat format string.
      */
-    public String formatDate(Date d, String fmt) {
+    public String formatDate(LocalDateTime d, String fmt) {
         return formatDate(d, fmt, weblogRequest == null ?
                 null : weblogRequest.getWeblog().getTimeZoneInstance());
     }
@@ -72,22 +72,20 @@ public class UtilitiesModel implements Model {
     /**
      * Format date using SimpleDateFormat format string.
      */
-    public String formatDate(Date d, String fmt, TimeZone tzOverride) {
-        
+    public String formatDate(LocalDateTime d, String fmt, TimeZone tzOverride) {
         if (d == null || fmt == null) {
             return fmt;
         }
-        
-        SimpleDateFormat format = new SimpleDateFormat(fmt,
-                weblogRequest == null ?
-                    Locale.getDefault() : weblogRequest.getWeblog().getLocaleInstance());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt);
         if (tzOverride != null) {
-            format.setTimeZone(tzOverride);
+            dtf = dtf.withZone(tzOverride.toZoneId());
         }
-        
-        return format.format(d);
+        return d.format(dtf);
     }
     
+// macro.weblog.datepattern=MMMMM dd, yyyy 'at' hh:mm aa z  (SimpleDateFormat)
+// MMMMM dd, yyyy 'at' hh:mm a z
+
     /**
      * Format date in ISO-8601 format (YYYY-MM-DD)
      */

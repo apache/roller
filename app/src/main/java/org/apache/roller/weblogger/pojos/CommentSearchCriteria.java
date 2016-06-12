@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 
 public class CommentSearchCriteria {
@@ -34,9 +34,9 @@ public class CommentSearchCriteria {
     // Text appearing in comment, or null for all
     private String searchText;
     // Start date or null for no restriction
-    private Date startDate;
+    private LocalDateTime startDate;
     // End date or null for no restriction
-    private Date endDate;
+    private LocalDateTime endDate;
     // Comment status as defined in WeblogEntryComment, or null for any
     private ApprovalStatus status;
     // True for results in latest-first order
@@ -78,19 +78,19 @@ public class CommentSearchCriteria {
         this.searchText = searchText;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 

@@ -21,7 +21,8 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,7 +105,7 @@ public class PlanetFeedProcessor {
                 throw new IllegalArgumentException("Planet handle not provided in URL: " + request.getRequestURL());
             }
 
-            planet = planetManager.getPlanet(planetHandle);
+            planet = planetManager.getPlanetByHandle(planetHandle);
             if (planet == null) {
                 throw new IllegalArgumentException("Could not find planet with handle: " + planetHandle);
             }
@@ -116,10 +117,10 @@ public class PlanetFeedProcessor {
         }
 
         // figure planet last modified date
-        Date lastModified = planet.getLastUpdated();
+        LocalDateTime lastModified = planet.getLastUpdated();
 
         // Respond with 304 Not Modified if it is not modified.
-        if (Utilities.respondIfNotModified(request, response, lastModified.getTime(), deviceType)) {
+        if (Utilities.respondIfNotModified(request, response, Timestamp.valueOf(lastModified).getTime(), deviceType)) {
             return;
         }
 
@@ -138,7 +139,7 @@ public class PlanetFeedProcessor {
         }
 
         // set last-modified date
-        Utilities.setLastModifiedHeader(response, lastModified.getTime(), deviceType);
+        Utilities.setLastModifiedHeader(response, Timestamp.valueOf(lastModified).getTime(), deviceType);
 
         int page = 1;
         if (request.getParameter("page") != null) {

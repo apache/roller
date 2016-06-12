@@ -37,7 +37,7 @@
                         #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
 
                         ## 2) PLANET-entries
-                        ## set($pager = $planet.getAggregationPager($planetName, $since, $maxResults))
+                        ## set($pager = $planet.getPlanetPager($planetName, $since, $maxResults))
                         ## The below pager code should work against either:
 
                         #if($pager.items.size() > 0)

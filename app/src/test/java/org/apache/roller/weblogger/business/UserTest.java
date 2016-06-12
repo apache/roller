@@ -20,8 +20,7 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
@@ -57,7 +56,7 @@ public class UserTest extends WebloggerTest {
         testUser.setScreenName("Test User Screen Name");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
-        testUser.setDateCreated(new Timestamp(new Date().getTime()));
+        testUser.setDateCreated(LocalDateTime.now());
         testUser.setEnabled(Boolean.TRUE);
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         

@@ -50,7 +50,7 @@ public class SubscriptionTest extends WebloggerTest {
         testSub.setTitle("test_title");
 
         // verify
-        Subscription sub = planetManager.getSubscriptionById(testSub.getId());
+        Subscription sub = planetManager.getSubscription(testSub.getId());
         assertNotNull(sub);
         assertEquals("feed_url", sub.getFeedURL());
 
@@ -60,7 +60,7 @@ public class SubscriptionTest extends WebloggerTest {
         endSession(true);
 
         // verify
-        sub = planetManager.getSubscriptionById(testSub.getId());
+        sub = planetManager.getSubscription(testSub.getId());
         assertNotNull(sub);
         assertEquals("foo", sub.getTitle());
 
@@ -68,7 +68,7 @@ public class SubscriptionTest extends WebloggerTest {
         teardownSubscription(testSub.getId());
 
         // verify
-        sub = planetManager.getSubscriptionById(testSub.getId());
+        sub = planetManager.getSubscription(testSub.getId());
         assertNull(sub);
     }
 
@@ -78,7 +78,7 @@ public class SubscriptionTest extends WebloggerTest {
         Subscription testSub2 = setupSubscription(testPlanet1, "subFuncSub2");
 
         // by id
-        Subscription sub = planetManager.getSubscriptionById(testSub1.getId());
+        Subscription sub = planetManager.getSubscription(testSub1.getId());
         assertNotNull(sub);
         assertEquals("subFuncSub1", sub.getFeedURL());
         
@@ -87,8 +87,9 @@ public class SubscriptionTest extends WebloggerTest {
         assertNotNull(sub);
         assertEquals("subFuncSub2", sub.getFeedURL());
         
-        // count
-        assertEquals(2, planetManager.getSubscriptionCount());
+        // count by planet retrieval
+        Planet testPlanet = planetManager.getPlanetByHandle(testPlanet1.getHandle());
+        assertEquals(2, testPlanet.getSubscriptions().size());
     }
 
 }

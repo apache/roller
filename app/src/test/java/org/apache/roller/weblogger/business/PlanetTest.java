@@ -35,12 +35,12 @@ public class PlanetTest extends WebloggerTest {
         Planet testPlanet = setupPlanet("planetFuncTest1");
 
         // lookup planet by id
-        Planet planet = planetManager.getPlanetById(testPlanet.getId());
+        Planet planet = planetManager.getPlanet(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("planetFuncTest1", planet.getHandle());
         
         // lookup planet by handle
-        planet = planetManager.getPlanet(testPlanet.getHandle());
+        planet = planetManager.getPlanetByHandle(testPlanet.getHandle());
         assertNotNull(planet);
         assertEquals("planetFuncTest1", planet.getHandle());
         
@@ -57,7 +57,7 @@ public class PlanetTest extends WebloggerTest {
         Planet localPlanet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
         Planet planet;
 
-        planet = planetManager.getPlanet("testPlanetHandle");
+        planet = planetManager.getPlanetByHandle("testPlanetHandle");
         assertNull(planet);
 
         // add
@@ -65,7 +65,7 @@ public class PlanetTest extends WebloggerTest {
         endSession(true);
 
         // verify
-        planet = planetManager.getPlanetById(localPlanet.getId());
+        planet = planetManager.getPlanet(localPlanet.getId());
         assertNotNull(planet);
         assertEquals("testPlanetHandle", planet.getHandle());
 
@@ -75,7 +75,7 @@ public class PlanetTest extends WebloggerTest {
         endSession(true);
 
         // verify
-        planet = planetManager.getPlanetById(localPlanet.getId());
+        planet = planetManager.getPlanet(localPlanet.getId());
         assertNotNull(planet);
         assertEquals("foo", planet.getTitle());
 
@@ -84,7 +84,7 @@ public class PlanetTest extends WebloggerTest {
         endSession(true);
 
         // verify
-        planet = planetManager.getPlanetById(localPlanet.getId());
+        planet = planetManager.getPlanet(localPlanet.getId());
         assertNull(planet);
     }
 }
