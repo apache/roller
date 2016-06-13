@@ -20,7 +20,8 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
@@ -87,8 +88,8 @@ public class IndexManagerTest extends WebloggerTest {
         wd1.setAnchor("dummy1");
         wd1.setCreatorId(testUser.getId());
         wd1.setStatus(PubStatus.PUBLISHED);
-        wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
+        wd1.setUpdateTime(LocalDateTime.now());
+        wd1.setPubTime(LocalDateTime.now());
         wd1.setWeblog(getManagedWeblog(testWeblog));
 
         WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");
@@ -111,8 +112,8 @@ public class IndexManagerTest extends WebloggerTest {
         wd2.setAnchor("dummy2");
         wd2.setStatus(PubStatus.PUBLISHED);
         wd2.setCreatorId(testUser.getId());
-        wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
+        wd2.setUpdateTime(LocalDateTime.now());
+        wd2.setPubTime(LocalDateTime.now());
         wd2.setWeblog(getManagedWeblog(testWeblog));
 
         cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");

@@ -17,7 +17,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -34,9 +34,9 @@ public class WeblogEntrySearchCriteria {
     // User or null to get for all users.
     private User user;
     // Start date or null for no start date.
-    private Date startDate;
+    private LocalDateTime startDate;
     // End date or null for no end date.
-    private Date endDate;
+    private LocalDateTime endDate;
     // Category name or null for all categories.
     private String catName;
     // If provided, set of tags to search blog entries for, just one needs to match to retrieve entry
@@ -71,19 +71,19 @@ public class WeblogEntrySearchCriteria {
         this.user = user;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 

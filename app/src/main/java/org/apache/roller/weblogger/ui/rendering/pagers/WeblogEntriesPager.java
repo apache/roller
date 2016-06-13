@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public interface WeblogEntriesPager extends Pager {
      * The collection is grouped by days of entries.  Each value is a list of
      * entry objects keyed by the date they were published.
      */
-    Map<Date, List<WeblogEntry>> getEntries();
+    Map<LocalDate, List<WeblogEntry>> getEntries();
         
     /**
      * Link value for next collection view

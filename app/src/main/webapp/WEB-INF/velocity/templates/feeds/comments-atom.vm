@@ -29,7 +29,7 @@
     #if($server.feedHistoryEnabled)
         #showFeedHistory($pager)
     #end
-    <updated>$utils.formatIso8601Date($pager.lastUpdated)</updated>
+    <updated>$utils.formatIsoZonedDateTime($pager.lastUpdated)</updated>
     <generator uri="https://github.com/gmazza/tightblog" version="$server.systemVersion">TightBlog</generator>
     #showCommentsAtom10($pager.items)
 </feed>

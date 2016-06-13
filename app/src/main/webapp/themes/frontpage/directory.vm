@@ -46,28 +46,6 @@
         </div>
     </div>
 
-    <div id="rightcontent_wrap">
-        <div id="rightcontent"> 
-
-            <div class="sidebarBodyHead">
-                <div class="menu-tr">
-                    <div class="menu-tl">
-                       <h3>New blogs</h3>		
-                    </div>
-                </div>
-            </div>	
-
-            <div class="sidebarBody">  
-               #set($newblogs = $site.getNewWeblogs($since, $maxResults))
-               <ul>
-               #foreach($blog in $newblogs)
-                  <li>$blog.name (<a href="?weblog=$blog.handle" title="$blog.dateCreated">$blog.handle</a>)</li>
-               #end
-               </ul>	
-            </div>
-
-        </div>
-    </div>
 </div>
 
 </div>

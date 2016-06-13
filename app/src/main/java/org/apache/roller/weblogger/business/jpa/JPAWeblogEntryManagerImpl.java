@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -46,17 +45,16 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.TimeZone;
 
 public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
@@ -123,12 +121,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // we only consider an entry future published if it is scheduled
         // more than 1 minute into the future
         if (PubStatus.PUBLISHED.equals(entry.getStatus()) &&
-                entry.getPubTime().after(new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE))) {
+                entry.getPubTime().isAfter(LocalDateTime.now().plusMinutes(1))) {
             entry.setStatus(PubStatus.SCHEDULED);
         }
 
         // Store value object (creates new or updates existing)
-        entry.setUpdateTime(new Timestamp(new Date().getTime()));
+        entry.setUpdateTime(LocalDateTime.now());
 
         this.strategy.store(entry);
         entry.getWeblog().invalidateCache();
@@ -257,14 +255,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (wesc.getStartDate() != null) {
-            Timestamp start = new Timestamp(wesc.getStartDate().getTime());
-            params.add(size++, start);
+            params.add(size++, wesc.getStartDate());
             queryString.append(" AND e.pubTime >= ?").append(size);
         }
 
         if (wesc.getEndDate() != null) {
-            Timestamp end = new Timestamp(wesc.getEndDate().getTime());
-            params.add(size++, end);
+            params.add(size++, wesc.getEndDate());
             queryString.append(" AND e.pubTime <= ?").append(size);
         }
 
@@ -504,23 +500,17 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc) {
-        TreeMap<Date, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
+    public Map<LocalDate, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc) {
+        TreeMap<LocalDate, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
-        Calendar cal = Calendar.getInstance();
-        if (wesc.getWeblog() != null) {
-            cal.setTimeZone(wesc.getWeblog().getTimeZoneInstance());
-        }
-
         for (WeblogEntry entry : entries) {
-            cal.setTime(entry.getPubTime() == null ? new Date() : entry.getPubTime());
-            Date sDate = DateUtils.truncate(cal, Calendar.DATE).getTime();
-            List<WeblogEntry> dayEntries = map.get(sDate);
+            LocalDate tmp = entry.getPubTime() == null ? LocalDate.now() : entry.getPubTime().toLocalDate();
+            List<WeblogEntry> dayEntries = map.get(tmp);
             if (dayEntries == null) {
                 dayEntries = new ArrayList<>();
-                map.put(sDate, dayEntries);
+                map.put(tmp, dayEntries);
             }
             dayEntries.add(entry);
         }
@@ -528,25 +518,16 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc) {
-        TreeMap<Date, String> map = new TreeMap<>(Collections.reverseOrder());
+    public Map<LocalDate, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc) {
+        TreeMap<LocalDate, String> map = new TreeMap<>(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
-        Calendar cal = Calendar.getInstance();
-        FastDateFormat formatter;
-        if (wesc.getWeblog() != null) {
-            TimeZone tz = wesc.getWeblog().getTimeZoneInstance();
-            formatter = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, tz);
-        } else {
-            formatter = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS);
-        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_8CHARS);
 
         for (WeblogEntry entry : entries) {
-            cal.setTime(entry.getPubTime());
-            Date sDate = DateUtils.truncate(cal, Calendar.DATE).getTime();
-            if (map.get(sDate) == null) {
-                map.put(sDate, formatter.format(sDate));
+            if (map.get(entry.getPubTime().toLocalDate()) == null) {
+                map.put(entry.getPubTime().toLocalDate(), formatter.format(entry.getPubTime().toLocalDate()));
             }
         }
         return map;

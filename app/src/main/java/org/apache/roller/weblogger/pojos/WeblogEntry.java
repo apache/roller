@@ -20,11 +20,9 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -94,8 +92,8 @@ public class WeblogEntry {
     private String enclosureType;
     private Long enclosureLength;
     private String anchor;
-    private Timestamp pubTime;
-    private Timestamp updateTime;
+    private LocalDateTime pubTime;
+    private LocalDateTime updateTime;
     private String plugins;
     private Integer commentDays = 7;
     private PubStatus status;
@@ -130,8 +128,8 @@ public class WeblogEntry {
             String title,
             String text,
             String anchor,
-            Timestamp pubTime,
-            Timestamp updateTime,
+            LocalDateTime pubTime,
+            LocalDateTime updateTime,
             PubStatus status) {
         this.id = WebloggerCommon.generateUUID();
         this.category = category;
@@ -346,11 +344,11 @@ public class WeblogEntry {
      * times are displayed in a user's weblog they must be translated
      * to the user's timeZone.</p>
      */
-    public Timestamp getPubTime() {
+    public LocalDateTime getPubTime() {
         return this.pubTime;
     }
     
-    public void setPubTime(Timestamp pubTime) {
+    public void setPubTime(LocalDateTime pubTime) {
         this.pubTime = pubTime;
     }
     
@@ -363,11 +361,11 @@ public class WeblogEntry {
      * to the user's timeZone.</p>
      */
     @Basic(optional=false)
-    public Timestamp getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return this.updateTime;
     }
     
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -486,14 +484,10 @@ public class WeblogEntry {
         }
         boolean ret = false;
 
-        Date inPubTime = getPubTime();
+        LocalDateTime inPubTime = getPubTime();
         if (inPubTime != null) {
-            Calendar expireCal = Calendar.getInstance(getWeblog().getLocaleInstance());
-            expireCal.setTime(inPubTime);
-            expireCal.add(Calendar.DATE, getCommentDays());
-            Date expireDay = expireCal.getTime();
-            Date today = new Date();
-            if (today.before(expireDay)) {
+            LocalDateTime lastCommentDay = inPubTime.plusDays(getCommentDays());
+            if (LocalDateTime.now().isBefore(lastCommentDay)) {
                 ret = true;
             }
         }

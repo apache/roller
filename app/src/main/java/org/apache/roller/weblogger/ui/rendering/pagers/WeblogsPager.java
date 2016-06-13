@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +36,6 @@ public class WeblogsPager extends AbstractPager {
     private static Logger log = LoggerFactory.getLogger(WeblogsPager.class);
     
     private String letter = null;
-    private int sinceDays = -1;
     private int length = 0;
     
     // collection for the pager
@@ -54,7 +51,6 @@ public class WeblogsPager extends AbstractPager {
             URLStrategy    strat,
             String         baseUrl,
             String         letter,
-            int            sinceDays,
             int            page,
             int            length) {
         
@@ -62,7 +58,6 @@ public class WeblogsPager extends AbstractPager {
 
         this.weblogManager = weblogManager;
         this.letter = letter;
-        this.sinceDays = sinceDays;
         this.length = length;
         
         // initialize the collection
@@ -111,17 +106,11 @@ public class WeblogsPager extends AbstractPager {
             int offset = getPage() * length;
             
             List<Weblog> results = new ArrayList<>();
-            Date startDate = null;
-            if (sinceDays != -1) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.DATE, -1 * sinceDays);
-                startDate = cal.getTime();
-            }
+
             try {
                 List<Weblog> rawWeblogs;
                 if (letter == null) {
-                    rawWeblogs = weblogManager.getWeblogs(Boolean.TRUE, startDate, null, offset, length + 1);
+                    rawWeblogs = weblogManager.getWeblogs(Boolean.TRUE, offset, length + 1);
                 } else {
                     rawWeblogs = weblogManager.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }

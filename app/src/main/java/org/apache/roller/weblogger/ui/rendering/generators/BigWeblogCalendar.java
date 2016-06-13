@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.generators;
 
-
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -28,7 +27,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -39,7 +38,7 @@ import java.util.TimeZone;
  */
 public class BigWeblogCalendar extends WeblogCalendar {
     
-    private Map<Date, List<WeblogEntry>> monthMap;
+    private Map<LocalDate, List<WeblogEntry>> monthMap;
     protected FastDateFormat singleDayFormat;
 
     public BigWeblogCalendar(WeblogPageRequest pRequest, WeblogEntryManager wem, URLStrategy urlStrategy) {
@@ -55,14 +54,14 @@ public class BigWeblogCalendar extends WeblogCalendar {
     }
 
     @Override
-    protected String getContent(Date day) {
+    protected String getContent(LocalDate day) {
 
         StringBuilder sb = new StringBuilder();
         // get the 8 char YYYYMMDD datestring for day, returns null if no weblog entry on that day
         String dateString;
         List<WeblogEntry> entries = monthMap.get(day);
         if ( entries != null ) {
-            dateString = eightCharDateFormat.format(entries.get(0).getPubTime());
+            dateString = entries.get(0).getPubTime().toLocalDate().format(eightCharDateFormat);
 
             // append 8 char date string on end of selfurl
             String dayUrl = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
@@ -100,13 +99,13 @@ public class BigWeblogCalendar extends WeblogCalendar {
     }
 
     @Override
-    protected String getDateStringOfEntryOnDay(Date day) {
+    protected String getDateStringOfEntryOnDay(LocalDate day) {
         // get the 8 char YYYYMMDD datestring for first entry of day,
         // returns null if no weblog entry on that day
         List<WeblogEntry> entries = monthMap.get(day);
         if (entries != null) {
             WeblogEntry entry = entries.get(0);
-            return eightCharDateFormat.format(entry.getPubTime());
+            return entry.getPubTime().toLocalDate().format(eightCharDateFormat);
         }
         return null;
     }

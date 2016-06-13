@@ -27,7 +27,7 @@
        <h2 class="pageTitle">All weblogs</h2>
     #end
 
-    #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, -1, $pageLength))
+    #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, $pageLength))
     <table class="blogdirectory data">
         <thead>
             <tr>

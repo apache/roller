@@ -51,10 +51,9 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -107,7 +106,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     @Override
     public void saveWeblog(Weblog weblog) {
-        weblog.setLastModified(new Timestamp(new Date().getTime()));
+        weblog.setLastModified(LocalDateTime.now());
         strategy.merge(weblog);
         if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
             cacheManager.invalidate(weblog);
@@ -344,10 +343,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public List<Weblog> getWeblogs(Boolean visible, Date startDate, Date endDate, int offset, int length) {
+    public List<Weblog> getWeblogs(Boolean visible, int offset, int length) {
         
-        //if (endDate == null) endDate = new Date();
-                      
         List<Object> params = new ArrayList<>();
         int size = 0;
         String queryString;
@@ -355,18 +352,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         queryString = "SELECT w FROM Weblog w WHERE 1=1 ";
 
-        if (startDate != null) {
-            Timestamp start = new Timestamp(startDate.getTime());
-            whereClause.append(" AND ");
-            params.add(size++, start);
-            whereClause.append(" w.dateCreated > ?").append(size);
-        }
-        if (endDate != null) {
-            Timestamp end = new Timestamp(endDate.getTime());
-            whereClause.append(" AND ");
-            params.add(size++, end);
-            whereClause.append(" w.dateCreated < ?").append(size);
-        }
         if (visible != null) {
             whereClause.append(" AND ");
             params.add(size++, visible);
@@ -541,15 +526,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     @Override
     public List<Weblog> getHotWeblogs(int sinceDays, int offset, int length) {
 
-        // figure out start date
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
-
         TypedQuery<Weblog> query = strategy.getNamedQuery(
                 "Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc", Weblog.class);
-        query.setParameter(1, startDate);
+        query.setParameter(1, LocalDateTime.now().minusDays(sinceDays));
         if (offset != 0) {
             query.setFirstResult(offset);
         }
@@ -601,7 +580,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         log.debug("promoting scheduled entries...");
 
         try {
-            Date now = new Date();
+            LocalDateTime now = LocalDateTime.now();
             log.debug("looking up scheduled entries older than {}", now);
 
             // get all published entries older than current time
@@ -766,7 +745,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return propertiesManager.getSiteBlacklist();
         } else {
             Blacklist bl = (Blacklist) weblogBlacklistCache.get(weblog.getHandle(),
-                    weblog.getLastModified().getTime());
+                    weblog.getLastModified().toInstant(ZoneOffset.UTC).toEpochMilli());
 
             if (bl == null) {
                 bl = new Blacklist(weblog.getBlacklist(), propertiesManager.getSiteBlacklist());

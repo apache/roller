@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.InputStream;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -66,8 +66,8 @@ public class MediaFile {
     private int thumbnailHeight = -1;
     private int thumbnailWidth = -1;
     private String contentType;
-    private Timestamp dateUploaded = new Timestamp(System.currentTimeMillis());
-    private Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
+    private LocalDateTime dateUploaded = LocalDateTime.now();
+    private LocalDateTime lastUpdated = LocalDateTime.now();
 
     // Using String creatorId instead of User creator; see comments in Weblog class for info
     private String  creatorId        = null;
@@ -157,25 +157,20 @@ public class MediaFile {
     }
 
     @Column(name="date_uploaded", nullable=false)
-    public Timestamp getDateUploaded() {
+    public LocalDateTime getDateUploaded() {
         return dateUploaded;
     }
 
-    public void setDateUploaded(Timestamp dateUploaded) {
+    public void setDateUploaded(LocalDateTime dateUploaded) {
         this.dateUploaded = dateUploaded;
     }
 
-    @Transient
-    public long getLastModified() {
-        return getLastUpdated().getTime();
-    }
-
     @Column(name="last_updated")
-    public Timestamp getLastUpdated() {
+    public LocalDateTime getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(Timestamp time) {
+    public void setLastUpdated(LocalDateTime time) {
         this.lastUpdated = time;
     }
 
@@ -376,24 +371,14 @@ public class MediaFile {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
-    public static Comparator<MediaFile> NameComparator = new Comparator<MediaFile>() {
-        public int compare(MediaFile file1, MediaFile file2) {
-            return file1.getName().compareTo(file2.getName());
-        }
-    };
+    public static Comparator<MediaFile> NameComparator = (file1, file2) ->
+        file1.getName().compareTo(file2.getName());
 
-    public static Comparator<MediaFile> ContentTypeComparator = new Comparator<MediaFile>() {
-        public int compare(MediaFile file1, MediaFile file2) {
-            return file1.getContentType().compareTo(file2.getContentType());
-        }
-    };
+    public static Comparator<MediaFile> ContentTypeComparator = (file1, file2) ->
+        file1.getContentType().compareTo(file2.getContentType());
 
-    public static Comparator<MediaFile> DateUploadedComparator = new Comparator<MediaFile>() {
-        public int compare(MediaFile file1, MediaFile file2) {
-            // Do last uploaded first comparison for date field
-            return file2.getDateUploaded().compareTo(file1.getDateUploaded());
-        }
-    };
+    public static Comparator<MediaFile> DateUploadedComparator = (file1, file2) ->
+        file2.getDateUploaded().compareTo(file1.getDateUploaded());
 
     @Transient
     public String getDirectoryId() {

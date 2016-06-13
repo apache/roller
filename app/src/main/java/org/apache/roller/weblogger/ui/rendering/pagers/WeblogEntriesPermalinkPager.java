@@ -20,9 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     WeblogEntry prevEntry = null;
     
     // collection for the pager
-    Map<Date, List<WeblogEntry>> entries = null;
+    Map<LocalDate, List<WeblogEntry>> entries = null;
 
     public WeblogEntriesPermalinkPager(
             WeblogEntryManager weblogEntryManager,
@@ -89,13 +89,14 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         return entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
-    public Map<Date, List<WeblogEntry>> getEntries() {
+    public Map<LocalDate, List<WeblogEntry>> getEntries() {
         if (entries == null) {
             currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (!canShowDraftEntries) {
                 if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     entries = new TreeMap<>();
-                    entries.put(currEntry.getPubTime(), Collections.singletonList(currEntry));
+                    entries.put(currEntry.getPubTime().toLocalDate(),
+                            Collections.singletonList(currEntry));
                 }
             } else {
                 // for weblog entry previews, here we allow unpublished entries to be shown
@@ -106,13 +107,13 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
                     tmpEntry.setData(currEntry);
 
                     // for display, set the pubtime to the current time if it is not set
-                    if(tmpEntry.getPubTime() == null) {
-                        tmpEntry.setPubTime(new Timestamp(System.currentTimeMillis()));
+                    if (tmpEntry.getPubTime() == null) {
+                        tmpEntry.setPubTime(LocalDateTime.now());
                     }
 
                     // store the entry in the collection
                     entries = new TreeMap<>();
-                    entries.put(tmpEntry.getPubTime(), Collections.singletonList(tmpEntry));
+                    entries.put(tmpEntry.getPubTime().toLocalDate(), Collections.singletonList(tmpEntry));
                 }
             }
         }
@@ -182,7 +183,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         if (nextEntry == null) {
             nextEntry = weblogEntryManager.getNextEntry(currEntry, null);
             // make sure that entry is published and not to future
-            if (nextEntry != null && nextEntry.getPubTime().after(new Date())
+            if (nextEntry != null && nextEntry.getPubTime().isAfter(LocalDateTime.now())
                     && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                 nextEntry = null;
             }
@@ -195,7 +196,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         if (prevEntry == null) {
             prevEntry = weblogEntryManager.getPreviousEntry(currEntry, null);
             // make sure that entry is published and not to future
-            if (prevEntry != null && prevEntry.getPubTime().after(new Date())
+            if (prevEntry != null && prevEntry.getPubTime().isAfter(LocalDateTime.now())
                     && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                 prevEntry = null;
             }

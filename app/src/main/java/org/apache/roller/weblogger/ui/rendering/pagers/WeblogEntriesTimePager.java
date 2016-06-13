@@ -20,23 +20,21 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.sql.Timestamp;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -105,14 +103,14 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
     private PagingInterval interval;
 
-    private SimpleDateFormat dateFormat;
-    
-    private Date timePeriod;
-    private Date nextTimePeriod;
-    private Date prevTimePeriod;
+    private DateTimeFormatter dateFormat;
+
+    private LocalDate timePeriod;
+    private LocalDate nextTimePeriod;
+    private LocalDate prevTimePeriod;
     
     // collection for the pager
-    private Map<Date, List<WeblogEntry>> entries = null;
+    private Map<LocalDate, List<WeblogEntry>> entries = null;
 
     // for site blog
     private List<WeblogEntry> items = null;
@@ -122,11 +120,11 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
     // PagingInterval.SITE_LATEST allows for initializing these fields
     private int siteMaxEntries = -1;
-    private Date fixedStartDate = null;
+    private LocalDate fixedStartDate = null;
     private Weblog siteWeblog = null;
 
     // most recent update time of current set of entries
-    private Date lastUpdated = null;
+    private LocalDateTime lastUpdated = null;
 
     /**
       * This constructor is to create site-wide (frontpage) weblog pagers, which allow more
@@ -150,10 +148,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         this.viewLocale = siteWeblog.getLocaleInstance();
 
         if (sinceDays > 0) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);
-            fixedStartDate = cal.getTime();
+            fixedStartDate = LocalDate.now().minusDays(sinceDays);
         }
 
         setup(PagingInterval.SITE_LATEST, weblogEntryManager, propertiesManager, strat, weblog, null,
@@ -212,69 +207,59 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         }
         this.offset = maxEntries * page;
 
-        Date startDate = fixedStartDate;
-        Date endDate = null;
+        LocalDateTime startTime = fixedStartDate == null ? null : fixedStartDate.atStartOfDay();
+        LocalDateTime endTime = null;
 
         if (interval == PagingInterval.DAY || interval == PagingInterval.MONTH) {
-            TimeZone tz = weblog.getTimeZoneInstance();
+            ZoneId zoneId = weblog.getTimeZoneInstance().toZoneId();
 
-            dateFormat = new SimpleDateFormat(
-                    messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".dateFormat"));
-            dateFormat.setTimeZone(tz);
+            dateFormat = DateTimeFormatter.ofPattern(
+                    messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".dateFormat"),
+                    weblog.getLocaleInstance());
 
             timePeriod = parseDate(dateString);
-            Calendar cal = Calendar.getInstance(tz);
-            cal.setTime(timePeriod);
+
+            ZonedDateTime weblogInitialDate = ZonedDateTime.of(weblog.getDateCreated() != null ?
+                            weblog.getDateCreated() : LocalDateTime.MIN,
+                    weblog.getTimeZoneInstance().toZoneId());
 
             if (interval == PagingInterval.DAY) {
-                startDate = DateUtils.truncate(cal, Calendar.DATE).getTime();
-                endDate = DateUtils.addMilliseconds(DateUtils.ceiling(cal, Calendar.DATE).getTime(), -1);
+                startTime = timePeriod.atStartOfDay();
+                endTime = timePeriod.atStartOfDay().plusDays(1).minusNanos(1);
 
-                cal.add(Calendar.DAY_OF_MONTH, 1);
-                cal.set(Calendar.HOUR, 0);
-                cal.set(Calendar.MINUTE, 0);
-                cal.set(Calendar.SECOND, 0);
-                nextTimePeriod = cal.getTime();
-                if (nextTimePeriod.after(getToday())) {
+                nextTimePeriod = timePeriod.plusDays(1);
+                ZonedDateTime next = ZonedDateTime.of(nextTimePeriod.atStartOfDay(), zoneId);
+
+                if (next.isAfter(getToday())) {
                     nextTimePeriod = null;
                 }
 
-                cal.setTime(timePeriod);
-                cal.add(Calendar.DAY_OF_MONTH, -1);
-                cal.set(Calendar.HOUR, 23);
-                cal.set(Calendar.MINUTE, 59);
-                cal.set(Calendar.SECOND, 59);
-                prevTimePeriod = cal.getTime();
-                // one millisecond before start of the next day
-                Date endOfPrevDay = new Date(DateUtils.ceiling(cal, Calendar.DATE).getTimeInMillis() - 1);
-                Date weblogInitialDate = weblog.getDateCreated() != null ? weblog.getDateCreated() : new Date(0);
-                if (endOfPrevDay.before(weblogInitialDate)) {
+                // don't allow for paging into days before the blog's create date
+                prevTimePeriod = timePeriod.minusDays(1);
+                ZonedDateTime prev = ZonedDateTime.of(prevTimePeriod.atStartOfDay(), zoneId);
+                if (prev.isBefore(weblogInitialDate)) {
                     prevTimePeriod = null;
                 }
             } else {
-                startDate = DateUtils.truncate(cal, Calendar.MONTH).getTime();
-                endDate = new Date(DateUtils.ceiling(cal.getTime(), Calendar.MONTH).getTime() - 1);
+                startTime = timePeriod.withDayOfMonth(1).atStartOfDay();
+                endTime = startTime.plusMonths(1).minusNanos(1);
 
-                cal.add(Calendar.MONTH, 1);
-                nextTimePeriod = cal.getTime();
+                nextTimePeriod = timePeriod.plusMonths(1);
+
                 // don't allow for paging into months in the future
-                if (nextTimePeriod.after(getToday())) {
+                if (YearMonth.from(nextTimePeriod).isAfter(YearMonth.from(getToday()))) {
                     nextTimePeriod = null;
                 }
 
                 // don't allow for paging into months before the blog's create date
-                cal.setTime(timePeriod);
-                cal.add(Calendar.MONTH, -1);
-                prevTimePeriod = cal.getTime();
-                Date endOfPrevMonth = new Date(DateUtils.ceiling(cal, Calendar.MONTH).getTimeInMillis() - 1);
-                Date weblogInitialDate = weblog.getDateCreated() != null ? weblog.getDateCreated() : new Date(0);
-                if (endOfPrevMonth.before(weblogInitialDate)) {
+                prevTimePeriod = timePeriod.minusMonths(1);
+                if (YearMonth.from(prevTimePeriod).isBefore(YearMonth.from(weblogInitialDate))) {
                     prevTimePeriod = null;
                 }
             }
         }
 
-        loadEntries(startDate, endDate);
+        loadEntries(startTime, endTime);
     }
 
     public List<WeblogEntry> getItems() {
@@ -284,9 +269,11 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return items;
     }
 
-    public Map<Date, List<WeblogEntry>> getEntries() { return entries; }
+    public Map<LocalDate, List<WeblogEntry>> getEntries() {
+        return entries;
+    }
 
-    public Map<Date, List<WeblogEntry>> loadEntries(Date startDate, Date endDate) {
+    public Map<LocalDate, List<WeblogEntry>> loadEntries(LocalDateTime startTime, LocalDateTime endTime) {
 
         if (entries == null) {
             entries = new TreeMap<>(Collections.reverseOrder());
@@ -294,8 +281,8 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 // With WESC, if any values null, equivalent to not setting the criterion.
                 wesc.setWeblog(weblog);
-                wesc.setStartDate(startDate);
-                wesc.setEndDate(endDate);
+                wesc.setStartDate(startTime);
+                wesc.setEndDate(endTime);
                 wesc.setCatName(catName);
                 if (tag != null) {
                     wesc.setTags(Collections.singleton(tag));
@@ -303,11 +290,11 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(maxEntries +1);
-                Map<Date, List<WeblogEntry>> mmap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
+                Map<LocalDate, List<WeblogEntry>> mmap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
 
                 // need to wrap pojos
                 int count = 0;
-                for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {
+                for (Map.Entry<LocalDate, List<WeblogEntry>> entry : mmap.entrySet()) {
                     // now we need to go through each entry in a timePeriod
                     List<WeblogEntry> entrySubset = new ArrayList<>();
                     List<WeblogEntry> dayEntries = entry.getValue();
@@ -378,7 +365,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     
     public String getNextCollectionLink() {
         if (nextTimePeriod != null) {
-            String next = FastDateFormat.getInstance(interval.getDateFormat(), weblog.getTimeZoneInstance()).format(nextTimePeriod);
+            String next = nextTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(), weblog.getLocaleInstance()));
             return createURL(0, 0, next);
         }
         return null;
@@ -396,7 +383,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     
     public String getPrevCollectionLink() {
         if (prevTimePeriod != null) {
-            String prev = FastDateFormat.getInstance(interval.getDateFormat(), weblog.getTimeZoneInstance()).format(prevTimePeriod);
+            String prev = prevTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(), weblog.getLocaleInstance()));
             return createURL(0, 0, prev);
         }
         return null;
@@ -414,41 +401,37 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     /**
      * Return today based on current blog's timezone/locale.
      */
-    protected Date getToday() {
-        Calendar todayCal = Calendar.getInstance(
-                weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
-        todayCal.setTime(new Date());
-        return todayCal.getTime();
+    protected ZonedDateTime getToday() {
+        return ZonedDateTime.now(weblog.getTimeZoneInstance().toZoneId());
     }
 
     /**
      * Parse data as either 6-char or 8-char format.
      */
-    protected Date parseDate(String dateString) {
-        FastDateFormat dateFormat;
-        if (dateString != null && StringUtils.isNumeric(dateString)) {
+    protected LocalDate parseDate(String dateString) {
+        DateTimeFormatter dtf;
+        LocalDate ldt;
+        if (dateString != null && StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
             if (dateString.length() == 8) {
-                dateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS,
-                        weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
-            } else if (dateString.length() == 6) {
-                dateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_6CHARS,
-                        weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
+                dtf = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_8CHARS, weblog.getLocaleInstance());
+                ldt = LocalDate.parse(dateString, dtf);
             } else {
-                return null;
+                dtf = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_6CHARS, weblog.getLocaleInstance());
+                YearMonth tmp = YearMonth.parse(dateString, dtf);
+                ldt = tmp.atDay(1);
             }
         } else {
             return null;
         }
 
-        ParsePosition pos = new ParsePosition(0);
-        Date ret = dateFormat.parse(dateString, pos);
-
         // make sure the requested date is not in the future
-        Date today = getToday();
-        if (ret.after(today)) {
-            ret = today;
+        ZonedDateTime today = getToday();
+        ZonedDateTime requested = ZonedDateTime.of(ldt.atStartOfDay(), weblog.getTimeZoneInstance().toZoneId());
+
+        if (requested.isAfter(today)) {
+            requested = today;
         }
-        return ret;
+        return requested.toLocalDate();
     }
 
     /**
@@ -466,21 +449,21 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     }
 
     /** Get last updated time from items in pager */
-    public Date getLastUpdated() {
+    public LocalDateTime getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
             List<WeblogEntry> items = getItems();
             if (items != null && items.size() > 0) {
-                Timestamp newest = items.get(0).getUpdateTime();
+                LocalDateTime newest = items.get(0).getUpdateTime();
                 for (WeblogEntry e : items) {
-                    if (e.getUpdateTime().after(newest)) {
+                    if (e.getUpdateTime().isAfter(newest)) {
                         newest = e.getUpdateTime();
                     }
                 }
-                lastUpdated = new Date(newest.getTime());
+                lastUpdated = newest;
             } else {
                 // no articles, so choose today's date
-                lastUpdated = new Date();
+                lastUpdated = LocalDateTime.now();
             }
         }
         return lastUpdated;

@@ -25,7 +25,7 @@
     <id>$utils.escapeXML($absoluteSite)</id>
     <link rel="alternate" type="text/html" href="$absoluteSite" />
     <link rel="shortcut icon" href="$absoluteSite/favicon.ico"/>
-    <updated>$utils.formatRfc822Date($lastModified)</updated>
+    <updated>$utils.formatIsoOffsetDateTime($lastModified)</updated>
     <generator uri="https://github.com/gmazza/tightblog" version="$generatorVersion">TightBlog</generator>
   #foreach( $entry in $entries )
   <entry>
@@ -33,9 +33,9 @@
     <title type="html">$utils.escapeXML($entry.title)</title>
     <author><name>$entry.author</name></author>
     <link rel="alternate" type="text/html" href="$utils.escapeXML($entry.permalink)"/>
-    <published>$utils.formatIso8601Date($entry.pubTime)</published>
+    <published>$utils.formatIsoZonedDateTime($entry.pubTime)</published>
     #if( $utils.isNotEmpty($entry.updateTime) )
-       <updated>$utils.formatIso8601Date($entry.updateTime)</updated>
+       <updated>$utils.formatIsoZonedDateTime($entry.updateTime)</updated>
     #end
     #if( $utils.isNotEmpty($entry.text) )
        <content type="html">$utils.escapeXML($entry.content)</content>

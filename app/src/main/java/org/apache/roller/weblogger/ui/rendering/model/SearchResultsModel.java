@@ -21,12 +21,11 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
@@ -66,7 +64,7 @@ public class SearchResultsModel extends PageModel {
 	WeblogSearchRequest searchRequest = null;
 
 	// the actual search results mapped by Day -> Set of entries
-    private Map<Date, TreeSet<WeblogEntry>> results = new TreeMap<>(Collections.reverseOrder());
+    private Map<LocalDate, TreeSet<WeblogEntry>> results = new TreeMap<>(Collections.reverseOrder());
 
 	private WeblogEntriesSearchPager pager = null;
 
@@ -133,7 +131,7 @@ public class SearchResultsModel extends PageModel {
 
 		// search completed, setup pager based on results
         // convert Map from <Date, Set> to <Date, List>
-		Map<Date, List<WeblogEntry>> listMap = results.entrySet().stream()
+		Map<LocalDate, List<WeblogEntry>> listMap = results.entrySet().stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, e->new ArrayList<>(e.getValue())));
 
 		pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, listMap,
@@ -174,7 +172,7 @@ public class SearchResultsModel extends PageModel {
 		WeblogEntry entry;
 		Document doc;
 		String handle;
-		Timestamp now = new Timestamp(new Date().getTime());
+		LocalDateTime now = LocalDateTime.now();
 		for (int i = offset; i < offset + limit; i++) {
 			try {
 				doc = search.getSearcher().doc(hits[i].doc);
@@ -194,7 +192,7 @@ public class SearchResultsModel extends PageModel {
 			// maybe null if search result returned inactive user
 			// or entry's user is not the requested user.
 			// but don't return future posts
-			if (entry != null && entry.getPubTime().before(now)) {
+			if (entry != null && entry.getPubTime().isBefore(now)) {
 				addEntryToResults(entry);
 			}
 		}
@@ -205,19 +203,15 @@ public class SearchResultsModel extends PageModel {
 	}
 
 	private void addEntryToResults(WeblogEntry entry) {
-        Calendar entryPubTime = Calendar.getInstance(entry.getWeblog().getTimeZoneInstance());
-        entryPubTime.setTime(entry.getPubTime());
-
-		// convert entry's each date to midnight (00m 00h 00s)
-		Date midnight = DateUtils.truncate(entryPubTime, Calendar.DATE).getTime();
+		LocalDate pubDate = entry.getPubTime().toLocalDate();
 
 		// ensure we do not get duplicates from Lucene by using a set collection.
-		TreeSet<WeblogEntry> set = this.results.get(midnight);
+		TreeSet<WeblogEntry> set = this.results.get(pubDate);
 		if (set == null) {
 			// date is not mapped yet, so we need a new Set
 			set = new TreeSet<>(Comparator.comparing(WeblogEntry::getPubTime)
 					.thenComparing(WeblogEntry::getTitle));
-			this.results.put(midnight, set);
+			this.results.put(pubDate, set);
 		}
 		set.add(entry);
 	}

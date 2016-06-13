@@ -247,7 +247,7 @@ Show comments for weblog entry according to TightBlog configuration.
                     <b>$server.msg("macro.weblog.comment.unknown")</b>
                 #end
 
-                $server.msg("macro.weblog.on") $utils.formatDate($comment.postTime, $server.msg( "macro.weblog.datepattern" ))
+                $server.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $server.msg( "macro.weblog.datetimepattern" ))
 
                 <a href="$url.comment($entry.anchor, $comment.timestamp)"
                    class="entrypermalink" title="$server.msg( "macro.weblog.commentpermalink.title" )">#</a>
@@ -296,7 +296,7 @@ Show comments for weblog entry according to TightBlog configuration.
                    <b>$server.msg("macro.weblog.comment.unknown")</b>
                 #end
 
-                $server.msg("macro.weblog.on") $utils.formatDate($comment.postTime, $server.msg( "macro.weblog.datepattern" ))
+                $server.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $server.msg( "macro.weblog.datetimepattern" ))
                 ##<a href="$url.comment($entry.anchor, $comment.timestamp)" title="$server.msg( "macro.weblog.commentpermalink.title" )" data-role="button" data-inline="true" data-mini="true">#</a>
               </p>
             </li>

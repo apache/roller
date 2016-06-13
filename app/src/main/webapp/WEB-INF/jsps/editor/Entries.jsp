@@ -20,6 +20,8 @@
 -->
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
+<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 
@@ -72,17 +74,15 @@
     </div>
     <s:if test="pager.items.size() > 0">
         <div style="float:right;">
+            <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
             <s:if test="firstEntry.pubTime != null">
-                <s:text name="generic.date.toStringFormatOld">
-                    <s:param value="firstEntry.pubTime" />
-                </s:text>
+                <javatime:format value="${firstEntry.pubTime}" pattern="${dateFormat}"/>
             </s:if>
             ---
             <s:if test="lastEntry.pubTime != null">
-                <s:text name="generic.date.toStringFormatOld">
-                    <s:param value="lastEntry.pubTime" />
-                </s:text>
+                <javatime:format value="${lastEntry.pubTime}" pattern="${dateFormat}"/>
             </s:if>
+
         </div>
     </s:if>
     <br />
@@ -167,17 +167,15 @@
 
     <td>
         <s:if test="#post.pubTime != null">
-            <s:text name="generic.date.toStringFormatOld">
-                <s:param value="#post.pubTime" />
-            </s:text>
+            <s:set var="tempTime1" value="#post.pubTime"/>
+            <javatime:format value="${tempTime1}" pattern="${dateFormat}"/>
         </s:if>
     </td>
 
     <td>
         <s:if test="#post.updateTime != null">
-            <s:text name="generic.date.toStringFormatOld">
-                <s:param value="#post.updateTime" />
-            </s:text>
+            <s:set var="tempTime2" value="#post.updateTime"/>
+            <javatime:format value="${tempTime2}" pattern="${dateFormat}"/>
         </s:if>
     </td>
 

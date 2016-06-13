@@ -20,6 +20,8 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
+import java.time.Clock;
+
 /**
  * A cache entry that is meant to expire in a lazy fashion.
  *
@@ -48,7 +50,7 @@ public class LazyExpiringCacheEntry {
 
     public LazyExpiringCacheEntry(Object item) {
         this.value = item;
-        this.timeCached = System.currentTimeMillis();
+        this.timeCached = Clock.systemDefaultZone().millis();
     }
 
     /**

@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -58,11 +57,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -239,15 +237,13 @@ public final class EntryEdit extends UIAction {
                 log.debug("entry pubtime is {}", entry.getPubTime());
 
                 //Calendar cal = Calendar.getInstance(locale);
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(entry.getPubTime());
-                cal.setTimeZone(entry.getWeblog().getTimeZoneInstance());
+                ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getTimeZoneInstance().toZoneId());
 
-                bean.setHours(cal.get(Calendar.HOUR_OF_DAY));
-                bean.setMinutes(cal.get(Calendar.MINUTE));
-                bean.setSeconds(cal.get(Calendar.SECOND));
-                DateFormat df = new SimpleDateFormat("M/d/yy");
-                bean.setDateString(df.format(cal.getTime()));
+                bean.setHours(zdt.getHour());
+                bean.setMinutes(zdt.getMinute());
+                bean.setSeconds(zdt.getSecond());
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yy");
+                bean.setDateString(df.format(zdt.toLocalDate()));
 
                 if (log.isDebugEnabled()) {
                     log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", "
@@ -280,10 +276,9 @@ public final class EntryEdit extends UIAction {
      */
     public String publish() {
         if (getActionWeblogRole().hasEffectiveRole(WeblogRole.POST)) {
-            Timestamp pubTime = calculatePubTime();
+            LocalDateTime pubTime = calculatePubTime();
 
-            if (pubTime != null && pubTime.after(
-                    new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE))) {
+            if (pubTime != null && pubTime.isAfter(LocalDateTime.now().plusMinutes(1))) {
                 getBean().setStatus(PubStatus.SCHEDULED);
             } else {
                 getBean().setStatus(PubStatus.PUBLISHED);
@@ -294,24 +289,18 @@ public final class EntryEdit extends UIAction {
         return save();
     }
 
-    private Timestamp calculatePubTime() {
-        Timestamp pubtime = null;
+    private LocalDateTime calculatePubTime() {
+        LocalDateTime pubtime = null;
 
         String dateString = bean.getDateString();
         if(!StringUtils.isEmpty(dateString)) {
             try {
                 // Don't require user add preceding '0' of month and day.
-                DateFormat df = new SimpleDateFormat("M/d/yy");
-                df.setTimeZone(getActionWeblog().getTimeZoneInstance());
-                Date newDate = df.parse(dateString);
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yy");
+                LocalDate newDate = LocalDate.parse(dateString, df);
 
                 // Now handle the time from the hour, minute and second combos
-                Calendar cal = Calendar.getInstance(getActionWeblog().getTimeZoneInstance(), getLocale());
-                cal.setTime(newDate);
-                cal.set(Calendar.HOUR_OF_DAY, bean.getHours());
-                cal.set(Calendar.MINUTE, bean.getMinutes());
-                cal.set(Calendar.SECOND, bean.getSeconds());
-                pubtime = new Timestamp(cal.getTimeInMillis());
+                pubtime = newDate.atTime(bean.getHours(), bean.getMinutes(), bean.getSeconds());
             } catch (Exception e) {
                 log.error("Error calculating pubtime", e);
             }
@@ -334,7 +323,7 @@ public final class EntryEdit extends UIAction {
                 WeblogEntry weblogEntry = getEntry();
 
                 // set updatetime & pubtime
-                weblogEntry.setUpdateTime(new Timestamp(new Date().getTime()));
+                weblogEntry.setUpdateTime(LocalDateTime.now());
                 weblogEntry.setPubTime(calculatePubTime());
 
                 // copy data to pojo

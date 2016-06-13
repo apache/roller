@@ -21,8 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +146,7 @@ public class SiteModel implements Model {
 
 
     /** Get pager of weblogs whose handles begin with specified letter */
-    public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
+    public Pager getWeblogsByLetterPager(String letter, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
                 pageLink, null, null, null, null, 0, false);
@@ -161,7 +159,6 @@ public class SiteModel implements Model {
             urlStrategy,
             pagerUrl,
             letter,
-            sinceDays,
             pageRequest.getPageNum(),
             length);
     }   
@@ -194,30 +191,6 @@ public class SiteModel implements Model {
     }
     
         
-    /*
-     * Get most recent collection of Website objects,
-     * in reverse chrono order by creationDate.
-     * @param offset   Offset into results (for paging)
-     * @param len      Max number of results to return
-     */
-    public List<Weblog> getNewWeblogs(int sinceDays, int length) {
-        List<Weblog> results = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
-        try {            
-            List<Weblog> weblogs = weblogManager.getWeblogs(true, startDate, null, 0, length);
-            for (Weblog weblog : weblogs) {
-                results.add(weblog);
-            }
-        } catch (Exception e) {
-            log.error("ERROR: fetching weblog list", e);
-        }
-        return results;
-    }
-           
-
     /**
      * Get list of WebsiteDisplay objects, ordered by number of hits.
      * @param sinceDays Only consider weblogs updated in the last sinceDays

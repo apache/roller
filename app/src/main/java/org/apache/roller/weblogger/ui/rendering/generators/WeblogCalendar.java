@@ -22,22 +22,21 @@ package org.apache.roller.weblogger.ui.rendering.generators;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.ParsePosition;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -61,14 +60,14 @@ public class WeblogCalendar {
 
     protected Weblog weblog = null;
 
-    private Map<Date, String> monthMap;
-    protected Date dayInMonth = null;
+    private Map<LocalDate, String> monthMap;
+    protected LocalDate dayInMonth = null;
     protected String cat = null;
     protected String pageLink = null;
-    protected Date prevMonth = null;
-    protected Date nextMonth = null;
-    protected FastDateFormat eightCharDateFormat;
-    protected FastDateFormat sixCharDateFormat;
+    protected LocalDate prevMonth = null;
+    protected LocalDate nextMonth = null;
+    protected DateTimeFormatter eightCharDateFormat;
+    protected DateTimeFormatter sixCharDateFormat;
     protected String mClassSuffix = "";
 
     public WeblogCalendar(WeblogEntryManager wem, URLStrategy urlStrategy, WeblogPageRequest pRequest) {
@@ -77,9 +76,8 @@ public class WeblogCalendar {
         this.pageRequest = pRequest;
 
         weblog = pageRequest.getWeblog();
-        TimeZone tz = weblog.getTimeZoneInstance();
-        eightCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, tz);
-        sixCharDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_6CHARS, tz);
+        eightCharDateFormat = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_8CHARS);
+        sixCharDateFormat = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_6CHARS);
         pageLink = pageRequest.getWeblogTemplateName();
 
         if (pageRequest.getWeblogCategoryName() != null) {
@@ -90,34 +88,26 @@ public class WeblogCalendar {
         initModel();
     }
 
-    private Calendar newCalendarInstance() {
-        Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
-        cal.setTime(dayInMonth);
-        return cal;
-    }
-
     private void initModel() {
-        Calendar cal = newCalendarInstance();
-        cal.setTime(dayInMonth);
-        Date startDate = DateUtils.truncate(cal, Calendar.MONTH).getTime();
-        Date endDate = new Date(DateUtils.ceiling(cal, Calendar.MONTH).getTimeInMillis() - 1);
+        LocalDateTime startTime = dayInMonth.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endTime = dayInMonth.withDayOfMonth(dayInMonth.lengthOfMonth()).atStartOfDay().plusDays(1).minusNanos(1);
 
         // determine if we should have next and prev month links, and if so, the months for them to point to
-        prevMonth = findNearestMonthWithArticles(new Date(startDate.getTime()-1), false);
-        nextMonth = findNearestMonthWithArticles(new Date(endDate.getTime()+1), true);
+        prevMonth = findNearestMonthWithArticles(startTime.minusNanos(1), false);
+        nextMonth = findNearestMonthWithArticles(endTime.plusNanos(1), true);
 
         // retrieve the entries for this month
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(weblog);
-        wesc.setStartDate(startDate);
-        wesc.setEndDate(endDate);
+        wesc.setStartDate(startTime);
+        wesc.setEndDate(endTime);
         wesc.setCatName(cat);
         wesc.setStatus(PubStatus.PUBLISHED);
         loadWeblogEntries(wesc);
     }
 
-    private Date findNearestMonthWithArticles(Date targetDate, boolean succeedingMonth) {
-        Date nearestMonth = null;
+    private LocalDate findNearestMonthWithArticles(LocalDateTime targetDate, boolean succeedingMonth) {
+        LocalDate nearestMonth = null;
 
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(weblog);
@@ -134,18 +124,16 @@ public class WeblogCalendar {
         List entries = weblogEntryManager.getWeblogEntries(wesc);
         if (entries.size() > 0) {
             WeblogEntry nearestEntry = (WeblogEntry)entries.get(0);
-            Calendar calNext = newCalendarInstance();
-            calNext.setTime(new Date(nearestEntry.getPubTime().getTime()));
-            nearestMonth = DateUtils.truncate(calNext, Calendar.MONTH).getTime();
+            nearestMonth = nearestEntry.getPubTime().toLocalDate().withDayOfMonth(1);
         }
         return nearestMonth;
     }
 
-    protected String getContent(Date day) {
+    protected String getContent(LocalDate day) {
         return null;
     }
 
-    protected String getDateStringOfEntryOnDay(Date day) {
+    protected String getDateStringOfEntryOnDay(LocalDate day) {
         // get the 8 char YYYYMMDD datestring for day
         return monthMap.get(day);
     }
@@ -156,7 +144,7 @@ public class WeblogCalendar {
      * @param alwaysURL Always return a URL, never return null
      * @return          URL for day, or null if no weblog entry on that day
      */
-    protected String computeUrl(Date day, boolean createMonthURL, boolean alwaysURL) {
+    protected String computeUrl(LocalDate day, boolean createMonthURL, boolean alwaysURL) {
         String dateString = getDateStringOfEntryOnDay(day);
         if (dateString == null) {
             if (alwaysURL) {
@@ -184,36 +172,21 @@ public class WeblogCalendar {
      * Parse date as either 6-char or 8-char format.  Use current date if date not provided
      * in URL (e.g., a permalink)
      */
-    private Date parseWeblogURLDateString(String dateString) {
+    private LocalDate parseWeblogURLDateString(String dateString) {
+        LocalDate ret = null;
 
-        // Date must have time part removed as the time-less date serves as the key into the monthMap
-        LocalDateTime tmp = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
-        Date ret = Date.from(tmp.atZone(weblog.getTimeZoneInstance().toZoneId()).toInstant());
-
-        if (dateString != null
-                && dateString.length()==8
-                && StringUtils.isNumeric(dateString) ) {
-            ParsePosition pos = new ParsePosition(0);
-            ret = eightCharDateFormat.parse(dateString, pos);
-
-            // make sure the requested date is not in the future
-            // Date is always ms offset from epoch in UTC, by no means of timezone.
-            Date today = new Date();
-            if(ret.after(today)) {
-                ret = today;
+        if (dateString != null && StringUtils.isNumeric(dateString)) {
+            if (dateString.length() == 8) {
+                ret = LocalDate.parse(dateString, eightCharDateFormat);
+            } else if (dateString.length() == 6) {
+                YearMonth tmp = YearMonth.parse(dateString, sixCharDateFormat);
+                ret = tmp.atDay(1);
             }
+        }
 
-        } else if(dateString != null
-                && dateString.length()==6
-                && StringUtils.isNumeric(dateString)) {
-            ParsePosition pos = new ParsePosition(0);
-            ret = sixCharDateFormat.parse(dateString, pos);
-
-            // make sure the requested date is not in the future
-            Date today = new Date();
-            if(ret.after(today)) {
-                ret = today;
-            }
+        // make sure the requested date is not in the future
+        if (ret == null || ret.isAfter(LocalDate.now())) {
+            ret = LocalDate.now();
         }
 
         return ret;
@@ -239,6 +212,12 @@ public class WeblogCalendar {
     	return url;
     }
 
+    private Calendar newCalendarInstance() {
+        Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
+        cal.setTime(new Timestamp(dayInMonth.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
+        return cal;
+    }
+
     public String generateHTML() {
         String ret;
         StringWriter sw = new StringWriter();
@@ -259,8 +238,8 @@ public class WeblogCalendar {
         // get Resource Bundle
         ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", locale);
         // formatter for Month-Year title of calendar
-        SimpleDateFormat formatTitle = new SimpleDateFormat(bundle.getString("calendar.dateFormat"), locale);
-        formatTitle.setTimeZone(todayCal.getTimeZone());
+        DateTimeFormatter formatTitle = DateTimeFormatter.ofPattern(bundle.getString("calendar.dateFormat"), locale)
+                .withZone(todayCal.getTimeZone().toZoneId());
 
         // start with the first day of the week containing the first day of the month
         dayIndex.set(Calendar.DAY_OF_MONTH, dayIndex.getMinimum(Calendar.DAY_OF_MONTH));
@@ -299,7 +278,7 @@ public class WeblogCalendar {
                 }
 
                 // determine URL for this calendar day
-                Date tddate = dayIndex.getTime();
+                LocalDate tddate = LocalDate.from(new Timestamp(dayIndex.getTimeInMillis()).toLocalDateTime());
                 String url = computeUrl(tddate, false, false);
                 String content = getContent( tddate );
 
