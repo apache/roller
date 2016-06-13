@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -76,18 +75,11 @@ public interface WeblogManager {
     /**
      * Get weblogs optionally restricted by user, enabled and active status.
      * @param visible   Get all with this visible state (or null or all)
-     * @param startDate Restrict to those created after (or null for all)
-     * @param endDate   Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
      * @param length    Maximum number of results to return (for paging)
      * @return List of Weblog objects.
      */
-    List<Weblog> getWeblogs(
-            Boolean  visible,
-            Date     startDate,
-            Date     endDate,
-            int      offset,
-            int      length);
+    List<Weblog> getWeblogs(Boolean visible, int offset, int length);
     
     /**
      * Get users of a weblog.

@@ -100,7 +100,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public void prepare() {
         // just grab our properties map and make it available to the action
         setProperties(propertiesManager.getProperties());
-        setWeblogs(weblogManager.getWeblogs(true, null, null, 0, -1));
+        setWeblogs(weblogManager.getWeblogs(true, 0, -1));
         globalConfigDef = propertiesManager.getRuntimeConfigDefs();
     }
     

@@ -114,7 +114,7 @@ public class AdminController {
     public List<String> getWeblogHandles(HttpServletResponse response) throws ServletException {
         try {
             List<String> weblogHandles = new ArrayList<>();
-            List<Weblog> weblogs = weblogManager.getWeblogs(null, null, null, 0, -1);
+            List<Weblog> weblogs = weblogManager.getWeblogs(null, 0, -1);
             for (Weblog weblog : weblogs) {
                 weblogHandles.add(weblog.getHandle());
             }

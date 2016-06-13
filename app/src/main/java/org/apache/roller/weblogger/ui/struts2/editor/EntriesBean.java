@@ -18,9 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,27 +54,24 @@ public class EntriesBean {
         }
     }
     
-    public Date getStartDate() {
-        if(!StringUtils.isEmpty(getStartDateString())) {
+    public LocalDateTime getStartDate() {
+        return getDate(getStartDateString());
+    }
+
+    public LocalDateTime getEndDate() {
+        return getDate(getEndDateString());
+    }
+
+    private LocalDateTime getDate(String dateToParse) {
+        if(!StringUtils.isEmpty(dateToParse)) {
             try {
-                DateFormat df = new SimpleDateFormat("MM/dd/yy");
-                return df.parse(getStartDateString());
-            } catch(Exception e) { }
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("MM/dd/yy");
+                return LocalDateTime.parse(dateToParse, df);
+            } catch(Exception ignored) { }
         }
         return null;
     }
 
-    public Date getEndDate() {
-        if(!StringUtils.isEmpty(getEndDateString())) {
-            try {
-                DateFormat df = new SimpleDateFormat("MM/dd/yy");
-                return df.parse(getEndDateString());
-            } catch(Exception e) { }
-        }
-        return null;
-    }
-    
-    
     public String getCategoryName() {
         return categoryName;
     }

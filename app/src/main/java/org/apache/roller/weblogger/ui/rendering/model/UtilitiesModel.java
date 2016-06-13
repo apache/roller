@@ -21,13 +21,13 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.Temporal;
 import java.util.Map;
-import java.util.TimeZone;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -57,47 +57,48 @@ public class UtilitiesModel implements Model {
     /**
      * Return date for current time.
      */
-    public static Date getNow() {
-        return new Date();
+    public static LocalDateTime getNow() {
+        return LocalDateTime.now();
     }
-    
+
     /**
-     * Format date using SimpleDateFormat format string.
+     * Format Temporal object (e.g., LocalDate, LocalTime, or LocalDateTime) using provided
+     * DateTimeFormatter-supported format string.  Will not parse timezones.
      */
-    public String formatDate(LocalDateTime d, String fmt) {
-        return formatDate(d, fmt, weblogRequest == null ?
-                null : weblogRequest.getWeblog().getTimeZoneInstance());
-    }
-    
-    /**
-     * Format date using SimpleDateFormat format string.
-     */
-    public String formatDate(LocalDateTime d, String fmt, TimeZone tzOverride) {
-        if (d == null || fmt == null) {
+    public String formatDate(Temporal dt, String fmt) {
+        if (dt == null || fmt == null) {
             return fmt;
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt);
-        if (tzOverride != null) {
-            dtf = dtf.withZone(tzOverride.toZoneId());
-        }
-        return d.format(dtf);
+        return dtf.format(dt);
     }
-    
-// macro.weblog.datepattern=MMMMM dd, yyyy 'at' hh:mm aa z  (SimpleDateFormat)
-// MMMMM dd, yyyy 'at' hh:mm a z
 
     /**
-     * Format date in ISO-8601 format (YYYY-MM-DD)
+     * Format LocalDateTime or LocalTime object using provided DateTimeFormatter-supported
+     * format string. This variant needed when desired to output a timezone.
      */
-    public String formatIso8601Date(Date d) {
-        return DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(d);
+    public String formatDateTime(Temporal dt, String fmt) {
+        if (dt == null || fmt == null) {
+            return fmt;
+        }
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt).withZone(ZoneId.systemDefault());
+        return dtf.format(dt);
     }
     
     /**
-     * Return a date in RFC-822 format (EEE, dd MMM yyyy HH:mm:ss Z)
+     * Format date as '2011-12-03T10:15:30+01:00[Europe/Paris]'
+     * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
      */
-    public String formatRfc822Date(Date date) {
-        return DateFormatUtils.SMTP_DATETIME_FORMAT.format(date);
+    public String formatIsoZonedDateTime(LocalDateTime date) {
+        return DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date);
+    }
+    
+    /**
+     * Format date as '2011-12-03T10:15:30+01:00'
+     * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+     */
+    public String formatIsoOffsetDateTime(LocalDateTime date) {
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date);
     }
     
     //------------------------------------------------------------ String utils

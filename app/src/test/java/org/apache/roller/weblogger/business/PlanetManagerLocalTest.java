@@ -18,8 +18,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
@@ -66,7 +65,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         testUser = getManagedUser(testUser);
         testWeblog = getManagedWeblog(testWeblog);
 
-        Timestamp testTime = new Timestamp(new Date().getTime());
+        LocalDateTime testTime = LocalDateTime.now();
 
         WeblogEntry testEntry1 = new WeblogEntry();
         testEntry1.setId(WebloggerCommon.generateUUID());

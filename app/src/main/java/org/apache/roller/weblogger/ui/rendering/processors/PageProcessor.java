@@ -57,7 +57,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -195,11 +197,11 @@ public class PageProcessor {
         }
 
         // determine the lastModified date for this content
-        long lastModified = System.currentTimeMillis();
+        long lastModified = Clock.systemDefaultZone().millis();
         if (isSiteWide) {
             lastModified = siteWideCache.getLastModified().getTime();
         } else if (weblog.getLastModified() != null) {
-            lastModified = weblog.getLastModified().getTime();
+            lastModified = Timestamp.valueOf(weblog.getLastModified()).getTime();
         }
 
         // 304 Not Modified handling.
@@ -328,7 +330,7 @@ public class PageProcessor {
                 invalid = true;
             } else if (!entry.isPublished()) {
                 invalid = true;
-            } else if (new Date().before(entry.getPubTime())) {
+            } else if (LocalDateTime.now().isBefore(entry.getPubTime())) {
                 invalid = true;
             }
         } else if (pageRequest.getWeblogCategoryName() != null) {

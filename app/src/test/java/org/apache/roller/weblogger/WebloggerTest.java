@@ -39,9 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring-beans.xml")
@@ -173,7 +171,7 @@ abstract public class WebloggerTest {
         testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
-        testWeblog.setDateCreated(new Timestamp(new Date().getTime()));
+        testWeblog.setDateCreated(LocalDateTime.now());
         testWeblog.setCreatorId(creator.getId());
 
         // add weblog
@@ -213,10 +211,8 @@ abstract public class WebloggerTest {
         testEntry.setTitle(anchor);
         testEntry.setText("blah blah entry");
         testEntry.setAnchor(anchor);
-        testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date()
-                .getTime()));
-        testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date()
-                .getTime()));
+        testEntry.setPubTime(LocalDateTime.now());
+        testEntry.setUpdateTime(LocalDateTime.now());
         testEntry.setStatus(status);
         testEntry.setWeblog(getManagedWeblog(weblog));
         testEntry.setCreatorId(user.getId());

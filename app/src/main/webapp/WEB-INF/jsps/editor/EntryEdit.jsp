@@ -19,6 +19,8 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
+<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
@@ -94,37 +96,41 @@
             </td>
         </tr>
 
+                <javatime:format value="${firstEntry.pubTime}" pattern="${dateFormat}"/>
+
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="status"><s:text name="weblogEdit.status" /></label>
             </td>
             <td>
+                <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
                 <s:if test="bean.published">
                     <span style="color:green; font-weight:bold">
                         <s:text name="weblogEdit.published" />
                         (<s:text name="weblogEdit.updateTime" />
-                        <s:date name="entry.updateTime" />)
+                        <javatime:format value="${entry.updateTime}" pattern="${dateFormat}"/>)
                     </span>
                 </s:if>
                 <s:elseif test="bean.draft">
                     <span style="color:orange; font-weight:bold">
                         <s:text name="weblogEdit.draft" />
                         (<s:text name="weblogEdit.updateTime" />
-                        <s:date name="entry.updateTime" />)
+                        <javatime:format value="${entry.updateTime}" pattern="${dateFormat}"/>)
                     </span>
                 </s:elseif>
                 <s:elseif test="bean.pending">
                     <span style="color:orange; font-weight:bold">
                         <s:text name="weblogEdit.pending" />
                         (<s:text name="weblogEdit.updateTime" />
-                        <s:date name="entry.updateTime" />)
+                        <javatime:format value="${entry.updateTime}" pattern="${dateFormat}"/>)
                     </span>
                 </s:elseif>
                 <s:elseif test="bean.scheduled">
                     <span style="color:orange; font-weight:bold">
                         <s:text name="weblogEdit.scheduled" />
                         (<s:text name="weblogEdit.updateTime" />
-                        <s:date name="entry.updateTime" />)
+                        <javatime:format value="${entry.updateTime}" pattern="${dateFormat}"/>)
                     </span>
                 </s:elseif>
                 <s:else>

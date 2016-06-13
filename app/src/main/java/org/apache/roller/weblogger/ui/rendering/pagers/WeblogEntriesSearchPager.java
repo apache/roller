@@ -21,7 +21,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     // url strategy
     URLStrategy urlStrategy = null;
     
-    private Map<Date, List<WeblogEntry>> entries = null;
+    private Map<LocalDate, List<WeblogEntry>> entries = null;
     
     private Weblog weblog = null;
     private String      query = null;
@@ -54,7 +54,7 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     
     
     public WeblogEntriesSearchPager(URLStrategy strat, WeblogSearchRequest searchRequest,
-                                    Map<Date, List<WeblogEntry>> entries, boolean more) {
+                                    Map<LocalDate, List<WeblogEntry>> entries, boolean more) {
         
         // url strategy for building urls
         this.urlStrategy = strat;
@@ -77,7 +77,7 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     }
     
     
-    public Map<Date, List<WeblogEntry>> getEntries() {
+    public Map<LocalDate, List<WeblogEntry>> getEntries() {
         return entries;
     }
 

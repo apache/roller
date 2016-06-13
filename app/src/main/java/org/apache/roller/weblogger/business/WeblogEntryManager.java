@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
@@ -68,7 +68,7 @@ public interface WeblogEntryManager {
      * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return Map of Lists of WeblogEntries keyed by calendar day
      */
-    Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc);
+    Map<LocalDate, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc);
 
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
@@ -77,7 +77,7 @@ public interface WeblogEntryManager {
      * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return Map of date strings keyed by Date
      */
-    Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc);
+    Map<LocalDate, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc);
     
     /**
      * Get the WeblogEntry following, chronologically, the current entry.

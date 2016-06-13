@@ -20,7 +20,7 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -90,10 +90,10 @@ public class Weblog {
     private String  timeZone         = null;
     private String  defaultPlugins   = null;
     private Boolean visible          = Boolean.TRUE;
-    private Timestamp dateCreated      = new Timestamp(new Date().getTime());
+    private LocalDateTime dateCreated = LocalDateTime.now();
     private int     defaultCommentDays = -1;
     private int     entriesPerPage   = 15;
-    private Timestamp lastModified     = new Timestamp(new Date().getTime());
+    private LocalDateTime lastModified = LocalDateTime.now();
     private String  about            = null;
     /*
      * String creatorId used instead of User object to prevent models from having access to sensitive User
@@ -285,20 +285,12 @@ public class Weblog {
     }
 
     @Basic(optional=false)
-    public Timestamp getDateCreated() {
-        if (dateCreated == null) {
-            return null;
-        } else {
-            return (Timestamp) dateCreated.clone();
-        }
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
     }
 
-    public void setDateCreated(final Timestamp date) {
-        if (date != null) {
-            dateCreated = (Timestamp) date.clone();
-        } else {
-            dateCreated = null;
-        }
+    public void setDateCreated(LocalDateTime date) {
+        dateCreated = date;
     }
 
     /**
@@ -388,11 +380,11 @@ public class Weblog {
      * comments, categories, bookmarks, etc.  This can be used by cache managers
      * to determine if blog content should be invalidated and reloaded.
      */
-    public Timestamp getLastModified() {
+    public LocalDateTime getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Timestamp lastModified) {
+    public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;
     }
 
@@ -401,7 +393,7 @@ public class Weblog {
      * refreshing so users can see new categories, bookmarks, etc.
      */
     public void invalidateCache() {
-        setLastModified(new Timestamp(new Date().getTime()));
+        setLastModified(LocalDateTime.now());
     }
 
     // Used in templates

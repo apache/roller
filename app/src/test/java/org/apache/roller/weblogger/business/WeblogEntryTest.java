@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.business;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -88,8 +89,8 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
-        testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setPubTime(LocalDateTime.now());
+        testEntry.setUpdateTime(LocalDateTime.now());
         testEntry.setWeblog(testWeblog);
         testEntry.setCreatorId(testUser.getId());
         testEntry.setStatus(PubStatus.DRAFT);
@@ -147,17 +148,17 @@ public class WeblogEntryTest extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry1);
         
         entry2.setStatus(PubStatus.PUBLISHED);
-        entry2.setUpdateTime(new java.sql.Timestamp(entry2.getUpdateTime().getTime()+8822384));
+        entry2.setUpdateTime(LocalDateTime.now().plusHours(1));
         entry2.setPubTime(entry2.getUpdateTime());
         weblogEntryManager.saveWeblogEntry(entry2);
 
         entry3.setStatus(PubStatus.DRAFT);
-        entry3.setUpdateTime(new java.sql.Timestamp(entry3.getUpdateTime().getTime()+348829384));
+        entry3.setUpdateTime(LocalDateTime.now().plusDays(1));
         entry3.setPubTime(entry3.getUpdateTime());
         weblogEntryManager.saveWeblogEntry(entry3);
         
-        entry4.setPubTime(new java.sql.Timestamp(entry1.getPubTime().getTime() - 348829384));
-        entry5.setPubTime(new java.sql.Timestamp(entry1.getPubTime().getTime() - 8822384));
+        entry4.setPubTime(LocalDateTime.now().minusDays(1));
+        entry5.setPubTime(LocalDateTime.now().minusHours(1));
         
         endSession(true);
         
@@ -311,10 +312,8 @@ public class WeblogEntryTest extends WebloggerTest {
             testEntry.setText("blah blah entry");
             testEntry.setAnchor("testEntryAnchor");
             testEntry.setStatus(PubStatus.PUBLISHED);
-            testEntry.setPubTime(
-                    new java.sql.Timestamp(new java.util.Date().getTime()));
-            testEntry.setUpdateTime(
-                    new java.sql.Timestamp(new java.util.Date().getTime()));
+            testEntry.setPubTime(LocalDateTime.now());
+            testEntry.setUpdateTime(LocalDateTime.now());
             testEntry.setWeblog(testWeblog);
             testEntry.setCreatorId(testUser.getId());
             testEntry.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
@@ -811,8 +810,8 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
-        testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setPubTime(LocalDateTime.now());
+        testEntry.setUpdateTime(LocalDateTime.now());
         testEntry.setWeblog(testWeblog);
         testEntry.setStatus(PubStatus.DRAFT);
         testEntry.setCreatorId(testUser.getId());
@@ -943,6 +942,3 @@ public class WeblogEntryTest extends WebloggerTest {
     }
 
 }
-
-
-

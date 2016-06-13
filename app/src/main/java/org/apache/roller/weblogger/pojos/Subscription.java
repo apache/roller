@@ -18,7 +18,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;

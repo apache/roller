@@ -198,7 +198,7 @@ public class FeedManagerImpl implements FeedManager {
         }
 
         // if weblog hasn't changed since last fetch then bail
-        if(lastModified != null && !localWeblog.getLastModified().toLocalDateTime().isAfter(lastModified)) {
+        if(lastModified != null && !localWeblog.getLastModified().isAfter(lastModified)) {
             log.debug("Skipping unmodified local blog {}", feedURL);
             return null;
         }
@@ -208,7 +208,7 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(urlStrategy.getWeblogURL(localWeblog, true));
         newSub.setTitle(localWeblog.getName());
-        newSub.setLastUpdated(localWeblog.getLastModified().toLocalDateTime());
+        newSub.setLastUpdated(localWeblog.getLastModified());
         
         // must have a last updated time
         if(newSub.getLastUpdated() == null) {
@@ -243,7 +243,7 @@ public class FeedManagerImpl implements FeedManager {
 
             entry.setAuthor(blogEntry.getCreator().getScreenName());
             entry.setTitle(blogEntry.getTitle());
-            entry.setPubTime(blogEntry.getPubTime().toLocalDateTime());
+            entry.setPubTime(blogEntry.getPubTime());
             entry.setContent(content);
             entry.setPermalink(blogEntry.getPermalink());
             entry.setUri(blogEntry.getPermalink());

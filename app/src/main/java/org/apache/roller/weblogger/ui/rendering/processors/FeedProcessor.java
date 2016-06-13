@@ -21,6 +21,8 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -132,11 +134,11 @@ public class FeedProcessor {
         }
 
         // determine the lastModified date for this content
-        long lastModified = System.currentTimeMillis();
+        long lastModified = Clock.systemDefaultZone().millis();
         if (feedRequest.isSiteWideFeed()) {
             lastModified = siteWideCache.getLastModified().getTime();
         } else if (weblog.getLastModified() != null) {
-            lastModified = weblog.getLastModified().getTime();
+            lastModified = Timestamp.valueOf(weblog.getLastModified()).getTime();
         }
 
         // Respond with 304 Not Modified if it is not modified.

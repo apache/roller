@@ -207,7 +207,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
 
         // walk through all enable weblogs and add/update subs as needed
         List<String> liveUserFeeds = new ArrayList<>();
-        List<Weblog> weblogs = weblogManager.getWeblogs(Boolean.TRUE, null, null, 0, -1);
+        List<Weblog> weblogs = weblogManager.getWeblogs(Boolean.TRUE, 0, -1);
         for ( Weblog weblog : weblogs ) {
 
             log.debug("processing weblog - {}", weblog.getHandle());
