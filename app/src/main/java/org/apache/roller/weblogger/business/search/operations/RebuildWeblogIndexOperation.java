@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -74,7 +74,7 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
     // ================================================================
 
     public void doRun() {
-        Date start = new Date();
+        Instant start = Instant.now();
 
         if (this.website != null) {
             log.debug("Reindexining weblog {}", website.getHandle());
@@ -120,8 +120,8 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
             endWriting();
         }
 
-        Date end = new Date();
-        double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
+        Instant end = Instant.now();
+        double length = (end.toEpochMilli() - start.toEpochMilli()) / (double) DateUtils.MILLIS_PER_SECOND;
 
         if (website == null) {
             log.info("Completed rebuilding index for all users in {} secs", length);

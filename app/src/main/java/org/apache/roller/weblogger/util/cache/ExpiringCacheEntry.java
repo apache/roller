@@ -20,6 +20,8 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
+import java.time.Clock;
+
 /**
  * A cache entry that expires.
  *
@@ -36,7 +38,7 @@ public class ExpiringCacheEntry {
     public ExpiringCacheEntry(Object value, long timeout) {
         this.value = value;
         this.timeout = timeout;
-        this.timeCached = System.currentTimeMillis();
+        this.timeCached = Clock.systemDefaultZone().millis();
     }
 
     public long getTimeCached() {

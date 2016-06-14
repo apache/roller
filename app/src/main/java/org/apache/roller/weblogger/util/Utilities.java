@@ -28,8 +28,10 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +56,6 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
@@ -678,9 +679,8 @@ public class Utilities {
      *
      * @return true if a response status was sent, false otherwise.
      */
-    public static boolean respondIfNotModified(HttpServletRequest request,
-                                               HttpServletResponse response, long lastModifiedTimeMillis,
-                                               DeviceType deviceType) {
+    public static boolean respondIfNotModified(HttpServletRequest request, HttpServletResponse response,
+                                               long lastModifiedTimeMillis, DeviceType deviceType) {
 
         long sinceDate;
         try {
@@ -694,9 +694,9 @@ public class Utilities {
         lastModifiedTimeMillis -= (lastModifiedTimeMillis % DateUtils.MILLIS_PER_SECOND);
 
         if (log.isDebugEnabled()) {
-            FastDateFormat format = FastDateFormat.getInstance("EEE MMM dd 'at' h:mm:ss a");
-            log.debug("since date = " + format.format(new Date(sinceDate)));
-            log.debug("last mod date (truncated to seconds) = " + format.format(new Date(lastModifiedTimeMillis)));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd 'at' h:mm:ss a").withZone(ZoneId.systemDefault());
+            log.debug("since date = " + formatter.format(Instant.ofEpochMilli(sinceDate)));
+            log.debug("last mod date (truncated to seconds) = " + formatter.format(Instant.ofEpochMilli(lastModifiedTimeMillis)));
         }
 
         // Set device type for device switching

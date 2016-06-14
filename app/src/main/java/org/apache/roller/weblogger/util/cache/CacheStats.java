@@ -1,21 +1,21 @@
 package org.apache.roller.weblogger.util.cache;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class CacheStats {
 
-    private Date startTime;
+    private LocalDateTime startTime;
     private int hits;
     private int misses;
     private int puts;
     private int removes;
     private double efficiency = 0.0;
 
-    public Date getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 

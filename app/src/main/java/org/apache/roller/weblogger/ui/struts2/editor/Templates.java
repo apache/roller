@@ -45,10 +45,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -149,7 +148,7 @@ public class Templates extends UIAction {
 			newTemplate.setWeblog(getActionWeblog());
 			newTemplate.setRole(getNewTmplAction());
 			newTemplate.setName(getNewTmplName());
-			newTemplate.setLastModified(new Timestamp(new Date().getTime()));
+			newTemplate.setLastModified(LocalDateTime.now());
 
 			// save the new Template
 			weblogManager.saveTemplate(newTemplate);

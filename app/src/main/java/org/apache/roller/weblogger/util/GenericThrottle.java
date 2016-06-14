@@ -18,13 +18,13 @@
  */
 package org.apache.roller.weblogger.util;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 
 /**
  * A tool used to provide throttling support.
@@ -61,13 +61,13 @@ public class GenericThrottle {
     // threshold and interval to determine who is abusive
     private int threshold = 25;
 
-    private long intervalMS = 60 * DateUtils.MILLIS_PER_MINUTE;
+    private long intervalMS = 60000;
 
     private int maxEntries = 250;
 
     public GenericThrottle(int threshold, int intervalMin, int maxEntries) {
         this.threshold = Math.max(threshold, 0);
-        this.intervalMS = Math.max(intervalMin * DateUtils.MILLIS_PER_MINUTE, 0);
+        this.intervalMS = Math.max(intervalMin * 1000, 0);
         this.maxEntries = Math.max(maxEntries, 1);
     }
 
@@ -153,7 +153,7 @@ public class GenericThrottle {
     // just something to keep a few properties in
     private class ClientInfo {
         public int hits = 0;
-        public java.util.Date start = new java.util.Date();
+        public LocalDateTime start = LocalDateTime.now();
     }
     
 }

@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
-import java.util.Date;
-
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -32,6 +30,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 
 /**
  * Cache for site-wide weblog content.  The site weblog needs a different type of
@@ -64,17 +63,17 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
         }
     }
 
-    public Date getLastModified() {
-        Date lastModified = null;
+    public LocalDateTime getLastModified() {
+        LocalDateTime lastModified = null;
         
         // first try our cached version
         if (this.lastUpdateTime != null) {
-            lastModified = (Date) this.lastUpdateTime.getValue();
+            lastModified = (LocalDateTime) this.lastUpdateTime.getValue();
         }
         
         // still null, we need to get a fresh value
         if (lastModified == null) {
-            lastModified = new Date();
+            lastModified = LocalDateTime.now();
             this.lastUpdateTime = new ExpiringCacheEntry(lastModified, timeoutInMS);
         }
         

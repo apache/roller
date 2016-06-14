@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -465,7 +464,7 @@ public final class EntryEdit extends UIAction {
                 break;
             case SCHEDULED:
                 addMessage("weblogEdit.scheduledEntry",
-                        DateFormatUtils.ISO_DATE_FORMAT.format(getEntry().getPubTime()));
+                        DateTimeFormatter.ISO_DATE_TIME.format(getEntry().getPubTime()));
                 break;
             case PENDING:
                 addMessage("weblogEdit.submittedForReview");

@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.generators;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -28,6 +27,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -39,12 +39,12 @@ import java.util.TimeZone;
 public class BigWeblogCalendar extends WeblogCalendar {
     
     private Map<LocalDate, List<WeblogEntry>> monthMap;
-    protected FastDateFormat singleDayFormat;
+    protected DateTimeFormatter singleDayFormat;
 
     public BigWeblogCalendar(WeblogPageRequest pRequest, WeblogEntryManager wem, URLStrategy urlStrategy) {
         super(wem, urlStrategy, pRequest);
         TimeZone tz = weblog.getTimeZoneInstance();
-        singleDayFormat = FastDateFormat.getInstance("dd", tz);
+        singleDayFormat = DateTimeFormatter.ofPattern("dd").withZone(tz.toZoneId());
         mClassSuffix = "Big";
     }
 

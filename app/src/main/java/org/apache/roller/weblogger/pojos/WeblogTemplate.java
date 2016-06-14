@@ -37,7 +37,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +69,7 @@ public class WeblogTemplate implements Template {
     private String  name = null;
     private String  description = null;
     private String  relativePath = null;
-    private Timestamp lastModified = null;
+    private LocalDateTime lastModified = null;
     private TemplateDerivation derivation = TemplateDerivation.NONSHARED;
 
     private String  contentsStandard = null;
@@ -126,11 +126,11 @@ public class WeblogTemplate implements Template {
     }
 
     @Column(name="updatetime", nullable=false)
-    public Timestamp getLastModified() {
+    public LocalDateTime getLastModified() {
         return lastModified;
     }
     
-    public void setLastModified(final Timestamp newtime ) {
+    public void setLastModified(LocalDateTime newtime) {
         lastModified = newtime;
     }
 

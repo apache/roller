@@ -25,11 +25,10 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PingResult;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -239,7 +237,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                     " To see all logged pings, make sure logging at DEBUG for this class, or INFO to see just failures.");
         }
 
-        Timestamp startOfDay = new Timestamp(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH).getTime());
+        LocalDateTime startOfDay = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         Boolean hadDateUpdate = false;
         List<PingTarget> targets = getEnabledPingTargets();
 
@@ -251,7 +249,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                     } else {
                         PingResult pr = sendPing(target, weblog);
                         // for performance reasons, limit updates to daily
-                        if (!pr.isError() && (target.getLastSuccess() == null || target.getLastSuccess().before(startOfDay))) {
+                        if (!pr.isError() && (target.getLastSuccess() == null || target.getLastSuccess().isBefore(startOfDay))) {
                             target.setLastSuccess(startOfDay);
                             savePingTarget(target);
                             hadDateUpdate = true;

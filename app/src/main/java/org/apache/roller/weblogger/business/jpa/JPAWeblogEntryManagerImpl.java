@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
@@ -388,37 +387,26 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * Create anchor for weblog entry, based on title or text
      */
     private String createAnchorBase(WeblogEntry entry) {
-
         // Use title (minus non-alphanumeric characters)
-        String base = null;
+        String base;
         if (!StringUtils.isEmpty(entry.getTitle())) {
             base = Utilities.replaceNonAlphanumeric(entry.getTitle(), ' ').trim();
-        }
-        // If we still have no base, then try text (minus non-alphanumerics)
-        if (StringUtils.isEmpty(base) && !StringUtils.isEmpty(entry.getText())) {
+        } else {
+            // try text
             base = Utilities.replaceNonAlphanumeric(entry.getText(), ' ').trim();
         }
 
-        if (!StringUtils.isEmpty(base)) {
-
-            // Use only the first 4 words
-            StringTokenizer toker = new StringTokenizer(base);
-            String tmp = null;
-            int count = 0;
-            while (toker.hasMoreTokens() && count < 5) {
-                String s = toker.nextToken();
-                s = s.toLowerCase();
-                tmp = (tmp == null) ? s : tmp + "-" + s;
-                count++;
-            }
-            base = tmp;
+        // Use only the first 4 words
+        StringTokenizer toker = new StringTokenizer(base);
+        String tmp = null;
+        int count = 0;
+        while (toker.hasMoreTokens() && count < 5) {
+            String s = toker.nextToken();
+            s = s.toLowerCase();
+            tmp = (tmp == null) ? s : tmp + "-" + s;
+            count++;
         }
-        // No title or text, so instead we will use the items date
-        // in YYYYMMDD format as the base anchor
-        else {
-            base = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS,
-                    entry.getWeblog().getTimeZoneInstance()).format(entry.getPubTime());
-        }
+        base = tmp;
 
         return base;
     }

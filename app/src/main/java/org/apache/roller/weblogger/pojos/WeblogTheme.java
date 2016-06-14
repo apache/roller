@@ -23,8 +23,8 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.roller.weblogger.business.WeblogManager;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,7 +68,7 @@ public class WeblogTheme {
         return "N/A";
     }
 
-    public Date getLastModified() {
+    public LocalDateTime getLastModified() {
         return this.sharedTheme.getLastModified();
     }
 
