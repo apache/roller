@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.Instant;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.lucene.index.IndexWriter;
@@ -65,7 +65,7 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
     // ================================================================
 
     public void doRun() {
-        Date start = new Date();
+        Instant start = Instant.now();
 
         IndexWriter writer = beginWriting();
         try {
@@ -83,8 +83,8 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
             endWriting();
         }
 
-        Date end = new Date();
-        double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
+        Instant end = Instant.now();
+        double length = (end.toEpochMilli() - start.toEpochMilli()) / (double) DateUtils.MILLIS_PER_SECOND;
         log.info("Completed deleting indices for weblog {} in {} seconds", weblogHandle, length);
     }
 }

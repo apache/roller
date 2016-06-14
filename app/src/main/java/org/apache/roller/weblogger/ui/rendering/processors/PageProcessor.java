@@ -199,7 +199,7 @@ public class PageProcessor {
         // determine the lastModified date for this content
         long lastModified = Clock.systemDefaultZone().millis();
         if (isSiteWide) {
-            lastModified = siteWideCache.getLastModified().getTime();
+            lastModified = Timestamp.valueOf(siteWideCache.getLastModified()).getTime();
         } else if (weblog.getLastModified() != null) {
             lastModified = Timestamp.valueOf(weblog.getLastModified()).getTime();
         }

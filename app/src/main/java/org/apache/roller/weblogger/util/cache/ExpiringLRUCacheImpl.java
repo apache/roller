@@ -24,8 +24,8 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -49,7 +49,7 @@ public class ExpiringLRUCacheImpl implements Cache {
     protected int misses = 0;
     protected int puts = 0;
     protected int removes = 0;
-    protected Date startTime = new Date();
+    protected LocalDateTime startTime = LocalDateTime.now();
 
     public ExpiringLRUCacheImpl(int maxsize, long timeoutInMS) {
         this.cache = Collections.synchronizedMap(new LRULinkedHashMap<>(maxsize));
@@ -69,7 +69,7 @@ public class ExpiringLRUCacheImpl implements Cache {
         misses = 0;
         puts = 0;
         removes = 0;
-        startTime = new Date();
+        startTime = LocalDateTime.now();
     }
 
     public CacheStats getStats() {

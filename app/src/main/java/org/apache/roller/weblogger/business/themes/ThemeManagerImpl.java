@@ -24,9 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.InputStreamReader;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,7 +155,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		weblogTemplate.setName(sharedTemplate.getName());
 		weblogTemplate.setDescription(sharedTemplate.getDescription());
 		weblogTemplate.setRelativePath(sharedTemplate.getRelativePath());
-		weblogTemplate.setLastModified(new Timestamp(new Date().getTime()));
+		weblogTemplate.setLastModified(LocalDateTime.now());
 
 		// create weblog template code objects and save them
 		for (RenditionType type : RenditionType.values()) {

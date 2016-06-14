@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * The Template interface represents the abstract concept of a single unit
@@ -131,7 +131,7 @@ public interface Template {
     /**
      * The last time the template was modified.
      */
-    Date getLastModified();
+    LocalDateTime getLastModified();
 
 
     /**
