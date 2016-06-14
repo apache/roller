@@ -23,13 +23,6 @@
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 
-<s:if test="actionName == 'comments'">
-    <s:set var="mainAction">comments</s:set>
-</s:if>
-<s:else>
-    <s:set var="mainAction">globalCommentManagement</s:set>
-</s:else>
-
 <script>
 <s:if test="pager.items != null">
     $(document).ready(function(){
@@ -56,20 +49,15 @@
 </script>
 
 <p class="subtitle">
-    <s:if test="actionName == 'comments'">
-        <s:if test="bean.entryId != null && !bean.entryId.equals('') ">
-            <s:text name="commentManagement.entry.subtitle">
-                <s:param value="queryEntry.title"/>
-            </s:text>
-        </s:if>
-        <s:else>
-            <s:text name="commentManagement.website.subtitle">
-                <s:param value="%{actionWeblog.handle}"/>
-            </s:text>
-        </s:else>
+    <s:if test="bean.entryId != null && !bean.entryId.equals('') ">
+        <s:text name="commentManagement.entry.subtitle">
+            <s:param value="queryEntry.title"/>
+        </s:text>
     </s:if>
     <s:else>
-        <s:text name="commentManagement.subtitle" />
+        <s:text name="commentManagement.website.subtitle">
+            <s:param value="%{actionWeblog.handle}"/>
+        </s:text>
     </s:else>
 </p>
 
@@ -78,33 +66,22 @@
 </s:if>
 <s:else>
     <p class="pagetip">
-        <s:if test="actionName == 'comments'">
-            <s:text name="commentManagement.tip" />
-        </s:if>
-        <s:else>
-            <s:text name="commentManagement.globalTip" />
-        </s:else>
+        <s:text name="commentManagement.tip" />
     </p>
 
 <%-- ============================================================= --%>
 <%-- Comment table / form with checkboxes --%>
 <%-- ============================================================= --%>
 
-<s:form id="commentsForm" action="%{#mainAction}">
+<s:form id="commentsForm" action="comments">
     <sec:csrfInput/>
     <s:hidden name="bean.ids" />
     <s:hidden name="bean.startDateString" />
     <s:hidden name="bean.endDateString" />
     <s:hidden name="bean.approvedString" />
-    <s:if test="actionName == 'comments'">
-        <s:hidden name="bean.entryId" />
-        <s:hidden name="bean.searchString" />
-        <s:hidden name="weblog" />
-    </s:if>
-    <s:else>
-        <s:hidden name="bean.offset" />
-        <s:hidden name="bean.count" />
-    </s:else>
+    <s:hidden name="bean.entryId" />
+    <s:hidden name="bean.searchString" />
+    <s:hidden name="weblog" />
 
 
 <%-- ============================================================= --%>
@@ -175,9 +152,7 @@
             <%-- Comment table header --%>
 
             <tr>
-                <s:if test="actionName == 'comments'">
-                    <th width="5%"><s:text name="commentManagement.columnApproved" /></th>
-                </s:if>
+                <th width="5%"><s:text name="commentManagement.columnApproved" /></th>
                 <th width="5%"><s:text name="commentManagement.columnSpam" /></th>
                 <th width="5%" ><s:text name="generic.delete" /></th>
                 <th ><s:text name="commentManagement.columnComment" /></th>
@@ -187,22 +162,18 @@
             <%-- Select ALL and NONE buttons --%>
 
             <tr class="actionrow">
-                <s:if test="actionName == 'comments'">
-                    <td align="center">
-                        <s:text name="commentManagement.select" /><br/>
-                        <span id="checkallapproved"><a href="#"><s:text name="generic.all" /></a></span><br />
-                        <span id="clearallapproved"><a href="#"><s:text name="generic.none" /></a></span>
-                    </td>
-                </s:if>
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
-
+                    <span id="checkallapproved"><a href="#"><s:text name="generic.all" /></a></span><br />
+                    <span id="clearallapproved"><a href="#"><s:text name="generic.none" /></a></span>
+                </td>
+                <td align="center">
+                    <s:text name="commentManagement.select" /><br/>
                     <span id="checkallspam"><a href="#"><s:text name="generic.all" /></a></span><br />
                     <span id="clearallspam"><a href="#"><s:text name="generic.none" /></a></span>
                 </td>
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
-
                     <span id="checkalldelete"><a href="#"><s:text name="generic.all" /></a></span><br />
                     <span id="clearalldelete"><a href="#"><s:text name="generic.none" /></a></span>
                 </td>
@@ -221,22 +192,16 @@
 <%-- ========================================================= --%>
 
             <s:iterator id="comment" value="pager.items" status="rowstatus">
-                <tr>
-                    <s:if test="actionName == 'comments'">
-                        <td>
-                            <%-- a bit funky to use checkbox list here, but using checkbox didn't work for me :(
-                 we are effectively just creating a checkbox list of 1 item for each iteration of our collection --%>
-                            <s:checkboxlist name="bean.approvedComments" list="{#comment}" listKey="id" listValue="name" />
-                        </td>
-                    </s:if>
-                    <td>
                         <%-- a bit funky to use checkbox list here, but using checkbox didn't work for me :(
-             we are effectively just creating a checkbox list of 1 item for each iteration of our collection --%>
+             we are effectively just creating a checkbox list of 1 item for each status for each iteration of our collection --%>
+                <tr>
+                    <td>
+                        <s:checkboxlist name="bean.approvedComments" list="{#comment}" listKey="id" listValue="name" />
+                    </td>
+                    <td>
                         <s:checkboxlist name="bean.spamComments" list="{#comment}" listKey="id" listValue="name" />
                     </td>
                     <td>
-                        <%-- a bit funky to use checkbox list here, but using checkbox didn't work for me :(
-             we are effectively just creating a checkbox list of 1 item for each iteration of our collection --%>
                         <s:checkboxlist name="bean.deleteComments" list="{#comment}" listKey="id" listValue="name" />
                     </td>
 
@@ -315,21 +280,19 @@
                                                <span width="200px" id="comment-<s:property value="#comment.id"/>"><s:property value="#comment.content" escape="true" /></span>
                                           </s:else>
                                      </div>
-                                     <s:if test="actionName == 'comments'">
-                                         <div class="details">
-                                              <a id="editlink-<s:property value="#comment.id"/>" onclick='editComment("<s:property value="#comment.id"/>")'>
-                                                   <s:text name="generic.edit" />
-                                              </a>
-                                         </div>
-                                         <div class="details">
-                                              <span id="savelink-<s:property value="#comment.id"/>" style="display: none">
-                                                   <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text name="generic.save" /></a> &nbsp;|&nbsp;
-                                              </span>
-                                              <span id="cancellink-<s:property value="#comment.id"/>" style="display: none">
-                                                   <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'><s:text name="generic.cancel" /></a>
-                                              </span>
-                                         </div>
-                                     </s:if>
+                                     <div class="details">
+                                          <a id="editlink-<s:property value="#comment.id"/>" onclick='editComment("<s:property value="#comment.id"/>")'>
+                                               <s:text name="generic.edit" />
+                                          </a>
+                                     </div>
+                                     <div class="details">
+                                          <span id="savelink-<s:property value="#comment.id"/>" style="display: none">
+                                               <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text name="generic.save" /></a> &nbsp;|&nbsp;
+                                          </span>
+                                          <span id="cancellink-<s:property value="#comment.id"/>" style="display: none">
+                                               <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'><s:text name="generic.cancel" /></a>
+                                          </span>
+                                     </div>
                                 </div>
                             </tr>
                         </table> <%-- end comment details table in table --%>
@@ -419,7 +382,7 @@
 <%-- Save changes and cancel buttons --%>
 <%-- ========================================================= --%>
 
-        <s:submit action="%{#mainAction}!update" value="%{getText('commentManagement.update')}" />
+        <s:submit action="comments!update" value="%{getText('commentManagement.update')}" />
 
     </s:form>
 

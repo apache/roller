@@ -9,8 +9,6 @@ Defines the menus provided with Weblogger
             <tabItem action="userAdmin"
                      titleKey="tabbedmenu.admin.userAdmin">
             </tabItem>
-            <tabItem action="globalCommentManagement"
-                     titleKey="tabbedmenu.admin.commentManagement"/>
             <tabItem action="pingTargets"
                      titleKey="tabbedmenu.admin.pingTargets">
             </tabItem>
@@ -38,7 +36,7 @@ Defines the menus provided with Weblogger
                      weblogRole="POST">
             </tabItem>
             <tabItem action="comments"
-                     titleKey="tabbedmenu.admin.commentManagement"
+                     titleKey="tabbedmenu.weblog.commentManagement"
                      weblogRole="POST"/>
             <tabItem action="categories"
                      titleKey="tabbedmenu.weblog.categories"

@@ -24,13 +24,6 @@
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 
-<s:if test="actionName == 'comments'">
-    <s:set var="mainAction">comments</s:set>
-</s:if>
-<s:else>
-    <s:set var="mainAction">globalCommentManagement</s:set>
-</s:else>
-
 <div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
@@ -42,7 +35,7 @@
 
 <p><s:text name="commentManagement.sidebarDescription" /></p>
     
- <s:form action="%{#mainAction}!query" id="commentsQuery">
+ <s:form action="comments!query" id="commentsQuery">
     <sec:csrfInput/>
     <s:hidden name="weblog" />
     
