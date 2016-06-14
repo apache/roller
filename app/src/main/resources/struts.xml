@@ -165,17 +165,6 @@
             <result name="success" type="tiles">.GlobalConfig</result>
         </action>
 
-        <action name="globalCommentManagement!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Comments">
-            <result name="list" type="tiles">.GlobalCommentManagement</result>
-            <param name="actionName">globalCommentManagement</param>
-            <param name="desiredMenu">admin</param>
-            <result name="success" type="redirectAction">
-                <param name="actionName">globalCommentManagement!updateMade</param>
-                <param name="bean.id">${bean.id}</param>
-            </result>
-        </action>
-
         <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">userAdmin</param>
             <param name="pageTitleReal">userAdmin.title.userAdministration</param>

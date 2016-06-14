@@ -130,20 +130,8 @@ public class Comments extends UIAction {
 
     public Comments() {
         this.pageTitle = "commentManagement.title";
-    }
-
-    private boolean isGlobalCommentManagement() {
-        return actionName.equals("globalCommentManagement");
-    }
-
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return (isGlobalCommentManagement()) ? GlobalRole.ADMIN : GlobalRole.BLOGGER;
-    }
-
-    @Override
-    public WeblogRole getRequiredWeblogRole() {
-        return (isGlobalCommentManagement()) ? WeblogRole.NOBLOGNEEDED : WeblogRole.POST;
+        this.requiredWeblogRole = WeblogRole.POST;
+        this.requiredGlobalRole = GlobalRole.BLOGGER;
     }
 
     public void loadComments() {
@@ -157,10 +145,8 @@ public class Comments extends UIAction {
         }
 
         CommentSearchCriteria csc = new CommentSearchCriteria();
-        if (!isGlobalCommentManagement()) {
-            csc.setWeblog(getActionWeblog());
-            csc.setEntry(getQueryEntry());
-        }
+        csc.setWeblog(getActionWeblog());
+        csc.setEntry(getQueryEntry());
         csc.setSearchText(getBean().getSearchString());
         csc.setStartDate(getBean().getStartDate());
         csc.setEndDate(getBean().getEndDate());
@@ -192,7 +178,7 @@ public class Comments extends UIAction {
 
         Map<String, String> params = new HashMap<>();
 
-        if (!isGlobalCommentManagement() && !StringUtils.isEmpty(getBean().getEntryId())) {
+        if (!StringUtils.isEmpty(getBean().getEntryId())) {
             params.put("bean.entryId", getBean().getEntryId());
         }
         if (!StringUtils.isEmpty(getBean().getSearchString())) {
@@ -208,10 +194,7 @@ public class Comments extends UIAction {
             params.put("bean.approvedString", getBean().getApprovedString());
         }
 
-        return urlStrategy.getActionURL(actionName,
-                        isGlobalCommentManagement() ? "/tb-ui/admin" : "/tb-ui/authoring",
-                        isGlobalCommentManagement() ? null : getActionWeblog(),
-                        params, false);
+        return urlStrategy.getActionURL(actionName, "/tb-ui/authoring", getActionWeblog(), params, false);
     }
 
     public String execute() {
@@ -237,9 +220,7 @@ public class Comments extends UIAction {
         getBean().loadCheckboxes(getPager().getItems());
 
         CommentSearchCriteria csc = new CommentSearchCriteria();
-        if (!isGlobalCommentManagement()) {
-            csc.setWeblog(getActionWeblog());
-        }
+        csc.setWeblog(getActionWeblog());
         csc.setSearchText(getBean().getSearchString());
         csc.setStartDate(getBean().getStartDate());
         csc.setEndDate(getBean().getEndDate());
@@ -263,9 +244,6 @@ public class Comments extends UIAction {
     public String update() {
 
         try {
-            // Global Management: update weblogs
-            HashSet<Weblog> flushWeblogSet = new HashSet<>();
-
             // if search is enabled, we will need to re-index all entries with
             // comments that have been approved, so build a list of those
             // entries
@@ -279,12 +257,10 @@ public class Comments extends UIAction {
                 WeblogEntryComment deleteComment;
                 for (String deleteId : deletes) {
                     deleteComment = weblogEntryManager.getComment(deleteId);
-                    flushWeblogSet.add(deleteComment.getWeblogEntry().getWeblog());
                     weblogEntryManager.removeComment(deleteComment);
 
                     // make sure comment is tied to action weblog
-                    if (isGlobalCommentManagement() || getActionWeblog().equals(
-                            deleteComment.getWeblogEntry().getWeblog())) {
+                    if (getActionWeblog().equals(deleteComment.getWeblogEntry().getWeblog())) {
                         reindexList.add(deleteComment.getWeblogEntry());
                     }
                 }
@@ -315,7 +291,7 @@ public class Comments extends UIAction {
                 WeblogEntryComment comment = weblogEntryManager.getComment(id);
 
                 // for non-Global, make sure comment is tied to action weblog
-                if (isGlobalCommentManagement() || getActionWeblog().equals(comment.getWeblogEntry().getWeblog())) {
+                if (getActionWeblog().equals(comment.getWeblogEntry().getWeblog())) {
                     // comment approvals and mark/unmark spam
                     if (approvedIds.contains(id)) {
                         if (!ApprovalStatus.APPROVED.equals(comment.getStatus())) {
@@ -328,8 +304,6 @@ public class Comments extends UIAction {
                             log.debug("Marking as approved - {}", comment.getId());
                             comment.setStatus(ApprovalStatus.APPROVED);
                             weblogEntryManager.saveComment(comment, true);
-
-                            flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                             reindexList.add(comment.getWeblogEntry());
                         }
                     } else if (spamIds.contains(id)) {
@@ -337,17 +311,12 @@ public class Comments extends UIAction {
                             log.debug("Marking as spam - {}", comment.getId());
                             comment.setStatus(ApprovalStatus.SPAM);
                             weblogEntryManager.saveComment(comment, true);
-
-                            flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                             reindexList.add(comment.getWeblogEntry());
                         }
-                    } else if (!ApprovalStatus.DISAPPROVED.equals(comment.getStatus())
-                            && !(isGlobalCommentManagement() && ApprovalStatus.APPROVED.equals(comment.getStatus()))) {
+                    } else if (!ApprovalStatus.DISAPPROVED.equals(comment.getStatus())) {
                         log.debug("Marking as disapproved - {}", comment.getId());
                         comment.setStatus(ApprovalStatus.DISAPPROVED);
                         weblogEntryManager.saveComment(comment, true);
-
-                        flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                         reindexList.add(comment.getWeblogEntry());
                     }
                 }
@@ -355,23 +324,16 @@ public class Comments extends UIAction {
 
             WebloggerFactory.flush();
 
-            if (isGlobalCommentManagement()) {
-                // notify caches of changes, flush weblogs affected by changes
-                for (Weblog weblog : flushWeblogSet) {
-                    cacheManager.invalidate(weblog);
-                }
-            } else {
-                // notify caches of changes by flushing whole weblog because we can't
-                // invalidate deleted comment objects (JPA nulls the fields out).
-                cacheManager.invalidate(getActionWeblog());
+            // notify caches of changes by flushing whole weblog because we can't
+            // invalidate deleted comment objects (JPA nulls the fields out).
+            cacheManager.invalidate(getActionWeblog());
 
-                // if required, send notification for all comments changed
-                if (mailManager.isMailConfigured()) {
-                    I18nMessages resources = I18nMessages
-                            .getMessages(getActionWeblog().getLocaleInstance());
-                    mailManager.sendEmailApprovalNotifications(approvedComments,
-                            resources);
-                }
+            // if required, send notification for all comments changed
+            if (mailManager.isMailConfigured()) {
+                I18nMessages resources = I18nMessages
+                        .getMessages(getActionWeblog().getLocaleInstance());
+                mailManager.sendEmailApprovalNotifications(approvedComments,
+                        resources);
             }
 
             // if we've got entries to reindex then do so
