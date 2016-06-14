@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -74,7 +75,8 @@ public class ExpiringLRUCacheImpl implements Cache {
 
     public CacheStats getStats() {
         CacheStats stats = new CacheStats();
-        stats.setStartTime(startTime);
+        long startTimeMillis = startTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        stats.setStartTime(startTimeMillis);
         stats.setHits(hits);
         stats.setMisses(misses);
         stats.setPuts(puts);

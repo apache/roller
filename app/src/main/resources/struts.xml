@@ -1,6 +1,6 @@
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-    "http://struts.apache.org/dtds/struts-2.3.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
 <struts>
 
     <constant name="struts.multipart.parser" value="spring"/>
@@ -114,6 +114,7 @@
         <action name="emailResponse!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.Login">
             <result name="successActivate" type="tiles">.Welcome</result>
+            <allowed-methods>activate</allowed-methods>
         </action>
 
         <action name="profile" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -163,6 +164,7 @@
         <action name="globalConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.GlobalConfig">
             <result name="success" type="tiles">.GlobalConfig</result>
+            <allowed-methods>save</allowed-methods>
         </action>
 
         <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -217,6 +219,7 @@
             <result name="input" type="tiles">.MediaFileEdit</result>
             <result name="success" type="chain">mediaFileView</result>
             <result name="error" type="tiles">.MediaFileEdit</result>
+            <allowed-methods>save</allowed-methods>
         </action>
 
         <action name="mediaFileEdit!*" method="{1}"
@@ -231,11 +234,13 @@
                 <param name="weblog">${weblog}</param>
                 <param name="directoryName">${directoryName}</param>
             </result>
+            <allowed-methods>cancel,save</allowed-methods>
         </action>
 
         <action name="mediaFileView!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
             <result name="success" type="tiles">.MediaFileView</result>
+            <allowed-methods>createNewDirectory,deleteFolder,deletedSelected,moveSelected,view</allowed-methods>
         </action>
 
         <action name="mediaFileChooser" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -257,6 +262,7 @@
                 <param name="weblog">${weblog}</param>
                 <param name="bean.id">${bean.id}</param>
             </result>
+            <allowed-methods>publish,saveDraft</allowed-methods>
         </action>
 
         <action name="entryEdit!*" method="{1}"
@@ -270,6 +276,7 @@
                 <param name="weblog">${weblog}</param>
             </result>
             <result name="list" type="chain">entries</result>
+            <allowed-methods>firstSave,publish,remove,saveDraft</allowed-methods>
         </action>
 
         <action name="entries"
@@ -287,6 +294,7 @@
                 <param name="bean.entryId">${bean.entryId}</param>
                 <param name="weblog">${weblog}</param>
             </result>
+            <allowed-methods>update,updateMade</allowed-methods>
         </action>
 
         <action name="categories" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -301,6 +309,7 @@
         <action name="bookmarks!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Bookmarks">
             <result name="list" type="tiles">.Bookmarks</result>
+            <allowed-methods>delete</allowed-methods>
         </action>
 
         <action name="weblogConfig" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -322,12 +331,14 @@
         <action name="templates!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Templates">
             <result name="list" type="tiles">.Templates</result>
+            <allowed-methods>add,newTheme,remove</allowed-methods>
         </action>
 
         <action name="templateEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.TemplateEdit">
             <result name="input" type="tiles">.TemplateEdit</result>
             <result name="list" type="chain">templates</result>
+            <allowed-methods>delete,save</allowed-methods>
         </action>
 
         <action name="members!*" method="{1}"
@@ -335,6 +346,7 @@
             <result name="list" type="tiles">.Members</result>
             <result name="input" type="tiles">.Members</result>
             <result name="success" type="tiles">.Members</result>
+            <allowed-methods>invite,save</allowed-methods>
         </action>
 
     </package>

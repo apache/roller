@@ -46,7 +46,7 @@ var contextPath = "${pageContext.request.contextPath}";
 <input type="hidden" id="cancelURL" value="<s:url action='menu'/>"/>
 <input type="hidden" id="userId" value="<s:property value='%{#parameters.id}'/>"/>
 
-<p class="subtitle"><s:text name="userAdmin.title.editUser" /></p>
+<p class="subtitle"><s:text name="yourProfile.subtitle" /></p>
 
 <s:form id="myForm" action="profile">
     <table class="formtable">
@@ -103,6 +103,6 @@ var contextPath = "${pageContext.request.contextPath}";
     <br />
 
     <s:submit id="save-link" value="%{getText('generic.save')}" />
-    <input id="cancel-link" type="button" value="<s:text name="generic.cancel"/>"/>
+    <input id="cancel-link" type="button" value="<s:text name='generic.cancel'/>" onclick="window.location='<s:url action='menu'/>'" />
 
 </s:form>

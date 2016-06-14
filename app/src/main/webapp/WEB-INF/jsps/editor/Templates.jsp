@@ -16,6 +16,8 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
+<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
@@ -71,7 +73,8 @@
         <th width="4%"><s:text name="generic.view"/></th>
         <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
     </tr>
-    <s:iterator id="p" value="templates" status="rowstatus">
+    <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
+    <s:iterator var="p" value="templates" status="rowstatus">
         <s:if test="#rowstatus.odd == true">
             <tr class="rollertable_odd">
         </s:if>
@@ -114,9 +117,8 @@
 
             <td>
                 <s:if test="#p.lastModified != null">
-                    <s:text name="generic.date.toStringFormatOld">
-                        <s:param value="#p.lastModified" />
-                    </s:text>
+                    <s:set var="tempTime" value="#p.lastModified"/>
+                    <javatime:format value="${tempTime}" pattern="${dateFormat}"/>
                 </s:if>
             </td>
 

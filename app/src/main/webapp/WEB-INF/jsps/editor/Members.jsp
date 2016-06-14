@@ -45,7 +45,7 @@
            <th width="20%"><s:text name="memberPermissions.limited" /></th>
            <th width="20%"><s:text name="memberPermissions.remove" /></th>
         </tr>
-        <s:iterator id="role" value="weblogRoles" status="rowstatus">
+        <s:iterator var="role" value="weblogRoles" status="rowstatus">
             <s:if test="#role.pending">
                 <tr class="rollertable_pending">
             </s:if>

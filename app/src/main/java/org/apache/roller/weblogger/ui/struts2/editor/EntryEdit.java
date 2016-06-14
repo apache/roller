@@ -294,8 +294,8 @@ public final class EntryEdit extends UIAction {
         String dateString = bean.getDateString();
         if(!StringUtils.isEmpty(dateString)) {
             try {
-                // Don't require user add preceding '0' of month and day.
-                DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yy");
+                // Don't require user to add preceding '0' of month and day.
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yyyy");
                 LocalDate newDate = LocalDate.parse(dateString, df);
 
                 // Now handle the time from the hour, minute and second combos

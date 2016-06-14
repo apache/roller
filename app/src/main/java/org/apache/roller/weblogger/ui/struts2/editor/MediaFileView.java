@@ -237,24 +237,6 @@ public class MediaFileView extends UIAction {
     }
 
     /**
-     * Delete selected media file
-     */
-    public String delete() {
-        try {
-            log.debug("Processing delete of file id {}", getMediaFileId());
-            MediaFile mediaFile = mediaFileManager.getMediaFile(getMediaFileId());
-            mediaFileManager.removeMediaFile(getActionWeblog(), mediaFile);
-            // flush changes
-            WebloggerFactory.flush();
-            addMessage("mediaFile.delete.success");
-        } catch (IOException e) {
-            log.error("Error deleting media file", e);
-            addError("mediaFile.delete.error", getMediaFileId());
-        }
-        return execute();
-    }
-
-    /**
      * Delete folder
      */
     public String deleteFolder() {

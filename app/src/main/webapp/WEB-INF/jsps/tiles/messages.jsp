@@ -28,12 +28,12 @@
 <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
     <div id="errors" class="errors">
         <ul>
-            <s:iterator id="actionError" value="actionErrors">
-                <li><s:property value="#actionError" escape="false" /></li>
+            <s:iterator var="actionError" value="actionErrors">
+                <li><s:property value="#actionError"/></li>
             </s:iterator>
-            <s:iterator id="fieldErrorName" value="fieldErrors.keySet()">
-                <s:iterator id="fieldErrorValue" value="fieldErrors[#fieldErrorName]">
-                    <li><s:property value="#fieldErrorValue" escape="false" /></li>
+            <s:iterator var="fieldErrorName" value="fieldErrors.keySet()">
+                <s:iterator var="fieldErrorValue" value="fieldErrors[#fieldErrorName]">
+                    <li><s:property value="#fieldErrorValue"/></li>
                 </s:iterator>
             </s:iterator>
         </ul>

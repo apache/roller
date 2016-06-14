@@ -31,19 +31,19 @@
 
     <p><s:text name="yourWebsites.invitationsPrompt" /></p>
     
-    <s:iterator id="invite" value="pendingPermissions">
+    <s:iterator var="invite" value="pendingPermissions">
         <s:text name="yourWebsites.youAreInvited" >
             <s:param value="#invite.weblog.handle" />
         </s:text>
         
-        <s:url action="menu!accept" id="acceptInvite">
+        <s:url var="acceptInvite" action="menu!accept">
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="acceptInvite" />'>
             <s:text name="yourWebsites.accept" />
         </a> 
         &nbsp;|&nbsp;
-        <s:url action="menu!decline" id="declineInvite">
+        <s:url var="declineInvite" action="menu!decline">
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="declineInvite" />'>
@@ -90,7 +90,7 @@
   });
 </script>
 
-    <s:iterator id="perms" value="existingPermissions">
+    <s:iterator var="perms" value="existingPermissions">
 
         <div class="yourWeblogBox">  
 
@@ -118,7 +118,7 @@
                        
                        <tr>
                            <td class="mm_subtable_label"><s:text name='generic.description' /></td>
-                           <td><s:property value="#perms.weblog.about" escape="false" /></td>
+                           <td><s:property value="#perms.weblog.about"/></td>
                        </tr>
 
                        <tr>
@@ -137,7 +137,7 @@
                
                <td class="mm_table_actions" width="20%" align="left" >
 
-                       <s:url action="entryAdd" namespace="/tb-ui/authoring" id="newEntry">
+                       <s:url var="newEntry" action="entryAdd" namespace="/tb-ui/authoring">
                            <s:param name="weblog" value="#perms.weblog.handle" />
                        </s:url>
                        <img src='<s:url value="/images/table_edit.png"/>' />
@@ -146,7 +146,7 @@
 
                        <%-- Show Entries link with count for users above LIMITED permission --%>
                        <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
-                           <s:url action="entries" namespace="/tb-ui/authoring" id="editEntries">
+                           <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/table_multiple.png"/>' />
@@ -156,7 +156,7 @@
 
                        <%-- Show Comments link with count for users above LIMITED permission --%>
                        <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
-                           <s:url action="comments" namespace="/tb-ui/authoring" id="manageComments">
+                           <s:url var="manageComments" action="comments" namespace="/tb-ui/authoring">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/page_white_edit.png"/>' />
@@ -169,7 +169,7 @@
                            
                            <%-- And only show theme option if custom themes are enabled --%>
                            <s:if test="getProp('themes.customtheme.allowed')">
-                               <s:url action="templates" namespace="/tb-ui/authoring" id="weblogTheme">
+                               <s:url var="weblogTheme" action="templates" namespace="/tb-ui/authoring">
                                    <s:param name="weblog" value="#perms.weblog.handle" />
                                </s:url>
                                <img src='<s:url value="/images/layout.png"/>' />
@@ -178,7 +178,7 @@
                                <br />
                            </s:if>
                            
-                           <s:url action="weblogConfig" namespace="/tb-ui/authoring" id="manageWeblog">
+                           <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                                <s:param name="id" value="#perms.weblog.id" />
                            </s:url>
