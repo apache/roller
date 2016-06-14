@@ -148,8 +148,12 @@ public class Comments extends UIAction {
         csc.setWeblog(getActionWeblog());
         csc.setEntry(getQueryEntry());
         csc.setSearchText(getBean().getSearchString());
-        csc.setStartDate(getBean().getStartDate());
-        csc.setEndDate(getBean().getEndDate());
+        if (getBean().getStartDate() != null) {
+            csc.setStartDate(getBean().getStartDate().atStartOfDay());
+        }
+        if (getBean().getEndDate() != null) {
+            csc.setEndDate(getBean().getEndDate().plusDays(1).atStartOfDay());
+        }
         csc.setStatus(getBean().getStatus());
         csc.setOffset(getBean().getPage() * COUNT);
         csc.setMaxResults(COUNT + 1);
@@ -222,8 +226,12 @@ public class Comments extends UIAction {
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setWeblog(getActionWeblog());
         csc.setSearchText(getBean().getSearchString());
-        csc.setStartDate(getBean().getStartDate());
-        csc.setEndDate(getBean().getEndDate());
+        if (getBean().getStartDate() != null) {
+            csc.setStartDate(getBean().getStartDate().atStartOfDay());
+        }
+        if (getBean().getEndDate() != null) {
+            csc.setEndDate(getBean().getEndDate().plusDays(1).atStartOfDay());
+        }
         csc.setStatus(getBean().getStatus());
 
         return LIST;

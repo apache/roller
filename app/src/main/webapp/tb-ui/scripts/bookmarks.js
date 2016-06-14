@@ -17,6 +17,7 @@ $(function() {
                   "url": newUrl,
                   "description": newDescription
                };
+               var dg = $(this);
                if (newName.length > 0 && newUrl.length > 0) {
                   $.ajax({
                      type: "PUT",
@@ -25,15 +26,9 @@ $(function() {
                      contentType: "application/json; charset=utf-8",
                      processData: "false",
                      success: function(data, textStatus, xhr) {
-                        if (idToUpdate == '') {
-                           document.bookmarksForm.action = $("#add-link").attr("formaction");
-                           document.bookmarksForm.submit();
-                        } else {
-                           $('#bkname-' + idToUpdate).text(newName.trim());
-                           $('#bkurl-' + idToUpdate).text(newUrl.trim());
-                           $('#bkdescription-' + idToUpdate).text(newDescription.trim());
-                           $("#bookmark-edit").dialog().dialog("close");
-                        }
+                       dg.dialog('close');
+                       angular.element('#bookmark-list').scope().ctrl.loadBookmarks();
+                       angular.element('#bookmark-list').scope().$apply();
                      },
                      error: function(xhr, status, errorThrown) {
                         if (xhr.status in this.statusCode)
@@ -61,9 +56,23 @@ $(function() {
          {
             text: msg.confirmLabel,
             click: function() {
-               document.bookmarksForm.action = $("#delete-link").attr("formaction");
-               document.bookmarksForm.submit();
+               var idsToRemove = [];
+               $('input[name="selectedBookmarks"]:checked').each(function(){
+                 idsToRemove.push($(this).val());
+               });
                $(this).dialog("close");
+               if (idsToRemove.length > 0) {
+                 for (i = 0; i < idsToRemove.length; i++) {
+                   $.ajax({
+                      type: "DELETE",
+                      url: contextPath + '/tb-ui/authoring/rest/bookmark/' + idsToRemove[i],
+                      success: function(data, textStatus, xhr) {
+                      }
+                   });
+                 }
+                 angular.element('#bookmark-list').scope().ctrl.loadBookmarks();
+                 angular.element('#bookmark-list').scope().$apply();
+               }
             }
          },
          {
@@ -74,17 +83,17 @@ $(function() {
          }
       ]
    });
-   $(".edit-link").click(function(e) {
+   $("#tableBody").on('click', '.edit-link', function(e) {
       e.preventDefault();
+      var tr = $(this).closest('tr');
+      var idToEdit = tr.attr('id');
       $('#bookmark-edit').dialog('option', 'title', msg.editTitle)
-      var idBeingUpdated = $(this).attr("data-id");
-      $('#bookmark-edit-name').val($('#bkname-' + idBeingUpdated).text()).select();
-      $('#bookmark-edit-url').val($('#bkurl-' + idBeingUpdated).text());
-      $('#bookmark-edit-description').val($('#bkdescription-' + idBeingUpdated).text());
+      $('#bookmark-edit-name').val(tr.find('td.bookmark-name').html());
+      $('#bookmark-edit-url').val(tr.find('td.bookmark-url').html());
+      $('#bookmark-edit-description').val(tr.find('td.bookmark-description').html());
       $('#bookmark-edit-error').css("display", "none");
-      var dataId = $(this).attr("data-id");
       checkLoggedIn(function() {
-         $('#bookmark-edit').data('bookmarkId', dataId).dialog('open');
+         $('#bookmark-edit').data('bookmarkId', idToEdit).dialog('open');
       });
    });
    $("#add-link").click(function(e) {
@@ -98,8 +107,20 @@ $(function() {
          $('#bookmark-edit').data('bookmarkId', '').dialog('open');
       });
    });
-   $("#delete-link").click(function(e) {
+   $(".control").on('click', '#delete-link', function(e) {
       e.preventDefault();
       $('#confirm-delete').dialog('open');
    });
 });
+
+var bookmarkApp = angular.module('bookmarkApp', []);
+
+bookmarkApp.controller('BookmarkController', ['$http', function BookmarkController($http) {
+    var self = this;
+    this.loadBookmarks = function() {
+      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblog").val() + '/bookmarks').then(function(response) {
+        self.bookmarks = response.data;
+      });
+    };
+    this.loadBookmarks();
+  }]);

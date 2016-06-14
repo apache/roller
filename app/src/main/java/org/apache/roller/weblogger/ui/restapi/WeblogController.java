@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -98,13 +97,6 @@ public class WeblogController {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    @Autowired
-    private IndexManager indexManager;
-
-    public void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
     }
 
     @Resource(name="weblogEntryPlugins")

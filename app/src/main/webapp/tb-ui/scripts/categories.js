@@ -60,7 +60,7 @@ $(function() {
                      angular.element('#category-list').scope().$apply();
                   }
                });
-            },
+            }
          },
          {
             text: msg.cancelLabel,
