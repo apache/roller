@@ -48,7 +48,6 @@
 <input id="refreshURL" type="hidden" value="<s:url action='categories'/>"/>
 <input type="hidden" id="actionWeblog" value="<s:property value='%{#parameters.weblog}'/>"/>
 
-<%-- Form is a table of categories each with checkbox --%>
 <div id="category-list" ng-app="tightBlogApp" ng-controller="CategoryController as ctrl">
 
     <table class="rollertable">
@@ -79,7 +78,7 @@
        </table>
 
       <div class="control clearfix">
-          <input type="button" value="<s:text name='categoriesForm.addCategory'/>" id="add-link"/>
+          <input type="button" value="<s:text name='categoriesForm.addCategory'/>" id="add-link">
       </div>
 
 </div>

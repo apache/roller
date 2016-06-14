@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -57,7 +58,7 @@ public class CommentsBean {
         for (WeblogEntryComment comment : comments) {
             allComments.add(comment.getId());
             
-            if(ApprovalStatus.APPROVED.equals(comment.getStatus())) {
+            if (ApprovalStatus.APPROVED.equals(comment.getStatus())) {
                 approvedList.add(comment.getId());
             } else if(ApprovalStatus.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
@@ -77,39 +78,40 @@ public class CommentsBean {
     
     
     public ApprovalStatus getStatus() {
-        if (approvedString.equals("ONLY_APPROVED")) {
-            return ApprovalStatus.APPROVED;
-        } else if (approvedString.equals("ONLY_DISAPPROVED")) {
-            return ApprovalStatus.DISAPPROVED;
-        } else if (approvedString.equals("ONLY_PENDING")) {
-            return ApprovalStatus.PENDING;
-        } else if (approvedString.equals("ONLY_SPAM")) {
-            return ApprovalStatus.SPAM;
-        } else {
-            // shows *all* comments, regardless of status
-            return null;
+        switch (approvedString) {
+            case "ONLY_APPROVED":
+                return ApprovalStatus.APPROVED;
+            case "ONLY_DISAPPROVED":
+                return ApprovalStatus.DISAPPROVED;
+            case "ONLY_PENDING":
+                return ApprovalStatus.PENDING;
+            case "ONLY_SPAM":
+                return ApprovalStatus.SPAM;
+            default:
+                // show all comments regardless of status
+                return null;
         }
     }
-    
-    public LocalDateTime getStartDate() {
+
+    public LocalDate getStartDate() {
         if(!StringUtils.isEmpty(getStartDateString())) {
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
-                return LocalDateTime.parse(getStartDateString(), formatter);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                return LocalDate.parse(getStartDateString(), formatter);
             } catch (Exception ignored) { }
         }
         return null;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         if (!StringUtils.isEmpty(getEndDateString())) {
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
-                LocalDateTime day = LocalDateTime.parse(getStartDateString(), formatter);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                LocalDate day = LocalDate.parse(getStartDateString(), formatter);
                 if (day == null) {
-                    day = LocalDateTime.now();
+                    day = LocalDate.now();
                 }
-                return day.plusDays(1).truncatedTo(ChronoUnit.DAYS).minusNanos(1);
+                return day;
             } catch (Exception ignored) {}
         }
         return null;
