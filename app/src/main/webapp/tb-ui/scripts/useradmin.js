@@ -24,7 +24,7 @@ $(function() {
          url: contextPath + '/tb-ui/admin/rest/useradmin/userlist',
          success: function(data, textStatus, xhr) {
            $('#useradmin-select-user').empty();
-           for (var directory in data) {
+           for (var key in data) {
              $('#useradmin-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
            }
            if (id) {

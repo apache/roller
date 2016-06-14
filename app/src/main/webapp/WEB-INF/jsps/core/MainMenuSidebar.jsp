@@ -29,7 +29,7 @@
                 
                 <hr size="1" noshade="noshade" />
                 
-                <s:url id="editProfile" action="profile">
+                <s:url var="editProfile" action="profile">
                     <s:param name="id" value="authenticatedUser.id" />
                 </s:url>
 

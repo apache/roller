@@ -35,7 +35,7 @@
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                     <s:param name="directoryName" value="%{directoryName}" />
                 </s:url>
-                <a href='<s:property escape="false" value="%{mediaFileAddURL}" />'
+                <a href='<s:property value="%{mediaFileAddURL}" />'
                     <s:if test="actionName.equals('mediaFileAdd')">style='font-weight:bold;'</s:if> >
                     <s:text name="mediaFileSidebar.add" />
                 </a>

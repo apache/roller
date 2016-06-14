@@ -64,7 +64,7 @@ var msg= {
         <s:if test="weblogObj.bookmarks.size > 0">
 
         <%-- Bookmarks --%>
-        <s:iterator id="bookmark" value="weblogObj.bookmarks" status="rowstatus">
+        <s:iterator var="bookmark" value="weblogObj.bookmarks" status="rowstatus">
             <s:if test="#rowstatus.odd == true">
                 <tr class="rollertable_odd">
             </s:if>

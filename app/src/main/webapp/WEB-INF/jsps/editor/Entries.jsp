@@ -150,7 +150,7 @@
     <th width="5%"></th>
 </tr>
 
-<s:iterator id="post" value="pager.items">
+<s:iterator var="post" value="pager.items">
     <%-- <td> with style if comment is spam or pending --%>
     <s:if test="#post.status.name() == 'DRAFT'">
         <tr class="draftentry">

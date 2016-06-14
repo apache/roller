@@ -115,32 +115,31 @@ public class SearchOperation extends ReadFromIndexOperation {
                     websiteHandle);
 
             if (tUsername != null) {
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tUsername), BooleanClause.Occur.MUST);
-                query = bQuery;
+                query = new BooleanQuery.Builder()
+                        .add(query, BooleanClause.Occur.MUST)
+                        .add(new TermQuery(tUsername), BooleanClause.Occur.MUST)
+                        .build();
             }
 
             if (category != null) {
                 Term tCategory = new Term(FieldConstants.CATEGORY, category.toLowerCase());
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tCategory), BooleanClause.Occur.MUST);
-                query = bQuery;
+                query = new BooleanQuery.Builder()
+                        .add(query, BooleanClause.Occur.MUST)
+                        .add(new TermQuery(tCategory), BooleanClause.Occur.MUST)
+                        .build();
             }
 
             Term tLocale = IndexOperation.getTerm(FieldConstants.LOCALE,
                     locale);
 
             if (tLocale != null) {
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tLocale), BooleanClause.Occur.MUST);
-                query = bQuery;
+                query = new BooleanQuery.Builder()
+                        .add(query, BooleanClause.Occur.MUST)
+                        .add(new TermQuery(tLocale), BooleanClause.Occur.MUST)
+                        .build();
             }
 
-            searchresults = searcher.search(query, null/* Filter */, docLimit,
-                    SORTER);
+            searchresults = searcher.search(query, docLimit, SORTER);
 
         } catch (IOException e) {
             log.error("Error searching index", e);
