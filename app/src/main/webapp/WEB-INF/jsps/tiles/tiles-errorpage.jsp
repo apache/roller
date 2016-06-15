@@ -26,12 +26,7 @@
       <tiles:insertAttribute name="head" />
     </head>
     <body>
-        
-        <div id="banner">
-            <tiles:insertAttribute name="banner" />
-        </div>
-        
-        <div id="wrapper"> 
+        <div id="content">
             <div id="leftcontent_wrap">
                 <div id="leftcontent"> 
                 </div>
@@ -49,10 +44,9 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="footer">
             <tiles:insertAttribute name="footer" />
         </div>
-        
     </body>
 </html>

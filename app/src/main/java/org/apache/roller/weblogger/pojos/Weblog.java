@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.hibernate.validator.constraints.NotBlank;
@@ -549,20 +548,6 @@ public class Weblog {
 
     public void setTempPreviewWeblog(boolean tempPreviewWeblog) {
         this.tempPreviewWeblog = tempPreviewWeblog;
-    }
-
-    // used by MainMenu.jsp
-    @Transient
-    public long getCommentCount() {
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        return mgr.getCommentCount(this);
-    }
-
-    // used by MainMenu.jsp
-    @Transient
-    public long getEntryCount() {
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        return mgr.getEntryCount(this);
     }
 
     // convenience methods for populating fields from forms

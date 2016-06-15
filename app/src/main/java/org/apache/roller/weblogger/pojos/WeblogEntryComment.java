@@ -50,11 +50,13 @@ import javax.persistence.Transient;
         @NamedQuery(name="WeblogEntryComment.getCountAllDistinctByStatus",
                 query="SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1"),
         @NamedQuery(name="WeblogEntryComment.getCountDistinctByWeblog&Status",
-                query="SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2")
+                query="SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2"),
 })
 public class WeblogEntryComment {
     
     // approval status states
+    // Reason for having both PENDING and DISAPPROVED is that the former triggers
+    // email notifications upon subsequent approval while the latter does not.
     public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
 
     // attributes

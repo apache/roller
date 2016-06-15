@@ -46,7 +46,7 @@ layout.css: Base CSS layout for the web UI (position and sizing only)
 }
 #content {
 }
-/*  
+/*
     NOTE: these wrap divs are kinda lame, however they are necessary.
     the problem is that when 2 divs are floated side-by-side then the
     calculation of their widths does not include padding or margins.
