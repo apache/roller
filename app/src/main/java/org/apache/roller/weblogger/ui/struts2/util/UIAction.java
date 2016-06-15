@@ -139,6 +139,9 @@ public class UIAction extends ActionSupport implements Preparable {
         this.requiredWeblogRole = requiredWeblogRole;
     }
 
+    public boolean isUserIsAdmin() {
+        return getAuthenticatedUser() != null && getAuthenticatedUser().isGlobalAdmin();
+    }
     /**
      * Cancel.
      *

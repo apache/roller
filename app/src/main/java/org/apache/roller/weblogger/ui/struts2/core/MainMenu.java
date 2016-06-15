@@ -136,10 +136,6 @@ public class MainMenu extends UIAction {
         this.inviteId = inviteId;
     }
 
-    public boolean isUserIsAdmin() {
-        return getAuthenticatedUser().isGlobalAdmin();
-    }
-
     /**
      * Resign from a weblog
      */

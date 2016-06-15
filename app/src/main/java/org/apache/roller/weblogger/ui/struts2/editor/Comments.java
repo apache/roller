@@ -298,7 +298,6 @@ public class Comments extends UIAction {
 
                 WeblogEntryComment comment = weblogEntryManager.getComment(id);
 
-                // for non-Global, make sure comment is tied to action weblog
                 if (getActionWeblog().equals(comment.getWeblogEntry().getWeblog())) {
                     // comment approvals and mark/unmark spam
                     if (approvedIds.contains(id)) {

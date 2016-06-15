@@ -62,10 +62,6 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
-      <property-def  name="site.adminemail"  key="configForm.siteAdminEmail">
-         <type>string</type>
-         <default-value></default-value>
-      </property-def>
       <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
           <!-- If true, new auto ping requests are not queued, any existing queued requests
           are not processed, and sending a manual ping results in a message saying pings
@@ -85,10 +81,6 @@
       <property-def name="user.account.email.activation"  key="configForm.requireEmailActivation">
          <type>boolean</type>
          <default-value>false</default-value>
-      </property-def>
-      <property-def  name="users.registration.url"  key="configForm.registrationUrl">
-          <type>string</type>
-          <default-value></default-value>
       </property-def>
       <property-def name="site.allowUserWeblogCreation" key="configForm.allowUserWeblogCreation">
           <type>boolean</type>

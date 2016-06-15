@@ -122,11 +122,6 @@
                        </tr>
 
                        <tr>
-                           <td class="mm_subtable_label"><s:text name='yourWebsites.userCount' /></td>   
-                           <td><s:property value="#perms.weblog.userCount" /></td>
-                       </tr>
-
-                       <tr>
                            <td class="mm_subtable_label"><s:text name='yourWebsites.todaysHits' /></td>   
                            <td><s:property value="#perms.weblog.hitsToday" /></td>
                        </tr>
@@ -150,7 +145,7 @@
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/table_multiple.png"/>' />
-                           <s:a href="%{editEntries}"><s:text name="yourWebsites.editEntries" /> (<s:property value="#perms.weblog.entryCount" />)</s:a>
+                           <s:a href="%{editEntries}"><s:text name="yourWebsites.editEntries" /></s:a>
                            <br />
                        </s:if>
 
@@ -160,7 +155,8 @@
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/page_white_edit.png"/>' />
-                           <s:a href="%{manageComments}"><s:text name="yourWebsites.manageComments" /> (<s:property value="#perms.weblog.commentCount" />)</s:a>
+                           <s:a href="%{manageComments}"><s:text name="yourWebsites.manageComments" />
+                           </s:a>
                            <br />
                        </s:if>
 
@@ -203,6 +199,14 @@
         </div>
         
     </s:iterator>
+
+    <s:if test="getBooleanProp('site.allowUserWeblogCreation') && (getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty))">
+        <form method="link" action="<s:url action='createWeblog'/>">
+          <div class="control clearfix">
+             <input type="submit" value="<s:text name='yourWebsites.createWeblog'/>">
+          </div>
+        </form>
+    </s:if>
 
     <div id="confirm-resign" title="<s:text name='generic.confirm'/>" style="display:none">
         <p>

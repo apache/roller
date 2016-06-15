@@ -479,7 +479,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return q.getResultList();
     }
 
-
     @Override
     public Map<String, Long> getWeblogHandleLetterMap() {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

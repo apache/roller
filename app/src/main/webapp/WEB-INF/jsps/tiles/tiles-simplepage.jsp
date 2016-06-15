@@ -30,13 +30,11 @@
         </style>
     </head>
     <body>
-        
         <div id="banner">
-            <tiles:insertAttribute name="banner" />
             <tiles:insertAttribute name="bannerStatus" />
         </div>
         
-        <div id="wrapper"> 
+        <div id="content">
             <div id="leftcontent_wrap">
                 <div id="leftcontent"> 
                 </div>
@@ -59,6 +57,5 @@
         <div id="footer">
             <tiles:insertAttribute name="footer" />
         </div>
-        
     </body>
 </html>

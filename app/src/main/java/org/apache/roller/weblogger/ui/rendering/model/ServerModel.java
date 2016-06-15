@@ -76,18 +76,10 @@ public class ServerModel implements Model {
         return propertiesManager.getStringProperty("site.name");
     }
     
-    public String getSiteEmail() {
-        return propertiesManager.getStringProperty("site.adminemail");
-    }
-
     public boolean getRegistrationEnabled() {
         return propertiesManager.getBooleanProperty("users.registration.enabled");
     }
     
-    public String getRegistrationURL() {
-        return propertiesManager.getStringProperty("users.registration.url");
-    }
-
     public boolean getCommentHtmlAllowed() {
         return propertiesManager.getBooleanProperty("users.comments.htmlenabled");
     }

@@ -24,8 +24,7 @@
             <td class="bannerLeft">
                 
                 <s:if test="authenticatedUser != null">
-                    <s:text name="mainPage.loggedInAs" />
-                    <a href="<s:url action="menu" namespace="/tb-ui" />"><s:property value="authenticatedUser.userName"/></a>
+                    <s:text name="mainPage.loggedInAs" /> <s:property value="authenticatedUser.userName"/>
                 </s:if>
                 
                 
@@ -34,33 +33,39 @@
                     <b><a href='<s:property value="actionWeblog.absoluteURL" />'>
                             <s:property value="%{actionWeblog.handle}" />
                     </a></b>
-                    
                 </s:if>
                 
             </td>
             
             <td class="bannerRight">
                 
-                <a href="<s:url value='/'/>"><s:property value="getProp('site.name')"/></a>
-                
-                | <a href="<s:url action='menu' namespace='/tb-ui' />"><s:text name="mainPage.mainMenu" /></a>
-                
-                <s:if test="authenticatedUser != null">
-                    | <a href="<s:url action='logout' namespace='/tb-ui' />"><s:text name="navigationBar.logout"/></a>
+                <s:if test="authenticatedUser == null">
+                   <a href="<s:url value='/'/>"><s:property value="getProp('site.name')"/></a> |
                 </s:if>
+
+                <s:if test="userIsAdmin">
+                    <a href="<s:url action='globalConfig' namespace='/tb-ui/admin' />"><s:text name="yourWebsites.globalAdmin" /></a> |
+                </s:if>
+
+                <s:if test="authenticatedUser != null">
+                   <a href="<s:url action='menu' namespace='/tb-ui' />"><s:text name="yourWebsites.title" /></a> |
+                   <s:url var="editProfile" action="profile">
+                       <s:param name="id" value="authenticatedUser.id" />
+                   </s:url>
+                   <s:a href="%{editProfile}"><s:text name="yourWebsites.editProfile" /></s:a> |
+                   <a href="<s:url action='logout' namespace='/tb-ui' />"><s:text name="navigationBar.logout"/></a>
+                </s:if>
+
                 <s:else>
-                    | <a href="<s:url action='login-redirect' namespace='/tb-ui' />"><s:text name="navigationBar.login"/></a>
+                    <a href="<s:url action='login-redirect' namespace='/tb-ui' />"><s:text name="navigationBar.login"/></a>
                     
                     <s:if test="getBooleanProp('users.registration.enabled') && getProp('authentication.method') != 'ldap'">
                         | <a href="<s:url action='register' namespace='/tb-ui' />"><s:text name="navigationBar.register"/></a>
                     </s:if>
-                    <s:elseif test="getProp('users.registration.url') != null && getProp('users.registration.url') > 0">
-                        | <a href="<s:property value="getProp('users.registration.url')"/>"><s:text name="navigationBar.register"/></a>
-                    </s:elseif>
                 </s:else>
                 
             </td>
         </tr>
     </table>
-    
+
 </div>
