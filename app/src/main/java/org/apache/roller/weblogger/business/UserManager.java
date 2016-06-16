@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 
-import javax.persistence.RollbackException;
 import java.util.List;
 
 /**
@@ -138,6 +137,14 @@ public interface UserManager {
     boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role);
 
     /**
+     * Retrieve a user by its internal identifier id.
+     *
+     * @param id the id of the user weblog role object to retrieve.
+     * @return the user object with specified id or null if not found
+     */
+    UserWeblogRole getUserWeblogRole(String id);
+
+    /**
      * Get user's WeblogRole within a weblog or null if none.
      * @param user    User whose role is being checked
      * @param weblog  Target weblog of the role
@@ -175,25 +182,15 @@ public interface UserManager {
     /**
      * Confirm user's participation with the specified weblog or throw exception if no pending invitation exists.
      * (changes state of WeblogRole record to pending = false)
-     * @param user    User granted invitation
-     * @param weblog  Weblog granted invitation to
+     * @param userWeblogRole pending UserWeblogRole object containing user and weblog combination
      */
-    void acceptWeblogInvitation(User user, Weblog weblog);
+    void acceptWeblogInvitation(UserWeblogRole userWeblogRole);
     
     /**
-     * Decline participation within specified weblog or throw exception if no pending invitation exists.
-     * (removes WeblogRole record)
-     * @param user    User granted invitation
-     * @param weblog  Weblog granted invitation to
-     */
-    void declineWeblogInvitation(User user, Weblog weblog);
-
-    /**
      * Revoke from user his WeblogRole for a given weblog.
-     * @param user  User to remove WeblogRole from
-     * @param weblog  Weblog to revoke WeblogRole from
+     * @param userWeblogRole UserWeblogRole object containing user and weblog combination to remove
      */
-    void revokeWeblogRole(User user, Weblog weblog);
+    void revokeWeblogRole(UserWeblogRole userWeblogRole);
 
     /**
      * Get user's non-pending WeblogRoles.

@@ -131,12 +131,11 @@
             <result name="success" type="tiles">.CreateWeblog</result>
         </action>
 
-        <action name="menu!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
-            <result type="tiles">.MainMenu</result>
-            <result name="list" type="redirectAction">
-                <param name="actionName">menu</param>
-            </result>
+        <action name="menu" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="pageTitleReal">yourWebsites.title</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
+            <result name="success" type="tiles">.MainMenu</result>
         </action>
 
     </package>

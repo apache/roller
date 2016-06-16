@@ -286,6 +286,41 @@ public class UserController {
         return uwrs;
     }
 
+    @RequestMapping(value = "/tb-ui/authoring/rest/loggedinuser/weblogs", method = RequestMethod.GET)
+    public List<UserWeblogRole> getLoggedInUsersWeblogs(Principal p, HttpServletResponse response)
+            throws ServletException {
+        User user = userManager.getUserByUserName(p.getName());
+        if (user == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+        return getUsersWeblogs(user.getId(), response);
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/attach", method = RequestMethod.POST)
+    public void acceptWeblogInvitation(@PathVariable String id, Principal p, HttpServletResponse response) {
+        UserWeblogRole uwr = userManager.getUserWeblogRole(id);
+        if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
+            userManager.acceptWeblogInvitation(uwr);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        WebloggerFactory.flush();
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/detach", method = RequestMethod.POST)
+    public void resignFromWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
+        UserWeblogRole uwr = userManager.getUserWeblogRole(id);
+        if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
+            userManager.revokeWeblogRole(uwr);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        WebloggerFactory.flush();
+    }
+
     private ResponseEntity saveUser(User user, User newData, Principal p, HttpServletResponse response) throws ServletException {
         try {
             if (user != null) {

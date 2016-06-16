@@ -69,7 +69,7 @@ public class WeblogRoleTest extends WebloggerTest {
         testUser = getManagedUser(testUser);
         role = userManager.getWeblogRole(testUser, testWeblog);
         assertNotNull(role);
-        userManager.revokeWeblogRole(testUser, testWeblog);
+        userManager.revokeWeblogRole(role);
         endSession(true);
         
         // check that delete was successful
@@ -87,7 +87,7 @@ public class WeblogRoleTest extends WebloggerTest {
         endSession(true);
         
         // revoke role
-        userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
+        userManager.revokeWeblogRole(role);
         endSession(true);
         
         // add only draft role
@@ -167,10 +167,11 @@ public class WeblogRoleTest extends WebloggerTest {
         // invite user to weblog
         userManager.grantPendingWeblogRole(user, testWeblog, WeblogRole.EDIT_DRAFT);
         endSession(true);
-        assertTrue(userManager.getWeblogRolesIncludingPending(user).get(0).isPending());
+        List<UserWeblogRole> uwrList = userManager.getWeblogRolesIncludingPending(user);
+        assertTrue(uwrList.get(0).isPending());
 
         // accept invitation
-        userManager.acceptWeblogInvitation(user, testWeblog);
+        userManager.acceptWeblogInvitation(uwrList.get(0));
         endSession(true);
 
         // re-query now that we have changed things
@@ -193,10 +194,10 @@ public class WeblogRoleTest extends WebloggerTest {
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        userManager.revokeWeblogRole(user, testWeblog);
+        UserWeblogRole uwr = userManager.getWeblogRole(user, testWeblog);
+        userManager.revokeWeblogRole(uwr);
         endSession(true);
 
-        //user = userManager.getUser(user.getId());
         userRoles = userManager.getWeblogRoles(user);
         assertEquals(0, userRoles.size());
 

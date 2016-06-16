@@ -316,6 +316,11 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
+    public UserWeblogRole getUserWeblogRole(String id) {
+        return this.strategy.load(UserWeblogRole.class, id);
+    }
+
+    @Override
     public UserWeblogRole getWeblogRole(String username, String weblogHandle) {
         User userToCheck = getUserByUserName(username, true);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
@@ -397,53 +402,28 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     @Override
-    public void acceptWeblogInvitation(User user, Weblog weblog) {
-
-        // get specified permission
-        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogIdIncludingPending",
-                UserWeblogRole.class);
-        q.setParameter(1, user.getId());
-        q.setParameter(2, weblog.getId());
-        UserWeblogRole existingPerm;
-        try {
-            existingPerm = q.getSingleResult();
-            existingPerm.setPending(false);
-            this.strategy.store(existingPerm);
-            editorMenuCache.remove(generateMenuCacheKey(user.getUserName(), weblog.getHandle()));
-        } catch (NoResultException ignored) {
-            // invitation rescinded
+    public void acceptWeblogInvitation(UserWeblogRole uwr) {
+        // check role is still in DB
+        UserWeblogRole existingRole = getUserWeblogRole(uwr.getId());
+        if (existingRole != null) {
+            existingRole.setPending(false);
+            this.strategy.store(existingRole);
+            editorMenuCache.remove(generateMenuCacheKey(existingRole.getUser().getUserName(),
+                    existingRole.getWeblog().getHandle()));
         }
     }
 
     @Override
-    public void declineWeblogInvitation(User user, Weblog weblog) {
+    public void revokeWeblogRole(UserWeblogRole roleToRevoke) {
         // get specified role
-        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogIdIncludingPending",
-                UserWeblogRole.class);
-        q.setParameter(1, user.getId());
-        q.setParameter(2, weblog.getId());
-        UserWeblogRole existingRole;
-        try {
-            existingRole = q.getSingleResult();
+        UserWeblogRole existingRole = getUserWeblogRole(roleToRevoke.getId());
+        if (existingRole != null) {
+            if (!existingRole.isPending()) {
+                editorMenuCache.remove(generateMenuCacheKey(existingRole.getUser().getUserName(),
+                        existingRole.getWeblog().getHandle()));
+            }
             this.strategy.remove(existingRole);
-        } catch (NoResultException ignored) {
         }
-    }
-
-    @Override
-    public void revokeWeblogRole(User user, Weblog weblog) {
-        // get specified role
-        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogIdIncludingPending",
-                UserWeblogRole.class);
-        q.setParameter(1, user.getId());
-        q.setParameter(2, weblog.getId());
-        UserWeblogRole oldrole;
-        try {
-            oldrole = q.getSingleResult();
-            this.strategy.remove(oldrole);
-        } catch (NoResultException ignored) {
-        }
-        editorMenuCache.remove(generateMenuCacheKey(user.getUserName(), weblog.getHandle()));
     }
 
     

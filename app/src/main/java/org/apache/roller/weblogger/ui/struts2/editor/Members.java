@@ -129,12 +129,10 @@ public class Members extends UIAction implements ParameterAware {
                 if (sval != null) {
                     if (!error && !role.getWeblogRole().name().equals(sval)) {
                         if ("-1".equals(sval)) {
-                            userManager.revokeWeblogRole(
-                                     role.getUser(), role.getWeblog());
+                            userManager.revokeWeblogRole(role);
                             removed++;
                         } else {
-                            userManager.revokeWeblogRole(
-                                    role.getUser(), role.getWeblog());
+                            userManager.revokeWeblogRole(role);
                             userManager.grantWeblogRole(
                                     role.getUser(), role.getWeblog(), WeblogRole.valueOf(sval));
                             changed++;
