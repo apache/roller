@@ -19,188 +19,128 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-
-<%-- PROMPT: Welcome... you have no blog --%>
-<s:if test="existingPermissions.isEmpty && pendingPermissions.isEmpty"> 
-    <p><s:text name="yourWebsites.prompt.noBlog" />
-    <a href="<s:url action="createWeblog"/>"><s:text name="yourWebsites.createOne" /></a></p>
-</s:if>    
-
-<%-- PROMPT: You have invitation(s) --%>
-<s:elseif test="!pendingPermissions.isEmpty">
-
-    <p><s:text name="yourWebsites.invitationsPrompt" /></p>
-    
-    <s:iterator var="invite" value="pendingPermissions">
-        <s:text name="yourWebsites.youAreInvited" >
-            <s:param value="#invite.weblog.handle" />
-        </s:text>
-        
-        <s:url var="acceptInvite" action="menu!accept">
-            <s:param name="inviteId" value="#invite.weblog.id" />
-        </s:url>
-        <a href='<s:property value="acceptInvite" />'>
-            <s:text name="yourWebsites.accept" />
-        </a> 
-        &nbsp;|&nbsp;
-        <s:url var="declineInvite" action="menu!decline">
-            <s:param name="inviteId" value="#invite.weblog.id" />
-        </s:url>
-        <a href='<s:property value="declineInvite" />'>
-            <s:text name="yourWebsites.decline" />
-        </a><br />
-    </s:iterator>
-    <br />
-</s:elseif>
-
-<%-- PROMPT: default ... select a weblog to edit --%>
-<s:else> 
-    <p class="subtitle"><s:text name="yourWebsites.prompt.hasBlog" /></p>        
-</s:else>
-
-<%-- if we have weblogs, then loop through and list them --%>
-<s:if test="!existingPermissions.isEmpty">
-    
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
-
 <script>
-  $(function() {
-    $("#confirm-resign").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:170,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.yes'/>": function() {
-          document.location.href='<s:url action="menu!resign" />?weblog='+encodeURIComponent($(this).data('weblog'));
-          $( this ).dialog( "close" );
-        },
-        "<s:text name='generic.no'/>": function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-
-    $(".resign-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-resign').data('weblog', $(this).attr("data-weblog")).dialog('open');
-    });
-  });
+var contextPath = "${pageContext.request.contextPath}";
+var msg= {
+    yesLabel: '<s:text name="generic.yes"/>',
+    noLabel: '<s:text name="generic.no"/>',
+    cancelLabel: '<s:text name="generic.cancel"/>',
+};
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/mainmenu.js'/>"></script>
 
-    <s:iterator var="perms" value="existingPermissions">
+<input id="refreshURL" type="hidden" value="<s:url action='menu'/>"/>
 
-        <div class="yourWeblogBox">  
+<div id="blog-list" ng-app="mainMenuApp" ng-controller="MainMenuController as ctrl">
 
-            <span class="mm_weblog_name"><img src='<s:url value="/images/folder.png"/>' />&nbsp;<s:property value="#perms.weblog.name" /></span>
-                
-            <table class="mm_table" width="100%" cellpadding="0" cellspacing="0">
-               <tr>
-               <td valign="top">
+    <span ng-if="ctrl.roles.length == 0">
+        <p><s:text name="yourWebsites.prompt.noBlog" /></p>
+    </span>
 
-                   <table cellpadding="0" cellspacing="0">
-                       
-                       <tr>
-                           <td class="mm_subtable_label"><s:text name='yourWebsites.weblog'/></td>
-                           <td><a href='<s:property value="#perms.weblog.absoluteURL" />'>
-                               <s:property value="#perms.weblog.absoluteURL" />
-                           </a></td>                          
-                       </tr>
-                       
-                       <tr>
-                           <td class="mm_subtable_label"><s:text name='generic.role'/></td>
-                           <td><s:if test='#perms.weblogRole.name() == "OWNER"'>OWNER</s:if>
-                           <s:if test='#perms.weblogRole.name() == "POST"'>PUBLISHER</s:if>
-                           <s:if test='#perms.weblogRole.name() == "EDIT_DRAFT"'>CONTRIBUTOR</s:if></td>
-                       </tr>
-                       
-                       <tr>
-                           <td class="mm_subtable_label"><s:text name='generic.description' /></td>
-                           <td><s:property value="#perms.weblog.about"/></td>
-                       </tr>
+    <div id="allBlogs">
+      <div ng-repeat="role in ctrl.roles | filter:{ pending: 'true' }">
+         <span id="{{role.id}}">
+           <s:text name="yourWebsites.youAreInvited"/>: {{role.weblog.handle}}
+           <input class="accept-button" type="button" value="<s:text name="yourWebsites.accept" />">
+           <input class="decline-button" type="button" value="<s:text name="yourWebsites.decline" />">
+         </span>
+      </div>
+      <div ng-repeat="role in ctrl.roles | filter:{ pending: 'false' }">
+        <span class="mm_weblog_name"><img src='<s:url value="/images/folder.png"/>' />&nbsp;{{role.weblog.name}}</span>
 
-                       <tr>
-                           <td class="mm_subtable_label"><s:text name='yourWebsites.todaysHits' /></td>   
-                           <td><s:property value="#perms.weblog.hitsToday" /></td>
-                       </tr>
-                       
-                   </table>
+        <table class="mm_table" width="100%" cellpadding="0" cellspacing="0">
+           <tr id="{{role.id}}" data-name="{{role.weblog.name}}">
+           <td valign="top">
 
-               </td>
-               
-               <td class="mm_table_actions" width="20%" align="left" >
+               <table cellpadding="0" cellspacing="0">
 
-                       <s:url var="newEntry" action="entryAdd" namespace="/tb-ui/authoring">
-                           <s:param name="weblog" value="#perms.weblog.handle" />
-                       </s:url>
-                       <img src='<s:url value="/images/table_edit.png"/>' />
-                       <s:a href="%{newEntry}"><s:text name="yourWebsites.newEntry" /></s:a>
+                   <tr>
+                       <td class="mm_subtable_label"><s:text name='yourWebsites.weblog'/></td>
+                       <td><a href='{{role.weblog.absoluteURL}}'>{{role.weblog.absoluteURL}}</a></td>
+                   </tr>
+
+                   <tr>
+                       <td class="mm_subtable_label"><s:text name='generic.role'/></td>
+                       <td ng-switch on="role.weblogRole">
+                          <span ng-switch-when="OWNER">OWNER</span>
+                          <span ng-switch-when="POST">PUBLISHER</span>
+                          <span ng-switch-when="EDIT_DRAFT">CONTRIBUTOR</span>
+                       </td>
+                   </tr>
+
+                   <tr>
+                       <td class="mm_subtable_label"><s:text name='generic.description' /></td>
+                       <td>{{role.weblog.about}}</td>
+                   </tr>
+
+                   <tr>
+                       <td class="mm_subtable_label"><s:text name='yourWebsites.todaysHits' /></td>
+                       <td>{{role.weblog.hitsToday}}</td>
+                   </tr>
+
+               </table>
+
+           </td>
+
+           <td class="mm_table_actions" width="20%" align="left" >
+
+                   <img src='<s:url value="/images/table_edit.png"/>' />
+                   <a href="<s:url action='entryAdd' namespace='/tb-ui/authoring'/>?weblog={{role.weblog.handle}}">
+                     <s:text name="yourWebsites.newEntry" />
+                   </a>
+                   <br />
+
+                   <%-- Show Entries and Comments links for users above EDIT_DRAFT role --%>
+                   <span ng-if="role.weblogRole != 'EDIT_DRAFT'">
+                       <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring"/>
+                       <img src='<s:url value="/images/table_multiple.png"/>' />
+                       <s:a href="%{editEntries}?weblog={{role.weblog.handle}}"><s:text name="yourWebsites.editEntries" /></s:a>
                        <br />
 
-                       <%-- Show Entries link with count for users above LIMITED permission --%>
-                       <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
-                           <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring">
-                               <s:param name="weblog" value="#perms.weblog.handle" />
-                           </s:url>
-                           <img src='<s:url value="/images/table_multiple.png"/>' />
-                           <s:a href="%{editEntries}"><s:text name="yourWebsites.editEntries" /></s:a>
+                       <s:url var="manageComments" action="comments" namespace="/tb-ui/authoring"/>
+                       <img src='<s:url value="/images/page_white_edit.png"/>' />
+                       <s:a href="%{manageComments}?weblog={{role.weblog.handle}}"><s:text name="yourWebsites.manageComments" /></s:a>
+                       <br />
+                   </span>
+
+                   <%-- Only admins get access to theme and config settings --%>
+                   <span ng-if="role.weblogRole == 'OWNER'">
+
+                       <%-- And only show theme option if custom themes are enabled --%>
+                       <s:if test="getProp('themes.customtheme.allowed')">
+                           <img src='<s:url value="/images/layout.png"/>'>
+                           <s:url var="weblogTheme" action="templates" namespace="/tb-ui/authoring"/>
+                           <s:a href='%{weblogTheme}?weblog={{role.weblog.handle}}'><s:text name="yourWebsites.theme" /></s:a>
                            <br />
                        </s:if>
 
-                       <%-- Show Comments link with count for users above LIMITED permission --%>
-                       <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
-                           <s:url var="manageComments" action="comments" namespace="/tb-ui/authoring">
-                               <s:param name="weblog" value="#perms.weblog.handle" />
-                           </s:url>
-                           <img src='<s:url value="/images/page_white_edit.png"/>' />
-                           <s:a href="%{manageComments}"><s:text name="yourWebsites.manageComments" />
-                           </s:a>
-                           <br />
-                       </s:if>
+                       <img src='<s:url value="/images/cog.png"/>' />
+                       <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring"/>
+                       <s:a href='%{manageWeblog}?id={{role.weblog.id}}&weblog={{role.weblog.handle}}'>
+                           <s:text name="yourWebsites.manage" />
+                       </s:a>
+                       <br />
+                   </span>
 
-                       <%-- Only admins get access to theme and config settings --%>
-                       <s:if test='#perms.weblogRole.name() == "OWNER"'>
-                           
-                           <%-- And only show theme option if custom themes are enabled --%>
-                           <s:if test="getProp('themes.customtheme.allowed')">
-                               <s:url var="weblogTheme" action="templates" namespace="/tb-ui/authoring">
-                                   <s:param name="weblog" value="#perms.weblog.handle" />
-                               </s:url>
-                               <img src='<s:url value="/images/layout.png"/>' />
-                               <a href='<s:property value="weblogTheme" />'>
-                                   <s:text name="yourWebsites.theme" /></a> 
-                               <br />
-                           </s:if>
-                           
-                           <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring">
-                               <s:param name="weblog" value="#perms.weblog.handle" />
-                               <s:param name="id" value="#perms.weblog.id" />
-                           </s:url>
-                           <img src='<s:url value="/images/cog.png"/>' />
-                           <s:a href='%{manageWeblog}'>
-                               <s:text name="yourWebsites.manage" /></s:a>
-                           <br />
-                       </s:if>
+                   <%-- don't allow last admin to resign from blog --%>
+                   <span ng-if='role.weblogRole != "OWNER"'>
+                      <img src='<s:url value="/images/delete.png"/>' />
+                      <a href="#" class="resign-link" data-weblog="{{role.weblog.handle}}">
+                          <s:text name='yourWebsites.resign'/>
+                      </a>
+                   </span>
+           </td>
+           </tr>
+        </table>
+      </div>
+    </div>
 
-                       <%-- don't allow last admin to resign from blog --%>
-                       <s:if test='!(#perms.weblogRole.name() == "OWNER")'>
-                          <img src='<s:url value="/images/delete.png"/>' />
-                          <a class="resign-link" data-weblog="<s:property value='#perms.weblog.handle'/>">
-                              <s:text name='yourWebsites.resign'/>
-                          </a>
-                       </s:if>
-
-               </td>
-               </tr>
-            </table>
-            
-        </div>
-        
-    </s:iterator>
-
-    <s:if test="getBooleanProp('site.allowUserWeblogCreation') && (getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty))">
+    <s:if test="getBooleanProp('site.allowUserWeblogCreation') && getBooleanProp('groupblogging.enabled')">
         <form method="link" action="<s:url action='createWeblog'/>">
           <div class="control clearfix">
              <input type="submit" value="<s:text name='yourWebsites.createWeblog'/>">
@@ -208,13 +148,9 @@
         </form>
     </s:if>
 
-    <div id="confirm-resign" title="<s:text name='generic.confirm'/>" style="display:none">
+    <div id="confirm-resign" style="display:none">
         <p>
-           <s:text name="yourWebsites.confirmResignation">
-               <s:param value="weblog" />
-           </s:text>
+           <s:text name="yourWebsites.confirmResignation"/>
         </p>
     </div>
-
-</s:if>
-
+</div>

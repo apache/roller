@@ -200,6 +200,7 @@ public class Weblog {
     }
 
     @Transient
+    @JsonIgnore
     public SafeUser getCreator() {
         if (creator == null) {
             creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);

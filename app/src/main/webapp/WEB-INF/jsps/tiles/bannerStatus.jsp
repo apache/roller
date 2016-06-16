@@ -18,27 +18,27 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <div class="bannerStatusBox">
-    
+
     <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
         <tr>
             <td class="bannerLeft">
-                
+
                 <s:if test="authenticatedUser != null">
                     <s:text name="mainPage.loggedInAs" /> <s:property value="authenticatedUser.userName"/>
                 </s:if>
-                
-                
+
+
                 <s:if test="actionWeblog != null">
                     - <s:text name="mainPage.currentWebsite" />
                     <b><a href='<s:property value="actionWeblog.absoluteURL" />'>
                             <s:property value="%{actionWeblog.handle}" />
                     </a></b>
                 </s:if>
-                
+
             </td>
-            
+
             <td class="bannerRight">
-                
+
                 <s:if test="authenticatedUser == null">
                    <a href="<s:url value='/'/>"><s:property value="getProp('site.name')"/></a> |
                 </s:if>
@@ -58,12 +58,12 @@
 
                 <s:else>
                     <a href="<s:url action='login-redirect' namespace='/tb-ui' />"><s:text name="navigationBar.login"/></a>
-                    
+
                     <s:if test="getBooleanProp('users.registration.enabled') && getProp('authentication.method') != 'ldap'">
                         | <a href="<s:url action='register' namespace='/tb-ui' />"><s:text name="navigationBar.register"/></a>
                     </s:if>
                 </s:else>
-                
+
             </td>
         </tr>
     </table>

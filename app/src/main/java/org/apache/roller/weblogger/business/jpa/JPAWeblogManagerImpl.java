@@ -185,7 +185,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // remove permissions
         for (UserWeblogRole role : userManager.getWeblogRolesIncludingPending(weblog)) {
-            userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
+            userManager.revokeWeblogRole(role);
         }
 
         // remove indexing
