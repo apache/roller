@@ -222,7 +222,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.PUT)
+    @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
     public ResponseEntity registerUser(@Valid @RequestBody User newData, HttpServletResponse response) throws ServletException {
         if (propertiesManager.getBooleanProperty("users.registration.enabled") || userManager.getUserCount() == 0) {
             boolean mustActivate = propertiesManager.getBooleanProperty("user.account.email.activation");
