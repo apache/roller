@@ -108,7 +108,7 @@
             <param name="pageTitleReal">newUser.addNewUser</param>
             <param name="requiredGlobalRole">NOAUTHNEEDED</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.Register</result>
+            <result name="success" type="tiles">.Profile</result>
         </action>
 
         <action name="emailResponse!*" method="{1}"

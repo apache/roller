@@ -9,7 +9,25 @@ $(function() {
   }
   $(function() {
     var recordId = $('#userId').val();
-    checkLoggedIn(function() {
+    if (recordId == '') {
+      var startData = {};
+      if (authMethod == "ldap") {
+        $.ajax({
+           type: "GET",
+           url: contextPath + '/tb-ui/register/rest/ldapdata',
+           success: function(data, textStatus, xhr) {
+             startData = data;
+           },
+           error: function(xhr, status, errorThrown) {
+              if (xhr.status == 404) {
+                $('div .ldapok').hide();
+                $('#errorMessageNoLDAPAuth').show();
+              }
+           }
+        });
+      }
+      updateEditForm(startData);
+    } else {
       $.ajax({
          type: "GET",
          url: contextPath + '/tb-ui/authoring/rest/userprofile/' + recordId,
@@ -17,31 +35,39 @@ $(function() {
            updateEditForm(data);
          }
       });
-    });
+    }
+  });
+  $("#cancel-link").click(function (e) {
+    e.preventDefault();
+    window.location.replace($('#cancelURL').attr('value'));
   });
   $("#myForm").submit(function(e) {
     e.preventDefault();
     $('#errorMessageDiv').hide();
     $('#successMessageDiv').hide();
     var view = $.view("#recordId");
-    checkLoggedIn(function() {
-      $.ajax({
-         type: "POST",
-         url: contextPath + '/tb-ui/authoring/rest/userprofile/' + view.data.id,
-         data: JSON.stringify(view.data),
-         contentType: "application/json",
-         success: function(data, textStatus, xhr) {
+    var urlToUse = contextPath + (view.data.hasOwnProperty('id') ?
+      '/tb-ui/authoring/rest/userprofile/' + view.data.id : '/tb-ui/register/rest/registeruser');
+    $.ajax({
+       type: "POST",
+       url: urlToUse,
+       data: JSON.stringify(view.data),
+       contentType: "application/json",
+       success: function(data, textStatus, xhr) {
+         $('div .notregistered').hide();
+         if (data.enabled == true) {
            $('#successMessageDiv').show();
-           updateEditForm(data);
-         },
-         error: function(xhr, status, errorThrown) {
-            if (xhr.status == 400) {
-              var html = $.render.errorMessageTemplate(xhr.responseJSON);
-              $('#errorMessageDiv').html(html);
-              $('#errorMessageDiv').show();
-            }
+         } else {
+           $('#successMessageNeedActivation').show();
          }
-      });
+       },
+       error: function(xhr, status, errorThrown) {
+          if (xhr.status == 400) {
+            var html = $.render.errorMessageTemplate(xhr.responseJSON);
+            $('#errorMessageDiv').html(html);
+            $('#errorMessageDiv').show();
+          }
+       }
     });
   });
 });

@@ -49,10 +49,7 @@
 
                 <s:if test="authenticatedUser != null">
                    <a href="<s:url action='menu' namespace='/tb-ui' />"><s:text name="yourWebsites.title" /></a> |
-                   <s:url var="editProfile" action="profile">
-                       <s:param name="id" value="authenticatedUser.id" />
-                   </s:url>
-                   <s:a href="%{editProfile}"><s:text name="yourWebsites.editProfile" /></s:a> |
+                   <a href="<s:url action='profile' namespace='/tb-ui' />"><s:text name="yourWebsites.editProfile" /></a> |
                    <a href="<s:url action='logout' namespace='/tb-ui' />"><s:text name="navigationBar.logout"/></a>
                 </s:if>
 

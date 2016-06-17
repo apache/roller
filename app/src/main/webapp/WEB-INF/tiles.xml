@@ -75,10 +75,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
     </definition>
 
-    <definition name=".Register" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/Register.jsp" />
-    </definition>
-
     <definition name=".Welcome" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Welcome.jsp" />
     </definition>

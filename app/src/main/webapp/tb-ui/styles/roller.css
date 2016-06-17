@@ -159,6 +159,12 @@ input.searchButton {
     margin: 5px;
     border: 0px none #000;
 }
+input:-moz-read-only {
+    background-color: LightGray
+}
+input:read-only {
+  background-color: LightGray
+}
 
 
 /* ----------------------------------------------------------------------
