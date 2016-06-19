@@ -83,10 +83,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
     </definition>
 
-    <definition name=".CreateWeblog" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/CreateWeblog.jsp" />
-    </definition>
-
     <definition name=".GenericError" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/GenericError.jsp" />
     </definition>

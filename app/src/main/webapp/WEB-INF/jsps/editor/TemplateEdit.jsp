@@ -155,7 +155,7 @@
             <td>
                 <s:submit value="%{getText('generic.save')}" />
                 <input type="button" value='<s:text name="generic.cancel"/>'
-                    onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
+                    onclick="window.location='<s:url action="templates"><s:param name="weblogId" value="%{weblogId}"/></s:url>'" />
                 <s:if test="template != null && template.id != null">
                     <s:submit class="delete-link" value="%{getText('templateEdit.delete')}"/>
                 </s:if>

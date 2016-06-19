@@ -1,38 +1,74 @@
 $(function() {
-  var data = {};
+  var data = {
+    weblogData : {"theme":"basic", "tagline":"", "editorPage" : "editor-text.jsp",
+    "allowComments" : true, "emailComments" : false, "approveComments" : true, "visible" : true,
+    "entriesPerPage" : 15, "defaultCommentDaysString" : "-1"},
+    themeList : []
+  };
   $.templates({
     formTemplate: '#formTemplate',
-    errorMessageTemplate: '#errorMessageTemplate'
+    errorMessageTemplate: '#errorMessageTemplate',
+    selectedThemeTemplate: '#selectedThemeTemplate'
   });
+  function getThemes() {
+    checkLoggedIn(function() {
+      $.ajax({
+        url: contextPath + "/tb-ui/authoring/rest/themes/null",
+        contentType: "application/json",
+        success: function(themes) {
+          data.themeList = themes;
+          $.link.formTemplate("#formBody", data);
+          $('#themeSelector option[value=basic]').prop('selected', 'selected').trigger('change');
+        }
+      });
+    });
+  }
   function updateEditForm(data) {
     $.link.formTemplate("#formBody", data);
   }
   $(function() {
     var recordId = $('#weblogId').val();
-    checkLoggedIn(function() {
-      $.ajax({
-         type: "GET",
-         url: contextPath + '/tb-ui/authoring/rest/weblog/' + recordId,
-         success: function(data, textStatus, xhr) {
-           updateEditForm(data);
-         }
+    if (recordId != '') {
+      checkLoggedIn(function() {
+        $.ajax({
+           type: "GET",
+           url: contextPath + '/tb-ui/authoring/rest/weblog/' + recordId,
+           success: function(weblogData, textStatus, xhr) {
+             data.weblogData = weblogData;
+             updateEditForm(data);
+           }
+        });
       });
-    });
+    } else {
+      getThemes();
+    }
+  });
+  $("#formBody").on('change', '#themeSelector', function(e) {
+    var selInx = $(this).prop('selectedIndex');
+    var html = $.render.selectedThemeTemplate(data.themeList[selInx]);
+    $('#themeDetails').html(html);
   });
   $("#myForm").submit(function(e) {
     e.preventDefault();
     $('#errorMessageDiv').hide();
     $('#successMessageDiv').hide();
     var view = $.view("#recordId");
+    var update = view.data.weblogData.hasOwnProperty('id');
+    var urlToUse = contextPath + (update ?
+      '/tb-ui/authoring/rest/weblog/' + view.data.weblogData.id : '/tb-ui/authoring/rest/weblogs');
     checkLoggedIn(function() {
       $.ajax({
          type: "POST",
-         url: contextPath + '/tb-ui/authoring/rest/weblog/' + view.data.id,
-         data: JSON.stringify(view.data),
+         url: urlToUse,
+         data: JSON.stringify(view.data.weblogData),
          contentType: "application/json",
          success: function(data, textStatus, xhr) {
-           $('#successMessageDiv').show();
-           updateEditForm(data);
+           if (update) {
+             $('#successMessageDiv').show();
+             updateEditForm(data);
+           } else {
+             window.location.replace($('#menuURL').attr('value'));
+           }
          },
          error: function(xhr, status, errorThrown) {
            if (xhr.status == 400) {

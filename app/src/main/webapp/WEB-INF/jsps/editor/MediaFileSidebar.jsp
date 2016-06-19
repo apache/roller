@@ -32,7 +32,7 @@
 
                 <img src='<s:url value="/images/image_add.png"/>' border="0"alt="icon" />
                 <s:url var="mediaFileAddURL" action="mediaFileAdd">
-                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                    <s:param name="weblogId" value="%{actionWeblog.id}" />
                     <s:param name="directoryName" value="%{directoryName}" />
                 </s:url>
                 <a href='<s:property value="%{mediaFileAddURL}" />'

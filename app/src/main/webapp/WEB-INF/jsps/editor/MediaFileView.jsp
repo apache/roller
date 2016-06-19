@@ -249,7 +249,7 @@
                         <div class="mediaObject">
 
                             <s:url var="editUrl" action="mediaFileEdit">
-                                <s:param name="weblog" value="%{actionWeblog.handle}" />
+                                <s:param name="weblogId" value="%{actionWeblog.id}" />
                                 <s:param name="directoryName" value="currentDirectory.name" />
                                 <s:param name="mediaFileId" value="#mediaFile.id" />
                             </s:url>

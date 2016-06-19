@@ -34,7 +34,7 @@
       modal: true,
       buttons: {
         "<s:text name='generic.delete'/>": function() {
-          document.location.href='<s:url action="entryEdit!remove" />?weblog=<s:property value="weblog"/>&bean.id=<s:property value="bean.id"/>';
+          document.location.href='<s:url action="entryEdit!remove" />?weblogId=<s:property value="weblogId"/>&bean.id=<s:property value="bean.id"/>';
           $( this ).dialog( "close" );
         },
         Cancel: function() {

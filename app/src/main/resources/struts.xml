@@ -128,7 +128,7 @@
             <param name="pageTitleReal">createWebsite.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.CreateWeblog</result>
+            <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 
         <action name="menu" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -230,7 +230,7 @@
             <result name="error" type="tiles">.MediaFileEdit</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">mediaFileView</param>
-                <param name="weblog">${weblog}</param>
+                <param name="weblogId">${weblogId}</param>
                 <param name="directoryName">${directoryName}</param>
             </result>
             <allowed-methods>cancel,save</allowed-methods>
@@ -258,7 +258,7 @@
             <result name="input" type="tiles">.EntryEdit</result>
             <result name="success" type="redirectAction">
                 <param name="actionName">entryEdit!firstSave</param>
-                <param name="weblog">${weblog}</param>
+                <param name="weblogId">${weblogId}</param>
                 <param name="bean.id">${bean.id}</param>
             </result>
             <allowed-methods>publish,saveDraft</allowed-methods>
@@ -272,10 +272,10 @@
             <result name="error" type="chain">menu</result>
             <result name="deleted" type="redirectAction">
                 <param name="actionName">entryAdd</param>
-                <param name="weblog">${weblog}</param>
+                <param name="weblogId">${weblogId}</param>
             </result>
             <result name="list" type="chain">entries</result>
-            <allowed-methods>firstSave,publish,remove,saveDraft</allowed-methods>
+            <allowed-methods>firstSave,publish,remove,removeViaList,saveDraft</allowed-methods>
         </action>
 
         <action name="entries"
@@ -291,7 +291,7 @@
             <result name="success" type="redirectAction">
                 <param name="actionName">comments!updateMade</param>
                 <param name="bean.entryId">${bean.entryId}</param>
-                <param name="weblog">${weblog}</param>
+                <param name="weblogId">${weblogId}</param>
             </result>
             <allowed-methods>query,update,updateMade</allowed-methods>
         </action>

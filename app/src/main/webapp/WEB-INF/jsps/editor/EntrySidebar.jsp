@@ -29,7 +29,7 @@
                 <s:if test="#localCommentCount > 0">
                     <s:url var="commentsURL" action="comments">
                        <s:param name="bean.entryId" value="bean.id" />
-                       <s:param name="weblog" value="weblog" />
+                       <s:param name="weblogId" value="weblogId" />
                     </s:url>
                     <s:text name="weblogEdit.hasComments">
                         <s:param value="%{commentsURL}" />
@@ -50,7 +50,7 @@
                 <s:iterator var="post" value="#pendingEntries">
                     <span class="entryEditSidebarLink">
                         <s:url var="editUrl" action="entryEdit">
-                            <s:param name="weblog" value="%{actionWeblog.handle}" />
+                            <s:param name="weblogId" value="%{actionWeblog.id}" />
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
                         <img src='<s:url value="/images/table_error.png"/>' 
@@ -70,7 +70,7 @@
                 <s:iterator var="post" value="#draftEntries">
                     <span class="entryEditSidebarLink">
                         <s:url var="editUrl" action="entryEdit">
-                            <s:param name="weblog" value="%{actionWeblog.handle}" />
+                            <s:param name="weblogId" value="%{actionWeblog.id}" />
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
                         <img src='<s:url value="/images/table_edit.png"/>' 
@@ -92,7 +92,7 @@
                     <s:iterator var="post" value="#pubEntries">
                         <span class="entryEditSidebarLink">
                             <s:url var="editUrl" action="entryEdit">
-                                <s:param name="weblog" value="%{actionWeblog.handle}" />
+                                <s:param name="weblogId" value="%{actionWeblog.id}" />
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>
                             <img src='<s:url value="/images/table_edit.png"/>' 
@@ -112,7 +112,7 @@
                     <s:iterator var="post" value="#schedEntries">
                         <span class="entryEditSidebarLink">
                             <s:url var="editUrl" action="entryEdit">
-                                <s:param name="weblog" value="%{actionWeblog.handle}" />
+                                <s:param name="weblogId" value="%{actionWeblog.id}" />
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>
                             <img src='<s:url value="/images/table_edit.png"/>' 
