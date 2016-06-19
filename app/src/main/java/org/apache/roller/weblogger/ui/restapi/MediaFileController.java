@@ -5,6 +5,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,11 +42,12 @@ public class MediaFileController {
         this.mediaFileManager = mediaFileManager;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{handle}/mediadirectories", method = RequestMethod.GET)
-    public List<MediaDirectory> getMediaDirectories(@PathVariable String handle, Principal p, HttpServletResponse response) {
-        if (userManager.checkWeblogRole(p.getName(), handle, WeblogRole.EDIT_DRAFT)) {
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/mediadirectories", method = RequestMethod.GET)
+    public List<MediaDirectory> getMediaDirectories(@PathVariable String id, Principal p, HttpServletResponse response) {
+        Weblog weblog = weblogManager.getWeblog(id);
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
             List<MediaDirectory> temp =
-            mediaFileManager.getMediaDirectories(weblogManager.getWeblogByHandle(handle))
+            mediaFileManager.getMediaDirectories(weblogManager.getWeblog(id))
                     .stream()
                     .filter(md -> !md.getMediaFiles().isEmpty())
                     .peek(md -> { md.setMediaFiles(null); md.setWeblog(null); })

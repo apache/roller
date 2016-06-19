@@ -21,7 +21,7 @@ $(function() {
                if (newName.length > 0 && newUrl.length > 0) {
                   $.ajax({
                      type: "PUT",
-                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/bookmarks?weblog=' + $("#actionWeblog").val() : '/tb-ui/authoring/rest/bookmark/' + idToUpdate),
+                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/bookmarks?weblogId=' + $("#actionWeblogId").val() : '/tb-ui/authoring/rest/bookmark/' + idToUpdate),
                      data: JSON.stringify(newData),
                      contentType: "application/json; charset=utf-8",
                      processData: "false",
@@ -118,7 +118,7 @@ var bookmarkApp = angular.module('bookmarkApp', []);
 bookmarkApp.controller('BookmarkController', ['$http', function BookmarkController($http) {
     var self = this;
     this.loadBookmarks = function() {
-      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblog").val() + '/bookmarks').then(function(response) {
+      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/bookmarks').then(function(response) {
         self.bookmarks = response.data;
       });
     };

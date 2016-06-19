@@ -30,7 +30,7 @@
 
 <s:form action="members!save">
     <sec:csrfInput/>
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+    <s:hidden name="weblogId" value="%{actionWeblog.id}" />
 
     <div style="text-align: right; padding-bottom: 6px;">
         <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -96,7 +96,7 @@
 <p><s:text name="inviteMember.prompt" /></p>
 <s:form>
     <sec:csrfInput/>
-    <s:hidden id="invite_weblog" name="weblog" value="%{actionWeblog.handle}"/>
+    <s:hidden id="invite_weblog" name="weblogId" value="%{actionWeblog.id}"/>
 
     <select name="userId" id="membersinvite-select-user"/><br>
 
@@ -121,7 +121,7 @@ var contextPath = "${pageContext.request.contextPath}";
 $(function() {
   $.ajax({
      type: "GET",
-     url: contextPath + '/tb-ui/authoring/rest/' + $('#invite_weblog').attr('value') + '/potentialmembers',
+     url: contextPath + '/tb-ui/authoring/rest/weblog/' + $('#invite_weblog').attr('value') + '/potentialmembers',
      success: function(data, textStatus, xhr) {
        for (var key in data) {
          $('#membersinvite-select-user').append('<option value="' + key + '">' + data[key] + '</option>');

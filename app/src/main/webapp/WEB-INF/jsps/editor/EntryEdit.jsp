@@ -76,7 +76,7 @@
 
 <s:form id="entry">
     <sec:csrfInput/>
-    <s:hidden name="weblog" />
+    <s:hidden name="weblogId" />
     <s:hidden name="bean.status" />
     <s:if test="actionName == 'entryEdit'">
         <s:hidden name="bean.id" />

@@ -81,7 +81,7 @@
     <s:hidden name="bean.approvedString" />
     <s:hidden name="bean.entryId" />
     <s:hidden name="bean.searchString" />
-    <s:hidden name="weblog" />
+    <s:hidden name="weblogId" />
 
 
 <%-- ============================================================= --%>

@@ -81,9 +81,9 @@ public class BlogrollController {
         this.cacheManager = cacheManager;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{handle}/bookmarks", method = RequestMethod.GET)
-    public List<WeblogBookmark> getWeblogBookmarks(@PathVariable String handle, HttpServletResponse response) {
-        Weblog weblog = weblogManager.getWeblogByHandle(handle);
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/bookmarks", method = RequestMethod.GET)
+    public List<WeblogBookmark> getWeblogBookmarks(@PathVariable String id, HttpServletResponse response) {
+        Weblog weblog = weblogManager.getWeblog(id);
         if (weblog != null) {
             return weblog.getBookmarks()
                     .stream()
@@ -152,11 +152,11 @@ public class BlogrollController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/bookmarks", method = RequestMethod.PUT)
-    public void addBookmark(@RequestParam(name="weblog") String weblogHandle, @RequestBody WeblogBookmark newData, Principal p,
+    public void addBookmark(@RequestParam(name="weblogId") String weblogId, @RequestBody WeblogBookmark newData, Principal p,
                             HttpServletResponse response) throws ServletException {
         try {
-            if (userManager.checkWeblogRole(p.getName(), weblogHandle, WeblogRole.OWNER)) {
-                Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+            Weblog weblog = weblogManager.getWeblog(weblogId);
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
                         newData.getUrl(), newData.getDescription());
                 try {

@@ -59,7 +59,7 @@
 
 <s:form id="templatesForm">
     <sec:csrfInput/>
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+    <s:hidden name="weblogId" value="%{actionWeblog.id}" />
 
 <%-- table of pages --%>
 <table class="rollertable">
@@ -85,13 +85,13 @@
             <td style="vertical-align:middle">
                 <s:if test="#p.derivation.name() != 'SHARED'">
                     <s:url var="edit" action="templateEdit">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
+                        <s:param name="weblogId" value="%{actionWeblog.id}" />
                         <s:param name="bean.id" value="#p.id" />
                     </s:url>
                 </s:if>
                 <s:else>
                     <s:url var="edit" action="templateEdit">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
+                        <s:param name="weblogId" value="%{actionWeblog.id}" />
                         <s:param name="bean.name" value="#p.name" />
                     </s:url>
                 </s:else>

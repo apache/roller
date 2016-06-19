@@ -105,11 +105,11 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.PUT)
-    public void addCategory(@RequestParam(name="weblog") String weblogHandle, @RequestBody TextNode categoryName, Principal p,
+    public void addCategory(@RequestParam(name="weblogId") String weblogId, @RequestBody TextNode categoryName, Principal p,
                             HttpServletResponse response) throws ServletException {
         try {
-            if (userManager.checkWeblogRole(p.getName(), weblogHandle, WeblogRole.OWNER)) {
-                Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+            Weblog weblog = weblogManager.getWeblog(weblogId);
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 WeblogCategory wc = new WeblogCategory(weblog, categoryName.asText());
                 try {
                     weblogManager.saveWeblogCategory(wc);
@@ -129,9 +129,9 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.GET)
-    public List<WeblogCategory> getWeblogCategories(@RequestParam(name="weblog") String weblogHandle,
+    public List<WeblogCategory> getWeblogCategories(@RequestParam(name="weblogId") String weblogId,
                                                     @RequestParam(required=false) String skipCategoryId) {
-        return weblogManager.getWeblogCategories(weblogManager.getWeblogByHandle(weblogHandle))
+        return weblogManager.getWeblogCategories(weblogManager.getWeblog(weblogId))
                 .stream()
                 .filter(cat -> !cat.getId().equals(skipCategoryId))
                 .peek(cat -> cat.setWeblog(null))

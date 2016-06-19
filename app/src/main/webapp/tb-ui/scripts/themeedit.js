@@ -11,12 +11,12 @@ $(function() {
        {
           text: msg.confirmLabel,
           click: function() {
-            var handle = $('#recordId').val();
+            var weblogId = $('#recordId').val();
             var newTheme = $('#themeSelector').val();
             checkLoggedIn(function() {
               $.ajax({
                type: "POST",
-               url: contextPath + '/tb-ui/authoring/rest/weblog/' + handle + '/switchtheme/' + newTheme,
+               url: contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/switchtheme/' + newTheme,
                success: function(data, textStatus, xhr) {
                  document.themeForm.submit();
                },

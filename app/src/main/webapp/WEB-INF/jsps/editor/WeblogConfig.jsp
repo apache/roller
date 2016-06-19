@@ -33,7 +33,7 @@ var msg= {
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/weblogconfig.js'/>"></script>
 
-<div id="errorMessageDiv" style="color:red;display:none">
+<div id="errorMessageDiv" class="errors" style="display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
   <b>{{:errorMessage}}</b>
   <ul>
@@ -44,13 +44,13 @@ var msg= {
   </script>
 </div>
 
-<input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?id=<s:property value='%{#parameters.id}'/>"/>
+<input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 <input type="hidden" id="menuURL" value="<s:url action='menu'/>"/>
-<input type="hidden" id="weblogId" value="<s:property value='%{#parameters.id}'/>"/>
+<input type="hidden" id="weblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 
 <p class="subtitle">
    <s:text name="websiteSettings.subtitle" >
-       <s:property value='%{#parameters.weblog}'/>
+       <s:param value="actionWeblog.handle"/>
    </s:text>
 </p>
 

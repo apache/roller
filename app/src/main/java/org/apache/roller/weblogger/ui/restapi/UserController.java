@@ -117,17 +117,17 @@ public class UserController {
         return createUserMap(userManager.getUsers(null, null, 0, -1));
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/{weblogHandle}/potentialmembers", method = RequestMethod.GET)
-    public Map<String, String> getPotentialNewMembers(@PathVariable String weblogHandle, Principal p,
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers", method = RequestMethod.GET)
+    public Map<String, String> getPotentialNewMembers(@PathVariable String weblogId, Principal p,
                                                       HttpServletResponse response)
             throws ServletException {
 
-        if (userManager.checkWeblogRole(p.getName(), weblogHandle, WeblogRole.OWNER)) {
+        Weblog weblog = weblogManager.getWeblog(weblogId);
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
             // member list excludes inactive accounts
             List<SafeUser> potentialUsers = userManager.getUsers(null, true, 0, -1);
 
             // filter out people already members
-            Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
             ListIterator<SafeUser> potentialIter = potentialUsers.listIterator();
             List<UserWeblogRole> currentUserList = userManager.getWeblogRolesIncludingPending(weblog);
             while (potentialIter.hasNext() && !currentUserList.isEmpty()) {

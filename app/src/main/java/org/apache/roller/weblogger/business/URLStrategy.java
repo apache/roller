@@ -55,11 +55,10 @@ public interface URLStrategy {
     String getRegisterURL(boolean absolute);
     
     /**
-     * Get a url to a UI action in a given namespace, optionally specifying
-     * a weblogHandle parameter if that is needed by the action.
+     * Get a url to a UI action in a given namespace, optionally specifying a weblog object
+     * if that is needed by the action.
      */
-    String getActionURL(String action, String namespace, Weblog weblog, Map<String, String> parameters,
-                        boolean absolute);
+    String getActionURL(String action, String namespace, Weblog weblog, Map<String, String> params, boolean absolute);
     
     /**
      * Get a url to add a new weblog entry.

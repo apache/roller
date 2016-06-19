@@ -32,7 +32,7 @@
     </s:else>
     <div class="menu-tr">
         <div class="menu-tl">
-            &nbsp;&nbsp;<a href="<s:url action='%{#tab.action}'><s:param name='id' value='actionWeblog.id'/><s:param name='weblog' value='actionWeblog.handle'/></s:url>"><s:text name="%{#tab.key}" /></a>&nbsp;&nbsp;
+            &nbsp;&nbsp;<a href="<s:url action='%{#tab.action}'><s:param name='weblogId' value='actionWeblog.id'/></s:url>"><s:text name="%{#tab.key}" /></a>&nbsp;&nbsp;
         </div>
     </div>
     </td>
@@ -47,10 +47,10 @@
             <s:iterator var="tabItem" value="#selectedTab.items" status="stat">
                 <s:if test="!#stat.first">|</s:if>
                 <s:if test="#tabItem.selected">
-                    <a class="menuItemSelected" href="<s:url action='%{#tabItem.action}'><s:param name='id' value='actionWeblog.id'/><s:param name='weblog' value='actionWeblog.handle'/></s:url>"><s:text name="%{#tabItem.key}" /></a>
+                    <a class="menuItemSelected" href="<s:url action='%{#tabItem.action}'><s:param name='weblogId' value='actionWeblog.id'/></s:url>"><s:text name="%{#tabItem.key}" /></a>
                 </s:if>
                 <s:else>
-                    <a class="menuItemUnselected" href="<s:url action='%{#tabItem.action}'><s:param name='id' value='actionWeblog.id'/><s:param name='weblog' value='actionWeblog.handle'/></s:url>"><s:text name="%{#tabItem.key}" /></a>
+                    <a class="menuItemUnselected" href="<s:url action='%{#tabItem.action}'><s:param name='weblogId' value='actionWeblog.id'/></s:url>"><s:text name="%{#tabItem.key}" /></a>
                 </s:else>
             </s:iterator>
         </td>

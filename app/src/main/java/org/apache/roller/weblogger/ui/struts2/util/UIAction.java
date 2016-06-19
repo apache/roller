@@ -101,8 +101,8 @@ public class UIAction extends ActionSupport implements Preparable {
     // the role the user has with this weblog
     private WeblogRole actionWeblogRole = null;
 
-    // the weblog handle of the action weblog
-    private String weblog = null;
+    // the weblog id of the action weblog
+    private String weblogId = null;
     
     // action name (used by tabbed menu utility)
     protected String actionName = null;
@@ -297,12 +297,12 @@ public class UIAction extends ActionSupport implements Preparable {
         this.actionWeblogRole = actionWeblogRole;
     }
 
-    public String getWeblog() {
-        return weblog;
+    public String getWeblogId() {
+        return weblogId;
     }
 
-    public void setWeblog(String weblog) {
-        this.weblog = weblog;
+    public void setWeblogId(String weblogId) {
+        this.weblogId = weblogId;
     }
     
     public String getPageTitle() {
