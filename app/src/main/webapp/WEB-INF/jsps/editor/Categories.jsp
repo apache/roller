@@ -38,7 +38,7 @@
 
 <p class="subtitle">
     <s:text name="categoriesForm.subtitle">
-        <s:param value="weblog"/>
+        <s:param value="actionWeblog.handle"/>
     </s:text>
 </p>
 <p class="pagetip">
@@ -46,7 +46,7 @@
 </p>
 
 <input id="refreshURL" type="hidden" value="<s:url action='categories'/>"/>
-<input type="hidden" id="actionWeblog" value="<s:property value='%{#parameters.weblog}'/>"/>
+<input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 
 <div id="category-list" ng-app="tightBlogApp" ng-controller="CategoryController as ctrl">
 

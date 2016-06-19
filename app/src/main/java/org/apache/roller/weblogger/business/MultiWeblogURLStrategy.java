@@ -33,10 +33,8 @@ import org.apache.roller.weblogger.util.Utilities;
 public class MultiWeblogURLStrategy implements URLStrategy {
     
     public MultiWeblogURLStrategy() {}
-    
-    /**
-     * @inheritDoc
-     */
+
+    @Override
     public URLStrategy getPreviewURLStrategy(String previewTheme) {
         return new PreviewURLStrategy(previewTheme);
     }
@@ -49,31 +47,22 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         }
     }
 
-    /**
-     * Url to login page.
-     */
+    @Override
     public String getLoginURL(boolean absolute) {
         return getRootURL(absolute) + "/tb-ui/login-redirect.rol";
     }
 
-    /**
-     * Url to logout page.
-     */
+    @Override
     public String getLogoutURL(boolean absolute) {
         return getRootURL(absolute) + "/tb-ui/logout.rol";
     }
 
-    /**
-     * Url to register page.
-     */
+    @Override
     public String getRegisterURL(boolean absolute) {
         return getRootURL(absolute) + "/tb-ui/register.rol";
     }
 
-    /**
-     * Get a url to a UI action in a given namespace, optionally specifying
-     * a weblogHandle parameter if that is needed by the action.
-     */
+    @Override
     public String getActionURL(String action, String namespace, Weblog weblog,
                                Map<String, String> parameters, boolean absolute) {
         String url = getRootURL(absolute) + namespace + "/" + action + ".rol";
@@ -81,8 +70,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         // add weblog handle parameter, if provided
         Map<String, String> params = new HashMap<>();
         if (weblog != null) {
-            params.put("id", weblog.getId());
-            params.put("weblog", weblog.getHandle());
+            params.put("weblogId", weblog.getId());
         }
 
         if (parameters != null) {
@@ -91,9 +79,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return url + Utilities.getQueryString(params);
     }
 
-    /**
-     * Get a url to add a new weblog entry.
-     */
+    @Override
     public String getEntryAddURL(String weblogHandle, boolean absolute) {
         String url = getRootURL(absolute) + "/tb-ui/authoring/entryAdd.rol";
         Map<String, String> params = new HashMap<>();
@@ -101,9 +87,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return url + Utilities.getQueryString(params);
     }
 
-    /**
-     * Get a url to edit a specific weblog entry.
-     */
+    @Override
     public String getEntryEditURL(String weblogHandle, String entryId, boolean absolute) {
         String url = getRootURL(absolute) + "/tb-ui/authoring/entryEdit.rol";
         Map<String, String> params = new HashMap<>();
@@ -112,9 +96,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return url + Utilities.getQueryString(params);
     }
 
-    /**
-     * Get a url to weblog config page.
-     */
+    @Override
     public String getWeblogConfigURL(String weblogHandle, boolean absolute) {
         String url = getRootURL(absolute) + "/tb-ui/authoring/weblogConfig.rol";
         Map<String, String> params = new HashMap<>();
@@ -122,10 +104,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return url + Utilities.getQueryString(params);
     }
 
-    /**
-     * Get URL of a planet's newsfeed.
-     * @param planet URL for the desired planet
-     */
+    @Override
     public String getPlanetURL(String planet) {
         String url = getRootURL(true) + "/planetrss";
         Map<String, String> params = new HashMap<>();
@@ -133,16 +112,12 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return url + Utilities.getQueryString(params);
     }
 
-    /**
-     * Get root url for a given weblog.
-     */
+    @Override
     public String getWeblogURL(Weblog weblog, boolean absolute) {
         return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
     }
-    
-    /**
-     * Get url for a single weblog entry on a given weblog.
-     */
+
+    @Override
     public String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute) {
         return getWeblogURL(weblog, absolute) + "entry/" + Utilities.encode(entryAnchor);
     }
@@ -152,40 +127,26 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return getWeblogURL(weblog, absolute) + "entrycomment/" + Utilities.encode(entryAnchor);
     }
 
-    /**
-     * Get url for a single weblog media file on a given weblog.
-     */
+    @Override
     public String getMediaFileURL(Weblog weblog, String fileAnchor, boolean absolute) {
         return getWeblogURL(weblog, absolute) + "mediaresource/" + Utilities.encode(fileAnchor);
     }
 
-    /**
-     * Get url for a single weblog media file on a given weblog.
-     */
+    @Override
     public String getMediaFileThumbnailURL(Weblog weblog, String fileAnchor, boolean absolute) {
         return getMediaFileURL(weblog, fileAnchor, absolute) + "?t=true";
     }
 
-    
-    /**
-     * Get url for a single weblog entry comments on a given weblog.
-     */
+    @Override
     public String getWeblogCommentsURL(Weblog weblog, String entryAnchor, boolean absolute) {
         return getWeblogEntryURL(weblog, entryAnchor, absolute)+"#comments";
     }
-    
-    
-    /**
-     * Get url for a single weblog entry comment on a given weblog.
-     */
+
+    @Override
     public String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp, boolean absolute) {
         return getWeblogEntryURL(weblog, entryAnchor, absolute)+"#comment-"+timeStamp;
     }
     
-    
-    /**
-     * Get url for a collection of entries on a given weblog.
-     */
     @Override
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                          int pageNum, boolean absolute) {
@@ -201,10 +162,10 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         } else if (tag != null) {
             pathinfo.append("tag/").append(Utilities.encodePath(tag));
         } else {
-            if(dateString != null) {
+            if (dateString != null) {
                 params.put("date", dateString);
             }
-            if(category != null) {
+            if (category != null) {
                 params.put("cat", Utilities.encode(category));
             }
         }
@@ -216,10 +177,6 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return pathinfo.toString() + Utilities.getQueryString(params);
     }
     
-    
-    /**
-     * Get url for a custom page on a given weblog.
-     */
     @Override
     public String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
                             String dateString, String tag, int pageNum, boolean absolute) {
@@ -253,9 +210,6 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         return pathinfo.toString() + Utilities.getQueryString(params);
     }
 
-    /**
-     * Get url for a feed on a given weblog.
-     */
     @Override
     public String getWeblogFeedURL(Weblog weblog, String type, String category, String tag) {
 
@@ -271,10 +225,8 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
         return url + Utilities.getQueryString(params);
     }
-    
-    /**
-     * Get url to search endpoint on a given weblog.
-     */
+
+    @Override
     public String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute) {
         String url = getWeblogURL(weblog, absolute) + "search";
 

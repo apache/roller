@@ -72,16 +72,15 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements Stru
             }
 
             // extract the work weblog and set it
-            String weblogHandle = theAction.getWeblog();
-            if (!StringUtils.isEmpty(weblogHandle)) {
+            String weblogId = theAction.getWeblogId();
+            if (!StringUtils.isEmpty(weblogId)) {
                 try {
-                    Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+                    Weblog weblog = weblogManager.getWeblog(weblogId);
                     if (weblog != null) {
                         theAction.setActionWeblog(weblog);
                     }
                 } catch (Exception e) {
-                    log.error("Error looking up action weblog - "
-                            + weblogHandle, e);
+                    log.error("Error looking up action weblog with ID " + weblogId, e);
                 }
             }
         }

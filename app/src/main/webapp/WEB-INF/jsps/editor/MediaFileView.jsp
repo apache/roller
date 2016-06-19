@@ -119,7 +119,7 @@
     toggleState = 'Off'
 
     function onSelectDirectory(id) {
-        window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblog=" + '<s:property value="%{actionWeblog.handle}" />';
+        window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblogId=" + '<s:property value="%{actionWeblog.id}" />';
     }
 
     function onToggle() {
@@ -177,7 +177,7 @@
 
     <p class="subtitle">
         <s:text name="mediaFileView.subtitle" >
-            <s:param value="weblog" />
+           <s:param value="actionWeblog.handle"/>
         </s:text>
     </p>
     </p>
@@ -197,7 +197,7 @@
 
   <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
     <sec:csrfInput/>
-    <s:hidden name="weblog" />
+    <s:hidden name="weblogId" />
     <s:hidden name="directoryId" />
     <s:hidden name="newDirectoryName" />
     <input type="hidden" name="mediaFileId" value="" />

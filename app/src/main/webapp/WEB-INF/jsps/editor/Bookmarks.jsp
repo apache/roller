@@ -38,7 +38,7 @@ var msg= {
 
 <p class="subtitle">
     <s:text name="bookmarksForm.subtitle" >
-        <s:param value="weblog" />
+        <s:param value="actionWeblog.handle"/>
     </s:text>
 </p>
 <p class="pagetip">
@@ -46,7 +46,7 @@ var msg= {
 </p>
 
 <input id="refreshURL" type="hidden" value="<s:url action='bookmarks'/>"/>
-<input type="hidden" id="actionWeblog" value="<s:property value='%{#parameters.weblog}'/>"/>
+<input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 
 <div id="bookmark-list" ng-app="bookmarkApp" ng-controller="BookmarkController as ctrl">
 

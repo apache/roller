@@ -90,7 +90,7 @@ var msg= {
            <td class="mm_table_actions" width="20%" align="left" >
 
                    <img src='<s:url value="/images/table_edit.png"/>' />
-                   <a href="<s:url action='entryAdd' namespace='/tb-ui/authoring'/>?weblog={{role.weblog.handle}}">
+                   <a href="<s:url action='entryAdd' namespace='/tb-ui/authoring'/>?weblogId={{role.weblog.id}}">
                      <s:text name="yourWebsites.newEntry" />
                    </a>
                    <br />
@@ -99,12 +99,12 @@ var msg= {
                    <span ng-if="role.weblogRole != 'EDIT_DRAFT'">
                        <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring"/>
                        <img src='<s:url value="/images/table_multiple.png"/>' />
-                       <s:a href="%{editEntries}?weblog={{role.weblog.handle}}"><s:text name="yourWebsites.editEntries" /></s:a>
+                       <s:a href="%{editEntries}?weblogId={{role.weblog.id}}"><s:text name="yourWebsites.editEntries" /></s:a>
                        <br />
 
                        <s:url var="manageComments" action="comments" namespace="/tb-ui/authoring"/>
                        <img src='<s:url value="/images/page_white_edit.png"/>' />
-                       <s:a href="%{manageComments}?weblog={{role.weblog.handle}}"><s:text name="yourWebsites.manageComments" /></s:a>
+                       <s:a href="%{manageComments}?weblogId={{role.weblog.id}}"><s:text name="yourWebsites.manageComments" /></s:a>
                        <br />
                    </span>
 
@@ -115,13 +115,13 @@ var msg= {
                        <s:if test="getProp('themes.customtheme.allowed')">
                            <img src='<s:url value="/images/layout.png"/>'>
                            <s:url var="weblogTheme" action="templates" namespace="/tb-ui/authoring"/>
-                           <s:a href='%{weblogTheme}?weblog={{role.weblog.handle}}'><s:text name="yourWebsites.theme" /></s:a>
+                           <s:a href='%{weblogTheme}?weblogId={{role.weblog.id}}'><s:text name="yourWebsites.theme" /></s:a>
                            <br />
                        </s:if>
 
                        <img src='<s:url value="/images/cog.png"/>' />
                        <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring"/>
-                       <s:a href='%{manageWeblog}?id={{role.weblog.id}}&weblog={{role.weblog.handle}}'>
+                       <s:a href='%{manageWeblog}?weblogId={{role.weblog.id}}'>
                            <s:text name="yourWebsites.manage" />
                        </s:a>
                        <br />

@@ -59,12 +59,12 @@ var msg= {
    </s:text>
 </p>
 
-<input type="hidden" id="recordId" value="<s:property value='%{#parameters.weblog}'/>"/>
-<input type="hidden" id="refreshURL" value="<s:url action='themeEdit'/>?weblog=%{#parameters.weblog}"/>
+<input type="hidden" id="recordId" value="<s:property value='%{#parameters.weblogId}'/>"/>
+<input type="hidden" id="refreshURL" value="<s:url action='themeEdit'/>?weblogId=%{#parameters.weblogId}"/>
 
 <s:form id="themeForm" action="templates!newTheme">
     <sec:csrfInput/>
-    <s:hidden name="weblog"/>
+    <s:hidden name="weblogId"/>
 
     <div class="optioner">
         <p>

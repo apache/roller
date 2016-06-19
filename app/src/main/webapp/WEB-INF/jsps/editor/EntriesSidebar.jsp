@@ -37,7 +37,7 @@
 
                 <s:form action="entries">
                     <sec:csrfInput/>
-                    <s:hidden name="weblog" />
+                    <s:hidden name="weblogId" />
 
                     <%-- ========================================================= --%>
                     <%-- filter by category --%>

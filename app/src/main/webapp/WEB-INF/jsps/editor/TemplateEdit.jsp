@@ -65,7 +65,7 @@
                 
 <s:form action="templateEdit!save">
     <sec:csrfInput/>
-    <s:hidden name="weblog" />
+    <s:hidden name="weblogId" />
     <s:hidden name="bean.id"/>
     <s:hidden name="bean.derivation"/>
 

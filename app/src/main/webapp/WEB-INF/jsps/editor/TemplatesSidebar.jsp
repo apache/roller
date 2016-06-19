@@ -28,7 +28,7 @@
                 
                 <s:form action="templates!add">
                     <sec:csrfInput/>
-					<s:hidden name="weblog" />
+					<s:hidden name="weblogId" />
                     
                     <table cellpadding="0" cellspacing="6" ng-app="roleDescriptionModule"
                         ng-controller="roleDescriptionController">

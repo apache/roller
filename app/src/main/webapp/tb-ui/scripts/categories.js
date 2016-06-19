@@ -13,7 +13,7 @@ $(function() {
                if (newName.length > 0) {
                   $.ajax({
                      type: "PUT",
-                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val() : '/tb-ui/authoring/rest/category/' + idToUpdate),
+                     url: contextPath + ((idToUpdate == '') ? '/tb-ui/authoring/rest/categories?weblogId=' + $("#actionWeblogId").val() : '/tb-ui/authoring/rest/category/' + idToUpdate),
                      data: JSON.stringify(newName),
                      contentType: "application/json",
                      processData: "false",
@@ -105,7 +105,7 @@ $(function() {
                $('#category-remove-targetlist').empty()
                $.ajax({
                   type: "GET",
-                  url: contextPath + '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val() + '&skipCategoryId=' + idToRemove,
+                  url: contextPath + '/tb-ui/authoring/rest/categories?weblogId=' + $("#actionWeblogId").val() + '&skipCategoryId=' + idToRemove,
                   dataType: "json",
                   success: function(data, textStatus, xhr) {
                      $.each(data, function(i, d) {
@@ -128,7 +128,7 @@ var tightBlogApp = angular.module('tightBlogApp', []);
 tightBlogApp.controller('CategoryController', ['$http', function CategoryController($http) {
     var self = this;
     this.loadCategories = function() {
-      $http.get(contextPath + '/tb-ui/authoring/rest/categories?weblog=' + $("#actionWeblog").val()).then(function(response) {
+      $http.get(contextPath + '/tb-ui/authoring/rest/categories?weblogId=' + $("#actionWeblogId").val()).then(function(response) {
         self.categories = response.data;
       });
     };

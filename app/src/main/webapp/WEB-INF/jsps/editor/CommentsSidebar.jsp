@@ -37,7 +37,7 @@
     
  <s:form action="comments!query" id="commentsQuery">
     <sec:csrfInput/>
-    <s:hidden name="weblog" />
+    <s:hidden name="weblogId" />
     
     <div class="sideformrow">
         <label for="searchString" class="sideformrow"><s:text name="commentManagement.searchString" />:</label>   

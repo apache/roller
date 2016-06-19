@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
@@ -72,11 +71,10 @@ public class ThemeController {
         return list;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogHandle}/switchtheme/{newThemeId}", method = RequestMethod.POST)
-    public ResponseEntity switchTheme(@PathVariable String weblogHandle, @PathVariable String newThemeId,
-                                             Principal p, HttpServletResponse response) {
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}", method = RequestMethod.POST)
+    public ResponseEntity switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p) {
 
-        Weblog weblog = weblogManager.getWeblogByHandle(weblogHandle);
+        Weblog weblog = weblogManager.getWeblog(weblogId);
         SharedTheme newTheme = themeManager.getSharedTheme(newThemeId);
         User user = userManager.getUserByUserName(p.getName());
         Locale userLocale = Locale.forLanguageTag(user.getLocale());
