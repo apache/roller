@@ -195,7 +195,7 @@
 
     <td>
         <s:url var="editUrl" action="entryEdit">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
+            <s:param name="weblogId" value="%{actionWeblog.id}" />
             <s:param name="bean.id" value="#post.id" />
         </s:url>
         <s:a href="%{editUrl}"><s:text name="generic.edit" /></s:a>

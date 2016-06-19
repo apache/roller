@@ -68,7 +68,7 @@
 <script>
     function onClickAddImage(){
         <s:url var="mediaFileChooser" action="mediaFileChooser">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
+            <s:param name="weblogId" value="%{actionWeblog.id}" />
         </s:url>
         $( "#mediaFileEditor" ).attr('src','<s:property value="%{mediaFileChooser}" />');
         $(function() {

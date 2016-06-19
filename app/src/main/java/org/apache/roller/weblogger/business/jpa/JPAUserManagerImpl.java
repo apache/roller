@@ -290,7 +290,7 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) {
         User userToCheck = getUserByUserName(username, true);
-        Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
+        Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle, null);
         return !(userToCheck == null || weblogToCheck == null) && checkWeblogRole(userToCheck, weblogToCheck, role);
     }
 

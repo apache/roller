@@ -40,7 +40,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
 </div>
 
 <div id="errorMessageNoLDAPAuth" class="errors" style="display:none">
-  <span>Registration unavailable: LDAP authentication not detected.</span>
+  <span><s:text name="Register.error.ldap.unavailable"/></span>
 </div>
 
 <div class="ldapok">

@@ -130,7 +130,7 @@ public class WeblogController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblogs", method = RequestMethod.PUT)
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblogs", method = RequestMethod.POST)
     public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response) throws ServletException {
 
         if(!propertiesManager.getBooleanProperty("site.allowUserWeblogCreation")) {

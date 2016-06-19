@@ -159,7 +159,7 @@ var contextPath = "${pageContext.request.contextPath}";
                   </td>
                   <td>
                       <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring">
-                          <s:param name="weblog" value="{{:weblog.handle}}" />
+                          <s:param name="weblogId" value="{{:weblog.id}}" />
                       </s:url>
                       <img src='<s:url value="/images/page_white_edit.png"/>' />
                       <a href='<s:property value="editEntries" />?weblog={{:weblog.handle}}'>
@@ -167,10 +167,10 @@ var contextPath = "${pageContext.request.contextPath}";
                   </td>
                   <td>
                       <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring">
-                          <s:param name="weblog" value="{{:weblog.handle}}" />
+                          <s:param name="weblogId" value="{{:weblog.id}}" />
                       </s:url>
                       <img src='<s:url value="/images/page_white_edit.png"/>' />
-                      <a href='<s:property value="manageWeblog"/>?weblog={{:weblog.handle}}'>
+                      <a href='<s:property value="manageWeblog"/>?weblogId={{:weblog.id}}'>
                       <s:text name="userAdmin.manage" /></a>
                   </td>
               </tr>
