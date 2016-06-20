@@ -302,10 +302,9 @@ abstract public class WebloggerTest {
         testSub.setPlanet(planet);
         planetManager.saveSubscription(testSub);
 
-        planet.getSubscriptions().add(testSub);
-
         // flush
         strategy.flush();
+        strategy.refresh(planet);
 
         // query to make sure we return the persisted object
         Subscription sub = planetManager.getSubscription(testSub.getId());

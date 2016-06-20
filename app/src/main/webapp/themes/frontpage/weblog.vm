@@ -130,7 +130,7 @@
                 #set($hotblogs = $site.getHotWeblogs($since, $maxResults))
                 <ul>
                    #foreach($blog in $hotblogs)
-                   <li><a href="$url.site/$blog.subjectNameShort">$blog.subjectNameShort</a> | $blog.count</li>
+                   <li><a href="$url.site/$blog.handle">$blog.name</a> | $blog.hitsToday</li>
                    #end
                 </ul>   
                 <br />		

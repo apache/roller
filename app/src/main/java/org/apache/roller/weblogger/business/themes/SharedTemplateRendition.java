@@ -78,16 +78,25 @@ public class SharedTemplateRendition implements TemplateRendition {
         return "{" + this.contentsFile + ", [" + this.renditionType +"], " + this.parser + "}";
 	}
 
-	public boolean equals(SharedTemplateRendition other) {
-		return other == this || new EqualsBuilder()
-				.append(template, other.getRendition())
-                .append(parser, other.getParser())
-                .append(renditionType, other.getRenditionType())
-                .isEquals();
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	public int hashCode() {
-		return new HashCodeBuilder().append(getRendition()).toHashCode();
-	}
+        SharedTemplateRendition that = (SharedTemplateRendition) o;
 
+        if (parser != that.parser) return false;
+        if (renditionType != that.renditionType) return false;
+        if (contentsFile != null ? !contentsFile.equals(that.contentsFile) : that.contentsFile != null) return false;
+        return template.equals(that.template);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = parser.hashCode();
+        result = 31 * result + renditionType.hashCode();
+        result = 31 * result + (contentsFile != null ? contentsFile.hashCode() : 0);
+        result = 31 * result + template.hashCode();
+        return result;
+    }
 }

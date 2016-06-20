@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
@@ -62,8 +64,7 @@ public class Subscription implements Comparable<Subscription> {
     // associations
     private Planet planet;
     private Set<SubscriptionEntry> entries = new HashSet<>();
-    
-    
+
     public Subscription() {}
     
     @Id
@@ -167,27 +168,28 @@ public class Subscription implements Comparable<Subscription> {
         return thisString.compareTo(otherString);
     }
 
-    /**
-     * Determines if subscriptions are equal by comparing feed URLs.
-     */
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof Subscription)) {
-            return false;
-        }
-        final Subscription that = (Subscription) other;
-        return this.feedURL.equals(that.getFeedURL());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Subscription that = (Subscription) o;
+
+        if (!feedURL.equals(that.feedURL)) return false;
+        return planet != null ? planet.equals(that.planet) : that.planet == null;
+
     }
 
+    @Override
     public int hashCode() {
-        return this.feedURL.hashCode();
+        int result = feedURL.hashCode();
+        result = 31 * result + (planet != null ? planet.hashCode() : 0);
+        return result;
     }
 
     public String toString() {
-        String str = "{ Feed URL:" + getFeedURL();
-        str += ", Site URL:" + getSiteURL();
+        String str = "{ Planet:" + getPlanet();
+        str += ", Feed URL:" + getFeedURL();
         str += ", Title:" + getTitle() + "}";
         return str;
     }

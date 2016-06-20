@@ -154,12 +154,11 @@ public class MediaDirectory {
             return false;
         }
         MediaDirectory o = (MediaDirectory) other;
-        return new EqualsBuilder().append(getId(), o.getId())
-                .append(getName(), o.getName()).isEquals();
+        return new EqualsBuilder().append(getId(), o.getId()).isEquals();
     }
 
     public int hashCode() {
-        return new HashCodeBuilder().append(getId()).append(getName()).toHashCode();
+        return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
 }

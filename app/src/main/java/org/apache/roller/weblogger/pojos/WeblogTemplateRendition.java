@@ -113,13 +113,13 @@ public class WeblogTemplateRendition implements TemplateRendition {
             return false;
         }
 		WeblogTemplateRendition o = (WeblogTemplateRendition) other;
-		return new EqualsBuilder().append(getWeblogTemplate().getId(), o.getWeblogTemplate().getId())
-				.append(getRendition(), o.getRendition()).isEquals();
+		return new EqualsBuilder().append(getWeblogTemplate().getId(),o.getWeblogTemplate().getId())
+				.append(getRenditionType(), o.getRenditionType()).isEquals();
 	}
 
 	public int hashCode() {
 		return new HashCodeBuilder().append(getWeblogTemplate().getId())
-				.append(getRendition()).toHashCode();
+				.append(getRenditionType()).toHashCode();
 	}
 
 	@Enumerated(EnumType.STRING)
