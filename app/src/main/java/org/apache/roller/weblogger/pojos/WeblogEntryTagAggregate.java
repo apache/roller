@@ -100,7 +100,7 @@ public class WeblogEntryTagAggregate {
         WeblogEntryTagAggregate o = (WeblogEntryTagAggregate)other;
         return new EqualsBuilder()
         .append(getName(), o.getName())
-        .append(this.getWeblog(), o.getWeblog())
+        .append(getWeblog(), o.getWeblog())
         .isEquals();
     }
     

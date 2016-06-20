@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
@@ -194,25 +194,26 @@ public class SiteModel implements Model {
     /**
      * Get list of WebsiteDisplay objects, ordered by number of hits.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
-     * @param length      Max number of results to return
+     * @param length    Max number of results to return
+     * @return list of Weblog objects with just name, handle, and hitsToday fields populated
      */
-    public List<StatCount> getHotWeblogs(int sinceDays, int length) {
-        
-        List<StatCount> results = new ArrayList<>();
-        try {
-            List<Weblog> hotBlogs = weblogManager.getHotWeblogs(sinceDays, 0, length);
+    public List<Weblog> getHotWeblogs(int sinceDays, int length) {
 
-            for (Weblog weblog : hotBlogs) {
-                StatCount statCount = new StatCount(
-                  weblog.getId(), weblog.getHandle(), weblog.getName(), "statCount.weblogDayHits", weblog.getHitsToday()
-                );
-                statCount.setWeblogHandle(weblog.getHandle());
-                results.add(statCount);
+        List<Weblog> results = new ArrayList<>();
+        try {
+            List<Weblog> weblogs = weblogManager.getHotWeblogs(sinceDays, 0, length);
+
+            for (Weblog weblog : weblogs) {
+                Weblog copy = new Weblog();
+                copy.setName(weblog.getName());
+                copy.setHandle(weblog.getHandle());
+                copy.setHitsToday(weblog.getHitsToday());
+                results.add(copy);
             }
         } catch (Exception e) {
             log.error("ERROR: fetching hot weblog list", e);
         }
-        
+
         return results;
     }
 

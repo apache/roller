@@ -257,12 +257,11 @@ public class User {
             return false;
         }
         User o = (User)other;
-        return new EqualsBuilder().append(getUserName(), o.getUserName())
-                .append(getId(), o.getId()).isEquals();
+        return new EqualsBuilder().append(getId(), o.getId()).isEquals();
     }
     
     public int hashCode() {
-        return new HashCodeBuilder().append(getUserName()).toHashCode();
+        return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
     @Transient
