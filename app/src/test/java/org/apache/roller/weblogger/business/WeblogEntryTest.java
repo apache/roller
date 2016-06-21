@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -43,6 +42,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
@@ -594,7 +594,7 @@ public class WeblogEntryTest extends WebloggerTest {
             // let's make sure we are starting from scratch
 
             // site-wide
-            List<TagStat> tags = weblogEntryManager.getTags(null, null, null, 0, -1);
+            List<WeblogEntryTagAggregate> tags = weblogEntryManager.getTags(null, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // first weblog
@@ -628,12 +628,12 @@ public class WeblogEntryTest extends WebloggerTest {
             expectedWeblogTags.put("two", 2);
             expectedWeblogTags.put("three", 1);
 
-            for (TagStat stat : tags) {
+            for (WeblogEntryTagAggregate stat : tags) {
                 if (!expectedWeblogTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
                 }
                 Integer expectedCount = expectedWeblogTags.get(stat.getName());
-                assertEquals(expectedCount.intValue(), stat.getCount());
+                assertEquals(expectedCount.intValue(), stat.getTotal());
             }
 
             // now add another entry in another blog
@@ -657,12 +657,12 @@ public class WeblogEntryTest extends WebloggerTest {
             expectedSiteTags.put("three", 2);
             expectedSiteTags.put("four", 1);
 
-            for (TagStat stat : tags) {
+            for (WeblogEntryTagAggregate stat : tags) {
                 if (!expectedSiteTags.containsKey(stat.getName()))
                     fail("Unexpected tagName.");
 
                 Integer expectedCount = expectedSiteTags.get(stat.getName());
-                assertEquals(expectedCount.intValue(), stat.getCount());
+                assertEquals(expectedCount.intValue(), stat.getTotal());
             }
 
             endSession(true);
@@ -685,14 +685,14 @@ public class WeblogEntryTest extends WebloggerTest {
             expectedWeblogTags.put("three", 1);
             expectedWeblogTags.put("five", 1);
 
-            for (TagStat stat : tags) {
+            for (WeblogEntryTagAggregate stat : tags) {
                 if (!expectedWeblogTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
                 }
                 Integer expectedCount =
                         expectedWeblogTags.get(stat.getName());
                 assertEquals(stat.getName(),
-                        expectedCount.intValue(), stat.getCount());
+                        expectedCount.intValue(), stat.getTotal());
             }
 
             tags = weblogEntryManager.getTags(null, null, null, 0, -1);
@@ -705,12 +705,12 @@ public class WeblogEntryTest extends WebloggerTest {
             expectedSiteTags.put("four", 1);
             expectedSiteTags.put("five", 1);
 
-            for (TagStat stat : tags) {
+            for (WeblogEntryTagAggregate stat : tags) {
                 if (!expectedSiteTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
                 }
                 Integer expectedCount = expectedSiteTags.get(stat.getName());
-                assertEquals(stat.getName(), expectedCount.intValue(), stat.getCount());
+                assertEquals(stat.getName(), expectedCount.intValue(), stat.getTotal());
             }
 
             teardownWeblog(testWeblog2.getId());
@@ -734,7 +734,7 @@ public class WeblogEntryTest extends WebloggerTest {
         // let's make sure we are starting from scratch
 
         // site-wide
-        List<TagStat> tags = weblogEntryManager.getTags(null, null, null, 0, -1);
+        List<WeblogEntryTagAggregate> tags = weblogEntryManager.getTags(null, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // first weblog
@@ -761,12 +761,12 @@ public class WeblogEntryTest extends WebloggerTest {
         expectedWeblogTags.put("one", 1);
         expectedWeblogTags.put("two", 1);
 
-        for (TagStat stat : tags) {
+        for (WeblogEntryTagAggregate stat : tags) {
             if (!expectedWeblogTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
             Integer expectedCount = expectedWeblogTags.get(stat.getName());
-            assertEquals(expectedCount.intValue(), stat.getCount());
+            assertEquals(expectedCount.intValue(), stat.getTotal());
         }
 
         // now add another entry in another blog
@@ -786,12 +786,12 @@ public class WeblogEntryTest extends WebloggerTest {
         expectedSiteTags.put("two", 1);
         expectedSiteTags.put("three", 1);
 
-        for (TagStat stat : tags) {
+        for (WeblogEntryTagAggregate stat : tags) {
             if (!expectedSiteTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
             Integer expectedCount = expectedSiteTags.get(stat.getName());
-            assertEquals(expectedCount.intValue(), stat.getCount());
+            assertEquals(expectedCount.intValue(), stat.getTotal());
         }
 
         endSession(true);

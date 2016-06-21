@@ -30,12 +30,12 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
-import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.rendering.generators.BigWeblogCalendar;
@@ -250,13 +250,13 @@ public class PageModel implements Model {
     }
 
     /**
-     * Get a list of TagStats objects for the most popular tags
+     * Get a list of WeblogEntryTagAggregate objects for the most popular tags
      *
      * @param length    Max number of tags to return.
      * @return          Collection of WeblogEntryTag objects
      */
-    public List<TagStat> getPopularTags(int length) {
-        List<TagStat> results = new ArrayList<>();
+    public List<WeblogEntryTagAggregate> getPopularTags(int length) {
+        List<WeblogEntryTagAggregate> results = new ArrayList<>();
         try {
             results = weblogEntryManager.getPopularTags(pageRequest.getWeblog(), 0, length);
         } catch (Exception e) {

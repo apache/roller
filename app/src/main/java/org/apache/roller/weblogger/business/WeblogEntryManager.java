@@ -24,11 +24,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
-import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 
 /**
  * Interface to weblog entry, category and comment management.
@@ -131,22 +131,25 @@ public interface WeblogEntryManager {
     void applyCommentDefaultsToEntries(Weblog website);
     
     /**
-     * Get list of TagStat. There's no offset/length params just a limit.
+     * Get list of WeblogEntryTagAggregate objects identifying the most used tags for a weblog.
+     * There are no offset/length params just a limit.
      * @param weblog       Weblog or null to get for all weblogs.
      * @param offset       0-based index into results
-     * @param limit         Max TagStats to return (or -1 for no limit)  @return List of most popular tags.
+     * @param limit        Max objects to return (or -1 for no limit)
+     * @return List of most popular tags.
      */
-    List<TagStat> getPopularTags(Weblog weblog, int offset, int limit);
+    List<WeblogEntryTagAggregate> getPopularTags(Weblog weblog, int offset, int limit);
     
     /**
-     * Get list of TagStat. There's no offset/length params just a limit.
+     * Get list of WeblogEntryTagAggregate objects for the tags comprising a weblog. There are
+     * no offset/length params just a limit.
      * @param website       Weblog or null to get for all weblogs.
      * @param sortBy        Sort by either 'name' or 'count' (null for name) 
      * @param startsWith    Prefix for tags to be returned (null or a string of length > 0)
-     * @param limit         Max TagStats to return (or -1 for no limit)
+     * @param limit         Max objects to return (or -1 for no limit)
      * @return List of tags matching the criteria.
      */
-    List<TagStat> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit);
+    List<WeblogEntryTagAggregate> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit);
     
     /**
      * Does the specified tag exist?  Optionally confined to a specific weblog.

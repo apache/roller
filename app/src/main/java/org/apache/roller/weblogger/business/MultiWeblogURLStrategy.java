@@ -160,7 +160,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         } else if(dateString != null && category == null) {
             pathinfo.append("date/").append(dateString);  
         } else if (tag != null) {
-            pathinfo.append("tag/").append(Utilities.encodePath(tag));
+            pathinfo.append("tags/").append(Utilities.encodePath(tag));
         } else {
             if (dateString != null) {
                 params.put("date", dateString);
