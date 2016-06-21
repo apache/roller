@@ -30,13 +30,13 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.business.MailManager;
@@ -71,6 +71,9 @@ import java.util.stream.Collectors;
 public final class EntryEdit extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(EntryEdit.class);
+
+    private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
+
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
@@ -241,8 +244,7 @@ public final class EntryEdit extends UIAction {
                 bean.setHours(zdt.getHour());
                 bean.setMinutes(zdt.getMinute());
                 bean.setSeconds(zdt.getSecond());
-                DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yy");
-                bean.setDateString(df.format(zdt.toLocalDate()));
+                bean.setDateString(pubDateFormat.format(zdt.toLocalDate()));
 
                 if (log.isDebugEnabled()) {
                     log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", "
@@ -294,9 +296,7 @@ public final class EntryEdit extends UIAction {
         String dateString = bean.getDateString();
         if(!StringUtils.isEmpty(dateString)) {
             try {
-                // Don't require user to add preceding '0' of month and day.
-                DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yyyy");
-                LocalDate newDate = LocalDate.parse(dateString, df);
+                LocalDate newDate = LocalDate.parse(dateString, pubDateFormat);
 
                 // Now handle the time from the hour, minute and second combos
                 pubtime = newDate.atTime(bean.getHours(), bean.getMinutes(), bean.getSeconds());
@@ -550,7 +550,7 @@ public final class EntryEdit extends UIAction {
     public WeblogTagData getWeblogTagData(@PathVariable String handle, @RequestParam("prefix") String prefix)
             throws ServletException {
 
-        List<TagStat> tags;
+        List<WeblogEntryTagAggregate> tags;
 
         try {
             Weblog weblog = weblogManager.getWeblogByHandle(handle);
@@ -571,7 +571,7 @@ public final class EntryEdit extends UIAction {
 
         private String prefix;
         private String weblog;
-        private List<TagStat> tagcounts;
+        private List<WeblogEntryTagAggregate> tagcounts;
 
         public String getPrefix() {
             return prefix;
@@ -589,11 +589,11 @@ public final class EntryEdit extends UIAction {
             this.weblog = weblog;
         }
 
-        public List<TagStat> getTagcounts() {
+        public List<WeblogEntryTagAggregate> getTagcounts() {
             return tagcounts;
         }
 
-        public void setTagcounts(List<TagStat> tagcounts) {
+        public void setTagcounts(List<WeblogEntryTagAggregate> tagcounts) {
             this.tagcounts = tagcounts;
         }
 

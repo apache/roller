@@ -160,7 +160,7 @@ public class RequestMappingFilter implements Filter {
             return true;
         } else if (weblogRequestContext != null && "tags".equals(weblogRequestContext)) {
             // tags section can have an index page at /<weblog>/tags/ and
-            // a tags query at /<weblog>/tags/tag1+tag2, but that's it
+            // a tags query at /<weblog>/tags/tagToSearch, but that's it
             if((weblogRequestData == null && !trailingSlash) ||
                     (weblogRequestData != null && trailingSlash)) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);

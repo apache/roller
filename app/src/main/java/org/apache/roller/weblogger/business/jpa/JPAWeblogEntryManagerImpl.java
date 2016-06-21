@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
-import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -36,6 +35,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -547,56 +546,54 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public List<TagStat> getPopularTags(Weblog weblog, int offset, int limit) {
-        TypedQuery<TagStat> query;
+    public List<WeblogEntryTagAggregate> getPopularTags(Weblog weblog, int offset, int limit) {
+        TypedQuery<WeblogEntryTagAggregate> query;
         List queryResults;
+        int queryLimit = (limit >= 0) ? limit : 25;
         
-        query = strategy.getNamedQuery("WeblogEntryTagAggregate.getPopularTagsByWeblog", TagStat.class);
+        query = strategy.getNamedQuery("WeblogEntryTagAggregate.getPopularTagsByWeblog", WeblogEntryTagAggregate.class);
         query.setParameter(1, weblog);
 
         if (offset != 0) {
             query.setFirstResult(offset);
         }
         if (limit != -1) {
-            query.setMaxResults(limit);
+            query.setMaxResults(queryLimit);
         }
         queryResults = query.getResultList();
         
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
         
-        List<TagStat> results = new ArrayList<>(limit >= 0 ? limit : 25);
+        List<WeblogEntryTagAggregate> results = new ArrayList<>(queryLimit);
         
-        if (queryResults != null) {
-            for (Object obj : queryResults) {
-                Object[] row = (Object[]) obj;
-                TagStat t = new TagStat();
-                t.setName((String) row[0]);
-                t.setCount(((Number) row[1]).intValue());
+        for (Object obj : queryResults) {
+            Object[] row = (Object[]) obj;
+            WeblogEntryTagAggregate t = new WeblogEntryTagAggregate();
+            t.setName((String) row[0]);
+            t.setTotal(((Number) row[1]).intValue());
 
-                min = Math.min(min, t.getCount());
-                max = Math.max(max, t.getCount());
-                results.add(t);
-            }
+            min = Math.min(min, t.getTotal());
+            max = Math.max(max, t.getTotal());
+            results.add(t);
         }
 
         min = Math.log(1+min);
         max = Math.log(1+max);
-        
+
         double range = Math.max(.01, max - min) * 1.0001;
-        
-        for (TagStat t : results) {
-            t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1+t.getCount()) - min) / range)));
+        for (WeblogEntryTagAggregate t : results) {
+            t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1+t.getTotal()) - min) / range)));
         }
 
         // sort results by name, because query had to sort by total
-        Collections.sort(results, TagStat.Comparator);
-        
+        Collections.sort(results, WeblogEntryTagAggregate.Comparator);
+
         return results;
     }
 
     @Override
-    public List<TagStat> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit) {
+    public List<WeblogEntryTagAggregate> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit) {
         Query query;
         List queryResults;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
@@ -635,22 +632,22 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         queryResults = query.getResultList();
         
-        List<TagStat> results = new ArrayList<>();
+        List<WeblogEntryTagAggregate> results = new ArrayList<>();
         if (queryResults != null) {
             for (Object obj : queryResults) {
                 Object[] row = (Object[]) obj;
-                TagStat ce = new TagStat();
+                WeblogEntryTagAggregate ce = new WeblogEntryTagAggregate();
                 ce.setName((String) row[0]);
                 // The JPA query retrieves SUM(w.total) always as long
-                ce.setCount(((Long) row[1]).intValue());
+                ce.setTotal(((Long) row[1]).intValue());
                 results.add(ce);
             }
         }
 
         if (sortByName) {
-            Collections.sort(results, TagStat.Comparator);
+            Collections.sort(results, WeblogEntryTagAggregate.Comparator);
         } else {
-            Collections.sort(results, TagStat.CountComparator);
+            Collections.sort(results, WeblogEntryTagAggregate.CountComparator);
         }
         
         return results;

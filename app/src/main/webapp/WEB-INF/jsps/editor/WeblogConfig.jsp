@@ -55,18 +55,16 @@ var msg= {
 
 <%-- Create Weblog --%>
 <s:if test="weblogId == null">
-    <s:set var="saveButtonText">createWebsite.button.save</s:set>
-    <s:set var="subtitlePrompt"><s:text name="createWebsite.prompt"/></s:set>
+    <s:text var="saveButtonText" name="createWebsite.button.save"/>
+    <s:text var="subtitlePrompt" name="createWebsite.prompt"/>
     <input type="hidden" id="refreshURL" value="<s:url action='createWeblog'/>"/>
 </s:if>
 <%-- Update Weblog --%>
 <s:else>
-    <s:set var="saveButtonText">websiteSettings.button.update</s:set>
-    <s:set var="subtitlePrompt">
-      <s:text name="websiteSettings.subtitle" >
-          <s:param value="actionWeblog.handle"/>
-      </s:text>
-    </s:set>
+    <s:text var="saveButtonText" name="websiteSettings.button.update"/>
+    <s:text var="subtitlePrompt" name="websiteSettings.subtitle">
+        <s:param value="actionWeblog.handle"/>
+    </s:text>
     <input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 </s:else>
 
@@ -159,14 +157,14 @@ var msg= {
         <tr>
             <td class="label"><s:text name="createWebsite.locale"/>*</td>
             <td class="field">
-                <s:select data-link="weblogData.locale" size="1" list="localesList" listValue="displayName" />
+                <s:select data-link="weblogData.locale" size="1" list="localesList" listValue="displayName" required="required" />
             </td>
         </tr>
 
         <tr>
             <td class="label"><s:text name="createWebsite.timeZone"/>*</td>
             <td class="field">
-                <s:select data-link="weblogData.timeZone" size="1" list="timeZonesList" />
+                <s:select data-link="weblogData.timeZone" size="1" list="timeZonesList" required="required"/>
             </td>
         </tr>
 

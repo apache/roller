@@ -32,6 +32,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.Comparator;
 
 /**
  * Tag aggregate data.
@@ -48,7 +50,8 @@ public class WeblogEntryTagAggregate {
     private String name = null;
     private Weblog weblog = null;
     private int total = 0;
-    
+    private int intensity = 0;
+
     public WeblogEntryTagAggregate() {
     }
 
@@ -84,10 +87,19 @@ public class WeblogEntryTagAggregate {
         this.total = total;
     }
 
+    @Transient
+    public int getIntensity() {
+        return intensity;
+    }
+
+    public void setIntensity(int intensity) {
+        this.intensity = intensity;
+    }
+
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        return "{" + getWeblog().getHandle() + ", " + getName() + ", " + getTotal() + "}";
+        return "{" + (getWeblog() != null ? getWeblog().getHandle() + ", " : "") + getName() + ", " + getTotal() + "}";
     }
     
     public boolean equals(Object other) {
@@ -110,5 +122,20 @@ public class WeblogEntryTagAggregate {
         .append(getWeblog())
         .toHashCode();
     }
-    
+
+    public static java.util.Comparator<WeblogEntryTagAggregate> Comparator = (weta1, weta2) ->
+        weta1.getName().compareToIgnoreCase(weta2.getName());
+
+    public static Comparator<WeblogEntryTagAggregate> CountComparator = (weta1, weta2) -> {
+        // higher numbers first for counts
+        int compVal = Integer.valueOf(weta2.getTotal()).compareTo(weta1.getTotal());
+
+        // still alpha order if tied
+        if (compVal == 0) {
+            compVal = weta1.getName().compareTo(weta2.getName());
+        }
+        return compVal;
+    };
+
+
 }
