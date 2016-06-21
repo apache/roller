@@ -71,48 +71,59 @@ public class Utilities {
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
-    private static Pattern mLinkPattern = Pattern.compile("<a href=.*>",
+    private static Pattern mLinkPattern = Pattern.compile("<a href=.*?>",
             Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
-            "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_B_TAG_PATTERN = Pattern.compile(
-            "&lt;/b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_I_TAG_PATTERN = Pattern.compile(
-            "&lt;i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_I_TAG_PATTERN = Pattern.compile(
-            "&lt;/i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_BLOCKQUOTE_TAG_PATTERN = Pattern
-            .compile("&lt;blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_BLOCKQUOTE_TAG_PATTERN = Pattern
-            .compile("&lt;/blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern BR_TAG_PATTERN = Pattern.compile(
+
+    public static final Pattern BR_TAG_PATTERN = Pattern.compile(
             "&lt;br&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_P_TAG_PATTERN = Pattern.compile(
-            "&lt;p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_P_TAG_PATTERN = Pattern.compile(
-            "&lt;/p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_PRE_TAG_PATTERN = Pattern.compile(
-            "&lt;pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_PRE_TAG_PATTERN = Pattern.compile(
-            "&lt;/pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_UL_TAG_PATTERN = Pattern.compile(
-            "&lt;ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_UL_TAG_PATTERN = Pattern.compile(
-            "&lt;/ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_OL_TAG_PATTERN = Pattern.compile(
-            "&lt;ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_OL_TAG_PATTERN = Pattern.compile(
-            "&lt;/ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_LI_TAG_PATTERN = Pattern.compile(
-            "&lt;li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_LI_TAG_PATTERN = Pattern.compile(
-            "&lt;/li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile(
+    public static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile(
             "&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile(
-            "&lt;a href=.*&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
+    public static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile(
+            "&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
+    public static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
             Pattern.CASE_INSENSITIVE);
+
+    public enum HTMLMatchingTag {
+        BLOCKQUOTE("blockquote"),
+        CITE("cite"),
+        P("p"),
+        PRE("pre"),
+        B("b"),
+        I("i"),
+        EM("em"),
+        STRONG("strong"),
+        STRIKE("strike");
+
+
+        HTMLMatchingTag(String tagName) {
+            openingPattern = Pattern.compile("&lt;" + tagName + "&gt;", Pattern.CASE_INSENSITIVE);
+            closingPattern = Pattern.compile("&lt;/" + tagName + "&gt;", Pattern.CASE_INSENSITIVE);
+            openingTag = "<" + tagName + ">";
+            closingTag = "</" + tagName + ">";
+        }
+
+        private final Pattern openingPattern;
+        private final Pattern closingPattern;
+        private final String openingTag;
+        private final String closingTag;
+
+        public String getOpeningTag() {
+            return openingTag;
+        }
+
+        public String getClosingTag() {
+            return closingTag;
+        }
+
+        public Pattern getOpeningEscapedPattern() {
+            return openingPattern;
+        }
+
+        public Pattern getClosingEscapedPattern() {
+            return closingPattern;
+        }
+    }
+
 
     /**
      * Transforms the given String into a subset of HTML displayable on a web
@@ -128,26 +139,13 @@ public class Utilities {
             return null;
         }
 
-        s = replace(s, OPENING_B_TAG_PATTERN, "<b>");
-        s = replace(s, CLOSING_B_TAG_PATTERN, "</b>");
-        s = replace(s, OPENING_I_TAG_PATTERN, "<i>");
-        s = replace(s, CLOSING_I_TAG_PATTERN, "</i>");
-        s = replace(s, OPENING_BLOCKQUOTE_TAG_PATTERN, "<blockquote>");
-        s = replace(s, CLOSING_BLOCKQUOTE_TAG_PATTERN, "</blockquote>");
-        s = replace(s, BR_TAG_PATTERN, "<br>");
-        s = replace(s, OPENING_P_TAG_PATTERN, "<p>");
-        s = replace(s, CLOSING_P_TAG_PATTERN, "</p>");
-        s = replace(s, OPENING_PRE_TAG_PATTERN, "<pre>");
-        s = replace(s, CLOSING_PRE_TAG_PATTERN, "</pre>");
-        s = replace(s, OPENING_UL_TAG_PATTERN, "<ul>");
-        s = replace(s, CLOSING_UL_TAG_PATTERN, "</ul>");
-        s = replace(s, OPENING_OL_TAG_PATTERN, "<ol>");
-        s = replace(s, CLOSING_OL_TAG_PATTERN, "</ol>");
-        s = replace(s, OPENING_LI_TAG_PATTERN, "<li>");
-        s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
-        s = replace(s, QUOTE_PATTERN, "\"");
+        for (HTMLMatchingTag tag : HTMLMatchingTag.values()) {
+            s = replace(s, tag.getOpeningEscapedPattern(), tag.getOpeningTag());
+            s = replace(s, tag.getClosingEscapedPattern(), tag.getClosingTag());
+        }
 
-        // HTTP links
+        s = replace(s, BR_TAG_PATTERN, "<br>");
+        s = replace(s, QUOTE_PATTERN, "\"");
         s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
         Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
         while (m.find()) {
@@ -268,15 +266,25 @@ public class Utilities {
     }
 
     /**
-     * Reads an inputstream into a string
+     * HTML textarea elements have a form submission value whose linebreaks are
+     * standardized to \r\n and an API value (used in scripting) standardized to \n.
+     * The former is used when a reader submits a comment (and serialized to the DB
+     * as such), the latter when the blogger edits the comment with the UI.  This
+     * method converts the latter back to the former for DB serialization and subsequent
+     * browser rendering.
+     *
+     * Each readline() call below strips off the \n, necessitating the addition of
+     * the "\r\n" after each line.
+     *
+     * See: https://www.w3.org/TR/html5/forms.html#concept-textarea-api-value
      */
-    public static String streamToString(InputStream is) throws IOException {
+    public static String apiValueToFormSubmissionValue(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
         String line;
         while ((line = in.readLine()) != null) {
             sb.append(line);
-            sb.append(System.getProperty("line.separator"));
+            sb.append("\r\n");
         }
         return sb.toString();
     }

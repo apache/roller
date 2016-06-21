@@ -285,7 +285,7 @@ public class WeblogEntryComment {
     public String getProcessedContent() {
         String processedContent = content;
 
-        // escape content (e.g., " -> &quot;) if content-type is text/plain
+        // escape content (e.g., " -> &quot;) and tags if content-type is text/plain
         // html content has to remain as-is so the HTML subset plugin can render it.
         if ("text/plain".equals(contentType)) {
             processedContent = StringEscapeUtils.escapeHtml4(processedContent);

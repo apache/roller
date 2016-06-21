@@ -21,6 +21,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -440,9 +441,7 @@ public class Comments extends UIAction {
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     CommentData cd = new CommentData();
                     cd.id = id;
-                    cd.content = StringEscapeUtils.escapeHtml4(c.getContent());
-                    cd.content = WordUtils.wrap(cd.content, 72);
-                    cd.content = StringEscapeUtils.escapeEcmaScript(cd.content);
+                    cd.content = c.getContent();
                     return cd;
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -467,7 +466,7 @@ public class Comments extends UIAction {
                 User authenticatedUser = userManager.getUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
-                    String content = Utilities.streamToString(request.getInputStream());
+                    String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream()); // IOUtils.toString(request.getInputStream(), "UTF-8"); //
                     c.setContent(content);
                     // don't update the posttime when updating the comment
                     c.setPostTime(c.getPostTime());

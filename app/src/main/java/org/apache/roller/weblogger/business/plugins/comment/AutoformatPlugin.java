@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Comment plugin which turns plain text paragraph formatting into html
- * paragraph formatting using <p> and <br> tags.
+ * paragraph formatting using the <p> tag.
  */
 public class AutoformatPlugin implements WeblogEntryCommentPlugin {
 
@@ -69,26 +69,24 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
             boolean insidePara = false;
             while((line = br.readLine()) != null) {
                 
-                if(!insidePara && line.trim().length() > 0) {
+                if (!insidePara && line.trim().length() > 0) {
                     // start of a new paragraph
-                    buf.append("\n<p>");
+                    buf.append("<p>");
                     buf.append(line);
                     insidePara = true;
-                } else if(insidePara && line.trim().length() > 0) {
-                    // another line in an existing paragraph
-                    buf.append("<br>\n");
-                    buf.append(line);
-                } else if(insidePara && line.trim().length() < 1) {
+                } else if (insidePara && line.trim().length() == 0) {
                     // end of a paragraph
-                    buf.append("</p>\n\n");
+                    buf.append("</p>");
                     insidePara = false;
+                } else {
+                    buf.append(" ").append(line);
                 }
             }
             
             // if the text ends without an empty line then we need to
             // terminate the last paragraph now
             if (insidePara) {
-                buf.append("</p>\n\n");
+                buf.append("</p>");
             }
             
         } catch(Exception e) {

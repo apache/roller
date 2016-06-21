@@ -50,7 +50,7 @@ public class CommentPluginsTest extends WebloggerTest {
     @Test
     public void testAutoFormatPlugin() {
         String convertLinesStart = "paragraph1\n\nparagraph2\nline2\nline3\n\nparagraph3";
-        String convertLinesFormatted = "\n<p>paragraph1</p>\n\n\n<p>paragraph2<br/>\nline2<br/>\nline3</p>\n\n\n<p>paragraph3</p>\n\n";
+        String convertLinesFormatted = "\n<p>paragraph1</p>\n\n\n<p>paragraph2<br>\nline2<br>\nline3</p>\n\n\n<p>paragraph3</p>\n\n";
 
         // setup test comment
         WeblogEntryComment comment = new WeblogEntryComment();
