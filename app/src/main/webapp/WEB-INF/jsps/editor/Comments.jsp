@@ -22,6 +22,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 
 <script>
 <s:if test="pager.items != null">
@@ -369,7 +372,7 @@
             url: '${pageContext.request.contextPath}/tb-ui/authoring/rest/comment/' + id,
             success: function(data) {
                 var cdata = eval("(" + data + ")");
-                $("#comment-" + cdata.id).html(cdata.content);
+                $("#comment-" + cdata.id).text(cdata.content);
                 $("#link-" + id).detach();
                 if (callback) callback(id);
             }

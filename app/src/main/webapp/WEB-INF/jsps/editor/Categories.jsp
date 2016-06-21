@@ -45,7 +45,7 @@
     <s:text name="categoriesForm.rootPrompt"/>
 </p>
 
-<input id="refreshURL" type="hidden" value="<s:url action='categories'/>"/>
+<input id="refreshURL" type="hidden" value="<s:url action='categories'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 <input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 
 <div id="category-list" ng-app="tightBlogApp" ng-controller="CategoryController as ctrl">
