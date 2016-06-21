@@ -180,7 +180,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     }
 
     private WeblogEntry getNextEntry() {
-        if (nextEntry == null) {
+        if (nextEntry == null && currEntry.getPubTime() != null) {
             nextEntry = weblogEntryManager.getNextEntry(currEntry, null);
             // make sure that entry is published and not to future
             if (nextEntry != null && nextEntry.getPubTime().isAfter(LocalDateTime.now())
@@ -193,7 +193,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     
     
     private WeblogEntry getPrevEntry() {
-        if (prevEntry == null) {
+        if (prevEntry == null && currEntry.getPubTime() != null) {
             prevEntry = weblogEntryManager.getPreviousEntry(currEntry, null);
             // make sure that entry is published and not to future
             if (prevEntry != null && prevEntry.getPubTime().isAfter(LocalDateTime.now())

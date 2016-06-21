@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -160,10 +161,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());
     }
 
-    private List getNextPrevEntries(WeblogEntry current, String catName, int maxEntries, boolean next) {
+    private List<WeblogEntry> getNextPrevEntries(WeblogEntry current, String catName, int maxEntries, boolean next) {
 
-        if (current == null) {
-            log.debug("current WeblogEntry cannot be null");
+        if (current == null || current.getPubTime() == null) {
             return Collections.emptyList();
         }
 
@@ -185,11 +185,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             params.add(size++, current.getPubTime());
             whereClause.append(" AND e.pubTime > ?").append(size);
         } else {
-            // pub time null if current article not yet published, in Draft view
-            if (current.getPubTime() != null) {
-                params.add(size++, current.getPubTime());
-                whereClause.append(" AND e.pubTime < ?").append(size);
-            }
+            params.add(size++, current.getPubTime());
+            whereClause.append(" AND e.pubTime < ?").append(size);
         }
 
         if (catName != null) {
@@ -524,9 +521,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public WeblogEntry getNextEntry(WeblogEntry current, String catName) {
         WeblogEntry entry = null;
-        List entryList = getNextPrevEntries(current, catName, 1, true);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, 1, true);
         if (entryList != null && entryList.size() > 0) {
-            entry = (WeblogEntry)entryList.get(0);
+            entry = entryList.get(0);
         }
         return entry;
     }
@@ -534,9 +531,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public WeblogEntry getPreviousEntry(WeblogEntry current, String catName) {
         WeblogEntry entry = null;
-        List entryList = getNextPrevEntries(current, catName, 1, false);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, 1, false);
         if (entryList != null && entryList.size() > 0) {
-            entry = (WeblogEntry)entryList.get(0);
+            entry = entryList.get(0);
         }
         return entry;
     }

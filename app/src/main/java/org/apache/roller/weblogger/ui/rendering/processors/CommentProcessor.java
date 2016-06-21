@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -133,6 +135,15 @@ public class CommentProcessor {
         this.propertiesManager = propertiesManager;
     }
 
+    @Resource(name="commentPlugins")
+    private List<WeblogEntryCommentPlugin> commentPlugins;
+
+    public void setCommentPlugins(List<WeblogEntryCommentPlugin> commentPlugins) {
+        this.commentPlugins = commentPlugins;
+    }
+
+    private String commentPluginsAsString;
+
     @Autowired
     private MailManager mailManager;
 
@@ -154,6 +165,7 @@ public class CommentProcessor {
     public void init() {
         commentValidationManager = new CommentValidationManager(commentValidators);
         globalCommentModerationRequired = propertiesManager.getBooleanProperty("users.moderation.required");
+        commentPluginsAsString = commentPlugins.stream().map(WeblogEntryCommentPlugin::getId).collect(Collectors.joining(","));
     }
 
     /**
@@ -294,7 +306,7 @@ public class CommentProcessor {
         }
 
         // add all enabled content plugins
-        comment.setPlugins(propertiesManager.getStringProperty("enabled.comment.plugins"));
+        comment.setPlugins(commentPluginsAsString);
 
         WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
         cf.setData(comment);

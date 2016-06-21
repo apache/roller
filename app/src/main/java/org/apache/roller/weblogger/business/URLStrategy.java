@@ -63,12 +63,12 @@ public interface URLStrategy {
     /**
      * Get a url to add a new weblog entry.
      */
-    String getEntryAddURL(String weblogHandle, boolean absolute);
+    String getEntryAddURL(String weblogId, boolean absolute);
 
     /**
      * Get a url to edit a specific weblog entry.
      */
-    String getEntryEditURL(String weblogHandle, String entryId, boolean absolute);
+    String getEntryEditURL(String weblogId, String entryId, boolean absolute);
 
     /**
      * Get a url to weblog config page.

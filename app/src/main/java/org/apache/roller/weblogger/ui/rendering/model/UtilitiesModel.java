@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.Temporal;
@@ -90,7 +91,7 @@ public class UtilitiesModel implements Model {
      * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
      */
     public String formatIsoZonedDateTime(LocalDateTime date) {
-        return DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date);
+        return DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.of(date, ZoneId.systemDefault()));
     }
     
     /**
@@ -98,7 +99,7 @@ public class UtilitiesModel implements Model {
      * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
      */
     public String formatIsoOffsetDateTime(LocalDateTime date) {
-        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date);
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.of(date, ZoneId.systemDefault()));
     }
     
     //------------------------------------------------------------ String utils

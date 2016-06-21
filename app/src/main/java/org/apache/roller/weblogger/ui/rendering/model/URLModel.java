@@ -168,19 +168,19 @@ public class URLModel implements Model {
         // need to determine entryId from anchor
         WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, anchor);
         if(entry != null) {
-            return urlStrategy.getEntryEditURL(weblog.getHandle(), entry.getId(), false);
+            return urlStrategy.getEntryEditURL(weblog.getId(), entry.getId(), false);
         }
         return null;
     } 
 
     /** URL for creating a new weblog entry */
     public String getCreateEntry() {
-        return urlStrategy.getEntryAddURL(weblog.getHandle(), false);
+        return urlStrategy.getEntryAddURL(weblog.getId(), false);
     }
 
     /** URL for editing weblog settings */
     public String getEditSettings() {
-        return urlStrategy.getWeblogConfigURL(weblog.getHandle(), false);
+        return urlStrategy.getWeblogConfigURL(weblog.getId(), false);
     }
 
     ///////  Inner Classes  ///////

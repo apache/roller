@@ -381,7 +381,7 @@ public class PageModel implements Model {
         return false;
     }
 
-    public boolean isUserBlogAdmin(Weblog weblog) {
+    public boolean isUserBlogOwner(Weblog weblog) {
         try {
             if (!preview && pageRequest.getAuthenticatedUser() != null) {
                 // using handle variant of checkWeblogRole as id is presently nulled out in the templates

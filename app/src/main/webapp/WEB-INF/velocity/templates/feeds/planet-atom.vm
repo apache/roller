@@ -19,7 +19,7 @@
   are also under Apache License.
 *#<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="$absoluteSite/tb-ui/styles/planet-atom.xsl" media="screen"?>
-#set($entries = $planetManager.getEntries($planet, $page, $maxEntries))
+#set($entries = $planetManager.getEntries($planet, $null, $page, $maxEntries))
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title type="html">$utils.escapeXML($planet.title)</title>
     <id>$utils.escapeXML($absoluteSite)</id>
