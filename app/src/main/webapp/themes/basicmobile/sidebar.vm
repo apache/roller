@@ -23,5 +23,4 @@
     <h2>Navigation</h2>
     <div class="sidebar">
     #showPageMenu(false)
-    #showEditorMenu(true)
     </div>

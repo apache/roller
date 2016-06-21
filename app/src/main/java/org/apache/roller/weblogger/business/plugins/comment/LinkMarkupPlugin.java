@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins.comment;
 
 import java.util.regex.Matcher;
@@ -30,14 +32,14 @@ import org.slf4j.LoggerFactory;
  * Comment plugin which turns plain text URLs into hyperlinks using
  * the html anchor (&lt;a&gt;) tag.
  * 
- * Contributed by Matthew Montgomery.
+ * Based on work originally from Matthew Montgomery.
  */
 public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
 
     private static Logger log = LoggerFactory.getLogger(LinkMarkupPlugin.class);
 
     private static final Pattern PATTERN = Pattern.compile(
-            "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);  
+            "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);
     
     public LinkMarkupPlugin() {
         log.debug("Instantiating LinkMarkupPlugin");
@@ -69,48 +71,52 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
      * @return Results of applying plugin to string.
      */
     public String render(final WeblogEntryComment comment, String text) {
-        StringBuilder result;
-        result = new StringBuilder();
-        
-        if (text != null) {
-            Matcher matcher;
-            matcher = PATTERN.matcher(text);
 
-            int start = 0;
-            int end = text.length();
-            
-            while (start < end) {
-                if (matcher.find()) {
-                    // Copy up to the match
-                    result.append(text.substring(start, (matcher.start())));
+        // only do this if comment is plain text (html option has anchor tags already)
+        if ("text/plain".equals(comment.getContentType())) {
+            StringBuilder result = new StringBuilder();
 
-                    // Copy the URL and create the hyperlink
-                    // Unescape HTML as we don't know if that setting is on
-                    String url;
-                    url = StringEscapeUtils.unescapeHtml4(text.substring(
-                            matcher.start(), matcher.end()));
+            if (text != null) {
+                Matcher matcher;
+                matcher = PATTERN.matcher(text);
 
-                    // Build the anchor tag and escape HTML in the URL output
-                    result.append("<a href=\"");
-                    result.append(StringEscapeUtils.escapeHtml4(url));
-                    result.append("\">");
-                    result.append(StringEscapeUtils.escapeHtml4(url));
-                    result.append("</a>");
+                int start = 0;
+                int end = text.length();
 
-                    // Increment the starting index
-                    start = matcher.end();
-                }
-                else {
-                    // Copy the remainder
-                    result.append(text.substring(start, end));
+                while (start < end) {
+                    if (matcher.find()) {
+                        // Copy up to the match
+                        result.append(text.substring(start, (matcher.start())));
 
-                    // Increment the starting index to exit the loop
-                    start = end;
+                        // Copy the URL and create the hyperlink
+                        // Unescape HTML as we don't know if that setting is on
+                        String url;
+                        url = StringEscapeUtils.unescapeHtml4(text.substring(
+                                matcher.start(), matcher.end()));
+
+                        // Build the anchor tag and escape HTML in the URL output
+                        result.append("<a href=\"");
+                        result.append(StringEscapeUtils.escapeHtml4(url));
+                        result.append("\">");
+                        result.append(StringEscapeUtils.escapeHtml4(url));
+                        result.append("</a>");
+
+                        // Increment the starting index
+                        start = matcher.end();
+                    }
+                    else {
+                        // Copy the remainder
+                        result.append(text.substring(start, end));
+
+                        // Increment the starting index to exit the loop
+                        start = end;
+                    }
                 }
             }
+            return result.toString();
+        } else {
+            return text;
         }
-
-        return result.toString();
     }
     
 }

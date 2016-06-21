@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins.comment;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -61,10 +60,10 @@ public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
         if ("text/html".equals(comment.getContentType())) {
             log.debug("starting value:\n {}", output);
             	        
-	        // escape html
+	        // escape all html
 	        output = StringEscapeUtils.escapeHtml4(output);
 	        
-	        // just use old utilities method
+	        // return some of the escaped tags back to HTML
 	        output = Utilities.transformToHTMLSubset(output);
 	        log.debug("ending value:\n {}", text);
         }

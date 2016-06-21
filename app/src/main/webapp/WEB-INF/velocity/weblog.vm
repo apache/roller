@@ -45,7 +45,6 @@ Macros defined in this file:
     #showWeblogEntryCalendar($big)
 
     #showPageMenu($addExternalPages)
-    #showEditorMenu($vertical)
 
     #showWeblogSearchForm($weblog $showCatChooser)
     #showMobileSearchForm($weblog $showCatChooser)

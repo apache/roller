@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins.comment;
 
 import java.io.BufferedReader;
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Comment plugin which turns plain text paragraph formatting into html
- * paragraph formatting using <p> and <br/> tags.
+ * paragraph formatting using <p> and <br> tags.
  */
 public class AutoformatPlugin implements WeblogEntryCommentPlugin {
 
@@ -74,7 +76,7 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
                     insidePara = true;
                 } else if(insidePara && line.trim().length() > 0) {
                     // another line in an existing paragraph
-                    buf.append("<br/>\n");
+                    buf.append("<br>\n");
                     buf.append(line);
                 } else if(insidePara && line.trim().length() < 1) {
                     // end of a paragraph

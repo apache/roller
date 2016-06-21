@@ -36,27 +36,22 @@
             <tr>
                 <td class="label"><s:text name="%{#pd.key}" /></td>
                 
-                  <%-- special condition for comment plugins --%>
-                  <s:if test="#pd.name == 'users.comments.plugins'">
-                      <td class="field"><s:checkboxlist theme="strutsoverride" list="pluginsList"
-                        name="commentPlugins" listKey="id" listValue="name" /></td>
-                  </s:if>
-
                   <%-- special condition for front page blog --%>
-                  <s:elseif test="#pd.name == 'site.frontpage.weblog.handle'">
+                  <s:if test="#pd.name == 'site.frontpage.weblog.handle'">
                       <td class="field">
                           <select name='<s:property value="#pd.name"/>'>
                                 <option value=''>
                                     <s:text name="configForm.none" />
-                                </option>                              <s:iterator var="weblog" value="weblogs">
-                                <option value='<s:property value="#weblog.handle"/>'
-                                    <s:if test='properties[#pd.name].value == #weblog.handle'>selected='true'</s:if> >
-                                    <s:property value="#weblog.name"/>
                                 </option>
-                              </s:iterator>
+                                <s:iterator var="weblog" value="weblogs">
+                                    <option value='<s:property value="#weblog.handle"/>'
+                                        <s:if test='properties[#pd.name].value == #weblog.handle'>selected='true'</s:if> >
+                                        <s:property value="#weblog.name"/>
+                                    </option>
+                                 </s:iterator>
                           </select>
                       </td>
-                  </s:elseif>
+                  </s:if>
 
                   <%-- "string" type means use a simple textbox --%>
                   <s:elseif test="#pd.type == 'string'">

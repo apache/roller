@@ -71,7 +71,7 @@ public class Utilities {
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
-    private static Pattern mLinkPattern = Pattern.compile("<a href=.*?>",
+    private static Pattern mLinkPattern = Pattern.compile("<a href=.*>",
             Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
             "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
@@ -86,7 +86,7 @@ public class Utilities {
     private static final Pattern CLOSING_BLOCKQUOTE_TAG_PATTERN = Pattern
             .compile("&lt;/blockquote&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern BR_TAG_PATTERN = Pattern.compile(
-            "&lt;br */*&gt;", Pattern.CASE_INSENSITIVE);
+            "&lt;br&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_P_TAG_PATTERN = Pattern.compile(
             "&lt;p&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern CLOSING_P_TAG_PATTERN = Pattern.compile(
@@ -110,9 +110,62 @@ public class Utilities {
     private static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile(
             "&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile(
-            "&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
+            "&lt;a href=.*&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
             Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Transforms the given String into a subset of HTML displayable on a web
+     * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
+     * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags if applicable).
+     *
+     * @param s the String to transform
+     * @return the transformed String
+     */
+    public static String transformToHTMLSubset(String s) {
+
+        if (s == null) {
+            return null;
+        }
+
+        s = replace(s, OPENING_B_TAG_PATTERN, "<b>");
+        s = replace(s, CLOSING_B_TAG_PATTERN, "</b>");
+        s = replace(s, OPENING_I_TAG_PATTERN, "<i>");
+        s = replace(s, CLOSING_I_TAG_PATTERN, "</i>");
+        s = replace(s, OPENING_BLOCKQUOTE_TAG_PATTERN, "<blockquote>");
+        s = replace(s, CLOSING_BLOCKQUOTE_TAG_PATTERN, "</blockquote>");
+        s = replace(s, BR_TAG_PATTERN, "<br>");
+        s = replace(s, OPENING_P_TAG_PATTERN, "<p>");
+        s = replace(s, CLOSING_P_TAG_PATTERN, "</p>");
+        s = replace(s, OPENING_PRE_TAG_PATTERN, "<pre>");
+        s = replace(s, CLOSING_PRE_TAG_PATTERN, "</pre>");
+        s = replace(s, OPENING_UL_TAG_PATTERN, "<ul>");
+        s = replace(s, CLOSING_UL_TAG_PATTERN, "</ul>");
+        s = replace(s, OPENING_OL_TAG_PATTERN, "<ol>");
+        s = replace(s, CLOSING_OL_TAG_PATTERN, "</ol>");
+        s = replace(s, OPENING_LI_TAG_PATTERN, "<li>");
+        s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
+        s = replace(s, QUOTE_PATTERN, "\"");
+
+        // HTTP links
+        s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
+        Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
+        while (m.find()) {
+            int start = m.start();
+            int end = m.end();
+            String link = s.substring(start, end);
+            link = "<" + link.substring(4, link.length() - 4) + ">";
+            s = s.substring(0, start) + link + s.substring(end, s.length());
+            m = OPENING_A_TAG_PATTERN.matcher(s);
+        }
+
+        // escaped angle brackets
+        s = s.replaceAll("&amp;lt;", "&lt;");
+        s = s.replaceAll("&amp;gt;", "&gt;");
+        s = s.replaceAll("&amp;#", "&#");
+
+        return s;
+    }
 
     /**
      * Remove occurrences of html, defined as any text between the characters
@@ -446,62 +499,7 @@ public class Utilities {
         return mySet;
     }
 
-    /**
-     * Transforms the given String into a subset of HTML displayable on a web
-     * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
-     * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags).
-     * 
-     * @param s
-     *            the String to transform
-     * @return the transformed String
-     */
-    public static String transformToHTMLSubset(String s) {
-
-        if (s == null) {
-            return null;
-        }
-
-        s = replace(s, OPENING_B_TAG_PATTERN, "<b>");
-        s = replace(s, CLOSING_B_TAG_PATTERN, "</b>");
-        s = replace(s, OPENING_I_TAG_PATTERN, "<i>");
-        s = replace(s, CLOSING_I_TAG_PATTERN, "</i>");
-        s = replace(s, OPENING_BLOCKQUOTE_TAG_PATTERN, "<blockquote>");
-        s = replace(s, CLOSING_BLOCKQUOTE_TAG_PATTERN, "</blockquote>");
-        s = replace(s, BR_TAG_PATTERN, "<br />");
-        s = replace(s, OPENING_P_TAG_PATTERN, "<p>");
-        s = replace(s, CLOSING_P_TAG_PATTERN, "</p>");
-        s = replace(s, OPENING_PRE_TAG_PATTERN, "<pre>");
-        s = replace(s, CLOSING_PRE_TAG_PATTERN, "</pre>");
-        s = replace(s, OPENING_UL_TAG_PATTERN, "<ul>");
-        s = replace(s, CLOSING_UL_TAG_PATTERN, "</ul>");
-        s = replace(s, OPENING_OL_TAG_PATTERN, "<ol>");
-        s = replace(s, CLOSING_OL_TAG_PATTERN, "</ol>");
-        s = replace(s, OPENING_LI_TAG_PATTERN, "<li>");
-        s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
-        s = replace(s, QUOTE_PATTERN, "\"");
-
-        // HTTP links
-        s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
-        Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = s.substring(start, end);
-            link = "<" + link.substring(4, link.length() - 4) + ">";
-            s = s.substring(0, start) + link + s.substring(end, s.length());
-            m = OPENING_A_TAG_PATTERN.matcher(s);
-        }
-
-        // escaped angle brackets
-        s = s.replaceAll("&amp;lt;", "&lt;");
-        s = s.replaceAll("&amp;gt;", "&gt;");
-        s = s.replaceAll("&amp;#", "&#");
-
-        return s;
-    }
-
-    private static String replace(String string, Pattern pattern,
-            String replacement) {
+    private static String replace(String string, Pattern pattern, String replacement) {
         Matcher m = pattern.matcher(string);
         return m.replaceAll(replacement);
     }
