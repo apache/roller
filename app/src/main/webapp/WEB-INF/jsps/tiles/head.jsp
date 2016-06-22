@@ -16,4 +16,4 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <sec:csrfMetaTags />
 
-<script src="<s:url value="/scripts/roller.js"/>"></script>
+<script src="<s:url value='/scripts/roller.js'/>"></script>
