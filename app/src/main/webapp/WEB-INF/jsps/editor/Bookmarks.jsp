@@ -54,7 +54,7 @@ var msg= {
 
         <thead>
           <tr class="rHeaderTr">
-              <th width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
+              <th width="5%"><input name="control" type="checkbox" onclick="toggleFunction(this.checked,'selectedBookmarks');"
                   title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
               <th width="25%"><s:text name="generic.name" /></th>
               <th width="25%"><s:text name="bookmarksForm.url" /></th>
