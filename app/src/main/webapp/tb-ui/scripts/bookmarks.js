@@ -67,11 +67,11 @@ $(function() {
                       type: "DELETE",
                       url: contextPath + '/tb-ui/authoring/rest/bookmark/' + idsToRemove[i],
                       success: function(data, textStatus, xhr) {
+                        angular.element('#bookmark-list').scope().ctrl.loadBookmarks();
+                        angular.element('#bookmark-list').scope().$apply();
                       }
                    });
                  }
-                 angular.element('#bookmark-list').scope().ctrl.loadBookmarks();
-                 angular.element('#bookmark-list').scope().$apply();
                }
             }
          },
@@ -113,7 +113,7 @@ $(function() {
    });
 });
 
-var bookmarkApp = angular.module('bookmarkApp', []);
+var bookmarkApp = angular.module('BookmarkApp', []);
 
 bookmarkApp.controller('BookmarkController', ['$http', function BookmarkController($http) {
     var self = this;

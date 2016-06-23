@@ -20,33 +20,18 @@
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
-
 <script>
-  $(function() {
-    $("#confirm-delete").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:310,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.delete'/>": function() {
-          document.templatesForm.action='<s:url action="templates!remove" />';
-          document.templatesForm.submit();
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-
-    $(".delete-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete').dialog('open');
-    });
-  });
+var contextPath = "${pageContext.request.contextPath}";
+var msg= {
+    deleteLabel: '<s:text name="generic.delete"/>',
+    cancelLabel: '<s:text name="generic.cancel"/>'
+};
 </script>
+
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/templates.js'/>"></script>
 
 <p class="subtitle">
    <s:text name="templates.subtitle" >
@@ -57,13 +42,15 @@
    <s:text name="templates.tip" />
 </p>
 
-<s:form id="templatesForm">
-    <sec:csrfInput/>
-    <s:hidden name="weblogId" value="%{actionWeblog.id}" />
+<input id="refreshURL" type="hidden" value="<s:url action='templates'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+<input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 
-<%-- table of pages --%>
+<div id="templates-list" ng-app="TemplatesApp" ng-controller="TemplatesController as ctrl">
+
+<fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
 <table class="rollertable">
 
+  <thead>
     <tr>
         <th width="17%"><s:text name="generic.name"/></th>
         <th width="20%"><s:text name="templates.path"/></th>
@@ -71,91 +58,109 @@
         <th width="8%"><s:text name="templates.source"/></th>
         <th width="13%"><s:text name="generic.lastModified"/></th>
         <th width="4%"><s:text name="generic.view"/></th>
-        <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
+        <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"
+          title="<s:text name="templates.selectAllLabel"/>"/></th>
     </tr>
-    <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
-    <s:iterator var="p" value="templates" status="rowstatus">
-        <s:if test="#rowstatus.odd == true">
-            <tr class="rollertable_odd">
-        </s:if>
-        <s:else>
-            <tr class="rollertable_even">
-        </s:else>
+  </thead>
+  <tbody id="tableBody">
+    <tr id="{{template.id}}" ng-repeat="tpl in ctrl.weblogTemplateData.templates" ng-class-even="'altrow'">
+        <td style="vertical-align:middle">
+            <s:url var="edit" action="templateEdit">
+                <s:param name="weblogId" value="%{actionWeblog.id}" />
+            </s:url>
+            <span ng-if="tpl.derivation != 'Default'">
+                <s:a href="%{edit}&bean.id={{tpl.id}}">{{tpl.name}}</s:a>
+            </span>
+            <span ng-if="tpl.derivation == 'Default'">
+                <s:a href="%{edit}&bean.name={{tpl.name}}">{{tpl.name}}</s:a>
+            </span>
+        </td>
 
-            <td style="vertical-align:middle">
-                <s:if test="#p.derivation.name() != 'SHARED'">
-                    <s:url var="edit" action="templateEdit">
-                        <s:param name="weblogId" value="%{actionWeblog.id}" />
-                        <s:param name="bean.id" value="#p.id" />
-                    </s:url>
-                </s:if>
-                <s:else>
-                    <s:url var="edit" action="templateEdit">
-                        <s:param name="weblogId" value="%{actionWeblog.id}" />
-                        <s:param name="bean.name" value="#p.name" />
-                    </s:url>
-                </s:else>
-                <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
-            </td>
+        <td style="vertical-align:middle">
+            <span ng-if="tpl.role.accessibleViaUrl == true">
+              {{tpl.relativePath}}
+            </span>
+        </td>
 
-            <td style="vertical-align:middle">
-                <s:if test="#p.role.accessibleViaUrl">
-                    <s:property value="#p.relativePath" />
-                </s:if>
-            </td>
+        <td style="vertical-align:middle">
+          <span ng-if="tpl.role.singleton == true || tpl.description == null || tpl.description == ''">
+            {{tpl.role.readableName}}
+          </span>
+          <span ng-if="tpl.role.singleton != true && tpl.description != null && tpl.description != ''">
+            {{tpl.role.readableName}}: {{tpl.description}}
+          </span>
+        </td>
 
-            <td style="vertical-align:middle">
-                <s:if test="#p.role.singleton || #p.description == null || #p.description == ''">
-                    <s:property value="#p.role.readableName"/>
-                </s:if>
-                <s:else>
-                    <s:property value="#p.role.readableName"/>: <s:property value="#p.description" />
-                </s:else>
-            </td>
+        <td style="vertical-align:middle">
+          {{tpl.derivation}}
+        </td>
 
-            <td style="vertical-align:middle"><s:property value="#p.derivation.readableName" /></td>
+        <td>
+          <span ng-if="tpl.lastModified != null">
+            {{tpl.lastModified}}
+          </span>
+        </td>
 
-            <td>
-                <s:if test="#p.lastModified != null">
-                    <s:set var="tempTime" value="#p.lastModified"/>
-                    <javatime:format value="${tempTime}" pattern="${dateFormat}"/>
-                </s:if>
-            </td>
+        <td align="center" style="vertical-align:middle">
+            <span ng-if="tpl.role.accessibleViaUrl">
+                <a target="_blank" href="<s:property value='actionWeblog.absoluteURL'/>page/{{tpl.relativePath}}">
+                  <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"/>
+                </a>
+            </span>
+        </td>
 
-            <td align="center" style="vertical-align:middle">
-                <s:if test="#p.role.accessibleViaUrl">
-                    <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"
-                    onclick="launchPage('<s:property value="actionWeblog.absoluteURL"/>page/<s:property value="#p.relativePath" />')"/>
-                </s:if>
-            </td>
-
-            <td class="center" style="vertical-align:middle">
-                <s:if test="#p.derivation.name() != 'SHARED'">
-                    <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" />
-                </s:if>
-            </td>
-        </tr>
-    </s:iterator>
+        <td class="center" style="vertical-align:middle">
+          <span ng-if="tpl.derivation != 'Default'">
+              <input type="checkbox" name="idSelections" value="{{tpl.id}}" />
+          </span>
+        </td>
+    </tr>
+  </tbody>
 </table>
 
+<div class="control">
+  <s:if test="!templates.isEmpty">
+ 		<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
+  </s:if>
+
+  <span style="float:right">
+      <s:form>
+        <sec:csrfInput/>
+        <s:hidden name="weblogId" value="%{actionWeblog.id}" />
+        <s:submit id="switch-theme-button" action="themeEdit" namespace="/tb-ui/authoring" value="%{getText('templates.switchTheme')}" />
+      </s:form>
+  </span>
+</div>
+
+<table cellpadding="0" cellspacing="6">
+    <caption><s:text name="templates.addNewPage" /></caption>
+    <tr>
+        <td><s:text name="generic.name"/></td>
+        <td><s:textfield id="newTmplName" name="newTmplName" /></td>
+    </tr>
+    <tr>
+        <td><s:text name="templates.role"/></td>
+        <td>
+            <select ng-model="selectedRole" name="newTmplAction" size="1"
+              ng-init="changedValue(selectedRole)" ng-change="changedValue(selectedRole)">
+              <option ng-repeat="option in ctrl.weblogTemplateData.availableTemplateRoles" value="{{option.name}}">{{option.readableName}}</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" class="field">
+            <p>{{ description }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><input id="add-link" type="button" value="<s:text name='templates.add'/>"></td>
+    </tr>
+</table>
+
+</div>
+
 <br/>
-
-<s:if test="!templates.isEmpty">
-	<div class="control">
-		<s:submit class="delete-link" value="%{getText('templates.deleteselected')}" />
-
-    <span style="float:right">
-        <s:submit id="switch-theme-button" action="themeEdit" value="%{getText('templates.switchTheme')}" />
-    </span>
-	</div>
-</s:if>
-
-<script>
-function launchPage(url) {
-    window.open(url, '_blank');
-}
-</script>
-</s:form>
 
 <div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="templateRemoves.youSure" />

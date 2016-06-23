@@ -44,7 +44,7 @@
 
 <table class="rollertable">
 <thead>
-   <tr class="rHeaderTr">
+   <tr>
         <th style="width:15%"><s:text name="planets.column.title"/></th>
         <th style="width:15%"><s:text name="planets.column.handle"/></th>
         <th style="width:49%"><s:text name="generic.description"/></th>

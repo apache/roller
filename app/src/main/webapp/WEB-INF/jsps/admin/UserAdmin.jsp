@@ -135,7 +135,7 @@ var contextPath = "${pageContext.request.contextPath}";
         <p><s:text name="userAdmin.userMemberOf"/></p>
         <table class="rollertable">
           <thead>
-            <tr class="rHeaderTr">
+            <tr>
                 <th style="width:30%"><s:text name="generic.weblog" /></th>
                 <th style="width:10%"><s:text name="userAdmin.pending" /></th>
                 <th style="width:10%"><s:text name="generic.role" /></th>

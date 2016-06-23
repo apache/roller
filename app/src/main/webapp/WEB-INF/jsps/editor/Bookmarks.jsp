@@ -48,12 +48,12 @@ var msg= {
 <input id="refreshURL" type="hidden" value="<s:url action='bookmarks'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 <input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 
-<div id="bookmark-list" ng-app="bookmarkApp" ng-controller="BookmarkController as ctrl">
+<div id="bookmark-list" ng-app="BookmarkApp" ng-controller="BookmarkController as ctrl">
 
     <table class="rollertable">
 
         <thead>
-          <tr class="rHeaderTr">
+          <tr>
               <th width="5%"><input name="control" type="checkbox" onclick="toggleFunction(this.checked,'selectedBookmarks');"
                   title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
               <th width="25%"><s:text name="generic.name" /></th>

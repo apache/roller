@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -76,7 +77,11 @@ public class WeblogTemplate implements Template {
     private String  contentsMobile = null;
 
     // associations
+    @JsonIgnore
     private Weblog weblog = null;
+
+    @JsonIgnore
+    private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
     public WeblogTemplate() {}
 
@@ -133,8 +138,6 @@ public class WeblogTemplate implements Template {
     public void setLastModified(LocalDateTime newtime) {
         lastModified = newtime;
     }
-
-    private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="weblogid", nullable=false)

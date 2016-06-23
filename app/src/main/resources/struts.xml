@@ -332,8 +332,8 @@
 
         <action name="templates!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Templates">
-            <result name="list" type="tiles">.Templates</result>
-            <allowed-methods>add,newTheme,remove</allowed-methods>
+            <result name="success" type="tiles">.Templates</result>
+            <allowed-methods>add,newTheme</allowed-methods>
         </action>
 
         <action name="templateEdit!*" method="{1}"

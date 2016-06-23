@@ -192,11 +192,11 @@ public class UserController {
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/users", method = RequestMethod.PUT)
     public ResponseEntity addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
-        User user = new User();
         ValidationError maybeError = advancedValidate(newData, true);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
         }
+        User user = new User();
         user.setId(WebloggerCommon.generateUUID());
         user.setUserName(newData.getUserName());
         user.setDateCreated(LocalDateTime.now());
