@@ -51,7 +51,7 @@ $(function() {
      if (newTemplateName.length > 0 && newTemplateAction.length > 0) {
         $.ajax({
            type: "PUT",
-           url: contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() : '/templates'),
+           url: contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates',
            data: JSON.stringify(newData),
            contentType: "application/json; charset=utf-8",
            processData: "false",

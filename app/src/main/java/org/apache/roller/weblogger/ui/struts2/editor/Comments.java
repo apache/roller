@@ -21,10 +21,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -36,7 +33,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.business.MailManager;

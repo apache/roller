@@ -43,7 +43,7 @@ var msg= {
    <s:text name="templates.tip" />
 </p>
 
-<div id="errorMessageDiv" style="color:red;display:none">
+<div id="errorMessageDiv" class="errors" style="display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
   <b>{{:errorMessage}}</b>
   <ul>
@@ -137,9 +137,7 @@ var msg= {
 </table>
 
 <div class="control">
-  <s:if test="!templates.isEmpty">
- 		<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
-  </s:if>
+	<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
 
   <span style="float:right">
       <s:form>
@@ -149,7 +147,7 @@ var msg= {
       </s:form>
   </span>
 </div>
-
+<br>  
 <table cellpadding="0" cellspacing="6">
     <caption><s:text name="templates.addNewPage" /></caption>
     <tr>
