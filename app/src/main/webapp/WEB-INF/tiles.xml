@@ -33,6 +33,7 @@
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+        <put-attribute name="angularString" value="" />
     </definition>
 
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
@@ -189,8 +190,7 @@
 
     <definition name=".Templates" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Templates.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/TemplatesSidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".TemplateEdit" extends=".tiles-tabbedpage"  >

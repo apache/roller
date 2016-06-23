@@ -50,7 +50,7 @@
 
 <table class="rollertable">
 <thead>
-   <tr class="rHeaderTr">
+   <tr>
         <th style="width:20%"><s:text name="generic.name"/></th>
         <th style="width:20%"><s:text name="cacheInfo.startTime"/></th>
         <th style="width:10%"><s:text name="cacheInfo.puts"/></th>

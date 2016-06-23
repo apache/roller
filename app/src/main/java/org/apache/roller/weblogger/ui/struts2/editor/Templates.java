@@ -18,18 +18,19 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -38,16 +39,26 @@ import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -59,31 +70,34 @@ public class Templates extends UIAction {
 
 	private static Logger log = LoggerFactory.getLogger(Templates.class);
 
-	// list of templates to display
-	private List<Template> templates = Collections.emptyList();
-
-	// list of template action types user is allowed to create
-	private List<Pair<String, String>> availableRoles;
+	private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;
 	private ComponentType newTmplAction = null;
 
-	// List of selected templates (to remove)
-	private String[] idSelections = null;
-
+	@Autowired
 	private JPAPersistenceStrategy persistenceStrategy = null;
 
 	public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
 		this.persistenceStrategy = persistenceStrategy;
 	}
 
-    private WeblogManager weblogManager;
+	@Autowired
+	private UserManager userManager;
+
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
+
+    @Autowired
+	private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
+	@Autowired
 	private ThemeManager themeManager;
 
 	public void setThemeManager(ThemeManager themeManager) {
@@ -94,53 +108,134 @@ public class Templates extends UIAction {
 		this.actionName = "templates";
 		this.desiredMenu = "editor";
 		this.pageTitle = "templates.title";
+		this.requiredGlobalRole = GlobalRole.BLOGGER;
 	}
 
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return GlobalRole.BLOGGER;
-    }
+	@RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
+	public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
+												 HttpServletResponse response) {
 
-	public String execute() {
+		Weblog weblog = weblogManager.getWeblog(id);
+		if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
-		// get current list of templates defined for the blog
-		WeblogTheme theme = new WeblogTheme(weblogManager, getActionWeblog(),
-				themeManager.getSharedTheme(getActionWeblog().getTheme()));
+			WeblogTemplateData wtd = new WeblogTemplateData();
 
-		List<? extends Template> raw = theme.getTemplates();
-		List<Template> pages = new ArrayList<>();
-		pages.addAll(raw);
-		setTemplates(pages);
+			WeblogTheme theme = new WeblogTheme(weblogManager, weblog,
+					themeManager.getSharedTheme(weblog.getTheme()));
 
-		// build list of action types that may be added
-		availableRoles = new ArrayList<>();
-		for (ComponentType type : ComponentType.values()) {
-			availableRoles.add(Pair.of(type.name(), type.getReadableName()));
+			List<? extends Template> raw = theme.getTemplates();
+			List<Template> pages = new ArrayList<>();
+			pages.addAll(raw);
+			wtd.templates = pages;
+
+			// build list of action types that may be added
+			List<ComponentType> availableRoles = new ArrayList<>(Arrays.asList(ComponentType.values()));
+
+			// remove from above list any already existing for the theme
+			pages.stream().filter(p -> p.getRole().isSingleton()).forEach(p ->
+				availableRoles.removeIf(r -> r.name().equals(p.getRole().name())));
+
+			wtd.availableTemplateRoles = availableRoles;
+			return wtd;
+		} else {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+	}
+
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public class WeblogTemplateData {
+		List<Template> templates;
+		List<ComponentType> availableTemplateRoles;
+
+		public List<Template> getTemplates() {
+			return templates;
 		}
 
-		// remove from above list any already existing for the theme
-		for (Template tmpPage : getTemplates()) {
-			if (tmpPage.getRole().isSingleton()) {
-				availableRoles.removeIf(p -> p.getLeft().equals(tmpPage.getRole().name()));
+		public void setTemplates(List<Template> templates) {
+			this.templates = templates;
+		}
+
+		public List<ComponentType> getAvailableTemplateRoles() {
+			return availableTemplateRoles;
+		}
+
+		public void setAvailableTemplateRoles(List<ComponentType> availableTemplateRoles) {
+			this.availableTemplateRoles = availableTemplateRoles;
+		}
+	}
+
+	@RequestMapping(value = "/tb-ui/authoring/rest/template/{id}", method = RequestMethod.DELETE)
+	public void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response)
+			throws ServletException {
+
+		try {
+			WeblogTemplate template = weblogManager.getTemplate(id);
+			if (template != null) {
+				if (userManager.checkWeblogRole(p.getName(), template.getWeblog().getHandle(), WeblogRole.OWNER)) {
+					weblogManager.removeTemplate(template);
+					persistenceStrategy.flush();
+					response.setStatus(HttpServletResponse.SC_OK);
+				} else {
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
+		} catch (Exception e) {
+			log.error("Error deleting template with ID: ", id, e);
+			throw new ServletException(e.getMessage());
 		}
-		setAvailableRoles(availableRoles);
-		return LIST;
 	}
 
-	public String newTheme() {
-		SharedTheme theme = themeManager.getSharedTheme(getActionWeblog().getTheme());
-		addMessage("themeEditor.setTheme.success", theme.getName());
-		return execute();
+	@RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", method = RequestMethod.PUT)
+	public ResponseEntity addTemplate(@PathVariable String weblogId, @RequestBody WeblogTemplate incomingTemplateData,
+							Principal p, HttpServletResponse response)
+			throws ServletException {
+		try {
+			Weblog weblog = weblogManager.getWeblog(weblogId);
+			if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+				ValidationError maybeError = advancedValidate(incomingTemplateData);
+				if (maybeError != null) {
+					return ResponseEntity.badRequest().body(maybeError);
+				}
+
+				WeblogTemplate newTemplate = new WeblogTemplate();
+				newTemplate.setId(WebloggerCommon.generateUUID());
+				newTemplate.setWeblog(weblog);
+				newTemplate.setRole(incomingTemplateData.getRole());
+				newTemplate.setName(incomingTemplateData.getName());
+				newTemplate.setLastModified(LocalDateTime.now());
+
+				// save the new Template
+				weblogManager.saveTemplate(newTemplate);
+
+				// Create weblog template codes for available types.
+				WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
+						newTemplate, RenditionType.NORMAL);
+				if (newTmplAction != ComponentType.STYLESHEET && newTmplAction != ComponentType.JAVASCRIPT) {
+					standardRendition.setRendition(getText("templateEdit.newTemplateContent"));
+				}
+				standardRendition.setParser(Parser.VELOCITY);
+				weblogManager.saveTemplateRendition(standardRendition);
+
+				// flush results to db
+				WebloggerFactory.flush();
+
+				return ResponseEntity.ok(newTemplate);
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			throw new ServletException(e.getMessage());
+		}
 	}
 
 	/**
 	 * Save a new template.
 	 */
 	public String add() {
-
-		// validation
-		myValidate();
 
 		if (!hasActionErrors()) {
 			WeblogTemplate newTemplate = new WeblogTemplate();
@@ -168,74 +263,34 @@ public class Templates extends UIAction {
 			// reset form fields
 			setNewTmplName(null);
 			setNewTmplAction(null);
-        }
+		}
 
-		return execute();
+		return SUCCESS;
 	}
 
-	/**
-	 * Remove Selected templates
-	 */
-	public String remove() {
-		if (getIdSelections() != null) {
-			WeblogTemplate template;
+	private ValidationError advancedValidate(WeblogTemplate data) {
+		BindException be = new BindException(data, "new data object");
 
-			try {
-				for (String id : idSelections) {
-					template = weblogManager.getTemplate(id);
-					if (template != null) {
-						weblogManager.removeTemplate(template);
-					}
-				}
+		WeblogTemplate template = weblogManager.getTemplateByName(data.getWeblog(), data.getName());
+		if (template != null && !template.getId().equals(data.getId())) {
+			be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.nameAlreadyExists")));
+		}
 
-                persistenceStrategy.flush();
-
-			} catch (Exception e) {
-				log.error("Error deleting templates for weblog '{}'", getActionWeblog().getHandle(), e);
-				addError("error.unexpected");
+		if (data.getRole().isSingleton()) {
+			template = weblogManager.getTemplateByAction(data.getWeblog(), data.getRole());
+			if (template != null && !template.getId().equals(data.getId())) {
+				be.addError(new ObjectError("WeblogTemplate",
+						bundle.getString("templates.error.singletonActionAlreadyExists")));
 			}
 		}
-        return execute();
+
+		return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
 	}
 
-	// validation when adding a new template
-	private void myValidate() {
-
-		// make sure name is non-null and within proper size
-		if (StringUtils.isEmpty(getNewTmplName())) {
-			addError("templates.error.nameNull");
-		} else if (getNewTmplName().length() > WebloggerCommon.TEXTWIDTH_255) {
-			addError("templates.error.nameSize");
-		}
-
-		// make sure action is a valid
-		if (getNewTmplAction() == null) {
-			addError("templates.error.actionNull");
-		}
-
-		// check if template by that name already exists
-		WeblogTheme testTheme = new WeblogTheme(weblogManager, getActionWeblog(),
-				themeManager.getSharedTheme(getActionWeblog().getTheme()));
-
-		if (testTheme.getTemplateByName(getNewTmplName()) != null) {
-			addError("templates.error.nameAlreadyExists", getNewTmplName());
-		}
-	}
-
-	public List<Template> getTemplates() {
-		return templates;
-	}
-
-	public void setTemplates(List<Template> templates) {
-		this.templates = templates;
-	}
-
-	public List<Pair<String, String>> getAvailableRoles() {
-		return availableRoles;
-	}
-
-	public void setAvailableRoles(List<Pair<String, String>> availableRoles) {
-		this.availableRoles = availableRoles;
+	public String newTheme() {
+		SharedTheme theme = themeManager.getSharedTheme(getActionWeblog().getTheme());
+		addMessage("themeEditor.setTheme.success", theme.getName());
+		return SUCCESS;
 	}
 
 	public String getNewTmplName() {
@@ -252,27 +307,6 @@ public class Templates extends UIAction {
 
 	public void setNewTmplAction(ComponentType newTmplAction) {
 		this.newTmplAction = newTmplAction;
-	}
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/templateDescriptions/{role}", method = RequestMethod.GET)
-    public String getTemplateComponentTypeDescription(@PathVariable String role) {
-        ComponentType desiredType = ComponentType.valueOf(role);
-        ResourceBundle rb = ResourceBundle.getBundle("ApplicationResources");
-        return rb.getString(desiredType.getDescriptionProperty());
-    }
-
-	/**
-	 * Select check boxes for deleting records
-	 */
-	public String[] getIdSelections() {
-		return idSelections;
-	}
-
-	/**
-	 * Select check boxes for deleting records
-	 */
-	public void setIdSelections(String[] idSelections) {
-		this.idSelections = idSelections;
 	}
 
 }

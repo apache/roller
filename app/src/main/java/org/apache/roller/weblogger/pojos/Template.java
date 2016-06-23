@@ -20,6 +20,9 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
@@ -35,6 +38,7 @@ public interface Template {
 
     @XmlType
     @XmlEnum
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum ComponentType {
         @XmlEnumValue("weblog") WEBLOG("Weblog", "text/html", true, "template.weblog.description"),
         @XmlEnumValue("permalink") PERMALINK("Permalink", "text/html", true, "template.permalink.description"),
@@ -83,6 +87,9 @@ public interface Template {
             return descriptionProperty;
         }
 
+        // so JSON will serialize name
+        public String getName() { return name(); }
+
     }
 
     /**
@@ -104,6 +111,7 @@ public interface Template {
             this.readableName = readableName;
         }
 
+        @JsonValue
         public String getReadableName() {
             return readableName;
         }

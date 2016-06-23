@@ -51,7 +51,7 @@ var msg= {
 
 <table class="rollertable">
   <thead>
-    <tr class="rHeaderTr">
+    <tr>
         <th width="20%"><s:text name="generic.name" /></th>
         <th width="50%"><s:text name="pingTarget.pingUrl" /></th>
         <th width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>

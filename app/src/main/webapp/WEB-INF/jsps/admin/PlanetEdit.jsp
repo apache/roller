@@ -83,7 +83,7 @@ var msg= {
 
 <table class="rollertable">
   <thead>
-    <tr class="rHeaderTr">
+    <tr>
         <th style="width:30%"><s:text name="planetSubscriptions.column.title" /></th>
         <th style="width:60%"><s:text name="planetSubscriptions.column.feedUrl" /></th>
         <th width="width:10%"><s:text name="generic.delete" /></th>

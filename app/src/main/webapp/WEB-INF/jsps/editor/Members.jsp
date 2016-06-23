@@ -38,7 +38,7 @@
     </div>
 
     <table class="rollertable">
-        <tr class="rHeaderTr">
+        <tr>
            <th width="20%"><s:text name="memberPermissions.userName" /></th>
            <th width="20%"><s:text name="memberPermissions.administrator" /></th>
            <th width="20%"><s:text name="memberPermissions.author" /></th>
