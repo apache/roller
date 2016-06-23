@@ -1,4 +1,7 @@
 $(function() {
+  $.templates({
+    errorMessageTemplate: '#errorMessageTemplate'
+  });
   $("#confirm-delete").dialog({
     autoOpen: false,
     resizable: true,
@@ -37,10 +40,37 @@ $(function() {
   });
   $("#add-link").click(function(e) {
      e.preventDefault();
+     $('#errorMessageDiv').hide();
+     $('#successMessageDiv').hide();
+     var newTemplateName = $('#newTmplName').val().trim();
+     var newTemplateAction = $('#newTemplAction').val().trim();
      var newData = {
-
+       "name" : newTemplateName,
+       "role" : newTemplateAction
      };
-
+     if (newTemplateName.length > 0 && newTemplateAction.length > 0) {
+        $.ajax({
+           type: "PUT",
+           url: contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates',
+           data: JSON.stringify(newData),
+           contentType: "application/json; charset=utf-8",
+           processData: "false",
+           success: function(data, textStatus, xhr) {
+             $('#successMessageDiv').show();
+             angular.element('#templates-list').scope().ctrl.loadTemplateData();
+             angular.element('#templates-list').scope().$apply();
+           },
+           error: function(xhr, status, errorThrown) {
+              if (xhr.status in this.statusCode)
+                 return;
+                 if (xhr.status == 400) {
+                    var html = $.render.errorMessageTemplate(xhr.responseJSON);
+                    $('#errorMessageDiv').html(html);
+                    $('#errorMessageDiv').show();
+                 }
+           }
+        });
+     }
   });
   $("#delete-link").click(function(e) {
     e.preventDefault();

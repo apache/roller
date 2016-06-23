@@ -419,4 +419,8 @@ public class UIAction extends ActionSupport implements Preparable {
         return StringEscapeUtils.escapeHtml4(s);
     }
 
+    public String newTheme() {
+        addMessage("themeEditor.setTheme.success", getActionWeblog().getTheme());
+        return SUCCESS;
+    }
 }

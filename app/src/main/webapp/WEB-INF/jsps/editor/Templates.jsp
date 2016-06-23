@@ -20,6 +20,7 @@
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script>
@@ -41,6 +42,23 @@ var msg= {
 <p class="pagetip">
    <s:text name="templates.tip" />
 </p>
+
+<div id="errorMessageDiv" class="errors" style="display:none">
+  <script id="errorMessageTemplate" type="text/x-jsrender">
+  <b>{{:errorMessage}}</b>
+  <ul>
+     {{for errors}}
+     <li>{{>#data}}</li>
+     {{/for}}
+  </ul>
+  </script>
+</div>
+
+<div id="successMessageDiv" class="messages" style="display:none">
+  <s:if test="weblogId != null">
+    <p><s:text name="generic.changes.saved"/></p>
+  </s:if>
+</div>
 
 <input id="refreshURL" type="hidden" value="<s:url action='templates'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 <input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
@@ -119,9 +137,7 @@ var msg= {
 </table>
 
 <div class="control">
-  <s:if test="!templates.isEmpty">
- 		<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
-  </s:if>
+	<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
 
   <span style="float:right">
       <s:form>
@@ -131,7 +147,7 @@ var msg= {
       </s:form>
   </span>
 </div>
-
+<br>  
 <table cellpadding="0" cellspacing="6">
     <caption><s:text name="templates.addNewPage" /></caption>
     <tr>
@@ -141,7 +157,7 @@ var msg= {
     <tr>
         <td><s:text name="templates.role"/></td>
         <td>
-            <select ng-model="selectedRole" name="newTmplAction" size="1"
+            <select id="newTemplAction" ng-model="selectedRole" name="newTmplAction" size="1"
               ng-init="changedValue(selectedRole)" ng-change="changedValue(selectedRole)">
               <option ng-repeat="option in ctrl.weblogTemplateData.availableTemplateRoles" value="{{option.name}}">{{option.readableName}}</option>
             </select>
