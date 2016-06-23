@@ -152,6 +152,7 @@
             <result name="upgrade_database" type="tiles">.UpgradeDatabase</result>
             <result name="bootstrap" type="tiles">.Bootstrap</result>
             <result name="success" type="chain">home</result>
+            <allowed-methods>bootstrap,create</allowed-methods>
         </action>
 
     </package>
