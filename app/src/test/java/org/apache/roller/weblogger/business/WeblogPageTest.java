@@ -20,7 +20,7 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
@@ -59,7 +59,7 @@ public class WeblogPageTest extends WebloggerTest {
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setRelativePath("testTemp");
-        testPage.setLastModified(LocalDateTime.now());
+        testPage.setLastModified(Instant.now());
         testPage.setWeblog(getManagedWeblog(testWeblog));
     }
     

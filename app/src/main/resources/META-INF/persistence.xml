@@ -25,5 +25,6 @@
     <class>org.apache.roller.weblogger.pojos.WeblogTemplate</class>
     <class>org.apache.roller.weblogger.pojos.WeblogTemplateRendition</class>
     <class>org.apache.roller.weblogger.pojos.LocalDateTimeConverter</class>
+    <class>org.apache.roller.weblogger.pojos.InstantConverter</class>
   </persistence-unit>
 </persistence>

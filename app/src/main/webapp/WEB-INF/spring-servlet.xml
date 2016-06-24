@@ -19,6 +19,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:context="http://www.springframework.org/schema/context"
              xmlns:mvc="http://www.springframework.org/schema/mvc"
+             xmlns:util="http://www.springframework.org/schema/util"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
           http://www.springframework.org/schema/context
@@ -27,7 +28,11 @@
           http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
 
     <!-- needed for @RestController, @RequestMapping and other annotations to take effect -->
-    <mvc:annotation-driven validator="beanValidator"/>
+    <mvc:annotation-driven validator="beanValidator">
+        <mvc:message-converters>
+            <beans:ref bean="jsonConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <mvc:interceptors>
         <!-- Spring Mobile: http://docs.spring.io/spring-mobile/docs/current/reference/html/device.html -->

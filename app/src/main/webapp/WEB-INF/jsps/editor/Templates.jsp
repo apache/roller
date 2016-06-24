@@ -115,12 +115,12 @@ var msg= {
 
         <td>
           <span ng-if="tpl.lastModified != null">
-            {{tpl.lastModified}}
+            {{tpl.lastModified | date:'short' }}
           </span>
         </td>
 
         <td align="center" style="vertical-align:middle">
-            <span ng-if="tpl.role.accessibleViaUrl">
+            <span ng-if="tpl.role.accessibleViaUrl && tpl.relativePath != null && tpl.relativePath != ''">
                 <a target="_blank" href="<s:property value='actionWeblog.absoluteURL'/>page/{{tpl.relativePath}}">
                   <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"/>
                 </a>
@@ -147,7 +147,7 @@ var msg= {
       </s:form>
   </span>
 </div>
-<br>  
+<br>
 <table cellpadding="0" cellspacing="6">
     <caption><s:text name="templates.addNewPage" /></caption>
     <tr>
