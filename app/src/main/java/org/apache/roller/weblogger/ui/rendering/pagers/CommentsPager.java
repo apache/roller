@@ -20,7 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -52,7 +54,7 @@ public class CommentsPager extends AbstractPager {
     private boolean more = false;
     
     // most recent update time of current set of entries
-    private LocalDateTime lastUpdated = null;
+    private Instant lastUpdated = null;
 
     private WeblogEntryManager weblogEntryManager;
 
@@ -96,7 +98,9 @@ public class CommentsPager extends AbstractPager {
                 CommentSearchCriteria csc = new CommentSearchCriteria();
                 csc.setWeblog(weblog);
                 csc.setCategoryName(categoryName);
-                csc.setStartDate(startDate);
+                if (startDate != null) {
+                    csc.setStartDate(startDate.atZone(ZoneId.systemDefault()).toInstant());
+                }
                 csc.setStatus(ApprovalStatus.APPROVED);
                 csc.setOffset(offset);
                 csc.setMaxResults(length + 1);
@@ -129,15 +133,15 @@ public class CommentsPager extends AbstractPager {
     }
     
     /** Get last updated time from items in pager */
-    public LocalDateTime getLastUpdated() {
+    public Instant getLastUpdated() {
         if (lastUpdated == null) {
-            // feeds are sorted by posttime, so use that
+            // feeds are sorted by post time, so use that
             List<WeblogEntryComment> items = getItems();
             if (items != null && items.size() > 0) {
                 lastUpdated = items.get(0).getPostTime();
             } else {
                 // no update so we assume it's brand new
-                lastUpdated = LocalDateTime.now();
+                lastUpdated = Instant.now();
             }
         }
         return lastUpdated;

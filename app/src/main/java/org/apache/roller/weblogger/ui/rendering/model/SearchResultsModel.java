@@ -21,8 +21,9 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -172,7 +173,7 @@ public class SearchResultsModel extends PageModel {
 		WeblogEntry entry;
 		Document doc;
 		String handle;
-		LocalDateTime now = LocalDateTime.now();
+		Instant now = Instant.now();
 		for (int i = offset; i < offset + limit; i++) {
 			try {
 				doc = search.getSearcher().doc(hits[i].doc);
@@ -203,7 +204,7 @@ public class SearchResultsModel extends PageModel {
 	}
 
 	private void addEntryToResults(WeblogEntry entry) {
-		LocalDate pubDate = entry.getPubTime().toLocalDate();
+		LocalDate pubDate = entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
 
 		// ensure we do not get duplicates from Lucene by using a set collection.
 		TreeSet<WeblogEntry> set = this.results.get(pubDate);

@@ -20,7 +20,8 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.roller.weblogger.business.PlanetManager;
@@ -80,9 +81,9 @@ public class PlanetEntriesPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
 
-            LocalDateTime startDate = null;
+            Instant startDate = null;
             if (sinceDays > 0) {
-                startDate = LocalDateTime.now().minusDays(sinceDays);
+                startDate = Instant.now().minus(sinceDays, ChronoUnit.DAYS);
             }
 
             List<SubscriptionEntry> results = new ArrayList<>();

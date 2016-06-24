@@ -27,11 +27,10 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-
 
 /**
  * HTML generator for big calendar that displays blog entry titles for each day.
@@ -43,8 +42,7 @@ public class BigWeblogCalendar extends WeblogCalendar {
 
     public BigWeblogCalendar(WeblogPageRequest pRequest, WeblogEntryManager wem, URLStrategy urlStrategy) {
         super(wem, urlStrategy, pRequest);
-        TimeZone tz = weblog.getTimeZoneInstance();
-        singleDayFormat = DateTimeFormatter.ofPattern("dd").withZone(tz.toZoneId());
+        singleDayFormat = DateTimeFormatter.ofPattern("dd").withZone(weblog.getZoneId());
         mClassSuffix = "Big";
     }
 
@@ -61,7 +59,7 @@ public class BigWeblogCalendar extends WeblogCalendar {
         String dateString;
         List<WeblogEntry> entries = monthMap.get(day);
         if ( entries != null ) {
-            dateString = entries.get(0).getPubTime().toLocalDate().format(eightCharDateFormat);
+            dateString = entries.get(0).getPubTime().atZone(ZoneId.systemDefault()).toLocalDate().format(eightCharDateFormat);
 
             // append 8 char date string on end of selfurl
             String dayUrl = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
@@ -105,7 +103,7 @@ public class BigWeblogCalendar extends WeblogCalendar {
         List<WeblogEntry> entries = monthMap.get(day);
         if (entries != null) {
             WeblogEntry entry = entries.get(0);
-            return entry.getPubTime().toLocalDate().format(eightCharDateFormat);
+            return entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate().format(eightCharDateFormat);
         }
         return null;
     }

@@ -1,7 +1,11 @@
 $(function() {
   var data = {};
+  function formatDateFunction(dateValue) {
+    return (dateValue == null) ? null : new Date(dateValue).toLocaleString();
+  }
+  var myHelpers = { formatDate : formatDateFunction };
   $.templates({
-    formTemplate: '#formTemplate',
+    formTemplate: { markup: '#formTemplate', helpers: myHelpers },
     tableTemplate: '#tableTemplate',
     errorMessageTemplate: '#errorMessageTemplate'
   });

@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -62,9 +62,9 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
     private String permalink;
     private String author;
     private String content = "";
-    private LocalDateTime published;
-    private LocalDateTime updated;
-    private LocalDateTime uploaded;
+    private Instant published;
+    private Instant updated;
+    private Instant uploaded;
     private String categoriesString;
     
     // associations
@@ -128,29 +128,29 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
     }
 
     @Column(name="published", nullable=false)
-    public LocalDateTime getPubTime() {
+    public Instant getPubTime() {
         return published;
     }
     
-    public void setPubTime(LocalDateTime published) {
+    public void setPubTime(Instant published) {
         this.published = published;
     }
 
     @Column(name="updated")
-    public LocalDateTime getUpdateTime() {
+    public Instant getUpdateTime() {
         return updated;
     }
     
-    public void setUpdateTime(LocalDateTime updated) {
+    public void setUpdateTime(Instant updated) {
         this.updated = updated;
     }
 
     @Basic(optional=false)
-    public LocalDateTime getUploaded() {
+    public Instant getUploaded() {
         return uploaded;
     }
 
-    public void setUploaded(LocalDateTime uploaded) {
+    public void setUploaded(Instant uploaded) {
         this.uploaded = uploaded;
     }
 

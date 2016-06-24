@@ -21,9 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -118,10 +116,10 @@ public class PlanetFeedProcessor {
         }
 
         // figure planet last modified date
-        LocalDateTime lastModified = planet.getLastUpdated();
+        Instant lastModified = planet.getLastUpdated();
 
         // Respond with 304 Not Modified if it is not modified.
-        if (Utilities.respondIfNotModified(request, response, Timestamp.valueOf(lastModified).getTime(), deviceType)) {
+        if (Utilities.respondIfNotModified(request, response, lastModified.toEpochMilli(), deviceType)) {
             return;
         }
 
@@ -140,7 +138,7 @@ public class PlanetFeedProcessor {
         }
 
         // set last-modified date
-        Utilities.setLastModifiedHeader(response, Timestamp.valueOf(lastModified).getTime(), deviceType);
+        Utilities.setLastModifiedHeader(response, lastModified.toEpochMilli(), deviceType);
 
         int page = 1;
         if (request.getParameter("page") != null) {

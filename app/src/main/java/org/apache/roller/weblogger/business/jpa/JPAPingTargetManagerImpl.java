@@ -25,8 +25,9 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -237,7 +238,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                     " To see all logged pings, make sure logging at DEBUG for this class, or INFO to see just failures.");
         }
 
-        LocalDateTime startOfDay = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        Instant startOfDay = LocalDate.now().withDayOfMonth(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         Boolean hadDateUpdate = false;
         List<PingTarget> targets = getEnabledPingTargets();
 

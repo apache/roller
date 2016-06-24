@@ -133,10 +133,10 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
               <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
               <td class="field">
                   <s:if test="authenticatedUser == null">
-                    <input required type="password" size="20" data-link="password" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input required type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
                   </s:if>
                   <s:else>
-                    <input type="password" size="20" data-link="password" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
                   </s:else>
               </td>
               <td class="description"><s:text name="%{#passwordTipKey}" /></td>

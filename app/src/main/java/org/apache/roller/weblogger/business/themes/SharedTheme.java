@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class SharedTheme {
     // the preview image path is relative from the shared theme's base folder
     private String previewImagePath = null;
     private Boolean dualTheme = false;
-    private LocalDateTime lastModified = null;
+    private Instant lastModified = null;
     private boolean enabled = true;
 
     // JAXB loads here; ThemeManagerImpl moves them to the three maps.
@@ -147,11 +147,11 @@ public class SharedTheme {
         this.themeDir = themeDir;
     }
 
-    public LocalDateTime getLastModified() {
+    public Instant getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(LocalDateTime lastModified) {
+    public void setLastModified(Instant lastModified) {
         this.lastModified = lastModified;
     }
 

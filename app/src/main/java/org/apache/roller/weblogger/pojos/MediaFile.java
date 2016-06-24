@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Comparator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -66,8 +66,8 @@ public class MediaFile {
     private int thumbnailHeight = -1;
     private int thumbnailWidth = -1;
     private String contentType;
-    private LocalDateTime dateUploaded = LocalDateTime.now();
-    private LocalDateTime lastUpdated = LocalDateTime.now();
+    private Instant dateUploaded = Instant.now();
+    private Instant lastUpdated = Instant.now();
 
     // Using String creatorId instead of User creator; see comments in Weblog class for info
     private String  creatorId        = null;
@@ -157,20 +157,20 @@ public class MediaFile {
     }
 
     @Column(name="date_uploaded", nullable=false)
-    public LocalDateTime getDateUploaded() {
+    public Instant getDateUploaded() {
         return dateUploaded;
     }
 
-    public void setDateUploaded(LocalDateTime dateUploaded) {
+    public void setDateUploaded(Instant dateUploaded) {
         this.dateUploaded = dateUploaded;
     }
 
     @Column(name="last_updated")
-    public LocalDateTime getLastUpdated() {
+    public Instant getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(LocalDateTime time) {
+    public void setLastUpdated(Instant time) {
         this.lastUpdated = time;
     }
 

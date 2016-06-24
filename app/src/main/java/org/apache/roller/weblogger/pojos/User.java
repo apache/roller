@@ -20,11 +20,12 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -81,36 +82,22 @@ public class User {
     @NotBlank(message = "{Register.error.emailAddressNull}")
     @Email(message = "{error.add.user.badEmail}")
     private String  emailAddress;
-    private LocalDateTime dateCreated;
+    private Instant dateCreated;
     private String  locale;
     private Boolean enabled = Boolean.FALSE;
     private String  activationCode;
+    private Instant lastLogin;
 
     // below two fields not persisted but used for password entry and confirmation
     // on new user & user update forms.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordText;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordConfirm;
 
     public User() {
     }
     
-    public User(String userName,
-            String password,
-            GlobalRole globalRole,
-            String emailAddress,
-            String locale,
-            LocalDateTime dateCreated,
-            Boolean isEnabled) {
-        this.id = WebloggerCommon.generateUUID();
-        this.userName = userName;
-        this.password = password;
-        this.globalRole = globalRole;
-        this.emailAddress = emailAddress;
-        this.dateCreated = dateCreated;
-        this.locale = locale;
-        this.enabled = isEnabled;
-    }
-
     @Id
     public String getId() {
         return this.id;
@@ -135,6 +122,7 @@ public class User {
      * If password encryption is enabled, will return encrypted password.
      */
     @Column(name="passphrase", nullable=false)
+    @JsonIgnore
     public String getPassword() {
         return this.password;
     }
@@ -199,12 +187,20 @@ public class User {
     }
 
     @Basic(optional=false)
-    public LocalDateTime getDateCreated() {
+    public Instant getDateCreated() {
          return dateCreated;
     }
 
-    public void setDateCreated(LocalDateTime dateTime) {
+    public void setDateCreated(Instant dateTime) {
         this.dateCreated = dateTime;
+    }
+
+    public Instant getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Instant lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
     public String getLocale() {
@@ -218,8 +214,8 @@ public class User {
     /**
      * Is this user account enabled?  Disabled accounts cannot login.
      */
-    @Column(name="isenabled", nullable=false)
-    public Boolean getEnabled() {
+    @Basic(optional=false)
+    public Boolean isEnabled() {
         return this.enabled;
     }
     
@@ -244,7 +240,7 @@ public class User {
         stringVal += ", " + getGlobalRole();
         stringVal += ", " + getEmailAddress();
         stringVal += ", " + getDateCreated();
-        stringVal += ", " + getEnabled();
+        stringVal += ", " + isEnabled();
         stringVal += "}";
         return stringVal;
     }

@@ -44,9 +44,11 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,12 +122,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // we only consider an entry future published if it is scheduled
         // more than 1 minute into the future
         if (PubStatus.PUBLISHED.equals(entry.getStatus()) &&
-                entry.getPubTime().isAfter(LocalDateTime.now().plusMinutes(1))) {
+                entry.getPubTime().isAfter(Instant.now().plus(1, ChronoUnit.MINUTES))) {
             entry.setStatus(PubStatus.SCHEDULED);
         }
 
         // Store value object (creates new or updates existing)
-        entry.setUpdateTime(LocalDateTime.now());
+        entry.setUpdateTime(Instant.now());
 
         this.strategy.store(entry);
         entry.getWeblog().invalidateCache();
@@ -490,7 +492,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
         for (WeblogEntry entry : entries) {
-            LocalDate tmp = entry.getPubTime() == null ? LocalDate.now() : entry.getPubTime().toLocalDate();
+            LocalDate tmp = entry.getPubTime() == null ? LocalDate.now() :
+                    entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
             List<WeblogEntry> dayEntries = map.get(tmp);
             if (dayEntries == null) {
                 dayEntries = new ArrayList<>();
@@ -510,8 +513,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_8CHARS);
 
         for (WeblogEntry entry : entries) {
-            if (map.get(entry.getPubTime().toLocalDate()) == null) {
-                map.put(entry.getPubTime().toLocalDate(), formatter.format(entry.getPubTime().toLocalDate()));
+            LocalDate maybeDate = entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (map.get(maybeDate) == null) {
+                map.put(maybeDate, formatter.format(maybeDate));
             }
         }
         return map;

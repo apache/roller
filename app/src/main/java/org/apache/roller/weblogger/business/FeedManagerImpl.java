@@ -22,8 +22,7 @@ package org.apache.roller.weblogger.business;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -101,7 +100,7 @@ public class FeedManagerImpl implements FeedManager {
     }
 
     @Override
-    public Subscription fetchSubscription(String feedURL, LocalDateTime lastModified) {
+    public Subscription fetchSubscription(String feedURL, Instant lastModified) {
 
         if (feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
@@ -144,7 +143,7 @@ public class FeedManagerImpl implements FeedManager {
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(feed.getLink());
         newSub.setTitle(feed.getTitle());
-        newSub.setLastUpdated(new Timestamp(feed.getPublishedDate().getTime()).toLocalDateTime());
+        newSub.setLastUpdated(feed.getPublishedDate().toInstant());
 
         // check if feed is unchanged and bail now if so
         if (lastModified != null && newSub.getLastUpdated() != null &&
@@ -164,7 +163,7 @@ public class FeedManagerImpl implements FeedManager {
             if (newEntry != null) {
                 if (newEntry.getPubTime() == null) {
                     log.debug("No published date, assigning today's date for {}", feedURL);
-                    newEntry.setPubTime(LocalDateTime.now());
+                    newEntry.setPubTime(Instant.now());
                 }
                 newSub.addEntry(newEntry);
                 numIncluded++;
@@ -179,7 +178,7 @@ public class FeedManagerImpl implements FeedManager {
      * feed processing.
      * We expect local feeds to have urls of the style ... weblogger:<blog handle>
      */
-    private Subscription fetchWebloggerSubscription(String feedURL, LocalDateTime lastModified) {
+    private Subscription fetchWebloggerSubscription(String feedURL, Instant lastModified) {
 
         // extract blog handle from our special feed url
         String weblogHandle = null;
@@ -212,7 +211,7 @@ public class FeedManagerImpl implements FeedManager {
         
         // must have a last updated time
         if(newSub.getLastUpdated() == null) {
-            newSub.setLastUpdated(LocalDateTime.now());
+            newSub.setLastUpdated(Instant.now());
         }
         
         // lookup recent entries from weblog and add them to the subscription
@@ -248,7 +247,7 @@ public class FeedManagerImpl implements FeedManager {
             entry.setPermalink(blogEntry.getPermalink());
             entry.setUri(blogEntry.getPermalink());
             entry.setCategoriesString(blogEntry.getCategory().getName());
-            entry.setUploaded(LocalDateTime.now());
+            entry.setUploaded(Instant.now());
             newSub.addEntry(entry);
         }
 
@@ -286,16 +285,16 @@ public class FeedManagerImpl implements FeedManager {
 
         // Play some games to get the updated date
         if (romeEntry.getUpdatedDate() != null) {
-            newEntry.setUpdateTime(new Timestamp(romeEntry.getUpdatedDate().getTime()).toLocalDateTime());
+            newEntry.setUpdateTime(romeEntry.getUpdatedDate().toInstant());
         }
 
         // And more games getting publish date
         if (romeEntry.getPublishedDate() != null) {
             // use <pubDate>
-            newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime()).toLocalDateTime());
+            newEntry.setPubTime(romeEntry.getPublishedDate().toInstant());
         } else if (entrydc != null && entrydc.getDate() != null) {
             // use <dc:date>
-            newEntry.setPubTime(new Timestamp(entrydc.getDate().getTime()).toLocalDateTime());
+            newEntry.setPubTime(entrydc.getDate().toInstant());
         } else {
             newEntry.setPubTime(newEntry.getUpdateTime());
         }
@@ -323,7 +322,7 @@ public class FeedManagerImpl implements FeedManager {
             }
             newEntry.setCategoriesString(list);
         }
-        newEntry.setUploaded(LocalDateTime.now());
+        newEntry.setUploaded(Instant.now());
         return newEntry;
     }
 

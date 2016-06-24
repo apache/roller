@@ -20,7 +20,7 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.User;
@@ -70,7 +70,7 @@ public class WeblogTest extends WebloggerTest {
         testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
-        testWeblog.setDateCreated(LocalDateTime.now());
+        testWeblog.setDateCreated(Instant.now());
         testWeblog.setCreatorId(testUser.getId());
 
         // make sure test weblog does not exist

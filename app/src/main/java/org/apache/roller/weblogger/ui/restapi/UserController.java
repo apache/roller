@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -199,7 +199,7 @@ public class UserController {
         User user = new User();
         user.setId(WebloggerCommon.generateUUID());
         user.setUserName(newData.getUserName());
-        user.setDateCreated(LocalDateTime.now());
+        user.setDateCreated(Instant.now());
         return saveUser(user, newData, p, response);
     }
 
@@ -327,8 +327,8 @@ public class UserController {
                 user.setScreenName(newData.getScreenName().trim());
                 user.setEmailAddress(newData.getEmailAddress().trim());
                 user.setLocale(newData.getLocale());
-                user.setEnabled(newData.getEnabled());
-                if (!user.getEnabled() && StringUtils.isNotEmpty(newData.getActivationCode())) {
+                user.setEnabled(newData.isEnabled());
+                if (!user.isEnabled() && StringUtils.isNotEmpty(newData.getActivationCode())) {
                     user.setActivationCode(newData.getActivationCode());
                 }
                 if (p == null) {
@@ -339,13 +339,15 @@ public class UserController {
                 }
 
                 // reset password if set
-                if (!StringUtils.isEmpty(newData.getPassword())) {
-                    user.resetPassword(newData.getPassword().trim());
+                if (!StringUtils.isEmpty(newData.getPasswordText())) {
+                    user.resetPassword(newData.getPasswordText().trim());
                 }
+
+                newData.setPasswordText(null);
+                newData.setPasswordConfirm(null);
 
                 try {
                     userManager.saveUser(user);
-                    WebloggerFactory.flush();
                     user.setPassword(null);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (RollbackException e) {
@@ -363,13 +365,13 @@ public class UserController {
     private ValidationError advancedValidate(User data, boolean isAdd) {
         BindException be = new BindException(data, "new data object");
 
-        if (!StringUtils.isEmpty(data.getPassword()) && !data.getPassword().equals(data.getPasswordConfirm())) {
+        if (!StringUtils.isEmpty(data.getPasswordText()) && !data.getPasswordText().equals(data.getPasswordConfirm())) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
         }
 
         if (isAdd &&
                 WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.DATABASE &&
-                StringUtils.isEmpty(data.getPassword())) {
+                StringUtils.isEmpty(data.getPasswordText())) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
         }
 

@@ -56,10 +56,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -239,7 +240,7 @@ public final class EntryEdit extends UIAction {
                 log.debug("entry pubtime is {}", entry.getPubTime());
 
                 //Calendar cal = Calendar.getInstance(locale);
-                ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getTimeZoneInstance().toZoneId());
+                ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getZoneId());
 
                 bean.setHours(zdt.getHour());
                 bean.setMinutes(zdt.getMinute());
@@ -277,9 +278,9 @@ public final class EntryEdit extends UIAction {
      */
     public String publish() {
         if (getActionWeblogRole().hasEffectiveRole(WeblogRole.POST)) {
-            LocalDateTime pubTime = calculatePubTime();
+            Instant pubTime = calculatePubTime();
 
-            if (pubTime != null && pubTime.isAfter(LocalDateTime.now().plusMinutes(1))) {
+            if (pubTime != null && pubTime.isAfter(Instant.now().plus(1, ChronoUnit.MINUTES))) {
                 getBean().setStatus(PubStatus.SCHEDULED);
             } else {
                 getBean().setStatus(PubStatus.PUBLISHED);
@@ -290,8 +291,8 @@ public final class EntryEdit extends UIAction {
         return save();
     }
 
-    private LocalDateTime calculatePubTime() {
-        LocalDateTime pubtime = null;
+    private Instant calculatePubTime() {
+        Instant pubtime = null;
 
         String dateString = bean.getDateString();
         if(!StringUtils.isEmpty(dateString)) {
@@ -299,7 +300,8 @@ public final class EntryEdit extends UIAction {
                 LocalDate newDate = LocalDate.parse(dateString, pubDateFormat);
 
                 // Now handle the time from the hour, minute and second combos
-                pubtime = newDate.atTime(bean.getHours(), bean.getMinutes(), bean.getSeconds());
+                pubtime = newDate.atTime(bean.getHours(), bean.getMinutes(), bean.getSeconds())
+                        .atZone(getActionWeblog().getZoneId()).toInstant();
             } catch (Exception e) {
                 log.error("Error calculating pubtime", e);
             }
@@ -322,7 +324,7 @@ public final class EntryEdit extends UIAction {
                 WeblogEntry weblogEntry = getEntry();
 
                 // set updatetime & pubtime
-                weblogEntry.setUpdateTime(LocalDateTime.now());
+                weblogEntry.setUpdateTime(Instant.now());
                 weblogEntry.setPubTime(calculatePubTime());
 
                 // copy data to pojo

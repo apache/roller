@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * Cache for site-wide weblog content.  The site weblog needs a different type of
@@ -63,17 +63,17 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
         }
     }
 
-    public LocalDateTime getLastModified() {
-        LocalDateTime lastModified = null;
+    public Instant getLastModified() {
+        Instant lastModified = null;
         
         // first try our cached version
         if (this.lastUpdateTime != null) {
-            lastModified = (LocalDateTime) this.lastUpdateTime.getValue();
+            lastModified = (Instant) this.lastUpdateTime.getValue();
         }
         
         // still null, we need to get a fresh value
         if (lastModified == null) {
-            lastModified = LocalDateTime.now();
+            lastModified = Instant.now();
             this.lastUpdateTime = new ExpiringCacheEntry(lastModified, timeoutInMS);
         }
         

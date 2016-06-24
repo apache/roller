@@ -20,7 +20,8 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -92,8 +93,8 @@ public class WeblogEntry {
     private String enclosureType;
     private Long enclosureLength;
     private String anchor;
-    private LocalDateTime pubTime;
-    private LocalDateTime updateTime;
+    private Instant pubTime;
+    private Instant updateTime;
     private String plugins;
     private Integer commentDays = 7;
     private PubStatus status;
@@ -128,8 +129,8 @@ public class WeblogEntry {
             String title,
             String text,
             String anchor,
-            LocalDateTime pubTime,
-            LocalDateTime updateTime,
+            Instant pubTime,
+            Instant updateTime,
             PubStatus status) {
         this.id = WebloggerCommon.generateUUID();
         this.category = category;
@@ -344,11 +345,11 @@ public class WeblogEntry {
      * times are displayed in a user's weblog they must be translated
      * to the user's timeZone.</p>
      */
-    public LocalDateTime getPubTime() {
+    public Instant getPubTime() {
         return this.pubTime;
     }
     
-    public void setPubTime(LocalDateTime pubTime) {
+    public void setPubTime(Instant pubTime) {
         this.pubTime = pubTime;
     }
     
@@ -361,11 +362,11 @@ public class WeblogEntry {
      * to the user's timeZone.</p>
      */
     @Basic(optional=false)
-    public LocalDateTime getUpdateTime() {
+    public Instant getUpdateTime() {
         return this.updateTime;
     }
     
-    public void setUpdateTime(LocalDateTime updateTime) {
+    public void setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -484,10 +485,10 @@ public class WeblogEntry {
         }
         boolean ret = false;
 
-        LocalDateTime inPubTime = getPubTime();
+        Instant inPubTime = getPubTime();
         if (inPubTime != null) {
-            LocalDateTime lastCommentDay = inPubTime.plusDays(getCommentDays());
-            if (LocalDateTime.now().isBefore(lastCommentDay)) {
+            Instant lastCommentDay = inPubTime.plus(getCommentDays(), ChronoUnit.DAYS);
+            if (Instant.now().isBefore(lastCommentDay)) {
                 ret = true;
             }
         }
