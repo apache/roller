@@ -17,8 +17,11 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:util="http://www.springframework.org/schema/util"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+          http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+          http://www.springframework.org/schema/util
+          http://www.springframework.org/schema/util/spring-util-4.2.xsd">
 
     <!-- Have JSR-250 annotations (PostConstruct, PreDestroy) honored by Spring -->
     <beans:bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
@@ -395,6 +398,22 @@
             <beans:list>
                 <beans:value>ApplicationResources</beans:value>
             </beans:list>
+        </beans:property>
+    </beans:bean>
+
+    <!-- Overriding the default Spring JSON converter so Jackson will strip off the nanoseconds portion when it
+         serializes java.time.Instant objects.  Makes conversion and date display much easier on the browser side.
+         See: http://stackoverflow.com/q/37999762/1207540
+    -->
+    <beans:bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <beans:property name="objectMapper">
+            <beans:bean class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+                <beans:property name="featuresToDisable">
+                    <beans:array>
+                        <util:constant static-field="com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS"/>
+                    </beans:array>
+                </beans:property>
+            </beans:bean>
         </beans:property>
     </beans:bean>
 

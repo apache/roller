@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * The Template interface represents the abstract concept of a single unit
@@ -139,8 +139,7 @@ public interface Template {
     /**
      * The last time the template was modified.
      */
-    LocalDateTime getLastModified();
-
+    Instant getLastModified();
 
     /**
      * get the Template rendition object for the given type.

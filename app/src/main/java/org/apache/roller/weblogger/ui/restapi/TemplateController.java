@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -189,7 +189,7 @@ public class TemplateController {
 				newTemplate.setWeblog(incomingTemplateData.getWeblog());
 				newTemplate.setRole(incomingTemplateData.getRole());
 				newTemplate.setName(incomingTemplateData.getName());
-				newTemplate.setLastModified(LocalDateTime.now());
+				newTemplate.setLastModified(Instant.now());
 
 				// save the new Template
 				weblogManager.saveTemplate(newTemplate);

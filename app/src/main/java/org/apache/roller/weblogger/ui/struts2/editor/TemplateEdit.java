@@ -40,7 +40,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -164,7 +164,7 @@ public class TemplateEdit extends UIAction {
                 template.setRelativePath(bean.getRelativePath());
             }
 
-            template.setLastModified(LocalDateTime.now());
+            template.setLastModified(Instant.now());
 
             try {
                 weblogManager.saveTemplate(template);
