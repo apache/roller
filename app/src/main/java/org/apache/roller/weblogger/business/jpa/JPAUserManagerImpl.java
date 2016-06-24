@@ -111,7 +111,8 @@ public class JPAUserManagerImpl implements UserManager {
             data.setActivationCode(null);
         }
 
-        this.strategy.store(data);
+        strategy.store(data);
+        strategy.flush();
     }
 
     @Override
@@ -144,7 +145,7 @@ public class JPAUserManagerImpl implements UserManager {
                     this.userNameToIdMap.get(userName));
             if (user != null) {
                 // only return the user if the enabled status matches
-                if(enabled == null || enabled.equals(user.getEnabled())) {
+                if(enabled == null || enabled.equals(user.isEnabled())) {
                     log.debug("userNameToIdMap CACHE HIT - {}", userName);
                     return user;
                 }

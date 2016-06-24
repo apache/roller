@@ -18,14 +18,12 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
@@ -59,7 +57,7 @@ public class Subscription implements Comparable<Subscription> {
     private String title;
     private String feedURL;
     private String siteURL;
-    private LocalDateTime lastUpdated;
+    private Instant lastUpdated;
 
     // associations
     private Planet planet;
@@ -105,11 +103,11 @@ public class Subscription implements Comparable<Subscription> {
 
 
     @Column(name="last_updated")
-    public LocalDateTime getLastUpdated() {
+    public Instant getLastUpdated() {
         return lastUpdated;
     }
     
-    public void setLastUpdated(LocalDateTime lastUpdated) {
+    public void setLastUpdated(Instant lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 

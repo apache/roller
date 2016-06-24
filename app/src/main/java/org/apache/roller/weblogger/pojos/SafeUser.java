@@ -24,13 +24,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 
 /**
@@ -56,23 +55,11 @@ public class SafeUser {
     private String  id;
     private String  screenName;
     private String  emailAddress;
-    private LocalDateTime dateCreated;
+    private Instant dateCreated;
     private String  locale;
     private Boolean enabled = Boolean.TRUE;
 
     public SafeUser() {
-    }
-
-    public SafeUser(String id,
-                    String screenName,
-                    String emailAddress,
-                    String locale,
-                    Boolean isEnabled) {
-        this.id = id;
-        this.screenName = screenName;
-        this.emailAddress = emailAddress;
-        this.locale = locale;
-        this.enabled = isEnabled;
     }
 
     @Id
@@ -103,11 +90,11 @@ public class SafeUser {
     }
 
     @Basic(optional=false)
-    public LocalDateTime getDateCreated() {
+    public Instant getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(LocalDateTime dateTime) {
+    public void setDateCreated(Instant dateTime) {
         this.dateCreated = dateTime;
     }
 
@@ -119,10 +106,7 @@ public class SafeUser {
         this.locale = locale;
     }
 
-    /**
-     * Is this user account enabled?  Disabled accounts cannot login.
-     */
-    @Column(name="isenabled", nullable=false)
+    @Basic(optional=false)
     public Boolean getEnabled() {
         return this.enabled;
     }

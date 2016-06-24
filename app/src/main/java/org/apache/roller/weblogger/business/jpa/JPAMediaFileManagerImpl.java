@@ -39,7 +39,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -181,7 +181,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     @Override
     public void updateMediaFile(Weblog weblog, MediaFile mediaFile) {
-        mediaFile.setLastUpdated(LocalDateTime.now());
+        mediaFile.setLastUpdated(Instant.now());
         strategy.store(mediaFile);
 
         strategy.flush();
@@ -193,7 +193,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     @Override
     public void updateMediaFile(Weblog weblog, MediaFile mediaFile, InputStream is) throws IOException {
-        mediaFile.setLastUpdated(LocalDateTime.now());
+        mediaFile.setLastUpdated(Instant.now());
         strategy.store(mediaFile);
 
         strategy.flush();

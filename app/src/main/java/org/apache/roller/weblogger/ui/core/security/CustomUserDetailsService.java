@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.pojos.User;
 /**
  * Spring Security UserDetailsService implemented using Weblogger API.
  */
-public class RollerUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
@@ -60,7 +60,7 @@ public class RollerUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>(1);
         authorities.add(new SimpleGrantedAuthority(userData.getGlobalRole().name()));
         return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
-                true, true, true, true, authorities);
+                userData.isEnabled(), true, true, true, authorities);
     }
         
 }

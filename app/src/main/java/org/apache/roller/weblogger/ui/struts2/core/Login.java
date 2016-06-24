@@ -110,7 +110,6 @@ public class Login extends UIAction {
                 user.setEnabled(Boolean.TRUE);
                 user.setActivationCode(null);
                 userManager.saveUser(user);
-                WebloggerFactory.flush();
                 setActivationStatus("active");
             } else {
                 addError("error.activate.user.invalidActivationCode");

@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Timestamp;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -120,7 +119,7 @@ public class MediaResourceProcessor {
 
         try {
             mediaFile = mediaFileManager.getMediaFile(resourceId, true);
-            resourceLastMod = Timestamp.valueOf(mediaFile.getLastUpdated()).getTime();
+            resourceLastMod = mediaFile.getLastUpdated().toEpochMilli();
         } catch (Exception ex) {
             // Not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);

@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
@@ -102,6 +102,6 @@ public interface PlanetManager {
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    List<SubscriptionEntry> getEntries(Planet planet, LocalDateTime startDate, int offset, int len);
+    List<SubscriptionEntry> getEntries(Planet planet, Instant startDate, int offset, int len);
 
 }

@@ -18,7 +18,8 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -126,8 +127,8 @@ public class Planet implements Comparable<Planet> {
     }
 
     @Transient
-    public LocalDateTime getLastUpdated() {
-        LocalDateTime lastUpdated = LocalDateTime.now().minusYears(5);
+    public Instant getLastUpdated() {
+        Instant lastUpdated = Instant.now().minus(365, ChronoUnit.DAYS);
         if (getSubscriptions() != null) {
             for (Subscription sub : getSubscriptions()) {
                 if (sub.getLastUpdated() != null && sub.getLastUpdated().isAfter(lastUpdated)) {

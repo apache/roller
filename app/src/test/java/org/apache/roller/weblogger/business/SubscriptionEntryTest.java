@@ -18,7 +18,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
@@ -71,7 +71,7 @@ public class SubscriptionEntryTest extends WebloggerTest {
         assertEquals(2, planetManager.getEntries(planet, null, 0, 10).size());
         
         // by planet with timeframe constraint
-        assertEquals(0, planetManager.getEntries(planet, LocalDateTime.now(), 0, 10).size());
+        assertEquals(0, planetManager.getEntries(planet, Instant.now(), 0, 10).size());
     }
     
     @Test

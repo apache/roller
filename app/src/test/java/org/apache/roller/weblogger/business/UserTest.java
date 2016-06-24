@@ -20,7 +20,7 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
@@ -56,7 +56,7 @@ public class UserTest extends WebloggerTest {
         testUser.setScreenName("Test User Screen Name");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
-        testUser.setDateCreated(LocalDateTime.now());
+        testUser.setDateCreated(Instant.now());
         testUser.setEnabled(Boolean.TRUE);
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         
@@ -67,8 +67,7 @@ public class UserTest extends WebloggerTest {
         // add test user
         userManager.saveUser(testUser);
         String userName = testUser.getUserName();
-        endSession(true);
-        
+
         // make sure test user exists
         user = userManager.getUserByUserName(userName);
         assertNotNull(user);
@@ -77,8 +76,7 @@ public class UserTest extends WebloggerTest {
         // modify user and save
         user.setScreenName("testtesttest");
         userManager.saveUser(user);
-        endSession(true);
-        
+
         // make sure changes were saved
         user = userManager.getUserByUserName(userName);
         assertNotNull(user);
@@ -134,7 +132,6 @@ public class UserTest extends WebloggerTest {
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);
         userManager.saveUser(user);
-        endSession(true);
         user = userManager.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
@@ -162,8 +159,7 @@ public class UserTest extends WebloggerTest {
 
         user.setGlobalRole(GlobalRole.LOGIN);
         userManager.saveUser(user);
-        endSession(true);
-        
+
         // check that role was switched
         user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);

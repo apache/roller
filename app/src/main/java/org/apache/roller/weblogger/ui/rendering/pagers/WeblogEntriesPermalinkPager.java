@@ -20,8 +20,8 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -95,7 +95,9 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
             if (!canShowDraftEntries) {
                 if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     entries = new TreeMap<>();
-                    entries.put(currEntry.getPubTime().toLocalDate(),
+                    entries.put(currEntry.getPubTime()
+                            .atZone(currEntry.getWeblog().getZoneId())
+                            .toLocalDate(),
                             Collections.singletonList(currEntry));
                 }
             } else {
@@ -108,12 +110,14 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
                     // for display, set the pubtime to the current time if it is not set
                     if (tmpEntry.getPubTime() == null) {
-                        tmpEntry.setPubTime(LocalDateTime.now());
+                        tmpEntry.setPubTime(Instant.now());
                     }
 
                     // store the entry in the collection
                     entries = new TreeMap<>();
-                    entries.put(tmpEntry.getPubTime().toLocalDate(), Collections.singletonList(tmpEntry));
+                    entries.put(tmpEntry.getPubTime()
+                            .atZone(currEntry.getWeblog().getZoneId())
+                            .toLocalDate(), Collections.singletonList(tmpEntry));
                 }
             }
         }
@@ -183,7 +187,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         if (nextEntry == null && currEntry.getPubTime() != null) {
             nextEntry = weblogEntryManager.getNextEntry(currEntry, null);
             // make sure that entry is published and not to future
-            if (nextEntry != null && nextEntry.getPubTime().isAfter(LocalDateTime.now())
+            if (nextEntry != null && nextEntry.getPubTime().isAfter(Instant.now())
                     && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                 nextEntry = null;
             }
@@ -196,7 +200,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         if (prevEntry == null && currEntry.getPubTime() != null) {
             prevEntry = weblogEntryManager.getPreviousEntry(currEntry, null);
             // make sure that entry is published and not to future
-            if (prevEntry != null && prevEntry.getPubTime().isAfter(LocalDateTime.now())
+            if (prevEntry != null && prevEntry.getPubTime().isAfter(Instant.now())
                     && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                 prevEntry = null;
             }

@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -99,8 +101,8 @@ public class WeblogCalendar {
         // retrieve the entries for this month
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(weblog);
-        wesc.setStartDate(startTime);
-        wesc.setEndDate(endTime);
+        wesc.setStartDate(startTime.atZone(ZoneId.systemDefault()).toInstant());
+        wesc.setEndDate(endTime.atZone(ZoneId.systemDefault()).toInstant());
         wesc.setCatName(cat);
         wesc.setStatus(PubStatus.PUBLISHED);
         loadWeblogEntries(wesc);
@@ -115,16 +117,16 @@ public class WeblogCalendar {
         wesc.setStatus(PubStatus.PUBLISHED);
         wesc.setMaxResults(1);
         if (succeedingMonth) {
-            wesc.setStartDate(targetDate);
+            wesc.setStartDate(targetDate.atZone(ZoneId.systemDefault()).toInstant());
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
         } else {
-            wesc.setEndDate(targetDate);
+            wesc.setEndDate(targetDate.atZone(ZoneId.systemDefault()).toInstant());
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
         }
         List entries = weblogEntryManager.getWeblogEntries(wesc);
         if (entries.size() > 0) {
             WeblogEntry nearestEntry = (WeblogEntry)entries.get(0);
-            nearestMonth = nearestEntry.getPubTime().toLocalDate().withDayOfMonth(1);
+            nearestMonth = nearestEntry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1);
         }
         return nearestMonth;
     }
@@ -213,7 +215,7 @@ public class WeblogCalendar {
     }
 
     private Calendar newCalendarInstance() {
-        Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(weblog.getZoneId()), weblog.getLocaleInstance());
         cal.setTime(new Timestamp(dayInMonth.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
         return cal;
     }
