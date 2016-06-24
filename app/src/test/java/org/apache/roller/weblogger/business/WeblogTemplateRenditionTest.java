@@ -36,7 +36,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static org.junit.Assert.*;
 
@@ -64,7 +64,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setRelativePath("testTemp");
-        testPage.setLastModified(LocalDateTime.now());
+        testPage.setLastModified(Instant.now());
         testPage.setWeblog(getManagedWeblog(testWeblog));
     }
 

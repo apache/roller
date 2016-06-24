@@ -43,7 +43,7 @@ var msg= {
    <s:text name="templates.tip" />
 </p>
 
-<div id="errorMessageDiv" style="color:red;display:none">
+<div id="errorMessageDiv" class="errors" style="display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
   <b>{{:errorMessage}}</b>
   <ul>
@@ -115,12 +115,12 @@ var msg= {
 
         <td>
           <span ng-if="tpl.lastModified != null">
-            {{tpl.lastModified}}
+            {{tpl.lastModified | date:'short' }}
           </span>
         </td>
 
         <td align="center" style="vertical-align:middle">
-            <span ng-if="tpl.role.accessibleViaUrl">
+            <span ng-if="tpl.role.accessibleViaUrl && tpl.relativePath != null && tpl.relativePath != ''">
                 <a target="_blank" href="<s:property value='actionWeblog.absoluteURL'/>page/{{tpl.relativePath}}">
                   <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"/>
                 </a>
@@ -137,9 +137,7 @@ var msg= {
 </table>
 
 <div class="control">
-  <s:if test="!templates.isEmpty">
- 		<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
-  </s:if>
+	<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
 
   <span style="float:right">
       <s:form>
@@ -149,7 +147,7 @@ var msg= {
       </s:form>
   </span>
 </div>
-
+<br>
 <table cellpadding="0" cellspacing="6">
     <caption><s:text name="templates.addNewPage" /></caption>
     <tr>

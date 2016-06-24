@@ -39,7 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring-beans.xml")
@@ -134,14 +134,9 @@ abstract public class WebloggerTest {
         testUser.setScreenName(userName);
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
-        testUser.setDateCreated(LocalDateTime.now());
+        testUser.setDateCreated(Instant.now());
         testUser.setEnabled(Boolean.TRUE);
-
-        // store the user
         userManager.saveUser(testUser);
-
-        // flush to db
-        strategy.flush();
 
         // query for the user to make sure we return the persisted object
         User user = userManager.getUserByUserName(userName.toLowerCase());
@@ -171,7 +166,7 @@ abstract public class WebloggerTest {
         testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
-        testWeblog.setDateCreated(LocalDateTime.now());
+        testWeblog.setDateCreated(Instant.now());
         testWeblog.setCreatorId(creator.getId());
 
         // add weblog
@@ -211,8 +206,8 @@ abstract public class WebloggerTest {
         testEntry.setTitle(anchor);
         testEntry.setText("blah blah entry");
         testEntry.setAnchor(anchor);
-        testEntry.setPubTime(LocalDateTime.now());
-        testEntry.setUpdateTime(LocalDateTime.now());
+        testEntry.setPubTime(Instant.now());
+        testEntry.setUpdateTime(Instant.now());
         testEntry.setStatus(status);
         testEntry.setWeblog(getManagedWeblog(weblog));
         testEntry.setCreatorId(user.getId());
@@ -248,7 +243,7 @@ abstract public class WebloggerTest {
         testComment.setUrl("test");
         testComment.setRemoteHost("foofoo");
         testComment.setContent(comment);
-        testComment.setPostTime(LocalDateTime.now());
+        testComment.setPostTime(Instant.now());
         testComment.setWeblogEntry(getManagedWeblogEntry(entry));
         testComment.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
 
@@ -331,7 +326,7 @@ abstract public class WebloggerTest {
         testEntry.setPermalink(title);
         testEntry.setUri(title);
         testEntry.setTitle(title);
-        LocalDateTime testLDT = LocalDateTime.now();
+        Instant testLDT = Instant.now();
         testEntry.setPubTime(testLDT);
         testEntry.setSubscription(testSub);
         testEntry.setUploaded(testLDT);

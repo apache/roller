@@ -33,7 +33,7 @@ var msg= {
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/pingtargets.js'/>"></script>
 
-<div id="errorMessageDiv" style="color:red;display:none">
+<div id="errorMessageDiv" class="errors" style="display:none">
   <span>Error message here.</span>
 </div>
 

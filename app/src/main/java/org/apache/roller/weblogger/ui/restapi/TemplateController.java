@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.struts2.editor;
+package org.apache.roller.weblogger.ui.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -26,19 +26,16 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.Parser;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,25 +53,18 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Templates listing page.
- */
 @RestController
-public class Templates extends UIAction {
+public class TemplateController {
 
-	private static Logger log = LoggerFactory.getLogger(Templates.class);
+	private static Logger log = LoggerFactory.getLogger(TemplateController.class);
 
 	private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
-
-	// name and action of new template if we are adding a template
-	private String newTmplName = null;
-	private ComponentType newTmplAction = null;
 
 	@Autowired
 	private JPAPersistenceStrategy persistenceStrategy = null;
@@ -102,13 +92,6 @@ public class Templates extends UIAction {
 
 	public void setThemeManager(ThemeManager themeManager) {
 		this.themeManager = themeManager;
-	}
-
-    public Templates() {
-		this.actionName = "templates";
-		this.desiredMenu = "editor";
-		this.pageTitle = "templates.title";
-		this.requiredGlobalRole = GlobalRole.BLOGGER;
 	}
 
 	@RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
@@ -191,11 +174,11 @@ public class Templates extends UIAction {
 
 	@RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", method = RequestMethod.PUT)
 	public ResponseEntity addTemplate(@PathVariable String weblogId, @RequestBody WeblogTemplate incomingTemplateData,
-							Principal p, HttpServletResponse response)
-			throws ServletException {
+							Principal p) throws ServletException {
 		try {
 			Weblog weblog = weblogManager.getWeblog(weblogId);
 			if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+				incomingTemplateData.setWeblog(weblog);
 				ValidationError maybeError = advancedValidate(incomingTemplateData);
 				if (maybeError != null) {
 					return ResponseEntity.badRequest().body(maybeError);
@@ -203,10 +186,10 @@ public class Templates extends UIAction {
 
 				WeblogTemplate newTemplate = new WeblogTemplate();
 				newTemplate.setId(WebloggerCommon.generateUUID());
-				newTemplate.setWeblog(weblog);
+				newTemplate.setWeblog(incomingTemplateData.getWeblog());
 				newTemplate.setRole(incomingTemplateData.getRole());
 				newTemplate.setName(incomingTemplateData.getName());
-				newTemplate.setLastModified(LocalDateTime.now());
+				newTemplate.setLastModified(Instant.now());
 
 				// save the new Template
 				weblogManager.saveTemplate(newTemplate);
@@ -214,8 +197,8 @@ public class Templates extends UIAction {
 				// Create weblog template codes for available types.
 				WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
 						newTemplate, RenditionType.NORMAL);
-				if (newTmplAction != ComponentType.STYLESHEET && newTmplAction != ComponentType.JAVASCRIPT) {
-					standardRendition.setRendition(getText("templateEdit.newTemplateContent"));
+				if (newTemplate.getRole() != ComponentType.STYLESHEET && newTemplate.getRole() != ComponentType.JAVASCRIPT) {
+					standardRendition.setRendition(bundle.getString("templateEdit.newTemplateContent"));
 				}
 				standardRendition.setParser(Parser.VELOCITY);
 				weblogManager.saveTemplateRendition(standardRendition);
@@ -230,42 +213,6 @@ public class Templates extends UIAction {
 		} catch (Exception e) {
 			throw new ServletException(e.getMessage());
 		}
-	}
-
-	/**
-	 * Save a new template.
-	 */
-	public String add() {
-
-		if (!hasActionErrors()) {
-			WeblogTemplate newTemplate = new WeblogTemplate();
-			newTemplate.setId(WebloggerCommon.generateUUID());
-			newTemplate.setWeblog(getActionWeblog());
-			newTemplate.setRole(getNewTmplAction());
-			newTemplate.setName(getNewTmplName());
-			newTemplate.setLastModified(LocalDateTime.now());
-
-			// save the new Template
-			weblogManager.saveTemplate(newTemplate);
-
-			// Create weblog template codes for available types.
-			WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
-					newTemplate, RenditionType.NORMAL);
-			if (newTmplAction != ComponentType.STYLESHEET && newTmplAction != ComponentType.JAVASCRIPT) {
-				standardRendition.setRendition(getText("templateEdit.newTemplateContent"));
-			}
-			standardRendition.setParser(Parser.VELOCITY);
-			weblogManager.saveTemplateRendition(standardRendition);
-
-			// flush results to db
-			WebloggerFactory.flush();
-
-			// reset form fields
-			setNewTmplName(null);
-			setNewTmplAction(null);
-		}
-
-		return SUCCESS;
 	}
 
 	private ValidationError advancedValidate(WeblogTemplate data) {
@@ -285,28 +232,6 @@ public class Templates extends UIAction {
 		}
 
 		return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
-	}
-
-	public String newTheme() {
-		SharedTheme theme = themeManager.getSharedTheme(getActionWeblog().getTheme());
-		addMessage("themeEditor.setTheme.success", theme.getName());
-		return SUCCESS;
-	}
-
-	public String getNewTmplName() {
-		return newTmplName;
-	}
-
-	public void setNewTmplName(String newTmplName) {
-		this.newTmplName = newTmplName;
-	}
-
-	public ComponentType getNewTmplAction() {
-		return newTmplAction;
-	}
-
-	public void setNewTmplAction(ComponentType newTmplAction) {
-		this.newTmplAction = newTmplAction;
 	}
 
 }

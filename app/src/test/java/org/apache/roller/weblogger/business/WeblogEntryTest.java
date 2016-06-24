@@ -22,7 +22,8 @@ package org.apache.roller.weblogger.business;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,8 +90,8 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
-        testEntry.setPubTime(LocalDateTime.now());
-        testEntry.setUpdateTime(LocalDateTime.now());
+        testEntry.setPubTime(Instant.now());
+        testEntry.setUpdateTime(Instant.now());
         testEntry.setWeblog(testWeblog);
         testEntry.setCreatorId(testUser.getId());
         testEntry.setStatus(PubStatus.DRAFT);
@@ -148,17 +149,17 @@ public class WeblogEntryTest extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry1);
         
         entry2.setStatus(PubStatus.PUBLISHED);
-        entry2.setUpdateTime(LocalDateTime.now().plusHours(1));
+        entry2.setUpdateTime(Instant.now().plus(1, ChronoUnit.HOURS));
         entry2.setPubTime(entry2.getUpdateTime());
         weblogEntryManager.saveWeblogEntry(entry2);
 
         entry3.setStatus(PubStatus.DRAFT);
-        entry3.setUpdateTime(LocalDateTime.now().plusDays(1));
+        entry3.setUpdateTime(Instant.now().plus(1, ChronoUnit.DAYS));
         entry3.setPubTime(entry3.getUpdateTime());
         weblogEntryManager.saveWeblogEntry(entry3);
         
-        entry4.setPubTime(LocalDateTime.now().minusDays(1));
-        entry5.setPubTime(LocalDateTime.now().minusHours(1));
+        entry4.setPubTime(Instant.now().minus(1, ChronoUnit.DAYS));
+        entry5.setPubTime(Instant.now().minus(1, ChronoUnit.HOURS));
         
         endSession(true);
         
@@ -312,8 +313,8 @@ public class WeblogEntryTest extends WebloggerTest {
             testEntry.setText("blah blah entry");
             testEntry.setAnchor("testEntryAnchor");
             testEntry.setStatus(PubStatus.PUBLISHED);
-            testEntry.setPubTime(LocalDateTime.now());
-            testEntry.setUpdateTime(LocalDateTime.now());
+            testEntry.setPubTime(Instant.now());
+            testEntry.setUpdateTime(Instant.now());
             testEntry.setWeblog(testWeblog);
             testEntry.setCreatorId(testUser.getId());
             testEntry.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
@@ -810,8 +811,8 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
-        testEntry.setPubTime(LocalDateTime.now());
-        testEntry.setUpdateTime(LocalDateTime.now());
+        testEntry.setPubTime(Instant.now());
+        testEntry.setUpdateTime(Instant.now());
         testEntry.setWeblog(testWeblog);
         testEntry.setStatus(PubStatus.DRAFT);
         testEntry.setCreatorId(testUser.getId());

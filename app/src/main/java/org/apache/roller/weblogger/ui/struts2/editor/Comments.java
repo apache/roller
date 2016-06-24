@@ -21,10 +21,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -36,7 +33,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.business.MailManager;
@@ -55,6 +51,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -70,6 +68,8 @@ import java.util.Set;
 public class Comments extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(Comments.class);
+
+    private static DateTimeFormatter searchDateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     @Autowired
     private UserManager userManager;
@@ -150,10 +150,12 @@ public class Comments extends UIAction {
         csc.setEntry(getQueryEntry());
         csc.setSearchText(getBean().getSearchString());
         if (getBean().getStartDate() != null) {
-            csc.setStartDate(getBean().getStartDate().atStartOfDay());
+            LocalDate ld = LocalDate.parse(getBean().getStartDateString(), searchDateFormatter);
+            csc.setStartDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
         }
         if (getBean().getEndDate() != null) {
-            csc.setEndDate(getBean().getEndDate().plusDays(1).atStartOfDay());
+            LocalDate ld = LocalDate.parse(getBean().getEndDateString(), searchDateFormatter).plusDays(1);
+            csc.setEndDate(ld.plusDays(1).atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
         }
         csc.setStatus(getBean().getStatus());
         csc.setOffset(getBean().getPage() * COUNT);
@@ -228,10 +230,12 @@ public class Comments extends UIAction {
         csc.setWeblog(getActionWeblog());
         csc.setSearchText(getBean().getSearchString());
         if (getBean().getStartDate() != null) {
-            csc.setStartDate(getBean().getStartDate().atStartOfDay());
+            csc.setStartDate(getBean().getStartDate().atStartOfDay()
+                    .atZone(getActionWeblog().getZoneId()).toInstant());
         }
         if (getBean().getEndDate() != null) {
-            csc.setEndDate(getBean().getEndDate().plusDays(1).atStartOfDay());
+            csc.setEndDate(getBean().getEndDate().plusDays(1).atStartOfDay()
+                    .atZone(getActionWeblog().getZoneId()).toInstant());
         }
         csc.setStatus(getBean().getStatus());
 

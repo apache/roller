@@ -20,7 +20,8 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -137,7 +138,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public List<SubscriptionEntry> getEntries(Planet group, LocalDateTime startDate, int offset, int len) {
+    public List<SubscriptionEntry> getEntries(Planet group, Instant startDate, int offset, int len) {
 
         if (group == null) {
             throw new IllegalArgumentException("group cannot be null or empty");
@@ -225,7 +226,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
                 sub.setTitle(weblog.getName());
                 sub.setFeedURL(feedUrl);
                 sub.setSiteURL(urlStrategy.getWeblogURL(weblog, true));
-                sub.setLastUpdated(LocalDateTime.now().minusYears(5));
+                sub.setLastUpdated(Instant.now().minus(365, ChronoUnit.DAYS));
                 sub.setPlanet(planet);
                 saveSubscription(sub);
 

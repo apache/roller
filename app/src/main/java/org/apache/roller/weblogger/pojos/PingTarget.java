@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -52,7 +52,7 @@ public class PingTarget {
     private String id;
     private String name;
     private String pingUrl;
-    private LocalDateTime lastSuccess;
+    private Instant lastSuccess;
     private boolean enabled;
 
     public PingTarget() {
@@ -119,11 +119,11 @@ public class PingTarget {
      *
      * @return the timestamp of the last successful ping; <code>null</code> if the target has not yet been used.
      */
-    public LocalDateTime getLastSuccess() {
+    public Instant getLastSuccess() {
         return lastSuccess;
     }
 
-    public void setLastSuccess(LocalDateTime lastSuccess) {
+    public void setLastSuccess(Instant lastSuccess) {
         this.lastSuccess = lastSuccess;
     }
 

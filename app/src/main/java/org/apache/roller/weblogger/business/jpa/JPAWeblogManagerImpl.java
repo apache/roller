@@ -51,8 +51,8 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -106,7 +106,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     @Override
     public void saveWeblog(Weblog weblog) {
-        weblog.setLastModified(LocalDateTime.now());
+        weblog.setLastModified(Instant.now());
         strategy.merge(weblog);
         if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
             cacheManager.invalidate(weblog);
@@ -384,7 +384,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 log.error("ERROR user is null, userId: {}", role.getUser().getId());
                 continue;
             }
-            if (!enabledOnly || user.getEnabled()) {
+            if (!enabledOnly || user.isEnabled()) {
                 users.add(user);
             }
         }
@@ -527,7 +527,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         TypedQuery<Weblog> query = strategy.getNamedQuery(
                 "Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc", Weblog.class);
-        query.setParameter(1, LocalDateTime.now().minusDays(sinceDays));
+        query.setParameter(1, Instant.now().minus(sinceDays, ChronoUnit.DAYS));
         if (offset != 0) {
             query.setFirstResult(offset);
         }
@@ -579,7 +579,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         log.debug("promoting scheduled entries...");
 
         try {
-            LocalDateTime now = LocalDateTime.now();
+            Instant now = Instant.now();
             log.debug("looking up scheduled entries older than {}", now);
 
             // get all published entries older than current time
@@ -744,7 +744,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return propertiesManager.getSiteBlacklist();
         } else {
             Blacklist bl = (Blacklist) weblogBlacklistCache.get(weblog.getHandle(),
-                    weblog.getLastModified().toInstant(ZoneOffset.UTC).toEpochMilli());
+                    weblog.getLastModified().toEpochMilli());
 
             if (bl == null) {
                 bl = new Blacklist(weblog.getBlacklist(), propertiesManager.getSiteBlacklist());

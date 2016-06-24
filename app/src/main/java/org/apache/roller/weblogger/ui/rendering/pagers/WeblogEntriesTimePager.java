@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -124,7 +125,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     private Weblog siteWeblog = null;
 
     // most recent update time of current set of entries
-    private LocalDateTime lastUpdated = null;
+    private Instant lastUpdated = null;
 
     /**
       * This constructor is to create site-wide (frontpage) weblog pagers, which allow more
@@ -211,7 +212,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         LocalDateTime endTime = null;
 
         if (interval == PagingInterval.DAY || interval == PagingInterval.MONTH) {
-            ZoneId zoneId = weblog.getTimeZoneInstance().toZoneId();
+            ZoneId zoneId = weblog.getZoneId();
 
             dateFormat = DateTimeFormatter.ofPattern(
                     messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".dateFormat"),
@@ -219,9 +220,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
             timePeriod = parseDate(dateString);
 
-            ZonedDateTime weblogInitialDate = ZonedDateTime.of(weblog.getDateCreated() != null ?
-                            weblog.getDateCreated() : LocalDateTime.MIN,
-                    weblog.getTimeZoneInstance().toZoneId());
+            ZonedDateTime weblogInitialDate = weblog.getDateCreated().atZone(weblog.getZoneId());
 
             if (interval == PagingInterval.DAY) {
                 startTime = timePeriod.atStartOfDay();
@@ -281,8 +280,12 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 // With WESC, if any values null, equivalent to not setting the criterion.
                 wesc.setWeblog(weblog);
-                wesc.setStartDate(startTime);
-                wesc.setEndDate(endTime);
+                if (startTime != null) {
+                    wesc.setStartDate(startTime.atZone(ZoneId.systemDefault()).toInstant());
+                }
+                if (endTime != null) {
+                    wesc.setEndDate(endTime.atZone(ZoneId.systemDefault()).toInstant());
+                }
                 wesc.setCatName(catName);
                 if (tag != null) {
                     wesc.setTags(Collections.singleton(tag));
@@ -402,7 +405,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
      * Return today based on current blog's timezone/locale.
      */
     protected ZonedDateTime getToday() {
-        return ZonedDateTime.now(weblog.getTimeZoneInstance().toZoneId());
+        return ZonedDateTime.now(weblog.getZoneId());
     }
 
     /**
@@ -426,7 +429,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
         // make sure the requested date is not in the future
         ZonedDateTime today = getToday();
-        ZonedDateTime requested = ZonedDateTime.of(ldt.atStartOfDay(), weblog.getTimeZoneInstance().toZoneId());
+        ZonedDateTime requested = ZonedDateTime.of(ldt.atStartOfDay(), weblog.getZoneId());
 
         if (requested.isAfter(today)) {
             requested = today;
@@ -449,12 +452,12 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     }
 
     /** Get last updated time from items in pager */
-    public LocalDateTime getLastUpdated() {
+    public Instant getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
             List<WeblogEntry> items = getItems();
             if (items != null && items.size() > 0) {
-                LocalDateTime newest = items.get(0).getUpdateTime();
+                Instant newest = items.get(0).getUpdateTime();
                 for (WeblogEntry e : items) {
                     if (e.getUpdateTime().isAfter(newest)) {
                         newest = e.getUpdateTime();
@@ -463,7 +466,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 lastUpdated = newest;
             } else {
                 // no articles, so choose today's date
-                lastUpdated = LocalDateTime.now();
+                lastUpdated = Instant.now();
             }
         }
         return lastUpdated;

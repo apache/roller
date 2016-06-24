@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Locale;
 import java.util.Set;
 
@@ -29,6 +29,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -87,9 +88,9 @@ public class LDAPRegistrationHelper {
         
         User ud = new User();
         // setting default
-        ud.setId(null);
+        ud.setId(WebloggerCommon.generateUUID());
         ud.setLocale(Locale.getDefault().toString());
-        ud.setDateCreated(LocalDateTime.now());
+        ud.setDateCreated(Instant.now());
 
         String userName;
         String email = null;

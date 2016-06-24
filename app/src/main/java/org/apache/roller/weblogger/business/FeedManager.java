@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -64,9 +64,11 @@ public interface FeedManager {
      * so that they may be used in any way desired by the rest of the system.
      *
      * @param feedURL The feed url to use when fetching the subscription.
+     * @param lastModified Last modified date to check against to determine
+     *                     whether a new fetch is necessary.
      * @return Subscription The fetched subscription.
      */
-    Subscription fetchSubscription(String feedURL, LocalDateTime lastModified);
+    Subscription fetchSubscription(String feedURL, Instant lastModified);
 
     /**
      * Update all Subscriptions that are part of the specified planet.

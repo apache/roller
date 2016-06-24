@@ -15,7 +15,8 @@ create table weblogger_user (
     activationcode	varchar(48),
     datecreated     $db.TIMESTAMP_SQL_TYPE not null,
     locale          varchar(20),
-    isenabled       $db.BOOLEAN_SQL_TYPE_TRUE not null
+    enabled         $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    lastlogin       $db.TIMESTAMP_SQL_TYPE
 );
 alter table weblogger_user add constraint wu_username_uq unique (username);
 

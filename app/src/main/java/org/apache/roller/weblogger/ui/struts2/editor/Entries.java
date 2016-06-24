@@ -20,6 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +32,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.*;
-import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,8 @@ import org.slf4j.LoggerFactory;
 public class Entries extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(Entries.class);
+
+    private static DateTimeFormatter searchDateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     private WeblogEntryManager weblogEntryManager;
 
@@ -97,9 +101,17 @@ public class Entries extends UIAction {
 
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(getActionWeblog());
-        wesc.setStartDate(getBean().getStartDate());
-        wesc.setEndDate(getBean().getEndDate());
-        wesc.setCatName(getBean().getCategoryName());
+        if (getBean().getStartDateString() != null) {
+            LocalDate ld = LocalDate.parse(getBean().getStartDateString(), searchDateFormatter);
+            wesc.setStartDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        }
+        if (getBean().getEndDateString() != null) {
+            LocalDate ld = LocalDate.parse(getBean().getEndDateString(), searchDateFormatter).plusDays(1);
+            wesc.setEndDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        }
+        if (!"".equals(getBean().getCategoryName())) {
+            wesc.setCatName(getBean().getCategoryName());
+        }
         wesc.setTags(getBean().getTags());
         wesc.setStatus("ALL".equals(status) ? null : WeblogEntry.PubStatus.valueOf(status));
         wesc.setText(getBean().getText());
@@ -164,15 +176,13 @@ public class Entries extends UIAction {
     /**
      * Get the list of all categories for the action weblog, not including root.
      */
-    public List<WeblogCategory> getCategories() {
-        // make list of categories with first option being being a transient
-        // category just meant to represent the "any" category default
-        List<WeblogCategory> cats = new ArrayList<>();
-        WeblogCategory tmpCat = new WeblogCategory();
-        tmpCat.setName("Any");
-        cats.add(tmpCat);
-        cats.addAll(getActionWeblog().getWeblogCategories());
-        return cats;
+    public List<Pair<String, String>> getCategories() {
+        List<Pair<String, String>> opts = new ArrayList<>();
+        opts.add(Pair.of("", "(Any)"));
+        for (WeblogCategory cat : getActionWeblog().getWeblogCategories()) {
+            opts.add(Pair.of(cat.getName(), cat.getName()));
+        }
+        return opts;
     }
 
     public List<Pair<String, String>> getSortByOptions() {

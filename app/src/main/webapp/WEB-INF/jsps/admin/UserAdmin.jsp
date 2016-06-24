@@ -27,7 +27,7 @@ var contextPath = "${pageContext.request.contextPath}";
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/useradmin.js'/>"></script>
 
-<div id="errorMessageDiv" style="color:red;display:none">
+<div id="errorMessageDiv" class="errors" style="display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
   <b>{{:errorMessage}}</b>
   <ul>
@@ -67,6 +67,14 @@ var contextPath = "${pageContext.request.contextPath}";
               </td>
           </tr>
 
+          {{if id != null}}
+          <tr>
+              <td class="label"><label for="lastLogin"><s:text name="userSettings.lastLogin" /></label></td>
+              <td class="field"><input type="text" size="30" value="{{:~formatDate(lastLogin)}}" readonly></td>
+              <td class="description"></td>
+          </tr>
+          {{/if}}
+
           <tr>
               <td class="label"><label for="screenName"><s:text name="userSettings.screenname" /></label></td>
               <td class="field"><input type="text" size="30" data-link="screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
@@ -84,9 +92,9 @@ var contextPath = "${pageContext.request.contextPath}";
                   <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
                   <td class="field">
                   {{if id != null}}
-                      <input type="password" size="20" data-link="password" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
+                      <input type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
                   {{else}}
-                      <input type="password" size="20" data-link="password" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20" required></td>
+                      <input type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20" required></td>
                   {{/if}}
                   <td class="description"><s:text name="userAdmin.tip.password" /></td>
               </tr>
