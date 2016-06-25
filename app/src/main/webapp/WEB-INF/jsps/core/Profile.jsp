@@ -110,22 +110,21 @@
             valid = true;
 
         } else {
-            saveButton.attr("disabled", true);
-            saveButton.addClass("btn-danger");
-            return;
+            valid = false;
         }
 
         if ( (password && password.trim().length) || (passwordConfirm && passwordConfirm.trim().length > 0 )) {
             if ( password != passwordConfirm ) {
-                saveButton.attr("disabled", true );
-                saveButton.addClass("btn-danger");
-                return;
+                valid = false;
             }
         }
 
         if ( valid ) {
             saveButton.attr("disabled", false);
             saveButton.removeClass("btn-danger");
+        } else {
+            saveButton.attr("disabled", true);
+            saveButton.addClass("btn-danger");
         }
 
     }
