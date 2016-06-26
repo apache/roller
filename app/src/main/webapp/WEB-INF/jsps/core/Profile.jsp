@@ -105,8 +105,8 @@
         var passwordConfirm = $("#profile_bean_passwordConfirm:first").val();
 
         if (    screenName && screenName.trim().length > 0
-             && fullName && fullName.trim().length > 0
-             && email && fullName.trim().length > 0 && validateEmail(email) ) {
+             && fullName   && fullName.trim().length > 0
+             && email      && email.trim().length > 0 && validateEmail(email) ) {
             valid = true;
 
         } else {
