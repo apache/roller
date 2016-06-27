@@ -56,7 +56,7 @@ public class VelocityRenderer implements Renderer {
     // a possible exception
     private Exception velocityException = null;
 
-    public VelocityRenderer(Template template, DeviceType deviceType) throws Exception {
+    public VelocityRenderer(Template template, DeviceType deviceType) {
 
         // the Template we are supposed to render
         this.renderTemplate = template;
@@ -81,27 +81,17 @@ public class VelocityRenderer implements Renderer {
             velocityException = ex;
 
             // need to lookup error page template
-            velocityTemplate = RollerVelocity.getTemplate("error-page.vm", deviceType);
+            velocityTemplate = RollerVelocity.getTemplate("templates/error-page.vm", deviceType);
 
-        } catch (Exception ex) {
-            // some kind of generic/unknown exception, dump it to the logs
-            log.error("Unknown exception creating renderer for {}", template.getId(), ex);
-
-            // throw if back to the caller
-            throw ex;
         }
     }
 
     @Override
     public void render(Map<String, Object> model, Writer out) throws WebloggerException {
-
         try {
-
             if (velocityException != null) {
-
                 // Render exception
                 renderException(model, out, null);
-
                 // and we're done
                 return;
             }
@@ -112,12 +102,10 @@ public class VelocityRenderer implements Renderer {
             Context ctx = new VelocityContext(model);
 
             if (velocityDecorator != null) {
-
                 /**
                  * We only allow decorating once, so the process isn't fully
                  * recursive. This is just to keep it simple.
                  */
-
                 // render base template to a temporary StringWriter
                 StringWriter sw = new StringWriter();
                 velocityTemplate.merge(ctx, sw);
@@ -129,9 +117,7 @@ public class VelocityRenderer implements Renderer {
 
                 // now render decorator to our output writer
                 velocityDecorator.merge(ctx, out);
-
             } else {
-
                 // no decorator, so just merge template to our output writer
                 velocityTemplate.merge(ctx, out);
             }
@@ -142,14 +128,12 @@ public class VelocityRenderer implements Renderer {
             log.debug("Rendered [{}] in {} secs", renderTemplate.getId(), renderTime);
 
         } catch (VelocityException ex) {
-
             // in the case of a parsing error including a macro we want to
             // render an error page instead so the user knows what was wrong
             velocityException = ex;
 
             // need to lookup parse error template
-            renderException(model, out, "error-parse.vm");
-
+            renderException(model, out, "templates/error-parse.vm");
         } catch (Exception ex) {
             // wrap and rethrow so caller can deal with it
             throw new WebloggerException("Error during rendering", ex);
@@ -157,9 +141,7 @@ public class VelocityRenderer implements Renderer {
     }
 
     private void renderException(Map<String, Object> model, Writer out, String template) throws WebloggerException {
-
         try {
-
             if (template != null) {
                 // need to lookup error page template
                 velocityTemplate = RollerVelocity.getTemplate(template, deviceType);
@@ -173,12 +155,10 @@ public class VelocityRenderer implements Renderer {
 
             // render output to Writer
             velocityTemplate.merge(ctx, out);
-
         } catch (Exception e) {
             // wrap and rethrow so caller can deal with it
             throw new WebloggerException("Error during rendering", e);
         }
-
     }
 
 }

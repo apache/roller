@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,31 +20,37 @@
  */
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import org.apache.commons.collections.ExtendedProperties;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
 /**
  * The ThemeResourceLoader is a Velocity template loader which loads templates
- * from shared themes.  See RollerVelocity javadoc for more information.
- * 
- * @author Allen Gilliland
+ * that are part of themes.  Resources fitting this loader are of two formats:
+ *
+ * For templates from shared themes: <theme name>:<template name>[|<renditionType>]
+ * For templates that are overridden or weblog-specific:
+ *                                   <weblog template id>[|<renditionType>]
+ * RenditionType.NORMAL is used if renditionType above is omitted.
  */
 public class ThemeResourceLoader extends ResourceLoader {
 
     private static Logger logger = LoggerFactory.getLogger(ThemeResourceLoader.class);
 
+    @Override
     public void init(ExtendedProperties configuration) {
         if (logger.isDebugEnabled()) {
             logger.debug(configuration.toString());
@@ -52,84 +58,87 @@ public class ThemeResourceLoader extends ResourceLoader {
     }
 
     /**
+     * Get an InputStream so that the Runtime can build a template with it.
+     *
+     * @param resourceId resource identifier for template rendition
+     * @return InputStream containing template
      * @throws ResourceNotFoundException
      */
-    public InputStream getResourceStream(String name) {
+    @Override
+    public InputStream getResourceStream(String resourceId) {
 
-        if (log.isDebugEnabled()) {
-            logger.debug("Looking for: {}", name);
-        }
+        logger.debug("Looking for: {}", resourceId);
 
-        if (name == null || name.length() < 1) {
+        if (resourceId == null || resourceId.length() < 1) {
             throw new ResourceNotFoundException("Need to specify a template name!");
         }
 
+        Template template;
         RenditionType renditionType = RenditionType.NORMAL;
-        if (name.contains("|")) {
-            String[] pair = name.split("\\|");
-            name = pair[0];
+
+        if (resourceId.contains("|")) {
+            String[] pair = resourceId.split("\\|");
+            resourceId = pair[0];
             renditionType = RenditionType.valueOf(pair[1].toUpperCase());
         }
 
-        try {
-            // parse the name ... shared theme template names are
-            // <theme>:<template>|<deviceType>
-            // where theme:template is defined via ThemeManagerImpl.loadThemeData().
-            String[] split = name.split(":", 2);
-            if (split.length < 2) {
-                throw new ResourceNotFoundException("Invalid ThemeRL key " + name);
+        // by here, resourceId will lack the "|renditionType"
+        if (resourceId.contains(":")) {
+            // shared theme, stored in a file
+            String[] sharedThemeParts = resourceId.split(":", 2);
+            if (sharedThemeParts.length != 2) {
+                throw new ResourceNotFoundException("Invalid Theme resource key " + resourceId);
             }
-
-            // lookup the template from the proper theme
             ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-            SharedTheme theme = themeMgr.getSharedTheme(split[0]);
-            Template template = theme.getTemplateByName(split[1]);
+            SharedTheme theme = themeMgr.getSharedTheme(sharedThemeParts[0]);
+            template = theme.getTemplateByName(sharedThemeParts[1]);
+        } else {
+            // weblog-only theme in database
+            template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(resourceId);
+        }
 
-            if (template == null) {
-                throw new ResourceNotFoundException("Template [" + split[1]
-                        + "] doesn't seem to be part of theme [" + split[0] + "]");
-            }
+        if (template == null) {
+            throw new ResourceNotFoundException("Template \"" + resourceId + "\" not found");
+        }
 
-            final String contents;
+        final String contents;
+        TemplateRendition templateCode = template.getTemplateRendition(renditionType);
+        if (templateCode == null && renditionType != RenditionType.NORMAL) {
+            // fall back to standard rendition if mobile or other unavailable
+            templateCode = template.getTemplateRendition(RenditionType.NORMAL);
+        }
+        if (templateCode != null) {
+            contents = templateCode.getRendition();
+        } else {
+            throw new ResourceNotFoundException("Rendering [" + renditionType.name()
+                    + "] of Template [" + resourceId + "] not found.");
+        }
 
-            if (template.getTemplateRendition(renditionType) != null) {
-                contents = template.getTemplateRendition(renditionType).getRendition();
-            } else if (renditionType != RenditionType.NORMAL
-                    && template.getTemplateRendition(RenditionType.NORMAL) != null) {
-                // fall back to standard rendition type if others not defined
-                contents = template.getTemplateRendition(RenditionType.NORMAL).getRendition();
-            } else {
-                throw new ResourceNotFoundException("Rendering [" + renditionType.name()
-                        + "] of Template [" + split[1] + "] not found.");
-            }
+        logger.debug("Resource found!");
 
-            logger.debug("Resource found!");
-
-            // return the input stream
+        // return the input stream
+        try {
             return new ByteArrayInputStream(contents.getBytes("UTF-8"));
-
-        } catch (UnsupportedEncodingException uex) {
-            // We expect UTF-8 in all JRE installation.
-            // This rethrows as a Runtime exception after logging.
-            logger.error("exception", uex);
-            throw new RuntimeException(uex);
+        } catch (UnsupportedEncodingException uee) {
+            // should never happen, UTF-8 required to be supported by a JVM
+            String msg = "Rendering problem trying to load resource " + resourceId;
+            logger.error(msg, uee);
+            throw new ResourceNotFoundException(msg);
         }
     }
 
     /**
-     * Files loaded by this resource loader are not reloadable here, as they are
-     * stored in shared themes and there is no way velocity can trigger a
-     * reload.
-     * 
-     * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#isSourceModified(org.apache.velocity.runtime.resource.Resource)
+     * Velocity reloading not used.  Instead, template changes clear the page cache, triggering page regeneration that way.
      */
+    @Override
     public boolean isSourceModified(Resource resource) {
         return false;
     }
 
     /**
-     * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#getLastModified(org.apache.velocity.runtime.resource.Resource)
+     * Unused.
      */
+    @Override
     public long getLastModified(Resource resource) {
         return 0;
     }

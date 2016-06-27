@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * property value in that file) to obtain the Template to use for the
  * given template name.
  *
- * Further, RollerResourceLoader and parse out the |xxxxx portion added in
+ * Further, ThemeResourceLoader parses out the |xxxxx portion added in
  * the getTemplate() overrides to determine the proper device type's rendition
  * to use.
  *
@@ -60,8 +60,7 @@ public class RollerVelocity {
         Properties velocityProps = new Properties();
         
         try {
-            InputStream instream =
-                    RollerContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG);
+            InputStream instream = RollerContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG);
             
             velocityProps.load(instream);
             
@@ -90,7 +89,7 @@ public class RollerVelocity {
     }
     
     /**
-     * Convenience static method for looking up a template.
+     * Convenience static method for retrieving a Velocity template.
      * @throws org.apache.velocity.exception.ResourceNotFoundException,
      *       org.apache.velocity.exception.ParseErrorException
      */
@@ -99,7 +98,7 @@ public class RollerVelocity {
     }
 
      /**
-     * Convenience static method for looking up a template.
+     * Convenience static method for retrieving a Velocity template.
      * @throws org.apache.velocity.exception.ResourceNotFoundException,
      *       org.apache.velocity.exception.ParseErrorException
      */
@@ -108,7 +107,7 @@ public class RollerVelocity {
     }
     
     /**
-     * Convenience static method for looking up a template.
+     * Convenience static method for retrieving a Velocity template.
      * @throws org.apache.velocity.exception.ResourceNotFoundException,
      *       org.apache.velocity.exception.ParseErrorException
      */
@@ -117,7 +116,7 @@ public class RollerVelocity {
     }
 	
     /**
-     * Convenience static method for looking up a template.
+     * Convenience static method for retrieving a Velocity template.
      * @throws org.apache.velocity.exception.ResourceNotFoundException,
      *       org.apache.velocity.exception.ParseErrorException
      */
