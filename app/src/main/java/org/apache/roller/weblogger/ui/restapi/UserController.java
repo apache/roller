@@ -25,12 +25,14 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.MailManager;
@@ -45,13 +47,14 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.security.LDAPRegistrationHelper;
 import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.ldap.userdetails.LdapUserDetails;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,7 +66,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.mail.MessagingException;
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -100,13 +102,6 @@ public class UserController {
 
     public void setMailManager(MailManager manager) {
         mailManager = manager;
-    }
-
-    @Autowired
-    private LDAPRegistrationHelper ldapRegistrationHelper;
-
-    public void setLdapRegistrationHelper(LDAPRegistrationHelper ldapRegistrationHelper) {
-        this.ldapRegistrationHelper = ldapRegistrationHelper;
     }
 
     public UserController() {
@@ -190,32 +185,20 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/users", method = RequestMethod.PUT)
-    public ResponseEntity addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
-        ValidationError maybeError = advancedValidate(newData, true);
-        if (maybeError != null) {
-            return ResponseEntity.badRequest().body(maybeError);
-        }
-        User user = new User();
-        user.setId(WebloggerCommon.generateUUID());
-        user.setUserName(newData.getUserName());
-        user.setDateCreated(Instant.now());
-        return saveUser(user, newData, p, response);
-    }
-
     @RequestMapping(value = "/tb-ui/register/rest/ldapdata", method = RequestMethod.GET)
-    public ResponseEntity getLDAPData(HttpServletRequest request) throws ServletException {
-        if (WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.LDAP) {
-            // See if user is already logged in via Spring Security
-            User fromSSOUser = ldapRegistrationHelper.getUserDetailsFromAuthentication(request);
-            if (fromSSOUser != null) {
-                // Copy user details from Spring Security, including LDAP attributes
+    public ResponseEntity getLDAPData(Principal p) throws ServletException {
+
+        // See if user is already logged in via Spring Security
+        if (WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.LDAP && p != null) {
+
+            UsernamePasswordAuthenticationToken p2 = (UsernamePasswordAuthenticationToken) p;
+            LdapUserDetails userDetails = (LdapUserDetails) p2.getPrincipal();
+            if (userDetails.isEnabled()) {
+                // Copy username from LDAP
                 User user = new User();
-                user.setId(fromSSOUser.getId());
-                user.setUserName(fromSSOUser.getUserName());
-                user.setScreenName(fromSSOUser.getScreenName());
-                user.setEmailAddress(fromSSOUser.getEmailAddress());
-                user.setLocale(fromSSOUser.getLocale());
+                user.setUserName(userDetails.getUsername());
+                user.setLocale(Locale.getDefault().toString());
+                user.setEnabled(true);
                 return ResponseEntity.ok().body(user);
             }
         }
@@ -242,6 +225,26 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/users", method = RequestMethod.PUT)
+    public ResponseEntity addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
+        ValidationError maybeError = advancedValidate(newData, true);
+        if (maybeError != null) {
+            return ResponseEntity.badRequest().body(maybeError);
+        }
+        if (WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.LDAP) {
+            // LDAP auth ignores the database-saved password but that field keeps a not null constraint
+            // for the more common DB auth option, so providing a random string for that field.
+            String unusedPassword = RandomStringUtils.randomAscii(15);
+            newData.setPasswordText(unusedPassword);
+            newData.setPasswordConfirm(unusedPassword);
+        }
+        User user = new User();
+        user.setId(WebloggerCommon.generateUUID());
+        user.setUserName(newData.getUserName());
+        user.setDateCreated(Instant.now());
+        return saveUser(user, newData, p, response);
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/userprofile/{id}", method = RequestMethod.POST)

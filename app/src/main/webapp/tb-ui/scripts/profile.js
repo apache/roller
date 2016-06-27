@@ -10,13 +10,12 @@ $(function() {
   $(function() {
     var recordId = $('#userId').val();
     if (recordId == '') {
-      var startData = {};
       if (authMethod == "ldap") {
         $.ajax({
            type: "GET",
            url: contextPath + '/tb-ui/register/rest/ldapdata',
            success: function(data, textStatus, xhr) {
-             startData = data;
+             updateEditForm(data);
            },
            error: function(xhr, status, errorThrown) {
               if (xhr.status == 404) {
@@ -26,7 +25,6 @@ $(function() {
            }
         });
       }
-      updateEditForm(startData);
     } else {
       $.ajax({
          type: "GET",

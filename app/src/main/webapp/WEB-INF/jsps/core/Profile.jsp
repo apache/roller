@@ -40,7 +40,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
 </div>
 
 <div id="errorMessageNoLDAPAuth" class="errors" style="display:none">
-  <span><s:text name="Register.error.ldap.unavailable"/></span>
+  <span><s:text name="Register.error.ldap.notauthenticated"/></span>
 </div>
 
 <div class="ldapok">
@@ -94,7 +94,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
           <td class="label"><label for="userName"><s:text name="userSettings.username" /></label></td>
           <td class="field">
             <s:if test="getProp('authentication.method') == 'ldap'">
-                <strong data-link="userName"></strong>
+                <strong>{{:userName}}</strong>
             </s:if>
             <s:else>
               <s:if test="authenticatedUser == null">
