@@ -45,15 +45,20 @@ public class VelocityRendererFactory implements RendererFactory {
             return null;
         }
 
-        // nothing we can do with null values
-        tr = template.getTemplateRendition(RenditionType.NORMAL);
+        tr = template.getTemplateRendition(RenditionType.valueOf(deviceType.name()));
 
+        // fallback to normal if template for requested device type not available
+        if (tr == null && !DeviceType.NORMAL.equals(deviceType)) {
+            tr = template.getTemplateRendition(RenditionType.NORMAL);
+        }
+
+        // nothing we can do with null values
         if (tr == null) {
             return null;
         }
-        
+
+        // VelocityRenderer handles Velocity templates only
         if (Parser.VELOCITY.equals(tr.getParser())) {
-            // standard velocity template
             try {
                renderer = new VelocityRenderer(template, deviceType);
             } catch (Exception ex) {

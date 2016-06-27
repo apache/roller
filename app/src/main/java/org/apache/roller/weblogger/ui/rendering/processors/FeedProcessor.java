@@ -199,7 +199,7 @@ public class FeedProcessor {
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", feedRequest);
         model = Model.getModelMap("feedModelSet", initData);
-        pageId = feedRequest.getType() + "-atom.vm";
+        pageId = "templates/feeds/" + feedRequest.getType() + "-atom.vm";
 
         // lookup Renderer we are going to use
         Renderer renderer;
