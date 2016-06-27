@@ -33,7 +33,7 @@ if (user == null) {
     response.sendRedirect(request.getContextPath()+"/tb-ui/menu.rol");
 } else if (!user.isGlobalAdmin() && roles != null && roles.size() == 1) {
     Weblog weblog = roles.get(0).getWeblog();
-    response.sendRedirect(request.getContextPath()+"/tb-ui/authoring/entryAdd.rol?weblog=" + weblog.getHandle());
+    response.sendRedirect(request.getContextPath()+"/tb-ui/authoring/entryAdd.rol?weblogId=" + weblog.getId());
 } else {
     response.sendRedirect(request.getContextPath()+"/tb-ui/menu.rol");
 }

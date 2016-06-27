@@ -83,8 +83,6 @@
         <beans:property name="menuHelper" ref="menuHelper"/>
     </beans:bean>
 
-    <beans:bean id="ldapRegistrationHelper" class="org.apache.roller.weblogger.ui.core.security.LDAPRegistrationHelper"/>
-
     <beans:bean id="weblogManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl">
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>

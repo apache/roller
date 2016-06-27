@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -66,6 +67,7 @@ import javax.validation.constraints.Pattern;
         @NamedQuery(name="User.getCountEnabledDistinct",
                 query="SELECT COUNT(u) FROM User u WHERE u.enabled = ?1")
 })
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     
     private String  id;
