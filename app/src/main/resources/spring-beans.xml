@@ -23,6 +23,10 @@
           http://www.springframework.org/schema/util
           http://www.springframework.org/schema/util/spring-util-4.2.xsd">
 
+    <!-- Any of these values can be overridden and maintained outside of the WAR by placing in a separate
+         tightblog-custom.xml file in the servlet container's library folder, e.g. for Tomcat its lib folder
+         (same place where tightblog-custom.properties is kept.) -->
+
     <!-- Have JSR-250 annotations (PostConstruct, PreDestroy) honored by Spring -->
     <beans:bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 
@@ -273,9 +277,11 @@
                 </beans:bean>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.ExcessLinksCommentValidator"/>
                 <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.ExcessSizeCommentValidator"/>
-                <!--Akismet requires user-specific configuration -->
-                <!--beans:bean class="org.apache.roller.weblogger.ui.rendering.comments.AkismetCommentValidator">
-                    <beans:property name="urlStrategy" ref="urlStrategy"/>
+                <!--Akismet requires configuration of user key below -->
+                <!--beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.AkismetCommentValidator">
+                    <beans:constructor-arg ref="urlStrategy"/>
+                    <beans:constructor-arg name="apiKey" value="...your key here..."/>
+                    <beans:property name="deleteBlatantSpam" value="false"/>
                 </beans:bean-->
             </beans:list>
         </beans:property>
