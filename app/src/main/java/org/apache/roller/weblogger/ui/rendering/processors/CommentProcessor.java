@@ -385,8 +385,9 @@ public class CommentProcessor {
 
             }
 
-            if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
-                    !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled")) {
+            // Akismet validator can be configured to return -1 for blatant spam, if so configured, don't save in queue.
+            if (validationScore >= 0 && (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
+                    !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled"))) {
 
                 boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(comment.getStatus());
                 weblogEntryManager.saveComment(comment, refreshWeblog);

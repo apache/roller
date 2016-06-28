@@ -48,10 +48,15 @@ public class CommentValidationManager {
      */
     public int validateComment(WeblogEntryComment comment, RollerMessages messages) {
         int total = 0;
+        int singleResponse;
         if (validators.size() > 0) {
             for (CommentValidator val : validators) {
                 log.debug("Invoking comment validator {}", val.getName());
-                total += val.validate(comment, messages);
+                singleResponse = val.validate(comment, messages);
+                if (singleResponse == -1) { // blatant spam
+                    return -1;
+                }
+                total += singleResponse;
             }
             total = total / validators.size();
         } else {
