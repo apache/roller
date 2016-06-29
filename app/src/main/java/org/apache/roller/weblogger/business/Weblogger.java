@@ -20,12 +20,10 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
 /**
  * Helper methods to obtain managers of the Weblogger business tier.
- * Deprecated in favor of greater use of Spring DI
  */
 public class Weblogger {
 
