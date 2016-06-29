@@ -211,7 +211,7 @@ public class FileContentManagerImpl implements FileContentManager {
         long size = 0;
 
         if (dir.exists() && dir.isDirectory() && dir.canRead()) {
-            long dirSize = 0l;
+            long dirSize = 0L;
             File[] files = dir.listFiles();
             if (files != null) {
                 for (File file : files) {

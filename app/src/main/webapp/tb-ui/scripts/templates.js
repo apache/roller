@@ -1,7 +1,4 @@
 $(function() {
-  $.templates({
-    errorMessageTemplate: '#errorMessageTemplate'
-  });
   $("#confirm-delete").dialog({
     autoOpen: false,
     resizable: true,
@@ -64,8 +61,8 @@ $(function() {
               if (xhr.status in this.statusCode)
                  return;
                  if (xhr.status == 400) {
-                    var html = $.render.errorMessageTemplate(xhr.responseJSON);
-                    $('#errorMessageDiv').html(html);
+                    angular.element('#errorMessageDiv').scope().ctrl.errorObj = xhr.responseJSON;
+                    angular.element('#templates-list').scope().$apply();
                     $('#errorMessageDiv').show();
                  }
            }
@@ -84,6 +81,8 @@ var templatesApp = angular.module('TemplatesApp', []);
 
 templatesApp.controller('TemplatesController', ['$http', function TemplatesController($http) {
     var self = this;
+
+    this.errorObj = {};
 
     this.loadTemplateData = function() {
       $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates').then(function(response) {
