@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 
 /**
  * Helper methods to obtain managers of the Weblogger business tier.
+ * Meant for cases where Spring DI is not easily available or inefficient to use.
  */
 public class Weblogger {
 

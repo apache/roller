@@ -44,15 +44,18 @@ $(function() {
     $('#errorMessageDiv').hide();
     $('#successMessageDiv').hide();
     var view = $.view("#recordId");
-    var urlToUse = contextPath + (view.data.hasOwnProperty('id') ?
-      '/tb-ui/authoring/rest/userprofile/' + view.data.id : '/tb-ui/register/rest/registeruser');
+    var isUpdate = view.data.hasOwnProperty('id');
+    var urlToUse = contextPath + (isUpdate ? '/tb-ui/authoring/rest/userprofile/' + view.data.id
+      : '/tb-ui/register/rest/registeruser');
     $.ajax({
        type: "POST",
        url: urlToUse,
        data: JSON.stringify(view.data),
        contentType: "application/json",
        success: function(data, textStatus, xhr) {
-         $('div .notregistered').hide();
+         if (!isUpdate) {
+           $('div .notregistered').hide();
+         }
          if (data.enabled == true) {
            $('#successMessageDiv').show();
          } else {

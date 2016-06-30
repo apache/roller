@@ -208,13 +208,13 @@
     </div>
     <div id="miscControl" class="miscControl" style="display:none">
 
-        <label for="link"><s:text name="weblogEdit.pubTime" /></label>
+        <label for="link"><s:text name="weblogEdit.specifyPubTime" />:</label>
         <div>
-            <s:select name="bean.hours" list="hoursList" />
+            <s:textfield type="number" min="0" max="23" step="1" name="bean.hours"/>
             :
-            <s:select name="bean.minutes" list="minutesList" />
+            <s:textfield type="number" min="0" max="59" step="1" name="bean.minutes"/>
             :
-            <s:select name="bean.seconds" list="secondsList" />
+            <s:textfield type="number" min="0" max="59" step="1" name="bean.seconds"/>
             &nbsp;&nbsp;
             <script>
             $(function() {
@@ -244,21 +244,23 @@
 		<table>
 			<tr>
 				<td><s:text name="weblogEdit.searchDescription" />:<tags:help key="weblogEdit.searchDescription.tooltip"/></td>
-				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/> </td>
+				<td><s:textfield name="bean.searchDescription" size="80" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/> </td>
 			</tr>
             <tr>
 				<td><s:text name="weblogEdit.enclosureURL" />:<tags:help key="weblogEdit.enclosureURL.tooltip"/></td>
-				<td><s:textfield name="bean.enclosureUrl" size="40" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/></td>
+				<td><s:textfield name="bean.enclosureUrl" size="80" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/></td>
 			</tr>
-            <s:if test="actionName == 'entryEdit'">
+            <s:if test="actionName != 'entryAdd'">
                 <tr>
                     <td></td>
                     <td>
                         <s:if test="bean.enclosureType != null && bean.enclosureType != ''">
                             <s:text name="weblogEdit.enclosureType" />: <s:property value='bean.enclosureType' />
+                            <s:hidden name="bean.enclosureType"/>
                         </s:if>
                         <s:if test="bean.enclosureLength != null && bean.enclosureLength != 0">
                             <s:text name="weblogEdit.enclosureLength" />: <s:property value='bean.enclosureLength' />
+                            <s:hidden name="bean.enclosureLength"/>
                         </s:if>
                     </td>
                 </tr>

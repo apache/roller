@@ -21,6 +21,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import com.opensymphony.xwork2.ActionContext;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -29,6 +30,8 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+
+import java.util.Locale;
 
 /**
  * Handle user logins.
@@ -74,12 +77,11 @@ public class Login extends UIAction {
     }
 
     public String execute() {
-        
         // set action error message if there was login error
         if(getError() != null) {
             addError("error.password.mismatch");
         }
-        
+
         return SUCCESS;
     }
 

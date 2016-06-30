@@ -55,7 +55,7 @@ import java.util.TimeZone;
  */
 public class UIAction extends ActionSupport implements Preparable {
 
-    private static final List LOCALES;
+    private static final List<Locale> LOCALES;
     private static final List TIME_ZONES;
 
     private static Comparator<Locale> LocaleComparator = (locale1, locale2) -> {
@@ -359,7 +359,7 @@ public class UIAction extends ActionSupport implements Preparable {
         return "MMM dd, yyyy";
     }
     
-    public List getLocalesList() {
+    public List<Locale> getLocalesList() {
         return LOCALES;
     }
 
@@ -367,26 +367,6 @@ public class UIAction extends ActionSupport implements Preparable {
         return TIME_ZONES;
     }
     
-    public List getHoursList() {
-        List ret = new ArrayList();
-        for (int i=0; i<24; i++) {
-            ret.add(i);
-        }
-        return ret;
-    }
-    
-    public List getMinutesList() {
-        List ret = new ArrayList();
-        for (int i=0; i<60; i++) {
-            ret.add(i);
-        }
-        return ret;
-    }
-    
-    public List getSecondsList() {
-        return getMinutesList();
-    }
-
     public List<Pair<Integer, String>> getCommentDaysList() {
         List<Pair<Integer, String>> opts = new ArrayList<>();
         opts.add(Pair.of(-1, getText("weblogEdit.unlimitedCommentDays")));
@@ -423,4 +403,5 @@ public class UIAction extends ActionSupport implements Preparable {
         addMessage("themeEditor.setTheme.success", getActionWeblog().getTheme());
         return SUCCESS;
     }
+
 }

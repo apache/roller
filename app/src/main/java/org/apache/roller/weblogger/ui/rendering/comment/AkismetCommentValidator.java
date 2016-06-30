@@ -38,7 +38,12 @@ import org.slf4j.LoggerFactory;
  * Check against Akismet service. Expects to a valid Akismet API key in the
  * Spring configuration ("apiKey") property.
  * You can get a free personal use key by registering as a user at wordpress.com.
- * See Akismet site for API details (https://akismet.com/development/api/#detailed-docs)
+ * See Akismet site for API details (https://akismet.com/development/api/#comment-check)
+ *
+ * Per the Akismet docs, to test for non-blatant spam, use a commenter name of "viagra-test-123".
+ *
+ * To test for blatant spam, set test_discard=1 and is_test=1 to the request created
+ * in the validate() method below.
  *
  * Before using Akismet, good to verify your apiKey works using cURL or similar tool:
  * curl --data "key=...your key...&blog=http://www.myblogurl.com/blog/" https://rest.akismet.com/1.1/verify-key

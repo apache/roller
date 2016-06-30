@@ -17,6 +17,7 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.util.Utilities;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Locale;
 
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     private UserManager userManager;
@@ -43,11 +45,11 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         Object authPrincipal = authentication.getPrincipal();
 
+        UserDetails springUser = (UserDetails) authPrincipal;
+        User user = userManager.getUserByUserName(springUser.getUsername());
+
         // if authenticated via LDAP but not yet registered in system, redirect to registration page.
         if (authPrincipal instanceof LdapUserDetails) {
-            UserDetails springUser = (UserDetails) authPrincipal;
-            User user = userManager.getUserByUserName(springUser.getUsername());
-
             if (user == null) {
                 String redirectUrl = UrlUtils.buildFullRequestUrl(request.getScheme(), request.getServerName(),
                         new PortResolverImpl().getServerPort(request), "/tightblog/tb-ui/register.rol", null);
@@ -56,16 +58,18 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
             }
         }
 
+        // Normal login sets the users locale in login-redirect.jsp, below is for the case where the
+        // user's session has expired (and login-redirect is usually not triggered).
+        //
+        // The Locale.getAvailableLocales() used to populate the locale list uses underscore separators (en_US)
+        // while forLanguageTag() requires the BCP 47 style hyphens (en-US).  For now, just replacing the
+        // separator, should be sufficient for our purposes.
+        Locale locale = Locale.forLanguageTag(user.getLocale().replace('_', '-'));
+        request.getSession().setAttribute("WW_TRANS_I18N_LOCALE", locale);
+
         super.onAuthenticationSuccess(request, response, authentication);
 
-        if (authPrincipal instanceof UserDetails) {
-            UserDetails springUser = (UserDetails) authPrincipal;
-            User user = userManager.getUserByUserName(springUser.getUsername());
-
-            if (user != null) {
-                user.setLastLogin(Instant.now());
-                userManager.saveUser(user);
-            }
-        }
+        user.setLastLogin(Instant.now());
+        userManager.saveUser(user);
     }
 }

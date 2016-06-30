@@ -123,7 +123,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
       <tr>
           <td class="label"><label for="locale"><s:text name="userSettings.locale" /></label></td>
           <td class="field">
-            <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="locale" required=""/>
+              <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="locale" required=""/>
           </td>
           <td class="description"><s:text name="userRegister.tip.locale" /></td>
       </tr>

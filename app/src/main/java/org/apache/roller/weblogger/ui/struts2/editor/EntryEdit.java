@@ -363,6 +363,8 @@ public final class EntryEdit extends UIAction {
                         weblogEntry.setEnclosureUrl(mediacast.getUrl());
                         weblogEntry.setEnclosureType(mediacast.getContentType());
                         weblogEntry.setEnclosureLength(mediacast.getLength());
+                        bean.setEnclosureType(mediacast.getContentType());
+                        bean.setEnclosureLength(mediacast.getLength());
 
                     } catch (MediacastException ex) {
                         addMessage(getText(ex.getErrorKey()));
@@ -372,6 +374,8 @@ public final class EntryEdit extends UIAction {
                     weblogEntry.setEnclosureUrl(null);
                     weblogEntry.setEnclosureType(null);
                     weblogEntry.setEnclosureLength(null);
+                    bean.setEnclosureType(null);
+                    bean.setEnclosureLength(null);
                 }
 
                 if (log.isDebugEnabled()) {
