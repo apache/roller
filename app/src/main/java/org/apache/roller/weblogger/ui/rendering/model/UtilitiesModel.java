@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class UtilitiesModel implements Model {
     private WeblogRequest weblogRequest = null;
+    private ZoneId zoneId;
 
     /** Template context name to be used for model */
     @Override
@@ -47,6 +48,7 @@ public class UtilitiesModel implements Model {
     @Override
     public void init(Map initData) {
         weblogRequest = (WeblogRequest) initData.get("parsedRequest");
+        zoneId = (weblogRequest == null) ? ZoneId.systemDefault() : weblogRequest.getWeblog().getZoneId();
     }
 
     public String autoformat(String s) {
@@ -81,18 +83,18 @@ public class UtilitiesModel implements Model {
         if (dt == null || fmt == null) {
             return fmt;
         }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt).withZone(ZoneId.systemDefault());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt).withZone(zoneId);
         return dtf.format(dt);
     }
-    
+
     /**
      * Format date as '2011-12-03T10:15:30+01:00[Europe/Paris]'
      * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
      */
     public String formatIsoZonedDateTime(LocalDateTime date) {
-        return DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.of(date, ZoneId.systemDefault()));
+        return DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.of(date, zoneId));
     }
-    
+
     /**
      * Format date as '2011-12-03T10:15:30+01:00'
      * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
@@ -100,18 +102,18 @@ public class UtilitiesModel implements Model {
     public String formatIsoOffsetDateTime(LocalDateTime date) {
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.of(date, ZoneId.systemDefault()));
     }
-    
+
     //------------------------------------------------------------ String utils
-    
+
     // isEmpty = empty (size = 0) or null
     public boolean isEmpty(String str) {
         return StringUtils.isEmpty(str);
     }
-    
+
     public boolean isNotEmpty(String str) {
         return StringUtils.isNotEmpty(str);
     }
-    
+
     public String left(String str, int length) {
         return StringUtils.left(str, length);
     }
@@ -123,7 +125,7 @@ public class UtilitiesModel implements Model {
     public String escapeHTML(String str) {
         return StringEscapeUtils.escapeHtml4(str);
     }
-    
+
     public String unescapeHTML(String str) {
         return StringEscapeUtils.unescapeHtml4(str);
     }
@@ -170,14 +172,14 @@ public class UtilitiesModel implements Model {
     public final String decode(String s) {
         return (s == null) ? null : Utilities.decode(s);
     }
-        
+
     /**
      * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
      */
     public String addNofollow(String html) {
         return Utilities.addNofollow(html);
     }
-    
+
     /**
      * Transforms the given String into a subset of HTML displayable on a web
      * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
@@ -189,5 +191,5 @@ public class UtilitiesModel implements Model {
     public String transformToHTMLSubset(String s) {
         return Utilities.transformToHTMLSubset(s);
     }
-    
+
 }

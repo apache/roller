@@ -25,16 +25,21 @@
 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
 User user = mgr.getUserByUserName(auth.getName());
-List<UserWeblogRole> roles = (user != null) ? mgr.getWeblogRoles(user) : null;
 
 if (user == null) {
-    // this will force a login, and then a Spring security redirect to the menu page.  Forwarding
-    // to login directly does not work well as no forwarding occurs (remains on login page).
-    response.sendRedirect(request.getContextPath()+"/tb-ui/menu.rol");
-} else if (!user.isGlobalAdmin() && roles != null && roles.size() == 1) {
-    Weblog weblog = roles.get(0).getWeblog();
-    response.sendRedirect(request.getContextPath()+"/tb-ui/authoring/entryAdd.rol?weblogId=" + weblog.getId());
+    // Spring security policy requires a successful login before the code in this JSP can be accessed.
+    // If authentication successful but no user, authentication must have been via LDAP without
+    // the user having registered yet.  So forward to the registration page...
+    response.sendRedirect(request.getContextPath() + "/tightblog/tb-ui/register.rol");
 } else {
-    response.sendRedirect(request.getContextPath()+"/tb-ui/menu.rol");
+    List<UserWeblogRole> roles = mgr.getWeblogRoles(user);
+
+    if (!user.isGlobalAdmin() && roles != null && roles.size() == 1) {
+        Weblog weblog = roles.get(0).getWeblog();
+        response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
+            + user.getLocale() + "&weblogId=" + weblog.getId());
+    } else {
+        response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
+    }
 }
 %>
