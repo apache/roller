@@ -58,10 +58,6 @@
          <type>string</type>
          <default-value></default-value>
       </property-def>      
-      <property-def  name="site.frontpage.weblog.aggregated"  key="configForm.frontpageWeblogAggregated">
-         <type>boolean</type>
-         <default-value>false</default-value>
-      </property-def>
       <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
           <!-- If true, new auto ping requests are not queued, any existing queued requests
           are not processed, and sending a manual ping results in a message saying pings

@@ -153,7 +153,7 @@ public class SearchProcessor {
         model = Model.getModelMap("searchModelSet", initData);
 
         // Load special models for site-wide blog
-        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+        if (propertiesManager.isFrontPageWeblog(weblog.getHandle())) {
             model.putAll(Model.getModelMap("siteModelSet", initData));
         }
 

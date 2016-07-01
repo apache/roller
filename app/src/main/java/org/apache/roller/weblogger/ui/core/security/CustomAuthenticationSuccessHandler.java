@@ -72,4 +72,22 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         user.setLastLogin(Instant.now());
         userManager.saveUser(user);
     }
+
+    @Override
+    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
+        // If user went to login page directly instead of being routed there by Spring, the
+        // destination page will remain the login page.  In such circumstances, forward on to the
+        // Menu page instead.
+        String targetUrl = request.getHeader("Referer");
+        if (targetUrl != null) {
+            if (targetUrl.endsWith("/login.rol")) {
+                return targetUrl.substring(0, targetUrl.lastIndexOf("/login.rol")) + "/menu.rol";
+            } else if (targetUrl.contains("/emailResponse!activate.rol?")) {
+                // here, login page via email activation of account.
+                return targetUrl.substring(0, targetUrl.lastIndexOf("/emailResponse!")) + "/menu.rol";
+            }
+        }
+
+        return super.determineTargetUrl(request, response);
+    }
 }

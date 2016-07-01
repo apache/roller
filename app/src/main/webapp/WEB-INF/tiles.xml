@@ -76,10 +76,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
     </definition>
 
-    <definition name=".Welcome" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/Welcome.jsp" />
-    </definition>
-
     <definition name=".Profile" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
     </definition>

@@ -113,7 +113,7 @@
 
         <action name="emailResponse!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.Login">
-            <result name="successActivate" type="tiles">.Welcome</result>
+            <result name="successActivate" type="tiles">.Login</result>
             <allowed-methods>activate</allowed-methods>
         </action>
 

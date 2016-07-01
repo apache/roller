@@ -83,7 +83,7 @@ public interface PropertiesManager {
      * Return true if given weblog handle points to the front-page weblog and
      * that weblog is also configured to have site-wide data available.
      */
-    boolean isSiteWideWeblog(String weblogHandle);
+    boolean isFrontPageWeblog(String weblogHandle);
 
     /**
      * Get the Blacklist object for the Weblogger instance (not including any

@@ -240,20 +240,14 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         return intval;
     }
 
-    private boolean isFrontPageWeblog(String weblogHandle) {
-        String frontPageHandle = getStringProperty("site.frontpage.weblog.handle");
-        return (frontPageHandle.equals(weblogHandle));
-    }
-
     /**
      * Convenience method for classes trying to determine if a given
-     * weblog handle represents the front page blog and it is configured
-     * to render site-wide data.
+     * weblog handle represents the front page blog.
      */
     @Override
-    public boolean isSiteWideWeblog(String weblogHandle) {
-        boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
-        return (siteWide && isFrontPageWeblog(weblogHandle));
+    public boolean isFrontPageWeblog(String weblogHandle) {
+        String frontPageHandle = getStringProperty("site.frontpage.weblog.handle");
+        return (frontPageHandle != null && frontPageHandle.equals(weblogHandle));
     }
 
     @Override
