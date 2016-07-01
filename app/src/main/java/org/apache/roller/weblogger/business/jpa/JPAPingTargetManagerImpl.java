@@ -215,8 +215,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public void sendPings() {
         log.debug("ping task started");
 
-        // Make a copy of the current queue
-        Set<Weblog> weblogs = new HashSet<>(weblogPingSet);
+        // Make a reference to the current queue
+        Set<Weblog> weblogs = weblogPingSet;
 
         // reset queue for next execution
         weblogPingSet = Collections.synchronizedSet(new HashSet<>());
