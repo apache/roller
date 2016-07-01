@@ -93,12 +93,14 @@ public class HitCountTest extends WebloggerTest {
         assertEquals(10, aWeblog.getHitsToday());
         
         // increment
-        weblogManager.incrementHitCount(aWeblog, 25);
-        endSession(true);
-        
+        for (int i = 0; i < 5; i++) {
+            weblogManager.incrementHitCount(aWeblog);
+        }
+        weblogManager.updateHitCounters();
+
         // make sure it was incremented properly
         int hitCount = weblogManager.getHitCount(testWeblog);
-        assertEquals(35, hitCount);
+        assertEquals(15, hitCount);
     }
 
     @Test

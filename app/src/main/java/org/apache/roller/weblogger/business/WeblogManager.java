@@ -183,21 +183,19 @@ public interface WeblogManager {
     void promoteScheduledEntries();
 
     /**
-     * Empty the {@link HitCountQueue}, updating individual blog counters
-     * with its data.
-     */
-    void updateHitCounters();
-
-    /**
-     * Increment the hit count for a weblog by a certain amount.
-     *
-     * This is basically a convenience method for doing a lookup, modify, save
-     * of hit data
+     * Increment the hit (external view) count by one for a weblog.  This
+     * information is not written to the database immediately but stored
+     * in a queue.
      *
      * @param weblog The weblog object to increment the count for.
-     * @param amount How much to increment by.
      */
-    void incrementHitCount(Weblog weblog, int amount);
+    void incrementHitCount(Weblog weblog);
+
+    /**
+     * Job to write out the hit count queue to the database, updating
+     * individual blog's hit counters
+     */
+    void updateHitCounters();
 
     /**
      * Save a Bookmark.

@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
@@ -54,6 +53,7 @@ import javax.persistence.TypedQuery;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -72,6 +72,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final MediaFileManager mediaFileManager;
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
+
+    // Map of each weblog and its extra hit count that has had additional accesses since the
+    // last scheduled updateHitCounters() call.
+    private Map<String, Long> hitsTally = Collections.synchronizedMap(new HashMap<>());
 
     public void setWeblogBlacklistCache(LazyExpiringCache weblogBlacklistCache) {
         this.weblogBlacklistCache = weblogBlacklistCache;
@@ -547,12 +551,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public void incrementHitCount(Weblog weblog, int amount) {
-        weblog.setHitsToday(getHitCount(weblog) + amount);
-        strategy.store(weblog);
-    }
-
-    @Override
     public void saveBookmark(WeblogBookmark bookmark) {
         bookmark.getWeblog().invalidateCache();
         this.strategy.store(bookmark);
@@ -613,43 +611,48 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public void updateHitCounters() {
-        log.debug("updating blog hit counters...");
-
-        HitCountQueue hitCounter = HitCountQueue.getInstance();
-
-        // first get the current set of hits
-        List<String> currentHits = hitCounter.getHits();
-
-        // now reset the queued hits
-        hitCounter.resetHits();
-
-        // tally the counts, grouped by weblog handle
-        Map<String, Long> hitsTally = new HashMap<>();
-        long totalHitsProcessed = 0;
-        for (String weblogHandle : currentHits) {
-            Long count = hitsTally.get(weblogHandle);
+    public void incrementHitCount(Weblog weblog) {
+        if(weblog != null) {
+            Long count = hitsTally.get(weblog.getId());
             if(count == null) {
                 count = 1L;
             } else {
                 count = count + 1;
             }
-            totalHitsProcessed += 1;
-            hitsTally.put(weblogHandle, count);
+            hitsTally.put(weblog.getId(), count);
         }
+    }
+
+    @Override
+    public void updateHitCounters() {
+        log.debug("updating blog hit counters...");
+
+        // Make a reference to the current queue
+        Map<String, Long> hitsTallyCopy = hitsTally;
+
+        // reset queue for next execution
+        hitsTally = Collections.synchronizedMap(new HashMap<>());
 
         // iterate over the tallied hits and store them in the db
+        long totalHitsProcessed = 0;
         Weblog weblog;
-        for (Map.Entry<String, Long> entry : hitsTally.entrySet()) {
-            weblog = getWeblogByHandle(entry.getKey());
-            incrementHitCount(weblog, entry.getValue().intValue());
+        for (Map.Entry<String, Long> entry : hitsTallyCopy.entrySet()) {
+            weblog = getWeblog(entry.getKey());
+            updateHitCount(weblog, entry.getValue().intValue());
+            totalHitsProcessed += entry.getValue();
         }
 
         // flush the results to the db
         strategy.flush();
 
-        log.debug("Added {} hits to {} blogs", totalHitsProcessed, hitsTally.size());
+        log.debug("Added {} hits to {} blogs", totalHitsProcessed, hitsTallyCopy.size());
     }
+
+    private void updateHitCount(Weblog weblog, int amount) {
+        weblog.setHitsToday(getHitCount(weblog) + amount);
+        strategy.store(weblog);
+    }
+
 
     @Override
     public void saveWeblogCategory(WeblogCategory cat) {

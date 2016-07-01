@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerCommon;
-import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -57,7 +56,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.HashMap;
@@ -467,8 +465,7 @@ public class PageProcessor {
      * Notify the hit tracker that it has an incoming page hit.
      */
     private void processHit(Weblog weblog) {
-        HitCountQueue counter = HitCountQueue.getInstance();
-        counter.processHit(weblog);
+        weblogManager.incrementHitCount(weblog);
     }
 
     /**
