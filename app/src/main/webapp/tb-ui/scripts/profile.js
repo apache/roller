@@ -14,8 +14,8 @@ $(function() {
         $.ajax({
            type: "GET",
            url: contextPath + '/tb-ui/register/rest/ldapdata',
-           success: function(data, textStatus, xhr) {
-             updateEditForm(data);
+           success: function(ldapData, textStatus, xhr) {
+             updateEditForm(ldapData);
            },
            error: function(xhr, status, errorThrown) {
               if (xhr.status == 404) {
@@ -24,6 +24,8 @@ $(function() {
               }
            }
         });
+      } else {
+        updateEditForm(data);
       }
     } else {
       $.ajax({

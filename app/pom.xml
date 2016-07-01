@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.glen.tightblog</groupId>
         <artifactId>tightblog-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-beta</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,10 +16,10 @@
     <packaging>war</packaging>
 
     <properties>
-        <lucene.version>6.0.1</lucene.version>
+        <lucene.version>6.1.0</lucene.version>
         <spring.version>4.3.0.RELEASE</spring.version>
         <spring.security.version>4.1.0.RELEASE</spring.security.version>
-        <struts2.version>2.5</struts2.version>
+        <struts2.version>2.5.1</struts2.version>
         <jackson.version>2.7.4</jackson.version>
         <log4j2.version>2.6.1</log4j2.version>
     </properties>
@@ -174,7 +174,7 @@
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
-            <version>1.6.0</version>
+            <version>1.6.1</version>
             <scope>compile</scope>
         </dependency>
 
