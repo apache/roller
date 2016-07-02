@@ -23,11 +23,16 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<s:if test="activationStatus == 'active'">
+    <div class="messages">
+        <p><s:text name="welcome.user.account.activated" /></p>
+    </div>
+</s:if>
+
 <p><s:text name="loginPage.prompt" /></p>
 
 <form method="post" id="loginForm"
-      action="<s:url value='/roller_j_security_check'/>"
-      onsubmit="saveUsername(this)">
+      action="<s:url value='/roller_j_security_check'/>">
 
     <sec:csrfInput/>
 
@@ -58,22 +63,3 @@
 
     </table>
 </form>
-
-<script>
-if (document.getElementById) {
-    if (getCookie("username") != null) {
-        document.getElementById("j_username").value = getCookie("username");
-        // temporary during development
-        document.getElementById("j_password").value = 'password';
-        document.getElementById("login").focus();
-    } else {
-        document.getElementById("j_username").focus();
-    }
-}
-
-function saveUsername(theForm) {
-    var expires = new Date();
-    expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // sets it for approx one day.
-    setCookie("username",theForm.j_username.value,expires);
-}
-</script>

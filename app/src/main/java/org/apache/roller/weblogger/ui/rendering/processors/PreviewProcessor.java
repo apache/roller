@@ -197,7 +197,7 @@ public class PreviewProcessor {
         model = Model.getModelMap("previewModelSet", initData);
 
         // Load special models for site-wide blog
-        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+        if (propertiesManager.isFrontPageWeblog(weblog.getHandle())) {
             model.putAll(Model.getModelMap("siteModelSet", initData));
         }
 

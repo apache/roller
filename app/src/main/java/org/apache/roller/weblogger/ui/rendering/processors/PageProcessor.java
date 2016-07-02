@@ -161,7 +161,7 @@ public class PageProcessor {
     @RequestMapping(method = RequestMethod.GET)
     public void getPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Weblog weblog;
-        boolean isSiteWide;
+        boolean isFrontPageWeblog;
 
         WeblogPageRequest pageRequest;
         try {
@@ -173,9 +173,9 @@ public class PageProcessor {
             }
 
             // is this the site-wide weblog?
-            isSiteWide = propertiesManager.isSiteWideWeblog(pageRequest.getWeblogHandle());
+            isFrontPageWeblog = propertiesManager.isFrontPageWeblog(pageRequest.getWeblogHandle());
 
-            if (this.processReferrers && !isSiteWide) {
+            if (this.processReferrers && !isFrontPageWeblog) {
                 boolean spam = processReferrer(request, pageRequest);
                 if (spam) {
                     log.debug("evaluated to be a spammer, returning a 403");
@@ -196,7 +196,7 @@ public class PageProcessor {
 
         // determine the lastModified date for this content
         long lastModified = Clock.systemDefaultZone().millis();
-        if (isSiteWide) {
+        if (isFrontPageWeblog) {
             lastModified = siteWideCache.getLastModified().toEpochMilli();
         } else if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().toEpochMilli();
@@ -225,7 +225,7 @@ public class PageProcessor {
         if (commentForm == null && (cacheLoggedInPages || !pageRequest.isLoggedIn())) {
 
             CachedContent cachedContent;
-            if (isSiteWide) {
+            if (isFrontPageWeblog) {
                 cachedContent = (CachedContent) siteWideCache.get(cacheKey);
             } else {
                 cachedContent = (CachedContent) weblogPageCache.get(cacheKey, lastModified);
@@ -235,7 +235,7 @@ public class PageProcessor {
                 log.debug("HIT {}", cacheKey);
 
                 // allow for hit counting
-                if (!isSiteWide && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
+                if (!isFrontPageWeblog && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
                     this.processHit(weblog);
                 }
 
@@ -340,7 +340,7 @@ public class PageProcessor {
             }
         } else if (pageRequest.getTag() != null) {
             // tags specified. make sure they exist.
-            invalid = !weblogEntryManager.getTagExists(pageRequest.getTag(), (isSiteWide) ? null : weblog);
+            invalid = !weblogEntryManager.getTagExists(pageRequest.getTag(), (isFrontPageWeblog) ? null : weblog);
         }
 
         if (invalid) {
@@ -353,7 +353,7 @@ public class PageProcessor {
         }
 
         // allow for hit counting
-        if (!isSiteWide && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
+        if (!isFrontPageWeblog && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
             this.processHit(weblog);
         }
 
@@ -377,8 +377,8 @@ public class PageProcessor {
 
         model = Model.getModelMap("pageModelSet", initData);
 
-        // Load special models for site-wide blog
-        if (isSiteWide) {
+        // Load special models for front-page blog
+        if (isFrontPageWeblog) {
             model.putAll(Model.getModelMap("siteModelSet", initData));
         }
 
@@ -431,7 +431,7 @@ public class PageProcessor {
             log.debug("PUT {}", cacheKey);
 
             // put it in the right cache
-            if (isSiteWide) {
+            if (isFrontPageWeblog) {
                 siteWideCache.put(cacheKey, rendererOutput);
             } else {
                 weblogPageCache.put(cacheKey, rendererOutput);
