@@ -335,21 +335,22 @@ public class MailManager {
         // Don't escape the content if email will be sent as plain text
         msg.append((isPlainText) ? commentObject.getContent()
         : Utilities.transformToHTMLSubset(StringEscapeUtils.escapeHtml4(commentObject.getContent())));
-        
+
         msg.append((isPlainText) ? "\n\n----\n"
                 : "<br /><br /><hr /><span style=\"font-size: 11px\">");
-        msg.append(resources.getString("email.comment.respond") + ": ");
+
+        msg.append(resources.getString("email.comment.reply") + ": ");
         msg.append((isPlainText) ? "\n" : "<br />");
-        
+
         // Build link back to comment
         String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true);
-        
+
         if (isPlainText) {
             msg.append(commentURL);
         } else {
             msg.append("<a href=\""+commentURL+"\">"+commentURL+"</a></span>");
         }
-        
+
         // next the additional information that is sent to the blog owner
         // Owner gets an email if it's pending and/or he's turned on notifications
         if (commentObject.getPending() || weblog.getEmailComments()) {
@@ -394,11 +395,18 @@ public class MailManager {
             ownermsg.append((isPlainText) ? "\n\n----\n" :
                 "<br /><br /><hr /><span style=\"font-size: 11px\">");
 
-            // commenter email address: allow blog owner to reply via email instead of blog comment
+            // providing commenter email address, to facilitate replying via email instead of blog comment if desired
             if (!StringUtils.isBlank(commentObject.getEmail())) {
                 ownermsg.append(resources.getString("email.comment.commenter.email") + ": " + commentObject.getEmail());
+                ownermsg.append((isPlainText) ? "\n" : "<br/>");
+            }
+
+            // showing website URL gives more background of commenter, including help in detecting if email is spam.
+            if (!StringUtils.isBlank(commentObject.getUrl())) {
+                ownermsg.append(resources.getString("email.comment.commenter.website") + ": " + commentObject.getUrl());
                 ownermsg.append((isPlainText) ? "\n\n" : "<br/><br/>");
             }
+
             // add link to weblog edit page so user can login to manage comments
             ownermsg.append(resources.getString("email.comment.management.link") + ": ");
             ownermsg.append((isPlainText) ? "\n" : "<br/>");
@@ -413,10 +421,11 @@ public class MailManager {
             } else {
                 ownermsg.append(
                         "<a href=\"" + deleteURL + "\">" + deleteURL + "</a></span>");
-                msg.append("</Body></html>");
                 ownermsg.append("</Body></html>");
             }
         }
+
+        msg.append("</Body></html>");
 
         // determine email subject
         String subject;
