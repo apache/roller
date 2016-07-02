@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -46,6 +47,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
@@ -89,9 +91,6 @@ public class CommentProcessor {
 
     private CommentValidationManager commentValidationManager = null;
 
-    // whether comment moderation is enforced server-wide (regardless of per-blog setting)
-    private boolean globalCommentModerationRequired = true;
-
     @Autowired(required=false)
     private GenericThrottle commentThrottle = null;
 
@@ -126,6 +125,13 @@ public class CommentProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     @Autowired
@@ -164,7 +170,6 @@ public class CommentProcessor {
     @PostConstruct
     public void init() {
         commentValidationManager = new CommentValidationManager(commentValidators);
-        globalCommentModerationRequired = propertiesManager.getBooleanProperty("users.moderation.required");
         commentPluginsAsString = commentPlugins.stream().map(WeblogEntryCommentPlugin::getId).collect(Collectors.joining(","));
     }
 
@@ -173,6 +178,8 @@ public class CommentProcessor {
      */
     @RequestMapping(path="/**", method = RequestMethod.POST)
     public void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        boolean globalCommentModerationRequired = propertiesManager.getBooleanProperty("users.moderation.required");
 
         String error = null;
         String dispatch_url;
@@ -348,15 +355,24 @@ public class CommentProcessor {
         int validationScore = commentValidationManager.validateComment(comment, messages);
         log.debug("Comment Validation score: {}", validationScore);
 
+        // those with at least the POST role for the weblog don't need to have their comments moderated.
+        boolean ownComment = false;
+        String maybeUser = commentRequest.getAuthenticatedUser();
+        if (maybeUser != null) {
+            ownComment = userManager.checkWeblogRole(maybeUser, commentRequest.getWeblogHandle(), WeblogRole.POST);
+        }
+
         if (!preview) {
-            if (validationScore == WebloggerCommon.PERCENT_100 && commentApprovalRequired) {
-                // Valid comments go into moderation if required
-                comment.setStatus(ApprovalStatus.PENDING);
-                message = messageUtils.getString("commentServlet.submittedToModerator");
-            } else if (validationScore == WebloggerCommon.PERCENT_100) {
-                // else they're approved
-                comment.setStatus(ApprovalStatus.APPROVED);
-                message = messageUtils.getString("commentServlet.commentAccepted");
+            if (validationScore == WebloggerCommon.PERCENT_100) {
+                if (!ownComment && commentApprovalRequired) {
+                    // Valid comments go into moderation if required
+                    comment.setStatus(ApprovalStatus.PENDING);
+                    message = messageUtils.getString("commentServlet.submittedToModerator");
+                } else {
+                    // else they're approved
+                    comment.setStatus(ApprovalStatus.APPROVED);
+                    message = messageUtils.getString("commentServlet.commentAccepted");
+                }
             } else {
                 // Invalid comments are marked as spam, but just a moderation message sent to spammer
                 // Informing the spammer the reasons for its detection encourages the spammer to just modify
