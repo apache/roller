@@ -15,14 +15,7 @@ $(function() {
         $(this).dialog("close");
         if (idsToRemove.length > 0) {
           for (i = 0; i < idsToRemove.length; i++) {
-            $.ajax({
-               type: "DELETE",
-               url: contextPath + '/tb-ui/authoring/rest/template/' + idsToRemove[i],
-               success: function(data, textStatus, xhr) {
-                 angular.element('#templates-list').scope().ctrl.loadTemplateData();
-                 angular.element('#templates-list').scope().$apply();
-               }
-            });
+            angular.element('#templates-list').scope().ctrl.deleteTemplate(idsToRemove[i]);
           }
         }
       }
@@ -35,40 +28,6 @@ $(function() {
       }
     ]
   });
-  $("#add-link").click(function(e) {
-     e.preventDefault();
-     $('#errorMessageDiv').hide();
-     $('#successMessageDiv').hide();
-     var newTemplateName = $('#newTmplName').val().trim();
-     var newTemplateAction = $('#newTemplAction').val().trim();
-     var newData = {
-       "name" : newTemplateName,
-       "role" : newTemplateAction
-     };
-     if (newTemplateName.length > 0 && newTemplateAction.length > 0) {
-        $.ajax({
-           type: "PUT",
-           url: contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates',
-           data: JSON.stringify(newData),
-           contentType: "application/json; charset=utf-8",
-           processData: "false",
-           success: function(data, textStatus, xhr) {
-             $('#successMessageDiv').show();
-             angular.element('#templates-list').scope().ctrl.loadTemplateData();
-             angular.element('#templates-list').scope().$apply();
-           },
-           error: function(xhr, status, errorThrown) {
-              if (xhr.status in this.statusCode)
-                 return;
-                 if (xhr.status == 400) {
-                    angular.element('#errorMessageDiv').scope().ctrl.errorObj = xhr.responseJSON;
-                    angular.element('#templates-list').scope().$apply();
-                    $('#errorMessageDiv').show();
-                 }
-           }
-        });
-     }
-  });
   $("#delete-link").click(function(e) {
     e.preventDefault();
     if ($('input[name="idSelections"]:checked').size() > 0) {
@@ -79,8 +38,20 @@ $(function() {
 
 var templatesApp = angular.module('TemplatesApp', []);
 
+templatesApp.config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+    var header = $("meta[name='_csrf_header']").attr("content");
+    var token = $("meta[name='_csrf']").attr("content");
+    $httpProvider.defaults.headers.delete = {};
+    $httpProvider.defaults.headers.delete[header] = token;
+    $httpProvider.defaults.headers.post[header] = token;
+    $httpProvider.defaults.headers.put[header] = token;
+}]);
+
 templatesApp.controller('TemplatesController', ['$http', function TemplatesController($http) {
     var self = this;
+    this.selectedRole = 'CUSTOM_EXTERNAL';
+    this.newTemplateName = '';
 
     this.errorObj = {};
 
@@ -90,6 +61,35 @@ templatesApp.controller('TemplatesController', ['$http', function TemplatesContr
       });
     };
     this.loadTemplateData();
-    this.selectedRole = 'STYLESHEET';
 
+    this.deleteTemplate = function(templateId) {
+      $http.delete(contextPath + '/tb-ui/authoring/rest/template/' + templateId).then(
+         function(response) {
+           self.loadTemplateData();
+         }
+      );
+    }
+
+    this.addTemplate = function() {
+      $('#errorMessageDiv').hide();
+      $('#successMessageDiv').hide();
+      var newData = {
+        "name" : this.newTemplateName,
+        "role" : this.selectedRole
+      };
+      $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates', JSON.stringify(newData)).then(
+        function(response) {
+          $('#successMessageDiv').show();
+          self.loadTemplateData();
+        },
+        function(response) {
+         if (response.status == 408)
+           window.location.replace($('#refreshURL').attr('value'));  // return;
+         if (response.status == 400) {
+           self.errorObj = response.data;
+           $('#errorMessageDiv').show();
+         }
+      })
+
+    }
   }]);

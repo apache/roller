@@ -44,6 +44,7 @@ public class CustomAccessDeniedHandlerImpl extends AccessDeniedHandlerImpl {
             if ("XMLHttpRequest".equals(ajaxHeader)) {
                 // Ajax call detected, return TIMEOUT (408), a signal used by the JavaScript
                 // to regenerate the page that the script is on.
+                // another detection option: http://stackoverflow.com/a/34399417/1207540
                 response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT);
             } else {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/tb-ui/login.rol");

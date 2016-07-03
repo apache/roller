@@ -33,7 +33,7 @@ var msg= {
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/templates.js'/>"></script>
 
-<div ng-app="TemplatesApp">
+<div id="templates-list" ng-app="TemplatesApp" ng-controller="TemplatesController as ctrl">
 
     <p class="subtitle">
        <s:text name="templates.subtitle" >
@@ -44,7 +44,7 @@ var msg= {
        <s:text name="templates.tip" />
     </p>
 
-    <div id="errorMessageDiv" class="errors" ng-controller="TemplatesController as ctrl" style="display:none">
+    <div id="errorMessageDiv" class="errors" style="display:none">
       <b>{{ctrl.errorObj.errorMessage}}</b>
       <ul>
          <li ng-repeat="em in ctrl.errorObj.errors">{{em}}</li>
@@ -60,25 +60,31 @@ var msg= {
     <input id="refreshURL" type="hidden" value="<s:url action='templates'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
     <input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 
-    <div id="templates-list" ng-controller="TemplatesController as ctrl">
+    <div>
 
     <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
     <table class="rollertable">
 
       <thead>
         <tr>
-            <th width="17%"><s:text name="generic.name"/></th>
-            <th width="20%"><s:text name="templates.path"/></th>
-            <th width="34%"><s:text name="templates.role"/></th>
-            <th width="8%"><s:text name="templates.source"/></th>
-            <th width="13%"><s:text name="generic.lastModified"/></th>
-            <th width="4%"><s:text name="generic.view"/></th>
-            <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"
-              title="<s:text name="templates.selectAllLabel"/>"/></th>
+          <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"
+            title="<s:text name="templates.selectAllLabel"/>"/></th>
+          <th width="17%"><s:text name="generic.name"/></th>
+          <th width="20%"><s:text name="templates.path"/></th>
+          <th width="34%"><s:text name="templates.role"/></th>
+          <th width="8%"><s:text name="templates.source"/></th>
+          <th width="13%"><s:text name="generic.lastModified"/></th>
+          <th width="4%"><s:text name="generic.view"/></th>
         </tr>
       </thead>
-      <tbody id="tableBody">
-        <tr id="{{template.id}}" ng-repeat="tpl in ctrl.weblogTemplateData.templates" ng-class-even="'altrow'">
+      <tbody>
+        <tr ng-repeat="tpl in ctrl.weblogTemplateData.templates" ng-class-even="'altrow'">
+            <td class="center" style="vertical-align:middle">
+              <span ng-if="tpl.derivation != 'Default'">
+                  <input type="checkbox" name="idSelections" value="{{tpl.id}}" />
+              </span>
+            </td>
+
             <td style="vertical-align:middle">
                 <s:url var="edit" action="templateEdit">
                     <s:param name="weblogId" value="%{actionWeblog.id}" />
@@ -123,12 +129,6 @@ var msg= {
                     </a>
                 </span>
             </td>
-
-            <td class="center" style="vertical-align:middle">
-              <span ng-if="tpl.derivation != 'Default'">
-                  <input type="checkbox" name="idSelections" value="{{tpl.id}}" />
-              </span>
-            </td>
         </tr>
       </tbody>
     </table>
@@ -144,34 +144,34 @@ var msg= {
           </s:form>
       </span>
     </div>
-    <br>
-    <table cellpadding="0" cellspacing="6">
-        <caption><s:text name="templates.addNewPage" /></caption>
-        <tr>
-            <td><s:text name="generic.name"/></td>
-            <td><s:textfield id="newTmplName" name="newTmplName" /></td>
-        </tr>
-        <tr>
-            <td><s:text name="templates.role"/></td>
-            <td>
-                <select id="newTemplAction" ng-model="selectedRole" name="newTmplAction" size="1"
-                  ng-init="changedValue(selectedRole)" ng-change="changedValue(selectedRole)">
-                  <option ng-repeat="option in ctrl.weblogTemplateData.availableTemplateRoles" value="{{option.name}}">{{option.readableName}}</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" class="field">
-                <p>{{ description }}</p>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input id="add-link" type="button" value="<s:text name='templates.add'/>"></td>
-        </tr>
-    </table>
 
-    </div>
+    <form name="myform">
+      <table cellpadding="0" cellspacing="6">
+          <caption><s:text name="templates.addNewPage" /></caption>
+          <tr>
+              <td><s:text name="generic.name"/></td>
+              <td><input type="text" ng-model="ctrl.newTemplateName" maxlength="40" required/></td>
+          </tr>
+          <tr>
+              <td><s:text name="templates.role"/></td>
+              <td>
+                  <select ng-model="ctrl.selectedRole" size="1" required>
+                    <option ng-repeat="option in ctrl.weblogTemplateData.availableTemplateRoles" value="{{option.name}}">{{option.readableName}}</option>
+                  </select>
+              </td>
+          </tr>
+          <tr>
+              <td colspan="2" class="field">
+                  <p>{{ description }}</p>
+              </td>
+          </tr>
+          <tr>
+              <td><input ng-click="myform.$valid && ctrl.addTemplate()" type="button" value="<s:text name='templates.add'/>" required></td>
+          </tr>
+      </table>
+    </form>
+  </div>
+
 </div>
 
 <br/>
