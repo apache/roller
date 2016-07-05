@@ -17,18 +17,15 @@ package org.apache.roller.weblogger.pojos;
 
 // GlobalRole defines system-wide roles as opposed to individual blog permissions
 // Each role includes the roles of those of lower weight as defined in this enum
-// LOGIN and COMMENT presently unused/unncoded
 public enum GlobalRole {
     // For pages that don't need authenticated users (initial install, user registration, login, etc.)
     NOAUTHNEEDED(0),
-    // User can log into TightBlog
-    LOGIN(1),
-    // User can leave blog entry comments
-    COMMENT(2),
     // Users can edit weblogs for which they have permission
-    BLOGGER(3),
-    // Blog server admin rights: server settings, user management, etc.
-    ADMIN(4);
+    BLOGGER(1),
+    // Users can create new blogs
+    BLOGCREATOR(2),
+    // Blog server admin rights: server settings, planet management, user management, etc.
+    ADMIN(3);
 
     private int weight;
 

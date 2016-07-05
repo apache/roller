@@ -168,13 +168,13 @@ public class UserTest extends WebloggerTest {
         
         assertTrue(GlobalRole.ADMIN.equals(user.getGlobalRole()));
 
-        user.setGlobalRole(GlobalRole.LOGIN);
+        user.setGlobalRole(GlobalRole.BLOGCREATOR);
         userManager.saveUser(user);
 
         // check that role was switched
         user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertTrue(user.getGlobalRole() == GlobalRole.LOGIN);
+        assertTrue(user.getGlobalRole() == GlobalRole.BLOGCREATOR);
 
         // remove test user
         teardownUser(testUser.getUserName());

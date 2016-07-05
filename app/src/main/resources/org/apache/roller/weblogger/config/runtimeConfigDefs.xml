@@ -86,7 +86,7 @@
             <type>boolean</type>
             <default-value>false</default-value>
         </property-def>
-        <property-def name="site.allowUserWeblogCreation" key="configForm.allowUserWeblogCreation">
+        <property-def name="user.blogcreate.defaultrole" key="configForm.newUsersCreateBlogs">
             <type>boolean</type>
             <default-value>true</default-value>
         </property-def>

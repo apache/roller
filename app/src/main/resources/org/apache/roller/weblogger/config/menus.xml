@@ -70,8 +70,7 @@ Defines the menus provided with Weblogger
                 </subactions>
             </tabItem>
             <tabItem action="members"
-                     titleKey="tabbedmenu.website.members"
-                     enabledProperty="groupblogging.enabled">
+                     titleKey="tabbedmenu.website.members">
             </tabItem>
         </tab>
     </menu>

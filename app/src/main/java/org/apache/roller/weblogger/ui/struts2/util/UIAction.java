@@ -43,6 +43,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -140,7 +141,7 @@ public class UIAction extends ActionSupport implements Preparable {
     }
 
     public boolean isUserIsAdmin() {
-        return getAuthenticatedUser() != null && getAuthenticatedUser().isGlobalAdmin();
+        return getAuthenticatedUser() != null && GlobalRole.ADMIN.equals(getAuthenticatedUser().getGlobalRole());
     }
     /**
      * Cancel.
@@ -366,7 +367,16 @@ public class UIAction extends ActionSupport implements Preparable {
     public List getTimeZonesList() {
         return TIME_ZONES;
     }
-    
+
+    public List<Pair<String, String>> getAssignableGlobalRolesList() {
+        List<Pair<String, String>> opts;
+        opts = Arrays.stream(GlobalRole.values())
+                .filter(r -> r != GlobalRole.NOAUTHNEEDED)
+                .map(r -> Pair.of(r.name(), r.name()))
+                .collect(Collectors.toList());
+        return opts;
+    }
+
     public List<Pair<Integer, String>> getCommentDaysList() {
         List<Pair<Integer, String>> opts = new ArrayList<>();
         opts.add(Pair.of(-1, getText("weblogEdit.unlimitedCommentDays")));

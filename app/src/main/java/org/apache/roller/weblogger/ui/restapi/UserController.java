@@ -388,9 +388,10 @@ public class UserController {
                 }
                 if (p == null) {
                     // user self-registration
-                    user.setGlobalRole(GlobalRole.BLOGGER);
+                    user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole")
+                            ? GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
                 } else if (!user.getUserName().equals(p.getName())) {
-                    user.setGlobalRole(newData.isGlobalAdmin() ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
+                    user.setGlobalRole(newData.getGlobalRole());
                 }
 
                 // reset password if set
