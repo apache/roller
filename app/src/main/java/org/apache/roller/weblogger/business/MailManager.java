@@ -22,8 +22,10 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -53,6 +55,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 
 /**
@@ -96,8 +99,7 @@ public class MailManager {
      */
     public void sendPendingEntryNotice(WeblogEntry entry) {
         
-        Session mailSession = WebloggerFactory.getMailProvider() != null
-                ? WebloggerFactory.getMailProvider().getSession() : null;
+        Session mailSession = isMailConfigured() ? WebloggerFactory.getMailProvider().getSession() : null;
 
         if (mailSession == null) {
             log.info("Cannot send emails, no mail session configured.");
@@ -153,8 +155,109 @@ public class MailManager {
             log.error("ERROR: Problem sending pending entry notification email.");
         }
     }
-    
-    
+
+    public void sendRegistrationApprovalRequest(User user) {
+        try {
+            UserSearchCriteria criteria = new UserSearchCriteria();
+            criteria.setEnabled(true);
+            criteria.setGlobalRole(GlobalRole.ADMIN);
+            List<SafeUser> admins = userManager.getUsers(criteria);
+
+            // build list of reviewers (website users with author permission)
+            List<String> adminEmails = admins.stream().map(SafeUser::getEmailAddress).collect(Collectors.toList());
+            String[] to = adminEmails.toArray(new String[adminEmails.size()]);
+
+            String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/admin", null, null, true);
+
+            ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
+            StringBuilder sb = new StringBuilder();
+            sb.append(
+                    MessageFormat.format(
+                            resources.getString("mailMessage.approveRegistrationSubject"),
+                            new Object[] {
+                                user.getScreenName()
+                            }));
+            String subject = sb.toString();
+            sb = new StringBuilder();
+            sb.append(
+                    MessageFormat.format(
+                            resources.getString("mailMessage.approveRegistrationContent"),
+                            new Object[] {
+                                user.getScreenName(),
+                                user.getEmailAddress(),
+                                userAdminURL
+                            })
+            );
+            String content = sb.toString();
+            sendTextMessage(null, to, new String[0], new String[0], subject, content);
+
+        } catch (MessagingException e) {
+            log.error("ERROR: Problem sending pending entry notification email.");
+        }
+    }
+
+    public void sendRegistrationApprovedNotice(User user) {
+        try {
+            String[] to = new String[] {user.getEmailAddress()};
+
+            String loginURL = urlStrategy.getLoginURL(true);
+
+            ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources",
+                    Locale.forLanguageTag(user.getLocale()));
+            StringBuilder sb = new StringBuilder();
+            sb.append(
+                    MessageFormat.format(
+                            resources.getString("mailMessage.registrationApprovedSubject"),
+                            new Object[] {
+                                    user.getScreenName()
+                            }));
+            String subject = sb.toString();
+            sb = new StringBuilder();
+            sb.append(
+                    MessageFormat.format(
+                            resources.getString("mailMessage.registrationApprovedContent"),
+                            new Object[] {
+                                    user.getScreenName(),
+                                    user.getUserName(),
+                                    loginURL
+                            })
+            );
+            String content = sb.toString();
+            sendTextMessage(null, to, new String[0], new String[0], subject, content);
+
+        } catch (MessagingException e) {
+            log.error("ERROR: Problem sending pending entry notification email.");
+        }
+    }
+
+    public void sendRegistrationRejectedNotice(User user) {
+        try {
+            String[] to = new String[] {user.getEmailAddress()};
+
+            ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
+            StringBuilder sb = new StringBuilder();
+            sb.append(
+                    MessageFormat.format(
+                            resources.getString("mailMessage.registrationRejectedSubject"),
+                            new Object[] {
+                            }));
+            String subject = sb.toString();
+            sb = new StringBuilder();
+            sb.append(
+                    MessageFormat.format(
+                            resources.getString("mailMessage.registrationRejectedContent"),
+                            new Object[] {
+                                    user.getScreenName()
+                            })
+            );
+            String content = sb.toString();
+            sendTextMessage(null, to, new String[0], new String[0], subject, content);
+
+        } catch (MessagingException e) {
+            log.error("ERROR: Problem sending pending entry notification email.");
+        }
+    }
+
     /**
      * Send a weblog invitation email.
      */
@@ -246,8 +349,7 @@ public class MailManager {
 
         sendHTMLMessage(from, to, cc, bcc, subject, content);
     }
-    
-    
+
     /**
      * Send email notification of new or newly approved comment.
      *
@@ -256,10 +358,8 @@ public class MailManager {
      *                           Errors will be assumed to be "validation errors" 
      *                           and messages will be assumed to be "from the system"
      */
-    public void sendEmailNotification(WeblogEntryComment commentObject,
-                                             RollerMessages messages,
-                                             I18nMessages resources,
-                                             boolean notifySubscribers) {
+    public void sendEmailNotification(WeblogEntryComment commentObject, RollerMessages messages, I18nMessages resources,
+                                      boolean notifySubscribers) {
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
@@ -565,7 +665,7 @@ public class MailManager {
         MimeMessage message = new MimeMessage(session);
         
         // n.b. any default from address is expected to be determined by caller.
-        if (! StringUtils.isEmpty(from)) {
+        if (!StringUtils.isEmpty(from)) {
             InternetAddress sentFrom = new InternetAddress(from);
             message.setFrom(sentFrom);
             log.debug("e-mail from: {}", sentFrom);

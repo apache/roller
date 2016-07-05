@@ -40,10 +40,17 @@ var contextPath = "${pageContext.request.contextPath}";
 
 <input type="hidden" id="refreshURL" value="<s:url action='userAdmin'/>"/>
 
+<div id="pendingList">
+  <script id="pendingTemplate" type="text/x-jsrender">
+    <span id="{{:id}}" style="color:red">New registration request: {{:screenName}} ({{:emailAddress}}):
+    <input class="approve-button" type="button" value="<s:text name='yourWebsites.accept' />">
+    <input class="decline-button" type="button" value="<s:text name='yourWebsites.decline' />"><br></span>
+  </script>
+</div>
+
 <p class="subtitle"><s:text name="userAdmin.subtitle" /></p>
 <span id="userEdit"><select id="useradmin-select-user"></select>
 <input id="select-user" type="button" style="margin:4px" value='<s:text name="generic.edit" />'/></span>
-<span id="userCreate"><input id="create-user" type="button" style="margin:4px" value='<s:text name="userAdmin.createUser" />'/></span>
 
 <s:form id="myForm" action="userAdmin">
     <table class="formtable">
@@ -68,6 +75,11 @@ var contextPath = "${pageContext.request.contextPath}";
           </tr>
 
           {{if id != null}}
+          <tr>
+              <td class="label"><label for="dateCreated"><s:text name="userSettings.accountCreateDate" /></label></td>
+              <td class="field"><input type="text" size="30" value="{{:~formatDate(dateCreated)}}" readonly></td>
+              <td class="description"></td>
+          </tr>
           <tr>
               <td class="label"><label for="lastLogin"><s:text name="userSettings.lastLogin" /></label></td>
               <td class="field"><input type="text" size="30" value="{{:~formatDate(lastLogin)}}" readonly></td>

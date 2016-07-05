@@ -30,7 +30,7 @@ if (user == null) {
     // Spring security policy requires a successful login before the code in this JSP can be accessed.
     // If authentication successful but no user, authentication must have been via LDAP without
     // the user having registered yet.  So forward to the registration page...
-    response.sendRedirect(request.getContextPath() + "/tightblog/tb-ui/register.rol");
+    response.sendRedirect(request.getContextPath() + "/tb-ui/register.rol");
 } else {
     List<UserWeblogRole> roles = mgr.getWeblogRoles(user);
 

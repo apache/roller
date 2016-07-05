@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -106,15 +107,12 @@ public interface UserManager {
     User getUserByScreenName(String screenName);
 
     /**
-     * Lookup users whose usernames or email addresses start with a string.
+     * Lookup users based on supplied criteria
      *
-     * @param startsWith String to match screenNames and emailAddresses against (null for all)
-     * @param enabled    True if user is enabled, false disabled, null if either OK.
-     * @param offset     Offset into results (for paging)
-     * @param length     Max to return (for paging)
-     * @return List of (up to length) users that match startsWith string
+     * @param criteria  UserSearchCriteria object indicating search parameters
+     * @return list of SafeUser objects matching desired criteria
      */
-    List<SafeUser> getUsers(String startsWith, Boolean enabled, int offset, int length);
+    List<SafeUser> getUsers(UserSearchCriteria criteria);
 
     /**
      * Check user's rights for a specified weblog

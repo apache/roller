@@ -1,5 +1,5 @@
 $(function() {
-  var data = {};
+  var data = { "locale" : "en" };
   $.templates({
     formTemplate: '#formTemplate',
     errorMessageTemplate: '#errorMessageTemplate'

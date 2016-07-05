@@ -87,6 +87,7 @@ public class User {
     private Instant dateCreated;
     private String  locale;
     private Boolean enabled = Boolean.FALSE;
+    private Boolean approved = Boolean.FALSE;
     private String  activationCode;
     private Instant lastLogin;
 
@@ -224,7 +225,21 @@ public class User {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
+    /**
+     * New user with validated email account whose registration has been
+     * approved yet by a system administrator?  Unapproved accounts cannot
+     * log in.
+     */
+    @Basic(optional=false)
+    public Boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
+    }
+
     public String getActivationCode() {
         return activationCode;
     }

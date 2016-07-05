@@ -213,13 +213,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc) {
-
+    public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria criteria) {
         List<Object> params = new ArrayList<>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
 
-        if (wesc.getTags() == null || wesc.getTags().size() == 0) {
+        if (criteria.getTags() == null || criteria.getTags().size() == 0) {
             queryString.append("SELECT e FROM WeblogEntry e WHERE 1=1 ");
         } else {
             // subquery to avoid this problem with Derby: http://stackoverflow.com/a/480536
@@ -227,7 +226,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                     "where t.weblogEntry.id = e.id AND ");
             queryString.append("(");
             boolean isFirst = true;
-            for (String tagName : wesc.getTags()) {
+            for (String tagName : criteria.getTags()) {
                 if (!isFirst) {
                     queryString.append(" OR ");
                 }
@@ -238,70 +237,69 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(")) ");
         }
 
-        if (wesc.getWeblog() != null) {
-            params.add(size++, wesc.getWeblog().getId());
+        if (criteria.getWeblog() != null) {
+            params.add(size++, criteria.getWeblog().getId());
             queryString.append("AND e.weblog.id = ?").append(size);
         }
 
         params.add(size++, Boolean.TRUE);
         queryString.append(" AND e.weblog.visible = ?").append(size);
 
-        if (wesc.getUser() != null) {
-            params.add(size++, wesc.getUser().getUserName());
+        if (criteria.getUser() != null) {
+            params.add(size++, criteria.getUser().getUserName());
             queryString.append(" AND e.creatorUserName = ?").append(size);
         }
 
-        if (wesc.getStartDate() != null) {
-            params.add(size++, wesc.getStartDate());
+        if (criteria.getStartDate() != null) {
+            params.add(size++, criteria.getStartDate());
             queryString.append(" AND e.pubTime >= ?").append(size);
         }
 
-        if (wesc.getEndDate() != null) {
-            params.add(size++, wesc.getEndDate());
+        if (criteria.getEndDate() != null) {
+            params.add(size++, criteria.getEndDate());
             queryString.append(" AND e.pubTime <= ?").append(size);
         }
 
-        if (wesc.getCatName() != null) {
-            params.add(size++, wesc.getCatName());
+        if (criteria.getCatName() != null) {
+            params.add(size++, criteria.getCatName());
             queryString.append(" AND e.category.name = ?").append(size);
         }
 
-        if (wesc.getStatus() != null) {
-            params.add(size++, wesc.getStatus());
+        if (criteria.getStatus() != null) {
+            params.add(size++, criteria.getStatus());
             queryString.append(" AND e.status = ?").append(size);
         }
 
-        if (StringUtils.isNotEmpty(wesc.getText())) {
-            params.add(size++, '%' + wesc.getText() + '%');
+        if (StringUtils.isNotEmpty(criteria.getText())) {
+            params.add(size++, '%' + criteria.getText() + '%');
             queryString.append(" AND ( e.text LIKE ?").append(size);
             queryString.append("    OR e.summary LIKE ?").append(size);
             queryString.append("    OR e.title LIKE ?").append(size);
             queryString.append(") ");
         }
 
-        if (wesc.getSortBy() != null && wesc.getSortBy().equals(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME)) {
+        if (criteria.getSortBy() != null && criteria.getSortBy().equals(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME)) {
             queryString.append(" ORDER BY e.updateTime ");
         } else {
             queryString.append(" ORDER BY e.pubTime ");
         }
 
-        if (wesc.getSortOrder() != null && wesc.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
+        if (criteria.getSortOrder() != null && criteria.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
             queryString.append("ASC ");
         } else {
             queryString.append("DESC ");
         }
-
 
         TypedQuery<WeblogEntry> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntry.class);
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));
         }
 
-        if (wesc.getOffset() != 0) {
-            query.setFirstResult(wesc.getOffset());
+        if (criteria.getOffset() != 0) {
+            query.setFirstResult(criteria.getOffset());
         }
-        if (wesc.getMaxResults() != -1) {
-            query.setMaxResults(wesc.getMaxResults());
+        if (criteria.getMaxResults() != -1) {
+            query.setMaxResults(criteria.getMaxResults());
         }
 
         return query.getResultList();
