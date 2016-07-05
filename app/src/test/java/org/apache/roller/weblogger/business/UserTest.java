@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -102,6 +103,8 @@ public class UserTest extends WebloggerTest {
         
         // add test user
         User testUser = setupUser("usertestuser");
+        User testUser2 = setupUser("disabledtestuser");
+        testUser2.setEnabled(false);
         endSession(true);
         
         // lookup by username
@@ -115,19 +118,27 @@ public class UserTest extends WebloggerTest {
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
-        // lookup by UserName (part)
-        List<SafeUser> users1 = userManager.getUsers(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
-        assertEquals(1, users1.size());
-        safeUser = users1.get(0);
+        // lookup by getUsers() - all users
+        UserSearchCriteria usc = new UserSearchCriteria();
+        usc.setOffset(0);
+        List<SafeUser> users = userManager.getUsers(usc);
+        assertEquals(2, users.size());
+
+        // lookup by getUsers() - enabled only
+        usc.setEnabled(true);
+        users = userManager.getUsers(usc);
+        assertEquals(1, users.size());
+        safeUser = users.get(0);
         assertNotNull(safeUser);
         assertEquals(testUser.getScreenName(), safeUser.getScreenName());
-        
-        // lookup by Email (part)
-        List<SafeUser> users2 = userManager.getUsers(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
-        assertEquals(1, users2.size());
-        safeUser = users2.get(0);
+
+        // lookup by getUsers() - disabled only
+        usc.setEnabled(false);
+        users = userManager.getUsers(usc);
+        assertEquals(1, users.size());
+        safeUser = users.get(0);
         assertNotNull(safeUser);
-        assertEquals(testUser.getScreenName(), safeUser.getScreenName());
+        assertEquals(testUser2.getScreenName(), safeUser.getScreenName());
 
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);

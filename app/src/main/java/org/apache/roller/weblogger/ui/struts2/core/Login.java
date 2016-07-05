@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.ui.struts2.core;
 
 import com.opensymphony.xwork2.ActionContext;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -30,6 +31,7 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
 
@@ -61,6 +63,12 @@ public class Login extends UIAction {
     private String activationCode = null;
 
     private String activationStatus = null;
+
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
+    }
 
     @Override
     public WeblogRole getRequiredWeblogRole() {
@@ -109,10 +117,15 @@ public class Login extends UIAction {
 
             if (user != null) {
                 // enable user account
-                user.setEnabled(Boolean.TRUE);
                 user.setActivationCode(null);
+                if (user.isApproved()) {
+                    user.setEnabled(Boolean.TRUE);
+                    setActivationStatus("active");
+                } else {
+                    setActivationStatus("activePending");
+                    mailManager.sendRegistrationApprovalRequest(user);
+                }
                 userManager.saveUser(user);
-                setActivationStatus("active");
             } else {
                 addError("error.activate.user.invalidActivationCode");
             }

@@ -29,6 +29,12 @@
     </div>
 </s:if>
 
+<s:if test="activationStatus == 'activePending'">
+    <div class="messages">
+        <p><s:text name="welcome.user.account.need.approval" /></p>
+    </div>
+</s:if>
+
 <p><s:text name="loginPage.prompt" /></p>
 
 <form method="post" id="loginForm"

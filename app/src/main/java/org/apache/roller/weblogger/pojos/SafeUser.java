@@ -24,7 +24,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -44,11 +47,7 @@ import java.time.Instant;
         @NamedQuery(name="SafeUser.getByEnabled",
                 query="SELECT s FROM SafeUser s WHERE s.enabled = ?1"),
         @NamedQuery(name="SafeUser.getByScreenNameOrderByScreenName",
-                query="SELECT s FROM SafeUser s WHERE s.screenName= ?1 ORDER BY s.screenName"),
-        @NamedQuery(name="SafeUser.getByScreenNameOrEmailAddressStartsWith",
-                query="SELECT s FROM SafeUser s WHERE s.screenName LIKE ?1 OR s.emailAddress LIKE ?1"),
-        @NamedQuery(name="SafeUser.getByEnabled&ScreenNameOrEmailAddressStartsWith",
-                query="SELECT s FROM SafeUser s WHERE s.enabled = ?1 AND (s.screenName LIKE ?2 OR s.emailAddress LIKE ?3)")
+                query="SELECT s FROM SafeUser s WHERE s.screenName= ?1 ORDER BY s.screenName")
 })
 public class SafeUser {
 
@@ -57,7 +56,9 @@ public class SafeUser {
     private String  emailAddress;
     private Instant dateCreated;
     private String  locale;
-    private Boolean enabled = Boolean.TRUE;
+    private Boolean enabled;
+    private Boolean approved;
+    private GlobalRole globalRole;
 
     public SafeUser() {
     }
@@ -114,8 +115,27 @@ public class SafeUser {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
-    //------------------------------------------------------- Good citizenship
+
+    @Basic(optional=false)
+    public Boolean getApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
+    }
+
+    @Column(name="global_role", nullable=false)
+    @Enumerated(EnumType.STRING)
+    public GlobalRole getGlobalRole() {
+        return globalRole;
+    }
+
+    public void setGlobalRole(GlobalRole globalRole) {
+        this.globalRole = globalRole;
+    }
+
+//------------------------------------------------------- Good citizenship
     
     public String toString() {
         String stringVal = "{" + getId();

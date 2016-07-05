@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +101,11 @@ public class JPAUserManagerImpl implements UserManager {
             throw new IllegalArgumentException("cannot save null user");
         }
 
-        List existingUsers = this.getUsers(null, Boolean.TRUE, 0, 1);
+        UserSearchCriteria usc = new UserSearchCriteria();
+        usc.setEnabled(true);
+        usc.setOffset(0);
+        usc.setMaxResults(1);
+        List existingUsers = this.getUsers(usc);
 
         if (existingUsers.size() == 0 && makeFirstUserAdmin) {
             // Make first user an admin
@@ -233,36 +239,44 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public List<SafeUser> getUsers(String startsWith, Boolean enabled, int offset, int length) {
-        TypedQuery<SafeUser> query;
+    public List<SafeUser> getUsers(UserSearchCriteria criteria) {
+        List<Object> params = new ArrayList<>();
+        int size = 0;
+        StringBuilder queryString = new StringBuilder();
 
-        if (enabled != null) {
-            if (startsWith != null) {
-                query = strategy.getNamedQuery(
-                        "SafeUser.getByEnabled&ScreenNameOrEmailAddressStartsWith", SafeUser.class);
-                query.setParameter(1, enabled);
-                query.setParameter(2, startsWith + '%');
-                query.setParameter(3, startsWith + '%');
-            } else {
-                query = strategy.getNamedQuery("SafeUser.getByEnabled", SafeUser.class);
-                query.setParameter(1, enabled);
-            }
-        } else {
-            if (startsWith != null) {
-                query = strategy.getNamedQuery(
-                        "SafeUser.getByScreenNameOrEmailAddressStartsWith", SafeUser.class);
-                query.setParameter(1, startsWith +  '%');
-            } else {
-                query = strategy.getNamedQuery("SafeUser.getAll", SafeUser.class);
-                query.setHint("javax.persistence.cache.storeMode", "REFRESH");
-            }
+        queryString.append("SELECT su FROM SafeUser su WHERE 1=1 ");
+
+        if (criteria.getApproved() != null) {
+            params.add(size++, criteria.getApproved());
+            queryString.append(" and su.approved = ?").append(size);
         }
-        if (offset != 0) {
-            query.setFirstResult(offset);
+
+        if (criteria.getEnabled() != null) {
+            params.add(size++, criteria.getEnabled());
+            queryString.append(" and su.enabled = ?").append(size);
         }
-        if (length != -1) {
-            query.setMaxResults(length);
+
+        if (criteria.getGlobalRole() != null) {
+            params.add(size++, criteria.getGlobalRole());
+            queryString.append(" and su.globalRole = ?").append(size);
         }
+
+        queryString.append(" ORDER BY su.screenName ");
+
+        TypedQuery<SafeUser> query = strategy.getDynamicQuery(queryString.toString(), SafeUser.class);
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
+        }
+
+        query.setHint("javax.persistence.cache.storeMode", "REFRESH");
+
+        if (criteria.getOffset() != 0) {
+            query.setFirstResult(criteria.getOffset());
+        }
+        if (criteria.getMaxResults() != null) {
+            query.setMaxResults(criteria.getMaxResults());
+        }
+
         return query.getResultList();
     }
 

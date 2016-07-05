@@ -41,9 +41,11 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -98,6 +100,13 @@ public class UserController {
     }
 
     @Autowired
+    private JPAPersistenceStrategy persistenceStrategy = null;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
+    }
+
+    @Autowired
     private MailManager mailManager;
 
     public void setMailManager(MailManager manager) {
@@ -109,7 +118,45 @@ public class UserController {
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/userlist", method = RequestMethod.GET)
     public Map<String, String> getUserEditList() throws ServletException {
-        return createUserMap(userManager.getUsers(null, null, 0, -1));
+        UserSearchCriteria usc = new UserSearchCriteria();
+        usc.setApproved(true);
+        return createUserMap(userManager.getUsers(usc));
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval", method = RequestMethod.GET)
+    public List<SafeUser> getRegistrationsNeedingApproval() throws ServletException {
+        UserSearchCriteria usc = new UserSearchCriteria();
+        usc.setApproved(false);
+        return userManager.getUsers(usc);
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/approve", method = RequestMethod.POST)
+    public void approveRegistration(@PathVariable String id, HttpServletResponse response) {
+        User acceptedUser = userManager.getUser(id);
+        if (acceptedUser != null) {
+            if (!acceptedUser.isApproved()) {
+                acceptedUser.setApproved(true);
+                acceptedUser.setEnabled(true);
+                userManager.saveUser(acceptedUser);
+                mailManager.sendRegistrationApprovedNotice(acceptedUser);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/reject", method = RequestMethod.POST)
+    public void rejectRegistration(@PathVariable String id, HttpServletResponse response) {
+        User rejectedUser = userManager.getUser(id);
+        if (rejectedUser != null) {
+            mailManager.sendRegistrationRejectedNotice(rejectedUser);
+            userManager.removeUser(rejectedUser);
+            persistenceStrategy.flush();
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers", method = RequestMethod.GET)
@@ -120,7 +167,10 @@ public class UserController {
         Weblog weblog = weblogManager.getWeblog(weblogId);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
             // member list excludes inactive accounts
-            List<SafeUser> potentialUsers = userManager.getUsers(null, true, 0, -1);
+            UserSearchCriteria usc = new UserSearchCriteria();
+            usc.setEnabled(true);
+            usc.setOffset(0);
+            List<SafeUser> potentialUsers = userManager.getUsers(usc);
 
             // filter out people already members
             ListIterator<SafeUser> potentialIter = potentialUsers.listIterator();
@@ -208,12 +258,14 @@ public class UserController {
     @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
     public ResponseEntity registerUser(@Valid @RequestBody User newData, HttpServletResponse response) throws ServletException {
         if (propertiesManager.getBooleanProperty("users.registration.enabled") || userManager.getUserCount() == 0) {
-            boolean mustActivate = propertiesManager.getBooleanProperty("user.account.email.activation");
+            boolean mustBeApproved = propertiesManager.getBooleanProperty("user.require.registration.approval");
+            boolean mustActivate = mustBeApproved || propertiesManager.getBooleanProperty("user.account.email.activation");
             newData.setEnabled(!mustActivate);
             if (mustActivate) {
                 String activationCode = UUID.randomUUID().toString();
                 newData.setActivationCode(activationCode);
             }
+            newData.setApproved(!mustBeApproved);
             ResponseEntity re = addUser(newData, null, response);
             if (re.getStatusCode() == HttpStatus.OK && mustActivate) {
                 try {
@@ -227,8 +279,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/users", method = RequestMethod.PUT)
-    public ResponseEntity addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
+    private ResponseEntity addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
         ValidationError maybeError = advancedValidate(newData, true);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
@@ -331,6 +382,7 @@ public class UserController {
                 user.setEmailAddress(newData.getEmailAddress().trim());
                 user.setLocale(newData.getLocale());
                 user.setEnabled(newData.isEnabled());
+                user.setApproved(newData.isApproved());
                 if (!user.isEnabled() && StringUtils.isNotEmpty(newData.getActivationCode())) {
                     user.setActivationCode(newData.getActivationCode());
                 }

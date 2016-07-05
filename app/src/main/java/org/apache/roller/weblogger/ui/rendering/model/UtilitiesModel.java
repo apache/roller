@@ -100,7 +100,7 @@ public class UtilitiesModel implements Model {
      * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
      */
     public String formatIsoOffsetDateTime(LocalDateTime date) {
-        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.of(date, ZoneId.systemDefault()));
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.of(date, zoneId));
     }
 
     //------------------------------------------------------------ String utils
