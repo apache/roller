@@ -32,12 +32,12 @@
     <http pattern="/styles/**" security="none"/>
 
     <http use-expressions="false" auto-config="false" access-decision-manager-ref="accessDecisionManager">
-        <intercept-url pattern="/tb-ui/login-redirect**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/tb-ui/profile**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/tb-ui/createWeblog**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/tb-ui/menu**" access="ADMIN,BLOGGER"/>
-        <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
+        <intercept-url pattern="/tb-ui/createWeblog**" access="ADMIN,BLOGCREATOR"/>
+        <intercept-url pattern="/tb-ui/login-redirect**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/profile**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/menu**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
 
         <!-- Detect login redirects occurring as a result of Ajax GET calls and send a 408 (timeout) response
              code to the client instead, so the Ajax call can handle properly, see:

@@ -29,11 +29,10 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.util.Blacklist;
@@ -133,19 +132,10 @@ public class WeblogController {
     @RequestMapping(value = "/tb-ui/authoring/rest/weblogs", method = RequestMethod.POST)
     public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response) throws ServletException {
 
-        if(!propertiesManager.getBooleanProperty("site.allowUserWeblogCreation")) {
-            return ResponseEntity.status(403).body(bundle.getString("createWebsite.disabled"));
-        }
-
         User user = userManager.getUserByUserName(p.getName());
 
-        if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
-            List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
-            if (roles.size() > 0) {
-                // sneaky user trying to get around 1 blog limit that applies
-                // only when group blogging is disabled
-                return ResponseEntity.status(403).body(bundle.getString("createWebsite.oneBlogLimit"));
-            }
+        if(!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
+            return ResponseEntity.status(403).body(bundle.getString("createWebsite.notAuthorized"));
         }
 
         ValidationError maybeError = advancedValidate(newData, true);

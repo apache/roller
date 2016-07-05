@@ -144,21 +144,12 @@ public class User {
         return this.globalRole;
     }
 
-    @Transient
-    public boolean isGlobalAdmin() {
-        return this.globalRole == GlobalRole.ADMIN;
-    }
-
-    public void setGlobalAdmin(boolean administrator) {
-        setGlobalRole(administrator ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
+    public void setGlobalRole(GlobalRole globalRole) {
+        this.globalRole = globalRole;
     }
 
     public boolean hasEffectiveGlobalRole(GlobalRole roleToCheck) {
         return globalRole.getWeight() >= roleToCheck.getWeight();
-    }
-
-    public void setGlobalRole(GlobalRole globalRole) {
-        this.globalRole = globalRole;
     }
 
     /**

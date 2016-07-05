@@ -140,7 +140,7 @@ var msg= {
       </div>
     </div>
 
-    <s:if test="getBooleanProp('site.allowUserWeblogCreation') && getBooleanProp('groupblogging.enabled')">
+    <s:if test="authenticatedUser.hasEffectiveGlobalRole('BLOGCREATOR')">
         <form method="link" action="<s:url action='createWeblog'/>">
           <div class="control clearfix">
              <input type="submit" value="<s:text name='yourWebsites.createWeblog'/>">

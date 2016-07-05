@@ -139,11 +139,11 @@ var contextPath = "${pageContext.request.contextPath}";
           </tr>
 
           <tr>
-              <td class="label"><label for="userAdmin"><s:text name="userAdmin.userAdmin" /></label></td>
+              <td class="label"><label for="globalRole"><s:text name="userAdmin.globalRole" /></label></td>
               <td class="field">
-                  <input type="checkbox" name="globalAdmin" data-link="globalAdmin"/>
+                  <s:select name="globalRole" size="1" list="assignableGlobalRolesList" listKey="left" listValue="right" data-link="globalRole" required=""/>
               </td>
-              <td class="description"><s:text name="userAdmin.tip.userAdmin" /></td>
+              <td class="description"><s:text name="userAdmin.tip.globalRole" /></td>
           </tr>
         </script>
       </tbody>

@@ -34,7 +34,7 @@ if (user == null) {
 } else {
     List<UserWeblogRole> roles = mgr.getWeblogRoles(user);
 
-    if (!user.isGlobalAdmin() && roles != null && roles.size() == 1) {
+    if (!GlobalRole.ADMIN.equals(user.getGlobalRole()) && roles.size() == 1) {
         Weblog weblog = roles.get(0).getWeblog();
         response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
             + user.getLocale() + "&weblogId=" + weblog.getId());

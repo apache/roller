@@ -53,7 +53,6 @@ import org.apache.roller.weblogger.ui.rendering.comment.CommentValidationManager
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
-import org.apache.roller.weblogger.util.GenericThrottle;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -63,7 +62,6 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,14 +88,6 @@ public class CommentProcessor {
     public static final String PATH = "/tb-ui/rendering/comment";
 
     private CommentValidationManager commentValidationManager = null;
-
-    @Autowired(required=false)
-    private GenericThrottle commentThrottle = null;
-
-    // See GenericThrottle class for activation information
-    public void setCommentThrottle(@Qualifier("commentThrottle") GenericThrottle commentThrottle) {
-        this.commentThrottle = commentThrottle;
-    }
 
     @Autowired
     private CacheManager cacheManager;
@@ -200,13 +190,6 @@ public class CommentProcessor {
         } else {
             preview = false;
             log.debug("Handling regular comment post");
-        }
-
-        // throttling protection against spammers
-        if (commentThrottle != null && commentThrottle.processHit(request.getRemoteAddr())) {
-            log.debug("ABUSIVE {}", request.getRemoteAddr());
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
         }
 
         WeblogEntryRequest commentRequest;

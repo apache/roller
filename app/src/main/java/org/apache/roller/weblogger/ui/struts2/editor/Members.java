@@ -28,7 +28,6 @@ import java.util.Map;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -201,12 +200,6 @@ public class Members extends UIAction implements ParameterAware {
      * Save the new invitation and notify the user.
      */
     public String invite() {
-
-        // if group blogging is disabled then you can't change permissions
-        if (!WebloggerStaticConfig.getBooleanProperty("groupblogging.enabled")) {
-            addError("inviteMember.disabled");
-            return LIST;
-        }
 
         log.debug("Attempting to process weblog invitation");
 
