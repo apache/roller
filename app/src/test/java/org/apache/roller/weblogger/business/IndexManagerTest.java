@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business;
 import java.time.Instant;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
@@ -33,6 +32,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,7 +79,7 @@ public class IndexManagerTest extends WebloggerTest {
     @Test
     public void testSearch() throws Exception {
         WeblogEntry wd1 = new WeblogEntry();
-        wd1.setId(WebloggerCommon.generateUUID());
+        wd1.setId(Utilities.generateUUID());
         wd1.setTitle("The Tholian Web");
         wd1.setText(
          "When the Enterprise attempts to ascertain the fate of the  "
@@ -103,7 +103,7 @@ public class IndexManagerTest extends WebloggerTest {
                 new AddEntryOperation(weblogEntryManager, indexManager, wd1));
 
         WeblogEntry wd2 = new WeblogEntry();
-        wd2.setId(WebloggerCommon.generateUUID());
+        wd2.setId(Utilities.generateUUID());
         wd2.setTitle("A Piece of the Action");
         wd2.setText(
           "The crew of the Enterprise attempts to make contact with "

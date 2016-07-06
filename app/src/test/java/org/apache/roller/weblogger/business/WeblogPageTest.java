@@ -22,12 +22,13 @@ package org.apache.roller.weblogger.business;
 
 import java.time.Instant;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerCommon;
+
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class WeblogPageTest extends WebloggerTest {
         endSession(true);
 
         testPage = new WeblogTemplate();
-        testPage.setId(WebloggerCommon.generateUUID());
+        testPage.setId(Utilities.generateUUID());
         testPage.setRole(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");

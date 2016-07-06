@@ -24,7 +24,7 @@ import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -43,7 +43,7 @@ import javax.persistence.Table;
 })
 public class WeblogEntryTag  {
 
-    private String id = WebloggerCommon.generateUUID();
+    private String id = Utilities.generateUUID();
     private Weblog weblog = null;
     private WeblogEntry weblogEntry = null;
     private String name = null;

@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
@@ -86,7 +85,7 @@ public class WeblogEntryTest extends WebloggerTest {
         WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
-        testEntry.setId(WebloggerCommon.generateUUID());
+        testEntry.setId(Utilities.generateUUID());
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
@@ -308,7 +307,7 @@ public class WeblogEntryTest extends WebloggerTest {
             testUser = getManagedUser(testUser);
 
             WeblogEntry testEntry = new WeblogEntry();
-            testEntry.setId(WebloggerCommon.generateUUID());
+            testEntry.setId(Utilities.generateUUID());
             testEntry.setTitle("entryTestEntry");
             testEntry.setText("blah blah entry");
             testEntry.setAnchor("testEntryAnchor");
@@ -807,7 +806,7 @@ public class WeblogEntryTest extends WebloggerTest {
         WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
-        testEntry.setId(WebloggerCommon.generateUUID());
+        testEntry.setId(Utilities.generateUUID());
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");

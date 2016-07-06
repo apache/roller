@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -512,7 +511,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_8CHARS);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
 
         for (WeblogEntry entry : entries) {
             LocalDate maybeDate = entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();

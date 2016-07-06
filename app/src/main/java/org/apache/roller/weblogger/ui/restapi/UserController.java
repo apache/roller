@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -49,6 +48,7 @@ import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,7 +239,7 @@ public class UserController {
     public ResponseEntity getLDAPData(Principal p) throws ServletException {
 
         // See if user is already logged in via Spring Security
-        if (WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.LDAP && p != null) {
+        if (WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.LDAP && p != null) {
 
             UsernamePasswordAuthenticationToken p2 = (UsernamePasswordAuthenticationToken) p;
             LdapUserDetails userDetails = (LdapUserDetails) p2.getPrincipal();
@@ -284,7 +284,7 @@ public class UserController {
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
         }
-        if (WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.LDAP) {
+        if (WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.LDAP) {
             // LDAP auth ignores the database-saved password but that field keeps a not null constraint
             // for the more common DB auth option, so providing a random string for that field.
             String unusedPassword = RandomStringUtils.randomAscii(15);
@@ -292,7 +292,7 @@ public class UserController {
             newData.setPasswordConfirm(unusedPassword);
         }
         User user = new User();
-        user.setId(WebloggerCommon.generateUUID());
+        user.setId(Utilities.generateUUID());
         user.setUserName(newData.getUserName());
         user.setDateCreated(Instant.now());
         return saveUser(user, newData, p, response);
@@ -426,7 +426,7 @@ public class UserController {
         }
 
         if (isAdd &&
-                WebloggerStaticConfig.getAuthMethod() == WebloggerCommon.AuthMethod.DATABASE &&
+                WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB &&
                 StringUtils.isEmpty(data.getPasswordText())) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
         }

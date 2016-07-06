@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -145,7 +144,7 @@ public final class EntryEdit extends UIAction {
         if (isAdd()) {
             // Create and initialize new, not-yet-saved Weblog Entry
             entry = new WeblogEntry();
-            entry.setId(WebloggerCommon.generateUUID());
+            entry.setId(Utilities.generateUUID());
             entry.setCreatorId(getAuthenticatedUser().getId());
             entry.setWeblog(getActionWeblog());
         } else {

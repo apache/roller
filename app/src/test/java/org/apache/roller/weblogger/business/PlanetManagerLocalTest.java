@@ -20,13 +20,14 @@ package org.apache.roller.weblogger.business;
 
 import java.time.Instant;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerCommon;
+
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         Instant testTime = Instant.now();
 
         WeblogEntry testEntry1 = new WeblogEntry();
-        testEntry1.setId(WebloggerCommon.generateUUID());
+        testEntry1.setId(Utilities.generateUUID());
         testEntry1.setTitle("entryTestEntry1");
         testEntry1.setText("blah blah entry1");
         testEntry1.setAnchor("testEntryAnchor1");
@@ -81,7 +82,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(testEntry1);
 
         WeblogEntry testEntry2 = new WeblogEntry();
-        testEntry2.setId(WebloggerCommon.generateUUID());
+        testEntry2.setId(Utilities.generateUUID());
         testEntry2.setTitle("entryTestEntry2");
         testEntry2.setText("blah blah entry2");
         testEntry2.setAnchor("testEntryAnchor2");
@@ -94,7 +95,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(testEntry2);
 
         WeblogEntry testEntry3 = new WeblogEntry();
-        testEntry3.setId(WebloggerCommon.generateUUID());
+        testEntry3.setId(Utilities.generateUUID());
         testEntry3.setTitle("entryTestEntry3");
         testEntry3.setText("blah blah entry3");
         testEntry3.setAnchor("testEntryAnchor3");

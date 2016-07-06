@@ -25,8 +25,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -63,7 +63,7 @@ public class Planet implements Comparable<Planet> {
     public Planet() {}
     
     public Planet(String handle, String title, String desc) {
-        this.id = WebloggerCommon.generateUUID();
+        this.id = Utilities.generateUUID();
         this.handle = handle;
         this.title = title;
         this.description = desc;

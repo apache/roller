@@ -21,19 +21,14 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import com.opensymphony.xwork2.ActionContext;
-import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig.AuthMethod;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Locale;
 
 /**
  * Handle user logins.

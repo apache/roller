@@ -21,11 +21,11 @@
 
 package org.apache.roller.weblogger.ui.rendering.comment;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Validates comment if comment does not contain blacklisted words.
@@ -46,7 +46,7 @@ public class BlacklistCommentValidator implements CommentValidator {
             messages.addError("comment.validator.blacklistMessage");
             return 0;
         }
-        return WebloggerCommon.PERCENT_100;
+        return Utilities.PERCENT_100;
     }
 
     /**

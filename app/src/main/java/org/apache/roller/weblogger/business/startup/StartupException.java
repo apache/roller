@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.startup;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.util.WebloggerException;
 
 
 /**

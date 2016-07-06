@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
@@ -346,7 +345,7 @@ public class CommentProcessor {
         }
 
         if (!preview) {
-            if (validationScore == WebloggerCommon.PERCENT_100) {
+            if (validationScore == Utilities.PERCENT_100) {
                 if (!ownComment && commentApprovalRequired) {
                     // Valid comments go into moderation if required
                     comment.setStatus(ApprovalStatus.PENDING);
@@ -393,7 +392,7 @@ public class CommentProcessor {
                 WebloggerFactory.flush();
 
                 // Send email notifications to subscribers only if comment is 100% valid
-                boolean notifySubscribers = (validationScore == WebloggerCommon.PERCENT_100);
+                boolean notifySubscribers = (validationScore == Utilities.PERCENT_100);
                 mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
 
                 // only re-index/invalidate the cache if comment isn't moderated

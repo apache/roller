@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
@@ -35,6 +34,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
@@ -148,7 +148,7 @@ public class TemplateEdit extends UIAction {
             // starting from a shared template (first override)?
             if (template == null) {
                 template = new WeblogTemplate();
-                template.setId(WebloggerCommon.generateUUID());
+                template.setId(Utilities.generateUUID());
                 template.setWeblog(getActionWeblog());
                 template.setRole(bean.getRole());
                 template.setName(bean.getName());

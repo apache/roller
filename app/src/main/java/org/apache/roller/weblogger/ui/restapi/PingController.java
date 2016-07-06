@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +104,7 @@ public class PingController {
     public PingTarget addPingTarget(@RequestBody PingTarget newData, HttpServletResponse response) throws ServletException {
         try {
             PingTarget pingTarget = new PingTarget();
-            pingTarget.setId(WebloggerCommon.generateUUID());
+            pingTarget.setId(Utilities.generateUUID());
             pingTarget.setEnabled(false);
             return savePingTarget(pingTarget, newData, response);
         } catch (Exception e) {

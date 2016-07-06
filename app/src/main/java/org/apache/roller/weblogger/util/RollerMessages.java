@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class RollerMessages
 {
-    private List<RollerMessage> mErrors = new ArrayList<RollerMessage>();
-    private List<RollerMessage> mMessages = new ArrayList<RollerMessage>();
+    private List<RollerMessage> mErrors = new ArrayList<>();
+    private List<RollerMessage> mMessages = new ArrayList<>();
     
     public RollerMessages() 
     {

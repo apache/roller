@@ -21,12 +21,12 @@ package org.apache.roller.weblogger.ui.restapi;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Subscription;
+import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class PlanetController {
     @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.PUT)
     public Planet addPlanet(@RequestBody Planet newData, HttpServletResponse response) throws ServletException {
         Planet planet = new Planet();
-        planet.setId(WebloggerCommon.generateUUID());
+        planet.setId(Utilities.generateUUID());
         savePlanet(planet, newData, response);
         return response.getStatus() == HttpServletResponse.SC_OK ? planet : null;
     }

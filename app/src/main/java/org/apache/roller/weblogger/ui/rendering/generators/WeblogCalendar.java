@@ -39,7 +39,6 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -47,6 +46,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -78,8 +78,8 @@ public class WeblogCalendar {
         this.pageRequest = pRequest;
 
         weblog = pageRequest.getWeblog();
-        eightCharDateFormat = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_8CHARS);
-        sixCharDateFormat = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_6CHARS);
+        eightCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
+        sixCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
         pageLink = pageRequest.getWeblogTemplateName();
 
         if (pageRequest.getWeblogCategoryName() != null) {

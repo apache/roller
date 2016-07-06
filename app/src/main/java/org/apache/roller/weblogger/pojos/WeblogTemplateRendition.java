@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -42,7 +42,7 @@ import javax.persistence.Table;
 @Table(name="weblog_template_rendition")
 public class WeblogTemplateRendition implements TemplateRendition {
 
-	private String id = WebloggerCommon.generateUUID();
+	private String id = Utilities.generateUUID();
     private WeblogTemplate weblogTemplate = null;
 	// rendition contents
 	private String rendition = "";

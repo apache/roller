@@ -26,7 +26,7 @@ import java.io.Writer;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.util.WebloggerException;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;

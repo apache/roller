@@ -26,7 +26,6 @@ import java.time.Instant;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
@@ -59,7 +58,7 @@ public class WeblogEntryComment {
     public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
 
     // attributes
-    private String    id = WebloggerCommon.generateUUID();
+    private String    id = Utilities.generateUUID();
     private String    name = null;
     private String    email = null;
     private String    url = null;

@@ -21,11 +21,12 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerCommon;
+
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class PingsTest extends WebloggerTest {
         endSession(true);
 
         testCommonPing = new PingTarget();
-        testCommonPing.setId(WebloggerCommon.generateUUID());
+        testCommonPing.setId(Utilities.generateUUID());
         testCommonPing.setName("testCommonPing");
         testCommonPing.setPingUrl("http://localhost/testCommonPing");
     }

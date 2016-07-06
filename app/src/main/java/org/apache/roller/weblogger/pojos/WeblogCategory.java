@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -64,7 +64,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
     public WeblogCategory(
             Weblog weblog,
             String name) {
-        this.id = WebloggerCommon.generateUUID();
+        this.id = Utilities.generateUUID();
         this.name = name;
         this.weblog = weblog;
         calculatePosition();
