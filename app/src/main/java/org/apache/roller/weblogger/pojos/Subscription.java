@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -53,7 +53,7 @@ import javax.persistence.Table;
 public class Subscription implements Comparable<Subscription> {
     
     // attributes
-    private String id = WebloggerCommon.generateUUID();
+    private String id = Utilities.generateUUID();
     private String title;
     private String feedURL;
     private String siteURL;

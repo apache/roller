@@ -22,12 +22,13 @@ package org.apache.roller.weblogger.business;
 
 import java.time.Instant;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerCommon;
+
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -51,7 +52,7 @@ public class UserTest extends WebloggerTest {
         User user;
         
         User testUser = new User();
-        testUser.setId(WebloggerCommon.generateUUID());
+        testUser.setId(Utilities.generateUUID());
         testUser.setUserName("testuser");
         testUser.setPassword("password");
         testUser.setScreenName("Test User Screen Name");

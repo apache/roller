@@ -36,7 +36,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -44,6 +43,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,9 +76,9 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
     public enum PagingInterval {
         // For day-by-day paging
-        DAY("day", WebloggerCommon.FORMAT_8CHARS),
+        DAY("day", Utilities.FORMAT_8CHARS),
         // month-by-month paging
-        MONTH("month", WebloggerCommon.FORMAT_6CHARS),
+        MONTH("month", Utilities.FORMAT_6CHARS),
         // default "all" paging: reverse chronological, no time bounds
         LATEST("latest", null),
         // special pager for site weblog (behaves mostly like LATEST, but
@@ -416,10 +416,10 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         LocalDate ldt;
         if (dateString != null && StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
             if (dateString.length() == 8) {
-                dtf = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_8CHARS, weblog.getLocaleInstance());
+                dtf = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS, weblog.getLocaleInstance());
                 ldt = LocalDate.parse(dateString, dtf);
             } else {
-                dtf = DateTimeFormatter.ofPattern(WebloggerCommon.FORMAT_6CHARS, weblog.getLocaleInstance());
+                dtf = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS, weblog.getLocaleInstance());
                 YearMonth tmp = YearMonth.parse(dateString, dtf);
                 ldt = tmp.atDay(1);
             }

@@ -28,7 +28,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
@@ -38,6 +37,7 @@ import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +174,7 @@ public class SearchProcessor {
         }
 
         // render content
-        CachedContent rendererOutput = new CachedContent(WebloggerCommon.FOUR_KB_IN_BYTES);
+        CachedContent rendererOutput = new CachedContent(Utilities.EIGHT_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

@@ -23,9 +23,10 @@ package org.apache.roller.weblogger.ui.rendering.comment;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerCommon;
+
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ public class CommentValidationManager {
             total = total / validators.size();
         } else {
             // When no validators: consider all comments valid
-            total = WebloggerCommon.PERCENT_100;
+            total = Utilities.PERCENT_100;
         }
         return total;
     }

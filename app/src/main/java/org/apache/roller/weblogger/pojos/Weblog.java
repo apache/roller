@@ -29,9 +29,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
+import org.apache.roller.weblogger.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
@@ -72,7 +72,7 @@ import javax.validation.constraints.Pattern;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Weblog {
 
-    private String  id               = WebloggerCommon.generateUUID();
+    private String  id               = Utilities.generateUUID();
     @NotBlank(message = "{createWeblog.error.handleNull}")
     @Pattern(regexp = "[a-z0-9\\-]*", message = "{createWeblog.error.invalidHandle}")
     private String  handle           = null;

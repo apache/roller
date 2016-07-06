@@ -26,11 +26,11 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +117,7 @@ public class AkismetCommentValidator implements CommentValidator {
                 return 0;
             }
             else {
-                return WebloggerCommon.PERCENT_100;
+                return Utilities.PERCENT_100;
             }
         } catch (Exception e) {
             log.error("ERROR checking comment against Akismet", e);

@@ -18,9 +18,9 @@
 
 package org.apache.roller.weblogger.ui.rendering.comment;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Validates comment only if it does not exceed number of characters specified by the threshold property.
@@ -41,7 +41,7 @@ public class ExcessSizeCommentValidator implements CommentValidator {
             messages.addError("comment.validator.excessSizeMessage", Integer.toString(threshold));
             return 0;
         }
-        return WebloggerCommon.PERCENT_100;
+        return Utilities.PERCENT_100;
     }
     
 }

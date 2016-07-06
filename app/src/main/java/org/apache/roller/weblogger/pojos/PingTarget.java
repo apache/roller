@@ -24,7 +24,7 @@ import java.time.Instant;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -66,7 +66,7 @@ public class PingTarget {
      * @param autoEnable if true, pings sent to target by default
      */
     public PingTarget(String name, String pingUrl, boolean autoEnable) {
-        this.id = WebloggerCommon.generateUUID();
+        this.id = Utilities.generateUUID();
         this.name = name;
         this.pingUrl = pingUrl;
         this.lastSuccess = null;

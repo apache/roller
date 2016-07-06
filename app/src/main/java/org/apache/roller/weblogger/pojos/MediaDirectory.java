@@ -26,7 +26,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -60,7 +60,7 @@ public class MediaDirectory {
     }
 
     public MediaDirectory(Weblog weblog, String name) {
-        this.id = WebloggerCommon.generateUUID();
+        this.id = Utilities.generateUUID();
         this.name = name;
         this.weblog = weblog;
         weblog.getMediaDirectories().add(this);

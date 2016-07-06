@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -56,7 +56,7 @@ import javax.persistence.Transient;
 public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
     
     // attributes
-    private String id = WebloggerCommon.generateUUID();
+    private String id = Utilities.generateUUID();
     private String title;
     private String uri;
     private String permalink;

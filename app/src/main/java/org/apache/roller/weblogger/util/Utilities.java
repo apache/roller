@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,13 +67,17 @@ import org.springframework.mobile.device.site.SitePreferenceUtils;
  * General purpose utilities, not for use in templates.
  */
 public class Utilities {
-    /** The <code>Log</code> instance for this class. */
+
     private static Logger log = LoggerFactory.getLogger(Utilities.class);
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
-    private static Pattern mLinkPattern = Pattern.compile("<a href=.*?>",
-            Pattern.CASE_INSENSITIVE);
+    public static final String FORMAT_6CHARS = "yyyyMM";
+    public static final String FORMAT_8CHARS = "yyyyMMdd";
+    public static final int PERCENT_100 = 100;
+    public static final int EIGHT_KB_IN_BYTES = 8192;
+    public static final int TWENTYFOUR_KB_IN_BYTES = 24576;
+    public static final int ONE_MB_IN_BYTES = 1024 * 1024;
 
     public static final Pattern BR_TAG_PATTERN = Pattern.compile(
             "&lt;br&gt;", Pattern.CASE_INSENSITIVE);
@@ -82,6 +87,12 @@ public class Utilities {
             "&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
     public static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
             Pattern.CASE_INSENSITIVE);
+
+    private static Pattern mLinkPattern = Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);
+
+    public static String generateUUID() {
+        return UUID.randomUUID().toString();
+    }
 
     public enum HTMLMatchingTag {
         BLOCKQUOTE("blockquote"),

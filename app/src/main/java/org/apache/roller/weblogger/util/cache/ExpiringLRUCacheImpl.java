@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +84,7 @@ public class ExpiringLRUCacheImpl implements Cache {
 
         // calculate efficiency
         if (misses + hits > 0) {
-            double efficiency = hits * WebloggerCommon.PERCENT_100 / (misses + hits);
+            double efficiency = hits * Utilities.PERCENT_100 / (misses + hits);
             stats.setEfficiency(efficiency);
         }
 

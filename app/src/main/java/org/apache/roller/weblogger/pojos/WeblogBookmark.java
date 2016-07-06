@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -57,7 +57,7 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
     }
     
     public WeblogBookmark(Weblog parent, String name, String url, String desc) {
-        this.id = WebloggerCommon.generateUUID();
+        this.id = Utilities.generateUUID();
         this.weblog = parent;
         this.name = name;
         this.description = desc;

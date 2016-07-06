@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +53,12 @@ public final class WebloggerStaticConfig {
 
     // no, you may not instantiate this class :p
     private WebloggerStaticConfig() {}
+
+    // enum constant for properties file-configured authentication option (Database username/passwords or LDAP).
+    public enum AuthMethod {
+        DB,
+        LDAP
+    }
 
     /*
      * Static block run once at class loading
@@ -268,7 +273,7 @@ public final class WebloggerStaticConfig {
      * file is missing or not the property name of any AuthMethod enum object.
      */
     public static AuthMethod getAuthMethod() {
-        return AuthMethod.getAuthMethod(getProperty("authentication.method"));
+        return AuthMethod.valueOf(getProperty("authentication.method", "DB").toUpperCase());
     }
 
 }

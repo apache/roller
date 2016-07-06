@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -400,7 +399,7 @@ public class PageProcessor {
 
         // render content
         CachedContent rendererOutput = new CachedContent(
-                WebloggerCommon.TWENTYFOUR_KB_IN_BYTES, contentType);
+                Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

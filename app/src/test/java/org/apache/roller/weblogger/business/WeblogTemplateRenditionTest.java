@@ -23,7 +23,6 @@
 */
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -32,6 +31,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         endSession(true);
 
         testPage = new WeblogTemplate();
-        testPage.setId(WebloggerCommon.generateUUID());
+        testPage.setId(Utilities.generateUUID());
         testPage.setRole(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");

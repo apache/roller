@@ -28,7 +28,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -157,7 +156,7 @@ public class MediaResourceProcessor {
         OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[WebloggerCommon.EIGHT_KB_IN_BYTES];
+            byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];
             int length;
             out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {

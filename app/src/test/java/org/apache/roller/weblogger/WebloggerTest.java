@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +128,7 @@ abstract public class WebloggerTest {
 
     protected User setupUser(String userName) throws Exception {
         User testUser = new User();
-        testUser.setId(WebloggerCommon.generateUUID());
+        testUser.setId(Utilities.generateUUID());
         testUser.setUserName(userName.toLowerCase());
         testUser.setPassword("password");
         testUser.setGlobalRole(GlobalRole.BLOGGER);
@@ -202,7 +203,7 @@ abstract public class WebloggerTest {
             throws Exception {
 
         WeblogEntry testEntry = new WeblogEntry();
-        testEntry.setId(WebloggerCommon.generateUUID());
+        testEntry.setId(Utilities.generateUUID());
         testEntry.setTitle(anchor);
         testEntry.setText("blah blah entry");
         testEntry.setAnchor(anchor);

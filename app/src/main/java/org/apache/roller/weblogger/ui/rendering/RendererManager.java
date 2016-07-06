@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.rendering;
 
-import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.util.WebloggerException;
 
 import java.util.HashSet;
 import java.util.Set;

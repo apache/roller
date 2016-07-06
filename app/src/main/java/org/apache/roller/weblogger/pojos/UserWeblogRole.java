@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerCommon;
+import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -60,7 +60,7 @@ import java.time.Instant;
 })
 public class UserWeblogRole {
 
-    private String id = WebloggerCommon.generateUUID();
+    private String id = Utilities.generateUUID();
     private User user;
     private Weblog weblog;
     private boolean pending = false;

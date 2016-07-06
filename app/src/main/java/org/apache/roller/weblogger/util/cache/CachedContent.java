@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import org.apache.roller.weblogger.WebloggerCommon;
+
+import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class CachedContent {
         if(size > 0) {
             this.outstream = new ByteArrayOutputStream(size);
         } else {
-            this.outstream = new ByteArrayOutputStream(WebloggerCommon.EIGHT_KB_IN_BYTES);
+            this.outstream = new ByteArrayOutputStream(Utilities.EIGHT_KB_IN_BYTES);
         }
         
         // construct writer from output stream

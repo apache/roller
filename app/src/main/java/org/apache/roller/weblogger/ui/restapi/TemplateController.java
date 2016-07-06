@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -36,6 +35,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.Parser;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +185,7 @@ public class TemplateController {
 				}
 
 				WeblogTemplate newTemplate = new WeblogTemplate();
-				newTemplate.setId(WebloggerCommon.generateUUID());
+				newTemplate.setId(Utilities.generateUUID());
 				newTemplate.setWeblog(incomingTemplateData.getWeblog());
 				newTemplate.setRole(incomingTemplateData.getRole());
 				newTemplate.setName(incomingTemplateData.getName());

@@ -31,7 +31,6 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -39,6 +38,7 @@ import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,7 +199,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         Planet planet = getPlanetByHandle("all");
         if (planet == null) {
             planet = new Planet();
-            planet.setId(WebloggerCommon.generateUUID());
+            planet.setId(Utilities.generateUUID());
             planet.setHandle("all");
             planet.setTitle("All Blogs");
             savePlanet(planet);
