@@ -40,9 +40,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.business.MailManager;
-import org.apache.roller.weblogger.util.MediacastException;
-import org.apache.roller.weblogger.util.MediacastResource;
-import org.apache.roller.weblogger.util.MediacastUtil;
+import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -74,7 +72,6 @@ public final class EntryEdit extends UIAction {
     private static Logger log = LoggerFactory.getLogger(EntryEdit.class);
 
     private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
-
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
@@ -357,20 +354,21 @@ public final class EntryEdit extends UIAction {
                     try {
                         // Fetch MediaCast resource
                         log.debug("Checking MediaCast attributes");
-                        MediacastResource mediacast = MediacastUtil.lookupResource(getBean().getEnclosureUrl());
+                        AtomEnclosure enclosure = weblogEntryManager.generateEnclosure(getBean().getEnclosureUrl());
 
-                        // set mediacast attributes
-                        weblogEntry.setEnclosureUrl(mediacast.getUrl());
-                        weblogEntry.setEnclosureType(mediacast.getContentType());
-                        weblogEntry.setEnclosureLength(mediacast.getLength());
-                        bean.setEnclosureType(mediacast.getContentType());
-                        bean.setEnclosureLength(mediacast.getLength());
+                        // set enclosure attributes
+                        weblogEntry.setEnclosureUrl(enclosure.getUrl());
+                        weblogEntry.setEnclosureType(enclosure.getContentType());
+                        weblogEntry.setEnclosureLength(enclosure.getLength());
+                        bean.setEnclosureType(enclosure.getContentType());
+                        bean.setEnclosureLength(enclosure.getLength());
 
-                    } catch (MediacastException ex) {
-                        addMessage(getText(ex.getErrorKey()));
+                    } catch (IllegalArgumentException ex) {
+                        addError(getText(ex.getMessage()));
+                        return INPUT;
                     }
                 } else if ("entryEdit".equals(actionName)) {
-                    // if MediaCast string is empty, clean out MediaCast attributes
+                    // if enclosure string is empty, clean out its attributes
                     weblogEntry.setEnclosureUrl(null);
                     weblogEntry.setEnclosureType(null);
                     weblogEntry.setEnclosureLength(null);
