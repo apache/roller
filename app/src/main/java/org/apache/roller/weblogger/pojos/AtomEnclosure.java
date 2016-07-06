@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,31 +14,27 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
-package org.apache.roller.weblogger.util;
-
+package org.apache.roller.weblogger.pojos;
 
 /**
- * An external 'mediacast' resource, typically a podcast, video, etc.
- *
- * This class is mainly used by weblog entries to track external resources used
- * in postings via enclosures.
+ * Information held within the enclosure element of an Atom entry (blog entry).
+ * Enclosures are usually URLs to podcasts and other multimedia targets.
  */
-public class MediacastResource {
-    
+public class AtomEnclosure {
     private String url = null;
     private String contentType = null;
     private long length = 0;
-    
-    
-    public MediacastResource(String u, String c, long l) {
+
+    public AtomEnclosure(String u, String c, long l) {
         this.setUrl(u);
         this.setContentType(c);
         this.setLength(l);
     }
 
-    
     public String getUrl() {
         return url;
     }
@@ -62,16 +58,8 @@ public class MediacastResource {
     public void setLength(long length) {
         this.length = length;
     }
-    
-    
+
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        
-        buf.append("url = ").append(getUrl()).append("\n");
-        buf.append("contentType = ").append(getContentType()).append("\n");
-        buf.append("length = ").append(getLength()).append("\n");
-        
-        return buf.toString();
+        return "{url=" + url + "; contentType=" + contentType + "; length=" + length + "}";
     }
-    
 }

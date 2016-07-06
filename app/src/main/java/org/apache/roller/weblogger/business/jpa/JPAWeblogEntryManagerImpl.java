@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -44,6 +45,9 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -763,4 +767,46 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return content;
     }
 
+    @Override
+    public AtomEnclosure generateEnclosure(String url) {
+        if (url == null || url.trim().length() ==0) {
+            return null;
+        }
+
+        AtomEnclosure resource;
+        try {
+            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+            con.setRequestMethod("HEAD");
+            int response = con.getResponseCode();
+            String message = con.getResponseMessage();
+
+            if (response != 200) {
+                // Bad Response
+                log.debug("Mediacast error {}:{} from url {}", response, message, url);
+                throw new IllegalArgumentException("weblogEdit.mediaCastResponseError");
+            } else {
+                String contentType = con.getContentType();
+                long length = con.getContentLength();
+
+                if(contentType == null || length == -1) {
+                    // Incomplete
+                    log.debug("Response valid, but contentType or length is invalid");
+                    throw new IllegalArgumentException("weblogEdit.mediaCastLacksContentTypeOrLength");
+                }
+
+                resource = new AtomEnclosure(url, contentType, length);
+                log.debug("Valid mediacast resource = {}", resource.toString());
+
+            }
+        } catch (MalformedURLException mfue) {
+            // Bad URL
+            log.debug("Malformed MediaCast url: {}", url);
+            throw new IllegalArgumentException("weblogEdit.mediaCastUrlMalformed", mfue);
+        } catch (Exception e) {
+            // Check Failed
+            log.error("ERROR while checking MediaCast URL: {}: {}", url, e.getMessage());
+            throw new IllegalArgumentException("weblogEdit.mediaCastFailedFetchingInfo", e);
+        }
+        return resource;
+    }
 }
