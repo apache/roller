@@ -72,12 +72,6 @@ public class JPAUserManagerImpl implements UserManager {
     // cached mapping of screenNames -> userIds
     private Map<String, String> screenNameToIdMap = new HashMap<>();
 
-    private Boolean makeFirstUserAdmin = true;
-
-    public void setMakeFirstUserAdmin(Boolean makeFirstUserAdmin) {
-        this.makeFirstUserAdmin = makeFirstUserAdmin;
-    }
-
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
         this.strategy = strat;
     }
@@ -100,23 +94,6 @@ public class JPAUserManagerImpl implements UserManager {
         if (data == null) {
             throw new IllegalArgumentException("cannot save null user");
         }
-
-        UserSearchCriteria usc = new UserSearchCriteria();
-        usc.setEnabled(true);
-        usc.setOffset(0);
-        usc.setMaxResults(1);
-        List existingUsers = this.getUsers(usc);
-
-        if (existingUsers.size() == 0 && makeFirstUserAdmin) {
-            // Make first user an admin
-            data.setGlobalRole(GlobalRole.ADMIN);
-
-            //if user was disabled (because of activation user
-            // account with e-mail property), enable it for admin user
-            data.setEnabled(Boolean.TRUE);
-            data.setActivationCode(null);
-        }
-
         strategy.store(data);
         strategy.flush();
     }
@@ -145,19 +122,18 @@ public class JPAUserManagerImpl implements UserManager {
         
         // check cache first
         // NOTE: if we ever allow changing usernames then this needs updating
-        if(this.userNameToIdMap.containsKey(userName)) {
+        if (userNameToIdMap.containsKey(userName)) {
 
-            User user = this.getUser(
-                    this.userNameToIdMap.get(userName));
+            User user = getUser(userNameToIdMap.get(userName));
             if (user != null) {
                 // only return the user if the enabled status matches
-                if(enabled == null || enabled.equals(user.isEnabled())) {
+                if (enabled == null || enabled.equals(user.isEnabled())) {
                     log.debug("userNameToIdMap CACHE HIT - {}", userName);
                     return user;
                 }
             } else {
                 // mapping hit with lookup miss?  mapping must be old, remove it
-                this.userNameToIdMap.remove(userName);
+                userNameToIdMap.remove(userName);
             }
         }
 
@@ -165,12 +141,10 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<User> query;
         Object[] params;
         if (enabled != null) {
-            query = strategy.getNamedQuery(
-                    "User.getByUserName&Enabled", User.class);
+            query = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
             params = new Object[] {userName, enabled};
         } else {
-            query = strategy.getNamedQuery(
-                    "User.getByUserName", User.class);
+            query = strategy.getNamedQuery("User.getByUserName", User.class);
             params = new Object[] {userName};
         }
         for (int i=0; i<params.length; i++) {
@@ -215,8 +189,7 @@ public class JPAUserManagerImpl implements UserManager {
         // cache failed, do lookup
         TypedQuery<User> query;
         Object[] params;
-        query = strategy.getNamedQuery(
-                "User.getByScreenName", User.class);
+        query = strategy.getNamedQuery("User.getByScreenName", User.class);
         params = new Object[] {screenName};
 
         for (int i=0; i<params.length; i++) {

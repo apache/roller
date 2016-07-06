@@ -23,10 +23,11 @@ package org.apache.roller.weblogger.business;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
  * Interface for managing contents of the files uploaded to the weblogger.
@@ -45,8 +46,7 @@ public interface FileContentManager {
      * @throws FileNotFoundException If file does not exist.
      * @throws IOException Some other problem accessing or reading file.
      */
-    FileContent getFileContent(Weblog weblog, String fileId)
-            throws IOException;
+    FileContent getFileContent(Weblog weblog, String fileId) throws IOException;
 
     /**
      * Save a file's content to weblog's uploads area.
@@ -69,11 +69,10 @@ public interface FileContentManager {
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
      *
-     * @throws FileNotFoundException If path does not exist.
-     * @throws IOException If there is an unexpected error during the delete.
+     * @throws FileNotFoundException If file does not exist.
+     * @throws IOException If path does not exist or there is an unexpected error during the delete.
      */
-    void deleteFile(Weblog weblog, String fileId)
-            throws IOException;
+    void deleteFile(Weblog weblog, String fileId) throws IOException;
 
     /**
      * Determine if file can be saved given current WebloggerStaticConfig settings.
@@ -82,13 +81,13 @@ public interface FileContentManager {
      * @param fileName name of the file to be saved
      * @param contentType content type of the file
      * @param size size of the file in bytes.
-     * @param messages output parameter for adding messages.
+     * @param messages output parameter for resource bundle messages, or null if not necessary to receive them
      * @return true if the file can be saved, false otherwise. 
      */
     boolean canSave(Weblog weblog,
             String fileName,
             String contentType,
             long size,
-            RollerMessages messages);
+            Map<String, List<String>> messages);
 
 }

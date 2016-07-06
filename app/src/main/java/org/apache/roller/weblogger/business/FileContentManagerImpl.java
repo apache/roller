@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,11 +27,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +52,6 @@ public class FileContentManagerImpl implements FileContentManager {
 
     private String storageDir = null;
 
-
-
-    /**
-     * Create file content manager.
-     */
     public FileContentManagerImpl(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
 
@@ -69,10 +67,7 @@ public class FileContentManagerImpl implements FileContentManager {
         this.storageDir = inStorageDir.replace('/', File.separatorChar);
     }
 
-    /**
-     * @see org.apache.roller.weblogger.business.FileContentManager#getFileContent(Weblog,
-     *      String)
-     */
+    @Override
     public FileContent getFileContent(Weblog weblog, String fileId)
             throws IOException {
 
@@ -89,10 +84,7 @@ public class FileContentManagerImpl implements FileContentManager {
         return new FileContent(weblog, fileId, resourceFile);
     }
 
-    /**
-     * @see org.apache.roller.weblogger.business.FileContentManager#saveFileContent(Weblog,
-     *      String, java.io.InputStream)
-     */
+    @Override
     public void saveFileContent(Weblog weblog, String fileId, InputStream is)
             throws IOException {
 
@@ -127,12 +119,8 @@ public class FileContentManagerImpl implements FileContentManager {
 
     }
 
-    /**
-     * @see org.apache.roller.weblogger.business.FileContentManager#deleteFile(Weblog,
-     *      String)
-     */
-    public void deleteFile(Weblog weblog, String fileId)
-            throws FileNotFoundException, IOException {
+    @Override
+    public void deleteFile(Weblog weblog, String fileId) throws IOException {
 
         // get path to delete file, checks that path exists and is readable
         File delFile = this.getRealFile(weblog, fileId);
@@ -142,41 +130,41 @@ public class FileContentManagerImpl implements FileContentManager {
         }
     }
 
-    /**
-     * @see org.apache.roller.weblogger.business.FileContentManager#canSave(Weblog,
-     *      String, String, long, RollerMessages)
-     */
-    public boolean canSave(Weblog weblog, String fileName, String contentType,
-            long size, RollerMessages messages) {
+    @Override
+    public boolean canSave(Weblog weblog, String fileName, String contentType, long size,
+                           Map<String, List<String>> messages) {
 
         // first check, is uploading enabled?
         if (!propertiesManager.getBooleanProperty("uploads.enabled")) {
-            messages.addError("error.upload.disabled");
+            if (messages != null) {
+                messages.put("error.upload.disabled", null);
+            }
             return false;
         }
 
         // second check, does upload exceed max size for file?
         BigDecimal maxFileMB = new BigDecimal(
                 propertiesManager.getStringProperty("uploads.file.maxsize"));
-        int maxFileBytes = (int) (Utilities.ONE_MB_IN_BYTES * maxFileMB
-                .doubleValue());
+        int maxFileBytes = (int) (Utilities.ONE_MB_IN_BYTES * maxFileMB.doubleValue());
         log.debug("max allowed file size = {}", maxFileBytes);
         log.debug("attempted save file size = {}", size);
         if (size > maxFileBytes) {
-            String[] args = { fileName, maxFileMB.toString() };
-            messages.addError("error.upload.filemax", args);
+            if (messages != null) {
+                messages.put("error.upload.filemax", Arrays.asList(fileName, maxFileMB.toString()));
+            }
             return false;
         }
 
         // third check, does file cause weblog to exceed quota?
-        BigDecimal maxDirMB = new BigDecimal(
-                propertiesManager.getStringProperty("uploads.dir.maxsize"));
+        BigDecimal maxDirMB = new BigDecimal(propertiesManager.getStringProperty("uploads.dir.maxsize"));
         long maxDirBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxDirMB.doubleValue());
         try {
             File storageDirectory = this.getRealFile(weblog, null);
             long userDirSize = getDirSize(storageDirectory, true);
             if (userDirSize + size > maxDirBytes) {
-                messages.addError("error.upload.dirmax", maxDirMB.toString());
+                if (messages != null) {
+                    messages.put("error.upload.dirmax", Collections.singletonList(maxDirMB.toString()));
+                }
                 return false;
             }
         } catch (Exception ex) {
@@ -194,8 +182,9 @@ public class FileContentManagerImpl implements FileContentManager {
         String[] forbidFiles = StringUtils.split(
                 StringUtils.deleteWhitespace(forbids), ",");
         if (!checkFileType(allowFiles, forbidFiles, fileName, contentType)) {
-            String[] args = { fileName, contentType };
-            messages.addError("error.upload.forbiddenFile", args);
+            if (messages != null) {
+                messages.put("error.upload.forbiddenFile", Arrays.asList(fileName, contentType));
+            }
             return false;
         }
 
@@ -204,7 +193,6 @@ public class FileContentManagerImpl implements FileContentManager {
 
     /**
      * Get the size in bytes of given directory.
-     *
      * Optionally works recursively counting subdirectories if they exist.
      */
     private long getDirSize(File dir, boolean recurse) {
@@ -220,7 +208,7 @@ public class FileContentManagerImpl implements FileContentManager {
                         dirSize += file.length();
                     } else if (recurse) {
                         // count a subdirectory
-                        dirSize += getDirSize(file, recurse);
+                        dirSize += getDirSize(file, true);
                     }
                 }
             }
@@ -236,13 +224,6 @@ public class FileContentManagerImpl implements FileContentManager {
      */
     private boolean checkFileType(String[] allowFiles, String[] forbidFiles,
             String fileName, String contentType) {
-
-        // TODO: Atom Publishing Protocol figure out how to handle file
-        // allow/forbid using contentType.
-        // TEMPORARY SOLUTION: In the allow/forbid lists we will continue to
-        // allow user to specify file extensions (e.g. gif, png, jpeg) but will
-        // now also allow them to specify content-type rules (e.g. */*, image/*,
-        // text/xml, etc.).
 
         // if content type is invalid, reject file
         if (contentType == null || contentType.indexOf('/') == -1) {
@@ -262,13 +243,12 @@ public class FileContentManagerImpl implements FileContentManager {
 
         // check file against allowed file extensions
         if (allowFiles != null && allowFiles.length > 0) {
-            for (int y = 0; y < allowFiles.length; y++) {
+            for (String file : allowFiles) {
                 // oops, this allowed rule is a content-type, skip it
-                if (allowFiles[y].indexOf('/') != -1) {
+                if (file.indexOf('/') != -1) {
                     continue;
                 }
-                if (fileName.toLowerCase()
-                        .endsWith(allowFiles[y].toLowerCase())) {
+                if (fileName.toLowerCase().endsWith(file.toLowerCase())) {
                     allowFile = true;
                     break;
                 }
@@ -277,12 +257,12 @@ public class FileContentManagerImpl implements FileContentManager {
 
         // check file against allowed contentTypes
         if (allowFiles != null && allowFiles.length > 0) {
-            for (int y = 0; y < allowFiles.length; y++) {
+            for (String file : allowFiles) {
                 // oops, this allowed rule is NOT a content-type, skip it
-                if (allowFiles[y].indexOf('/') == -1) {
+                if (file.indexOf('/') == -1) {
                     continue;
                 }
-                if (matchContentType(allowFiles[y], contentType)) {
+                if (matchContentType(file, contentType)) {
                     allowFile = true;
                     break;
                 }
@@ -293,13 +273,12 @@ public class FileContentManagerImpl implements FileContentManager {
 
         // check file against forbidden file extensions, overrides any allows
         if (forbidFiles != null && forbidFiles.length > 0) {
-            for (int x = 0; x < forbidFiles.length; x++) {
+            for (String file : forbidFiles) {
                 // oops, this forbid rule is a content-type, skip it
-                if (forbidFiles[x].indexOf('/') != -1) {
+                if (file.indexOf('/') != -1) {
                     continue;
                 }
-                if (fileName.toLowerCase().endsWith(
-                        forbidFiles[x].toLowerCase())) {
+                if (fileName.toLowerCase().endsWith(file.toLowerCase())) {
                     allowFile = false;
                     break;
                 }
@@ -308,12 +287,12 @@ public class FileContentManagerImpl implements FileContentManager {
 
         // check file against forbidden contentTypes, overrides any allows
         if (forbidFiles != null && forbidFiles.length > 0) {
-            for (int x = 0; x < forbidFiles.length; x++) {
+            for (String file : forbidFiles) {
                 // oops, this forbid rule is NOT a content-type, skip it
-                if (forbidFiles[x].indexOf('/') == -1) {
+                if (file.indexOf('/') == -1) {
                     continue;
                 }
-                if (matchContentType(forbidFiles[x], contentType)) {
+                if (matchContentType(file, contentType)) {
                     allowFile = false;
                     break;
                 }
@@ -335,23 +314,20 @@ public class FileContentManagerImpl implements FileContentManager {
         }
         String ruleParts[] = rangeRule.split("/");
         String typeParts[] = contentType.split("/");
-        if (ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*")) {
-            return true;
-        }
-
-        return false;
+        return ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*");
     }
 
     /**
      * Construct the full real path to a resource in a weblog's uploads area.
      */
-    private File getRealFile(Weblog weblog, String fileId)
-            throws IOException {
+    private File getRealFile(Weblog weblog, String fileId) throws IOException {
 
         // make sure uploads area exists for this weblog
         File weblogDir = new File(this.storageDir + weblog.getHandle());
         if (!weblogDir.exists()) {
-            weblogDir.mkdirs();
+            if (!weblogDir.mkdirs()) {
+                throw new IOException("Cannot create directory " + weblogDir.getAbsolutePath());
+            }
         }
 
         // now form the absolute path
@@ -363,11 +339,9 @@ public class FileContentManagerImpl implements FileContentManager {
         // make sure path exists and is readable
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new FileNotFoundException("Invalid path [" + filePath + "], "
-                    + "file does not exist.");
+            throw new FileNotFoundException("Invalid path [" + filePath + "], " + "file does not exist.");
         } else if (!file.canRead()) {
-            throw new IOException("Invalid path [" + filePath + "], "
-                    + "cannot read from path.");
+            throw new IOException("Invalid path [" + filePath + "], " + "cannot read from path.");
         }
 
         // make sure someone isn't trying to sneak outside the uploads dir

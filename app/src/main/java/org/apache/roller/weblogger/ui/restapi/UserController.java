@@ -257,8 +257,10 @@ public class UserController {
 
     @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
     public ResponseEntity registerUser(@Valid @RequestBody User newData, HttpServletResponse response) throws ServletException {
-        if (propertiesManager.getBooleanProperty("users.registration.enabled") || userManager.getUserCount() == 0) {
-            boolean mustBeApproved = propertiesManager.getBooleanProperty("user.require.registration.approval");
+        long userCount = userManager.getUserCount();
+
+        if (userCount == 0 || propertiesManager.getBooleanProperty("users.registration.enabled")) {
+            boolean mustBeApproved = userCount > 0 && propertiesManager.getBooleanProperty("user.require.registration.approval");
             boolean mustActivate = mustBeApproved || propertiesManager.getBooleanProperty("user.account.email.activation");
             newData.setEnabled(!mustActivate);
             if (mustActivate) {
@@ -295,7 +297,8 @@ public class UserController {
         user.setId(Utilities.generateUUID());
         user.setUserName(newData.getUserName());
         user.setDateCreated(Instant.now());
-        return saveUser(user, newData, p, response);
+
+        return saveUser(user, newData, p, response, true);
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/userprofile/{id}", method = RequestMethod.POST)
@@ -309,7 +312,7 @@ public class UserController {
             if (maybeError != null) {
                 return ResponseEntity.badRequest().body(maybeError);
             }
-            return saveUser(user, newData, p, response);
+            return saveUser(user, newData, p, response, false);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -323,7 +326,7 @@ public class UserController {
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
         }
-        return saveUser(user, newData, p, response);
+        return saveUser(user, newData, p, response, false);
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs", method = RequestMethod.GET)
@@ -375,7 +378,7 @@ public class UserController {
         WebloggerFactory.flush();
     }
 
-    private ResponseEntity saveUser(User user, User newData, Principal p, HttpServletResponse response) throws ServletException {
+    private ResponseEntity saveUser(User user, User newData, Principal p, HttpServletResponse response, boolean add) throws ServletException {
         try {
             if (user != null) {
                 user.setScreenName(newData.getScreenName().trim());
@@ -386,12 +389,20 @@ public class UserController {
                 if (!user.isEnabled() && StringUtils.isNotEmpty(newData.getActivationCode())) {
                     user.setActivationCode(newData.getActivationCode());
                 }
-                if (p == null) {
-                    // user self-registration
-                    user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole")
-                            ? GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
-                } else if (!user.getUserName().equals(p.getName())) {
-                    user.setGlobalRole(newData.getGlobalRole());
+
+                if (add) {
+                    if (userManager.getUserCount() == 0) {
+                        // first person in is always an admin
+                        user.setGlobalRole(GlobalRole.ADMIN);
+                    } else {
+                        user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole")
+                                ? GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
+                    }
+                } else {
+                    // users can't alter own roles
+                    if (!user.getUserName().equals(p.getName())) {
+                        user.setGlobalRole(newData.getGlobalRole());
+                    }
                 }
 
                 // reset password if set

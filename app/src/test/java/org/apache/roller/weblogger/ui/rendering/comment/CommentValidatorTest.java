@@ -28,16 +28,15 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.comment.CommentValidationManager;
-import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -73,7 +72,7 @@ public class CommentValidatorTest extends WebloggerTest {
 
     @Test
     public void testExcessSizeCommentValidator() {
-        RollerMessages msgs = new RollerMessages();
+        Map<String, List<String>> msgs = new HashMap<>();
         WeblogEntryComment comment = createEmptyComment();
 
         // string that exceeds default excess size threshold of 1000
@@ -91,7 +90,7 @@ public class CommentValidatorTest extends WebloggerTest {
 
     @Test
     public void testExcessLinksCommentValidator() {
-        RollerMessages msgs = new RollerMessages();
+        Map<String, List<String>> msgs = new HashMap<>();
         WeblogEntryComment comment = createEmptyComment();
         
         comment.setContent("<a href=\"http://example.com\">link1</a>"); 
@@ -110,7 +109,7 @@ public class CommentValidatorTest extends WebloggerTest {
 
     @Test
     public void testBlacklistCommentValidator() {
-        RollerMessages msgs = new RollerMessages();
+        Map<String, List<String>> msgs = new HashMap<>();
         WeblogEntryComment comment = createEmptyComment();
        
         comment.getWeblogEntry().getWeblog().setBlacklist("www.myblacklistedsite.com");
@@ -122,11 +121,11 @@ public class CommentValidatorTest extends WebloggerTest {
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
     
-    // To run this test add the Akismet validator to Spring commentValidators
-    // and put your Akismet key in comment.validator.akismet.apikey
+    // To run this test uncomment the Akismet validator to commentValidatorList
+    // in spring-beans.xml along with your Akismet API key
     @Ignore
     public void testAkismetCommentValidator() {
-        RollerMessages msgs = new RollerMessages();
+        Map<String, List<String>> msgs = new HashMap<>();
         WeblogEntryComment comment = createEmptyComment();
         comment.setContent("nice friendly stuff");
 
