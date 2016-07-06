@@ -167,7 +167,7 @@ public class UserTest extends WebloggerTest {
         user = userManager.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         
-        assertTrue(GlobalRole.ADMIN.equals(user.getGlobalRole()));
+        assertTrue(GlobalRole.BLOGGER.equals(user.getGlobalRole()));
 
         user.setGlobalRole(GlobalRole.BLOGCREATOR);
         userManager.saveUser(user);

@@ -18,11 +18,13 @@
 
 package org.apache.roller.weblogger.ui.rendering.comment;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -40,12 +42,13 @@ public class ExcessLinksCommentValidator implements CommentValidator {
         return "Excess Links Comment Validator";
     }
 
-    public int validate(WeblogEntryComment comment, RollerMessages messages) {
+    public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         Matcher m = linkPattern.matcher(comment.getContent());
         int count = 0;
         while (m.find()) {
             if (count++ > threshold) {
-                messages.addError("comment.validator.excessLinksMessage", Integer.toString(threshold));
+                messages.put("comment.validator.excessLinksMessage",
+                        Collections.singletonList(Integer.toString(threshold)));
                 return 0;
             }
         }

@@ -24,8 +24,10 @@ package org.apache.roller.weblogger.ui.rendering.comment;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Blacklist;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Validates comment if comment does not contain blacklisted words.
@@ -41,9 +43,9 @@ public class BlacklistCommentValidator implements CommentValidator {
         this.weblogManager = weblogManager;
     }
 
-    public int validate(WeblogEntryComment comment, RollerMessages messages) {
+    public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         if (checkComment(comment)) {
-            messages.addError("comment.validator.blacklistMessage");
+            messages.put("comment.validator.blacklistMessage", null);
             return 0;
         }
         return Utilities.PERCENT_100;

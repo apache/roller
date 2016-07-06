@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -191,7 +190,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
         String id = mediaFile.getId();
         endSession(true);
         assertNotNull(id);
@@ -208,8 +207,7 @@ public class MediaFileTest extends WebloggerTest {
         assertNull(mediaFile2);
 
         String uploadsDirName = WebloggerStaticConfig.getProperty("mediafiles.storage.dir");
-        File flag = new File(uploadsDirName + File.separator
-                + "migration-status.properties");
+        File flag = new File(uploadsDirName + File.separator + "migration-status.properties");
         flag.delete();
     }
 
@@ -231,7 +229,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
         endSession(true);
         assertNotNull(mediaFile.getId());
         assertNotNull(mediaFile.getId().length() > 0);
@@ -259,7 +257,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
 
         rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
@@ -303,7 +301,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreatorId(testUser.getId());
@@ -313,7 +311,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setLength(4000);
         mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile2, null);
 
         endSession(true);
 
@@ -360,7 +358,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreatorId(testUser.getId());
@@ -371,7 +369,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setInputStream(getClass()
                 .getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
+        mediaFileManager.createMediaFile(testWeblog, mediaFile2, null);
 
         endSession(true);
 

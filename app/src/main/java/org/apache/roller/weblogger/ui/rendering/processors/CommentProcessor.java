@@ -23,8 +23,10 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -54,8 +56,6 @@ import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.slf4j.Logger;
@@ -176,9 +176,6 @@ public class CommentProcessor {
         Weblog weblog;
         WeblogEntry entry;
         boolean commentApprovalRequired;
-
-        String message = null;
-        RollerMessages messages = new RollerMessages();
 
         // are we doing a preview? or a post?
         String method = request.getParameter("method");
@@ -334,6 +331,8 @@ public class CommentProcessor {
             return;
         }
 
+        String message = null;
+        Map<String, List<String>> messages = new HashMap<>();
         int validationScore = commentValidationManager.validateComment(comment, messages);
         log.debug("Comment Validation score: {}", validationScore);
 
@@ -365,16 +364,12 @@ public class CommentProcessor {
 
                 // log specific error messages if they exist
                 log.debug("Comment marked as spam, reasons: ");
-                if (messages.getErrorCount() > 0) {
-                    Iterator errors = messages.getErrors();
-
-                    RollerMessage errorKey;
-                    while (errors.hasNext()) {
-                        errorKey = (RollerMessage) errors.next();
-                        if (errorKey.getArgs() != null) {
-                            log.debug(messageUtils.getString(errorKey.getKey(), errorKey.getArgs()));
+                if (messages.size() > 0) {
+                    for (Map.Entry<String, List<String>> item : messages.entrySet()) {
+                        if (item.getValue() != null) {
+                            log.debug(messageUtils.getString(item.getKey(), item.getValue()));
                         } else {
-                            log.debug(messageUtils.getString(errorKey.getKey()));
+                            log.debug(messageUtils.getString(item.getKey()));
                         }
                     }
                 } else {

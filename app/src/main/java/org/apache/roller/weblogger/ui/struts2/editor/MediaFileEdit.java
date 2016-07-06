@@ -22,9 +22,9 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -35,8 +35,6 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
@@ -45,7 +43,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Adds or edits a media file.
  */
-@SuppressWarnings("serial")
 public class MediaFileEdit extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(MediaFileEdit.class);
@@ -216,11 +213,10 @@ public class MediaFileEdit extends UIAction {
                             }
                         }
 
-                        RollerMessages errors = new RollerMessages();
+                        Map<String, List<String>> errors = new HashMap<>();
                         mediaFileManager.createMediaFile(getActionWeblog(), mediaFile, errors);
-                        for (Iterator it = errors.getErrors(); it.hasNext(); ) {
-                            RollerMessage msg = (RollerMessage) it.next();
-                            addError(msg.getKey(), Arrays.asList(msg.getArgs()));
+                        for (Map.Entry<String, List<String>> error : errors.entrySet()) {
+                            addError(error.getKey(), error.getValue());
                         }
 
                         WebloggerFactory.flush();

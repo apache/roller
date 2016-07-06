@@ -23,9 +23,9 @@ package org.apache.roller.weblogger.ui.rendering.comment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class CommentValidationManager {
      * @param messages Messages object to which errors will be added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)
      */
-    public int validateComment(WeblogEntryComment comment, RollerMessages messages) {
+    public int validateComment(WeblogEntryComment comment, Map<String, List<String>> messages) {
         int total = 0;
         int singleResponse;
         if (validators.size() > 0) {

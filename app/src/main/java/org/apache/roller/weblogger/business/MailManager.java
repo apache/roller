@@ -31,8 +31,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +46,6 @@ import javax.mail.internet.MimeMessage;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -358,8 +355,8 @@ public class MailManager {
      *                           Errors will be assumed to be "validation errors" 
      *                           and messages will be assumed to be "from the system"
      */
-    public void sendEmailNotification(WeblogEntryComment commentObject, RollerMessages messages, I18nMessages resources,
-                                      boolean notifySubscribers) {
+    public void sendEmailNotification(WeblogEntryComment commentObject, Map<String, List<String>> messages,
+                                      I18nMessages resources, boolean notifySubscribers) {
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
@@ -454,39 +451,19 @@ public class MailManager {
         // next the additional information that is sent to the blog owner
         // Owner gets an email if it's pending and/or he's turned on notifications
         if (commentObject.getPending() || weblog.getEmailComments()) {
-            // First, list any messages from the system that were passed in:
-            if (messages.getMessageCount() > 0) {
-                ownermsg.append((isPlainText) ? "" : "<p>");
-                ownermsg.append(resources.getString("commentServlet.email.thereAreSystemMessages"));
-                ownermsg.append((isPlainText) ? "\n\n" : "</p>");
-                ownermsg.append((isPlainText) ? "" : "<ul>");
-            }
-            for (Iterator it = messages.getMessages(); it.hasNext();) {
-                RollerMessage rollerMessage = (RollerMessage)it.next();
-                ownermsg.append((isPlainText) ? "" : "<li>");
-                ownermsg.append(MessageFormat.format(resources.getString(
-                    rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
-                ownermsg.append((isPlainText) ? "\n\n" : "</li>");
-            }
-            if (messages.getMessageCount() > 0) {
-                ownermsg.append((isPlainText) ? "\n\n" : "</ul>");
-            }
-
-            // Next, list any validation error messages that were passed in:
-            if (messages.getErrorCount() > 0) {
+            if (messages != null && messages.size() > 0) {
                 ownermsg.append((isPlainText) ? "" : "<p>");
                 ownermsg.append(resources.getString("commentServlet.email.thereAreErrorMessages"));
                 ownermsg.append((isPlainText) ? "\n\n" : "</p>");
                 ownermsg.append((isPlainText) ? "" : "<ul>");
-            }
-            for (Iterator it = messages.getErrors(); it.hasNext();) {
-                RollerMessage rollerMessage = (RollerMessage)it.next();
-                ownermsg.append((isPlainText) ? "" : "<li>");
-                ownermsg.append(MessageFormat.format(resources.getString(
-                    rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
-                ownermsg.append((isPlainText) ? "\n\n" : "</li>");
-            }
-            if (messages.getErrorCount() > 0) {
+
+                for (Map.Entry<String, List<String>> item : messages.entrySet()) {
+                    ownermsg.append((isPlainText) ? "" : "<li>");
+                    ownermsg.append(MessageFormat.format(resources.getString(
+                            item.getKey()), item.getValue()));
+                    ownermsg.append((isPlainText) ? "\n\n" : "</li>");
+                }
+
                 ownermsg.append((isPlainText) ? "\n\n" : "</ul>");
             }
 
@@ -600,12 +577,10 @@ public class MailManager {
     
 
     public void sendEmailApprovalNotifications(List<WeblogEntryComment> comments, I18nMessages resources) {
-        
-        RollerMessages messages = new RollerMessages();
         for (WeblogEntryComment comment : comments) {
 
             // Send email notifications because a new comment has been approved
-            sendEmailNotification(comment, messages, resources, true);
+            sendEmailNotification(comment, null, resources, true);
 
             // Send approval notification to author of approved comment
             sendEmailApprovalNotification(comment, resources);

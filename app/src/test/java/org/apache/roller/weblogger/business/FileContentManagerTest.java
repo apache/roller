@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -138,8 +137,7 @@ public class FileContentManagerTest extends WebloggerTest {
         propertiesManager.saveProperties(config);
         endSession(true);
 
-        RollerMessages msgs = new RollerMessages();
-        boolean canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 2500000, msgs);
+        boolean canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 2500000, null);
         assertFalse(canSave);
 
         config = propertiesManager.getProperties();
@@ -148,8 +146,7 @@ public class FileContentManagerTest extends WebloggerTest {
         endSession(true);
 
         // forbidden types check should fail
-        msgs = new RollerMessages();
-        canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, msgs);
+        canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, null);
         assertFalse(canSave);
 
         config = propertiesManager.getProperties();
@@ -158,8 +155,7 @@ public class FileContentManagerTest extends WebloggerTest {
         endSession(true);
 
         // uploads disabled should fail
-        msgs = new RollerMessages();
-        canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, msgs);
+        canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, null);
         assertFalse(canSave);
     }
 }

@@ -25,11 +25,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class AkismetCommentValidator implements CommentValidator {
         return "Akismet Comment Validator";
     }
 
-    public int validate(WeblogEntryComment comment, RollerMessages messages) {
+    public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         StringBuilder sb = new StringBuilder();
         sb.append("blog=").append(
             urlStrategy.getWeblogURL(comment.getWeblogEntry().getWeblog(), true)).append("&");
@@ -110,10 +111,10 @@ public class AkismetCommentValidator implements CommentValidator {
             String response = br.readLine();
             if ("true".equals(response)) {
                 if (deleteBlatantSpam && "discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
-                    messages.addError("comment.validator.akismetMessage.blatant");
+                    messages.put("comment.validator.akismetMessage.blatant", null);
                     return -1;
                 }
-                messages.addError("comment.validator.akismetMessage");
+                messages.put("comment.validator.akismetMessage", null);
                 return 0;
             }
             else {

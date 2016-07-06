@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.RollerMessages;
 
 import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
@@ -43,7 +42,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class JPAMediaFileManagerImpl implements MediaFileManager {
@@ -124,7 +125,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void createMediaFile(Weblog weblog, MediaFile mediaFile, RollerMessages errors) throws IOException {
+    public void createMediaFile(Weblog weblog, MediaFile mediaFile, Map<String, List<String>> errors) throws IOException {
         if (!fileContentManager.canSave(weblog, mediaFile.getName(),
                 mediaFile.getContentType(), mediaFile.getLength(), errors)) {
             return;
@@ -202,7 +203,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         updateWeblogLastModifiedDate(weblog);
 
-        RollerMessages msgs = new RollerMessages();
+        Map<String, List<String>> msgs = new HashMap<>();
         if (!fileContentManager.canSave(weblog, mediaFile.getName(),
                 mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
             throw new IOException(msgs.toString());

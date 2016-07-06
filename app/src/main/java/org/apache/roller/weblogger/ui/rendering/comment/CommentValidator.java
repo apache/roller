@@ -19,7 +19,9 @@
 package org.apache.roller.weblogger.ui.rendering.comment;
 
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.RollerMessages;
+
+import java.util.List;
+import java.util.Map;
 
 /** Interface for comment validation plugin */
 public interface CommentValidator {  
@@ -31,8 +33,8 @@ public interface CommentValidator {
 
     /**
      * @param comment Comment to be validated
-     * @param messages Messages object to which errors will added
+     * @param messages Map of resource bundle strings and optional arguments to which errors will added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)
      */
-    int validate(WeblogEntryComment comment, RollerMessages messages);
+    int validate(WeblogEntryComment comment, Map<String, List<String>> messages);
 }
