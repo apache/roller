@@ -29,5 +29,4 @@
     <li><fmt:message key="error.permissionDenied.reason0" /></li>
     <li><fmt:message key="error.permissionDenied.reason1" /></li>
     <li><fmt:message key="error.permissionDenied.reason2" /></li>
-    <li><fmt:message key="error.permissionDenied.reason3" /></li>
 </ul>
