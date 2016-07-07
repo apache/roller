@@ -31,10 +31,10 @@ import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
-import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
@@ -219,7 +219,7 @@ public class PageProcessor {
         // cached content checking, bypass cache if a comment form is present
         // i.e., request came from CommentProcessor and comment submission feedback/preview,
         // etc. is needed.
-        WeblogEntryCommentForm commentForm = (WeblogEntryCommentForm) request.getAttribute("commentForm");
+        WeblogEntryComment commentForm = (WeblogEntryComment) request.getAttribute("commentForm");
 
         if (commentForm == null && (cacheLoggedInPages || !pageRequest.isLoggedIn())) {
 
@@ -369,7 +369,7 @@ public class PageProcessor {
         initData.put("requestParameters", request.getParameterMap());
         initData.put("parsedRequest", pageRequest);
 
-        // if this was a comment posting, get the comment form
+        // if this GET is for a comment preview, store the comment form
         if (commentForm != null) {
             initData.put("commentForm", commentForm);
         }
