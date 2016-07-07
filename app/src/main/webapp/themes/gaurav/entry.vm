@@ -39,7 +39,7 @@
 					<div class="panel-heading">
 					<a name="comments"></a>
 					#if($model.commentForm.preview)
-						#set($comments = [$model.commentForm.previewComment])
+						#set($comments = [$model.commentForm])
 						<div class="comments-head">$server.msg( "macro.weblog.preview" ):</div>
 					#else
 						#if($entry.commentCount > 0)

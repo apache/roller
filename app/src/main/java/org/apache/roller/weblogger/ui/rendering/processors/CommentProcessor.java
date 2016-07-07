@@ -51,7 +51,6 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
-import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -169,7 +168,6 @@ public class CommentProcessor {
 
         boolean globalCommentModerationRequired = propertiesManager.getBooleanProperty("users.moderation.required");
 
-        String error = null;
         String dispatch_url;
 
         Weblog weblog;
@@ -293,10 +291,11 @@ public class CommentProcessor {
         // add all enabled content plugins
         comment.setPlugins(commentPluginsAsString);
 
-        WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
-        cf.setData(comment);
+        WeblogEntryComment commentForm = new WeblogEntryComment();
+        String error = null;
+        commentForm.setData(comment);
         if (preview) {
-            cf.setPreview(comment);
+            commentForm.setPreview(true);
         }
 
         I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
@@ -323,8 +322,9 @@ public class CommentProcessor {
 
         // bail now if we have already found an error
         if (error != null) {
-            cf.setError(error);
-            request.setAttribute("commentForm", cf);
+            commentForm.setError(true);
+            commentForm.setMessage(error);
+            request.setAttribute("commentForm", commentForm);
             RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
             dispatcher.forward(request, response);
             return;
@@ -405,20 +405,18 @@ public class CommentProcessor {
                 }
 
                 // comment was successful, clear the comment form
-                cf = new WeblogEntryCommentForm();
+                commentForm = new WeblogEntryComment();
+                commentForm.initializeFormFields();
             }
         }
 
         // the work has been done, now send the user back to the entry page
-        if (error != null) {
-            cf.setError(error);
-        }
         if (message != null) {
-            cf.setMessage(message);
+            commentForm.setMessage(message);
         }
         // for subsequent processing by PageProcessor, which will put in into PageModel
         // so the templates can work with the comments.
-        request.setAttribute("commentForm", cf);
+        request.setAttribute("commentForm", commentForm);
 
         // off to PageProcessor's POST handling.
         log.debug("comment processed, forwarding to {}", dispatch_url);

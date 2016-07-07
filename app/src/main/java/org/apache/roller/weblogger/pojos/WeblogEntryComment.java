@@ -63,8 +63,8 @@ public class WeblogEntryComment {
     private String    email = null;
     private String    url = null;
     private String    content = null;
-    private Instant postTime = null;
-    private ApprovalStatus status = ApprovalStatus.APPROVED;
+    private Instant   postTime = null;
+    private ApprovalStatus status = ApprovalStatus.DISAPPROVED;
     private Boolean   notify = Boolean.FALSE;
     private String    remoteHost = null;
     private String    referrer = null;
@@ -76,6 +76,11 @@ public class WeblogEntryComment {
     private WeblogEntry weblogEntry = null;
 
     public WeblogEntryComment() {}
+
+    // transient fields involved during comment submittal
+    private boolean error = false;
+    private boolean preview = false;
+    private String message = null;
 
     @Id
     public String getId() {
@@ -246,14 +251,7 @@ public class WeblogEntryComment {
     }
     
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getName());
-        buf.append(", ").append(getEmail());
-        buf.append(", ").append(getPostTime());
-        buf.append("}");
-        return buf.toString();
+        return "{" + id + ", " + name + ", " + email + ", " + postTime + "}";
     }
 
     public boolean equals(Object other) {
@@ -279,6 +277,25 @@ public class WeblogEntryComment {
             .toHashCode();
     }
 
+    public void setData(WeblogEntryComment other) {
+        this.id = other.getId();
+        this.name = other.getName();
+        this.email = other.getEmail();
+        this.url = other.getUrl();
+        this.content = other.getContent();
+        this.notify = other.getNotify();
+        this.postTime = other.getPostTime();
+        this.status = other.getStatus();
+        this.remoteHost = other.getRemoteHost();
+        this.referrer = other.getReferrer();
+        this.userAgent = other.getUserAgent();
+        this.plugins = other.getPlugins();
+        this.contentType = other.getContentType();
+        this.weblogEntry = other.getWeblogEntry();
+    }
+
+    // fields involved with rendering comments on blogs
+
     @Transient
     public String getProcessedContent() {
         String processedContent = content;
@@ -299,4 +316,38 @@ public class WeblogEntryComment {
         return processedContent;
     }
 
+    @Transient
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    @Transient
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Transient
+    public boolean isPreview() {
+        return preview;
+    }
+
+    public void setPreview(boolean preview) {
+        this.preview = preview;
+    }
+
+    public void initializeFormFields() {
+        // Velocity templates output the variable name if it is null.
+        setName("");
+        setEmail("");
+        setUrl("");
+        setContent("");
+    }
 }

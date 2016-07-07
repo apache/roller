@@ -37,14 +37,12 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.rendering.generators.BigWeblogCalendar;
 import org.apache.roller.weblogger.ui.rendering.generators.WeblogCalendar;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager.PagingInterval;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
-import org.apache.roller.weblogger.ui.rendering.comment.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +58,7 @@ public class PageModel implements Model {
     private static final int MAX_ENTRIES = 100;
 
     private WeblogPageRequest pageRequest = null;
-    private WeblogEntryCommentForm commentForm = null;
+    private WeblogEntryComment commentForm = null;
     private Map requestParameters = null;
     private boolean preview = false;
 
@@ -127,7 +125,7 @@ public class PageModel implements Model {
         }
 
         // see if there is a comment form
-        this.commentForm = (WeblogEntryCommentForm) initData.get("commentForm");
+        this.commentForm = (WeblogEntryComment) initData.get("commentForm");
         
         // custom request parameters
         this.requestParameters = (Map)initData.get("requestParameters");
@@ -330,9 +328,10 @@ public class PageModel implements Model {
      *
      * @return Comment form object
      */
-    public WeblogEntryCommentForm getCommentForm() {
+    public WeblogEntryComment getCommentForm() {
         if (commentForm == null) {
-            commentForm = new WeblogEntryCommentForm();
+            commentForm = new WeblogEntryComment();
+            commentForm.initializeFormFields();
         }
         return commentForm;
     }
@@ -348,21 +347,6 @@ public class PageModel implements Model {
             }
         }
         return null;
-    }
-
-    /**
-     * Get a Menu representing the editor UI action menu, if the user is
-     * currently logged in.  Exception: previews are coded below not to show
-     * the editor menu so it won't be used and also (for theme previews)
-     * to better show how the weblog will look to the outside visitor.
-     */
-    public Menu getEditorMenu() {
-        if (!preview && pageRequest.isLoggedIn()) {
-            String username = pageRequest.getAuthenticatedUser();
-            return userManager.getEditorMenu(username, pageRequest.getWeblogHandle());
-        } else {
-            return null;
-        }
     }
 
     public boolean isUserAuthenticated() {
