@@ -49,7 +49,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
-import org.apache.roller.weblogger.ui.rendering.comment.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
 import org.apache.roller.weblogger.business.MailManager;
@@ -83,8 +82,6 @@ public class CommentProcessor {
     private static Logger log = LoggerFactory.getLogger(CommentProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/comment";
-
-    private CommentValidationManager commentValidationManager = null;
 
     @Autowired
     private CacheManager cacheManager;
@@ -156,7 +153,6 @@ public class CommentProcessor {
      */
     @PostConstruct
     public void init() {
-        commentValidationManager = new CommentValidationManager(commentValidators);
         commentPluginsAsString = commentPlugins.stream().map(WeblogEntryCommentPlugin::getId).collect(Collectors.joining(","));
     }
 
@@ -332,7 +328,7 @@ public class CommentProcessor {
 
         String message = null;
         Map<String, List<String>> messages = new HashMap<>();
-        int validationScore = commentValidationManager.validateComment(comment, messages);
+        int validationScore = validateComment(comment, messages);
         log.debug("Comment Validation score: {}", validationScore);
 
         // those with at least the POST role for the weblog don't need to have their comments moderated.
@@ -444,4 +440,23 @@ public class CommentProcessor {
         out.println(commentAuthenticator == null ? "" : commentAuthenticator.getHtml(request));
     }
 
+    protected int validateComment(WeblogEntryComment comment, Map<String, List<String>> messages) {
+        int total = 0;
+        int singleResponse;
+        if (commentValidators.size() > 0) {
+            for (CommentValidator val : commentValidators) {
+                log.debug("Invoking comment validator {}", val.getName());
+                singleResponse = val.validate(comment, messages);
+                if (singleResponse == -1) { // blatant spam
+                    return -1;
+                }
+                total += singleResponse;
+            }
+            total = total / commentValidators.size();
+        } else {
+            // When no validators: consider all comments valid
+            total = Utilities.PERCENT_100;
+        }
+        return total;
+    }
 }

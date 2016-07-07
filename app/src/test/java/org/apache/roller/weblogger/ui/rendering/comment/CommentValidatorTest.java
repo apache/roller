@@ -17,9 +17,6 @@
  *
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
- *
- * Source file modified from the original ASF source; all changes made
- * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.rendering.comment;
 
@@ -30,10 +27,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,22 +36,13 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class CommentValidatorTest extends WebloggerTest {
-    CommentValidationManager mgr = null;
     Weblog        weblog = null;
-    User           user = null;
-    WeblogEntry    entry = null;
-
-    @Resource(name="commentValidatorList")
-    private List<CommentValidator> commentValidators;
-
-    public void setCommentValidators(List<CommentValidator> commentValidators) {
-        this.commentValidators = commentValidators;
-    }
+    User          user = null;
+    WeblogEntry   entry = null;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        mgr = new CommentValidationManager(commentValidators);
         user = setupUser("johndoe");
         weblog = setupWeblog("doeblog", user);
         entry = setupWeblogEntry("anchor1", weblog, user);
@@ -72,6 +58,7 @@ public class CommentValidatorTest extends WebloggerTest {
 
     @Test
     public void testExcessSizeCommentValidator() {
+        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         Map<String, List<String>> msgs = new HashMap<>();
         WeblogEntryComment comment = createEmptyComment();
 
@@ -82,19 +69,21 @@ public class CommentValidatorTest extends WebloggerTest {
         }
         
         comment.setContent("short stuff"); 
-        assertEquals(100, mgr.validateComment(comment, msgs));
+        assertEquals(100, validator.validate(comment, msgs));
 
         comment.setContent(sb.toString()); 
-        assertTrue(mgr.validateComment(comment, msgs) != 100);
+        assertTrue(validator.validate(comment, msgs) != 100);
     }
 
     @Test
     public void testExcessLinksCommentValidator() {
+        ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
+
         Map<String, List<String>> msgs = new HashMap<>();
         WeblogEntryComment comment = createEmptyComment();
         
         comment.setContent("<a href=\"http://example.com\">link1</a>"); 
-        assertEquals(100, mgr.validateComment(comment, msgs));
+        assertEquals(100, validator.validate(comment, msgs));
 
         // String that exceeds default excess links threshold of 3
         comment.setContent(
@@ -104,35 +93,38 @@ public class CommentValidatorTest extends WebloggerTest {
             "<a href=\"http://example.com\">link4</a>" +
             "<a href=\"http://example.com\">link5</a>"
         ); 
-        assertTrue(mgr.validateComment(comment, msgs) != 100);
+        assertTrue(validator.validate(comment, msgs) != 100);
     }
 
     @Test
     public void testBlacklistCommentValidator() {
+        BlacklistCommentValidator validator = new BlacklistCommentValidator();
+        validator.setWeblogManager(weblogManager);
         Map<String, List<String>> msgs = new HashMap<>();
+
         WeblogEntryComment comment = createEmptyComment();
-       
         comment.getWeblogEntry().getWeblog().setBlacklist("www.myblacklistedsite.com");
 
         comment.setContent("nice friendly stuff");
-        assertEquals(100, mgr.validateComment(comment, msgs));
+        assertEquals(100, validator.validate(comment, msgs));
 
         comment.setContent("blah blah www.myblacklistedsite.com blah");
-        assertTrue(mgr.validateComment(comment, msgs) != 100);
+        assertTrue(validator.validate(comment, msgs) != 100);
     }
     
-    // To run this test uncomment the Akismet validator to commentValidatorList
-    // in spring-beans.xml along with your Akismet API key
-    @Ignore
+    // To run this test provide your Akismet API key below.
     public void testAkismetCommentValidator() {
+        AkismetCommentValidator validator = new AkismetCommentValidator(urlStrategy, "api code here");
+
         Map<String, List<String>> msgs = new HashMap<>();
         WeblogEntryComment comment = createEmptyComment();
         comment.setContent("nice friendly stuff");
 
-        assertEquals(100, mgr.validateComment(comment, msgs));
+        assertEquals(100, validator.validate(comment, msgs));
 
+            // per Akismet docs, name hardcoded to always fail
         comment.setName("viagra-test-123");
-        assertTrue(mgr.validateComment(comment, msgs) != 100);
+        assertTrue(validator.validate(comment, msgs) != 100);
     }
 
     private WeblogEntryComment createEmptyComment() {

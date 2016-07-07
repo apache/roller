@@ -46,14 +46,20 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.validator.UrlValidator;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 
+/*
+ * If activated, restricts blog entries from certain tags to reduce the risk of XSS/malicious code being posted by
+ * the blogger.  Not necessary if all people given weblog rights at the PUBLISH and OWNER level are known and fully
+ * trusted not to post malicious blog entries (as they should be).  Also, the CONTRIBUTOR weblog role allows a person
+ * to blog without it getting posted (published externally) unless first approved by a publisher or owner of the weblog.
+ */
 public class HTMLSanitizer {
-    public static Boolean xssEnabled = WebloggerStaticConfig.getBooleanProperty("weblogAdminsUntrusted", Boolean.FALSE);
+    public static Boolean xssEnabled = WebloggerStaticConfig.getBooleanProperty("bloggersUnvetted", Boolean.FALSE);
 
-    public static Pattern forbiddenTags = Pattern.compile("^(script|object|embed|link|style|form|input)$");
-    public static Pattern allowedTags = Pattern.compile("^(b|p|i|s|a|img|table|thead|tbody|tfoot|tr|th|td|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|li|ul|ol|span|div|strike|strong|"
+    public static Pattern blockedTags = Pattern.compile("^(script|object|embed|link|style|form|input)$");
+    public static Pattern permittedTags = Pattern.compile("^(b|p|i|s|a|img|table|thead|tbody|tfoot|tr|th|td|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|li|ul|ol|span|div|strike|strong|"
             + "sub|sup|pre|del|code|blockquote|strike|kbd|br|hr|area|map|object|embed|param|link|form|small|big)$");
     // <!--.........>
     private static Pattern commentPattern = Pattern.compile("<!--.*");
@@ -73,19 +79,9 @@ public class HTMLSanitizer {
     private static Pattern forbiddenStylePattern = Pattern.compile("(?:(expression|eval|javascript))\\s*\\(");
 
     /**
-     * This method should be used to test input.
-     *
-     * @param html
-     * @return true if the input is "valid"
-     */
-    public static boolean isSanitized(String html) {
-        return sanitizer(html).isValid;
-    }
-
-    /**
      * Used to clean every html before to output it in any html page
      *
-     * @param html
+     * @param html html to sanitize
      * @return sanitized html
      */
     public static String sanitize(String html) {
@@ -103,7 +99,7 @@ public class HTMLSanitizer {
     /**
      * Used to get the text,  tags removed or encoded
      *
-     * @param html
+     * @param html html to sanitize
      * @return sanitized text
      */
     public static String getText(String html) {
@@ -113,16 +109,16 @@ public class HTMLSanitizer {
     /**
      * This is the main method of sanitizing. It will be used both for validation and cleaning
      *
-     * @param html
+     * @param html html to sanitize
      * @return a SanitizeResult object
      */
     public static SanitizeResult sanitizer(String html) {
-        return sanitizer(html, allowedTags, forbiddenTags);
+        return sanitizer(html, permittedTags, blockedTags);
     }
 
     public static SanitizeResult sanitizer(String html, Pattern allowedTags, Pattern forbiddenTags) {
         SanitizeResult ret = new SanitizeResult();
-        Stack<String> openTags = new Stack<String>();
+        Stack<String> openTags = new Stack<>();
 
 
         List<String> tokens = tokenize(html);
@@ -368,12 +364,10 @@ public class HTMLSanitizer {
 
     /**
      * Splits html tag and tag content <......>.
-     *
-     * @param html
      * @return a list of token
      */
     private static List<String> tokenize(String html) {
-        ArrayList tokens = new ArrayList();
+        ArrayList<String> tokens = new ArrayList<>();
         int pos = 0;
         String token = "";
         int len = html.length();
@@ -449,23 +443,22 @@ public class HTMLSanitizer {
      * Must be used when printing HTML & should be used in save actions.
      */
     static class SanitizeResult {
-
         public String html = "";
         public String text = "";
         public String val = "";
         public boolean isValid = true;
-        public List<String> invalidTags = new ArrayList<String>();
+        public List<String> invalidTags = new ArrayList<>();
     }
 
     public static String encode(String s) {
         return convertLineFeedToBR(htmlEncodeApexesAndTags(s == null ? "" : s));
     }
 
-    public static final String htmlEncodeApexesAndTags(String source) {
+    public static String htmlEncodeApexesAndTags(String source) {
         return htmlEncodeTag(htmlEncodeApexes(source));
     }
 
-    public static final String htmlEncodeApexes(String source) {
+    public static String htmlEncodeApexes(String source) {
         if (source != null) {
             return replaceAllNoRegex(source, new String[]{"\"", "'"}, new String[]{"&quot;", "&#39;"});
         } else {
@@ -473,7 +466,7 @@ public class HTMLSanitizer {
         }
     }
 
-    public static final String htmlEncodeTag(String source) {
+    public static String htmlEncodeTag(String source) {
         if (source != null) {
             return replaceAllNoRegex(source, new String[]{"<", ">"}, new String[]{"&lt;", "&gt;"});
         } else {
@@ -498,7 +491,7 @@ public class HTMLSanitizer {
         }
     }
 
-    public static final String replaceAllNoRegex(String source, String searches[], String replaces[]) {
+    public static String replaceAllNoRegex(String source, String searches[], String replaces[]) {
         int k;
         String tmp = source;
         for (k = 0; k < searches.length; k++) {
@@ -507,7 +500,7 @@ public class HTMLSanitizer {
         return tmp;
     }
 
-    public static final String replaceAllNoRegex(String source, String search, String replace) {
+    public static String replaceAllNoRegex(String source, String search, String replace) {
         StringBuilder buffer = new StringBuilder();
         if (source != null) {
             if (search.length() == 0) {

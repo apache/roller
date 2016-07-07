@@ -17,6 +17,7 @@ package org.apache.roller.weblogger;
 
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -89,6 +90,13 @@ abstract public class WebloggerTest {
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
+    }
+
+    @Resource
+    protected URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
     }
 
     @Before
