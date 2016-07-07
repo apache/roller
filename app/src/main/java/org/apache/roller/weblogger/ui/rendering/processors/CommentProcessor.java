@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -95,7 +94,7 @@ public class CommentProcessor {
         this.cacheManager = cacheManager;
     }
 
-    @Autowired
+    @Autowired(required=false)
     private CommentAuthenticator commentAuthenticator = null;
 
     public void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
@@ -316,7 +315,7 @@ public class CommentProcessor {
             error = messageUtils.getString("error.commentPostFailedURL");
             log.debug("URL is invalid: {}", comment.getUrl());
        // if this is a real comment post then authenticate request
-        } else if (!preview && !this.commentAuthenticator.authenticate(request)) {
+        } else if (!preview && commentAuthenticator != null && !commentAuthenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
             error = messageUtils.getString("error.commentAuthFailed", msg);
             log.debug("Comment failed authentication");
@@ -444,7 +443,7 @@ public class CommentProcessor {
         response.addHeader("Expires", "-1");
 
         PrintWriter out = response.getWriter();
-        out.println(commentAuthenticator.getHtml(request));
+        out.println(commentAuthenticator == null ? "" : commentAuthenticator.getHtml(request));
     }
 
 }

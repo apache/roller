@@ -289,14 +289,10 @@
 
     <!-- The Comment Authenticator is the first-round test a commentor must do before his comment is accepted
          (answer a math question to confirm not a robot, or be already authenticated within LDAP for example.)
-         The comment still needs to go through comment validation as well as (if configured for the blog) comment
-         approval.
+         After authentication, the comment still needs to go through comment validation (possibly marking it
+         as spam) as well as (if configured for the blog) comment approval.
 
-         Also available:
-         org.apache.roller.weblogger.ui.rendering.comments.LdapCommentAuthenticator - must be logged into
-             the LDAP defined for the blog
-         org.apache.roller.weblogger.ui.rendering.comments.DefaultCommentAuthenticator - no test, accept
-             everything immediately.  Provides no protection against robots leaving messages.
+         Comment out below bean to disable this check.
     -->
     <beans:bean id="commentAuthenticator" class="org.apache.roller.weblogger.ui.rendering.comment.MathCommentAuthenticator"/>
 
