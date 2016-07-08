@@ -121,9 +121,9 @@
                 <beans:property name="userSearch" ref="userSearch" />
             </beans:bean>
         </beans:constructor-arg>
-        <beans:constructor-arg>
-            <beans:bean class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
-                <beans:property name="userManager" ref="userManager"/>
+        <beans:constructor-arg name="authoritiesPopulator">
+            <beans:bean class="org.springframework.security.ldap.authentication.UserDetailsServiceLdapAuthoritiesPopulator">
+                <beans:constructor-arg name="userService" ref="dbAuthProvider"/>
             </beans:bean>
         </beans:constructor-arg>
     </beans:bean>

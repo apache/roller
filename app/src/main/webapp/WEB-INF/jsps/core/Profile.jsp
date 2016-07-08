@@ -90,18 +90,18 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
 <table class="formtable">
   <tbody id="formBody">
     <script id="formTemplate" type="text/x-jsrender">
-      <tr id="recordId" data-id="{{:id}}">
+      <tr id="recordId" data-id="{{:user.id}}">
           <td class="label"><label for="userName"><s:text name="userSettings.username" /></label></td>
           <td class="field">
             <s:if test="getProp('authentication.method') == 'ldap'">
-                <strong>{{:userName}}</strong>
+                <strong>{{:user.userName}}</strong>
             </s:if>
             <s:else>
               <s:if test="authenticatedUser == null">
-                <input type="text" size="30" minlength="5" maxlength="25" data-link="userName" onBlur="this.value=this.value.trim()" required>
+                <input type="text" size="30" minlength="5" maxlength="25" data-link="user.userName" onBlur="this.value=this.value.trim()" required>
               </s:if>
               <s:else>
-                <input type="text" size="30" data-link="userName" readonly="true">
+                <input type="text" size="30" data-link="user.userName" readonly="true">
               </s:else>
             </s:else>
           </td>
@@ -110,20 +110,20 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
 
       <tr>
           <td class="label"><label for="screenName"><s:text name="userSettings.screenname" /></label></td>
-          <td class="field"><input type="text" size="30" data-link="screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
+          <td class="field"><input type="text" size="30" data-link="user.screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
           <td class="description"><s:text name="userRegister.tip.screenName" /></td>
       </tr>
 
       <tr>
           <td class="label"><label for="emailAddress"><s:text name="userSettings.email" /></label></td>
-          <td class="field"><input type="email" size="40" data-link="emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
+          <td class="field"><input type="email" size="40" data-link="user.emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
           <td class="description"><s:text name="userAdmin.tip.email" /></td>
       </tr>
 
       <tr>
           <td class="label"><label for="locale"><s:text name="userSettings.locale" /></label></td>
           <td class="field">
-              <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="locale" required=""/>
+              <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="user.locale" required=""/>
           </td>
           <td class="description"><s:text name="userRegister.tip.locale" /></td>
       </tr>
@@ -133,10 +133,10 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
               <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
               <td class="field">
                   <s:if test="authenticatedUser == null">
-                    <input required type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input required type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
                   </s:if>
                   <s:else>
-                    <input type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
                   </s:else>
               </td>
               <td class="description"><s:text name="%{#passwordTipKey}" /></td>
@@ -145,10 +145,10 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
               <td class="label"><label for="passwordConfirm"><s:text name="userSettings.passwordConfirm" /></label></td>
               <td class="field">
                   <s:if test="authenticatedUser == null">
-                    <input required type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input required type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
                   </s:if>
                   <s:else>
-                    <input type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
                   </s:else>
               </td>
               <td class="description"><s:text name="%{#passwordConfirmTipKey}" /></td>

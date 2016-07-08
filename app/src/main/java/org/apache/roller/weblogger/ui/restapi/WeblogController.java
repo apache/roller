@@ -227,6 +227,7 @@ public class WeblogController {
             }
             return ResponseEntity.ok(weblog);
         } catch (Exception e) {
+            log.error("Error updating weblog", e);
             throw new ServletException(e.getMessage());
         }
     }

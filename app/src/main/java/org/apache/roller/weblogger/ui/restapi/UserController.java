@@ -32,7 +32,8 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -42,8 +43,8 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -124,7 +125,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval", method = RequestMethod.GET)
-    public List<SafeUser> getRegistrationsNeedingApproval() throws ServletException {
+    public List<User> getRegistrationsNeedingApproval() throws ServletException {
         UserSearchCriteria usc = new UserSearchCriteria();
         usc.setApproved(false);
         return userManager.getUsers(usc);
@@ -160,7 +161,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers", method = RequestMethod.GET)
-    public Map<String, String> getPotentialNewMembers(@PathVariable String weblogId, Principal p,
+    public Map<String, String> getPotentialNewBlogMembers(@PathVariable String weblogId, Principal p,
                                                       HttpServletResponse response)
             throws ServletException {
 
@@ -170,13 +171,13 @@ public class UserController {
             UserSearchCriteria usc = new UserSearchCriteria();
             usc.setEnabled(true);
             usc.setOffset(0);
-            List<SafeUser> potentialUsers = userManager.getUsers(usc);
+            List<User> potentialUsers = userManager.getUsers(usc);
 
             // filter out people already members
-            ListIterator<SafeUser> potentialIter = potentialUsers.listIterator();
+            ListIterator<User> potentialIter = potentialUsers.listIterator();
             List<UserWeblogRole> currentUserList = userManager.getWeblogRolesIncludingPending(weblog);
             while (potentialIter.hasNext() && !currentUserList.isEmpty()) {
-                SafeUser su = potentialIter.next();
+                User su = potentialIter.next();
                 ListIterator<UserWeblogRole> alreadyIter = currentUserList.listIterator();
                 while (alreadyIter.hasNext()) {
                     UserWeblogRole au = alreadyIter.next();
@@ -194,9 +195,9 @@ public class UserController {
         }
     }
 
-    private Map<String, String> createUserMap(List<SafeUser> users) {
+    private Map<String, String> createUserMap(List<User> users) {
         Map<String, String> userMap = new TreeMap<>();
-        for (SafeUser user : users) {
+        for (User user : users) {
             userMap.put(user.getId(), user.getScreenName() + " (" + user.getEmailAddress() + ")");
         }
         Map<String, String> sortedMap = userMap.entrySet().stream().sorted(Map.Entry.comparingByValue())
@@ -209,9 +210,6 @@ public class UserController {
     public User getUserData(@PathVariable String id, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
         if (user != null) {
-            user.setPassword(null);
-            user.setPasswordText(null);
-            user.setPasswordConfirm(null);
             return user;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -225,9 +223,6 @@ public class UserController {
         User authenticatedUser = userManager.getUserByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
-            user.setPassword(null);
-            user.setPasswordText(null);
-            user.setPasswordConfirm(null);
             return user;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -256,19 +251,30 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
-    public ResponseEntity registerUser(@Valid @RequestBody User newData, HttpServletResponse response) throws ServletException {
-        long userCount = userManager.getUserCount();
+    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, HttpServletResponse response) throws ServletException {
+        ValidationError maybeError = advancedValidate(newData, true);
+        if (maybeError != null) {
+            return ResponseEntity.badRequest().body(maybeError);
+        }
 
+        long userCount = userManager.getUserCount();
         if (userCount == 0 || propertiesManager.getBooleanProperty("users.registration.enabled")) {
             boolean mustBeApproved = userCount > 0 && propertiesManager.getBooleanProperty("user.require.registration.approval");
             boolean mustActivate = mustBeApproved || propertiesManager.getBooleanProperty("user.account.email.activation");
-            newData.setEnabled(!mustActivate);
+            newData.user.setEnabled(!mustActivate);
             if (mustActivate) {
                 String activationCode = UUID.randomUUID().toString();
-                newData.setActivationCode(activationCode);
+                newData.user.setActivationCode(activationCode);
             }
-            newData.setApproved(!mustBeApproved);
-            ResponseEntity re = addUser(newData, null, response);
+            newData.user.setApproved(!mustBeApproved);
+
+            User user = new User();
+            user.setId(Utilities.generateUUID());
+            user.setUserName(newData.user.getUserName());
+            user.setDateCreated(Instant.now());
+
+            ResponseEntity re = saveUser(user, newData, null, response, true);
+
             if (re.getStatusCode() == HttpStatus.OK && mustActivate) {
                 try {
                     mailManager.sendUserActivationEmail((User) re.getBody());
@@ -281,28 +287,8 @@ public class UserController {
         }
     }
 
-    private ResponseEntity addUser(@Valid @RequestBody User newData, Principal p, HttpServletResponse response) throws ServletException {
-        ValidationError maybeError = advancedValidate(newData, true);
-        if (maybeError != null) {
-            return ResponseEntity.badRequest().body(maybeError);
-        }
-        if (WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.LDAP) {
-            // LDAP auth ignores the database-saved password but that field keeps a not null constraint
-            // for the more common DB auth option, so providing a random string for that field.
-            String unusedPassword = RandomStringUtils.randomAscii(15);
-            newData.setPasswordText(unusedPassword);
-            newData.setPasswordConfirm(unusedPassword);
-        }
-        User user = new User();
-        user.setId(Utilities.generateUUID());
-        user.setUserName(newData.getUserName());
-        user.setDateCreated(Instant.now());
-
-        return saveUser(user, newData, p, response, true);
-    }
-
     @RequestMapping(value = "/tb-ui/authoring/rest/userprofile/{id}", method = RequestMethod.POST)
-    public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody User newData, Principal p,
+    public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                             HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
         User authenticatedUser = userManager.getUserByUserName(p.getName());
@@ -319,7 +305,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.PUT)
-    public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody User newData, Principal p,
+    public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                      HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
         ValidationError maybeError = advancedValidate(newData, false);
@@ -327,6 +313,112 @@ public class UserController {
             return ResponseEntity.badRequest().body(maybeError);
         }
         return saveUser(user, newData, p, response, false);
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    static class UserData {
+        User user;
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        UserCredentials credentials;
+
+        public UserData() {
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
+        public UserCredentials getCredentials() {
+            return credentials;
+        }
+
+        public void setCredentials(UserCredentials credentials) {
+            this.credentials = credentials;
+        }
+    }
+
+    private ResponseEntity saveUser(User user, UserData newData, Principal p, HttpServletResponse response, boolean add) throws ServletException {
+        try {
+            if (user != null) {
+                user.setScreenName(newData.user.getScreenName().trim());
+                user.setEmailAddress(newData.user.getEmailAddress().trim());
+                user.setLocale(newData.user.getLocale());
+                user.setEnabled(newData.user.isEnabled());
+                user.setApproved(newData.user.isApproved());
+                if (!user.isEnabled() && StringUtils.isNotEmpty(newData.user.getActivationCode())) {
+                    user.setActivationCode(newData.user.getActivationCode());
+                }
+
+                if (add) {
+                    if (userManager.getUserCount() == 0) {
+                        // first person in is always an admin
+                        user.setGlobalRole(GlobalRole.ADMIN);
+                    } else {
+                        user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole")
+                                ? GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
+                    }
+                } else {
+                    // users can't alter own roles
+                    if (!user.getUserName().equals(p.getName())) {
+                        user.setGlobalRole(newData.user.getGlobalRole());
+                    }
+                }
+
+                try {
+                    userManager.saveUser(user);
+                    // reset password if set
+                    if (!StringUtils.isEmpty(newData.credentials.getPasswordText())) {
+                        userManager.updateCredentials(user.getId(), newData.credentials.getPasswordText());
+                    }
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } catch (RollbackException e) {
+                    return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body("Persistence Problem");
+                }
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            log.error("Error updating user", e);
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private ValidationError advancedValidate(UserData data, boolean isAdd) {
+        BindException be = new BindException(data, "new data object");
+
+        if (!StringUtils.isEmpty(data.credentials.getPasswordText())) {
+            if (!data.credentials.getPasswordText().equals(data.credentials.getPasswordConfirm())) {
+                be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
+            }
+        } else {
+            if (!StringUtils.isEmpty(data.credentials.getPasswordConfirm())) {
+                // confirm provided but password field itself not filled out
+                be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
+            }
+        }
+
+        if (isAdd &&
+                WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB &&
+                StringUtils.isEmpty(data.credentials.getPasswordText())) {
+            be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
+        }
+
+        User testUser = userManager.getUserByUserName(data.user.getUserName(), null);
+        if (testUser != null && !testUser.getId().equals(data.user.getId())) {
+            be.addError(new ObjectError("User object", bundle.getString("error.add.user.userNameInUse")));
+        }
+
+        testUser = userManager.getUserByScreenName(data.user.getScreenName());
+        if (testUser != null && !testUser.getId().equals(data.user.getId())) {
+            be.addError(new ObjectError("User object", bundle.getString("error.add.user.screenNameInUse")));
+        }
+
+        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs", method = RequestMethod.GET)
@@ -377,82 +469,4 @@ public class UserController {
         }
         WebloggerFactory.flush();
     }
-
-    private ResponseEntity saveUser(User user, User newData, Principal p, HttpServletResponse response, boolean add) throws ServletException {
-        try {
-            if (user != null) {
-                user.setScreenName(newData.getScreenName().trim());
-                user.setEmailAddress(newData.getEmailAddress().trim());
-                user.setLocale(newData.getLocale());
-                user.setEnabled(newData.isEnabled());
-                user.setApproved(newData.isApproved());
-                if (!user.isEnabled() && StringUtils.isNotEmpty(newData.getActivationCode())) {
-                    user.setActivationCode(newData.getActivationCode());
-                }
-
-                if (add) {
-                    if (userManager.getUserCount() == 0) {
-                        // first person in is always an admin
-                        user.setGlobalRole(GlobalRole.ADMIN);
-                    } else {
-                        user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole")
-                                ? GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
-                    }
-                } else {
-                    // users can't alter own roles
-                    if (!user.getUserName().equals(p.getName())) {
-                        user.setGlobalRole(newData.getGlobalRole());
-                    }
-                }
-
-                // reset password if set
-                if (!StringUtils.isEmpty(newData.getPasswordText())) {
-                    user.resetPassword(newData.getPasswordText().trim());
-                }
-
-                newData.setPasswordText(null);
-                newData.setPasswordConfirm(null);
-
-                try {
-                    userManager.saveUser(user);
-                    user.setPassword(null);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } catch (RollbackException e) {
-                    return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body("Persistence Problem");
-                }
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-    private ValidationError advancedValidate(User data, boolean isAdd) {
-        BindException be = new BindException(data, "new data object");
-
-        if (!StringUtils.isEmpty(data.getPasswordText()) && !data.getPasswordText().equals(data.getPasswordConfirm())) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
-        }
-
-        if (isAdd &&
-                WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB &&
-                StringUtils.isEmpty(data.getPasswordText())) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
-        }
-
-        User testUser = userManager.getUserByUserName(data.getUserName(), null);
-        if (testUser != null && !testUser.getId().equals(data.getId())) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.userNameInUse")));
-        }
-
-        testUser = userManager.getUserByScreenName(data.getScreenName());
-        if (testUser != null && !testUser.getId().equals(data.getId())) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.screenNameInUse")));
-        }
-
-        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
-    }
-
 }

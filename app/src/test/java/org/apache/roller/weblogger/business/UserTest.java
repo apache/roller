@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.util.Utilities;
@@ -54,7 +53,6 @@ public class UserTest extends WebloggerTest {
         User testUser = new User();
         testUser.setId(Utilities.generateUUID());
         testUser.setUserName("testuser");
-        testUser.setPassword("password");
         testUser.setScreenName("Test User Screen Name");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
@@ -99,9 +97,9 @@ public class UserTest extends WebloggerTest {
      */
     @Test
     public void testUserLookups() throws Exception {
-        User user;
-        SafeUser safeUser;
-        
+        User user1;
+        User user2;
+
         // add test user
         User testUser = setupUser("usertestuser");
         User testUser2 = setupUser("disabledtestuser");
@@ -109,43 +107,43 @@ public class UserTest extends WebloggerTest {
         endSession(true);
         
         // lookup by username
-        user = userManager.getUserByUserName(testUser.getUserName());
-        assertNotNull(user);
-        assertEquals(testUser.getUserName(), user.getUserName());
+        user1 = userManager.getUserByUserName(testUser.getUserName());
+        assertNotNull(user1);
+        assertEquals(testUser.getUserName(), user1.getUserName());
         
         // lookup by id
-        String userName = user.getUserName();
-        user = userManager.getUserByUserName(userName);
-        assertNotNull(user);
-        assertEquals(testUser.getUserName(), user.getUserName());
+        String userName = user1.getUserName();
+        user1 = userManager.getUserByUserName(userName);
+        assertNotNull(user1);
+        assertEquals(testUser.getUserName(), user1.getUserName());
         
         // lookup by getUsers() - all users
         UserSearchCriteria usc = new UserSearchCriteria();
         usc.setOffset(0);
-        List<SafeUser> users = userManager.getUsers(usc);
+        List<User> users = userManager.getUsers(usc);
         assertEquals(2, users.size());
 
         // lookup by getUsers() - enabled only
         usc.setEnabled(true);
         users = userManager.getUsers(usc);
         assertEquals(1, users.size());
-        safeUser = users.get(0);
-        assertNotNull(safeUser);
-        assertEquals(testUser.getScreenName(), safeUser.getScreenName());
+        user1 = users.get(0);
+        assertNotNull(user1);
+        assertEquals(testUser.getScreenName(), user1.getScreenName());
 
         // lookup by getUsers() - disabled only
         usc.setEnabled(false);
         users = userManager.getUsers(usc);
         assertEquals(1, users.size());
-        safeUser = users.get(0);
-        assertNotNull(safeUser);
-        assertEquals(testUser2.getScreenName(), safeUser.getScreenName());
+        user2 = users.get(0);
+        assertNotNull(user2);
+        assertEquals(testUser2.getScreenName(), user2.getScreenName());
 
         // make sure disable users are not returned
-        user.setEnabled(Boolean.FALSE);
-        userManager.saveUser(user);
-        user = userManager.getUserByUserName(testUser.getUserName());
-        assertNull(user);
+        user1.setEnabled(Boolean.FALSE);
+        userManager.saveUser(user1);
+        user1 = userManager.getUserByUserName(testUser.getUserName());
+        assertNull(user1);
         
         // remove test user
         teardownUser(testUser.getUserName());

@@ -20,8 +20,8 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -71,14 +71,6 @@ public interface UserManager {
     User getUser(String id);
 
     /**
-     * Retrieve a SafeUser object by its internal identifier id.
-     *
-     * @param id the id of the user to retrieve.
-     * @return the SafeUser object with specified id or null if not found
-     */
-    SafeUser getSafeUser(String id);
-
-    /**
      * Lookup a user by UserName.
      * 
      * This lookup is restricted to 'enabled' users by default.  So this method
@@ -88,7 +80,25 @@ public interface UserManager {
      * @return The user, or null if not found or not enabled.
      */
     User getUserByUserName(String userName);
-    
+
+    /**
+     * Get user credentials by user name.  Only enabled and approved
+     * users are retrievable.
+     *
+     * @param userName User Name of user to lookup.
+     * @return The user, or null if not found or not enabled.
+     */
+    UserCredentials getCredentialsByUserName(String userName);
+
+    /**
+     * Update user password.  This method takes an unencrypted password
+     * and will encrypt it prior to storing in database.
+     *
+     * @param userId internal ID of user
+     * @param newPassword unencrypted password.
+     */
+    void updateCredentials(String userId, String newPassword);
+
     /**
      * Lookup a user by UserName with the given enabled status.
      * 
@@ -110,9 +120,9 @@ public interface UserManager {
      * Lookup users based on supplied criteria
      *
      * @param criteria  UserSearchCriteria object indicating search parameters
-     * @return list of SafeUser objects matching desired criteria
+     * @return list of User objects matching desired criteria
      */
-    List<SafeUser> getUsers(UserSearchCriteria criteria);
+    List<User> getUsers(UserSearchCriteria criteria);
 
     /**
      * Check user's rights for a specified weblog
