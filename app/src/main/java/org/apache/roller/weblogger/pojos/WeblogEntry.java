@@ -98,8 +98,8 @@ public class WeblogEntry {
     private Integer commentDays = 7;
     private PubStatus status;
     // Using String creatorId instead of User creator; see comments in Weblog class for info
-    private String  creatorId        = null;
-    private SafeUser creator         = null;
+    private String  creatorId = null;
+    private User creator = null;
     private String searchDescription;
 
     // Associated objects
@@ -414,12 +414,12 @@ public class WeblogEntry {
     }
 
     @Transient
-    public SafeUser getCreator() {
+    public User getCreator() {
         if (creator == null) {
             try {
-                creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
+                creator = WebloggerFactory.getWeblogger().getUserManager().getUser(creatorId);
             } catch (Exception ignored) {
-                log.error("Cannot find a SafeUser object for userId = {}", creatorId);
+                log.error("Cannot find a User object for userId = {}", creatorId);
             }
         }
         return creator;

@@ -23,8 +23,8 @@ package org.apache.roller.weblogger.business.jpa;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -34,8 +34,11 @@ import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,13 +107,38 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public SafeUser getSafeUser(String id) {
-        return this.strategy.load(SafeUser.class, id);
+    public User getUserByUserName(String userName) {
+        return getUserByUserName(userName, Boolean.TRUE);
     }
 
     @Override
-    public User getUserByUserName(String userName) {
-        return getUserByUserName(userName, Boolean.TRUE);
+    public UserCredentials getCredentialsByUserName(String userName) {
+        if (userName==null) {
+            throw new IllegalArgumentException("userName cannot be null");
+        }
+
+        TypedQuery<UserCredentials> query;
+        query = strategy.getNamedQuery("UserCredentials.getByUserName", UserCredentials.class);
+        query.setParameter(1, userName);
+        query.setHint("javax.persistence.cache.storeMode", "REFRESH");
+
+        UserCredentials creds;
+        try {
+            creds = query.getSingleResult();
+        } catch (NoResultException e) {
+            creds = null;
+        }
+        return creds;
+    }
+
+    @Override
+    public void updateCredentials(String userId, String newPassword) {
+        Query q = strategy.getNamedUpdate("UserCredentials.changePassword");
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        q.setParameter(1, encoder.encode(newPassword));
+        q.setParameter(2, userId);
+        q.executeUpdate();
+        strategy.flush();
     }
 
     @Override
@@ -212,31 +240,31 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public List<SafeUser> getUsers(UserSearchCriteria criteria) {
+    public List<User> getUsers(UserSearchCriteria criteria) {
         List<Object> params = new ArrayList<>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
 
-        queryString.append("SELECT su FROM SafeUser su WHERE 1=1 ");
+        queryString.append("SELECT u FROM User u WHERE 1=1 ");
 
         if (criteria.getApproved() != null) {
             params.add(size++, criteria.getApproved());
-            queryString.append(" and su.approved = ?").append(size);
+            queryString.append(" and u.approved = ?").append(size);
         }
 
         if (criteria.getEnabled() != null) {
             params.add(size++, criteria.getEnabled());
-            queryString.append(" and su.enabled = ?").append(size);
+            queryString.append(" and u.enabled = ?").append(size);
         }
 
         if (criteria.getGlobalRole() != null) {
             params.add(size++, criteria.getGlobalRole());
-            queryString.append(" and su.globalRole = ?").append(size);
+            queryString.append(" and u.globalRole = ?").append(size);
         }
 
-        queryString.append(" ORDER BY su.screenName ");
+        queryString.append(" ORDER BY u.screenName ");
 
-        TypedQuery<SafeUser> query = strategy.getDynamicQuery(queryString.toString(), SafeUser.class);
+        TypedQuery<User> query = strategy.getDynamicQuery(queryString.toString(), User.class);
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));
         }

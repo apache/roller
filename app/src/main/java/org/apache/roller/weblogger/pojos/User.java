@@ -22,15 +22,11 @@ package org.apache.roller.weblogger.pojos;
 
 import java.time.Instant;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -41,7 +37,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
 
@@ -75,7 +70,6 @@ public class User {
     @NotBlank(message = "{error.add.user.missingUserName}")
     @Pattern(regexp = "[a-z0-9]*", message = "{error.add.user.badUserName}")
     private String  userName;
-    private String  password;
     private GlobalRole globalRole;
 
     @NotBlank(message = "{Register.error.screenNameNull}")
@@ -90,13 +84,6 @@ public class User {
     private Boolean approved = Boolean.FALSE;
     private String  activationCode;
     private Instant lastLogin;
-
-    // below two fields not persisted but used for password entry and confirmation
-    // on new user & user update forms.
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String passwordText;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String passwordConfirm;
 
     public User() {
     }
@@ -120,24 +107,6 @@ public class User {
         this.userName = userName;
     }
     
-    /**
-     * Get password.
-     * If password encryption is enabled, will return encrypted password.
-     */
-    @Column(name="passphrase", nullable=false)
-    @JsonIgnore
-    public String getPassword() {
-        return this.password;
-    }
-    
-    /**
-     * Set password.
-     * If password encryption is turned on, then pass in an encrypted password.
-     */
-    public void setPassword( String password ) {
-        this.password = password;
-    }
-
     @Column(name="global_role", nullable=false)
     @Enumerated(EnumType.STRING)
     public GlobalRole getGlobalRole() {
@@ -150,16 +119,6 @@ public class User {
 
     public boolean hasEffectiveGlobalRole(GlobalRole roleToCheck) {
         return globalRole.getWeight() >= roleToCheck.getWeight();
-    }
-
-    /**
-     * Reset this user's password, handles encryption if configured.
-     *
-     * @param newPassword The new password to be set.
-     */
-    public void resetPassword(String newPassword) {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        setPassword(encoder.encode(newPassword));
     }
 
     @Basic(optional=false)
@@ -268,21 +227,4 @@ public class User {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
-    @Transient
-    public String getPasswordText() {
-        return passwordText;
-    }
-
-    public void setPasswordText(String passwordText) {
-        this.passwordText = passwordText;
-    }
-
-    @Transient
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
 }

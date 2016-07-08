@@ -138,7 +138,6 @@ abstract public class WebloggerTest {
         User testUser = new User();
         testUser.setId(Utilities.generateUUID());
         testUser.setUserName(userName.toLowerCase());
-        testUser.setPassword("password");
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         testUser.setScreenName(userName);
         testUser.setEmailAddress("TestUser@dev.null");

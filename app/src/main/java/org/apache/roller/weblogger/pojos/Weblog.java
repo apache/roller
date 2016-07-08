@@ -97,12 +97,12 @@ public class Weblog {
     private String  about            = null;
     /*
      * String creatorId used instead of User object to prevent models from having access to sensitive User
-     * info (passwords etc.) via this object.  Transient SafeUser object without sensitive fields used instead.
-     * (Avoiding direct use of SafeUser in a @ManyToOne relationship to avoid JPA trying to persist the SafeUser
+     * info (passwords etc.) via this object.  Transient User object without sensitive fields used instead.
+     * (Avoiding direct use of User in a @ManyToOne relationship to avoid JPA trying to persist the User
      * when this Weblog object is persisted.)
      */
     private String  creatorId        = null;
-    private SafeUser creator         = null;
+    private User    creator          = null;
     private String  analyticsCode    = null;
     private int     hitsToday        = 0;
     private boolean applyCommentDefaults = false;
@@ -202,9 +202,9 @@ public class Weblog {
 
     @Transient
     @JsonIgnore
-    public SafeUser getCreator() {
+    public User getCreator() {
         if (creator == null) {
-            creator = WebloggerFactory.getWeblogger().getUserManager().getSafeUser(creatorId);
+            creator = WebloggerFactory.getWeblogger().getUserManager().getUser(creatorId);
         }
         return creator;
     }

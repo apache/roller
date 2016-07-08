@@ -1,5 +1,11 @@
 $(function() {
-  var data = { "approved" : true };
+  var data = {
+    "user" : {
+      "approved" : true
+    },
+    "credentials" : {
+    }
+  };
   function formatDateFunction(dateValue) {
     return (dateValue == null) ? null : new Date(dateValue).toLocaleString();
   }
@@ -15,9 +21,9 @@ $(function() {
 
     $.ajax({
        type: "GET",
-       url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + data.id + '/weblogs',
-       success: function(data, textStatus, xhr) {
-         var html = $.render.tableTemplate(data);
+       url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + data.user.id + '/weblogs',
+       success: function(blogListing, textStatus, xhr) {
+         var html = $.render.tableTemplate(blogListing);
          $('#tableBody').html(html);
        }
     });
@@ -90,7 +96,9 @@ $(function() {
        $.ajax({
           type: "GET",
           url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + selectedId,
-          success: function(data, textStatus, xhr) {
+          success: function(userData, textStatus, xhr) {
+            data.user = userData;
+            data.credentials = {};
             updateEditForm(data);
             $('div .showinguser').show();
           }
@@ -112,11 +120,13 @@ $(function() {
          url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + view.data.id,
          data: JSON.stringify(view.data),
          contentType: "application/json",
-         success: function(data, textStatus, xhr) {
+         success: function(dbData, textStatus, xhr) {
            $('div .showinguser').show();
+           data.user = dbData;
+           data.credentials = {};
            updateEditForm(data);
            $('#userEdit').show();
-           refreshUserList(data.id);
+           refreshUserList(data.user.id);
          },
          error: function(xhr, status, errorThrown) {
             if (xhr.status == 400) {

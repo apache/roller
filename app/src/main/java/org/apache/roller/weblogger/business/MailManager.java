@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.SafeUser;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -158,10 +157,10 @@ public class MailManager {
             UserSearchCriteria criteria = new UserSearchCriteria();
             criteria.setEnabled(true);
             criteria.setGlobalRole(GlobalRole.ADMIN);
-            List<SafeUser> admins = userManager.getUsers(criteria);
+            List<User> admins = userManager.getUsers(criteria);
 
             // build list of reviewers (website users with author permission)
-            List<String> adminEmails = admins.stream().map(SafeUser::getEmailAddress).collect(Collectors.toList());
+            List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
             String[] to = adminEmails.toArray(new String[adminEmails.size()]);
 
             String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/admin", null, null, true);
@@ -360,7 +359,7 @@ public class MailManager {
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        SafeUser user = entry.getCreator();
+        User user = entry.getCreator();
         
         // Only send email if email notification is enabled, or a pending message that needs moderation.
         if (!commentObject.getPending()) {
@@ -595,7 +594,7 @@ public class MailManager {
         
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        SafeUser user = entry.getCreator();
+        User user = entry.getCreator();
 
         String from = user.getEmailAddress();
 

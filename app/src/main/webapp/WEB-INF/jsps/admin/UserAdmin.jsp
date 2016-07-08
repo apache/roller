@@ -56,46 +56,36 @@ var contextPath = "${pageContext.request.contextPath}";
     <table class="formtable">
       <tbody id="formBody">
         <script id="formTemplate" type="text/x-jsrender">
-          <tr id="recordId" data-id="{{:id}}">
+          <tr id="recordId" data-id="{{:user.id}}">
               <td class="label"><label for="userName"><s:text name="userSettings.username" /></label></td>
               <td class="field">
-                {{if id != null}}
-                    <input type="text" size="30" maxlength="30" data-link="userName" readonly="true" cssStyle="background: #e5e5e5">
-                {{else}}
-                    <input type="text" size="30" data-link="userName" onBlur="this.value=this.value.trim()" minlength="5" maxlength="20" required>
-                {{/if}}
+                <input type="text" size="30" maxlength="30" data-link="user.userName" readonly="true" cssStyle="background: #e5e5e5">
               </td>
               <td class="description">
-                  {{if id != null}}
-                      <s:text name="userSettings.tip.username" />
-                  {{else}}
-                      <s:text name="userAdmin.tip.userName" />
-                  {{/if}}
+                <s:text name="userSettings.tip.username" />
               </td>
           </tr>
 
-          {{if id != null}}
           <tr>
               <td class="label"><label for="dateCreated"><s:text name="userSettings.accountCreateDate" /></label></td>
-              <td class="field"><input type="text" size="30" value="{{:~formatDate(dateCreated)}}" readonly></td>
+              <td class="field"><input type="text" size="30" value="{{:~formatDate(user.dateCreated)}}" readonly></td>
               <td class="description"></td>
           </tr>
           <tr>
               <td class="label"><label for="lastLogin"><s:text name="userSettings.lastLogin" /></label></td>
-              <td class="field"><input type="text" size="30" value="{{:~formatDate(lastLogin)}}" readonly></td>
+              <td class="field"><input type="text" size="30" value="{{:~formatDate(user.lastLogin)}}" readonly></td>
               <td class="description"></td>
           </tr>
-          {{/if}}
 
           <tr>
               <td class="label"><label for="screenName"><s:text name="userSettings.screenname" /></label></td>
-              <td class="field"><input type="text" size="30" data-link="screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
+              <td class="field"><input type="text" size="30" data-link="user.screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
               <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
           </tr>
 
           <tr>
               <td class="label"><label for="emailAddress"><s:text name="userSettings.email" /></label></td>
-              <td class="field"><input type="email" size="40" data-link="emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
+              <td class="field"><input type="email" size="40" data-link="user.emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
               <td class="description"><s:text name="userAdmin.tip.email" /></td>
           </tr>
 
@@ -103,21 +93,13 @@ var contextPath = "${pageContext.request.contextPath}";
               <tr>
                   <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
                   <td class="field">
-                  {{if id != null}}
-                      <input type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
-                  {{else}}
-                      <input type="password" size="20" data-link="passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20" required></td>
-                  {{/if}}
+                  <input type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
                   <td class="description"><s:text name="userAdmin.tip.password" /></td>
               </tr>
               <tr>
                   <td class="label"><label for="passwordConfirm"><s:text name="userSettings.passwordConfirm" /></label></td>
                   <td class="field">
-                  {{if id != null}}
-                      <input type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
-                  {{else}}
-                      <input type="password" size="20" data-link="passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20" required></td>
-                  {{/if}}
+                  <input type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
                   <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
               </tr>
           </s:if>
@@ -125,7 +107,7 @@ var contextPath = "${pageContext.request.contextPath}";
           <tr>
               <td class="label"><label for="locale"><s:text name="userSettings.locale" /></label></td>
               <td class="field">
-                  <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="locale" required=""/>
+                  <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="user.locale" required=""/>
               </td>
               <td class="description"><s:text name="userAdmin.tip.locale" /></td>
           </tr>
@@ -133,7 +115,7 @@ var contextPath = "${pageContext.request.contextPath}";
           <tr>
               <td class="label"><label for="userEnabled"><s:text name="userAdmin.enabled" /></label></td>
               <td class="field">
-                  <input type="checkbox" name="enabled" data-link="enabled"/>
+                  <input type="checkbox" name="enabled" data-link="user.enabled"/>
               </td>
               <td class="description"><s:text name="userAdmin.tip.enabled" /></td>
           </tr>
@@ -141,7 +123,7 @@ var contextPath = "${pageContext.request.contextPath}";
           <tr>
               <td class="label"><label for="globalRole"><s:text name="userAdmin.globalRole" /></label></td>
               <td class="field">
-                  <s:select name="globalRole" size="1" list="assignableGlobalRolesList" listKey="left" listValue="right" data-link="globalRole" required=""/>
+                  <s:select name="globalRole" size="1" list="assignableGlobalRolesList" listKey="left" listValue="right" data-link="user.globalRole" required=""/>
               </td>
               <td class="description"><s:text name="userAdmin.tip.globalRole" /></td>
           </tr>
@@ -182,7 +164,7 @@ var contextPath = "${pageContext.request.contextPath}";
                           <s:param name="weblogId" value="{{:weblog.id}}" />
                       </s:url>
                       <img src='<s:url value="/images/page_white_edit.png"/>' />
-                      <a href='<s:property value="editEntries" />?weblog={{:weblog.handle}}'>
+                      <a href='<s:property value="editEntries" />?weblogId={{:weblog.id}}'>
                       <s:text name="userAdmin.editEntries" /></a>
                   </td>
                   <td>

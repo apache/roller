@@ -22,16 +22,22 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig.AuthMethod;
+import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.User;
 
 /**
  * Spring Security UserDetailsService implemented using Weblogger API.
+ * Configured in security.xml to be used by both DB and LDAP authentication, however
+ * LDAP uses this class just to obtain authorities.
  */
 public class CustomUserDetailsService implements UserDetailsService {
     private UserManager userManager;
@@ -43,6 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     /**
      * @throws UsernameNotFoundException, DataAccessException
      */
+    @Override
     public UserDetails loadUserByUsername(String userName) {
 
         if (!WebloggerFactory.isBootstrapped()) {
@@ -51,16 +58,18 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User info not available yet.");
         }
 
-        User userData;
-        // standard username/password auth
-        userData = userManager.getUserByUserName(userName);
-        if (userData == null) {
+        boolean usingDBAuth = (WebloggerStaticConfig.getAuthMethod() == AuthMethod.DB);
+        UserCredentials creds;
+
+        // for DB auth, password is required to be in the DB; LDAP has no DB-stored password.
+        creds = userManager.getCredentialsByUserName(userName);
+        if (creds == null || (usingDBAuth && StringUtils.isBlank(creds.getPassword()))) {
             throw new UsernameNotFoundException("ERROR no user: " + userName);
         }
+
         List<SimpleGrantedAuthority> authorities = new ArrayList<>(1);
-        authorities.add(new SimpleGrantedAuthority(userData.getGlobalRole().name()));
-        return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
-                userData.isEnabled(), true, true, true, authorities);
+        authorities.add(new SimpleGrantedAuthority(creds.getGlobalRole().name()));
+        return new org.springframework.security.core.userdetails.User(creds.getUserName(), creds.getPassword(),
+                true, true, true, true, authorities);
     }
-        
 }

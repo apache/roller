@@ -1,5 +1,11 @@
 $(function() {
-  var data = { "locale" : "en" };
+  var data = {
+    "user" : {
+      "locale" : "en"
+    },
+    "credentials" : {
+    }
+  };
   $.templates({
     formTemplate: '#formTemplate',
     errorMessageTemplate: '#errorMessageTemplate'
@@ -15,7 +21,9 @@ $(function() {
            type: "GET",
            url: contextPath + '/tb-ui/register/rest/ldapdata',
            success: function(ldapData, textStatus, xhr) {
-             updateEditForm(ldapData);
+             data.user = ldapData;
+             data.credentials = {};
+             updateEditForm(data);
            },
            error: function(xhr, status, errorThrown) {
               if (xhr.status == 404) {
@@ -31,7 +39,9 @@ $(function() {
       $.ajax({
          type: "GET",
          url: contextPath + '/tb-ui/authoring/rest/userprofile/' + recordId,
-         success: function(data, textStatus, xhr) {
+         success: function(dbData, textStatus, xhr) {
+           data.user = dbData;
+           data.credentials = {};
            updateEditForm(data);
          }
       });
@@ -46,23 +56,26 @@ $(function() {
     $('#errorMessageDiv').hide();
     $('#successMessageDiv').hide();
     var view = $.view("#recordId");
-    var isUpdate = view.data.hasOwnProperty('id');
-    var urlToUse = contextPath + (isUpdate ? '/tb-ui/authoring/rest/userprofile/' + view.data.id
+    var isUpdate = view.data.user.hasOwnProperty('id');
+    var urlToUse = contextPath + (isUpdate ? '/tb-ui/authoring/rest/userprofile/' + view.data.user.id
       : '/tb-ui/register/rest/registeruser');
     $.ajax({
        type: "POST",
        url: urlToUse,
        data: JSON.stringify(view.data),
        contentType: "application/json",
-       success: function(data, textStatus, xhr) {
+       success: function(dbData, textStatus, xhr) {
          if (!isUpdate) {
            $('div .notregistered').hide();
          }
-         if (data.enabled == true) {
+         if (dbData.enabled == true) {
            $('#successMessageDiv').show();
          } else {
            $('#successMessageNeedActivation').show();
          }
+         data.user = dbData;
+         data.credentials = {};
+         updateEditForm(data);
        },
        error: function(xhr, status, errorThrown) {
           if (xhr.status == 400) {
