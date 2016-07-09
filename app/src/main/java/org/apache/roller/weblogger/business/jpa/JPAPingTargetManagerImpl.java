@@ -43,6 +43,7 @@ import org.apache.roller.weblogger.business.PingResult;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.business.startup.RollerContext;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
@@ -159,7 +160,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
      * Note: this is expected to be called during initialization with transaction demarcation being handled by the
      * caller.
      *
-     * @see org.apache.roller.weblogger.ui.core.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
+     * @see RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
     private void initializePingTargets() {
         // Pattern used to parse ping targets.

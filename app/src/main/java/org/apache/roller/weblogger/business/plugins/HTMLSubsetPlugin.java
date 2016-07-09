@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.plugins.comment;
+package org.apache.roller.weblogger.business.plugins;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;

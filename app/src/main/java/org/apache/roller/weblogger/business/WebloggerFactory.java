@@ -22,8 +22,9 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.startup.MailProvider;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.business.startup.RollerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;

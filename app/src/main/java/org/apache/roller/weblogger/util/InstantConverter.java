@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.weblogger.pojos;
+package org.apache.roller.weblogger.util;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

@@ -128,7 +128,7 @@
 
     <!-- Context Listeners -->
     <listener>
-        <listener-class>org.apache.roller.weblogger.ui.core.RollerContext</listener-class>
+        <listener-class>org.apache.roller.weblogger.business.startup.RollerContext</listener-class>
     </listener>
     
     <listener>

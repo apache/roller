@@ -39,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
+import org.apache.roller.weblogger.business.plugins.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;

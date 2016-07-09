@@ -47,7 +47,7 @@
         <beans:property name="menuCache" ref="staticMenuCache"/>
     </beans:bean>
 
-    <beans:bean id="databaseProvider" class="org.apache.roller.weblogger.business.DatabaseProvider"/>
+    <beans:bean id="databaseProvider" class="org.apache.roller.weblogger.business.startup.DatabaseProvider"/>
 
     <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
         <beans:constructor-arg ref="databaseProvider"/>
@@ -259,9 +259,9 @@
     <beans:bean id="commentPlugins" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
             <beans:list>
-                <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin"/>
-                <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin"/>
-                <beans:bean class="org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin"/>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.LinkMarkupPlugin"/>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.AutoformatPlugin"/>
+                <beans:bean class="org.apache.roller.weblogger.business.plugins.HTMLSubsetPlugin"/>
             </beans:list>
         </beans:property>
     </beans:bean>

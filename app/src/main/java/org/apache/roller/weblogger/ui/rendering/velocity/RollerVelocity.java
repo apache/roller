@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.business.startup.RollerContext;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.mobile.device.DeviceType;
