@@ -272,8 +272,7 @@
                             </s:a>
                         </div>
 
-                        <div class="mediaObjectInfo"
-                             onmouseover='setupMenuButton("<s:property value='#mediaFile.id' />")'>
+                        <div class="mediaObjectInfo">
 
                             <input type="checkbox"
                                    name="selectedMediaFiles"

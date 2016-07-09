@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
@@ -68,7 +67,7 @@ public class FileContentManagerImpl implements FileContentManager {
     }
 
     @Override
-    public FileContent getFileContent(Weblog weblog, String fileId)
+    public File getFileContent(Weblog weblog, String fileId)
             throws IOException {
 
         // get a reference to the file, checks that file exists & is readable
@@ -81,7 +80,7 @@ public class FileContentManagerImpl implements FileContentManager {
         }
 
         // everything looks good, return resource
-        return new FileContent(weblog, fileId, resourceFile);
+        return resourceFile;
     }
 
     @Override

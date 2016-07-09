@@ -20,13 +20,13 @@
  */
 package org.apache.roller.weblogger.business;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
@@ -46,7 +46,7 @@ public interface FileContentManager {
      * @throws FileNotFoundException If file does not exist.
      * @throws IOException Some other problem accessing or reading file.
      */
-    FileContent getFileContent(Weblog weblog, String fileId) throws IOException;
+    File getFileContent(Weblog weblog, String fileId) throws IOException;
 
     /**
      * Save a file's content to weblog's uploads area.

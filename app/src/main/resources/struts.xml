@@ -240,7 +240,7 @@
         <action name="mediaFileView!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
             <result name="success" type="tiles">.MediaFileView</result>
-            <allowed-methods>createNewDirectory,deleteFolder,deletedSelected,moveSelected,view</allowed-methods>
+            <allowed-methods>createNewDirectory,deleteFolder,deleteSelected,moveSelected,view</allowed-methods>
         </action>
 
         <action name="mediaFileChooser" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">

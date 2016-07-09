@@ -16,7 +16,7 @@
             <AppenderRef ref="TightBlogFileAppender"/>
         </Root>
         <Logger name="org.apache.roller" level="info"/>
-        <Logger name="org.apache.struts2" level="warn"/>
+        <Logger name="org.apache.struts2" level="debug"/>
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="com.opensymphony.xwork2" level="error"/>
         <Logger name="org.springframework" level="warn"/>
