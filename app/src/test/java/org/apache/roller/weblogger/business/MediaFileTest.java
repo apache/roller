@@ -182,7 +182,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setCreatorId(testUser.getId());
+        mediaFile.setCreator(testUser);
         mediaFile.setName("test4.jpg");
         mediaFile.setNotes("This is a test image 4");
         mediaFile.setLength(3000);
@@ -220,7 +220,7 @@ public class MediaFileTest extends WebloggerTest {
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setCreatorId(testUser.getId());
+        mediaFile.setCreator(testUser);
         mediaFile.setName("test.jpg");
         mediaFile.setNotes("This is a test image");
         mediaFile.setLength(2000);
@@ -250,7 +250,7 @@ public class MediaFileTest extends WebloggerTest {
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setCreatorId(testUser.getId());
+        mediaFile.setCreator(testUser);
         mediaFile.setName("test5.jpg");
         mediaFile.setNotes("This is a test image 5");
         mediaFile.setLength(3000);
@@ -294,7 +294,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setCreatorId(testUser.getId());
+        mediaFile.setCreator(testUser);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setName("test6_1.jpg");
         mediaFile.setNotes("This is a test image 6.1");
@@ -304,7 +304,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
-        mediaFile2.setCreatorId(testUser.getId());
+        mediaFile2.setCreator(testUser);
         mediaFile2.setDirectory(rootDirectory);
         mediaFile2.setName("test6_2.jpg");
         mediaFile2.setNotes("This is a test image 6.2");
@@ -351,7 +351,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setCreatorId(testUser.getId());
+        mediaFile.setCreator(testUser);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setName("test7_1.jpg");
         mediaFile.setNotes("This is a test image 7.1");
@@ -361,7 +361,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
-        mediaFile2.setCreatorId(testUser.getId());
+        mediaFile2.setCreator(testUser);
         mediaFile2.setDirectory(rootDirectory);
         mediaFile2.setName("test7_2.jpg");
         mediaFile2.setNotes("This is a test image 7.2");

@@ -34,8 +34,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -55,8 +53,6 @@ import javax.persistence.Transient;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaFile {
 
-    private static Logger log = LoggerFactory.getLogger(MediaFile.class);
-
     private String id = Utilities.generateUUID();
     private String name;
     private String altText;
@@ -71,9 +67,6 @@ public class MediaFile {
     private String contentType;
     private Instant dateUploaded = Instant.now();
     private Instant lastUpdated = Instant.now();
-
-    // Using String creatorId instead of User creator; see comments in Weblog class for info
-    private String  creatorId = null;
     private User creator = null;
 
     private InputStream is;
@@ -261,25 +254,14 @@ public class MediaFile {
                 .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId(), true);
     }
 
-    @Column(name="creatorid", nullable=false)
-    public String getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    @Transient
+    @ManyToOne
+    @JoinColumn(name="creatorid",nullable=false)
     public User getCreator() {
-        if (creator == null  && creatorId != null) {
-            try {
-                creator = WebloggerFactory.getWeblogger().getUserManager().getUser(creatorId);
-            } catch (Exception ignored) {
-                log.error("Cannot find a User object for userId = {}", creatorId);
-            }
-        }
         return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public int getWidth() {

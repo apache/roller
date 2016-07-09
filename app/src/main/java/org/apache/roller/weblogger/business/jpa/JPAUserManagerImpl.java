@@ -29,9 +29,6 @@ import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.menu.Menu;
-import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
-import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -55,18 +52,6 @@ public class JPAUserManagerImpl implements UserManager {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    private MenuHelper menuHelper;
-
-    public void setMenuHelper(MenuHelper menuHelper) {
-        this.menuHelper = menuHelper;
-    }
-
-    private ExpiringCache editorMenuCache = null;
-
-    public void setEditorMenuCache(ExpiringCache editorMenuCache) {
-        this.editorMenuCache = editorMenuCache;
     }
 
     // cached mapping of userNames -> userIds
@@ -393,7 +378,6 @@ public class JPAUserManagerImpl implements UserManager {
             UserWeblogRole perm = new UserWeblogRole(user, weblog, role);
             this.strategy.store(perm);
         }
-        editorMenuCache.remove(generateMenuCacheKey(user.getUserName(), weblog.getHandle()));
     }
 
     @Override
@@ -424,8 +408,6 @@ public class JPAUserManagerImpl implements UserManager {
         if (existingRole != null) {
             existingRole.setPending(false);
             this.strategy.store(existingRole);
-            editorMenuCache.remove(generateMenuCacheKey(existingRole.getUser().getUserName(),
-                    existingRole.getWeblog().getHandle()));
         }
     }
 
@@ -434,10 +416,6 @@ public class JPAUserManagerImpl implements UserManager {
         // get specified role
         UserWeblogRole existingRole = getUserWeblogRole(roleToRevoke.getId());
         if (existingRole != null) {
-            if (!existingRole.isPending()) {
-                editorMenuCache.remove(generateMenuCacheKey(existingRole.getUser().getUserName(),
-                        existingRole.getWeblog().getHandle()));
-            }
             this.strategy.remove(existingRole);
         }
     }
@@ -481,23 +459,6 @@ public class JPAUserManagerImpl implements UserManager {
                 UserWeblogRole.class);
         q.setParameter(1, weblog.getId());
         return q.getResultList();
-    }
-
-    @Override
-    public Menu getEditorMenu(String username, String weblogHandle) {
-        String cacheKey = generateMenuCacheKey(username, weblogHandle);
-        Menu menu = (Menu) editorMenuCache.get(cacheKey);
-        if (menu == null) {
-            User user = getUserByUserName(username);
-            UserWeblogRole uwr = getWeblogRole(username, weblogHandle);
-            menu = menuHelper.getMenu("editor", user.getGlobalRole(), uwr == null ? null : uwr.getWeblogRole(), null);
-            editorMenuCache.put(cacheKey, menu);
-        }
-        return menu;
-    }
-
-    private String generateMenuCacheKey(String username, String weblogHandle) {
-        return "user/" + username + "/handle/" + weblogHandle;
     }
 
 }

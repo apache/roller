@@ -92,7 +92,7 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setPubTime(Instant.now());
         testEntry.setUpdateTime(Instant.now());
         testEntry.setWeblog(testWeblog);
-        testEntry.setCreatorId(testUser.getId());
+        testEntry.setCreator(testUser);
         testEntry.setStatus(PubStatus.DRAFT);
 
         WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");
@@ -315,7 +315,7 @@ public class WeblogEntryTest extends WebloggerTest {
             testEntry.setPubTime(Instant.now());
             testEntry.setUpdateTime(Instant.now());
             testEntry.setWeblog(testWeblog);
-            testEntry.setCreatorId(testUser.getId());
+            testEntry.setCreator(testUser);
             testEntry.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
 
             // shortcut
@@ -814,7 +814,7 @@ public class WeblogEntryTest extends WebloggerTest {
         testEntry.setUpdateTime(Instant.now());
         testEntry.setWeblog(testWeblog);
         testEntry.setStatus(PubStatus.DRAFT);
-        testEntry.setCreatorId(testUser.getId());
+        testEntry.setCreator(testUser);
 
         WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");
         testEntry.setCategory(cat);

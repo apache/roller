@@ -83,8 +83,6 @@
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
-        <beans:property name="editorMenuCache" ref="editorMenuCache"/>
-        <beans:property name="menuHelper" ref="menuHelper"/>
     </beans:bean>
 
     <beans:bean id="weblogManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl">
@@ -347,12 +345,6 @@
     <beans:bean id="weblogBlacklistCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogblacklist"/>
         <beans:property name="size" value="200"/>
-        <beans:property name="timeoutSec" value="3600"/>
-    </beans:bean>
-
-    <beans:bean id="editorMenuCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.ExpiringCache">
-        <beans:property name="cacheHandlerId" value="cache.editormenu"/>
-        <beans:property name="size" value="75"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
