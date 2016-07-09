@@ -14,22 +14,25 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- *
- * Source file modified from the original ASF source; all changes made
- * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.plugins.entry;
 
-import org.apache.roller.weblogger.pojos.WeblogEntry;
+package org.apache.roller.weblogger.business.plugins;
+
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 
 /**
- * Interface for Roller weblog entry plugins.
+ * Interface for weblog entry comment plugins.
  *
- * Weblog entry plugins are used to make transformations to the entry text.
- * These plugins affect both the entry summary and entry body.
+ * Weblog entry comment plugins are used to make transformations to comment text.
  */
-public interface WeblogEntryPlugin {
+public interface WeblogEntryCommentPlugin {
+    
+    /**
+     * A unique identifier for the plugin.
+     */
+    String getId();
+    
     
     /**
      * Returns the display name of this Plugin.
@@ -44,18 +47,12 @@ public interface WeblogEntryPlugin {
     
     
     /**
-     * Give plugin a chance to initialize and add objects to its rendering model.
-     */
-    void init();
-    
-    
-    /**
      * Apply plugin to the specified text.
      *
-     * @param entry       Entry being rendered.
+     * @param comment     Comment being rendered.
      * @param str         String to which plugin should be applied.
-     * @return            Results of applying plugin to entry.
+     * @return            Results of applying plugin to string.
      */
-    String render(WeblogEntry entry, String str);
+    String render(final WeblogEntryComment comment, String str);
     
 }

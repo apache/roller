@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.roller.weblogger.WebloggerTest;
+import org.apache.roller.weblogger.business.startup.DatabaseProvider;
 import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 import org.junit.Before;
 import org.junit.Test;

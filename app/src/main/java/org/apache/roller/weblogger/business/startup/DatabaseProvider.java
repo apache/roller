@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
 */
-package org.apache.roller.weblogger.business;
+package org.apache.roller.weblogger.business.startup;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,9 +29,10 @@ import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.roller.weblogger.business.startup.StartupException;
 
 /**
  * Encapsulates database configuration via JDBC properties or JNDI.

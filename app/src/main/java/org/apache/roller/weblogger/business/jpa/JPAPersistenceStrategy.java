@@ -35,7 +35,7 @@ import javax.naming.NamingException;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 
-import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.startup.DatabaseProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

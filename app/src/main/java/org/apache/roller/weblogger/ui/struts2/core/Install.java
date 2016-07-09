@@ -25,7 +25,7 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.List;
 
-import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.startup.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
 import org.apache.roller.weblogger.business.startup.StartupException;

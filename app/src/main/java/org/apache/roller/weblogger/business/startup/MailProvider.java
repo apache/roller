@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business;
+package org.apache.roller.weblogger.business.startup;
 
 import java.util.Properties;
 import javax.mail.Authenticator;
@@ -29,6 +29,8 @@ import javax.mail.Transport;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.startup.StartupException;
 
 /**

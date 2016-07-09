@@ -18,19 +18,16 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.core;
+package org.apache.roller.weblogger.business.startup;
 
 import java.io.File;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserCache;
-import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
