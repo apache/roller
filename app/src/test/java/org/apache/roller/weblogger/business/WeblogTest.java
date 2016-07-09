@@ -71,7 +71,7 @@ public class WeblogTest extends WebloggerTest {
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
         testWeblog.setDateCreated(Instant.now());
-        testWeblog.setCreatorId(testUser.getId());
+        testWeblog.setCreator(testUser);
 
         // make sure test weblog does not exist
         weblog = weblogManager.getWeblogByHandle(testWeblog.getHandle());

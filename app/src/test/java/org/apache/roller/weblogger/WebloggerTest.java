@@ -175,7 +175,7 @@ abstract public class WebloggerTest {
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
         testWeblog.setDateCreated(Instant.now());
-        testWeblog.setCreatorId(creator.getId());
+        testWeblog.setCreator(creator);
 
         // add weblog
         weblogManager.addWeblog(testWeblog);
@@ -218,7 +218,7 @@ abstract public class WebloggerTest {
         testEntry.setUpdateTime(Instant.now());
         testEntry.setStatus(status);
         testEntry.setWeblog(getManagedWeblog(weblog));
-        testEntry.setCreatorId(user.getId());
+        testEntry.setCreator(user);
         testEntry.setCategory(cat);
 
         // store entry

@@ -36,9 +36,10 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -95,13 +96,6 @@ public class Weblog {
     private int     entriesPerPage   = 15;
     private Instant lastModified = Instant.now();
     private String  about            = null;
-    /*
-     * String creatorId used instead of User object to prevent models from having access to sensitive User
-     * info (passwords etc.) via this object.  Transient User object without sensitive fields used instead.
-     * (Avoiding direct use of User in a @ManyToOne relationship to avoid JPA trying to persist the User
-     * when this Weblog object is persisted.)
-     */
-    private String  creatorId        = null;
     private User    creator          = null;
     private String  analyticsCode    = null;
     private int     hitsToday        = 0;
@@ -130,7 +124,7 @@ public class Weblog {
             String timeZone) {
         
         this.handle = handle;
-        this.creatorId = creator.getId();
+        this.creator = creator;
         this.name = name;
         this.tagline = desc;
         this.theme = theme;
@@ -191,22 +185,15 @@ public class Weblog {
         this.tagline = tagline;
     }
 
-    @Column(name="creatorid", nullable=false)
-    public String getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    @Transient
+    @ManyToOne
+    @JoinColumn(name="creatorid",nullable=false)
     @JsonIgnore
     public User getCreator() {
-        if (creator == null) {
-            creator = WebloggerFactory.getWeblogger().getUserManager().getUser(creatorId);
-        }
         return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public String getEditorPage() {
@@ -313,7 +300,7 @@ public class Weblog {
         this.setName(other.getName());
         this.setHandle(other.getHandle());
         this.setTagline(other.getTagline());
-        this.setCreatorId(other.getCreatorId());
+        this.setCreator(other.getCreator());
         this.setEditorPage(other.getEditorPage());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());

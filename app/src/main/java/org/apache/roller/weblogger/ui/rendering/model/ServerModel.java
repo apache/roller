@@ -92,12 +92,4 @@ public class ServerModel implements Model {
         return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
     }
 
-    public String getDefaultAnalyticsTrackingCode() {
-        return propertiesManager.getStringProperty("analytics.default.tracking.code");
-    }
-
-    public boolean getAnalyticsOverrideAllowed() {
-        return propertiesManager.getBooleanProperty("analytics.code.override.allowed");
-    }
-
 }

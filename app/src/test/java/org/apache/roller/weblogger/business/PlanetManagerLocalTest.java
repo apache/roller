@@ -76,7 +76,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         testEntry1.setPubTime(testTime);
         testEntry1.setUpdateTime(testTime);
         testEntry1.setWeblog(testWeblog);
-        testEntry1.setCreatorId(testUser.getId());
+        testEntry1.setCreator(testUser);
         testEntry1.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
         testEntry1.setStatus(PubStatus.PUBLISHED);
         weblogEntryManager.saveWeblogEntry(testEntry1);
@@ -89,7 +89,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         testEntry2.setPubTime(testTime);
         testEntry2.setUpdateTime(testTime);
         testEntry2.setWeblog(testWeblog);
-        testEntry2.setCreatorId(testUser.getId());
+        testEntry2.setCreator(testUser);
         testEntry2.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
         testEntry2.setStatus(PubStatus.PUBLISHED);
         weblogEntryManager.saveWeblogEntry(testEntry2);
@@ -102,7 +102,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
         testEntry3.setPubTime(testTime);
         testEntry3.setUpdateTime(testTime);
         testEntry3.setWeblog(testWeblog);
-        testEntry3.setCreatorId(testUser.getId());
+        testEntry3.setCreator(testUser);
         testEntry3.setCategory(weblogManager.getWeblogCategoryByName(testWeblog, "General"));
         testEntry3.setStatus(PubStatus.PUBLISHED);
         weblogEntryManager.saveWeblogEntry(testEntry3);

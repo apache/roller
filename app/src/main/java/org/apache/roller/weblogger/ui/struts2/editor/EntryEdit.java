@@ -145,7 +145,7 @@ public final class EntryEdit extends UIAction {
             // Create and initialize new, not-yet-saved Weblog Entry
             entry = new WeblogEntry();
             entry.setId(Utilities.generateUUID());
-            entry.setCreatorId(getAuthenticatedUser().getId());
+            entry.setCreator(getAuthenticatedUser());
             entry.setWeblog(getActionWeblog());
         } else {
             // already saved entry

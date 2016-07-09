@@ -24,6 +24,8 @@ package org.apache.roller.weblogger.ui.rendering.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
@@ -161,8 +163,25 @@ public class PageModel implements Model {
         // the search results model will extend this class and override this
         return false;
     }
-    
-    
+
+    /**
+     * Adds a tracking code for website analytics (e.g. Google Analytics). Will use the blog-defined
+     * tracking code if defined and permitted by the installation, else the server-defined tracking
+     * code if defined will be used.
+     */
+    public String getAnalyticsTrackingCode() {
+        if (preview) {
+            return "";
+        } else {
+            if (propertiesManager.getBooleanProperty("analytics.code.override.allowed")
+                    && !StringUtils.isBlank(pageRequest.getWeblog().getAnalyticsCode())) {
+                return pageRequest.getWeblog().getAnalyticsCode();
+            } else {
+                return propertiesManager.getStringProperty("analytics.default.tracking.code");
+            }
+        }
+    }
+
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */

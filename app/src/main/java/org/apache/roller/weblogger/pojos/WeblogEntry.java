@@ -97,8 +97,6 @@ public class WeblogEntry {
     private String plugins;
     private Integer commentDays = 7;
     private PubStatus status;
-    // Using String creatorId instead of User creator; see comments in Weblog class for info
-    private String  creatorId = null;
     private User creator = null;
     private String searchDescription;
 
@@ -134,7 +132,7 @@ public class WeblogEntry {
         this.id = Utilities.generateUUID();
         this.category = category;
         this.weblog = weblog;
-        this.creatorId = creator.getId();
+        this.creator = creator;
         this.title = title;
         this.text = text;
         this.anchor = anchor;
@@ -154,7 +152,7 @@ public class WeblogEntry {
      */
     public void setData(WeblogEntry other) {
         this.setId(other.getId());
-        this.setCreatorId(other.getCreatorId());
+        this.setCreator(other.getCreator());
         this.setCategory(other.getCategory());
         this.setWeblog(other.getWeblog());
         this.setTitle(other.getTitle());
@@ -234,13 +232,14 @@ public class WeblogEntry {
         this.weblog = weblog;
     }
 
-    @Column(name="creatorid", nullable=false)
-    public String getCreatorId() {
-        return creatorId;
+    @ManyToOne
+    @JoinColumn(name="creatorid",nullable=false)
+    public User getCreator() {
+        return creator;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     @Basic(optional=false)
@@ -411,18 +410,6 @@ public class WeblogEntry {
 
     public void setTags(Set<WeblogEntryTag> tagSet) {
          this.tagSet = tagSet;
-    }
-
-    @Transient
-    public User getCreator() {
-        if (creator == null) {
-            try {
-                creator = WebloggerFactory.getWeblogger().getUserManager().getUser(creatorId);
-            } catch (Exception ignored) {
-                log.error("Cannot find a User object for userId = {}", creatorId);
-            }
-        }
-        return creator;
     }
 
     /**
