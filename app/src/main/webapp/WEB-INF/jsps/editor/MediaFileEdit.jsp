@@ -34,6 +34,17 @@
             $("#entry_bean_name").get(0).disabled = false;
             $("#entry_bean_name").get(0).value = name;
         });
+
+        // do not send empty file fields
+        $('#entry').submit(function() {
+          var fileVal = $('#fileControl').val();
+          if (fileVal === undefined || fileVal === "") {
+             $('#fileControl').removeAttr('name');
+          }
+        });
+        $('#cancelbtn').click(function() {
+          $('#entry').attr('novalidate','');
+        });
     });
 
     function getFileName(fullName) {
@@ -50,7 +61,6 @@
        }
        return fileName;
     }
-
 </script>
 
 <s:if test="actionName == 'mediaFileEdit'">
@@ -66,6 +76,7 @@
         </div>
     </s:if>
 </s:if>
+
 <s:else>
     <s:set var="subtitleKey">mediaFileAdd.title</s:set>
     <s:set var="mainAction">mediaFileAdd</s:set>
@@ -189,7 +200,12 @@
             </td>
             <td>
                 <div id="fileControldiv" class="miscControl">
-                    <s:file id="fileControl" name="uploadedFile" size="30" />
+                    <s:if test="actionName == 'mediaFileEdit'">
+                        <input type="file" name="uploadedFile" size="30" value="" id="fileControl"/>
+                    </s:if>
+                    <s:else>
+                        <input type="file" name="uploadedFile" size="30" value="" id="fileControl" required/>
+                    </s:else>
                 </div>
             </td>
         </tr>
@@ -204,7 +220,7 @@
         <s:else>
            <s:submit value="%{getText('mediaFileAdd.upload')}"/>
         </s:else>
-        <s:submit value="%{getText('generic.cancel')}" action="mediaFileEdit!cancel" />
+        <s:submit id="cancelbtn" value="%{getText('generic.cancel')}" action="mediaFileEdit!cancel" />
     </div>
 
 </s:form>

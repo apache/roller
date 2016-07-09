@@ -20,6 +20,9 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.Comparator;
@@ -78,8 +81,8 @@ public class MediaFile {
     @JsonIgnore
     private MediaDirectory directory;
 
-    private FileContent content;
-    private FileContent thumbnail;
+    private File content;
+    private File thumbnail;
 
     // Not persisted, for use on forms only.
     private String directoryId;
@@ -208,8 +211,14 @@ public class MediaFile {
         if (is != null) {
             return is;
         } else if (content != null) {
-            return content.getInputStream();
+            try {
+                return new FileInputStream(content);
+            } catch (FileNotFoundException ex) {
+                // should never happen, rethrow as runtime exception
+                throw new RuntimeException("Error constructing input stream", ex);
+            }
         }
+
         return null;
     }
 
@@ -217,7 +226,7 @@ public class MediaFile {
         this.is = is;
     }
 
-    public void setContent(FileContent content) {
+    public void setContent(File content) {
         this.content = content;
     }
 
@@ -297,12 +306,17 @@ public class MediaFile {
     @Transient
     public InputStream getThumbnailInputStream() {
         if (thumbnail != null) {
-            return thumbnail.getInputStream();
+            try {
+                return new FileInputStream(thumbnail);
+            } catch (FileNotFoundException ex) {
+                // should never happen, rethrow as runtime exception
+                throw new RuntimeException("Error constructing input stream", ex);
+            }
         }
         return null;
     }
 
-    public void setThumbnailContent(FileContent thumbnail) {
+    public void setThumbnailContent(File thumbnail) {
         this.thumbnail = thumbnail;
     }
 

@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequest;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -47,22 +48,24 @@ public class SpringMultipartParser implements MultiPartRequest {
 
     private MultipartHttpServletRequest multipartRequest;
 
-    private MultiValueMap<String, File> multiFileMap = new LinkedMultiValueMap<String, File>();
+    private MultiValueMap<String, File> multiFileMap = new LinkedMultiValueMap<>();
 
     public void parse(HttpServletRequest request, String saveDir)
             throws IOException {
         multipartRequest =
                 WebUtils.getNativeRequest(request, MultipartHttpServletRequest.class);
 
-        if(multipartRequest == null) {
+        if (multipartRequest == null) {
             LOG.warn("Unable to MultipartHttpServletRequest");
             errors.add("Unable to MultipartHttpServletRequest");
             return;
         }
         multipartMap = multipartRequest.getMultiFileMap();
-        for(Entry<String, List<MultipartFile>> fileEntry : multipartMap.entrySet()) {
+        multiFileMap.clear();
+
+        for (Entry<String, List<MultipartFile>> fileEntry : multipartMap.entrySet()) {
             String fieldName = fileEntry.getKey();
-            for(MultipartFile file : fileEntry.getValue()) {
+            for (MultipartFile file : fileEntry.getValue()) {
                 File temp = File.createTempFile("upload", ".dat");
                 file.transferTo(temp);
                 multiFileMap.add(fieldName, temp);
@@ -130,17 +133,14 @@ public class SpringMultipartParser implements MultiPartRequest {
         return multipartRequest.getParameterValues(name);
     }
 
-    public List getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
     public void cleanUp() {
-        for(List<File> files : multiFileMap.values()) {
-            for(File file : files) {
-                file.delete();
-            }
+        for (List<File> files : multiFileMap.values()) {
+            files.forEach(File::delete);
         }
-
         // Spring takes care of the original File objects
     }
 }

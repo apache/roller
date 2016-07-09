@@ -20,12 +20,12 @@
  */
 package org.apache.roller.weblogger.business;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -90,7 +90,7 @@ public class FileContentManagerTest extends WebloggerTest {
 
         // File should not exist initially
         try {
-            FileContent fileContent = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
+            fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
             assertTrue("Non-existent file retrieved without any exception", false);
         } catch (FileNotFoundException e) {
             assertTrue("Exception thrown for non-existent file as expected", true);
@@ -101,17 +101,16 @@ public class FileContentManagerTest extends WebloggerTest {
         fileContentManager.saveFileContent(testWeblog, "bookmarks-file-id", is);
 
         // make sure file was stored successfully
-        FileContent fileContent1 = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
-        assertEquals("bookmarks-file-id", fileContent1.getFileId());
-
+        File fileContent1 = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
+        assertNotNull(fileContent1);
 
         // delete file
         fileContentManager.deleteFile(testWeblog, "bookmarks-file-id");
 
         // File should not exist after delete
         try {
-            FileContent fileContent = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
-            assertTrue("Non-existant file retrieved without any exception", false);
+            fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
+            assertTrue("Non-existent file retrieved without any exception", false);
         } catch (FileNotFoundException e) {
             assertTrue("Exception thrown for non-existant file as expected", true);
         }

@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -36,6 +35,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -145,10 +146,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private void updateThumbnail(MediaFile mediaFile) {
         try {
-            FileContent fc = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId());
+            File fileContent = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId());
             BufferedImage img;
 
-            img = ImageIO.read(fc.getInputStream());
+            img = ImageIO.read(new FileInputStream(fileContent));
 
             // determine and save width and height
             mediaFile.setWidth(img.getWidth());
@@ -224,11 +225,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public MediaFile getMediaFile(String id, boolean includeContent) throws IOException {
         MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
         if (includeContent) {
-            FileContent content = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), id);
+            File content = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), id);
             mediaFile.setContent(content);
 
             try {
-                FileContent thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
+                File thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
                         id + "_sm");
                 mediaFile.setThumbnailContent(thumbnail);
             } catch (Exception e) {
