@@ -27,8 +27,10 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.ui.struts2.core.GlobalConfig.RegistrationOption;
 
 /**
  * Handle user logins.
@@ -113,12 +115,14 @@ public class Login extends UIAction {
             if (user != null) {
                 // enable user account
                 user.setActivationCode(null);
-                if (user.isApproved()) {
-                    user.setEnabled(Boolean.TRUE);
-                    setActivationStatus("active");
-                } else {
+                RegistrationOption regProcess = RegistrationOption.valueOf(getProp("user.registration.process"));
+                if (RegistrationOption.APPROVAL_REQUIRED.equals(regProcess)) {
+                    user.setStatus(UserStatus.EMAILVERIFIED);
                     setActivationStatus("activePending");
                     mailManager.sendRegistrationApprovalRequest(user);
+                } else {
+                    user.setStatus(UserStatus.ENABLED);
+                    setActivationStatus("active");
                 }
                 userManager.saveUser(user);
             } else {

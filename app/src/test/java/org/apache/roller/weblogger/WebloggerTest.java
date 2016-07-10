@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -143,7 +144,7 @@ abstract public class WebloggerTest {
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
         testUser.setDateCreated(Instant.now());
-        testUser.setEnabled(Boolean.TRUE);
+        testUser.setStatus(UserStatus.ENABLED);
         userManager.saveUser(testUser);
 
         // query for the user to make sure we return the persisted object

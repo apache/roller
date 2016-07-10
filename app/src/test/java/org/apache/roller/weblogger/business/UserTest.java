@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class UserTest extends WebloggerTest {
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
         testUser.setDateCreated(Instant.now());
-        testUser.setEnabled(Boolean.TRUE);
+        testUser.setStatus(UserStatus.ENABLED);
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         
         // make sure test user does not exist
@@ -103,7 +104,7 @@ public class UserTest extends WebloggerTest {
         // add test user
         User testUser = setupUser("usertestuser");
         User testUser2 = setupUser("disabledtestuser");
-        testUser2.setEnabled(false);
+        testUser2.setStatus(UserStatus.DISABLED);
         endSession(true);
         
         // lookup by username
@@ -124,7 +125,7 @@ public class UserTest extends WebloggerTest {
         assertEquals(2, users.size());
 
         // lookup by getUsers() - enabled only
-        usc.setEnabled(true);
+        usc.setStatus(UserStatus.ENABLED);
         users = userManager.getUsers(usc);
         assertEquals(1, users.size());
         user1 = users.get(0);
@@ -132,7 +133,7 @@ public class UserTest extends WebloggerTest {
         assertEquals(testUser.getScreenName(), user1.getScreenName());
 
         // lookup by getUsers() - disabled only
-        usc.setEnabled(false);
+        usc.setStatus(UserStatus.DISABLED);
         users = userManager.getUsers(usc);
         assertEquals(1, users.size());
         user2 = users.get(0);
@@ -140,7 +141,7 @@ public class UserTest extends WebloggerTest {
         assertEquals(testUser2.getScreenName(), user2.getScreenName());
 
         // make sure disable users are not returned
-        user1.setEnabled(Boolean.FALSE);
+        user1.setStatus(UserStatus.DISABLED);
         userManager.saveUser(user1);
         user1 = userManager.getUserByUserName(testUser.getUserName());
         assertNull(user1);

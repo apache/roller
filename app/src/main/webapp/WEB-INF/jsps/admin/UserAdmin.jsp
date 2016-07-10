@@ -113,11 +113,11 @@ var contextPath = "${pageContext.request.contextPath}";
           </tr>
 
           <tr>
-              <td class="label"><label for="userEnabled"><s:text name="userAdmin.enabled" /></label></td>
+              <td class="label"><label for="userStatus"><s:text name="userAdmin.userStatus" /></label></td>
               <td class="field">
-                  <input type="checkbox" name="enabled" data-link="user.enabled"/>
+                  <s:select name="status" size="1" list="userStatusList" listKey="left" listValue="right" data-link="user.status" required=""/>
               </td>
-              <td class="description"><s:text name="userAdmin.tip.enabled" /></td>
+              <td class="description"><s:text name="userAdmin.tip.userStatus" /></td>
           </tr>
 
           <tr>

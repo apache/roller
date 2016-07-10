@@ -98,12 +98,13 @@ public interface Template {
      * SHARED - file-based only, the template came from a shared theme and was not overridden by the user
      *          during template customization.
      * OVERRIDDEN - A database-stored template that overrides one provided by a shared theme.
-     * NONSHARED - A database-stored template that does not override a shared template.
+     * SPECIFICBLOG - A database-stored template that does not override a shared template.  It is defined
+     *                for a single blog only.
      */
     enum TemplateDerivation {
         SHARED("Default"),
         OVERRIDDEN("Override"),
-        NONSHARED("Blog-Only");
+        SPECIFICBLOG("Blog-Only");
 
         private final String readableName;
 

@@ -56,7 +56,7 @@
                 <s:else>
                     <a href="<s:url action='login-redirect' namespace='/tb-ui' />"><s:text name="navigationBar.login"/></a>
 
-                    <s:if test="getBooleanProp('users.registration.enabled') && getProp('authentication.method') != 'ldap'">
+                    <s:if test="getProp('user.registration.process') != 'DISABLED' && getProp('authentication.method') != 'ldap'">
                         | <a href="<s:url action='register' namespace='/tb-ui' />"><s:text name="navigationBar.register"/></a>
                     </s:if>
                 </s:else>

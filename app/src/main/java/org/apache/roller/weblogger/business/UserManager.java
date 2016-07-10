@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.business;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -102,10 +103,10 @@ public interface UserManager {
      * Lookup a user by UserName with the given enabled status.
      * 
      * @param userName User Name of user to lookup.
-     * @param enabled True if user is enabled, false otherwise.
+     * @param status, if not null, status user must have
      * @return The user, or null if not found or of the proper enabled status.
      */
-    User getUserByUserName(String userName, Boolean enabled);
+    User getUserByUserName(String userName, UserStatus status);
 
     /**
      * Lookup a user by ScreenName
