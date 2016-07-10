@@ -37,7 +37,7 @@ import javax.validation.constraints.Pattern;
 @NamedQueries({
         @NamedQuery(name="UserCredentials.getByUserName",
                 query="SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
-                        "AND u.id = uc.id AND u.enabled = true AND u.approved = true"),
+                        "AND u.id = uc.id AND u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED"),
         @NamedQuery(name="UserCredentials.changePassword",
                 query="UPDATE UserCredentials u SET u.password = ?1 WHERE u.id = ?2")
 })

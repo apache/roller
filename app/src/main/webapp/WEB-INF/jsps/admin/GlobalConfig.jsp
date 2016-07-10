@@ -53,6 +53,20 @@
                       </td>
                   </s:if>
 
+                  <%-- special condition for enrollment process --%>
+                  <s:if test="#pd.name == 'user.registration.process'">
+                      <td class="field">
+                          <select name='<s:property value="#pd.name"/>'>
+                                <s:iterator var="item" value="registrationOptionList">
+                                    <option value='<s:property value="#item.left"/>'
+                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
+                                        <s:property value="#item.right"/>
+                                    </option>
+                                </s:iterator>
+                          </select>
+                      </td>
+                  </s:if>
+
                   <%-- "string" type means use a simple textbox --%>
                   <s:elseif test="#pd.type == 'string'">
                     <td class="field"><input type="text" name='<s:property value="#pd.name"/>'

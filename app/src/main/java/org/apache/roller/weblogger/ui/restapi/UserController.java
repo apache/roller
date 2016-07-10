@@ -47,9 +47,11 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.struts2.core.GlobalConfig.RegistrationOption;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
@@ -126,14 +128,13 @@ public class UserController {
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/userlist", method = RequestMethod.GET)
     public Map<String, String> getUserEditList() throws ServletException {
         UserSearchCriteria usc = new UserSearchCriteria();
-        usc.setApproved(true);
         return createUserMap(userManager.getUsers(usc));
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval", method = RequestMethod.GET)
     public List<User> getRegistrationsNeedingApproval() throws ServletException {
         UserSearchCriteria usc = new UserSearchCriteria();
-        usc.setApproved(false);
+        usc.setStatus(UserStatus.EMAILVERIFIED);
         return userManager.getUsers(usc);
     }
 
@@ -141,9 +142,8 @@ public class UserController {
     public void approveRegistration(@PathVariable String id, HttpServletResponse response) {
         User acceptedUser = userManager.getUser(id);
         if (acceptedUser != null) {
-            if (!acceptedUser.isApproved()) {
-                acceptedUser.setApproved(true);
-                acceptedUser.setEnabled(true);
+            if (!UserStatus.ENABLED.equals(acceptedUser.getStatus())) {
+                acceptedUser.setStatus(UserStatus.ENABLED);
                 userManager.saveUser(acceptedUser);
                 mailManager.sendRegistrationApprovedNotice(acceptedUser);
             }
@@ -175,7 +175,7 @@ public class UserController {
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
             // member list excludes inactive accounts
             UserSearchCriteria usc = new UserSearchCriteria();
-            usc.setEnabled(true);
+            usc.setStatus(UserStatus.ENABLED);
             usc.setOffset(0);
             List<User> potentialUsers = userManager.getUsers(usc);
 
@@ -249,7 +249,6 @@ public class UserController {
                 User user = new User();
                 user.setUserName(userDetails.getUsername());
                 user.setLocale(Locale.getDefault().toString());
-                user.setEnabled(true);
                 return ResponseEntity.ok().body(user);
             }
         }
@@ -258,21 +257,20 @@ public class UserController {
 
     @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
     public ResponseEntity registerUser(@Valid @RequestBody UserData newData, HttpServletResponse response) throws ServletException {
-        ValidationError maybeError = advancedValidate(newData, true);
+        ValidationError maybeError = advancedValidate(null, newData, true);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
         }
 
         long userCount = userManager.getUserCount();
-        if (userCount == 0 || propertiesManager.getBooleanProperty("users.registration.enabled")) {
-            boolean mustBeApproved = userCount > 0 && propertiesManager.getBooleanProperty("user.require.registration.approval");
-            boolean mustActivate = mustBeApproved || propertiesManager.getBooleanProperty("user.account.email.activation");
-            newData.user.setEnabled(!mustActivate);
+        RegistrationOption option = RegistrationOption.valueOf(propertiesManager.getStringProperty("user.registration.process"));
+        if (userCount == 0 || !RegistrationOption.DISABLED.equals(option)) {
+            boolean mustActivate = userCount > 0 && option.getLevel() >= RegistrationOption.EMAIL.getLevel();
             if (mustActivate) {
                 String activationCode = UUID.randomUUID().toString();
                 newData.user.setActivationCode(activationCode);
             }
-            newData.user.setApproved(!mustBeApproved);
+            newData.user.setStatus(mustActivate ? UserStatus.REGISTERED : UserStatus.ENABLED);
 
             User user = new User();
             user.setId(Utilities.generateUUID());
@@ -300,7 +298,7 @@ public class UserController {
         User authenticatedUser = userManager.getUserByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
-            ValidationError maybeError = advancedValidate(newData, false);
+            ValidationError maybeError = advancedValidate(null, newData, false);
             if (maybeError != null) {
                 return ResponseEntity.badRequest().body(maybeError);
             }
@@ -314,7 +312,7 @@ public class UserController {
     public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                      HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
-        ValidationError maybeError = advancedValidate(newData, false);
+        ValidationError maybeError = advancedValidate(user, newData, false);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
         }
@@ -353,13 +351,12 @@ public class UserController {
                 user.setScreenName(newData.user.getScreenName().trim());
                 user.setEmailAddress(newData.user.getEmailAddress().trim());
                 user.setLocale(newData.user.getLocale());
-                user.setEnabled(newData.user.isEnabled());
-                user.setApproved(newData.user.isApproved());
-                if (!user.isEnabled() && StringUtils.isNotEmpty(newData.user.getActivationCode())) {
+                if (!UserStatus.ENABLED.equals(user.getStatus()) && StringUtils.isNotEmpty(newData.user.getActivationCode())) {
                     user.setActivationCode(newData.user.getActivationCode());
                 }
 
                 if (add) {
+                    user.setStatus(newData.user.getStatus());
                     if (userManager.getUserCount() == 0) {
                         // first person in is always an admin
                         user.setGlobalRole(GlobalRole.ADMIN);
@@ -368,9 +365,10 @@ public class UserController {
                                 ? GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
                     }
                 } else {
-                    // users can't alter own roles
+                    // users can't alter own roles or status
                     if (!user.getUserName().equals(p.getName())) {
                         user.setGlobalRole(newData.user.getGlobalRole());
+                        user.setStatus(newData.user.getStatus());
                     }
                 }
 
@@ -394,8 +392,33 @@ public class UserController {
         }
     }
 
-    private ValidationError advancedValidate(UserData data, boolean isAdd) {
+    private ValidationError advancedValidate(User currentUser, UserData data, boolean isAdd) {
         BindException be = new BindException(data, "new data object");
+
+        if (currentUser != null) {
+            UserStatus currentStatus = currentUser.getStatus();
+            if (currentStatus != data.getUser().getStatus()) {
+                switch (currentStatus) {
+                    case ENABLED:
+                        if (data.getUser().getStatus() != UserStatus.DISABLED) {
+                            be.addError(new ObjectError("User object", bundle.getString("error.useradmin.enabled.only.disabled")));
+                        }
+                        break;
+                    case DISABLED:
+                        if (data.getUser().getStatus() != UserStatus.ENABLED) {
+                            be.addError(new ObjectError("User object", bundle.getString("error.useradmin.disabled.only.enabled")));
+                        }
+                        break;
+                    case REGISTERED:
+                    case EMAILVERIFIED:
+                        if (data.getUser().getStatus() != UserStatus.ENABLED) {
+                            be.addError(new ObjectError("User object", bundle.getString("error.useradmin.nonenabled.only.enabled")));
+                        }
+                        break;
+                }
+            }
+        }
+
 
         String maybePassword = data.credentials.getPasswordText();
         if (!StringUtils.isEmpty(maybePassword)) {

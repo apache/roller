@@ -46,7 +46,7 @@ import javax.validation.constraints.Pattern;
         @NamedQuery(name="User.getUserByActivationCode",
                 query="SELECT u FROM User u WHERE u.activationCode = ?1"),
         @NamedQuery(name="User.getByEnabled&EndDateOrderByStartDateDesc",
-                query="SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
+                query="SELECT u FROM User u WHERE u.status = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getByEndDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.dateCreated < ?1 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getByUserName",
@@ -54,17 +54,16 @@ import javax.validation.constraints.Pattern;
         @NamedQuery(name="User.getByScreenName",
                 query="SELECT u FROM User u WHERE u.screenName= ?1"),
         @NamedQuery(name="User.getByUserName&Enabled",
-                query="SELECT u FROM User u WHERE u.userName= ?1 AND u.enabled = ?2"),
+                query="SELECT u FROM User u WHERE u.userName= ?1 AND u.status = ?2"),
         @NamedQuery(name="User.getByEndDate&StartDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getGlobalRole",
                 query="SELECT u.globalRole FROM User u WHERE u.userName = ?1"),
         @NamedQuery(name="User.getCountEnabledDistinct",
-                query="SELECT COUNT(u) FROM User u WHERE u.enabled = ?1")
+                query="SELECT COUNT(u) FROM User u WHERE u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
-    
     private String  id;
 
     @NotBlank(message = "{error.add.user.missingUserName}")
@@ -74,14 +73,13 @@ public class User {
 
     @NotBlank(message = "{Register.error.screenNameNull}")
     private String  screenName;
+    private UserStatus status = UserStatus.DISABLED;
 
     @NotBlank(message = "{Register.error.emailAddressNull}")
     @Email(message = "{error.add.user.badEmail}")
     private String  emailAddress;
     private Instant dateCreated;
     private String  locale;
-    private Boolean enabled = Boolean.FALSE;
-    private Boolean approved = Boolean.FALSE;
     private String  activationCode;
     private Instant lastLogin;
 
@@ -115,6 +113,16 @@ public class User {
 
     public void setGlobalRole(GlobalRole globalRole) {
         this.globalRole = globalRole;
+    }
+
+    @Basic(optional=false)
+    @Enumerated(EnumType.STRING)
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     public boolean hasEffectiveGlobalRole(GlobalRole roleToCheck) {
@@ -164,32 +172,6 @@ public class User {
         this.locale = locale;
     }
 
-    /**
-     * Is this user account enabled?  Disabled accounts cannot login.
-     */
-    @Basic(optional=false)
-    public Boolean isEnabled() {
-        return this.enabled;
-    }
-    
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    /**
-     * New user with validated email account whose registration has been
-     * approved yet by a system administrator?  Unapproved accounts cannot
-     * log in.
-     */
-    @Basic(optional=false)
-    public Boolean isApproved() {
-        return approved;
-    }
-
-    public void setApproved(Boolean approved) {
-        this.approved = approved;
-    }
-
     public String getActivationCode() {
         return activationCode;
     }
@@ -205,9 +187,8 @@ public class User {
         stringVal += ", " + getUserName();
         stringVal += ", " + getScreenName();
         stringVal += ", " + getGlobalRole();
-        stringVal += ", " + getEmailAddress();
         stringVal += ", " + getDateCreated();
-        stringVal += ", " + isEnabled();
+        stringVal += ", " + status;
         stringVal += "}";
         return stringVal;
     }

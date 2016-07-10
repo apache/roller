@@ -1,10 +1,7 @@
 $(function() {
   var data = {
-    "user" : {
-      "approved" : true
-    },
-    "credentials" : {
-    }
+    "user" : {},
+    "credentials" : {}
   };
   function formatDateFunction(dateValue) {
     return (dateValue == null) ? null : new Date(dateValue).toLocaleString();
@@ -117,7 +114,7 @@ $(function() {
     checkLoggedIn(function() {
       $.ajax({
          type: "PUT",
-         url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + view.data.id,
+         url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + view.data.user.id,
          data: JSON.stringify(view.data),
          contentType: "application/json",
          success: function(dbData, textStatus, xhr) {

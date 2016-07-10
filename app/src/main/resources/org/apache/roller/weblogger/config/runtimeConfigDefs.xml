@@ -73,18 +73,9 @@
 
     <!-- User Settings Group -->
     <display-group name="userSettings" key="configForm.userSettings">
-
-        <property-def name="users.registration.enabled" key="configForm.allowNewUsers">
-            <type>boolean</type>
-            <default-value>false</default-value>
-        </property-def>
-        <property-def name="user.account.email.activation" key="configForm.requireEmailActivation">
-            <type>boolean</type>
-            <default-value>false</default-value>
-        </property-def>
-        <property-def name="user.require.registration.approval" key="configForm.newUserRequiresAdminApproval">
-            <type>boolean</type>
-            <default-value>true</default-value>
+        <property-def name="user.registration.process" key="configForm.requiredRegistrationProcess">
+            <type>string</type>
+            <default-value>DISABLED</default-value>
         </property-def>
         <property-def name="user.blogcreate.defaultrole" key="configForm.newUsersCreateBlogs">
             <type>boolean</type>

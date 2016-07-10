@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
@@ -387,7 +388,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 log.error("ERROR user is null, userId: {}", role.getUser().getId());
                 continue;
             }
-            if (!enabledOnly || user.isEnabled()) {
+            if (!enabledOnly || UserStatus.ENABLED.equals(user.getStatus())) {
                 users.add(user);
             }
         }

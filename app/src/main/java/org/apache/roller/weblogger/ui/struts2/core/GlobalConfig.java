@@ -21,8 +21,11 @@
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.RollbackException;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -77,7 +80,32 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         this.pageTitle = "configForm.title";
     }
     
-    
+    public enum RegistrationOption {
+        REGISTER(0, "Register only (not recommended)"),
+        EMAIL(1, "Register and activate via email (not recommended)"),
+        APPROVAL_REQUIRED(2, "Register, verify email, and admin approval"),
+        DISABLED(3, "Disabled -- No new accounts allowed");
+
+        private String description;
+
+        private int level;
+
+        RegistrationOption(int level, String description) {
+            this.level = level;
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+    }
+
+
     @Override
     public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
@@ -181,6 +209,14 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             return p[0];
         }
         return null;
+    }
+
+    public List<Pair<String, String>> getRegistrationOptionList() {
+        List<Pair<String, String>> opts;
+        opts = Arrays.stream(RegistrationOption.values())
+                .map(r -> Pair.of(r.name(), r.getDescription()))
+                .collect(Collectors.toList());
+        return opts;
     }
 
     public Map<String, RuntimeConfigProperty> getProperties() {

@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -92,11 +93,6 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getUserByUserName(String userName) {
-        return getUserByUserName(userName, Boolean.TRUE);
-    }
-
-    @Override
     public UserCredentials getCredentialsByUserName(String userName) {
         if (userName==null) {
             throw new IllegalArgumentException("userName cannot be null");
@@ -127,7 +123,12 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getUserByUserName(String userName, Boolean enabled) {
+    public User getUserByUserName(String userName) {
+        return getUserByUserName(userName, UserStatus.ENABLED);
+    }
+
+    @Override
+    public User getUserByUserName(String userName, UserStatus status) {
 
         if (userName==null) {
             throw new IllegalArgumentException("userName cannot be null");
@@ -140,7 +141,7 @@ public class JPAUserManagerImpl implements UserManager {
             User user = getUser(userNameToIdMap.get(userName));
             if (user != null) {
                 // only return the user if the enabled status matches
-                if (enabled == null || enabled.equals(user.isEnabled())) {
+                if (status == null || status.equals(user.getStatus())) {
                     log.debug("userNameToIdMap CACHE HIT - {}", userName);
                     return user;
                 }
@@ -153,9 +154,9 @@ public class JPAUserManagerImpl implements UserManager {
         // cache failed, do lookup
         TypedQuery<User> query;
         Object[] params;
-        if (enabled != null) {
+        if (status != null) {
             query = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
-            params = new Object[] {userName, enabled};
+            params = new Object[] {userName, status};
         } else {
             query = strategy.getNamedQuery("User.getByUserName", User.class);
             params = new Object[] {userName};
@@ -232,14 +233,9 @@ public class JPAUserManagerImpl implements UserManager {
 
         queryString.append("SELECT u FROM User u WHERE 1=1 ");
 
-        if (criteria.getApproved() != null) {
-            params.add(size++, criteria.getApproved());
-            queryString.append(" and u.approved = ?").append(size);
-        }
-
-        if (criteria.getEnabled() != null) {
-            params.add(size++, criteria.getEnabled());
-            queryString.append(" and u.enabled = ?").append(size);
+        if (criteria.getStatus() != null) {
+            params.add(size++, criteria.getStatus());
+            queryString.append(" and u.status = ?").append(size);
         }
 
         if (criteria.getGlobalRole() != null) {
@@ -269,7 +265,6 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public long getUserCount() {
         TypedQuery<Long> q = strategy.getNamedQuery("User.getCountEnabledDistinct", Long.class);
-        q.setParameter(1, Boolean.TRUE);
         List<Long> results = q.getResultList();
         return results.get(0);
     }
@@ -290,7 +285,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     @Override
     public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) {
-        User userToCheck = getUserByUserName(username, true);
+        User userToCheck = getUserByUserName(username, UserStatus.ENABLED);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle, null);
         return !(userToCheck == null || weblogToCheck == null) && checkWeblogRole(userToCheck, weblogToCheck, role);
     }
@@ -323,7 +318,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     @Override
     public UserWeblogRole getWeblogRole(String username, String weblogHandle) {
-        User userToCheck = getUserByUserName(username, true);
+        User userToCheck = getUserByUserName(username, UserStatus.ENABLED);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
         return getWeblogRole(userToCheck, weblogToCheck);
     }

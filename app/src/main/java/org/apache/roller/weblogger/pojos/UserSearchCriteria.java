@@ -17,8 +17,7 @@ package org.apache.roller.weblogger.pojos;
 
 public class UserSearchCriteria {
 
-    private Boolean approved;
-    private Boolean enabled;
+    private UserStatus status;
     private GlobalRole globalRole;
 
     // Offset into results for paging
@@ -27,20 +26,12 @@ public class UserSearchCriteria {
     // Max elements to return (or null for no limit)
     private Integer maxResults;
 
-    public Boolean getApproved() {
-        return approved;
+    public UserStatus getStatus() {
+        return status;
     }
 
-    public void setApproved(Boolean approved) {
-        this.approved = approved;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     public GlobalRole getGlobalRole() {

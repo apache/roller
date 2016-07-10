@@ -71,7 +71,7 @@ public class WeblogTemplate implements Template {
     private String  description = null;
     private String  relativePath = null;
     private Instant lastModified = null;
-    private TemplateDerivation derivation = TemplateDerivation.NONSHARED;
+    private TemplateDerivation derivation = TemplateDerivation.SPECIFICBLOG;
 
     private String  contentsStandard = null;
     private String  contentsMobile = null;

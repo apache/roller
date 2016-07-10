@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
@@ -372,6 +373,14 @@ public class UIAction extends ActionSupport implements Preparable {
         List<Pair<String, String>> opts;
         opts = Arrays.stream(GlobalRole.values())
                 .filter(r -> r != GlobalRole.NOAUTHNEEDED)
+                .map(r -> Pair.of(r.name(), r.name()))
+                .collect(Collectors.toList());
+        return opts;
+    }
+
+    public List<Pair<String, String>> getUserStatusList() {
+        List<Pair<String, String>> opts;
+        opts = Arrays.stream(UserStatus.values())
                 .map(r -> Pair.of(r.name(), r.name()))
                 .collect(Collectors.toList());
         return opts;

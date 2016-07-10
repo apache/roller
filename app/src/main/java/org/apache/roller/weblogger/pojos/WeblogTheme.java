@@ -64,10 +64,6 @@ public class WeblogTheme {
         return this.sharedTheme.getDescription();
     }
 
-    public String getAuthor() {
-        return "N/A";
-    }
-
     public Instant getLastModified() {
         return this.sharedTheme.getLastModified();
     }
@@ -79,7 +75,7 @@ public class WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.  Presently, for
      * performance reasons, this is the only method that will check the sharedTemplates
-     * for the purpose of switching the NONSHARED derivation to OVERRIDDEN if appropriate.
+     * for the purpose of switching the SHARED derivation to OVERRIDDEN if appropriate.
      */
     public List<? extends Template> getTemplates() {
         Map<String, Template> pageMap = new TreeMap<>();

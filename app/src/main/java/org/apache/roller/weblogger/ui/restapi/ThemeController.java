@@ -124,7 +124,7 @@ public class ThemeController {
         WeblogTheme oldTheme = new WeblogTheme(weblogManager, weblog, themeManager.getSharedTheme(weblog.getTheme()));
 
         oldTheme.getTemplates().stream().filter(
-                old -> old.getDerivation() == Template.TemplateDerivation.NONSHARED).forEach(old -> {
+                old -> old.getDerivation() == Template.TemplateDerivation.SPECIFICBLOG).forEach(old -> {
             if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
                 be.addError(new ObjectError("Weblog object", messages.getString("themeEditor.conflicting.singleton.role",
                         old.getRole().getReadableName())));

@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.startup.MailProvider;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -156,7 +157,7 @@ public class MailManager {
     public void sendRegistrationApprovalRequest(User user) {
         try {
             UserSearchCriteria criteria = new UserSearchCriteria();
-            criteria.setEnabled(true);
+            criteria.setStatus(UserStatus.ENABLED);
             criteria.setGlobalRole(GlobalRole.ADMIN);
             List<User> admins = userManager.getUsers(criteria);
 

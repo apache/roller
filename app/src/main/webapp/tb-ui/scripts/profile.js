@@ -68,7 +68,7 @@ $(function() {
          if (!isUpdate) {
            $('div .notregistered').hide();
          }
-         if (dbData.enabled == true) {
+         if (dbData.status == 'ENABLED') {
            $('#successMessageDiv').show();
          } else {
            $('#successMessageNeedActivation').show();
