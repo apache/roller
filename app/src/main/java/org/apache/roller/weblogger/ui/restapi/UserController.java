@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -79,6 +80,10 @@ public class UserController {
 
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
+    private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$";
+
+    private Pattern pattern;
+
     @Autowired
     private UserManager userManager;
 
@@ -115,6 +120,7 @@ public class UserController {
     }
 
     public UserController() {
+        pattern = Pattern.compile(PASSWORD_PATTERN);
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/userlist", method = RequestMethod.GET)
@@ -391,9 +397,14 @@ public class UserController {
     private ValidationError advancedValidate(UserData data, boolean isAdd) {
         BindException be = new BindException(data, "new data object");
 
-        if (!StringUtils.isEmpty(data.credentials.getPasswordText())) {
-            if (!data.credentials.getPasswordText().equals(data.credentials.getPasswordConfirm())) {
+        String maybePassword = data.credentials.getPasswordText();
+        if (!StringUtils.isEmpty(maybePassword)) {
+            if (!maybePassword.equals(data.credentials.getPasswordConfirm())) {
                 be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
+            } else {
+                if (!pattern.matcher(maybePassword).matches()) {
+                    be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordComplexityFail")));
+                }
             }
         } else {
             if (!StringUtils.isEmpty(data.credentials.getPasswordConfirm())) {

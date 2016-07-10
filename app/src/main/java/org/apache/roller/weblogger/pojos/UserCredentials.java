@@ -51,6 +51,13 @@ public class UserCredentials {
     private String password;
     private GlobalRole globalRole;
 
+    // below two fields not persisted but used for password entry and confirmation
+    // on new user & user update forms.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String passwordText;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String passwordConfirm;
+
     @Id
     public String getId() {
         return this.id;
@@ -79,12 +86,15 @@ public class UserCredentials {
         this.password = password;
     }
 
-    // below two fields not persisted but used for password entry and confirmation
-    // on new user & user update forms.
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String passwordText;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String passwordConfirm;
+    @Column(name="global_role", nullable=false)
+    @Enumerated(EnumType.STRING)
+    public GlobalRole getGlobalRole() {
+        return this.globalRole;
+    }
+
+    public void setGlobalRole(GlobalRole globalRole) {
+        this.globalRole = globalRole;
+    }
 
     @Transient
     public String getPasswordText() {
@@ -102,16 +112,6 @@ public class UserCredentials {
 
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
-    }
-
-    @Column(name="global_role", nullable=false)
-    @Enumerated(EnumType.STRING)
-    public GlobalRole getGlobalRole() {
-        return this.globalRole;
-    }
-
-    public void setGlobalRole(GlobalRole globalRole) {
-        this.globalRole = globalRole;
     }
 
 }
