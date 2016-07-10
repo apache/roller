@@ -133,10 +133,10 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
               <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
               <td class="field">
                   <s:if test="authenticatedUser == null">
-                    <input required type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input required type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
                   </s:if>
                   <s:else>
-                    <input type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
                   </s:else>
               </td>
               <td class="description"><s:text name="%{#passwordTipKey}" /></td>
@@ -145,10 +145,10 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
               <td class="label"><label for="passwordConfirm"><s:text name="userSettings.passwordConfirm" /></label></td>
               <td class="field">
                   <s:if test="authenticatedUser == null">
-                    <input required type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input required type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
                   </s:if>
                   <s:else>
-                    <input type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="25">
+                    <input type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
                   </s:else>
               </td>
               <td class="description"><s:text name="%{#passwordConfirmTipKey}" /></td>
