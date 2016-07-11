@@ -17,7 +17,6 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.util.Utilities;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
@@ -46,7 +45,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         Object authPrincipal = authentication.getPrincipal();
 
         UserDetails springUser = (UserDetails) authPrincipal;
-        User user = userManager.getUserByUserName(springUser.getUsername());
+        User user = userManager.getEnabledUserByUserName(springUser.getUsername());
 
         // if authenticated via LDAP but not yet registered in system, redirect to registration page.
         if (authPrincipal instanceof LdapUserDetails) {

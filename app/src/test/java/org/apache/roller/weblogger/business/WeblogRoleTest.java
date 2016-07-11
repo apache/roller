@@ -50,7 +50,7 @@ public class WeblogRoleTest extends WebloggerTest {
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
         endSession(true);
     }
 
@@ -150,7 +150,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertNull(perm);
 
         // cleanup
-        teardownUser(user.getUserName());
+        teardownUser(user.getId());
         endSession(true);
     }
 
@@ -175,7 +175,7 @@ public class WeblogRoleTest extends WebloggerTest {
         endSession(true);
 
         // re-query now that we have changed things
-        user = userManager.getUserByUserName(user.getUserName());
+        user = userManager.getEnabledUserByUserName(user.getUserName());
         testWeblog = weblogManager.getWeblogByHandle(testWeblog.getHandle());
 
         // assert that invitation list is empty
@@ -202,7 +202,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertEquals(0, userRoles.size());
 
         // cleanup the extra test user
-        teardownUser(user.getUserName());
+        teardownUser(user.getId());
         endSession(true);
     }
     
@@ -223,7 +223,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertTrue(userManager.checkWeblogRole(adminUser, testWeblog, WeblogRole.POST));
 
         // cleanup the extra test user
-        teardownUser(adminUser.getUserName());
+        teardownUser(adminUser.getId());
         endSession(true);
     }
 }

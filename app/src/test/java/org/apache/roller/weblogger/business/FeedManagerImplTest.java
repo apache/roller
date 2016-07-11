@@ -80,7 +80,7 @@ public class FeedManagerImplTest extends WebloggerTest {
         teardownSubscription(testSub.getId());
         teardownPlanet("testPlanetHandle");
         teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
     }
 
     @Test

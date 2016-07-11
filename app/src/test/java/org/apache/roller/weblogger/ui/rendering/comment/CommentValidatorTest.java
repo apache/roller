@@ -36,16 +36,16 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class CommentValidatorTest extends WebloggerTest {
-    Weblog        weblog = null;
-    User          user = null;
-    WeblogEntry   entry = null;
+    Weblog weblog = null;
+    User testUser = null;
+    WeblogEntry entry = null;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        user = setupUser("johndoe");
-        weblog = setupWeblog("doeblog", user);
-        entry = setupWeblogEntry("anchor1", weblog, user);
+        testUser = setupUser("johndoe");
+        weblog = setupWeblog("doeblog", testUser);
+        entry = setupWeblogEntry("anchor1", weblog, testUser);
         endSession(true);
     }
     
@@ -53,7 +53,7 @@ public class CommentValidatorTest extends WebloggerTest {
     public void tearDown() throws Exception {
         teardownWeblogEntry(entry.getId());
         teardownWeblog(weblog.getId());
-        teardownUser(user.getUserName());
+        teardownUser(testUser.getId());
     }
 
     @Test

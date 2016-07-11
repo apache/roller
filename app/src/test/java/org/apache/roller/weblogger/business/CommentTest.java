@@ -70,7 +70,7 @@ public class CommentTest extends WebloggerTest {
         try {
             teardownWeblogEntry(testEntry.getId());
             teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
+            teardownUser(testUser.getId());
             endSession(true);
         } catch (Exception ex) {
             throw new Exception("Test teardown failed", ex);

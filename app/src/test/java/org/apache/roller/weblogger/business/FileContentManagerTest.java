@@ -69,7 +69,7 @@ public class FileContentManagerTest extends WebloggerTest {
         config.get("uploads.enabled").setValue("true");
         propertiesManager.saveProperties(config);
         teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
         endSession(true);
     }
 

@@ -58,7 +58,7 @@ public class BookmarkTest extends WebloggerTest {
     public void tearDown() throws Exception {
         try {
             teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getUserName());
+            teardownUser(testUser.getId());
             endSession(true);
         } catch (Exception ex) {
             throw new Exception("Test teardown failed", ex);

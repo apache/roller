@@ -83,8 +83,8 @@ public class WeblogStatsTest extends WebloggerTest {
         teardownComment(comment21.getId());
         teardownWeblog(website2.getId());
 
-        teardownUser(user1.getUserName());
-        teardownUser(user2.getUserName());
+        teardownUser(user1.getId());
+        teardownUser(user2.getId());
 
         endSession(true);
     }

@@ -132,7 +132,7 @@ public class WeblogController {
     @RequestMapping(value = "/tb-ui/authoring/rest/weblogs", method = RequestMethod.POST)
     public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response) throws ServletException {
 
-        User user = userManager.getUserByUserName(p.getName());
+        User user = userManager.getEnabledUserByUserName(p.getName());
 
         if(!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
             return ResponseEntity.status(403).body(bundle.getString("createWebsite.notAuthorized"));

@@ -19,6 +19,9 @@ public class UserSearchCriteria {
 
     private UserStatus status;
     private GlobalRole globalRole;
+    private String activationCode;
+    private String userName;
+    private String screenName;
 
     // Offset into results for paging
     private int offset = 0;
@@ -40,6 +43,30 @@ public class UserSearchCriteria {
 
     public void setGlobalRole(GlobalRole globalRole) {
         this.globalRole = globalRole;
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getScreenName() {
+        return screenName;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
     }
 
     public int getOffset() {
