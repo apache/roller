@@ -24,7 +24,7 @@
 <%
 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-User user = mgr.getUserByUserName(auth.getName());
+User user = mgr.getEnabledUserByUserName(auth.getName());
 
 if (user == null) {
     // Spring security policy requires a successful login before the code in this JSP can be accessed.

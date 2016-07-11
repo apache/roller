@@ -27,10 +27,13 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.ui.struts2.core.GlobalConfig.RegistrationOption;
+
+import java.util.List;
 
 /**
  * Handle user logins.
@@ -110,9 +113,12 @@ public class Login extends UIAction {
         if (getActivationCode() == null) {
             addError("error.activate.user.missingActivationCode");
         } else {
-            User user = userManager.getUserByActivationCode(getActivationCode());
+            UserSearchCriteria usc = new UserSearchCriteria();
+            usc.setActivationCode(getActivationCode());
+            List<User> users = userManager.getUsers(usc);
 
-            if (user != null) {
+            if (users.size() == 1) {
+                User user = users.get(0);
                 // enable user account
                 user.setActivationCode(null);
                 RegistrationOption regProcess = RegistrationOption.valueOf(getProp("user.registration.process"));

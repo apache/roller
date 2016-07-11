@@ -49,7 +49,7 @@ public class WeblogTest extends WebloggerTest {
 
     @After
     public void tearDown() throws Exception {
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
         endSession(true);
     }
 

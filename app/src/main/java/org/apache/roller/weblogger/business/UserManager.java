@@ -56,13 +56,6 @@ public interface UserManager {
     long getUserCount();
 
     /**
-     * get a user by activation code
-     * @param activationCode activate code from email
-     * @return User object
-     */
-    User getUserByActivationCode(String activationCode);
-
-    /**
      * Retrieve a user by its internal identifier id.
      *
      * @param id the id of the user to retrieve.
@@ -71,7 +64,7 @@ public interface UserManager {
     User getUser(String id);
 
     /**
-     * Lookup a user by UserName.
+     * Lookup an enabled user by UserName.
      * 
      * This lookup is restricted to 'enabled' users by default.  So this method
      * will return null if the user is found but is not enabled.
@@ -79,11 +72,10 @@ public interface UserManager {
      * @param userName User Name of user to lookup.
      * @return The user, or null if not found or not enabled.
      */
-    User getUserByUserName(String userName);
+    User getEnabledUserByUserName(String userName);
 
     /**
-     * Get user credentials by user name.  Only enabled and approved
-     * users are retrievable.
+     * Get user credentials by user name.  Only enabled users are retrievable.
      *
      * @param userName User Name of user to lookup.
      * @return The user, or null if not found or not enabled.
@@ -98,23 +90,6 @@ public interface UserManager {
      * @param newPassword unencrypted password.
      */
     void updateCredentials(String userId, String newPassword);
-
-    /**
-     * Lookup a user by UserName with the given enabled status.
-     * 
-     * @param userName User Name of user to lookup.
-     * @param status, if not null, status user must have
-     * @return The user, or null if not found or of the proper enabled status.
-     */
-    User getUserByUserName(String userName, UserStatus status);
-
-    /**
-     * Lookup a user by ScreenName
-     *
-     * @param screenName Screen Name of user to lookup.
-     * @return The user, or null if not found or of the proper enabled status.
-     */
-    User getUserByScreenName(String screenName);
 
     /**
      * Lookup users based on supplied criteria

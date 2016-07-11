@@ -44,6 +44,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.time.Instant;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring-beans.xml")
 abstract public class WebloggerTest {
@@ -111,7 +112,7 @@ abstract public class WebloggerTest {
      * Convenience method that returns managed copy of given user.
      */
     protected User getManagedUser(User user) {
-        return userManager.getUserByUserName(user.getUserName());
+        return userManager.getEnabledUserByUserName(user.getUserName());
     }
 
     /**
@@ -148,7 +149,7 @@ abstract public class WebloggerTest {
         userManager.saveUser(testUser);
 
         // query for the user to make sure we return the persisted object
-        User user = userManager.getUserByUserName(userName.toLowerCase());
+        User user = userManager.getEnabledUserByUserName(userName.toLowerCase());
 
         if (user == null) {
             throw new IllegalStateException("error inserting new user");
@@ -157,8 +158,8 @@ abstract public class WebloggerTest {
         return user;
     }
 
-    protected void teardownUser(String userName) throws Exception {
-        User user = userManager.getUserByUserName(userName, null);
+    protected void teardownUser(String userId) throws Exception {
+        User user = userManager.getUser(userId);
         userManager.removeUser(user);
         strategy.flush();
     }

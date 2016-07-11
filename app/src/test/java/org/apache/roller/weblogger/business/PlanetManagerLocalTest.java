@@ -113,7 +113,7 @@ public class PlanetManagerLocalTest extends WebloggerTest {
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
         endSession(true);
     }
     

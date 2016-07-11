@@ -226,7 +226,7 @@ public class UserController {
     @RequestMapping(value = "/tb-ui/authoring/rest/userprofile/{id}", method = RequestMethod.GET)
     public User getProfileData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
-        User authenticatedUser = userManager.getUserByUserName(p.getName());
+        User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
             return user;
@@ -295,7 +295,7 @@ public class UserController {
     public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                             HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
-        User authenticatedUser = userManager.getUserByUserName(p.getName());
+        User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
             ValidationError maybeError = advancedValidate(null, newData, false);
@@ -442,13 +442,17 @@ public class UserController {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
         }
 
-        User testUser = userManager.getUserByUserName(data.user.getUserName(), null);
-        if (testUser != null && !testUser.getId().equals(data.user.getId())) {
+        UserSearchCriteria usc1 = new UserSearchCriteria();
+        usc1.setUserName(data.user.getUserName());
+        List<User> users = userManager.getUsers(usc1);
+        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.userNameInUse")));
         }
 
-        testUser = userManager.getUserByScreenName(data.user.getScreenName());
-        if (testUser != null && !testUser.getId().equals(data.user.getId())) {
+        UserSearchCriteria usc2 = new UserSearchCriteria();
+        usc2.setScreenName(data.user.getScreenName());
+        users = userManager.getUsers(usc2);
+        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.screenNameInUse")));
         }
 
@@ -472,7 +476,7 @@ public class UserController {
     @RequestMapping(value = "/tb-ui/authoring/rest/loggedinuser/weblogs", method = RequestMethod.GET)
     public List<UserWeblogRole> getLoggedInUsersWeblogs(Principal p, HttpServletResponse response)
             throws ServletException {
-        User user = userManager.getUserByUserName(p.getName());
+        User user = userManager.getEnabledUserByUserName(p.getName());
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;

@@ -58,9 +58,6 @@ public class JPAUserManagerImpl implements UserManager {
     // cached mapping of userNames -> userIds
     private Map<String, String> userNameToIdMap = new HashMap<>();
 
-    // cached mapping of screenNames -> userIds
-    private Map<String, String> screenNameToIdMap = new HashMap<>();
-
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
         this.strategy = strat;
     }
@@ -123,25 +120,18 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getUserByUserName(String userName) {
-        return getUserByUserName(userName, UserStatus.ENABLED);
-    }
-
-    @Override
-    public User getUserByUserName(String userName, UserStatus status) {
+    public User getEnabledUserByUserName(String userName) {
 
         if (userName==null) {
             throw new IllegalArgumentException("userName cannot be null");
         }
         
         // check cache first
-        // NOTE: if we ever allow changing usernames then this needs updating
         if (userNameToIdMap.containsKey(userName)) {
-
             User user = getUser(userNameToIdMap.get(userName));
             if (user != null) {
-                // only return the user if the enabled status matches
-                if (status == null || status.equals(user.getStatus())) {
+                // return the user only if enabled
+                if (UserStatus.ENABLED.equals(user.getStatus())) {
                     log.debug("userNameToIdMap CACHE HIT - {}", userName);
                     return user;
                 }
@@ -152,18 +142,9 @@ public class JPAUserManagerImpl implements UserManager {
         }
 
         // cache failed, do lookup
-        TypedQuery<User> query;
-        Object[] params;
-        if (status != null) {
-            query = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
-            params = new Object[] {userName, status};
-        } else {
-            query = strategy.getNamedQuery("User.getByUserName", User.class);
-            params = new Object[] {userName};
-        }
-        for (int i=0; i<params.length; i++) {
-            query.setParameter(i+1, params[i]);
-        }
+        TypedQuery<User> query = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
+        query.setParameter(1, userName);
+
         User user;
         try {
             user = query.getSingleResult();
@@ -172,7 +153,7 @@ public class JPAUserManagerImpl implements UserManager {
         }
 
         // add mapping to cache
-        if(user != null) {
+        if (user != null) {
             log.debug("userNameToIdMap CACHE MISS - {}", userName);
             this.userNameToIdMap.put(user.getUserName(), user.getId());
         }
@@ -180,50 +161,6 @@ public class JPAUserManagerImpl implements UserManager {
         return user;
     }
 
-
-    @Override
-    public User getUserByScreenName(String screenName) {
-
-        if (screenName==null) {
-            throw new IllegalArgumentException("screenName cannot be null");
-        }
-
-        // check cache first
-        if(this.screenNameToIdMap.containsKey(screenName)) {
-            User user = this.getUser(this.screenNameToIdMap.get(screenName));
-            if (user != null) {
-                log.debug("screenNameToIdMap CACHE HIT - {}", screenName);
-                return user;
-            } else {
-                // mapping hit with lookup miss?  mapping must be old, remove it
-                this.screenNameToIdMap.remove(screenName);
-            }
-        }
-
-        // cache failed, do lookup
-        TypedQuery<User> query;
-        Object[] params;
-        query = strategy.getNamedQuery("User.getByScreenName", User.class);
-        params = new Object[] {screenName};
-
-        for (int i=0; i<params.length; i++) {
-            query.setParameter(i+1, params[i]);
-        }
-        User user;
-        try {
-            user = query.getSingleResult();
-        } catch (NoResultException e) {
-            user = null;
-        }
-
-        // add mapping to cache
-        if(user != null) {
-            log.debug("screenNameToIdMap CACHE MISS - {}", screenName);
-            this.screenNameToIdMap.put(user.getUserName(), user.getId());
-        }
-
-        return user;
-    }
 
     @Override
     public List<User> getUsers(UserSearchCriteria criteria) {
@@ -236,6 +173,21 @@ public class JPAUserManagerImpl implements UserManager {
         if (criteria.getStatus() != null) {
             params.add(size++, criteria.getStatus());
             queryString.append(" and u.status = ?").append(size);
+        }
+
+        if (criteria.getActivationCode() != null) {
+            params.add(size++, criteria.getActivationCode());
+            queryString.append(" and u.activationCode = ?").append(size);
+        }
+
+        if (criteria.getScreenName() != null) {
+            params.add(size++, criteria.getScreenName());
+            queryString.append(" and u.screenName = ?").append(size);
+        }
+
+        if (criteria.getUserName() != null) {
+            params.add(size++, criteria.getUserName());
+            queryString.append(" and u.userName = ?").append(size);
         }
 
         if (criteria.getGlobalRole() != null) {
@@ -270,22 +222,8 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getUserByActivationCode(String activationCode) {
-        if (activationCode == null) {
-            throw new IllegalArgumentException("activationcode is null");
-        }
-        TypedQuery<User> q = strategy.getNamedQuery("User.getUserByActivationCode", User.class);
-        q.setParameter(1, activationCode);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
     public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) {
-        User userToCheck = getUserByUserName(username, UserStatus.ENABLED);
+        User userToCheck = getEnabledUserByUserName(username);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle, null);
         return !(userToCheck == null || weblogToCheck == null) && checkWeblogRole(userToCheck, weblogToCheck, role);
     }
@@ -318,7 +256,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     @Override
     public UserWeblogRole getWeblogRole(String username, String weblogHandle) {
-        User userToCheck = getUserByUserName(username, UserStatus.ENABLED);
+        User userToCheck = getEnabledUserByUserName(username);
         Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
         return getWeblogRole(userToCheck, weblogToCheck);
     }

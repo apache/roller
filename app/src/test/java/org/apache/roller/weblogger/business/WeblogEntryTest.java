@@ -76,7 +76,7 @@ public class WeblogEntryTest extends WebloggerTest {
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
         endSession(true);
     }
 
@@ -917,7 +917,7 @@ public class WeblogEntryTest extends WebloggerTest {
             teardownWeblog(blog2.getId());
             teardownWeblog(blog3.getId());
 
-            teardownUser(user1.getUserName());      
+            teardownUser(user1.getId());
             
             endSession(true);
         }

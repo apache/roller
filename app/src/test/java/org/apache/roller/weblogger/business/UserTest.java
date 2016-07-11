@@ -62,7 +62,7 @@ public class UserTest extends WebloggerTest {
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         
         // make sure test user does not exist
-        user = userManager.getUserByUserName(testUser.getUserName());
+        user = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // add test user
@@ -70,7 +70,7 @@ public class UserTest extends WebloggerTest {
         String userName = testUser.getUserName();
 
         // make sure test user exists
-        user = userManager.getUserByUserName(userName);
+        user = userManager.getEnabledUserByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser, user);
         
@@ -79,7 +79,7 @@ public class UserTest extends WebloggerTest {
         userManager.saveUser(user);
 
         // make sure changes were saved
-        user = userManager.getUserByUserName(userName);
+        user = userManager.getEnabledUserByUserName(userName);
         assertNotNull(user);
         assertEquals("testtesttest", user.getScreenName());
 
@@ -88,7 +88,7 @@ public class UserTest extends WebloggerTest {
         endSession(true);
         
         // make sure user no longer exists
-        user = userManager.getUserByUserName(userName);
+        user = userManager.getEnabledUserByUserName(userName);
         assertNull(user);
     }
     
@@ -108,13 +108,13 @@ public class UserTest extends WebloggerTest {
         endSession(true);
         
         // lookup by username
-        user1 = userManager.getUserByUserName(testUser.getUserName());
+        user1 = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNotNull(user1);
         assertEquals(testUser.getUserName(), user1.getUserName());
         
         // lookup by id
         String userName = user1.getUserName();
-        user1 = userManager.getUserByUserName(userName);
+        user1 = userManager.getEnabledUserByUserName(userName);
         assertNotNull(user1);
         assertEquals(testUser.getUserName(), user1.getUserName());
         
@@ -143,11 +143,11 @@ public class UserTest extends WebloggerTest {
         // make sure disable users are not returned
         user1.setStatus(UserStatus.DISABLED);
         userManager.saveUser(user1);
-        user1 = userManager.getUserByUserName(testUser.getUserName());
+        user1 = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNull(user1);
         
         // remove test user
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
         endSession(true);
     }
     
@@ -163,7 +163,7 @@ public class UserTest extends WebloggerTest {
         User testUser = setupUser("roletestuser");
         endSession(true);
         
-        user = userManager.getUserByUserName(testUser.getUserName());
+        user = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNotNull(user);
         
         assertTrue(GlobalRole.BLOGGER.equals(user.getGlobalRole()));
@@ -172,12 +172,12 @@ public class UserTest extends WebloggerTest {
         userManager.saveUser(user);
 
         // check that role was switched
-        user = userManager.getUserByUserName(testUser.getUserName());
+        user = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertTrue(user.getGlobalRole() == GlobalRole.BLOGCREATOR);
 
         // remove test user
-        teardownUser(testUser.getUserName());
+        teardownUser(testUser.getId());
         endSession(true);
     }
 

@@ -68,7 +68,7 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements Stru
             if (!"install".equals(theAction.actionName)) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 String name = auth.getName();
-                theAction.setAuthenticatedUser(userManager.getUserByUserName(name));
+                theAction.setAuthenticatedUser(userManager.getEnabledUserByUserName(name));
             }
 
             // extract the work weblog and set it

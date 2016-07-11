@@ -43,18 +43,12 @@ import javax.validation.constraints.Pattern;
 @Entity
 @Table(name="weblogger_user")
 @NamedQueries({
-        @NamedQuery(name="User.getUserByActivationCode",
-                query="SELECT u FROM User u WHERE u.activationCode = ?1"),
         @NamedQuery(name="User.getByEnabled&EndDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.status = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getByEndDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.dateCreated < ?1 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name="User.getByUserName",
-                query="SELECT u FROM User u WHERE u.userName= ?1"),
-        @NamedQuery(name="User.getByScreenName",
-                query="SELECT u FROM User u WHERE u.screenName= ?1"),
         @NamedQuery(name="User.getByUserName&Enabled",
-                query="SELECT u FROM User u WHERE u.userName= ?1 AND u.status = ?2"),
+                query="SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED"),
         @NamedQuery(name="User.getByEndDate&StartDateOrderByStartDateDesc",
                 query="SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name="User.getGlobalRole",

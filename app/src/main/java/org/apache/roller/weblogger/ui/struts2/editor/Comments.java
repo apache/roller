@@ -440,7 +440,7 @@ public class Comments extends UIAction {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to view comments
-                User authenticatedUser = userManager.getUserByUserName(p.getName());
+                User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     CommentData cd = new CommentData();
@@ -467,7 +467,7 @@ public class Comments extends UIAction {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to edit comments
-                User authenticatedUser = userManager.getUserByUserName(p.getName());
+                User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream()); // IOUtils.toString(request.getInputStream(), "UTF-8"); //
