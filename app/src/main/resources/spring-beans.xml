@@ -102,6 +102,7 @@
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="commentPlugins" ref="commentPlugins"/>
         <beans:property name="weblogEntryPlugins" ref="weblogEntryPlugins"/>
+        <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="feedManager" class="org.apache.roller.weblogger.business.FeedManagerImpl">

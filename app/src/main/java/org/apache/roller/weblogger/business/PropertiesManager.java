@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.business;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.util.Blacklist;
+import org.jsoup.safety.Whitelist;
 
 /**
  * Manages global runtime properties for Roller (those which may be altered
@@ -97,4 +98,8 @@ public interface PropertiesManager {
      */
     Blacklist getSiteBlacklist();
 
+    /**
+     * Get the JSoup whitelist used to filter blog entry text and summaries.
+     */
+    Whitelist getHtmlWhitelist();
 }

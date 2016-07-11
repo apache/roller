@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -36,8 +37,9 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
-import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +85,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
         this.weblogEntryPlugins = weblogEntryPlugins;
+    }
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     // cached mapping of entryAnchors -> entryIds
@@ -746,7 +754,17 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 }
             }
         }
-        return HTMLSanitizer.conditionallySanitize(ret);
+        return conditionallySanitize(ret);
+    }
+
+    private String conditionallySanitize(String ret) {
+        Whitelist whitelist = propertiesManager.getHtmlWhitelist();
+
+        if (whitelist == null || ret == null) {
+            return ret;
+        } else {
+            return Jsoup.clean(ret, whitelist);
+        }
     }
 
     @Override

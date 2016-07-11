@@ -138,7 +138,7 @@ public class UtilitiesModel implements Model {
      * Remove occurrences of html, defined as any text between the characters "&lt;" and "&gt;".
      */
     public String removeHTML(String str) {
-        return Utilities.removeHTML(str, false);
+        return Utilities.removeHTML(str);
     }
 
     /**

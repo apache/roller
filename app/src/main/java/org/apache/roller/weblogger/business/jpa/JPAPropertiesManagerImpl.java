@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.roller.weblogger.business.HTMLSanitizingLevel;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.Utilities;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +55,9 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     private final JPAPersistenceStrategy strategy;
 
     private Blacklist siteBlacklist = null;
+
+    private String currentWhitelist = null;
+    private Whitelist htmlWhitelist = null;
     
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
@@ -84,12 +89,13 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         Map<String, RuntimeConfigProperty> props;
         try {
             // retrieve properties from database
-            props = this.getProperties();
+            props = getProperties();
 
             // if any default props missing from the properties DB table,
             // initialize them and save them to that table.
             initializeMissingProps(props);
-            this.saveProperties(props);
+            saveProperties(props);
+            updateWhitelist();
         } catch (Exception e) {
             log.error("Failed to initialize runtime configuration properties."+
                     "Please check that the database has been upgraded!", e);
@@ -142,8 +148,39 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             this.strategy.store(prop);
         }
         siteBlacklist = new Blacklist(getStringProperty("spam.blacklist"), null);
+        updateWhitelist();
     }
-    
+
+    private void updateWhitelist() {
+        String whitelistChoice = getStringProperty("site.html.whitelist");
+        if (!whitelistChoice.equals(currentWhitelist)) {
+            switch (HTMLSanitizingLevel.valueOf(whitelistChoice)) {
+                case NONE:
+                    htmlWhitelist = Whitelist.none();
+                    break;
+                case BASIC:
+                    htmlWhitelist = Whitelist.basic();
+                    break;
+                case BASICWITHIMAGES:
+                    htmlWhitelist = Whitelist.basicWithImages();
+                    break;
+                case RELAXED:
+                    htmlWhitelist = Whitelist.relaxed();
+                    break;
+                case RELAXEDWITHIFRAME:
+                    htmlWhitelist = Whitelist.relaxed();
+                    htmlWhitelist.addTags("iframe")
+                            .addAttributes("iframe", "width", "height", "src", "style", "allowfullscreen")
+                            .addProtocols("iframe", "src", "http", "https");
+                    break;
+                case OFF:
+                    htmlWhitelist = null;
+                    break;
+            }
+            currentWhitelist = whitelistChoice;
+        }
+    }
+
 
     /**
      * This method compares the property definitions in the RuntimeConfigDefs
@@ -249,5 +286,10 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     @Override
     public Blacklist getSiteBlacklist() {
         return siteBlacklist;
+    }
+
+    @Override
+    public Whitelist getHtmlWhitelist() {
+        return htmlWhitelist;
     }
 }

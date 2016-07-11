@@ -85,7 +85,10 @@
 
     <!-- Weblog Rendering Settings Group -->
     <display-group name="weblogSettings" key="configForm.weblogSettings">
-
+        <property-def name="site.html.whitelist" key="configForm.htmlWhitelistLevel">
+            <type>string</type>
+            <default-value>RELAXED</default-value>
+        </property-def>
         <property-def name="site.pages.maxEntries" key="configForm.pageMaxEntries">
             <type>string</type>
             <default-value>30</default-value>
