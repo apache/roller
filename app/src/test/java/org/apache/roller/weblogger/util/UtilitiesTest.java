@@ -47,7 +47,7 @@ public class UtilitiesTest extends WebloggerTest {
     public void testRemoveHTML() {
         String test = "<br><br><p>a <b>bold</b> sentence with a <a href=\"http://example.com\">link</a></p>";
         String expect = "a bold sentence with a link";
-        String result = Utilities.removeHTML(test, false);
+        String result = Utilities.removeHTML(test);
         assertEquals(expect, result);
     }
 

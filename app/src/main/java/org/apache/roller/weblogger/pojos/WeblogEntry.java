@@ -34,7 +34,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -282,7 +281,7 @@ public class WeblogEntry {
     }
     
     public void setSearchDescription(String searchDescription) {
-        this.searchDescription = HTMLSanitizer.conditionallySanitize(searchDescription);
+        this.searchDescription = Utilities.removeHTML(searchDescription);
     }
 
     /**
@@ -537,7 +536,7 @@ public class WeblogEntry {
      */
     @Transient
     public String getTransformedText() {
-        return HTMLSanitizer.conditionallySanitize(render(getText()));
+        return render(getText());
     }
 
     /**
@@ -545,7 +544,7 @@ public class WeblogEntry {
      */
     @Transient
     public String getTransformedSummary() {
-        return HTMLSanitizer.conditionallySanitize(render(getSummary()));
+        return render(getSummary());
     }
 
     /**

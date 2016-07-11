@@ -26,6 +26,7 @@ import javax.persistence.RollbackException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.roller.weblogger.business.HTMLSanitizingLevel;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -104,7 +105,6 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         }
 
     }
-
 
     @Override
     public WeblogRole getRequiredWeblogRole() {
@@ -211,9 +211,17 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         return null;
     }
 
-    public List<Pair<String, String>> getRegistrationOptionList() {
+    public List<Pair<String, String>> getRegistrationOptions() {
         List<Pair<String, String>> opts;
         opts = Arrays.stream(RegistrationOption.values())
+                .map(r -> Pair.of(r.name(), r.getDescription()))
+                .collect(Collectors.toList());
+        return opts;
+    }
+
+    public List<Pair<String, String>> getHTMLSanitizingLevels() {
+        List<Pair<String, String>> opts;
+        opts = Arrays.stream(HTMLSanitizingLevel.values())
                 .map(r -> Pair.of(r.name(), r.getDescription()))
                 .collect(Collectors.toList());
         return opts;

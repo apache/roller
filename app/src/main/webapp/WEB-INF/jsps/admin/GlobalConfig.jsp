@@ -54,10 +54,10 @@
                   </s:if>
 
                   <%-- special condition for enrollment process --%>
-                  <s:if test="#pd.name == 'user.registration.process'">
+                  <s:elseif test="#pd.name == 'user.registration.process'">
                       <td class="field">
                           <select name='<s:property value="#pd.name"/>'>
-                                <s:iterator var="item" value="registrationOptionList">
+                                <s:iterator var="item" value="registrationOptions">
                                     <option value='<s:property value="#item.left"/>'
                                         <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
                                         <s:property value="#item.right"/>
@@ -65,7 +65,21 @@
                                 </s:iterator>
                           </select>
                       </td>
-                  </s:if>
+                  </s:elseif>
+
+                  <%-- special condition for JSoup HTML sanitizing levels --%>
+                  <s:elseif test="#pd.name == 'site.html.whitelist'">
+                      <td class="field">
+                          <select name='<s:property value="#pd.name"/>'>
+                                <s:iterator var="item" value="HTMLSanitizingLevels">
+                                    <option value='<s:property value="#item.left"/>'
+                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
+                                        <s:property value="#item.right"/>
+                                    </option>
+                                </s:iterator>
+                          </select>
+                      </td>
+                  </s:elseif>
 
                   <%-- "string" type means use a simple textbox --%>
                   <s:elseif test="#pd.type == 'string'">

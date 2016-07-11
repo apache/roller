@@ -57,6 +57,8 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
@@ -79,159 +81,43 @@ public class Utilities {
     public static final int TWENTYFOUR_KB_IN_BYTES = 24576;
     public static final int ONE_MB_IN_BYTES = 1024 * 1024;
 
-    public static final Pattern BR_TAG_PATTERN = Pattern.compile(
-            "&lt;br&gt;", Pattern.CASE_INSENSITIVE);
-    public static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile(
-            "&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
-    public static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile(
-            "&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
-    public static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
-            Pattern.CASE_INSENSITIVE);
-
     private static Pattern mLinkPattern = Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);
 
     public static String generateUUID() {
         return UUID.randomUUID().toString();
     }
 
-    public enum HTMLMatchingTag {
-        BLOCKQUOTE("blockquote"),
-        CITE("cite"),
-        P("p"),
-        PRE("pre"),
-        B("b"),
-        I("i"),
-        EM("em"),
-        STRONG("strong"),
-        STRIKE("strike");
+    private static Whitelist noHTMLWhitelist = Whitelist.none();
 
-
-        HTMLMatchingTag(String tagName) {
-            openingPattern = Pattern.compile("&lt;" + tagName + "&gt;", Pattern.CASE_INSENSITIVE);
-            closingPattern = Pattern.compile("&lt;/" + tagName + "&gt;", Pattern.CASE_INSENSITIVE);
-            openingTag = "<" + tagName + ">";
-            closingTag = "</" + tagName + ">";
-        }
-
-        private final Pattern openingPattern;
-        private final Pattern closingPattern;
-        private final String openingTag;
-        private final String closingTag;
-
-        public String getOpeningTag() {
-            return openingTag;
-        }
-
-        public String getClosingTag() {
-            return closingTag;
-        }
-
-        public Pattern getOpeningEscapedPattern() {
-            return openingPattern;
-        }
-
-        public Pattern getClosingEscapedPattern() {
-            return closingPattern;
-        }
-    }
-
+    private static Whitelist basicWhitelist = Whitelist.basic();
 
     /**
-     * Transforms the given String into a subset of HTML displayable on a web
-     * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
-     * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags if applicable).
-     *
-     * @param s the String to transform
-     * @return the transformed String
+     * Removes html tags not included in the JSoup "basic" whitelist.
+     * @param str String potentially containing html tags outside the whitelist.
+     * @return String with disallowed tags removed.  Text content remains in some cases
+     * (e.g., text content below a table), is removed in others (script tags.)
      */
-    public static String transformToHTMLSubset(String s) {
-
-        if (s == null) {
-            return null;
-        }
-
-        for (HTMLMatchingTag tag : HTMLMatchingTag.values()) {
-            s = replace(s, tag.getOpeningEscapedPattern(), tag.getOpeningTag());
-            s = replace(s, tag.getClosingEscapedPattern(), tag.getClosingTag());
-        }
-
-        s = replace(s, BR_TAG_PATTERN, "<br>");
-        s = replace(s, QUOTE_PATTERN, "\"");
-        s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
-        Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = s.substring(start, end);
-            link = "<" + link.substring(4, link.length() - 4) + ">";
-            s = s.substring(0, start) + link + s.substring(end, s.length());
-            m = OPENING_A_TAG_PATTERN.matcher(s);
-        }
-
-        // escaped angle brackets
-        s = s.replaceAll("&amp;lt;", "&lt;");
-        s = s.replaceAll("&amp;gt;", "&gt;");
-        s = s.replaceAll("&amp;#", "&#");
-
-        return s;
+    public static String transformToHTMLSubset(String str) {
+        return processHTML(str, basicWhitelist);
     }
 
     /**
-     * Remove occurrences of html, defined as any text between the characters
-     * "&lt;" and "&gt;". Replace any HTML tags with a space.
+     * Removes html tags from input.
+     * @param str String potentially containing html tags
+     * @return plain text string, all HTML tags removed.
      */
     public static String removeHTML(String str) {
-        return removeHTML(str, true);
+        return processHTML(str, noHTMLWhitelist);
     }
 
-    /**
-     * Remove occurrences of html, defined as any text between the characters
-     * "&lt;" and "&gt;".
-     * 
-     * @param str text to strip HTML out of
-     * @param addSpace whether to replace tags with a space
-     * @return String without the HTML tags
-     */
-    public static String removeHTML(String str, boolean addSpace) {
+    private static String processHTML(String str, Whitelist whitelist) {
         if (str == null) {
-            return "";
+            return null;
+        } else {
+            return Jsoup.clean(str, whitelist);
         }
-        StringBuilder ret = new StringBuilder(str.length());
-        int start = 0;
-        int beginTag = str.indexOf('<');
-        int endTag = 0;
-        if (beginTag == -1) {
-            return str;
-        }
-
-        while (beginTag >= start) {
-            if (beginTag > 0) {
-                ret.append(str.substring(start, beginTag));
-
-                // replace each tag with a space (looks better)
-                if (addSpace) {
-                    ret.append(" ");
-                }
-            }
-            endTag = str.indexOf('>', beginTag);
-
-            // if endTag found move "cursor" forward
-            if (endTag > -1) {
-                start = endTag + 1;
-                beginTag = str.indexOf('<', start);
-            }
-            // if no endTag found, get rest of str and break
-            else {
-                ret.append(str.substring(beginTag));
-                break;
-            }
-        }
-        // append everything after the last endTag
-        if (endTag > -1 && endTag + 1 < str.length()) {
-            ret.append(str.substring(endTag + 1));
-        }
-        return ret.toString().trim();
     }
+
 
     /**
      * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
@@ -312,7 +198,7 @@ public class Utilities {
      */
     public static String truncateHTML(String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
-        String str2 = removeHTML(str, false);
+        String str2 = removeHTML(str);
         boolean diff = (str2.length() < str.length());
 
         // quickly adjust the upper if it is set lower than 'lower'
@@ -373,7 +259,7 @@ public class Utilities {
 
     public static String truncateText(String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
-        String str2 = removeHTML(str, false);
+        String str2 = removeHTML(str);
 
         // quickly adjust the upper if it is set lower than 'lower'
         if (upper < lower) {
@@ -516,11 +402,6 @@ public class Utilities {
         Set<String> mySet = new HashSet<>();
         Collections.addAll(mySet, tagsarr);
         return mySet;
-    }
-
-    private static String replace(String string, Pattern pattern, String replacement) {
-        Matcher m = pattern.matcher(string);
-        return m.replaceAll(replacement);
     }
 
     public static String getContentTypeFromFileName(String fileName) {

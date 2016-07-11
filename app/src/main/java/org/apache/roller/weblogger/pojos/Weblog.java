@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -412,7 +411,7 @@ public class Weblog {
     }
 
     public void setAbout(String about) {
-        this.about = HTMLSanitizer.conditionallySanitize(about);
+        this.about = Utilities.removeHTML(about);
     }
 
     /**
