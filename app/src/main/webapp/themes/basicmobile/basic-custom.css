@@ -127,19 +127,6 @@ p.comment-details {
     font-size: 80%;
     color: #999;
 }
-.comments-syntax-indicator {
-    font-weight: bold;
-}
-.comments-syntax-indicator span.enabled {
-    background: transparent;
-    color: green;
-    font-style: italic;
-}
-.comments-syntax-indicator span.disabled {
-    background: transparent;
-    color: red;
-    font-style: italic;
-}
 
 form ul{ position: relative; list-style: none; width: 100%; }
 form li{ line-height: 2em; margin: 0; padding: 1px 1px 6px 9px; }

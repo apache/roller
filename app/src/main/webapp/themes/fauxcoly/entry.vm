@@ -43,17 +43,6 @@
         padding-left: 3px;
         margin-bottom: 0 !important;
     }
-    .comments-syntax-indicator {
-        font-weight: bold;
-    }
-    .comments-syntax-indicator .enabled {
-        color: green;
-        font-style: italic;
-    }
-    .comments-syntax-indicator .disabled {
-        color: red;
-        font-style: italic;
-    }
     div#commentAuthenticator p {
         font-size: 11px;
     }

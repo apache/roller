@@ -126,26 +126,8 @@ public class UtilitiesModel implements Model {
         return StringEscapeUtils.escapeHtml4(str);
     }
 
-    public String unescapeHTML(String str) {
-        return StringEscapeUtils.unescapeHtml4(str);
-    }
-
     public String escapeXML(String str) {
         return StringEscapeUtils.escapeXml10(str);
-    }
-
-    /**
-     * Remove occurrences of html, defined as any text between the characters "&lt;" and "&gt;".
-     */
-    public String removeHTML(String str) {
-        return Utilities.removeHTML(str);
-    }
-
-    /**
-     * Truncates based on text-only but retains HTML.
-     */
-    public String truncateHTML(String str, int lower, int upper, String appendToEnd) {
-        return Utilities.truncateHTML(str, lower, upper, appendToEnd);
     }
 
     /**
@@ -162,34 +144,6 @@ public class UtilitiesModel implements Model {
      */
     public final String encode(String s) {
         return (s == null) ? null : Utilities.encode(s);
-    }
-
-    /**
-     * URL decoding.
-     * @param s a URL-encoded string to be URL-decoded
-     * @return URL decoded value of s using character encoding UTF-8; null if s is null.
-     */
-    public final String decode(String s) {
-        return (s == null) ? null : Utilities.decode(s);
-    }
-
-    /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
-     */
-    public String addNofollow(String html) {
-        return Utilities.addNofollow(html);
-    }
-
-    /**
-     * Transforms the given String into a subset of HTML displayable on a web
-     * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
-     * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags).
-     *
-     * @param s   the String to transform
-     * @return    the transformed String
-     */
-    public String transformToHTMLSubset(String s) {
-        return Utilities.transformToHTMLSubset(s);
     }
 
 }

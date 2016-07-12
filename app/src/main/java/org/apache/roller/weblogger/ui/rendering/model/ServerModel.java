@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.ui.struts2.core.GlobalConfig;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
 
 /**
@@ -75,10 +76,6 @@ public class ServerModel implements Model {
 
     public String getSiteName() {
         return propertiesManager.getStringProperty("site.name");
-    }
-    
-    public boolean getCommentHtmlAllowed() {
-        return propertiesManager.getBooleanProperty("users.comments.htmlenabled");
     }
     
     public boolean getCommentEmailNotify() {

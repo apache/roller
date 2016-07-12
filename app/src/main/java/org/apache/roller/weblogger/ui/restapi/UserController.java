@@ -38,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -51,7 +52,7 @@ import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.core.GlobalConfig.RegistrationOption;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs.RegistrationOption;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
@@ -263,14 +264,16 @@ public class UserController {
         }
 
         long userCount = userManager.getUserCount();
-        RegistrationOption option = RegistrationOption.valueOf(propertiesManager.getStringProperty("user.registration.process"));
-        if (userCount == 0 || !RegistrationOption.DISABLED.equals(option)) {
-            boolean mustActivate = userCount > 0 && option.getLevel() >= RegistrationOption.EMAIL.getLevel();
+        RegistrationOption option = RuntimeConfigDefs.RegistrationOption.valueOf(propertiesManager.getStringProperty("user.registration.process"));
+        if (userCount == 0 || !RuntimeConfigDefs.RegistrationOption.DISABLED.equals(option)) {
+            boolean mustActivate = userCount > 0;
             if (mustActivate) {
-                String activationCode = UUID.randomUUID().toString();
-                newData.user.setActivationCode(activationCode);
+                newData.user.setActivationCode(UUID.randomUUID().toString());
+                newData.user.setStatus(UserStatus.REGISTERED);
+            } else {
+                // initial user is the Admin, is automatically enabled.
+                newData.user.setStatus(UserStatus.ENABLED);
             }
-            newData.user.setStatus(mustActivate ? UserStatus.REGISTERED : UserStatus.ENABLED);
 
             User user = new User();
             user.setId(Utilities.generateUUID());

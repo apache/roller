@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import java.time.Instant;
@@ -26,8 +25,6 @@ import java.time.Instant;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
@@ -58,19 +55,17 @@ public class WeblogEntryComment {
     public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
 
     // attributes
-    private String    id = Utilities.generateUUID();
-    private String    name = null;
-    private String    email = null;
-    private String    url = null;
-    private String    content = null;
-    private Instant   postTime = null;
+    private String id = Utilities.generateUUID();
+    private String name = null;
+    private String email = null;
+    private String url = null;
+    private String content = null;
+    private Instant postTime = null;
     private ApprovalStatus status = ApprovalStatus.DISAPPROVED;
-    private Boolean   notify = Boolean.FALSE;
-    private String    remoteHost = null;
-    private String    referrer = null;
-    private String    userAgent = null;
-    private String    plugins = null;
-    private String    contentType = "text/plain";
+    private Boolean notify = Boolean.FALSE;
+    private String remoteHost = null;
+    private String referrer = null;
+    private String userAgent = null;
 
     // associations
     private WeblogEntry weblogEntry = null;
@@ -193,29 +188,6 @@ public class WeblogEntryComment {
     }
     
     /**
-     * Comma separated list of comment plugins to apply.
-     */
-    public String getPlugins() {
-        return plugins;
-    }
-    
-    public void setPlugins(String plugins) {
-        this.plugins = plugins;
-    }
-    
-    /**
-     * The content-type of the comment.
-     */
-    @Basic(optional=false)
-    public String getContentType() {
-        return contentType;
-    }
-    
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    /**
      * Indicates that weblog owner considers this comment to be spam.
      */
     @Transient
@@ -289,32 +261,10 @@ public class WeblogEntryComment {
         this.remoteHost = other.getRemoteHost();
         this.referrer = other.getReferrer();
         this.userAgent = other.getUserAgent();
-        this.plugins = other.getPlugins();
-        this.contentType = other.getContentType();
         this.weblogEntry = other.getWeblogEntry();
     }
 
     // fields involved with rendering comments on blogs
-
-    @Transient
-    public String getProcessedContent() {
-        String processedContent = content;
-
-        // escape content (e.g., " -> &quot;) and tags if content-type is text/plain
-        // html content has to remain as-is so the HTML subset plugin can render it.
-        if ("text/plain".equals(contentType)) {
-            processedContent = StringEscapeUtils.escapeHtml4(processedContent);
-        }
-
-        // apply plugins
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        processedContent = mgr.applyCommentPlugins(this, processedContent);
-
-        // always add rel=nofollow for links
-        processedContent = Utilities.addNofollow(processedContent);
-
-        return processedContent;
-    }
 
     @Transient
     public boolean isError() {

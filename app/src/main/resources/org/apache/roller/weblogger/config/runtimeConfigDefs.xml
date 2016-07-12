@@ -89,6 +89,10 @@
             <type>string</type>
             <default-value>RELAXED</default-value>
         </property-def>
+        <property-def name="themes.customtheme.allowed" key="configForm.allowCustomTheme">
+            <type>boolean</type>
+            <default-value>true</default-value>
+        </property-def>
         <property-def name="site.pages.maxEntries" key="configForm.pageMaxEntries">
             <type>string</type>
             <default-value>30</default-value>
@@ -100,10 +104,6 @@
         <property-def name="users.themes.path" key="configForm.newUserThemes">
             <type>string</type>
             <default-value>/themes</default-value>
-        </property-def>
-        <property-def name="themes.customtheme.allowed" key="configForm.allowCustomTheme">
-            <type>boolean</type>
-            <default-value>true</default-value>
         </property-def>
 
     </display-group>
@@ -120,9 +120,9 @@
             <type>boolean</type>
             <default-value>false</default-value>
         </property-def>
-        <property-def name="users.comments.htmlenabled" key="configForm.commentHtmlAllowed">
-            <type>boolean</type>
-            <default-value>false</default-value>
+        <property-def name="comments.html.whitelist" key="configForm.commentHtmlWhitelistLevel">
+            <type>string</type>
+            <default-value>BASIC</default-value>
         </property-def>
         <property-def name="users.comments.emailnotify" key="configForm.emailComments">
             <type>boolean</type>

@@ -1,6 +1,6 @@
 <div class="entry">
     <a class="entryTitle" href="$utils.escapeHTML($entry.permalink)">
-        $utils.truncateText($utils.removeHTML($entry.title), 50, 50, "...")
+        $utils.truncateText($entry.title, 50, 50, "...")
     </a><br /> 
     <p class="entryDetails">
         <a href="$utils.escapeHTML($entry.weblog.URL)">$entry.weblog.name</a>
@@ -12,9 +12,9 @@
     </p>
     <p class="entryDescription">                    
         #if($entry.getTransformedText())
-             $utils.truncateText($utils.removeHTML($entry.getTransformedText()), 240, 260, "...")
+             $utils.truncateText($entry.getTransformedText()), 240, 260, "...")
         #else ## planet entries don't have displayContent
-             $utils.truncateText($utils.removeHTML($entry.text), 240, 260, "...")
+             $utils.truncateText($entry.text), 240, 260, "...")
         #end
     </p>
 </div>

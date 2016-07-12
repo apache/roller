@@ -176,4 +176,19 @@ public class RuntimeConfigDefs {
         }
     }
 
+    public enum RegistrationOption {
+        EMAIL("Register and activate via email (OK for LDAP but not recommended for DB auth)"),
+        APPROVAL_REQUIRED("Register, activate via email, and admin approval"),
+        DISABLED("Disabled -- No new accounts allowed");
+
+        private String description;
+
+        RegistrationOption(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
 }

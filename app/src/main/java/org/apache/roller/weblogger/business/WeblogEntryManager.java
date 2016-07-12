@@ -206,15 +206,6 @@ public interface WeblogEntryManager {
     String applyWeblogEntryPlugins(WeblogEntry entry, String str);
 
     /**
-     * Apply comment plugins.
-     *
-     * @param comment The comment to apply plugins for.
-     * @param text    The text to apply the plugins to.
-     * @return String The transformed comment text.
-     */
-    String applyCommentPlugins(WeblogEntryComment comment, String text);
-
-    /**
      * Create an Atom enclosure element for the resource (usually podcast or other
      * multimedia) at the specified URL.
      *

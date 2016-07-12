@@ -53,7 +53,7 @@
                       </td>
                   </s:if>
 
-                  <%-- special condition for enrollment process --%>
+                  <%-- special condition for required registration procedure --%>
                   <s:elseif test="#pd.name == 'user.registration.process'">
                       <td class="field">
                           <select name='<s:property value="#pd.name"/>'>
@@ -67,11 +67,25 @@
                       </td>
                   </s:elseif>
 
-                  <%-- special condition for JSoup HTML sanitizing levels --%>
+                  <%-- special condition for HTML sanitizing levels --%>
                   <s:elseif test="#pd.name == 'site.html.whitelist'">
                       <td class="field">
                           <select name='<s:property value="#pd.name"/>'>
                                 <s:iterator var="item" value="HTMLSanitizingLevels">
+                                    <option value='<s:property value="#item.left"/>'
+                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
+                                        <s:property value="#item.right"/>
+                                    </option>
+                                </s:iterator>
+                          </select>
+                      </td>
+                  </s:elseif>
+
+                  <%-- special condition for Comment HTML sanitizing levels --%>
+                  <s:elseif test="#pd.name == 'comments.html.whitelist'">
+                      <td class="field">
+                          <select name='<s:property value="#pd.name"/>'>
+                                <s:iterator var="item" value="CommentHTMLSanitizingLevels">
                                     <option value='<s:property value="#item.left"/>'
                                         <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
                                         <s:property value="#item.right"/>
@@ -130,7 +144,7 @@
     </table>
     
     <div class="control">
-        <input class="buttonBox" type="submit" value="<s:text name="generic.save"/>"/>
+        <input class="buttonBox" type="submit" value="<s:text name='generic.save'/>"/>
     </div>
     
 </s:form>

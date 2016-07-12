@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -413,14 +412,11 @@ public class MailManager {
         // Determine with mime type to use for e-mail
         StringBuilder msg = new StringBuilder();
         StringBuilder ownermsg = new StringBuilder();
-        boolean isPlainText = !propertiesManager.getBooleanProperty("users.comments.htmlenabled");
-        
+
         // first the common stub message for the owner and commenters (if applicable)
-        if (!isPlainText) {
-            msg.append("<html><body style=\"background: white; ");
-            msg.append(" color: black; font-size: 12px\">");
-        }
-        
+        msg.append("<html><body style=\"background: white; ");
+        msg.append(" color: black; font-size: 12px\">");
+
         if (!StringUtils.isEmpty(commentObject.getName())) {
             msg.append(commentObject.getName() + " "
                     + resources.getString("email.comment.wrote")+": ");
@@ -428,79 +424,67 @@ public class MailManager {
             msg.append(resources.getString("email.comment.anonymous")+": ");
         }
         
-        msg.append((isPlainText) ? "\n\n" : "<br /><br />");
+        msg.append("<br /><br />");
 
         // Don't escape the content if email will be sent as plain text
-        msg.append((isPlainText) ? commentObject.getContent()
-        : Utilities.transformToHTMLSubset(StringEscapeUtils.escapeHtml4(commentObject.getContent())));
+        msg.append(StringEscapeUtils.escapeHtml4(commentObject.getContent()));
 
-        msg.append((isPlainText) ? "\n\n----\n"
-                : "<br /><br /><hr /><span style=\"font-size: 11px\">");
+        msg.append("<br /><br /><hr /><span style=\"font-size: 11px\">");
 
         msg.append(resources.getString("email.comment.reply") + ": ");
-        msg.append((isPlainText) ? "\n" : "<br />");
+        msg.append("<br />");
 
         // Build link back to comment
         String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true);
 
-        if (isPlainText) {
-            msg.append(commentURL);
-        } else {
-            msg.append("<a href=\""+commentURL+"\">"+commentURL+"</a></span>");
-        }
+        msg.append("<a href=\""+commentURL+"\">"+commentURL+"</a></span>");
 
         // next the additional information that is sent to the blog owner
         // Owner gets an email if it's pending and/or he's turned on notifications
         if (commentObject.getPending() || weblog.getEmailComments()) {
             if (messages != null && messages.size() > 0) {
-                ownermsg.append((isPlainText) ? "" : "<p>");
+                ownermsg.append("<p>");
                 ownermsg.append(resources.getString("commentServlet.email.thereAreErrorMessages"));
-                ownermsg.append((isPlainText) ? "\n\n" : "</p>");
-                ownermsg.append((isPlainText) ? "" : "<ul>");
+                ownermsg.append("</p>");
+                ownermsg.append("<ul>");
 
                 for (Map.Entry<String, List<String>> item : messages.entrySet()) {
-                    ownermsg.append((isPlainText) ? "" : "<li>");
+                    ownermsg.append("<li>");
                     ownermsg.append(MessageFormat.format(resources.getString(
                             item.getKey()), item.getValue()));
-                    ownermsg.append((isPlainText) ? "\n\n" : "</li>");
+                    ownermsg.append("</li>");
                 }
 
-                ownermsg.append((isPlainText) ? "\n\n" : "</ul>");
+                ownermsg.append("</ul>");
             }
 
             ownermsg.append(msg);
 
-            ownermsg.append((isPlainText) ? "\n\n----\n" :
-                "<br /><br /><hr /><span style=\"font-size: 11px\">");
+            ownermsg.append("<br /><br /><hr /><span style=\"font-size: 11px\">");
 
             // providing commenter email address, to facilitate replying via email instead of blog comment if desired
             if (!StringUtils.isBlank(commentObject.getEmail())) {
                 ownermsg.append(resources.getString("email.comment.commenter.email") + ": " + commentObject.getEmail());
-                ownermsg.append((isPlainText) ? "\n" : "<br/>");
+                ownermsg.append("<br/>");
             }
 
             // showing website URL gives more background of commenter, including help in detecting if email is spam.
             if (!StringUtils.isBlank(commentObject.getUrl())) {
                 ownermsg.append(resources.getString("email.comment.commenter.website") + ": " + commentObject.getUrl());
-                ownermsg.append((isPlainText) ? "\n\n" : "<br/><br/>");
+                ownermsg.append("<br/><br/>");
             }
 
             // add link to weblog edit page so user can login to manage comments
             ownermsg.append(resources.getString("email.comment.management.link") + ": ");
-            ownermsg.append((isPlainText) ? "\n" : "<br/>");
+            ownermsg.append("<br/>");
 
             Map<String, String> parameters = new HashMap<>();
             parameters.put("bean.entryId", entry.getId());
             String deleteURL = urlStrategy.getActionURL(
                     "comments", "/tb-ui/authoring", weblog, parameters, true);
 
-            if (isPlainText) {
-                ownermsg.append(deleteURL);
-            } else {
-                ownermsg.append(
-                        "<a href=\"" + deleteURL + "\">" + deleteURL + "</a></span>");
-                ownermsg.append("</Body></html>");
-            }
+            ownermsg.append("<a href=\"" + deleteURL + "\">" + deleteURL + "</a></span>");
+            ownermsg.append("</Body></html>");
         }
 
         msg.append("</Body></html>");
@@ -523,26 +507,14 @@ public class MailManager {
         try {
             String from = user.getEmailAddress();
 
-            boolean isHtml = !isPlainText;
-            
             if (commentObject.getPending() || weblog.getEmailComments()) {
-                if(isHtml) {
-                    sendHTMLMessage(
-                            from,
-                            new String[]{user.getEmailAddress()},
-                            null,
-                            null,
-                            subject,
-                            ownermsg.toString());
-                } else {
-                    sendTextMessage(
-                            from,
-                            new String[]{user.getEmailAddress()},
-                            null,
-                            null,
-                            subject,
-                            ownermsg.toString());
-                }
+                sendHTMLMessage(
+                        from,
+                        new String[]{user.getEmailAddress()},
+                        null,
+                        null,
+                        subject,
+                        ownermsg.toString());
             }
 
             // now send to subscribers
@@ -550,23 +522,13 @@ public class MailManager {
                 // Form array of commenter addrs
                 String[] commenterAddrs = subscribers.toArray(new String[subscribers.size()]);
 
-                if (isHtml) {
-                    sendHTMLMessage(
-                            from, 
-                            null,
-                            null,
-                            commenterAddrs,
-                            subject, 
-                            msg.toString());
-                } else {
-                    sendTextMessage(
-                            from, 
-                            null,
-                            null,
-                            commenterAddrs,
-                            subject, 
-                            msg.toString());
-                }
+                sendHTMLMessage(
+                        from,
+                        null,
+                        null,
+                        commenterAddrs,
+                        subject,
+                        msg.toString());
             }
         } catch (Exception e) {
             log.warn("Exception sending comment notification mail", e);

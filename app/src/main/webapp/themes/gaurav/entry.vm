@@ -56,7 +56,7 @@
 							#if($comment.approved || $model.commentForm.preview)
 								<a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
 								<div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
-									<p>$comment.processedContent</p>
+									<p>$comment.content</p>
 									<p class="comment-details">
 									$server.msg("macro.weblog.postedby")
 									#if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
@@ -133,18 +133,7 @@
 									<label for="input4">$server.msg( "macro.weblog.yourcomment" )</label>
 									<textarea name="content" class="form-control" rows="6" id="input4" required="">$cform.content</textarea>
 							  	</div>
-								
-								<div class="form-group col-lg-12">
-								    <span class="comments-syntax-indicator">
-								    $server.msg( "macro.weblog.htmlsyntax" )
-								    #if(!$server.commentHtmlAllowed)
-								        <span class="disabled">$server.msg( "macro.weblog.htmldisabled" )</span>
-								    #else
-								        <span class="enabled">$server.msg( "macro.weblog.htmlenabled" )</span>
-								    #end
-								    </span>
-								</div>
-								
+
 								<div class="form-group col-lg-12">
 								   <script src="$url.site/scripts/clientSideInclude.js"></script>
 								   <div id="commentAuthenticator"></div>
