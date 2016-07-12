@@ -26,9 +26,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -39,7 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.plugins.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -52,9 +49,12 @@ import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
 import org.apache.roller.weblogger.business.MailManager;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,15 +125,6 @@ public class CommentProcessor {
         this.propertiesManager = propertiesManager;
     }
 
-    @Resource(name="commentPlugins")
-    private List<WeblogEntryCommentPlugin> commentPlugins;
-
-    public void setCommentPlugins(List<WeblogEntryCommentPlugin> commentPlugins) {
-        this.commentPlugins = commentPlugins;
-    }
-
-    private String commentPluginsAsString;
-
     @Autowired
     private MailManager mailManager;
 
@@ -146,14 +137,6 @@ public class CommentProcessor {
 
     public void setCommentValidators(List<CommentValidator> commentValidators) {
         this.commentValidators = commentValidators;
-    }
-
-    /**
-     * Initialization.
-     */
-    @PostConstruct
-    public void init() {
-        commentPluginsAsString = commentPlugins.stream().map(WeblogEntryCommentPlugin::getId).collect(Collectors.joining(","));
     }
 
     /**
@@ -203,6 +186,9 @@ public class CommentProcessor {
                 throw new IllegalArgumentException("unable to lookup entry: " + commentRequest.getWeblogAnchor());
             }
 
+            Whitelist commentHTMLWhitelist = HTMLSanitizer.Level.valueOf(
+                    propertiesManager.getStringProperty("comments.html.whitelist")).getWhitelist();
+
             /*
              * parse request parameters
              *
@@ -225,8 +211,12 @@ public class CommentProcessor {
                 commenterUrl = Utilities.removeHTML(request.getParameter("url"));
             }
 
-            if(request.getParameter("content") != null) {
-                content = request.getParameter("content");
+            {
+                String contentTemp = request.getParameter("content");
+                if (contentTemp != null) {
+                    contentTemp = Utilities.insertLineBreaksIfMissing(contentTemp);
+                    content = Jsoup.clean(contentTemp, commentHTMLWhitelist);
+                }
             }
 
             if(request.getParameter("notify") != null) {
@@ -276,16 +266,6 @@ public class CommentProcessor {
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(Instant.now());
-
-        // set comment content-type depending on if html is allowed
-        if (propertiesManager.getBooleanProperty("users.comments.htmlenabled")) {
-            comment.setContentType("text/html");
-        } else {
-            comment.setContentType("text/plain");
-        }
-
-        // add all enabled content plugins
-        comment.setPlugins(commentPluginsAsString);
 
         WeblogEntryComment commentForm = new WeblogEntryComment();
         String error = null;

@@ -183,8 +183,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
 
                 if (request.getParameter("cat") != null) {
-                    this.weblogCategoryName = Utilities.decode(request
-                            .getParameter("cat"));
+                    this.weblogCategoryName = Utilities.decode(request.getParameter("cat"));
                 }
             }
         }

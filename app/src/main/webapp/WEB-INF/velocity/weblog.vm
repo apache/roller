@@ -226,7 +226,7 @@ Show comments for weblog entry according to TightBlog configuration.
             <a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
             <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
 
-                $comment.processedContent
+                $comment.content
 
                 <p class="comment-details">
                 $server.msg("macro.weblog.postedby")
@@ -275,7 +275,7 @@ Show comments for weblog entry according to TightBlog configuration.
             ##</li>
             <li data-theme="a">
               <p class="ui-li-desc content-textbox">
-                 $comment.processedContent
+                 $comment.content
               </p>
               <p class="ui-li-desc content-textbox">
                 $server.msg("macro.weblog.postedby")
@@ -348,16 +348,6 @@ Show comments form for weblog entry.
             <li>
                 <label class="desc">$server.msg( "macro.weblog.yourcomment" )</label>
                 <textarea name="content" class="textarea large" cols="40" rows="10">$cform.content</textarea>
-            </li>
-            <li class="info">
-                <span class="comments-syntax-indicator">
-                $server.msg( "macro.weblog.htmlsyntax" )
-                #if(!$server.commentHtmlAllowed)
-                    <span class="disabled">$server.msg( "macro.weblog.htmldisabled" )</span>
-                #else
-                    <span class="enabled">$server.msg( "macro.weblog.htmlenabled" )</span>
-                #end
-                </span>
             </li>
             <li class="info">
                <script src="$url.site/scripts/clientSideInclude.js"></script>

@@ -141,7 +141,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
     public String getNextName() {
         if (getNextEntry() != null) {
-            String title = Utilities.truncateHTML(getNextEntry().getTitle(), 15, 20, "...");
+            String title = Utilities.truncateText(getNextEntry().getTitle(), 15, 20, "...");
             return messageUtils.getString("weblogEntriesPager.single.next", new Object[] {title});
         }
         return null;
@@ -157,7 +157,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     
     public String getPrevName() {
         if (getPrevEntry() != null) {
-            String title = Utilities.truncateHTML(getPrevEntry().getTitle(), 15, 20, "...");
+            String title = Utilities.truncateText(getPrevEntry().getTitle(), 15, 20, "...");
             return messageUtils.getString("weblogEntriesPager.single.prev", new Object[] {title});
         }
         return null;

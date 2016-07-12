@@ -61,11 +61,11 @@
     <entry>
         <id>${comment.weblogEntry.permalink}#comment-${comment.timestamp}</id> 
         <title type="html">Re: $utils.escapeXML($comment.weblogEntry.title)</title>
-        <author><name>$utils.escapeXML($utils.removeHTML($comment.name))</name></author>
+        <author><name>$utils.escapeXML($comment.name)</name></author>
         <link rel="alternate" type="text/html" href="${comment.weblogEntry.permalink}#comment-${comment.timestamp}"/>
         <published>$utils.formatIsoZonedDateTime($comment.postTime)</published>
         <updated>$utils.formatIsoZonedDateTime($comment.postTime)</updated>
-        <content type="html">$utils.escapeXML($comment.processedContent)</content>
+        <content type="html">$utils.escapeXML($comment.content)</content>
     </entry>
     #end
 #end

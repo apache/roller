@@ -25,8 +25,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.plugins.WeblogEntryCommentPlugin;
-import org.apache.roller.weblogger.business.plugins.WeblogEntryPlugin;
+import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -37,6 +36,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -73,12 +73,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<>();
-
-    public void setCommentPlugins(List<WeblogEntryCommentPlugin> commentPlugins) {
-        this.commentPlugins = commentPlugins;
     }
 
     private List<WeblogEntryPlugin> weblogEntryPlugins = new ArrayList<>();
@@ -754,34 +748,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 }
             }
         }
-        return conditionallySanitize(ret);
-    }
+        Whitelist whitelist = HTMLSanitizer.Level.valueOf(
+                propertiesManager.getStringProperty("site.html.whitelist")).getWhitelist();
 
-    private String conditionallySanitize(String ret) {
-        Whitelist whitelist = propertiesManager.getHtmlWhitelist();
-
-        if (whitelist == null || ret == null) {
-            return ret;
-        } else {
-            return Jsoup.clean(ret, whitelist);
-        }
-    }
-
-    @Override
-    public String applyCommentPlugins(WeblogEntryComment comment, String text) {
-        if(comment == null || text == null) {
-            throw new IllegalArgumentException("comment cannot be null");
-        }
-        String content = text;
-        if (commentPlugins.size() > 0) {
-            for (WeblogEntryCommentPlugin plugin : commentPlugins) {
-                if(comment.getPlugins() != null && comment.getPlugins().contains(plugin.getId())) {
-                    log.debug("Invoking comment plugin {}", plugin.getId());
-                    content = plugin.render(comment, content);
-                }
-            }
-        }
-        return content;
+        return (ret == null || whitelist == null) ? ret : Jsoup.clean(ret, whitelist);
     }
 
     @Override

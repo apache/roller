@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -39,8 +40,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
@@ -58,7 +57,6 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
@@ -81,24 +79,8 @@ public class Utilities {
     public static final int TWENTYFOUR_KB_IN_BYTES = 24576;
     public static final int ONE_MB_IN_BYTES = 1024 * 1024;
 
-    private static Pattern mLinkPattern = Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);
-
     public static String generateUUID() {
         return UUID.randomUUID().toString();
-    }
-
-    private static Whitelist noHTMLWhitelist = Whitelist.none();
-
-    private static Whitelist basicWhitelist = Whitelist.basic();
-
-    /**
-     * Removes html tags not included in the JSoup "basic" whitelist.
-     * @param str String potentially containing html tags outside the whitelist.
-     * @return String with disallowed tags removed.  Text content remains in some cases
-     * (e.g., text content below a table), is removed in others (script tags.)
-     */
-    public static String transformToHTMLSubset(String str) {
-        return processHTML(str, basicWhitelist);
     }
 
     /**
@@ -107,42 +89,58 @@ public class Utilities {
      * @return plain text string, all HTML tags removed.
      */
     public static String removeHTML(String str) {
-        return processHTML(str, noHTMLWhitelist);
-    }
-
-    private static String processHTML(String str, Whitelist whitelist) {
         if (str == null) {
             return null;
         } else {
-            return Jsoup.clean(str, whitelist);
+            return Jsoup.clean(str, HTMLSanitizer.Level.NONE.getWhitelist());
         }
     }
 
+    public static String insertLineBreaksIfMissing(String text) {
+        log.debug("starting value: {}", text);
 
-    /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
-     */
-    public static String addNofollow(String html) {
-        if (html == null || html.length() == 0) {
-            return html;
+        // first check if text already has <br> and/or <p> tags, if so, assume it has already been formatted.
+        if (text.contains("<br>") || text.contains("<p>")) {
+            return text;
         }
-        Matcher m = mLinkPattern.matcher(html);
+
+        /*
+         * setup a buffered reader and iterate through each line inserting html as needed
+         * NOTE: We consider a paragraph to be 2 endlines with no text between them
+         */
         StringBuilder buf = new StringBuilder();
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = html.substring(start, end);
-            buf.append(html.substring(0, start));
-            if (link.contains("rel=\"nofollow\"")) {
-                buf.append(link.substring(0, link.length() - 1));
-                buf.append(" rel=\"nofollow\">");
-            } else {
-                buf.append(link);
+        try {
+            BufferedReader br = new BufferedReader(new StringReader(text));
+
+            String line;
+            boolean insidePara = false;
+            while((line = br.readLine()) != null) {
+
+                if (!insidePara && line.trim().length() > 0) {
+                    // start of a new paragraph
+                    buf.append("<p>");
+                    buf.append(line);
+                    insidePara = true;
+                } else if (insidePara && line.trim().length() == 0) {
+                    // end of a paragraph
+                    buf.append("</p>");
+                    insidePara = false;
+                } else {
+                    buf.append(" ").append(line);
+                }
             }
-            html = html.substring(end, html.length());
-            m = mLinkPattern.matcher(html);
+
+            // if the text ends without an empty line then we need to
+            // terminate the last paragraph now
+            if (insidePara) {
+                buf.append("</p>");
+            }
+
+        } catch(Exception e) {
+            log.warn("trouble rendering text.", e);
         }
-        buf.append(html);
+
+        log.debug("ending value:\n {}", buf.toString());
         return buf.toString();
     }
 
@@ -184,77 +182,6 @@ public class Utilities {
             sb.append("\r\n");
         }
         return sb.toString();
-    }
-
-    /**
-     * This method based on the "truncateNicely" tag at the former Apache Jakarta taglib project.
-     *
-     * @param str String to parse
-     * @param lower minimum acceptable length of string (not counting HTML tags)
-     * @param upper maximum acceptable length (not counting HTML tags)
-     * @param appendToEnd characters (potentially past maximum length) to add to
-     *                    visually indicate that truncation occurred
-     * @return processed string
-     */
-    public static String truncateHTML(String str, int lower, int upper, String appendToEnd) {
-        // strip markup from the string
-        String str2 = removeHTML(str);
-        boolean diff = (str2.length() < str.length());
-
-        // quickly adjust the upper if it is set lower than 'lower'
-        if (upper < lower) {
-            upper = lower;
-        }
-
-        // now determine if the string fits within the upper limit
-        // if it does, go straight to return, do not pass 'go' and collect $200
-        if (str2.length() > upper) {
-            // the magic location int
-            int loc;
-
-            // first we determine where the next space appears after lower
-            loc = str2.lastIndexOf(' ', upper);
-
-            // now we'll see if the location is greater than the lower limit
-            if (loc >= lower) {
-                // yes it was, so we'll cut it off here
-                str2 = str2.substring(0, loc);
-            } else {
-                // no it wasnt, so we'll cut it off at the upper limit
-                str2 = str2.substring(0, upper);
-                loc = upper;
-            }
-
-            // HTML was removed from original str
-            if (diff) {
-
-                // location of last space in truncated string
-                loc = str2.lastIndexOf(' ', loc);
-
-                // get last "word" in truncated string (add 1 to loc to
-                // eliminate space
-                String str3 = str2.substring(loc + 1);
-
-                // find this fragment in original str, from 'loc' position
-                loc = str.indexOf(str3, loc) + str3.length();
-
-                // get truncated string from original str, given new 'loc'
-                str2 = str.substring(0, loc);
-
-                // get all the HTML from original str after loc
-                str3 = extractHTML(str.substring(loc));
-
-                // append the appendToEnd String and
-                // add extracted HTML back onto truncated string
-                str = str2 + appendToEnd + str3;
-            } else {
-                // the string was truncated, so we append the appendToEnd String
-                str = str2 + appendToEnd;
-            }
-
-        }
-
-        return str;
     }
 
     public static String truncateText(String str, int lower, int upper, String appendToEnd) {

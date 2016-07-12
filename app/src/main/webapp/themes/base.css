@@ -148,9 +148,6 @@ div.comments-form {
   font-weight:normal;
   margin: 15px 15px 15px 15px;
 }
-span.comments-syntax-indicator {
-    display: block;
-}
 ul.commentsList {
     list-style: none;
     margin-left: 0;
@@ -180,19 +177,6 @@ input.commentFormInput {
 textarea.commentFormTextarea {
     font-size: 12px;
     width: 90% !important;
-}
-.comments-syntax-indicator {
-    font-weight: bold;
-}
-.comments-syntax-indicator span.enabled {
-    background: transparent;
-    color: green;
-    font-style: italic;
-}
-.comments-syntax-indicator span.disabled {
-    background: transparent;
-    color: red;
-    font-style: italic;
 }
 div.commentBody {}
 div.commentByline {}
