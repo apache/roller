@@ -332,7 +332,6 @@ public class PageModel implements Model {
             return new WeblogEntriesTimePager(
                     interval,
                     weblogEntryManager,
-                    propertiesManager,
                     urlStrategy,
                     pageRequest.getWeblog(),
                     pageRequest.getWeblogDate(),

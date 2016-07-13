@@ -268,7 +268,7 @@ public class FileContentManagerImpl implements FileContentManager {
             }
         }
 
-        // First check against what is FORBIDDEN
+        // Next check against what is FORBIDDEN
 
         // check file against forbidden file extensions, overrides any allows
         if (forbidFiles != null && forbidFiles.length > 0) {

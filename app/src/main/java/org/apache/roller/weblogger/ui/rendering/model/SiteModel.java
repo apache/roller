@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -68,12 +67,6 @@ public class SiteModel implements Model {
         this.weblogEntryManager = weblogEntryManager;
     }
 
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
-    }
-
     @Override
     public String getModelName() {
         return "site";
@@ -111,7 +104,6 @@ public class SiteModel implements Model {
     public Pager getWeblogEntriesPager(Weblog queryWeblog, String cat, int sinceDays, int length) {
         return new WeblogEntriesTimePager(
                 weblogEntryManager,
-                propertiesManager,
                 urlStrategy,
                 queryWeblog,
                 cat,

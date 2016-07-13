@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -145,7 +146,14 @@ public class CommentProcessor {
     @RequestMapping(path="/**", method = RequestMethod.POST)
     public void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        boolean globalCommentModerationRequired = propertiesManager.getBooleanProperty("users.moderation.required");
+        RuntimeConfigDefs.CommentOption commentOption =
+                RuntimeConfigDefs.CommentOption.valueOf(propertiesManager.getStringProperty("users.comments.enabled"));
+
+        if (RuntimeConfigDefs.CommentOption.NONE.equals(commentOption)) {
+            log.info("Getting comment post even though commenting is disabled -- returning 403");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
 
         String dispatch_url;
 
@@ -165,11 +173,7 @@ public class CommentProcessor {
         }
 
         WeblogEntryRequest commentRequest;
-        String commenterName = null;
-        String commenterEmail = null;
-        String commenterUrl = null;
-        String content = null;
-        boolean notify = false;
+        WeblogEntryComment comment = new WeblogEntryComment();
 
         try {
             commentRequest = new WeblogEntryRequest(request);
@@ -186,57 +190,6 @@ public class CommentProcessor {
                 throw new IllegalArgumentException("unable to lookup entry: " + commentRequest.getWeblogAnchor());
             }
 
-            Whitelist commentHTMLWhitelist = HTMLSanitizer.Level.valueOf(
-                    propertiesManager.getStringProperty("comments.html.whitelist")).getWhitelist();
-
-            /*
-             * parse request parameters
-             *
-             * the params we currently care about are:
-             *   name - comment author
-             *   email - comment email
-             *   url - comment referring url
-             *   content - comment contents
-             *   notify - if commenter wants to receive notifications
-             */
-            if(request.getParameter("name") != null) {
-                commenterName = Utilities.removeHTML(request.getParameter("name"));
-            }
-
-            if(request.getParameter("email") != null) {
-                commenterEmail = Utilities.removeHTML(request.getParameter("email"));
-            }
-
-            if(request.getParameter("url") != null) {
-                commenterUrl = Utilities.removeHTML(request.getParameter("url"));
-            }
-
-            {
-                String contentTemp = request.getParameter("content");
-                if (contentTemp != null) {
-                    contentTemp = Utilities.insertLineBreaksIfMissing(contentTemp);
-                    content = Jsoup.clean(contentTemp, commentHTMLWhitelist);
-                }
-            }
-
-            if(request.getParameter("notify") != null) {
-                notify = true;
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("name = " + commenterName);
-                log.debug("email = " + commenterEmail);
-                log.debug("url = " + commenterUrl);
-                log.debug("content = " + content);
-                log.debug("notify = " + notify);
-            }
-
-            commentApprovalRequired = globalCommentModerationRequired || weblog.getApproveComments();
-
-            // we know what the weblog entry is, so setup our urls
-            dispatch_url = PageProcessor.PATH + "/" + weblog.getHandle();
-            dispatch_url += "/entry/" + Utilities.encode(commentRequest.getWeblogAnchor());
-
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
             log.debug("error creating page request", e);
@@ -244,28 +197,69 @@ public class CommentProcessor {
             return;
         }
 
-        log.debug("Doing comment posting for entry = {}", entry.getPermalink());
+        commentApprovalRequired = RuntimeConfigDefs.CommentOption.MODERATIONREQUIRED.equals(commentOption) ||
+                weblog.getApproveComments();
 
-        // Collect input from request params and construct new comment object
-        // fields: name, email, url, content, notify
-        WeblogEntryComment comment = new WeblogEntryComment();
-        comment.setName(commenterName);
-        comment.setEmail(commenterEmail);
+        // we know what the weblog entry is, so setup our urls
+        dispatch_url = PageProcessor.PATH + "/" + weblog.getHandle();
+        dispatch_url += "/entry/" + Utilities.encode(commentRequest.getWeblogAnchor());
 
-        // Validate url
-        if (StringUtils.isNotEmpty(commenterUrl)) {
-            commenterUrl = commenterUrl.trim().toLowerCase();
-            if (!commenterUrl.startsWith("http://") && !commenterUrl.startsWith("https://")) {
-                commenterUrl = "http://" + commenterUrl;
-            }
-        }
-
-        comment.setUrl(commenterUrl);
-        comment.setContent(content);
-        comment.setNotify(notify);
+        /*
+         * parse request parameters
+         *
+         * the params we currently care about are:
+         *   name - comment author
+         *   email - comment email
+         *   url - comment referring url
+         *   content - comment contents
+         *   notify - if commenter wants to receive notifications
+         */
+        comment.setNotify(request.getParameter("notify") != null);
+        comment.setName(Utilities.removeHTML(request.getParameter("name")));
+        comment.setEmail(Utilities.removeHTML(request.getParameter("email")));
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(Instant.now());
+
+        // Validate url
+        comment.setUrl(Utilities.removeHTML(request.getParameter("url")));
+        String urlCheck = comment.getUrl();
+        if (StringUtils.isNotEmpty(urlCheck)) {
+            urlCheck = urlCheck.trim().toLowerCase();
+            if (!urlCheck.startsWith("http://") && !urlCheck.startsWith("https://")) {
+                urlCheck = "http://" + urlCheck;
+            }
+        }
+        comment.setUrl(urlCheck);
+
+        // Validate content
+        comment.setContent(request.getParameter("content"));
+        HTMLSanitizer.Level sanitizerLevel = HTMLSanitizer.Level.valueOf(
+                propertiesManager.getStringProperty("comments.html.whitelist"));
+        Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
+
+        // Need to insert paragraphs breaks in case commenter didn't do so.
+        String commentTemp = Utilities.insertLineBreaksIfMissing(comment.getContent());
+
+        // JSoup pulls out disallowable tags, normally good but HTMLSanitizer.Level.LIMITED is so
+        // limited good to give commenter opportunity to fix it in case too much removed.
+        boolean noDisallowedTags = true;
+        if (sanitizerLevel == HTMLSanitizer.Level.LIMITED) {
+            noDisallowedTags = Jsoup.isValid(commentTemp, commentHTMLWhitelist);
+        }
+
+        if (noDisallowedTags) {
+            comment.setContent(Jsoup.clean(commentTemp, commentHTMLWhitelist));
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Doing comment posting for entry = {}", entry.getPermalink());
+            log.debug("name = " + comment.getName());
+            log.debug("email = " + comment.getEmail());
+            log.debug("url = " + comment.getUrl());
+            log.debug("content = " + comment.getContent());
+            log.debug("notify = " + comment.getNotify());
+        }
 
         WeblogEntryComment commentForm = new WeblogEntryComment();
         String error = null;
@@ -281,9 +275,9 @@ public class CommentProcessor {
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
         // Must have an email and also must be valid
-        } else if (StringUtils.isEmpty(commenterEmail) || !Utilities.isValidEmailAddress(commenterEmail)) {
+        } else if (StringUtils.isEmpty(comment.getEmail()) || !Utilities.isValidEmailAddress(comment.getEmail())) {
             error = messageUtils.getString("error.commentPostFailedEmailAddress");
-            log.debug("Email Address is invalid: {}", commenterEmail);
+            log.debug("Email Address is invalid: {}", comment.getEmail());
         // if there is an URL it must be valid
         } else if (StringUtils.isNotEmpty(comment.getUrl())
                 && !new UrlValidator(new String[] { "http", "https" }).isValid(comment.getUrl())) {
@@ -294,6 +288,8 @@ public class CommentProcessor {
             String[] msg = { request.getParameter("answer") };
             error = messageUtils.getString("error.commentAuthFailed", msg);
             log.debug("Comment failed authentication");
+        } else if (!noDisallowedTags) {
+            error = messageUtils.getString("error.commentPostDisallowedTags");
         }
 
         // bail now if we have already found an error

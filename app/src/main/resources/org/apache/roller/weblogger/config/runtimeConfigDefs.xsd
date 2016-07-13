@@ -48,6 +48,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
         <xs:attribute name="key" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
     </xs:complexType>
 
 </xs:schema>

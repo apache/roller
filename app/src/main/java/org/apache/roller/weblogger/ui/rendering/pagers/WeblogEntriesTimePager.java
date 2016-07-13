@@ -36,8 +36,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
@@ -133,7 +133,6 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
      */
     public WeblogEntriesTimePager(
             WeblogEntryManager weblogEntryManager,
-            PropertiesManager propertiesManager,
             URLStrategy strat,
             Weblog weblog,
             String catName,
@@ -152,14 +151,13 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
             fixedStartDate = LocalDate.now().minusDays(sinceDays);
         }
 
-        setup(PagingInterval.SITE_LATEST, weblogEntryManager, propertiesManager, strat, weblog, null,
+        setup(PagingInterval.SITE_LATEST, weblogEntryManager, strat, weblog, null,
                 catName, tag, page);
     }
 
     public WeblogEntriesTimePager(
             PagingInterval interval,
             WeblogEntryManager weblogEntryManager,
-            PropertiesManager propertiesManager,
             URLStrategy strat,
             Weblog weblog,
             String dateString,
@@ -169,13 +167,12 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
         this.viewLocale = weblog.getLocaleInstance();
 
-        setup(interval, weblogEntryManager, propertiesManager, strat, weblog, dateString,
+        setup(interval, weblogEntryManager, strat, weblog, dateString,
                 catName, tag, page);
     }
 
     private void setup(PagingInterval interval,
        WeblogEntryManager weblogEntryManager,
-       PropertiesManager propertiesManager,
        URLStrategy        strat,
        Weblog             weblog,
        String             dateString,
@@ -200,7 +197,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
             maxEntries = siteMaxEntries;
         } else {
             // make sure offset, maxEntries, and page are valid
-            int maxLength = propertiesManager.getIntProperty("site.pages.maxEntries");
+            int maxLength = WebloggerStaticConfig.getIntProperty("site.pages.maxEntries", 30);
             maxEntries = weblog.getEntriesPerPage();
             if (maxEntries > maxLength) {
                 maxEntries = maxLength;

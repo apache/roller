@@ -32,6 +32,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
@@ -456,7 +457,8 @@ public class WeblogEntry {
      */
     @Transient
     public boolean getCommentsStillAllowed() {
-        if (!WebloggerFactory.getWeblogger().getPropertiesManager().getBooleanProperty("users.comments.enabled")) {
+        if (RuntimeConfigDefs.CommentOption.NONE.equals(RuntimeConfigDefs.CommentOption.valueOf(
+                WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty("users.comments.enabled")))) {
             return false;
         }
         if (!Boolean.TRUE.equals(getWeblog().getAllowComments())) {
