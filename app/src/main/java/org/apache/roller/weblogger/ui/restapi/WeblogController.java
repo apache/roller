@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -192,7 +193,7 @@ public class WeblogController {
                 weblog.setDefaultPlugins(newData.getDefaultPlugins());
 
                 // make sure user didn't enter an invalid entry display count
-                int maxEntries = propertiesManager.getIntProperty("site.pages.maxEntries");
+                int maxEntries = WebloggerStaticConfig.getIntProperty("site.pages.maxEntries", 30);
                 if (newData.getEntriesPerPage() > maxEntries) {
                     newData.setEntriesPerPage(maxEntries);
                 }

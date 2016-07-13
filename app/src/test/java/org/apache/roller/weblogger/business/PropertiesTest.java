@@ -51,17 +51,32 @@ public class PropertiesTest extends WebloggerTest {
         prop = propertiesManager.getProperty("site.name");
         assertNotNull(prop);
         assertEquals("testtest", prop.getValue());
-        
+
+        // get a second property by name
+        prop = propertiesManager.getProperty("analytics.default.tracking.code");
+        assertNotNull(prop);
+
+        // update a property
+        prop.setValue("blahblah");
+        propertiesManager.saveProperty(prop);
+        endSession(true);
+
+        // make sure property was updated
+        prop = propertiesManager.getProperty("analytics.default.tracking.code");
+        assertNotNull(prop);
+        assertEquals("blahblah", prop.getValue());
+
         // get all properties
         Map<String, RuntimeConfigProperty> props = propertiesManager.getProperties();
         assertNotNull(props);
         assertTrue(props.containsKey("site.name"));
-        
+        assertTrue(props.containsKey("analytics.default.tracking.code"));
+
         // update multiple properties
         prop = props.get("site.name");
         prop.setValue("foofoo");
-        prop = props.get("users.themes.path");
-        prop.setValue("/my/new/themedir");
+        prop = props.get("analytics.default.tracking.code");
+        prop.setValue("blahblahblah");
         propertiesManager.saveProperties(props);
         endSession(true);
         
@@ -69,6 +84,6 @@ public class PropertiesTest extends WebloggerTest {
         props = propertiesManager.getProperties();
         assertNotNull(props);
         assertEquals("foofoo", props.get("site.name").getValue());
-        assertEquals("/my/new/themedir", props.get("users.themes.path").getValue());
+        assertEquals("blahblahblah", props.get("analytics.default.tracking.code").getValue());
     }
 }

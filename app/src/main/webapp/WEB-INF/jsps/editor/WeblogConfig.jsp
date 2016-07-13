@@ -171,7 +171,7 @@ var msg= {
 
         <%-- ***** Comment settings ***** --%>
 
-        <s:if test="getBooleanProp('users.comments.enabled')">
+        <s:if test="getProp('users.comments.enabled') != 'NONE'">
             <tr>
                 <td colspan="3"><h2><s:text name="websiteSettings.commentSettings" /></h2></td>
             </tr>
@@ -181,7 +181,7 @@ var msg= {
                 <td class="field"><input type="checkbox" data-link="weblogData.allowComments"></td>
             </tr>
 
-            <s:if test="!getBooleanProp('users.moderation.required')">
+            <s:if test="getProp('users.comments.enabled') != 'MODERATIONREQUIRED'">
                 <tr>
                     <td class="label"><s:text name="websiteSettings.approveComments" /></td>
                     <td class="field"><input type="checkbox" data-link="weblogData.approveComments"></td>
@@ -234,7 +234,7 @@ var msg= {
 
         <s:if test="getBooleanProp('analytics.code.override.allowed')">
             <tr>
-                <td colspan="3"><h2><s:text name="configForm.webAnalytics" /></h2></td>
+                <td colspan="3"><h2><s:text name="websiteSettings.webAnalytics" /></h2></td>
             </tr>
 
             <tr>

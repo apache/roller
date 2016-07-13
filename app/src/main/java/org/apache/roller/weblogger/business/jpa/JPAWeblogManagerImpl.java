@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -567,6 +568,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         weblog.getBookmarks().remove(bookmark);
         weblog.invalidateCache();
         this.strategy.remove(bookmark);
+
         if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
             cacheManager.invalidate(weblog);
         }

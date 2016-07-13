@@ -23,7 +23,7 @@
 <s:form action="globalConfig!save">
     <sec:csrfInput/>
 
-    <table class="formtableNoDesc">
+    <table class="formtable">
     
     <s:iterator var="dg" value="globalConfigDef.displayGroups">
     
@@ -95,6 +95,20 @@
                       </td>
                   </s:elseif>
 
+                  <%-- special condition for Comment options --%>
+                  <s:elseif test="#pd.name == 'users.comments.enabled'">
+                      <td class="field">
+                          <select name='<s:property value="#pd.name"/>'>
+                                <s:iterator var="item" value="commentOptions">
+                                    <option value='<s:property value="#item.left"/>'
+                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
+                                        <s:property value="#item.right"/>
+                                    </option>
+                                </s:iterator>
+                          </select>
+                      </td>
+                  </s:elseif>
+
                   <%-- "string" type means use a simple textbox --%>
                   <s:elseif test="#pd.type == 'string'">
                     <td class="field"><input type="text" name='<s:property value="#pd.name"/>'
@@ -130,7 +144,7 @@
                         name='<s:property value="#pd.name"/>' size="50" onBlur="this.value=this.value.trim()"/></td>
                   </s:else>
                 
-                <td class="description"><%-- <s:text name="" /> --%></td>
+                <td class="description"><s:text name="%{#pd.description}"/></td>
             </tr>
           
         </s:iterator>

@@ -205,10 +205,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     @Override
     public void addToPingSet(Weblog changedWeblog) {
-        if (propertiesManager.getBooleanProperty("pings.suspendPingProcessing")) {
-            log.debug("Ping processing is suspended. No auto pings will be queued.");
-            return;
-        }
         weblogPingSet.add(changedWeblog);
     }
 
@@ -222,11 +218,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         // reset queue for next execution
         weblogPingSet = Collections.synchronizedSet(new HashSet<>());
 
-        if (propertiesManager.getBooleanProperty("pings.suspendPingProcessing")) {
-            log.warn("Ping processing suspended on admin settings page, no pings are being generated.");
-            return;
-        }
-
         String absoluteContextUrl = WebloggerStaticConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
             log.warn("WARNING: Skipping current ping queue processing round because we cannot yet" +
@@ -235,7 +226,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
 
         if (logPingsOnly) {
-            log.warn("pings.logOnly set to true in properties file so no actual pinging will occur." +
+            log.warn("logPingsOnly set to true for the ping target manager so no actual pinging will occur." +
                     " To see all logged pings, make sure logging at DEBUG for this class, or INFO to see just failures.");
         }
 

@@ -120,7 +120,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(weblogEntryManager, propertiesManager, urlStrategy,
+            super(weblogEntryManager, urlStrategy,
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), feedRequest.getTag(),
                     feedRequest.getPage(),

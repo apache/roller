@@ -89,6 +89,7 @@ public class RuntimeConfigDefs {
     public static class PropertyDef {
         private String name = null;
         private String key = null;
+        private String description = null;
         private String type = null;
         private String defaultValue = null;
         private int rows = 5;
@@ -116,6 +117,15 @@ public class RuntimeConfigDefs {
         @XmlAttribute
         public void setKey(String key) {
             this.key = key;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        @XmlAttribute
+        public void setDescription(String description) {
+            this.description = description;
         }
 
         public String getType() {
@@ -189,6 +199,28 @@ public class RuntimeConfigDefs {
 
         public String getDescription() {
             return description;
+        }
+    }
+
+    public enum CommentOption {
+        NONE(0, "No"),
+        MODERATIONREQUIRED(1, "Yes, but blogger must moderate comments"),
+        YES(2, "Yes, and comment moderation is blogger's choice");
+
+        private String description;
+
+        private int level;
+
+        CommentOption(int level, String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public int getLevel() {
+            return level;
         }
     }
 }

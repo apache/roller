@@ -42,7 +42,7 @@ public final class HTMLSanitizer {
         RELAXED(4, "Relaxed (Allows tables, headings, divs)", RelaxedWhitelist),
         RELAXED_IFRAMES(5, "Relaxed plus iframes (Social media widgets, videos, scripting potential)",
                 RelaxedIframesWhitelist),
-        OFF(6, "No sanitizing at all (Allows scripts, forms.  Not recommended)", null);
+        OFF(6, "No sanitizing at all (Allows scripts, forms, everything.)", null);
 
 
         private String description;
