@@ -55,14 +55,14 @@ var msg= {
 
 <%-- Create Weblog --%>
 <s:if test="weblogId == null">
-    <s:text var="saveButtonText" name="createWebsite.button.save"/>
-    <s:text var="subtitlePrompt" name="createWebsite.prompt"/>
+    <s:text var="saveButtonText" name="weblogSettings.create.button.save"/>
+    <s:text var="subtitlePrompt" name="weblogSettings.create.prompt"/>
     <input type="hidden" id="refreshURL" value="<s:url action='createWeblog'/>"/>
 </s:if>
 <%-- Update Weblog --%>
 <s:else>
-    <s:text var="saveButtonText" name="websiteSettings.button.update"/>
-    <s:text var="subtitlePrompt" name="websiteSettings.subtitle">
+    <s:text var="saveButtonText" name="weblogSettings.button.update"/>
+    <s:text var="subtitlePrompt" name="weblogSettings.prompt">
         <s:param value="actionWeblog.handle"/>
     </s:text>
     <input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
@@ -79,23 +79,22 @@ var msg= {
         <%-- ***** General settings ***** --%>
 
         <tr id="recordId" data-id="{{:weblogData.id}}">
-            <td colspan="3"><h2><s:text name="websiteSettings.generalSettings" /></h2></td>
+            <td colspan="3"><h2><s:text name="weblogSettings.generalSettings" /></h2></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.websiteTitle"/>*</td>
+            <td class="label"><s:text name="weblogSettings.websiteTitle"/>*</td>
             <td class="field"><input type="text" data-link="weblogData.name" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
-            <td class="description"><s:text name="createWebsite.tip.name" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="generic.tagline" /></td>
+            <td class="label"><s:text name="weblogSettings.tagline" /></td>
             <td class="field"><input type="text" data-link="weblogData.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
-            <td class="description"><s:text name="createWebsite.tip.description" /></td>
+            <td class="description"><s:text name="weblogSettings.tip.tagline" /></td>
         </tr>
 
         <tr>
-            <td class="label"><label for="handle"><s:text name="createWebsite.handle" />*</label></td>
+            <td class="label"><label for="handle"><s:text name="weblogSettings.handle" />*</label></td>
             <td class="field">
                 <s:if test="weblogId == null">
                   <input type="text" data-link="weblogData.handle trigger=true" size="30" maxlength="30" onBlur="this.value=this.value.trim()" required><br />
@@ -105,21 +104,22 @@ var msg= {
                   <input type="text" data-link="weblogData.handle" size="30" maxlength="30" readonly><br />
                 </s:else>
                 <span style="text-size:70%">
-                    <s:text name="createWebsite.weblogUrl" />:&nbsp;
+                    <s:text name="weblogSettings.weblogUrl" />:&nbsp;
                     <s:property value="absoluteSiteURL" />/<span style="color:red" data-link="weblogData.handle"></span>
                 </span>
             </td>
-            <td class="description"><s:text name="createWebsite.tip.handle" /></td>
+            <td class="description"><s:text name="weblogSettings.tip.handle" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.about" /></td>
+            <td class="label"><s:text name="weblogSettings.about" /></td>
             <td class="field"><textarea data-link="weblogData.about" rows="3" cols="40" maxlength="255" onBlur="this.value=this.value.trim()"></textarea></td>
+            <td class="description"><s:text name="weblogSettings.tip.about" /></td>
         </tr>
 
         <s:if test="weblogId == null">
           <tr>
-              <td class="label"><label for="theme"><s:text name="createWebsite.theme" />*</label></td>
+              <td class="label"><label for="theme"><s:text name="weblogSettings.theme" />*</label></td>
               <td class="field">
                   <select id="themeSelector" data-link="weblogData.theme" size="1">
                        {{for themeList}}
@@ -130,73 +130,85 @@ var msg= {
                   <br />
                   <div id="themeDetails" style="height:400px"></div>
               </td>
-              <td class="description"><s:text name="createWebsite.tip.theme" /></td>
+              <td class="description"><s:text name="weblogSettings.tip.theme" /></td>
           </tr>
         </s:if>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.editor" /></td>
+            <td class="label"><s:text name="weblogSettings.editor" /></td>
             <td class="field">
                 <select data-link="weblogData.editorPage trigger=true" size="1">
                     <option value="editor-text.jsp"><s:text name="editor.text.name"/></option>
                     <option value="editor-xinha.jsp"><s:text name="editor.xinha.name"/></option>
                 </select>
            </td>
+           <td class="description"><s:text name="weblogSettings.tip.editor" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.visible" /></td>
+            <td class="label"><s:text name="weblogSettings.visible" /></td>
             <td class="field"><input type="checkbox" data-link="weblogData.visible"></td>
+            <td class="description"><s:text name="weblogSettings.tip.visible" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="websiteSettings.entriesPerPage" /></td>
+            <td class="label"><s:text name="weblogSettings.entriesPerPage" /></td>
             <td class="field"><input type="number" min="1" max="100" step="1" data-link="weblogData.entriesPerPage" size="3" onBlur="this.value=this.value.trim()"></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="createWebsite.locale"/>*</td>
+            <td class="label"><s:text name="weblogSettings.locale"/>*</td>
             <td class="field">
                 <s:select data-link="weblogData.locale" size="1" list="localesList" listValue="displayName" required="required" />
             </td>
+            <td class="description"><s:text name="weblogSettings.tip.locale" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="createWebsite.timeZone"/>*</td>
+            <td class="label"><s:text name="weblogSettings.timeZone"/>*</td>
             <td class="field">
                 <s:select data-link="weblogData.timeZone" size="1" list="timeZonesList" required="required"/>
             </td>
+            <td class="description"><s:text name="weblogSettings.tip.timezone" /></td>
         </tr>
 
+        <s:if test="getBooleanProp('analytics.code.override.allowed')">
+            <tr>
+                <td class="label"><s:text name="weblogSettings.analyticsTrackingCode" /></td>
+                <td class="field"><textarea data-link="weblogData.analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"></textarea></td>
+                <td class="description"><s:text name="weblogSettings.tip.analyticsTrackingCode" /></td>
+            </tr>
+        </s:if>
 
         <%-- ***** Comment settings ***** --%>
 
         <s:if test="getProp('users.comments.enabled') != 'NONE'">
             <tr>
-                <td colspan="3"><h2><s:text name="websiteSettings.commentSettings" /></h2></td>
+                <td colspan="3"><h2><s:text name="weblogSettings.commentSettings" /></h2></td>
             </tr>
 
             <tr>
-                <td class="label"><s:text name="websiteSettings.allowComments" /></td>
-                <td class="field"><input type="checkbox" data-link="weblogData.allowComments"></td>
+                <td class="label"><s:text name="weblogSettings.allowComments" /></td>
+                <td class="field">
+                  <select data-link="weblogData.allowComments">
+                     <option value="NONE"><s:text name="generic.no"/></option>
+                     <option value="MUSTMODERATE"><s:text name="weblogSettings.mustModerateComments"/></option>
+                     <s:if test="getProp('users.comments.enabled') != 'MUSTMODERATE'">
+                         <option value="YES"><s:text name="weblogSettings.commentsOK"/></option>
+                     </s:if>
+                  </select>
+                </td>
             </tr>
-
-            <s:if test="getProp('users.comments.enabled') != 'MODERATIONREQUIRED'">
-                <tr>
-                    <td class="label"><s:text name="websiteSettings.approveComments" /></td>
-                    <td class="field"><input type="checkbox" data-link="weblogData.approveComments"></td>
-                </tr>
-            </s:if>
 
             <s:if test="getBooleanProp('users.comments.emailnotify')">
                 <tr>
-                    <td class="label"><s:text name="websiteSettings.emailComments" /></td>
+                    <td class="label"><s:text name="weblogSettings.emailComments" /></td>
                     <td class="field"><input type="checkbox" data-link="weblogData.emailComments"></td>
                 </tr>
             </s:if>
 
             <tr>
-                <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
+                <td class="label"><s:text name="weblogSettings.defaultCommentDays" /></td>
                 <td class="field">
                     <s:select data-link="weblogData.defaultCommentDaysString" list="commentDaysList" size="1" listKey="left" listValue="right" />
                 </td>
@@ -204,14 +216,15 @@ var msg= {
 
             <s:if test="weblogId != null">
               <tr>
-                  <td class="label"><s:text name="websiteSettings.applyCommentDefaults" /></td>
+                  <td class="label"><s:text name="weblogSettings.applyCommentDefaults" /></td>
                   <td class="field"><input type="checkbox" data-link="weblogData.applyCommentDefaults"></td>
               </tr>
             </s:if>
 
             <tr>
-                <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
+                <td class="label"><s:text name="weblogSettings.ignoreUrls" /></td>
                 <td class="field"><textarea data-link="weblogData.blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"></textarea></td>
+                <td class="description"><s:text name="weblogSettings.tip.ignoreUrls" /></td>
             </tr>
 
         </s:if>
@@ -219,29 +232,17 @@ var msg= {
         <%-- ***** Plugins "formatting" settings ***** --%>
         <s:if test="!weblogEntryPlugins.isEmpty">
             <tr>
-                <td colspan="3"><h2><s:text name="websiteSettings.formatting" /></h2></td>
+                <td colspan="3"><h2><s:text name="weblogSettings.formatting" /></h2></td>
             </tr>
 
             <tr>
-                <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
+                <td class="label"><s:text name="weblogSettings.label1" /> <br /><s:text name="weblogSettings.label2" /></td>
                 <td class="field">
                     <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" data-link="weblogData.defaultPluginsArray"/>
                 </td>
             </tr>
         </s:if>
 
-        <%-- ***** Web analytics settings ***** --%>
-
-        <s:if test="getBooleanProp('analytics.code.override.allowed')">
-            <tr>
-                <td colspan="3"><h2><s:text name="websiteSettings.webAnalytics" /></h2></td>
-            </tr>
-
-            <tr>
-                <td class="label"><s:text name="websiteSettings.analyticsTrackingCode" /></td>
-                <td class="field"><textarea data-link="weblogData.analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"></textarea></td>
-            </tr>
-        </s:if>
       </script>
     </tbody>
 </table>
@@ -256,16 +257,16 @@ var msg= {
 <br>
 
   <s:if test="weblogId != null">
-    <h2><s:text name="websiteSettings.removeWebsiteHeading" /></h2>
+    <h2><s:text name="weblogSettings.removeWebsiteHeading" /></h2>
 
     <p>
-        <s:text name="websiteSettings.removeWebsite" /><br><br>
+        <s:text name="weblogSettings.removeWebsite" /><br><br>
         <span class="warning">
-            <s:text name="websiteSettings.removeWebsiteWarning" />
+            <s:text name="weblogSettings.removeWebsiteWarning" />
         </span>
     </p>
     <br>
-    <s:submit id="delete-link" value="%{getText('websiteSettings.button.remove')}"/>
+    <s:submit id="delete-link" value="%{getText('weblogSettings.button.remove')}"/>
     <br>
     <br>
     <br>
@@ -284,6 +285,6 @@ var msg= {
     <br/>
     <br/>
     <span class="warning">
-        <s:text name="websiteSettings.removeWebsiteWarning" />
+        <s:text name="weblogSettings.removeWebsiteWarning" />
     </span>
 </div>

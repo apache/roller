@@ -35,15 +35,13 @@ public final class HTMLSanitizer {
         .addProtocols("iframe", "src", "http", "https");
 
     public enum Level {
-        NONE(0, "None (Remove all HTML)", NoneWhitelist),
-        LIMITED(1, "Limited (bold, italic, underline and line/paragraph breaks)", LimitedWhitelist),
-        BASIC(2, "Basic (Clickable links and line formatting -- pre, code, cite, etc.)", BasicWhitelist),
-        BASIC_IMAGES(3, "Basic plus image tags", BasicImagesWhitelist),
-        RELAXED(4, "Relaxed (Allows tables, headings, divs)", RelaxedWhitelist),
-        RELAXED_IFRAMES(5, "Relaxed plus iframes (Social media widgets, videos, scripting potential)",
-                RelaxedIframesWhitelist),
-        OFF(6, "No sanitizing at all (Allows scripts, forms, everything.)", null);
-
+        NONE(0, "configForm.htmlsanitizer.none", NoneWhitelist),
+        LIMITED(1, "configForm.htmlsanitizer.limited", LimitedWhitelist),
+        BASIC(2, "configForm.htmlsanitizer.basic", BasicWhitelist),
+        BASIC_IMAGES(3, "configForm.htmlsanitizer.basicimages", BasicImagesWhitelist),
+        RELAXED(4, "configForm.htmlsanitizer.relaxed", RelaxedWhitelist),
+        RELAXED_IFRAMES(5, "configForm.htmlsanitizer.relaxediframes", RelaxedIframesWhitelist),
+        OFF(6, "configForm.htmlsanitizer.off", null);
 
         private String description;
 

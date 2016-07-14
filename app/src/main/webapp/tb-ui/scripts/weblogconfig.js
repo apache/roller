@@ -1,8 +1,8 @@
 $(function() {
   var data = {
     weblogData : {"theme":"basic", "tagline":"", "editorPage" : "editor-text.jsp",
-    "allowComments" : true, "emailComments" : false, "approveComments" : true, "visible" : true,
-    "entriesPerPage" : 15, "defaultCommentDaysString" : "-1"},
+    "allowComments" : "MUSTMODERATE", "emailComments" : false, "visible" : true,
+    "entriesPerPage" : 12, "defaultCommentDaysString" : "-1"},
     themeList : []
   };
   $.templates({

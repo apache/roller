@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs.CommentOption;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -498,8 +498,8 @@ public final class EntryEdit extends UIAction {
     }
 
     public boolean isCommentingEnabled() {
-        return !RuntimeConfigDefs.CommentOption.NONE.name().equals(getProp("users.comments.enabled"))
-                && getActionWeblog().getAllowComments();
+        return !CommentOption.NONE.equals(CommentOption.valueOf(getProp("users.comments.enabled")))
+                && !CommentOption.NONE.equals(getActionWeblog().getAllowComments());
     }
 
     /**
