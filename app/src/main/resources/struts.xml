@@ -125,7 +125,7 @@
         </action>
 
         <action name="createWeblog" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
-            <param name="pageTitleReal">createWebsite.title</param>
+            <param name="pageTitleReal">weblogSettings.create.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.WeblogConfig</result>
@@ -319,7 +319,7 @@
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">weblogConfig</param>
             <param name="desiredMenu">editor</param>
-            <param name="pageTitleReal">websiteSettings.title</param>
+            <param name="pageTitleReal">weblogSettings.title</param>
             <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 

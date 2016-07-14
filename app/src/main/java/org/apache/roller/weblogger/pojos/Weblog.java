@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs.CommentOption;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
@@ -36,6 +37,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -73,18 +76,17 @@ import javax.validation.constraints.Pattern;
 public class Weblog {
 
     private String  id               = Utilities.generateUUID();
-    @NotBlank(message = "{createWeblog.error.handleNull}")
-    @Pattern(regexp = "[a-z0-9\\-]*", message = "{createWeblog.error.invalidHandle}")
+    @NotBlank(message = "{weblogSettings.error.handleNull}")
+    @Pattern(regexp = "[a-z0-9\\-]*", message = "{weblogSettings.error.invalidHandle}")
     private String  handle           = null;
-    @NotBlank(message = "{createWeblog.error.nameNull}")
+    @NotBlank(message = "{weblogSettings.error.nameNull}")
     private String  name             = null;
     private String  tagline          = null;
     private String  editorPage       = null;
     private String  blacklist        = null;
-    private Boolean allowComments    = Boolean.TRUE;
+    private CommentOption allowComments = CommentOption.MUSTMODERATE;
     private Boolean emailComments    = Boolean.FALSE;
-    private Boolean approveComments  = Boolean.TRUE;
-    @NotBlank(message = "{createWeblog.error.themeNull}")
+    @NotBlank(message = "{weblogSettings.error.themeNull}")
     private String  theme            = null;
     private String  locale           = null;
     private String  timeZone         = null;
@@ -212,11 +214,12 @@ public class Weblog {
     }
 
     @Basic(optional=false)
-    public Boolean getAllowComments() {
+    @Enumerated(EnumType.STRING)
+    public CommentOption getAllowComments() {
         return this.allowComments;
     }
     
-    public void setAllowComments(Boolean allowComments) {
+    public void setAllowComments(CommentOption allowComments) {
         this.allowComments = allowComments;
     }
 
@@ -227,15 +230,6 @@ public class Weblog {
     
     public void setDefaultCommentDays(int defaultCommentDays) {
         this.defaultCommentDays = defaultCommentDays;
-    }
-
-    @Basic(optional=false)
-    public Boolean getApproveComments() {
-        return approveComments;
-    }
-    
-    public void setApproveComments(Boolean approveComments) {
-        this.approveComments = approveComments;
     }
 
     @Basic(optional=false)
@@ -591,4 +585,5 @@ public class Weblog {
                 .append(getHandle())
                 .toHashCode();
     }
+
 }

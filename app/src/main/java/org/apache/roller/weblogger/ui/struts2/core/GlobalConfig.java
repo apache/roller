@@ -197,7 +197,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public List<Pair<String, String>> getCommentOptions() {
         List<Pair<String, String>> opts;
         opts = Arrays.stream(RuntimeConfigDefs.CommentOption.values())
-                .map(r -> Pair.of(r.name(), r.getDescription()))
+                .map(r -> Pair.of(r.name(), r.getSiteDescription()))
                 .collect(Collectors.toList());
         return opts;
     }

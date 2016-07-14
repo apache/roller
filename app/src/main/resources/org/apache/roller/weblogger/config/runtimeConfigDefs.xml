@@ -118,7 +118,7 @@
 
         <property-def name="users.comments.enabled" key="configForm.enableComments">
             <type>string</type>
-            <default-value>MODERATIONREQUIRED</default-value>
+            <default-value>MUSTMODERATE</default-value>
         </property-def>
         <property-def name="comments.html.whitelist" key="configForm.commentHtmlWhitelistLevel"
                       description="configForm.tip.commentHtmlWhitelistLevel">
@@ -134,8 +134,8 @@
             <type>boolean</type>
             <default-value>true</default-value>
         </property-def>
-        <property-def name="spam.blacklist" key="websiteSettings.ignoreUrls"
-            description="websiteSettings.tip.ignoreUrls">
+        <property-def name="spam.blacklist" key="weblogSettings.ignoreUrls"
+            description="weblogSettings.tip.ignoreUrls">
             <type>text</type>
             <default-value/>
             <rows>7</rows>

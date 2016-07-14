@@ -136,7 +136,7 @@ public class WeblogController {
         User user = userManager.getEnabledUserByUserName(p.getName());
 
         if(!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
-            return ResponseEntity.status(403).body(bundle.getString("createWebsite.notAuthorized"));
+            return ResponseEntity.status(403).body(bundle.getString("weblogSettings.createNotAuthorized"));
         }
 
         ValidationError maybeError = advancedValidate(newData, true);
@@ -186,7 +186,6 @@ public class WeblogController {
                 weblog.setEntriesPerPage(newData.getEntriesPerPage());
                 weblog.setBlacklist(newData.getBlacklist());
                 weblog.setAllowComments(newData.getAllowComments());
-                weblog.setApproveComments(newData.getApproveComments());
                 weblog.setEmailComments(newData.getEmailComments());
                 weblog.setLocale(newData.getLocale());
                 weblog.setTimeZone(newData.getTimeZone());
@@ -258,7 +257,7 @@ public class WeblogController {
         // make sure handle isn't already taken
         if(isAdd) {
             if (weblogManager.getWeblogByHandle(data.getHandle()) != null) {
-                be.addError(new ObjectError("Weblog object", bundle.getString("createWeblog.error.handleExists")));
+                be.addError(new ObjectError("Weblog object", bundle.getString("weblogSettings.error.handleExists")));
             }
         }
 
@@ -268,7 +267,7 @@ public class WeblogController {
             Blacklist testBlacklist = new Blacklist(data.getBlacklist(), null);
         } catch (Exception e) {
             be.addError(new ObjectError("Weblog object",
-                    bundle.getString("websiteSettings.error.processingBlacklist")));
+                    bundle.getString("weblogSettings.error.processingBlacklist")));
             be.addError(new ObjectError("Weblog object", e.getMessage()));
         }
 

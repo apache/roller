@@ -187,9 +187,9 @@ public class RuntimeConfigDefs {
     }
 
     public enum RegistrationOption {
-        EMAIL("Register and activate via email (OK for LDAP but not recommended for DB auth)"),
-        APPROVAL_REQUIRED("Register, activate via email, and admin approval"),
-        DISABLED("Disabled -- No new accounts allowed");
+        EMAIL("configForm.registration.email"),
+        APPROVAL_REQUIRED("configForm.registration.approvalRequired"),
+        DISABLED("configFrom.registration.disabled");
 
         private String description;
 
@@ -203,20 +203,28 @@ public class RuntimeConfigDefs {
     }
 
     public enum CommentOption {
-        NONE(0, "No"),
-        MODERATIONREQUIRED(1, "Yes, but blogger must moderate comments"),
-        YES(2, "Yes, and comment moderation is blogger's choice");
+        NONE(0, "generic.no", "generic.no"),
+        MUSTMODERATE(1, "configForm.mustModerateComments", "weblogSettings.mustModerateComments"),
+        YES(2, "configForm.commentsOK", "weblogSettings.commentsOK");
 
-        private String description;
+        private String siteDescription;
+
+        private String weblogDescription;
 
         private int level;
 
-        CommentOption(int level, String description) {
-            this.description = description;
+        CommentOption(int level, String siteDescription, String weblogDescription) {
+            this.level = level;
+            this.siteDescription = siteDescription;
+            this.weblogDescription = weblogDescription;
         }
 
-        public String getDescription() {
-            return description;
+        public String getWeblogDescription() {
+            return weblogDescription;
+        }
+
+        public String getSiteDescription() {
+            return siteDescription;
         }
 
         public int getLevel() {

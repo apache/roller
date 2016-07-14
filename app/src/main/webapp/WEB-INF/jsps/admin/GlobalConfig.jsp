@@ -60,7 +60,7 @@
                                 <s:iterator var="item" value="registrationOptions">
                                     <option value='<s:property value="#item.left"/>'
                                         <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:property value="#item.right"/>
+                                        <s:text name="%{#item.right}"/>
                                     </option>
                                 </s:iterator>
                           </select>
@@ -74,7 +74,7 @@
                                 <s:iterator var="item" value="HTMLSanitizingLevels">
                                     <option value='<s:property value="#item.left"/>'
                                         <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:property value="#item.right"/>
+                                        <s:text name="%{#item.right}"/>
                                     </option>
                                 </s:iterator>
                           </select>
@@ -88,7 +88,7 @@
                                 <s:iterator var="item" value="CommentHTMLSanitizingLevels">
                                     <option value='<s:property value="#item.left"/>'
                                         <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:property value="#item.right"/>
+                                        <s:text name="%{#item.right}"/>
                                     </option>
                                 </s:iterator>
                           </select>
@@ -102,7 +102,7 @@
                                 <s:iterator var="item" value="commentOptions">
                                     <option value='<s:property value="#item.left"/>'
                                         <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:property value="#item.right"/>
+                                        <s:text name="%{#item.right}"/>
                                     </option>
                                 </s:iterator>
                           </select>

@@ -173,7 +173,6 @@ public class CommentProcessor {
         }
 
         WeblogEntryRequest commentRequest;
-        WeblogEntryComment comment = new WeblogEntryComment();
 
         try {
             commentRequest = new WeblogEntryRequest(request);
@@ -197,8 +196,8 @@ public class CommentProcessor {
             return;
         }
 
-        commentApprovalRequired = RuntimeConfigDefs.CommentOption.MODERATIONREQUIRED.equals(commentOption) ||
-                weblog.getApproveComments();
+        commentApprovalRequired = RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(commentOption) ||
+                RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(weblog.getAllowComments());
 
         // we know what the weblog entry is, so setup our urls
         dispatch_url = PageProcessor.PATH + "/" + weblog.getHandle();
@@ -214,32 +213,33 @@ public class CommentProcessor {
          *   content - comment contents
          *   notify - if commenter wants to receive notifications
          */
-        comment.setNotify(request.getParameter("notify") != null);
-        comment.setName(Utilities.removeHTML(request.getParameter("name")));
-        comment.setEmail(Utilities.removeHTML(request.getParameter("email")));
-        comment.setWeblogEntry(entry);
-        comment.setRemoteHost(request.getRemoteHost());
-        comment.setPostTime(Instant.now());
+        WeblogEntryComment commentForm = new WeblogEntryComment();
+        commentForm.setNotify(request.getParameter("notify") != null);
+        commentForm.setName(Utilities.removeHTML(request.getParameter("name")));
+        commentForm.setEmail(Utilities.removeHTML(request.getParameter("email")));
+        commentForm.setWeblogEntry(entry);
+        commentForm.setRemoteHost(request.getRemoteHost());
+        commentForm.setPostTime(Instant.now());
 
         // Validate url
-        comment.setUrl(Utilities.removeHTML(request.getParameter("url")));
-        String urlCheck = comment.getUrl();
+        commentForm.setUrl(Utilities.removeHTML(request.getParameter("url")));
+        String urlCheck = commentForm.getUrl();
         if (StringUtils.isNotEmpty(urlCheck)) {
             urlCheck = urlCheck.trim().toLowerCase();
             if (!urlCheck.startsWith("http://") && !urlCheck.startsWith("https://")) {
                 urlCheck = "http://" + urlCheck;
             }
         }
-        comment.setUrl(urlCheck);
+        commentForm.setUrl(urlCheck);
 
         // Validate content
-        comment.setContent(request.getParameter("content"));
+        commentForm.setContent(request.getParameter("content"));
         HTMLSanitizer.Level sanitizerLevel = HTMLSanitizer.Level.valueOf(
                 propertiesManager.getStringProperty("comments.html.whitelist"));
         Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
 
         // Need to insert paragraphs breaks in case commenter didn't do so.
-        String commentTemp = Utilities.insertLineBreaksIfMissing(comment.getContent());
+        String commentTemp = Utilities.insertLineBreaksIfMissing(commentForm.getContent());
 
         // JSoup pulls out disallowable tags, normally good but HTMLSanitizer.Level.LIMITED is so
         // limited good to give commenter opportunity to fix it in case too much removed.
@@ -249,25 +249,19 @@ public class CommentProcessor {
         }
 
         if (noDisallowedTags) {
-            comment.setContent(Jsoup.clean(commentTemp, commentHTMLWhitelist));
+            commentForm.setContent(Jsoup.clean(commentTemp, commentHTMLWhitelist));
         }
 
         if (log.isDebugEnabled()) {
             log.debug("Doing comment posting for entry = {}", entry.getPermalink());
-            log.debug("name = " + comment.getName());
-            log.debug("email = " + comment.getEmail());
-            log.debug("url = " + comment.getUrl());
-            log.debug("content = " + comment.getContent());
-            log.debug("notify = " + comment.getNotify());
+            log.debug("name = " + commentForm.getName());
+            log.debug("email = " + commentForm.getEmail());
+            log.debug("url = " + commentForm.getUrl());
+            log.debug("content = " + commentForm.getContent());
+            log.debug("notify = " + commentForm.getNotify());
         }
 
-        WeblogEntryComment commentForm = new WeblogEntryComment();
         String error = null;
-        commentForm.setData(comment);
-        if (preview) {
-            commentForm.setPreview(true);
-        }
-
         I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
 
         // check if comments are allowed for this entry
@@ -275,14 +269,14 @@ public class CommentProcessor {
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
         // Must have an email and also must be valid
-        } else if (StringUtils.isEmpty(comment.getEmail()) || !Utilities.isValidEmailAddress(comment.getEmail())) {
+        } else if (StringUtils.isEmpty(commentForm.getEmail()) || !Utilities.isValidEmailAddress(commentForm.getEmail())) {
             error = messageUtils.getString("error.commentPostFailedEmailAddress");
-            log.debug("Email Address is invalid: {}", comment.getEmail());
+            log.debug("Email Address is invalid: {}", commentForm.getEmail());
         // if there is an URL it must be valid
-        } else if (StringUtils.isNotEmpty(comment.getUrl())
-                && !new UrlValidator(new String[] { "http", "https" }).isValid(comment.getUrl())) {
+        } else if (StringUtils.isNotEmpty(commentForm.getUrl())
+                && !new UrlValidator(new String[] { "http", "https" }).isValid(commentForm.getUrl())) {
             error = messageUtils.getString("error.commentPostFailedURL");
-            log.debug("URL is invalid: {}", comment.getUrl());
+            log.debug("URL is invalid: {}", commentForm.getUrl());
        // if this is a real comment post then authenticate request
         } else if (!preview && commentAuthenticator != null && !commentAuthenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
@@ -302,11 +296,6 @@ public class CommentProcessor {
             return;
         }
 
-        String message = null;
-        Map<String, List<String>> messages = new HashMap<>();
-        int validationScore = validateComment(comment, messages);
-        log.debug("Comment Validation score: {}", validationScore);
-
         // those with at least the POST role for the weblog don't need to have their comments moderated.
         boolean ownComment = false;
         String maybeUser = commentRequest.getAuthenticatedUser();
@@ -314,15 +303,22 @@ public class CommentProcessor {
             ownComment = userManager.checkWeblogRole(maybeUser, commentRequest.getWeblogHandle(), WeblogRole.POST);
         }
 
-        if (!preview) {
+        String message = null;
+        Map<String, List<String>> messages = new HashMap<>();
+        int validationScore = ownComment ? 100 : validateComment(commentForm, messages);
+        log.debug("Comment Validation score: {}", validationScore);
+
+        if (preview) {
+            commentForm.setPreview(true);
+        } else {
             if (validationScore == Utilities.PERCENT_100) {
                 if (!ownComment && commentApprovalRequired) {
                     // Valid comments go into moderation if required
-                    comment.setStatus(ApprovalStatus.PENDING);
+                    commentForm.setStatus(ApprovalStatus.PENDING);
                     message = messageUtils.getString("commentServlet.submittedToModerator");
                 } else {
                     // else they're approved
-                    comment.setStatus(ApprovalStatus.APPROVED);
+                    commentForm.setStatus(ApprovalStatus.APPROVED);
                     message = messageUtils.getString("commentServlet.commentAccepted");
                 }
             } else {
@@ -330,7 +326,7 @@ public class CommentProcessor {
                 // Informing the spammer the reasons for its detection encourages the spammer to just modify
                 // the spam message so it will pass through; also indicating that the message is subject
                 // to moderation (and sure refusal) discourages future spamming attempts.
-                comment.setStatus(ApprovalStatus.SPAM);
+                commentForm.setStatus(ApprovalStatus.SPAM);
                 message = messageUtils.getString("commentServlet.submittedToModerator");
 
                 // log specific error messages if they exist
@@ -350,16 +346,16 @@ public class CommentProcessor {
             }
 
             // Akismet validator can be configured to return -1 for blatant spam, if so configured, don't save in queue.
-            if (validationScore >= 0 && (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
+            if (validationScore >= 0 && (!ApprovalStatus.SPAM.equals(commentForm.getStatus()) ||
                     !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled"))) {
 
-                boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(comment.getStatus());
-                weblogEntryManager.saveComment(comment, refreshWeblog);
+                boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(commentForm.getStatus());
+                weblogEntryManager.saveComment(commentForm, refreshWeblog);
                 WebloggerFactory.flush();
 
                 // Send email notifications to subscribers only if comment is 100% valid
                 boolean notifySubscribers = (validationScore == Utilities.PERCENT_100);
-                mailManager.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
+                mailManager.sendEmailNotification(commentForm, messages, messageUtils, notifySubscribers);
 
                 // only re-index/invalidate the cache if comment isn't moderated
                 if (!commentApprovalRequired) {
@@ -373,7 +369,7 @@ public class CommentProcessor {
                     }
 
                     // Clear all caches associated with comment
-                    cacheManager.invalidate(comment);
+                    cacheManager.invalidate(commentForm);
                 }
 
                 // comment was successful, clear the comment form
