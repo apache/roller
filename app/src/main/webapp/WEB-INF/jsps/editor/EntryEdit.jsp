@@ -74,7 +74,7 @@
     </s:text>
 </p>
 
-<s:form id="entry">
+<s:form id="entry" onsubmit="return retrieveText();">
     <sec:csrfInput/>
     <s:hidden name="weblogId" />
     <s:hidden name="bean.status" />
@@ -178,9 +178,7 @@
 
     <%-- ================================================================== --%>
     <%-- Weblog editor --%>
-
     <s:include value="/WEB-INF/jsps/editor/EntryEditor.jsp" />
-
     <br />
 
     <%-- ================================================================== --%>
@@ -275,7 +273,7 @@
     <br>
     <div class="control">
         <span style="padding-left:7px">
-            <s:submit value="%{getText('weblogEdit.save')}" action="%{#mainAction}!saveDraft" />
+            <s:submit value="%{getText('weblogEdit.save')}" action="%{#mainAction}!saveDraft"/>
             <s:if test="actionName == 'entryEdit'">
                 <input type="button" name="fullPreview"
                                     value="<s:text name='weblogEdit.fullPreviewMode' />"

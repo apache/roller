@@ -4,26 +4,16 @@ COPYRIGHT NOTICES
 
 This product includes:
 
-* Snippets of code from the Blojsom blog server
-    Copyright 2003 David A. Czarnecki & Mark Lussier. All rights reserved.
-
-* Snippets of code from the Pebble blog server
-    Copyright 2003 Simon Brown, All rights reserved.
-
-* Code written by Sun Microsystems, Inc. 
+* Code written by Sun Microsystems, Inc.
     Copyright 2005 Sun Microsystems, Inc.
 
 * Code written by Dave Johnson for RSS and Atom in Action
     Copyright 2005 David M Johnson (For RSS and Atom In Action)
 
-* The Xinha WYSIWYG editor, which includes HTMLArea
-    htmlArea License (based on BSD license)
-    Copyright (c) 2002-2004, interactivetools.com, inc.
-    Copyright (c) 2003-2004 dynarch.com
-    All rights reserved.
-    http://trac.xinha.org/wiki/Licence
-    
 OTHER NOTICES
+
+* This product includes code from Apache Roller, licensed under the Apache
+  License Version 2.0.
 
 * Roller includes icons by Mark James (http://www.famfamfam.com/lab/icons)
 

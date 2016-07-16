@@ -36,7 +36,52 @@
         </span>
     </h3>
     <div>
-        <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5" onBlur="this.value=this.value.trim()"/>
+        <s:if test="editor == 'editor-rte.jsp'">
+            <div id="toolbar_quill"class="toolbar">
+                <span class="ql-format-group">
+                    <select title="Font" class="ql-font">
+                        <option value="sans-serif" selected="">Sans Serif</option>
+                        <option value="serif">Serif</option>
+                        <option value="monospace">Monospace</option>
+                    </select>
+                    <select title="Size" class="ql-size">
+                        <option value="10px">Small</option>
+                        <option value="13px" selected="">Normal</option>
+                        <option value="18px">Large</option>
+                        <option value="32px">Huge</option>
+                    </select>
+                </span>
+                <span class="ql-format-group">
+                    <span title="Bold" class="ql-format-button ql-bold"></span>
+                    <span class="ql-format-separator"></span>
+                    <span title="Italic" class="ql-format-button ql-italic"></span>
+                    <span class="ql-format-separator"></span>
+                    <span title="Underline" class="ql-format-button ql-underline"></span>
+                    <span class="ql-format-separator"></span>
+                    <span title="Strikethrough" class="ql-format-button ql-strike"></span>
+                </span>
+                <span class="ql-format-group">
+                    <span title="List" class="ql-format-button ql-list"></span>
+                    <span class="ql-format-separator"></span>
+                    <span title="Bullet" class="ql-format-button ql-bullet"></span>
+                    <span class="ql-format-separator"></span>
+                    <select title="Text Alignment" class="ql-align">
+                        <option value="left" label="Left" selected=""></option>
+                        <option value="center" label="Center"></option>
+                        <option value="right" label="Right"></option>
+                        <option value="justify" label="Justify"></option>
+                    </select>
+                </span>
+                <span class="ql-format-group">
+                    <span title="Link" class="ql-format-button ql-link"></span>
+                </span>
+            </div>
+            <div id="editor_quill"></div>
+            <s:textarea id="edit_content" name="bean.text" cssStyle="display:none" tabindex="5" onBlur="this.value=this.value.trim()"/>
+        </s:if>
+        <s:else>
+            <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5" onBlur="this.value=this.value.trim()"/>
+        </s:else>
     </div>
     <h3><s:text name="weblogEdit.summary"/><tags:help key="weblogEdit.summary.tooltip"/></h3>
     <div>
@@ -66,6 +111,10 @@
 <%-- Editor event handling, on close, on add image, etc. --%>
 
 <script>
+    $(function() {
+        $( "#accordion" ).accordion({
+        });
+    });
     function onClickAddImage(){
         <s:url var="mediaFileChooser" action="mediaFileChooser">
             <s:param name="weblogId" value="%{actionWeblog.id}" />
@@ -103,99 +152,52 @@
     }
 </script>
 
-<s:if test="editor == 'editor-xinha.jsp'">
-    <%-- Rich text editor (Xinha, see: http://trac.xinha.org/wiki/NewbieGuide) --%>
-
-    <s:url var="xinhaHome" value="/tb-ui/authoring/editors/xinha-0.96.1"></s:url>
+<s:if test="editor == 'editor-rte.jsp'">
+    <script src="//cdn.quilljs.com/0.20.1/quill.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css">
     <script>
-        // (preferably absolute) URL (including trailing slash) where Xinha is installed
-        _editor_url  = '<s:property value="xinhaHome" />';
-        _editor_lang = "en";        // And the language we need to use in the editor.
-        _editor_skin = "blue-look"; // If you want use a skin, add the name (of the folder) here
-    </script>
-    <script src="<s:property value="xinhaHome" />/XinhaCore.js"></script>
-
-    <script>
-        $(function() {
-            $( "#accordion" ).accordion({
-                activate: function( event, ui ) {
-                   <%-- Xinha summary editor needs a one-time init as it is
-                        not visible upon window opening (http://tinyurl.com/mn97j5l) --%>
-                   if (!summary_editor_initialized) {
-                       xinha_editors.edit_summary.sizeEditor();
-                       summary_editor_initialized = true;
-                   }
-                }
-            });
+        var editor = new Quill("#editor_quill", {
+          modules: {
+            'toolbar': { container: '#toolbar_quill' },
+            'link-tooltip': true
+          },
+          theme: 'snow'
         });
-
+        function retrieveText() {
+          // populate hidden text area with data from RTE div
+          var html = $("#ql-editor-1").html();
+          $("#edit_content").val(html);
+        };
+        $(function() {
+            // load from hidden text area into RTE div
+            var textFromServer = $("#edit_content").val();
+            $("#ql-editor-1").html(textFromServer);
+        });
         function insertMediaFile(anchorTag) {
-            xinha_editors.edit_content.insertHTML(anchorTag);
+          var html = $("#ql-editor-1").html();
+          html = html + anchorTag;
+          $("#ql-editor-1").html(html);
         }
-
-        summary_editor_initialized = false;
-        xinha_editors = null;
-        xinha_init    = null;
-        xinha_config  = null;
-        xinha_plugins = null;
-
-        xinha_init = xinha_init ? xinha_init : function() {
-
-            xinha_editors = xinha_editors ? xinha_editors : [
-                'edit_content', 'edit_summary'
-            ];
-
-            xinha_plugins = xinha_plugins ? xinha_plugins :[];
-            if(!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;
-
-            xinha_config = xinha_config ? xinha_config() : new Xinha.Config();
-            xinha_config.pageStyleSheets = [ _editor_url + "examples/full_example.css" ];
-            xinha_config.toolbar =
-                [
-                ["popupeditor"],
-                ["separator","formatblock","fontname","fontsize","bold","italic","underline","strikethrough"],
-                ["separator","forecolor","hilitecolor","textindicator"],
-                ["separator","subscript","superscript"],
-                ["linebreak","separator","justifyleft","justifycenter","justifyright","justifyfull"],
-                ["separator","insertorderedlist","insertunorderedlist","outdent","indent"],
-                ["separator","inserthorizontalrule","createlink","insertimage","inserttable"],
-                ["linebreak","separator","undo","redo","selectall","print"], (Xinha.is_gecko ? [] : ["cut","copy","paste","overwrite","saveas"]),
-                ["separator","killword","clearfonts","removeformat","toggleborders","splitblock","lefttoright", "righttoleft"],
-                ["separator","htmlmode","showhelp","about"]
-            ];
-
-            // turn off Xinha's URL stripping default. Blog entries need absolute URLs,
-            // otherwise links will be broken in RSS/Atom feeds.
-            xinha_config.stripBaseHref = false;
-
-            xinha_editors   = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
-
-            Xinha.startEditors(xinha_editors);
-        }
-
-        Xinha._addEvent(window,'load', xinha_init);
     </script>
 </s:if>
 <s:else>
     <%-- Plain text editor (raw HTML entry) --%>
     <script>
-        $(function() {
-            $( "#accordion" ).accordion({
-            });
-        });
+        function retrieveText() {
+        };
         function insertMediaFile(anchorTag) {
-            insertAtCursor(document.getElementById('edit_content'), anchorTag);
-        }
-        function insertAtCursor(textAreaElement, valueForInsertion) {
+            var textAreaElement = document.getElementById('edit_content');
+
             if (textAreaElement.selectionStart || textAreaElement.selectionStart == '0') {
                 var preText = textAreaElement.value.substring(0, textAreaElement.selectionStart);
                 var postText = textAreaElement.value.substring(textAreaElement.selectionStart, textAreaElement.value.length);
-                textAreaElement.value = preText + valueForInsertion + postText;
-                textAreaElement.selectionStart = preText.length + valueForInsertion.length;
+                textAreaElement.value = preText + anchorTag + postText;
+                textAreaElement.selectionStart = preText.length + anchorTag.length;
                 textAreaElement.selectionEnd = textAreaElement.selectionStart;
                 textAreaElement.focus();
             } else {
-                textAreaElement.value += valueForInsertion;
+                textAreaElement.value += anchorTag;
                 textAreaElement.focus();
             }
         }
