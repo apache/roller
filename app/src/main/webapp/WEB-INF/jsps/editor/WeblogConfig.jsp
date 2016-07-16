@@ -139,7 +139,7 @@ var msg= {
             <td class="field">
                 <select data-link="weblogData.editorPage trigger=true" size="1">
                     <option value="editor-text.jsp"><s:text name="editor.text.name"/></option>
-                    <option value="editor-xinha.jsp"><s:text name="editor.xinha.name"/></option>
+                    <option value="editor-rte.jsp"><s:text name="editor.rte.name"/></option>
                 </select>
            </td>
            <td class="description"><s:text name="weblogSettings.tip.editor" /></td>
