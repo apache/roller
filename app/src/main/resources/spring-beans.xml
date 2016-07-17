@@ -100,7 +100,6 @@
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
-        <beans:property name="weblogEntryPlugins" ref="weblogEntryPlugins"/>
         <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
 
@@ -155,11 +154,9 @@
         <beans:property name="preview" value="true"/>
     </beans:bean>
 
-    <beans:bean id="serverModel" class="org.apache.roller.weblogger.ui.rendering.model.ServerModel" scope="prototype">
+    <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype">
         <beans:property name="propertiesManager" ref="propertiesManager"/>
     </beans:bean>
-
-    <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype"/>
 
     <beans:bean id="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
@@ -198,7 +195,6 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="pageModel"/>
-                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
                 <beans:ref bean="planetModel"/>
@@ -211,7 +207,6 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="previewPageModel"/>
-                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="previewUrlModel"/>
             </beans:set>
@@ -222,7 +217,6 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="feedModel"/>
-                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
             </beans:set>
@@ -233,7 +227,6 @@
         <beans:property name="sourceSet">
             <beans:set>
                 <beans:ref bean="searchResultsModel"/>
-                <beans:ref bean="serverModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
             </beans:set>
@@ -245,13 +238,6 @@
             <beans:set>
                 <beans:ref bean="siteModel"/>
             </beans:set>
-        </beans:property>
-    </beans:bean>
-
-    <!-- Weblog Entry Plugins -->
-    <beans:bean id="weblogEntryPlugins" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <beans:property name="sourceList">
-            <beans:list/>
         </beans:property>
     </beans:bean>
 

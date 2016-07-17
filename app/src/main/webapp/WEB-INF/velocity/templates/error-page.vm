@@ -18,7 +18,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>$server.msg("errorPage.title")</title>
+    <title>$utils.msg("errorPage.title")</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <style>
@@ -47,7 +47,7 @@
             <tr>
                 <td class="bannerLeft"></td>
                 <td class="bannerRight">
-                   <a href="$url.absoluteSite">$server.siteName</a>
+                   <a href="$url.absoluteSite">TightBlog</a>
                 </td>
             </tr>
         </table>
@@ -58,8 +58,8 @@
       <h2 class="error">Velocity Template Error</h2>
       <span class="error">
         <ul>
-          <li>$server.msg("errorPage.title")</li>
-          <li>$server.msg("errorPage.message")</li>
+          <li>$utils.msg("errorPage.title")</li>
+          <li>$utils.msg("errorPage.message")</li>
         </ul>
       </span>
       <table width="80%" class="dottedtable" style="border-collapse: collapse;">

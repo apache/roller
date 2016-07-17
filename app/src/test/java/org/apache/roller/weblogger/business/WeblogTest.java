@@ -65,7 +65,7 @@ public class WeblogTest extends WebloggerTest {
         testWeblog.setName("Test Weblog");
         testWeblog.setTagline("Test Weblog");
         testWeblog.setHandle("testweblog");
-        testWeblog.setEditorPage("editor-text.jsp");
+        testWeblog.setEditFormat(Weblog.EditFormat.HTML);
         testWeblog.setBlacklist("");
         testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");

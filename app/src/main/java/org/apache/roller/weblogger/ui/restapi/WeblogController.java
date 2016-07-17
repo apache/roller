@@ -21,17 +21,14 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -51,7 +48,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -86,33 +82,14 @@ public class WeblogController {
     }
 
     @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
-    }
-
-    @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
 
-    @Resource(name="weblogEntryPlugins")
-    private List<WeblogEntryPlugin> weblogEntryPlugins;
-
-    public List<WeblogEntryPlugin> getWeblogEntryPlugins() {
-        return weblogEntryPlugins;
-    }
-
-    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
-        this.weblogEntryPlugins = weblogEntryPlugins;
-    }
-
     public WeblogController() {
     }
-
 
     @RequestMapping(value = "/tb-ui/authoring/rest/loggedin", method = RequestMethod.GET)
     public boolean loggedIn() {
@@ -181,7 +158,7 @@ public class WeblogController {
 
                 weblog.setName(newData.getName());
                 weblog.setTagline(newData.getTagline());
-                weblog.setEditorPage(newData.getEditorPage());
+                weblog.setEditFormat(newData.getEditFormat());
                 weblog.setVisible(newData.getVisible());
                 weblog.setEntriesPerPage(newData.getEntriesPerPage());
                 weblog.setBlacklist(newData.getBlacklist());
@@ -189,7 +166,6 @@ public class WeblogController {
                 weblog.setEmailComments(newData.getEmailComments());
                 weblog.setLocale(newData.getLocale());
                 weblog.setTimeZone(newData.getTimeZone());
-                weblog.setDefaultPlugins(newData.getDefaultPlugins());
 
                 // make sure user didn't enter an invalid entry display count
                 int maxEntries = WebloggerStaticConfig.getIntProperty("site.pages.maxEntries", 30);

@@ -36,8 +36,8 @@
         </span>
     </h3>
     <div>
-        <s:if test="editor == 'editor-rte.jsp'">
-            <div id="toolbar_quill"class="toolbar">
+        <s:if test="entry.editFormat.name() == 'RICHTEXT'">
+            <div id="toolbar_quill" class="toolbar">
                 <span class="ql-format-group">
                     <select title="Font" class="ql-font">
                         <option value="sans-serif" selected="">Sans Serif</option>
@@ -77,19 +77,19 @@
                 </span>
             </div>
             <div id="editor_quill"></div>
-            <s:textarea id="edit_content" name="bean.text" cssStyle="display:none" tabindex="5" onBlur="this.value=this.value.trim()"/>
+            <s:textarea id="edit_content" name="entry.text" cssStyle="display:none" tabindex="5" onBlur="this.value=this.value.trim()"/>
         </s:if>
         <s:else>
-            <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5" onBlur="this.value=this.value.trim()"/>
+            <s:textarea id="edit_content" name="entry.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5" onBlur="this.value=this.value.trim()"/>
         </s:else>
     </div>
     <h3><s:text name="weblogEdit.summary"/><tags:help key="weblogEdit.summary.tooltip"/></h3>
     <div>
-        <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6" onBlur="this.value=this.value.trim()"/>
+        <s:textarea id="edit_summary" name="entry.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6" onBlur="this.value=this.value.trim()"/>
     </div>
     <h3><s:text name="weblogEdit.notes"/><tags:help key="weblogEdit.notes.tooltip"/></h3>
     <div>
-        <s:textarea id="edit_notes" name="bean.notes" cols="75" rows="10" cssStyle="width: 100%" tabindex="7" onBlur="this.value=this.value.trim()"/>
+        <s:textarea id="edit_notes" name="entry.notes" cols="75" rows="10" cssStyle="width: 100%" tabindex="7" onBlur="this.value=this.value.trim()"/>
     </div>
 </div>
 
@@ -152,7 +152,7 @@
     }
 </script>
 
-<s:if test="editor == 'editor-rte.jsp'">
+<s:if test="entry.editFormat.name() == 'RICHTEXT'">
     <script src="//cdn.quilljs.com/0.20.1/quill.js"></script>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css">

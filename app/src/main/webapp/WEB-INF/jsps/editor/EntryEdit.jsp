@@ -34,7 +34,7 @@
       modal: true,
       buttons: {
         "<s:text name='generic.delete'/>": function() {
-          document.location.href='<s:url action="entryEdit!remove" />?weblogId=<s:property value="weblogId"/>&bean.id=<s:property value="bean.id"/>';
+          document.location.href='<s:url action="entryEdit!remove" />?weblogId=<s:property value="weblogId"/>&entryId=<s:property value="entry.id"/>';
           $( this ).dialog( "close" );
         },
         Cancel: function() {
@@ -76,10 +76,14 @@
 
 <s:form id="entry" onsubmit="return retrieveText();">
     <sec:csrfInput/>
-    <s:hidden name="weblogId" />
-    <s:hidden name="bean.status" />
+    <s:hidden name="weblogId"/>
+    <s:hidden name="entry.anchor"/>
+    <s:hidden name="entry.status"/>
+    <s:hidden name="entry.editFormat"/>
+    <s:hidden name="entry.id"/>
+    <s:hidden name="entry.creatorId"/>
     <s:if test="actionName == 'entryEdit'">
-        <s:hidden name="bean.id" />
+        <s:hidden name="entryId" />
     </s:if>
 
     <%-- ================================================================== --%>
@@ -92,7 +96,7 @@
                 <label for="title"><s:text name="weblogEdit.title" /></label>
             </td>
             <td>
-                <s:textfield name="bean.title" size="70" maxlength="255" tabindex="1" onBlur="this.value=this.value.trim()" style="width:60%"/>
+                <s:textfield name="entry.title" size="70" maxlength="255" tabindex="1" onBlur="this.value=this.value.trim()" style="width:60%"/>
             </td>
         </tr>
 
@@ -105,28 +109,28 @@
             </td>
             <td>
                 <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
-                <s:if test="bean.published">
+                <s:if test="entry.published">
                     <span style="color:green; font-weight:bold">
                         <s:text name="weblogEdit.published" />
                         (<s:text name="weblogEdit.updateTime" />
                         <javatime:format value="${entry.updateTime}" pattern="${dateFormat}"/>)
                     </span>
                 </s:if>
-                <s:elseif test="bean.draft">
+                <s:elseif test="entry.draft">
                     <span style="color:orange; font-weight:bold">
                         <s:text name="weblogEdit.draft" />
                         (<s:text name="weblogEdit.updateTime" />
                         <javatime:format value="${entry.updateTime}" pattern="${dateFormat}"/>)
                     </span>
                 </s:elseif>
-                <s:elseif test="bean.pending">
+                <s:elseif test="entry.pending">
                     <span style="color:orange; font-weight:bold">
                         <s:text name="weblogEdit.pending" />
                         (<s:text name="weblogEdit.updateTime" />
                         <javatime:format value="${entry.updateTime}" pattern="${dateFormat}"/>)
                     </span>
                 </s:elseif>
-                <s:elseif test="bean.scheduled">
+                <s:elseif test="entry.scheduled">
                     <span style="color:orange; font-weight:bold">
                         <s:text name="weblogEdit.scheduled" />
                         (<s:text name="weblogEdit.updateTime" />
@@ -145,7 +149,7 @@
                     <label for="permalink"><s:text name="weblogEdit.permalink" /></label>
                 </td>
                 <td>
-                    <s:if test="bean.published">
+                    <s:if test="entry.published">
                         <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'><s:property value="entry.permalink" /></a>
                         <img src='<s:url value="/images/launch-link.png"/>' />
                     </s:if>
@@ -161,7 +165,7 @@
                 <label for="categoryId"><s:text name="weblogEdit.category" /></label>
             </td>
             <td>
-                <s:select name="bean.categoryId" list="categories" listKey="id" listValue="name" size="1" />
+                <s:select name="entry.categoryId" list="categories" listKey="id" listValue="name" size="1" />
             </td>
         </tr>
 
@@ -170,31 +174,26 @@
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70"
+                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="entry.tagsAsString" size="70"
                 maxlength="255" tabindex="3" style="width:30%" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
+
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="title"><s:text name="weblogEdit.editFormat" /></label>
+            </td>
+            <td>
+                <span style="font-weight:bold"><s:text name="%{entry.editFormat.description}"/></span>
+            </td>
+        </tr>
+
     </table>
 
     <%-- ================================================================== --%>
     <%-- Weblog editor --%>
     <s:include value="/WEB-INF/jsps/editor/EntryEditor.jsp" />
     <br />
-
-    <%-- ================================================================== --%>
-    <%-- plugin chooser --%>
-
-    <s:if test="!weblogEntryPlugins.isEmpty">
-        <div id="pluginControlToggle" class="controlToggle">
-            <span id="ipluginControl">+</span>
-            <a class="controlToggle" onclick="javascript:toggleControl('pluginControlToggle','pluginControl')">
-            <s:text name="weblogEdit.pluginsToApply" /></a>
-        </div>
-        <div id="pluginControl" class="miscControl" style="display:none">
-            <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" name="bean.pluginsArray"/>
-        </div>
-    </s:if>
-
 
     <%-- ================================================================== --%>
     <%-- advanced settings  --%>
@@ -208,15 +207,15 @@
 
         <label for="link"><s:text name="weblogEdit.specifyPubTime" />:</label>
         <div>
-            <s:textfield type="number" min="0" max="23" step="1" name="bean.hours"/>
+            <s:textfield type="number" min="0" max="23" step="1" name="entry.hours"/>
             :
-            <s:textfield type="number" min="0" max="59" step="1" name="bean.minutes"/>
+            <s:textfield type="number" min="0" max="59" step="1" name="entry.minutes"/>
             :
-            <s:textfield type="number" min="0" max="59" step="1" name="bean.seconds"/>
+            <s:textfield type="number" min="0" max="59" step="1" name="entry.seconds"/>
             &nbsp;&nbsp;
             <script>
             $(function() {
-                $( "#entry_bean_dateString" ).datepicker({
+                $( "#entry_entry_dateString" ).datepicker({
                     showOn: "button",
                     buttonImage: "../../images/calendar.png",
                     buttonImageOnly: true,
@@ -225,7 +224,7 @@
                 });
             });
             </script>
-            <s:textfield name="bean.dateString" size="12" readonly="true"/>
+            <s:textfield name="entry.dateString" size="12" readonly="true"/>
             <s:property value="actionWeblog.timeZone" />
         </div>
         <br />
@@ -233,7 +232,7 @@
         <s:if test="commentingEnabled">
             <s:text name="weblogEdit.allowComments" />
             <s:text name="weblogEdit.commentDays" />
-            <s:select name="bean.commentDays" list="commentDaysList" size="1" listKey="left" listValue="right" />
+            <s:select name="entry.commentDays" list="commentDaysList" size="1" listKey="left" listValue="right" />
             <br />
         </s:if>
 
@@ -242,23 +241,23 @@
 		<table>
 			<tr>
 				<td><s:text name="weblogEdit.searchDescription" />:<tags:help key="weblogEdit.searchDescription.tooltip"/></td>
-				<td><s:textfield name="bean.searchDescription" size="80" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/> </td>
+				<td><s:textfield name="entry.searchDescription" size="80" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/> </td>
 			</tr>
             <tr>
 				<td><s:text name="weblogEdit.enclosureURL" />:<tags:help key="weblogEdit.enclosureURL.tooltip"/></td>
-				<td><s:textfield name="bean.enclosureUrl" size="80" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/></td>
+				<td><s:textfield name="entry.enclosureUrl" size="80" maxlength="255" style="width:100%" onBlur="this.value=this.value.trim()"/></td>
 			</tr>
             <s:if test="actionName != 'entryAdd'">
                 <tr>
                     <td></td>
                     <td>
-                        <s:if test="bean.enclosureType != null && bean.enclosureType != ''">
-                            <s:text name="weblogEdit.enclosureType" />: <s:property value='bean.enclosureType' />
-                            <s:hidden name="bean.enclosureType"/>
+                        <s:if test="entry.enclosureType != null && entry.enclosureType != ''">
+                            <s:text name="weblogEdit.enclosureType" />: <s:property value='entry.enclosureType' />
+                            <s:hidden name="entry.enclosureType"/>
                         </s:if>
-                        <s:if test="bean.enclosureLength != null && bean.enclosureLength != 0">
-                            <s:text name="weblogEdit.enclosureLength" />: <s:property value='bean.enclosureLength' />
-                            <s:hidden name="bean.enclosureLength"/>
+                        <s:if test="entry.enclosureLength != null && entry.enclosureLength != 0">
+                            <s:text name="weblogEdit.enclosureLength" />: <s:property value='entry.enclosureLength' />
+                            <s:hidden name="entry.enclosureLength"/>
                         </s:if>
                     </td>
                 </tr>

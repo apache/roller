@@ -15,7 +15,7 @@
 			<p class="lead">by <span style="text-transform: capitalize;">$entry.creator.screenName</span></p>
 		    
 			<hr>
-			<p><i class="icon-time"></i> Posted on $utils.formatDate($day, $server.msg("macro.weblog.datepattern")) at $utils.formatDate($entry.pubTime, $server.msg("macro.weblog.timepattern")) in <span class="category">$entry.category.name</span> </p>
+			<p><i class="icon-time"></i> Posted on $utils.formatDate($day, $utils.msg("macro.weblog.datepattern")) at $utils.formatDate($entry.pubTime, $utils.msg("macro.weblog.timepattern")) in <span class="category">$entry.category.name</span> </p>
 			<hr>
 	
 		    <div class="entryContent">
@@ -35,13 +35,13 @@
 		        #set($commentCount = $entry.commentCount)
 		        #if($entry.commentsStillAllowed || $commentCount > 0)
 		            #set($link = "$url.comments($entry.anchor)" )
-		            <a href="$link" class="commentslink">$server.msg("macro.weblog.comments") [$commentCount]</a>
+		            <a href="$link" class="commentslink">$utils.msg("macro.weblog.comments") [$commentCount]</a>
 		        #end
 
 		        #if ($model.isUserBlogPublisher($entry.weblog))
 		            &nbsp;|&nbsp;
 		            <a href="$url.editEntry($entry.anchor)">
-		                $server.msg("generic.edit")</a>
+		                $utils.msg("generic.edit")</a>
 		        #end
 		    </p>
 

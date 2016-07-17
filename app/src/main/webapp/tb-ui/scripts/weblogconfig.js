@@ -1,6 +1,6 @@
 $(function() {
   var data = {
-    weblogData : {"theme":"basic", "tagline":"", "editorPage" : "editor-text.jsp",
+    weblogData : {"theme":"basic", "tagline":"", "editFormat" : "HTML",
     "allowComments" : "MUSTMODERATE", "emailComments" : false, "visible" : true,
     "entriesPerPage" : 12, "defaultCommentDaysString" : "-1"},
     themeList : []

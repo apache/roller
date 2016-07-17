@@ -68,7 +68,7 @@
     <script>
         function validateSearch(form) {
             if (form.q.value == "") {
-                alert("$server.msg("macro.weblog.searchalert")");
+                alert("$utils.msg("macro.weblog.searchalert")");
                 form.q.focus();
                 return false;
             }

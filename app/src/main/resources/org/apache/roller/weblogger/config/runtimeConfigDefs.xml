@@ -49,12 +49,6 @@
     -->
     <!-- Site Settings Group -->
     <display-group name="siteSettings" key="configForm.siteSettings">
-
-        <property-def name="site.name" key="configForm.siteName"
-            description="configForm.tip.siteName">
-            <type>string</type>
-            <default-value>Blog Homepage</default-value>
-        </property-def>
         <property-def name="site.frontpage.weblog.handle" key="configForm.frontpageWeblogHandle"
             description="configForm.tip.frontpageWeblogHandle">
             <type>string</type>

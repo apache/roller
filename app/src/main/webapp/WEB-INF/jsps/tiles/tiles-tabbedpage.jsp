@@ -22,7 +22,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico">
-        <title><s:property value="getProp('site.name')"/>: <s:property value="pageTitle" /></title>
+        <title>TightBlog: <s:property value="pageTitle" /></title>
 
         <tiles:insertAttribute name="head" />     
         <style>

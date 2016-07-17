@@ -121,6 +121,12 @@
             <version>1.9.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.5.1</version>
+        </dependency>
+
         <!-- JSP tags for Java 8 time objects: https://github.com/sargue/java-time-jsptags -->
         <dependency>
             <groupId>net.sargue</groupId>

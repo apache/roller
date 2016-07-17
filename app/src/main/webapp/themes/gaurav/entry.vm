@@ -40,11 +40,11 @@
 					<a name="comments"></a>
 					#if($model.commentForm.preview)
 						#set($comments = [$model.commentForm])
-						<div class="comments-head">$server.msg( "macro.weblog.preview" ):</div>
+						<div class="comments-head">$utils.msg( "macro.weblog.preview" ):</div>
 					#else
 						#if($entry.commentCount > 0)
 							#set($comments = $entry.getComments())
-							<div class="comments-head">$server.msg( "macro.weblog.comments" ):</div>
+							<div class="comments-head">$utils.msg( "macro.weblog.comments" ):</div>
 						#else
 							<div class="comments-head">No one has commented yet.</div>
 						#end
@@ -58,7 +58,7 @@
 								<div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
 									<p>$comment.content</p>
 									<p class="comment-details">
-									$server.msg("macro.weblog.postedby")
+									$utils.msg("macro.weblog.postedby")
 									#if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
 										<a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
 									#elseif (!$utils.isEmpty($comment.name))
@@ -66,11 +66,11 @@
 									#elseif ($comment.remoteHost)
 										<b>$comment.remoteHost</b>
 									#else
-										<b>$server.msg("macro.weblog.comment.unknown")</b>
+										<b>$utils.msg("macro.weblog.comment.unknown")</b>
 									#end
-									$server.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $server.msg( "macro.weblog.datetimepattern" ))
+									$utils.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $utils.msg( "macro.weblog.datetimepattern" ))
 									<a href="$url.comment($entry.anchor, $comment.timestamp)"
-									   class="entrypermalink" title="$server.msg( "macro.weblog.commentpermalink.title" )">#</a>
+									   class="entrypermalink" title="$utils.msg( "macro.weblog.commentpermalink.title" )">#</a>
 									</p>
 								</div>
 							#end
@@ -99,23 +99,23 @@
 							<div class="row">   
 								<input type="hidden" name="method" value="post" />
 								<div class="form-group col-lg-4">
-									<label for="input1">$server.msg( "macro.weblog.name" )</label>
+									<label for="input1">$utils.msg( "macro.weblog.name" )</label>
 									<input type="text" name="name" class="form-control" value="$cform.name" id="input1" required="">
 							  	</div>
 							  	<div class="form-group col-lg-4">
-									<label for="input2">$server.msg( "macro.weblog.email" )</label>
+									<label for="input2">$utils.msg( "macro.weblog.email" )</label>
 									<input type="text" name="email" class="form-control" value="$cform.email" id="input2" required="">
 							  	</div>
 							  	<div class="form-group col-lg-4">
-									<label for="input3">$server.msg( "macro.weblog.url" )</label>
+									<label for="input3">$utils.msg( "macro.weblog.url" )</label>
 									<input type="text" name="url" class="form-control" value="$cform.url" id="input3">
 							  	</div>
-							  	#if ($server.commentEmailNotify)
+							  	#if ($utils.commentEmailNotify)
 							  	<div class="form-group col-lg-6">
 								  	<div class="checkbox">
 									  <label>
 										<input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end>
-										$server.msg( "macro.weblog.notifyMeOfComments" )
+										$utils.msg( "macro.weblog.notifyMeOfComments" )
 									  </label>
 									</div>
 								</div>
@@ -124,22 +124,22 @@
 								  	<div class="checkbox">
 									  <label>
 										<input type="checkbox" class="checkbox" id="rememberInfo" name="rememberInfo" />
-										$server.msg( "macro.weblog.rememberinfo" )
+										$utils.msg( "macro.weblog.rememberinfo" )
 									  </label>
 									</div>
 								</div>
 							  	<div class="clearfix"></div>
 							  	<div class="form-group col-lg-12">
-									<label for="input4">$server.msg( "macro.weblog.yourcomment" )</label>
+									<label for="input4">$utils.msg( "macro.weblog.yourcomment" )</label>
 									<textarea name="content" class="form-control" rows="6" id="input4" required="">$cform.content</textarea>
 							  	</div>
 
 								<div class="form-group col-lg-12">
 								   <script src="$url.site/scripts/clientSideInclude.js"></script>
 								   <div id="commentAuthenticator"></div>
-								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$server.msg("macro.weblog.postpreview" )&nbsp;"
+								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$utils.msg("macro.weblog.postpreview" )&nbsp;"
 								      onclick="this.form.method.value='preview';this.form.submit()" />
-								   <input type="submit" class="btn btn-success" name="post" value="&nbsp;$server.msg( "macro.weblog.post" )&nbsp;" />
+								   <input type="submit" class="btn btn-success" name="post" value="&nbsp;$utils.msg( "macro.weblog.post" )&nbsp;" />
 								</div>
 							</div>
 						</form>
@@ -185,7 +185,7 @@
 		
 						function validateComments(theForm) {
 							if (theForm.content.value == "") {
-								alert("$server.msg( "macro.weblog.commentwarning" )");
+								alert("$utils.msg( "macro.weblog.commentwarning" )");
 								theForm.content.focus();
 								return false;
 							}
@@ -195,7 +195,7 @@
 					</div>
 					</div>
 					#else
-						<span class="status">$server.msg( "comments.disabled" )</span>
+						<span class="status">$utils.msg( "comments.disabled" )</span>
 					#end
 				#end
 			</div>

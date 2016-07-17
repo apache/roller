@@ -34,7 +34,7 @@
       modal: true,
       buttons: {
         "<s:text name='generic.delete'/>": function() {
-          document.location.href='<s:url action="entryEdit!removeViaList" />?weblog=<s:property value="weblog"/>&bean.id='
+          document.location.href='<s:url action="entryEdit!removeViaList" />?weblogId=<s:property value="weblogId"/>&entryId='
             + encodeURIComponent($(this).data('entryId'));
           $( this ).dialog( "close" );
         },
@@ -196,7 +196,7 @@
     <td>
         <s:url var="editUrl" action="entryEdit">
             <s:param name="weblogId" value="%{actionWeblog.id}" />
-            <s:param name="bean.id" value="#post.id" />
+            <s:param name="entryId" value="#post.id" />
         </s:url>
         <s:a href="%{editUrl}"><s:text name="generic.edit" /></s:a>
     </td>

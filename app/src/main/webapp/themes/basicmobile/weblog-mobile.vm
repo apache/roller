@@ -63,10 +63,10 @@
       #else
         ## No entries.
         <ul data-role="listview" data-divider-theme="b" data-inset="true">
-          <li data-role="list-divider">$utils.formatDate($utils.now, $server.msg("macro.weblog.datepattern"))</li>
+          <li data-role="list-divider">$utils.formatDate($utils.now, $utils.msg("macro.weblog.datepattern"))</li>
           <li data-theme="a">
             <span class="ui-li-desc content-textbox">
-              <h3>$server.msg("macro.weblog.noEntriesForCategory")</h3>
+              <h3>$utils.msg("macro.weblog.noEntriesForCategory")</h3>
             </span>
           </li>
         </ul>
