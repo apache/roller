@@ -316,10 +316,7 @@ public final class EntryEdit extends UIAction {
                 entry.updateTags(updatedTags);
                 entry.setSearchDescription(entry.getSearchDescription().trim());
                 entry.setEnclosureUrl(entry.getEnclosureUrl().trim());
-                entry.setEnclosureType(entry.getEnclosureType());
-                entry.setEnclosureLength(entry.getEnclosureLength());
                 entry.setCategory(weblogManager.getWeblogCategory(entry.getCategoryId()));
-                entry.setCommentDays(entry.getCommentDays());
 
                 // handle pubtime auto set
                 if (entry.isPublished() && entry.getPubTime() == null) {
