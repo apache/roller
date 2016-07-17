@@ -2,7 +2,7 @@
 ## $entry here is a WeblogEntry
 <!-- _day-mobile -->
 <ul data-role="listview" data-divider-theme="b" data-inset="true">
-  <li data-role="list-divider">$utils.formatDate($day, $server.msg("macro.weblog.datepattern"))</li>
+  <li data-role="list-divider">$utils.formatDate($day, $utils.msg("macro.weblog.datepattern"))</li>
   ## Loop entries
   #foreach( $entry in $entries )
     <li data-role="list-divider" data-theme="a">
@@ -10,10 +10,10 @@
          $entry.title
          #set($commentCount = $entry.commentCount)
          #if($model.isUserBlogPublisher($entry.weblog))
-           &nbsp;|&nbsp;&nbsp;<a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$server.msg("generic.edit")</a>
+           &nbsp;|&nbsp;&nbsp;<a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$utils.msg("generic.edit")</a>
          #end
          #if($entry.commentsStillAllowed || $commentCount > 0)
-           |&nbsp;&nbsp;$server.msg("macro.weblog.comments") [$commentCount]
+           |&nbsp;&nbsp;$utils.msg("macro.weblog.comments") [$commentCount]
          #end
        </div>
     </li>
@@ -25,11 +25,11 @@
             #if($model.permalink || $utils.isEmpty($entry.summary))
                 $entry.getTransformedText()
             #else
-                $entry.getTransformedSummary() $server.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
+                $entry.getTransformedSummary() $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
             #end
         </p>
         <p class="ui-li-desc content-textbox">
-          Posted at $utils.formatDateTime($entry.pubTime, $server.msg("macro.weblog.timedatepattern"))
+          Posted at $utils.formatDateTime($entry.pubTime, $utils.msg("macro.weblog.timedatepattern"))
           by $entry.creator.screenName in <span class="category">$entry.category.name</span>
         </p>
       #if(!$model.permalink)

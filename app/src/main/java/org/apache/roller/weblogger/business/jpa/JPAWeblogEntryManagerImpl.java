@@ -25,7 +25,6 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -38,6 +37,9 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
+import org.commonmark.html.HtmlRenderer;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
@@ -73,12 +75,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    private List<WeblogEntryPlugin> weblogEntryPlugins = new ArrayList<>();
-
-    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
-        this.weblogEntryPlugins = weblogEntryPlugins;
     }
 
     private PropertiesManager propertiesManager;
@@ -733,25 +729,26 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public String applyWeblogEntryPlugins(WeblogEntry entry, String str) {
+    public String processBlogText(WeblogEntry entry, String str) {
         String ret = str;
-        WeblogEntry copy = new WeblogEntry(entry);
-        List<String> entryPlugins = copy.getPluginsList();
-        if (entryPlugins != null) {
-            for (WeblogEntryPlugin inPlugin : weblogEntryPlugins) {
-                if (entryPlugins.contains(inPlugin.getName())) {
-                    try {
-                        ret = inPlugin.render(entry, ret);
-                    } catch (Exception e) {
-                        log.error("ERROR from plugin: {}", inPlugin.getName());
-                    }
-                }
+
+        if (ret != null) {
+            Parser parser = Parser.builder().build();
+            Node document = parser.parse(ret);
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            ret = renderer.render(document);
+        }
+
+        if (ret != null) {
+            Whitelist whitelist = HTMLSanitizer.Level.valueOf(
+                    propertiesManager.getStringProperty("site.html.whitelist")).getWhitelist();
+
+            if (whitelist != null) {
+                ret = Jsoup.clean(ret, whitelist);
             }
         }
-        Whitelist whitelist = HTMLSanitizer.Level.valueOf(
-                propertiesManager.getStringProperty("site.html.whitelist")).getWhitelist();
 
-        return (ret == null || whitelist == null) ? ret : Jsoup.clean(ret, whitelist);
+        return ret;
     }
 
     @Override

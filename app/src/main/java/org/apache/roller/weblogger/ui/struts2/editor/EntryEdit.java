@@ -23,11 +23,11 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs.CommentOption;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -87,6 +87,13 @@ public final class EntryEdit extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    @Autowired
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     private CacheManager cacheManager;
 
     public void setCacheManager(CacheManager cacheManager) {
@@ -105,8 +112,6 @@ public final class EntryEdit extends UIAction {
         this.indexManager = indexManager;
     }
 
-    private List<WeblogEntryPlugin> weblogEntryPlugins;
-
     private URLStrategy urlStrategy;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
@@ -116,11 +121,10 @@ public final class EntryEdit extends UIAction {
     // Max Tags to show for autocomplete
     private static final int MAX_TAGS = WebloggerStaticConfig.getIntProperty("services.tagdata.max", 20);
 
-    // bean for managing form data
-    private WeblogEntry bean = new WeblogEntry();
-
     // the entry we are adding or editing
     private WeblogEntry entry = null;
+
+    private String entryId = null;
 
     public EntryEdit() {
         this.desiredMenu = "editor";
@@ -141,19 +145,6 @@ public final class EntryEdit extends UIAction {
         return WeblogRole.EDIT_DRAFT;
     }
 
-    public void prepare() {
-        if (isAdd()) {
-            // Create and initialize new, not-yet-saved Weblog Entry
-            entry = new WeblogEntry();
-            entry.setId(Utilities.generateUUID());
-            entry.setCreator(getAuthenticatedUser());
-            entry.setWeblog(getActionWeblog());
-        } else {
-            // already saved entry
-            setEntry(weblogEntryManager.getWeblogEntry(getBean().getId()));
-        }
-    }
-
     @SkipValidation
     public String removeViaList() {
         String result = removeCommon();
@@ -167,10 +158,9 @@ public final class EntryEdit extends UIAction {
     }
 
     private String removeCommon() {
-        if (getEntry() != null) {
+        entry = weblogEntryManager.getWeblogEntry(entryId);
+        if (entry != null) {
             try {
-                WeblogEntry entry = getEntry();
-
                 // remove from search index
                 if (entry.isPublished()) {
                     indexManager.removeEntryIndexOperation(entry);
@@ -213,24 +203,17 @@ public final class EntryEdit extends UIAction {
     public String execute() {
         if (isAdd()) {
             // set weblog defaults
-            bean.setCommentDays(getActionWeblog().getDefaultCommentDays());
-            // apply weblog default plugins
-            if (getActionWeblog().getDefaultPlugins() != null) {
-                bean.setPlugins(getActionWeblog().getDefaultPlugins());
-            }
+            entry = new WeblogEntry();
+            entry.setCreatorId(getAuthenticatedUser().getId());
+            entry.setWeblog(getActionWeblog());
+            entry.setEditFormat(getActionWeblog().getEditFormat());
+            entry.setCommentDays(getActionWeblog().getDefaultCommentDays());
         } else {
+            entry = weblogEntryManager.getWeblogEntry(entryId);
             // load bean with pojo data
-            bean.setId(entry.getId());
-            bean.setTitle(entry.getTitle());
-            bean.setStatus(entry.getStatus());
-            bean.setText(entry.getText());
-            bean.setSummary(entry.getSummary());
-            bean.setNotes(entry.getNotes());
-            bean.setCategoryId(entry.getCategoryId());
             String tagsAsString = String.join(" ", entry.getTags().stream().map(WeblogEntryTag::getName).collect(Collectors.toSet()));
-            bean.setTagsAsString(tagsAsString);
-            bean.setSearchDescription(entry.getSearchDescription());
-            bean.setPlugins(entry.getPlugins());
+            entry.setTagsAsString(tagsAsString);
+            entry.setCreatorId(entry.getCreator().getId());
 
             // init pubtime values
             if (entry.getPubTime() != null) {
@@ -239,21 +222,16 @@ public final class EntryEdit extends UIAction {
                 //Calendar cal = Calendar.getInstance(locale);
                 ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getZoneId());
 
-                bean.setHours(zdt.getHour());
-                bean.setMinutes(zdt.getMinute());
-                bean.setSeconds(zdt.getSecond());
-                bean.setDateString(pubDateFormat.format(zdt.toLocalDate()));
+                entry.setHours(zdt.getHour());
+                entry.setMinutes(zdt.getMinute());
+                entry.setSeconds(zdt.getSecond());
+                entry.setDateString(pubDateFormat.format(zdt.toLocalDate()));
 
                 if (log.isDebugEnabled()) {
-                    log.debug("pubtime vals are " + bean.getDateString() + ", " + bean.getHours() + ", "
-                            + bean.getMinutes() + ", " + bean.getSeconds());
+                    log.debug("pubtime vals are " + entry.getDateString() + ", " + entry.getHours() + ", "
+                            + entry.getMinutes() + ", " + entry.getSeconds());
                 }
             }
-
-            bean.setCommentDays(entry.getCommentDays());
-            bean.setEnclosureUrl(entry.getEnclosureUrl());
-            bean.setEnclosureType(entry.getEnclosureType());
-            bean.setEnclosureLength(entry.getEnclosureLength());
         }
         return INPUT;
     }
@@ -264,7 +242,7 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String saveDraft() {
-        getBean().setStatus(PubStatus.DRAFT);
+        entry.setStatus(PubStatus.DRAFT);
         return save();
     }
 
@@ -278,12 +256,12 @@ public final class EntryEdit extends UIAction {
             Instant pubTime = calculatePubTime();
 
             if (pubTime != null && pubTime.isAfter(Instant.now().plus(1, ChronoUnit.MINUTES))) {
-                getBean().setStatus(PubStatus.SCHEDULED);
+                entry.setStatus(PubStatus.SCHEDULED);
             } else {
-                getBean().setStatus(PubStatus.PUBLISHED);
+                entry.setStatus(PubStatus.PUBLISHED);
             }
         } else {
-            getBean().setStatus(PubStatus.PENDING);
+            entry.setStatus(PubStatus.PENDING);
         }
         return save();
     }
@@ -291,13 +269,13 @@ public final class EntryEdit extends UIAction {
     private Instant calculatePubTime() {
         Instant pubtime = null;
 
-        String dateString = bean.getDateString();
+        String dateString = entry.getDateString();
         if(!StringUtils.isEmpty(dateString)) {
             try {
                 LocalDate newDate = LocalDate.parse(dateString, pubDateFormat);
 
                 // Now handle the time from the hour, minute and second combos
-                pubtime = newDate.atTime(bean.getHours(), bean.getMinutes(), bean.getSeconds())
+                pubtime = newDate.atTime(entry.getHours(), entry.getMinutes(), entry.getSeconds())
                         .atZone(getActionWeblog().getZoneId()).toInstant();
             } catch (Exception e) {
                 log.error("Error calculating pubtime", e);
@@ -318,50 +296,47 @@ public final class EntryEdit extends UIAction {
 
         if (!hasActionErrors()) {
             try {
-                WeblogEntry weblogEntry = getEntry();
-
                 // set updatetime & pubtime
-                weblogEntry.setUpdateTime(Instant.now());
-                weblogEntry.setPubTime(calculatePubTime());
-
-                // copy data to pojo
-                weblogEntry.setTitle(bean.getTitle().trim());
-                weblogEntry.setStatus(bean.getStatus());
-                weblogEntry.setText(bean.getText().trim());
-                weblogEntry.setSummary(bean.getSummary().trim());
-                weblogEntry.setNotes(bean.getNotes().trim());
-                Set<String> updatedTags = Utilities.splitStringAsTags(bean.getTagsAsString().trim());
-                weblogEntry.updateTags(updatedTags);
-                weblogEntry.setSearchDescription(bean.getSearchDescription().trim());
-                weblogEntry.setEnclosureUrl(bean.getEnclosureUrl().trim());
-                weblogEntry.setEnclosureType(bean.getEnclosureType());
-                weblogEntry.setEnclosureLength(bean.getEnclosureLength());
-                weblogEntry.setCategory(weblogManager.getWeblogCategory(bean.getCategoryId()));
-
-                // join values from all plugins into a single string
-                weblogEntry.setPlugins(bean.getPlugins());
-
-                // comment settings & right-to-left option
-                weblogEntry.setCommentDays(bean.getCommentDays());
-
-                // handle pubtime auto set
-                if (weblogEntry.isPublished() && weblogEntry.getPubTime() == null) {
-                    // no time specified, use current time
-                    weblogEntry.setPubTime(weblogEntry.getUpdateTime());
+                entry.setUpdateTime(Instant.now());
+                entry.setPubTime(calculatePubTime());
+                entry.setWeblog(getActionWeblog());
+                entry.setCreator(userManager.getUser(entry.getCreatorId()));
+                if (entryId == null) {
+                    entry.setId(Utilities.generateUUID());
+                } else {
+                    entry.setId(entryId);
                 }
 
-                if (!StringUtils.isEmpty(getBean().getEnclosureUrl())) {
+                // copy data to pojo
+                entry.setTitle(entry.getTitle().trim());
+                entry.setText(entry.getText().trim());
+                entry.setSummary(entry.getSummary().trim());
+                entry.setNotes(entry.getNotes().trim());
+                Set<String> updatedTags = Utilities.splitStringAsTags(entry.getTagsAsString().trim());
+                entry.updateTags(updatedTags);
+                entry.setSearchDescription(entry.getSearchDescription().trim());
+                entry.setEnclosureUrl(entry.getEnclosureUrl().trim());
+                entry.setEnclosureType(entry.getEnclosureType());
+                entry.setEnclosureLength(entry.getEnclosureLength());
+                entry.setCategory(weblogManager.getWeblogCategory(entry.getCategoryId()));
+                entry.setCommentDays(entry.getCommentDays());
+
+                // handle pubtime auto set
+                if (entry.isPublished() && entry.getPubTime() == null) {
+                    // no time specified, use current time
+                    entry.setPubTime(entry.getUpdateTime());
+                }
+
+                if (!StringUtils.isEmpty(entry.getEnclosureUrl())) {
                     try {
                         // Fetch MediaCast resource
                         log.debug("Checking MediaCast attributes");
-                        AtomEnclosure enclosure = weblogEntryManager.generateEnclosure(getBean().getEnclosureUrl());
+                        AtomEnclosure enclosure = weblogEntryManager.generateEnclosure(entry.getEnclosureUrl());
 
                         // set enclosure attributes
-                        weblogEntry.setEnclosureUrl(enclosure.getUrl());
-                        weblogEntry.setEnclosureType(enclosure.getContentType());
-                        weblogEntry.setEnclosureLength(enclosure.getLength());
-                        bean.setEnclosureType(enclosure.getContentType());
-                        bean.setEnclosureLength(enclosure.getLength());
+                        entry.setEnclosureUrl(enclosure.getUrl());
+                        entry.setEnclosureType(enclosure.getContentType());
+                        entry.setEnclosureLength(enclosure.getLength());
 
                     } catch (IllegalArgumentException ex) {
                         addError(getText(ex.getMessage()));
@@ -369,36 +344,41 @@ public final class EntryEdit extends UIAction {
                     }
                 } else if ("entryEdit".equals(actionName)) {
                     // if enclosure string is empty, clean out its attributes
-                    weblogEntry.setEnclosureUrl(null);
-                    weblogEntry.setEnclosureType(null);
-                    weblogEntry.setEnclosureLength(null);
-                    bean.setEnclosureType(null);
-                    bean.setEnclosureLength(null);
+                    entry.setEnclosureUrl(null);
+                    entry.setEnclosureType(null);
+                    entry.setEnclosureLength(null);
                 }
 
                 if (log.isDebugEnabled()) {
-                    log.debug("entry bean is ...\n" + getBean().toString());
-                    log.debug("final status = " + weblogEntry.getStatus());
-                    log.debug("updtime = " + weblogEntry.getUpdateTime());
-                    log.debug("pubtime = " + weblogEntry.getPubTime());
+                    log.debug("entry bean is ...\n" + getEntry().toString());
+                    log.debug("final status = " + entry.getStatus());
+                    log.debug("updtime = " + entry.getUpdateTime());
+                    log.debug("pubtime = " + entry.getPubTime());
                 }
 
                 log.debug("Saving entry");
-                weblogEntryManager.saveWeblogEntry(weblogEntry);
+                if (!isAdd()) {
+                    // work with a managed object, so it doesn't try to insert twice.
+                    WeblogEntry myEntry = weblogEntryManager.getWeblogEntry(entry.getId());
+                    myEntry.setData(entry);
+                    weblogEntryManager.saveWeblogEntry(myEntry);
+                } else {
+                    weblogEntryManager.saveWeblogEntry(entry);
+                }
                 WebloggerFactory.flush();
 
                 // notify search of the new entry
-                if (weblogEntry.isPublished()) {
+                if (entry.isPublished()) {
                     indexManager.addEntryReIndexOperation(entry);
                 } else if ("entryEdit".equals(actionName)) {
                     indexManager.removeEntryIndexOperation(entry);
                 }
 
                 // notify caches
-                cacheManager.invalidate(weblogEntry);
+                cacheManager.invalidate(entry);
 
-                if (PubStatus.PENDING.equals(weblogEntry.getStatus()) && mailManager.isMailConfigured()) {
-                    mailManager.sendPendingEntryNotice(weblogEntry);
+                if (PubStatus.PENDING.equals(entry.getStatus()) && mailManager.isMailConfigured()) {
+                    mailManager.sendPendingEntryNotice(entry);
                 }
                 if ("entryEdit".equals(actionName)) {
                     addStatusMessage(getEntry().getStatus());
@@ -407,7 +387,7 @@ public final class EntryEdit extends UIAction {
                 } else {
                     // now that entry is saved we have an id value for it
                     // store it back in bean for use in next action
-                    getBean().setId(weblogEntry.getId());
+                    setEntryId(entry.getId());
                     // flip over to entryEdit mode, as defined in struts.xml
                     return SUCCESS;
                 }
@@ -419,29 +399,21 @@ public final class EntryEdit extends UIAction {
         }
         if ("entryAdd".equals(actionName)) {
             // if here on entryAdd, nothing saved, so reset status to null (unsaved)
-            getBean().setStatus(null);
+            getEntry().setStatus(null);
         }
         return INPUT;
     }
 
     public void myValidate() {
-        if (StringUtils.isEmpty(bean.getTitle())) {
+        if (StringUtils.isEmpty(entry.getTitle())) {
             addError("Entry.error.titleNull");
         }
-        if (StringUtils.isEmpty(bean.getCategoryId())) {
+        if (StringUtils.isEmpty(entry.getCategoryId())) {
             addError("Entry.error.categoryNull");
         }
-        if (StringUtils.isEmpty(bean.getText())) {
+        if (StringUtils.isEmpty(entry.getText())) {
             addError("Entry.error.textNull");
         }
-    }
-
-    public WeblogEntry getBean() {
-        return bean;
-    }
-
-    public void setBean(WeblogEntry bean) {
-        this.bean = bean;
     }
 
     public WeblogEntry getEntry() {
@@ -454,6 +426,7 @@ public final class EntryEdit extends UIAction {
 
     @SkipValidation
     public String firstSave() {
+        entry = weblogEntryManager.getWeblogEntry(entryId);
         addStatusMessage(getEntry().getStatus());
         return execute();
     }
@@ -487,10 +460,6 @@ public final class EntryEdit extends UIAction {
      */
     public List<WeblogCategory> getCategories() {
         return getActionWeblog().getWeblogCategories();
-    }
-
-    public String getEditor() {
-        return getActionWeblog().getEditorPage();
     }
 
     public boolean isUserAnAuthor() {
@@ -534,14 +503,6 @@ public final class EntryEdit extends UIAction {
         return getRecentEntries(PubStatus.PENDING, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
     }
 
-    public List<WeblogEntryPlugin> getWeblogEntryPlugins() {
-        return weblogEntryPlugins;
-    }
-
-    public void setWeblogEntryPlugins(List<WeblogEntryPlugin> weblogEntryPlugins) {
-        this.weblogEntryPlugins = weblogEntryPlugins;
-    }
-
     private List<WeblogEntry> getRecentEntries(PubStatus pubStatus, WeblogEntrySearchCriteria.SortBy sortBy) {
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(getActionWeblog());
@@ -569,6 +530,14 @@ public final class EntryEdit extends UIAction {
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
+    }
+
+    public String getEntryId() {
+        return entryId;
+    }
+
+    public void setEntryId(String entryId) {
+        this.entryId = entryId;
     }
 
     private static class WeblogTagData {
@@ -603,4 +572,5 @@ public final class EntryEdit extends UIAction {
         }
 
     }
+
 }

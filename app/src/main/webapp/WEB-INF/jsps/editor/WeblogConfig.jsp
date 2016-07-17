@@ -135,14 +135,15 @@ var msg= {
         </s:if>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.editor" /></td>
+            <td class="label"><s:text name="weblogSettings.editFormat" /></td>
             <td class="field">
-                <select data-link="weblogData.editorPage trigger=true" size="1">
-                    <option value="editor-text.jsp"><s:text name="editor.text.name"/></option>
-                    <option value="editor-rte.jsp"><s:text name="editor.rte.name"/></option>
+                <select data-link="weblogData.editFormat trigger=true" size="1">
+                    <option value="HTML"><s:text name="weblogSettings.editFormat.html"/></option>
+                    <option value="COMMONMARK"><s:text name="weblogSettings.editFormat.commonMark"/></option>
+                    <option value="RICHTEXT"><s:text name="weblogSettings.editFormat.richText"/></option>
                 </select>
            </td>
-           <td class="description"><s:text name="weblogSettings.tip.editor" /></td>
+           <td class="description"><s:text name="weblogSettings.tip.editFormat" /></td>
         </tr>
 
         <tr>
@@ -227,20 +228,6 @@ var msg= {
                 <td class="description"><s:text name="weblogSettings.tip.ignoreUrls" /></td>
             </tr>
 
-        </s:if>
-
-        <%-- ***** Plugins "formatting" settings ***** --%>
-        <s:if test="!weblogEntryPlugins.isEmpty">
-            <tr>
-                <td colspan="3"><h2><s:text name="weblogSettings.formatting" /></h2></td>
-            </tr>
-
-            <tr>
-                <td class="label"><s:text name="weblogSettings.label1" /> <br /><s:text name="weblogSettings.label2" /></td>
-                <td class="field">
-                    <s:checkboxlist theme="strutsoverride" list="weblogEntryPlugins" listKey="name" listValue="name" data-link="weblogData.defaultPluginsArray"/>
-                </td>
-            </tr>
         </s:if>
 
       </script>

@@ -36,6 +36,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -82,7 +83,7 @@ public class Weblog {
     @NotBlank(message = "{weblogSettings.error.nameNull}")
     private String  name             = null;
     private String  tagline          = null;
-    private String  editorPage       = null;
+    private EditFormat editFormat    = EditFormat.HTML;
     private String  blacklist        = null;
     private CommentOption allowComments = CommentOption.MUSTMODERATE;
     private Boolean emailComments    = Boolean.FALSE;
@@ -90,7 +91,6 @@ public class Weblog {
     private String  theme            = null;
     private String  locale           = null;
     private String  timeZone         = null;
-    private String  defaultPlugins   = null;
     private Boolean visible          = Boolean.TRUE;
     private Instant dateCreated = Instant.now();
     private int     defaultCommentDays = -1;
@@ -104,6 +104,27 @@ public class Weblog {
 
     // needed when viewing theme previews, to ensure proper templates being called
     private boolean tempPreviewWeblog = false;
+
+    public enum EditFormat {
+        HTML("weblogSettings.editFormat.html", true),
+        COMMONMARK("weblogSettings.editFormat.commonMark", true),
+        RICHTEXT("weblogSettings.editFormat.richText", false);
+
+        private String description;
+
+        private boolean usesPlainEditor;
+
+        EditFormat(String description, boolean usesPlainEditor) {
+            this.description = description;
+            this.usesPlainEditor = usesPlainEditor;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
+
 
     // Associated objects
     @JsonIgnore
@@ -197,12 +218,14 @@ public class Weblog {
         this.creator = creator;
     }
 
-    public String getEditorPage() {
-        return this.editorPage;
+    @Basic(optional=false)
+    @Enumerated(EnumType.STRING)
+    public EditFormat getEditFormat() {
+        return this.editFormat;
     }
     
-    public void setEditorPage(String editorPage) {
-        this.editorPage = editorPage;
+    public void setEditFormat(EditFormat editFormat) {
+        this.editFormat = editFormat;
     }
     
     public String getBlacklist() {
@@ -223,7 +246,7 @@ public class Weblog {
         this.allowComments = allowComments;
     }
 
-    @Basic(optional=false)
+    @Column(name="commentdays", nullable=false)
     public int getDefaultCommentDays() {
         return defaultCommentDays;
     }
@@ -275,17 +298,6 @@ public class Weblog {
     }
 
     /**
-     * Comma-delimited list of user's default Plugins.
-     */
-    public String getDefaultPlugins() {
-        return defaultPlugins;
-    }
-
-    public void setDefaultPlugins(String string) {
-        defaultPlugins = string;
-    }
-
-    /**
      * Set bean properties based on other bean.
      */
     public void setData(Weblog other) {
@@ -294,7 +306,7 @@ public class Weblog {
         this.setHandle(other.getHandle());
         this.setTagline(other.getTagline());
         this.setCreator(other.getCreator());
-        this.setEditorPage(other.getEditorPage());
+        this.setEditFormat(other.getEditFormat());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());
         this.setEmailComments(other.getEmailComments());
@@ -533,15 +545,6 @@ public class Weblog {
     }
 
     // convenience methods for populating fields from forms
-
-    @Transient
-    public String[] getDefaultPluginsArray() {
-        return StringUtils.split(defaultPlugins, ",");
-    }
-
-    public void setDefaultPluginsArray(String[] strings) {
-        defaultPlugins = StringUtils.join(strings, ",");
-    }
 
     @Transient
     public String getDefaultCommentDaysString() {

@@ -40,7 +40,7 @@
             <td class="bannerRight">
 
                 <s:if test="authenticatedUser == null">
-                   <a href="<s:url value='/'/>"><s:property value="getProp('site.name')"/></a> |
+                   <a href="<s:url value='/'/>"><s:text name="navigationBar.homePage" /></a> |
                 </s:if>
 
                 <s:if test="userIsAdmin">

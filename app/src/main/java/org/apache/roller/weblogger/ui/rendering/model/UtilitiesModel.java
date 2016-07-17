@@ -25,18 +25,30 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
+import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
- * Model which provides access to a set of general utilities.
+ * Model which provides access to system messages and certain properties
+ * as well as general utilities.
  */
 public class UtilitiesModel implements Model {
-    private WeblogRequest weblogRequest = null;
     private ZoneId zoneId;
+    I18nMessages messages = null;
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
 
     /** Template context name to be used for model */
     @Override
@@ -47,13 +59,34 @@ public class UtilitiesModel implements Model {
     /** Init page model, will take but does not require a WeblogRequest object. */
     @Override
     public void init(Map initData) {
-        weblogRequest = (WeblogRequest) initData.get("parsedRequest");
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         zoneId = (weblogRequest == null) ? ZoneId.systemDefault() : weblogRequest.getWeblog().getZoneId();
+        messages = I18nMessages.getMessages(
+                (weblogRequest == null) ? Locale.getDefault() : weblogRequest.getLocaleInstance());
+    }
+
+    /** Return message string */
+    public String msg(String key) {
+        return messages.getString(key);
+    }
+
+    /** Return parameterized message string */
+    public String msg(String key, List args) {
+        return messages.getString(key, args);
     }
 
     public String autoformat(String s) {
         return StringUtils.replace(s, "\n", "<br/>");
     }
+
+    public boolean getCommentEmailNotify() {
+        return propertiesManager.getBooleanProperty("users.comments.emailnotify");
+    }
+
+    public String getSystemVersion() {
+        return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
+    }
+
 
     //-------------------------------------------------------------- Date utils
     /**
@@ -88,15 +121,8 @@ public class UtilitiesModel implements Model {
     }
 
     /**
-     * Format date as '2011-12-03T10:15:30+01:00[Europe/Paris]'
-     * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
-     */
-    public String formatIsoZonedDateTime(LocalDateTime date) {
-        return DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.of(date, zoneId));
-    }
-
-    /**
-     * Format date as '2011-12-03T10:15:30+01:00'
+     * Provides required Atom date format e.g. '2011-12-03T10:15:30+01:00'
+     * see https://tools.ietf.org/html/rfc4287#section-3.3
      * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
      */
     public String formatIsoOffsetDateTime(LocalDateTime date) {
@@ -116,10 +142,6 @@ public class UtilitiesModel implements Model {
 
     public String left(String str, int length) {
         return StringUtils.left(str, length);
-    }
-
-    public String right(String str, int length) {
-        return StringUtils.right(str, length);
     }
 
     public String escapeHTML(String str) {

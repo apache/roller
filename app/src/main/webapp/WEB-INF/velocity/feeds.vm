@@ -34,8 +34,8 @@
         <title type="html">$utils.escapeXML($entry.title)</title>
         <author><name>$entry.creator.screenName</name></author>
         <link rel="alternate" type="text/html" href="$entry.permalink"/>
-        <published>$utils.formatIsoZonedDateTime($entry.pubTime)</published>
-        <updated>$utils.formatIsoZonedDateTime($entry.updateTime)</updated>
+        <published>$utils.formatIsoOffsetDateTime($entry.pubTime)</published>
+        <updated>$utils.formatIsoOffsetDateTime($entry.updateTime)</updated>
         <category term="$utils.escapeXML($entry.category.name)" label="$utils.escapeXML($entry.category.name)" />
 #foreach($tag in $entry.tags)
         <category term="$utils.escapeXML($tag.name)" scheme="http://roller.apache.org/ns/tags/" />
@@ -63,8 +63,8 @@
         <title type="html">Re: $utils.escapeXML($comment.weblogEntry.title)</title>
         <author><name>$utils.escapeXML($comment.name)</name></author>
         <link rel="alternate" type="text/html" href="${comment.weblogEntry.permalink}#comment-${comment.timestamp}"/>
-        <published>$utils.formatIsoZonedDateTime($comment.postTime)</published>
-        <updated>$utils.formatIsoZonedDateTime($comment.postTime)</updated>
+        <published>$utils.formatIsoOffsetDateTime($comment.postTime)</published>
+        <updated>$utils.formatIsoOffsetDateTime($comment.postTime)</updated>
         <content type="html">$utils.escapeXML($comment.content)</content>
     </entry>
     #end

@@ -238,7 +238,7 @@ public class FeedManagerImpl implements FeedManager {
             } else {
                 content = blogEntry.getSummary();
             }
-            content = weblogEntryManager.applyWeblogEntryPlugins(blogEntry, content);
+            content = weblogEntryManager.processBlogText(blogEntry, content);
 
             entry.setAuthor(blogEntry.getCreator().getScreenName());
             entry.setTitle(blogEntry.getTitle());

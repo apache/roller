@@ -171,7 +171,7 @@ abstract public class WebloggerTest {
         testWeblog.setName("Test Weblog");
         testWeblog.setTagline("Test Weblog");
         testWeblog.setHandle(handle.toLowerCase());
-        testWeblog.setEditorPage("editor-text.jsp");
+        testWeblog.setEditFormat(Weblog.EditFormat.HTML);
         testWeblog.setBlacklist("");
         testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");
@@ -215,6 +215,7 @@ abstract public class WebloggerTest {
         testEntry.setId(Utilities.generateUUID());
         testEntry.setTitle(anchor);
         testEntry.setText("blah blah entry");
+        testEntry.setEditFormat(Weblog.EditFormat.HTML);
         testEntry.setAnchor(anchor);
         testEntry.setPubTime(Instant.now());
         testEntry.setUpdateTime(Instant.now());

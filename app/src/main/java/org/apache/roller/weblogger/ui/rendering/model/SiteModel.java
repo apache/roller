@@ -177,7 +177,7 @@ public class SiteModel implements Model {
         try {            
             weblog = weblogManager.getWeblogByHandle(handle);
         } catch (Exception e) {
-            log.error("ERROR: fetching users by letter", e);
+            log.error("ERROR: fetching weblog", e);
         }
         return weblog;
     }

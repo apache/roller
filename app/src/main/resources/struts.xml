@@ -260,7 +260,7 @@
             <result name="success" type="redirectAction">
                 <param name="actionName">entryEdit!firstSave</param>
                 <param name="weblogId">${weblogId}</param>
-                <param name="bean.id">${bean.id}</param>
+                <param name="entryId">${entry.id}</param>
             </result>
             <allowed-methods>publish,saveDraft</allowed-methods>
         </action>

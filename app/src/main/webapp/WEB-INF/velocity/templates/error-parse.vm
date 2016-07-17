@@ -23,8 +23,8 @@
   <h2 style="background-color: inherit;color: #CC0000;margin: 0;padding: 0;">Velocity Template Error</h2>
   <span style="display: block;background-color: #fcc;color: #c00;border: 1px solid red;margin: 15px 0px;padding: 10px;font-weight: bold;">
     <ul style="list-style-type: none;margin-top: 0;margin-left: 0;margin-bottom: 0;padding: 3px;">
-      <li>$server.msg("errorPage.title")</li>
-      <li>$server.msg("errorPage.message")</li>
+      <li>$utils.msg("errorPage.title")</li>
+      <li>$utils.msg("errorPage.message")</li>
     </ul>
   </span>
   <table width="100%" style="border-collapse: collapse; border: 1px dotted #CCCCCC;">

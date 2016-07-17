@@ -33,9 +33,9 @@
     <title type="html">$utils.escapeXML($entry.title)</title>
     <author><name>$entry.author</name></author>
     <link rel="alternate" type="text/html" href="$utils.escapeXML($entry.permalink)"/>
-    <published>$utils.formatIsoZonedDateTime($entry.pubTime)</published>
+    <published>$utils.formatIsoOffsetDateTime($entry.pubTime)</published>
     #if( $utils.isNotEmpty($entry.updateTime) )
-       <updated>$utils.formatIsoZonedDateTime($entry.updateTime)</updated>
+       <updated>$utils.formatIsoOffsetDateTime($entry.updateTime)</updated>
     #end
     #if( $utils.isNotEmpty($entry.text) )
        <content type="html">$utils.escapeXML($entry.content)</content>

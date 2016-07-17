@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.Map;
 import org.apache.roller.weblogger.WebloggerTest;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.junit.Before;
@@ -39,51 +38,23 @@ public class PropertiesTest extends WebloggerTest {
         RuntimeConfigProperty prop;
         
         // get a property by name
-        prop = propertiesManager.getProperty("site.name");
+        prop = propertiesManager.getProperty("analytics.default.tracking.code");
+        prop.setValue("test1");
         assertNotNull(prop);
-        
+
+        prop = propertiesManager.getProperty("analytics.default.tracking.code");
+        assertNotNull(prop);
+        assertEquals("test1", prop.getValue());
+
         // update a property
-        prop.setValue("testtest");
+        prop.setValue("test2");
         propertiesManager.saveProperty(prop);
         endSession(true);
         
         // make sure property was updated
-        prop = propertiesManager.getProperty("site.name");
-        assertNotNull(prop);
-        assertEquals("testtest", prop.getValue());
-
-        // get a second property by name
         prop = propertiesManager.getProperty("analytics.default.tracking.code");
         assertNotNull(prop);
+        assertEquals("test2", prop.getValue());
 
-        // update a property
-        prop.setValue("blahblah");
-        propertiesManager.saveProperty(prop);
-        endSession(true);
-
-        // make sure property was updated
-        prop = propertiesManager.getProperty("analytics.default.tracking.code");
-        assertNotNull(prop);
-        assertEquals("blahblah", prop.getValue());
-
-        // get all properties
-        Map<String, RuntimeConfigProperty> props = propertiesManager.getProperties();
-        assertNotNull(props);
-        assertTrue(props.containsKey("site.name"));
-        assertTrue(props.containsKey("analytics.default.tracking.code"));
-
-        // update multiple properties
-        prop = props.get("site.name");
-        prop.setValue("foofoo");
-        prop = props.get("analytics.default.tracking.code");
-        prop.setValue("blahblahblah");
-        propertiesManager.saveProperties(props);
-        endSession(true);
-        
-        // make sure all properties were updated
-        props = propertiesManager.getProperties();
-        assertNotNull(props);
-        assertEquals("foofoo", props.get("site.name").getValue());
-        assertEquals("blahblahblah", props.get("analytics.default.tracking.code").getValue());
     }
 }

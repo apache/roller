@@ -4,7 +4,7 @@
 <div class="dayBox">
 
     <div class="dayTitle">
-       $utils.formatDate($day, $server.msg("macro.weblog.datepattern"))
+       $utils.formatDate($day, $utils.msg("macro.weblog.datepattern"))
     </div>
 
     #foreach( $entry in $entries )
@@ -15,19 +15,19 @@
             #if($model.permalink || $utils.isEmpty($entry.summary))
                 $entry.getTransformedText()
             #else
-                $entry.getTransformedSummary() $server.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
+                $entry.getTransformedSummary() $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
             #end
         </p>
         <p class="entryInfo">
-            Posted at <a href="$url.entry($entry.anchor)">$utils.formatDateTime($entry.pubTime, $server.msg("macro.weblog.timedatepattern"))</a>
+            Posted at <a href="$url.entry($entry.anchor)">$utils.formatDateTime($entry.pubTime, $utils.msg("macro.weblog.timedatepattern"))</a>
             by $entry.creator.screenName in <span class="category">$entry.category.name</span> &nbsp;|&nbsp;
             #if ($model.isUserBlogPublisher($entry.weblog))
-                <a href="$url.editEntry($entry.anchor)">$server.msg("generic.edit")</a> &nbsp;|&nbsp;
+                <a href="$url.editEntry($entry.anchor)">$utils.msg("generic.edit")</a> &nbsp;|&nbsp;
             #end
             #set($commentCount = $entry.commentCount)
             #if($entry.commentsStillAllowed || $commentCount > 0)
                 #set($link = "$url.comments($entry.anchor)" )
-                <a href="$link" class="commentsLink">$server.msg("macro.weblog.comments") [$commentCount]</a>
+                <a href="$link" class="commentsLink">$utils.msg("macro.weblog.comments") [$commentCount]</a>
             #end
         </p>
       </div>

@@ -22,14 +22,11 @@ package org.apache.roller.weblogger.pojos;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
@@ -88,13 +85,13 @@ public class WeblogEntry {
     private String text;
     private String summary;
     private String notes;
+    private Weblog.EditFormat editFormat = Weblog.EditFormat.HTML;
     private String enclosureUrl;
     private String enclosureType;
     private Long enclosureLength;
     private String anchor;
     private Instant pubTime;
     private Instant updateTime;
-    private String plugins;
     private Integer commentDays = 7;
     private PubStatus status;
     private User creator = null;
@@ -113,32 +110,11 @@ public class WeblogEntry {
     private String tagsAsString;
     private String dateString;
     private String categoryId;
+    private String creatorId;
 
     //----------------------------------------------------------- Construction
     
     public WeblogEntry() {
-    }
-    
-    public WeblogEntry(
-            WeblogCategory category,
-            Weblog weblog,
-            User creator,
-            String title,
-            String text,
-            String anchor,
-            Instant pubTime,
-            Instant updateTime,
-            PubStatus status) {
-        this.id = Utilities.generateUUID();
-        this.category = category;
-        this.weblog = weblog;
-        this.creator = creator;
-        this.title = title;
-        this.text = text;
-        this.anchor = anchor;
-        this.pubTime = pubTime;
-        this.updateTime = updateTime;
-        this.status = status;
     }
     
     public WeblogEntry(WeblogEntry otherData) {
@@ -155,6 +131,7 @@ public class WeblogEntry {
         this.setCreator(other.getCreator());
         this.setCategory(other.getCategory());
         this.setWeblog(other.getWeblog());
+        this.setEditFormat(other.getEditFormat());
         this.setTitle(other.getTitle());
         this.setText(other.getText());
         this.setSummary(other.getSummary());
@@ -164,7 +141,6 @@ public class WeblogEntry {
         this.setPubTime(other.getPubTime());
         this.setUpdateTime(other.getUpdateTime());
         this.setStatus(other.getStatus());
-        this.setPlugins(other.getPlugins());
         this.setCommentDays(other.getCommentDays());
         this.setEnclosureUrl(other.getEnclosureUrl());
         this.setEnclosureType(other.getEnclosureType());
@@ -297,6 +273,16 @@ public class WeblogEntry {
         this.text = text;
     }
 
+    @Basic(optional=false)
+    @Enumerated(EnumType.STRING)
+    public Weblog.EditFormat getEditFormat() {
+        return this.editFormat;
+    }
+
+    public void setEditFormat(Weblog.EditFormat editFormat) {
+        this.editFormat = editFormat;
+    }
+
     @Column(name="enclosure_url")
     public String getEnclosureUrl() {
         return enclosureUrl;
@@ -379,17 +365,6 @@ public class WeblogEntry {
     }
     
     /**
-     * Comma-delimited list of this entry's Plugins.
-     */
-    public String getPlugins() {
-        return plugins;
-    }
-    
-    public void setPlugins(String string) {
-        plugins = string;
-    }
-
-    /**
      * Number of days after pubTime that comments should be allowed, -1 for no limit.
      */
     @Basic(optional=false)
@@ -461,7 +436,7 @@ public class WeblogEntry {
                 WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty("users.comments.enabled")))) {
             return false;
         }
-        if (!Boolean.TRUE.equals(getWeblog().getAllowComments())) {
+        if (RuntimeConfigDefs.CommentOption.NONE.equals(getWeblog().getAllowComments())) {
             return false;
         }
         if (getCommentDays() == 0) {
@@ -505,28 +480,6 @@ public class WeblogEntry {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), getAnchor(), true);
     }
     
-    /**
-     * Convenience method to transform mPlugins to a List
-     * @return list of plugins to be applied to this blog entry
-     */
-    @Transient
-    public List<String> getPluginsList() {
-        if (getPlugins() != null) {
-            return Arrays.asList( StringUtils.split(getPlugins(), ",") );
-        }
-        return new ArrayList<>();
-    }
-
-    // Struts Checkboxlist control needs a String[] to specify selected values
-    @Transient
-    public String[] getPluginsArray() {
-        return StringUtils.split(plugins, ",");
-    }
-
-    public void setPluginsArray(String[] strings) {
-        plugins = StringUtils.join(strings, ",");
-    }
-
     /** Convenience method for checking published status */
     @Transient
     public boolean isPublished() {
@@ -555,7 +508,7 @@ public class WeblogEntry {
     private String render(String str) {
         log.debug("Applying page plugins to string");
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        return mgr.applyWeblogEntryPlugins(this, str);
+        return mgr.processBlogText(this, str);
     }
 
     @Transient
@@ -603,4 +556,12 @@ public class WeblogEntry {
         this.dateString = dateString;
     }
 
+    @Transient
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
 }

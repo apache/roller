@@ -195,15 +195,16 @@ public interface WeblogEntryManager {
     long getEntryCount(Weblog websiteData);
 
     /**
-     * Apply a set of weblog entry plugins to the specified string and
-     * return the results.  This method must *NOT* alter the contents of
-     * the original entry object.
+     * Process the blog text based on whether Commonmark and/or JSoup tag
+     * filtering is activated.  This method must *NOT* alter the contents of
+     * the original entry object, to allow the blogger to return to his original
+     * text for additional editing as desired.
      *
      * @param entry Original weblog entry
-     * @param str   String to which to apply plugins
+     * @param str   String to which to apply processing.
      * @return the transformed text
      */
-    String applyWeblogEntryPlugins(WeblogEntry entry, String str);
+    String processBlogText(WeblogEntry entry, String str);
 
     /**
      * Create an Atom enclosure element for the resource (usually podcast or other

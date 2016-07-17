@@ -27,9 +27,9 @@ UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
 User user = mgr.getEnabledUserByUserName(auth.getName());
 
 if (user == null) {
-    // Spring security policy requires a successful login before the code in this JSP can be accessed.
-    // If authentication successful but no user, authentication must have been via LDAP without
-    // the user having registered yet.  So forward to the registration page...
+    /* Spring security policy requires a successful login before the code in this JSP can be accessed.
+       If authentication successful but no user, authentication must have been via LDAP without
+       the user having registered yet.  So forward to the registration page... */
     response.sendRedirect(request.getContextPath() + "/tb-ui/register.rol");
 } else {
     List<UserWeblogRole> roles = mgr.getWeblogRoles(user);
@@ -39,7 +39,12 @@ if (user == null) {
         response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
             + user.getLocale() + "&weblogId=" + weblog.getId());
     } else {
-        response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
+        if (roles.size() > 0) {
+            response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
+        } else {
+            // admin has no blog yet, possibly initial setup.
+            response.sendRedirect(request.getContextPath() + "/tb-ui/admin/globalConfig.rol");
+        }
     }
 }
 %>
