@@ -34,11 +34,14 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +91,13 @@ public class Comments extends UIAction {
 
     public void setMailManager(MailManager manager) {
         mailManager = manager;
+    }
+
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     @Autowired
@@ -471,7 +481,14 @@ public class Comments extends UIAction {
                 Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream()); // IOUtils.toString(request.getInputStream(), "UTF-8"); //
-                    c.setContent(content);
+
+                    // Validate content
+                    HTMLSanitizer.Level sanitizerLevel = HTMLSanitizer.Level.valueOf(
+                            propertiesManager.getStringProperty("comments.html.whitelist"));
+                    Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
+
+                    c.setContent(Jsoup.clean(content, commentHTMLWhitelist));
+
                     // don't update the posttime when updating the comment
                     c.setPostTime(c.getPostTime());
                     weblogEntryManager.saveComment(c, true);

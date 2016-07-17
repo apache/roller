@@ -92,7 +92,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         String url = getRootURL(absolute) + "/tb-ui/authoring/entryEdit.rol";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
-        params.put("bean.id", entryId);
+        params.put("entryId", entryId);
         return url + Utilities.getQueryString(params);
     }
 
