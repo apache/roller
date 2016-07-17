@@ -94,7 +94,7 @@
 							<div class="alert alert-success">$cform.message</div>
 						#end
 		
-						<form method="post" action="$url.entry($entry.anchor)" focus="name" 
+						<form method="post" action="$url.entryComment($entry.anchor)" focus="name"
 							name="commentForm" onsubmit="fixURL(this); return validateComments(this)"> 
 							<div class="row">   
 								<input type="hidden" name="method" value="post" />

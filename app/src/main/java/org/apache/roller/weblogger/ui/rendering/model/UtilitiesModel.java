@@ -62,7 +62,7 @@ public class UtilitiesModel implements Model {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         zoneId = (weblogRequest == null) ? ZoneId.systemDefault() : weblogRequest.getWeblog().getZoneId();
         messages = I18nMessages.getMessages(
-                (weblogRequest == null) ? Locale.getDefault() : weblogRequest.getLocaleInstance());
+                (weblogRequest == null) ? Locale.ENGLISH : weblogRequest.getLocaleInstance());
     }
 
     /** Return message string */
@@ -104,7 +104,7 @@ public class UtilitiesModel implements Model {
         if (dt == null || fmt == null) {
             return fmt;
         }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt).withZone(zoneId);
         return dtf.format(dt);
     }
 
