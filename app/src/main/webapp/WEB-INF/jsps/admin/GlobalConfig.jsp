@@ -24,18 +24,18 @@
     <sec:csrfInput/>
 
     <table class="formtable">
-    
-    <s:iterator var="dg" value="globalConfigDef.displayGroups">
-    
+
+    <s:iterator var="dg" value="globalConfigDef.configGroups">
+
         <tr>
             <td colspan="3"><h2><s:text name="%{#dg.key}" /></h2></td>
         </tr>
-    
+
         <s:iterator var="pd" value="#dg.propertyDefs">
-            
+          <s:if test="%{!#pd.hidden}">
             <tr>
                 <td class="label"><s:text name="%{#pd.key}" /></td>
-                
+
                   <%-- special condition for front page blog --%>
                   <s:if test="#pd.name == 'site.frontpage.weblog.handle'">
                       <td class="field">
@@ -114,7 +114,7 @@
                     <td class="field"><input type="text" name='<s:property value="#pd.name"/>'
                         value='<s:property value="properties[#pd.name].value"/>' size="35" onBlur="this.value=this.value.trim()"/></td>
                   </s:elseif>
-                  
+
                   <%-- "text" type means use a full textarea --%>
                   <s:elseif test="#pd.type == 'text'">
                     <td class="field">
@@ -125,11 +125,11 @@
                                 onBlur="this.value=this.value.trim()"><s:property value="properties[#pd.name].value"/></textarea>
                     </td>
                   </s:elseif>
-                  
+
                   <%-- "boolean" type means use a checkbox --%>
                   <s:elseif test="#pd.type == 'boolean'">
                       <s:if test="properties[#pd.name].value == 'true'">
-                          <td class="field"><input type="checkbox" 
+                          <td class="field"><input type="checkbox"
                             name='<s:property value="#pd.name"/>' CHECKED></td>
                       </s:if>
                       <s:else>
@@ -137,28 +137,29 @@
                             name='<s:property value="#pd.name"/>'></td>
                       </s:else>
                   </s:elseif>
-                  
+
                   <%-- if it's something we don't understand then use textbox --%>
                   <s:else>
                     <td class="field"><input type="text"
                         name='<s:property value="#pd.name"/>' size="50" onBlur="this.value=this.value.trim()"/></td>
                   </s:else>
-                
+
                 <td class="description"><s:text name="%{#pd.description}"/></td>
             </tr>
-          
+
+          </s:if>
         </s:iterator>
-      
+
         <tr>
             <td colspan="2">&nbsp;</td>
         </tr>
-        
+
     </s:iterator>
 
     </table>
-    
+
     <div class="control">
         <input class="buttonBox" type="submit" value="<s:text name='generic.save'/>"/>
     </div>
-    
+
 </s:form>

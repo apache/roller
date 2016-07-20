@@ -109,7 +109,7 @@ public final class MenuHelper {
         propertyDefNames.clear();
         RuntimeConfigDefs rcd = propertiesManager.getRuntimeConfigDefs();
         if (rcd != null) {
-            for (RuntimeConfigDefs.DisplayGroup group : rcd.getDisplayGroups()) {
+            for (RuntimeConfigDefs.ConfigGroup group : rcd.getConfigGroups()) {
                 for (RuntimeConfigDefs.PropertyDef def : group.getPropertyDefs()) {
                     propertyDefNames.add(def.getName());
                 }

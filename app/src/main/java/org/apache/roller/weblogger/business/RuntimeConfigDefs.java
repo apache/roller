@@ -29,28 +29,28 @@ import java.util.List;
 @XmlRootElement(name="runtime-configs")
 public class RuntimeConfigDefs {
 
-    private List<DisplayGroup> displayGroups = null;
+    private List<ConfigGroup> configGroups = null;
 
     public RuntimeConfigDefs() {
-        this.displayGroups = new ArrayList<>();
+        this.configGroups = new ArrayList<>();
     }
 
-    public List<DisplayGroup> getDisplayGroups() {
-        return displayGroups;
+    public List<ConfigGroup> getConfigGroups() {
+        return configGroups;
     }
 
-    @XmlElement(name="display-group")
-    public void setDisplayGroups(List<DisplayGroup> displayGroups) {
-        this.displayGroups = displayGroups;
+    @XmlElement(name="config-group")
+    public void setConfigGroups(List<ConfigGroup> configGroups) {
+        this.configGroups = configGroups;
     }
 
-    public static class DisplayGroup {
+    public static class ConfigGroup {
 
         private List<PropertyDef> propertyDefs = null;
         private String name = null;
         private String key = null;
 
-        public DisplayGroup() {
+        public ConfigGroup() {
             this.propertyDefs = new ArrayList<>();
         }
 
@@ -92,6 +92,7 @@ public class RuntimeConfigDefs {
         private String description = null;
         private String type = null;
         private String defaultValue = null;
+        private boolean hidden = false;
         private int rows = 5;
         private int cols = 25;
 
@@ -143,6 +144,14 @@ public class RuntimeConfigDefs {
         @XmlElement(name = "default-value")
         public void setDefaultValue(String defaultvalue) {
             this.defaultValue = defaultvalue;
+        }
+
+        public boolean isHidden() {
+            return hidden;
+        }
+
+        public void setHidden(boolean hidden) {
+            this.hidden = hidden;
         }
 
         public int getRows() {

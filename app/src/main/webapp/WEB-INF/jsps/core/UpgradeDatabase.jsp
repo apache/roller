@@ -19,14 +19,13 @@
 
 
 <s:if test="error">
-    
-    <h2><s:text name="installer.errorUpgradingTables" /></h2> 
+    <h2><s:text name="installer.errorUpgradingTables" /></h2>
     <p><s:text name="installer.errorUpgradingTablesExplanation" /></p> 
 <pre>
 <s:iterator value="messages"><s:property/><br /></s:iterator>
 </pre>
-    
 </s:if>
+
 <s:elseif test="upgradeRequired">
 
     <h2><s:text name="installer.databaseUpgradeNeeded" /></h2>

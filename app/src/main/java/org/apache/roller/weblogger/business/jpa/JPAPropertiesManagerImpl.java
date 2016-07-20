@@ -169,7 +169,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         // that are not already in our props map
 
         log.info("Checking for new properties to add to the weblogger_properties database table...");
-        for (RuntimeConfigDefs.DisplayGroup dGroup : runtimeConfigDefs.getDisplayGroups()) {
+        for (RuntimeConfigDefs.ConfigGroup dGroup : runtimeConfigDefs.getConfigGroups()) {
             for (RuntimeConfigDefs.PropertyDef propDef : dGroup.getPropertyDefs()) {
 
                 // do we already have this prop?  if not then add it
