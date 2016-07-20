@@ -15,9 +15,8 @@ Check <a href="https://web-gmazza.rhcloud.com/blog/category/Blogs+%26+Wikis">my 
 The top-level TightBlog directory consists of the following folders:
 
 * app:                    TightBlog application - WAR application meant for deployment on a servlet container
-* docs:                   Documentation in ODT (OpenOffice/LibreOffice) format: Install, User, and Templates guides.
 * it-selenium:            Integrated browser tests for TightBlog using Selenium
-* util:                   Utility scripts (during development and/or application use)
+* etc:                    Utility scripts and screenshots for documentation
 
 To obtain the source code:
 * latest:  git clone git@github.com:gmazza/tightblog.git
