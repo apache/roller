@@ -41,19 +41,17 @@ public class DatabaseInstaller {
     private static Logger log = LoggerFactory.getLogger(DatabaseInstaller.class);
     
     private final DatabaseProvider db;
-    private final String targetVersion;
+    private final int targetVersion;
     private List<String> messages = new ArrayList<>();
     
     // the name of the property in weblogger_properties table which holds the dbversion value
     private static final String DBVERSION_PROP = "tightblog.database.version";
     
-    
     public DatabaseInstaller(DatabaseProvider dbProvider) {
         db = dbProvider;
-        targetVersion = WebloggerStaticConfig.getProperty("weblogger.version", "UNKNOWN");
+        targetVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version");
     }
-    
-    
+
     /** 
      * Determine if database schema needs to be upgraded.
      */
@@ -84,34 +82,7 @@ public class DatabaseInstaller {
      * Determine if database schema needs to be upgraded.
      */
     public boolean isUpgradeRequired() {
-        int desiredVersion = parseVersionString(targetVersion);
-        int currentDatabaseVersion;
-        try {
-            currentDatabaseVersion = getDatabaseVersion();
-        } catch (StartupException ex) {
-            throw new RuntimeException(ex);
-        }
-        
-        if (currentDatabaseVersion < 0) {
-            // assuming a fresh install has already occurred, just that the version number hasn't been set yet
-            Connection con = null;
-            try {
-                con = db.getConnection();
-                insertDatabaseVersion(con, desiredVersion);
-            } catch (Exception ioe) {
-                errorMessage("ERROR setting database version");
-            } finally {
-                try {
-                    if (con != null) {
-                        con.close();
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-            return false;
-        } else {
-            return currentDatabaseVersion < desiredVersion;
-        }
+        return getDatabaseVersion() < targetVersion;
     }
     
     
@@ -155,7 +126,7 @@ public class DatabaseInstaller {
             create.runScript(con, true);
             messages.addAll(create.getMessages());
             
-            insertDatabaseVersion(con, parseVersionString(targetVersion));
+            insertDatabaseVersion(con, targetVersion);
             
         } catch (SQLException sqle) {
             log.error("ERROR running SQL in database creation script", sqle);
@@ -191,11 +162,10 @@ public class DatabaseInstaller {
      */
     public List<String> upgradeDatabase(boolean runScripts) throws StartupException {
         
-        int targetVersionInt = parseVersionString(targetVersion);
         int currentDbVersion = getDatabaseVersion();
         
         log.debug("Database version = " + currentDbVersion);
-        log.debug("Desired version = " + targetVersionInt);
+        log.debug("Desired version = " + targetVersion);
        
         Connection con = null;
         try {
@@ -204,17 +174,12 @@ public class DatabaseInstaller {
                 String msg = "Cannot upgrade database tables, TightBlog database version cannot be determined";
                 errorMessage(msg);
                 throw new StartupException(msg);
-            } else if (currentDbVersion < 100) {
-                String msg = "TightBlog " + targetVersionInt + " cannot upgrade from versions older than 1.0; " +
-                        "try first upgrading to an earlier version of TightBlog.";
-                errorMessage(msg);
-                throw new StartupException(msg);
-            } else if (currentDbVersion >= targetVersionInt) {
+            } if (currentDbVersion >= targetVersion) {
                 log.info("Database is current, no upgrade needed");
                 return null;
             }
 
-            log.info("Database is old, beginning upgrade to version {}", targetVersionInt);
+            log.info("Database is old (version {}), beginning upgrade to DB version {}", currentDbVersion, targetVersion);
 
             // iterate through each upgrade as needed
             // to add to the upgrade sequence simply add a new "if" statement for whatever version needed
@@ -223,7 +188,7 @@ public class DatabaseInstaller {
             }
 
             // finished, update DB version in properties table
-            updateDatabaseVersion(con, targetVersionInt);
+            updateDatabaseVersion(con, targetVersion);
         
         } catch (SQLException e) {
             throw new StartupException("ERROR obtaining connection");
@@ -297,7 +262,7 @@ public class DatabaseInstaller {
     }
     
     
-    private int getDatabaseVersion() throws StartupException {
+    private int getDatabaseVersion() {
         int dbversion = -1;
         
         // get the current db version
@@ -326,33 +291,6 @@ public class DatabaseInstaller {
         return dbversion;
     }
     
-    
-    private int parseVersionString(String vstring) {        
-        int myversion = 0;
-        
-        // NOTE: this assumes a maximum of 3 digits for the version number
-        // so if we get to 10.0 we'll need to upgrade this
-        // strip out non-digits (\D), e.g. 1.0.0-SNAPSHOT -> 100
-        vstring = vstring.replaceAll("\\D", "");
-        if (vstring.length() > 3) {
-            vstring = vstring.substring(0, 3);
-        }
-        
-        // parse to an int
-        try {
-            int parsed = Integer.parseInt(vstring);            
-            if (parsed < 100) {
-                // i.e., make version 1.0 -> 10 -> 100
-                myversion = parsed * 10;
-            } else {
-                myversion = parsed;
-            }
-        } catch (Exception ignored) {}
-        
-        return myversion;
-    }
-    
-
     /**
      * Insert a new database.version property.
      * This should only be called once for new installations

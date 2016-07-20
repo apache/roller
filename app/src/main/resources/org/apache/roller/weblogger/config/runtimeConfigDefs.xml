@@ -37,7 +37,7 @@
   on how to populate the display that allows for changing the value.
   
   NOTE: order does matter!!  the display is populated in a linear fashion
-	starting from the first display-group and moving down.
+	starting from the first config-group and moving down.
 -->
 
 <runtime-configs>
@@ -48,7 +48,7 @@
       then be adjusted from the admin configuration page.
     -->
     <!-- Site Settings Group -->
-    <display-group name="siteSettings" key="configForm.siteSettings">
+    <config-group name="siteSettings" key="configForm.siteSettings">
         <property-def name="site.frontpage.weblog.handle" key="configForm.frontpageWeblogHandle"
             description="configForm.tip.frontpageWeblogHandle">
             <type>string</type>
@@ -59,10 +59,10 @@
             <type>boolean</type>
             <default-value>false</default-value>
         </property-def>
-    </display-group>
+    </config-group>
 
     <!-- User Settings Group -->
-    <display-group name="userSettings" key="configForm.userSettings">
+    <config-group name="userSettings" key="configForm.userSettings">
         <property-def name="user.registration.process" key="configForm.requiredRegistrationProcess"
                       description="configForm.tip.requiredRegistrationProcess">
             <type>string</type>
@@ -73,10 +73,10 @@
             <type>boolean</type>
             <default-value>true</default-value>
         </property-def>
-    </display-group>
+    </config-group>
 
     <!-- Weblog Settings Group -->
-    <display-group name="weblogSettings" key="configForm.weblogSettings">
+    <config-group name="weblogSettings" key="configForm.weblogSettings">
         <property-def name="site.html.whitelist" key="configForm.htmlWhitelistLevel"
                       description="configForm.tip.htmlWhitelistLevel">
             <type>string</type>
@@ -104,12 +104,10 @@
             <type>boolean</type>
             <default-value>true</default-value>
         </property-def>
-    </display-group>
-
+    </config-group>
 
     <!-- Comment Settings Group -->
-    <display-group name="commentSettings" key="configForm.commentSettings">
-
+    <config-group name="commentSettings" key="configForm.commentSettings">
         <property-def name="users.comments.enabled" key="configForm.enableComments">
             <type>string</type>
             <default-value>MUSTMODERATE</default-value>
@@ -135,12 +133,10 @@
             <rows>7</rows>
             <cols>80</cols>
         </property-def>
-
-    </display-group>
+    </config-group>
 
     <!-- File Upload Settings Group -->
-    <display-group name="uploadSettings" key="configForm.fileUploadSettings">
-
+    <config-group name="uploadSettings" key="configForm.fileUploadSettings">
         <property-def name="uploads.enabled" key="configForm.enableFileUploads"
                       description="configForm.tip.enableFileUploads">
             <type>boolean</type>
@@ -165,7 +161,6 @@
             <type>string</type>
             <default-value>20.00</default-value>
         </property-def>
-
-    </display-group>
+    </config-group>
 
 </runtime-configs>

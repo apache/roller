@@ -18,12 +18,12 @@
     <xs:element name="runtime-configs">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="display-group" type="displayGroupType" maxOccurs="unbounded"/>
+                <xs:element name="config-group" type="configGroupType" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="displayGroupType">
+    <xs:complexType name="configGroupType">
         <xs:sequence>
             <xs:element name="property-def" type="propertyDefType" maxOccurs="unbounded"/>
         </xs:sequence>
@@ -45,6 +45,7 @@
             <xs:element name="default-value" type="xs:string"/>
             <xs:element name="rows" type="xs:integer" minOccurs="0"/>
             <xs:element name="cols" type="xs:integer" minOccurs="0"/>
+            <xs:element name="hidden" type="xs:boolean" minOccurs="0" default="false"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
         <xs:attribute name="key" type="xs:string"/>
