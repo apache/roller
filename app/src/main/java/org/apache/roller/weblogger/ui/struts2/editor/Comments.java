@@ -351,12 +351,8 @@ public class Comments extends UIAction {
             cacheManager.invalidate(getActionWeblog());
 
             // if required, send notification for all comments changed
-            if (mailManager.isMailConfigured()) {
-                I18nMessages resources = I18nMessages
-                        .getMessages(getActionWeblog().getLocaleInstance());
-                mailManager.sendEmailApprovalNotifications(approvedComments,
-                        resources);
-            }
+            I18nMessages resources = I18nMessages.getMessages(getActionWeblog().getLocaleInstance());
+            mailManager.sendEmailApprovalNotifications(approvedComments, resources);
 
             // if we've got entries to reindex then do so
             if (!reindexList.isEmpty()) {

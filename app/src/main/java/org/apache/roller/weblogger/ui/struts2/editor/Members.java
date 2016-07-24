@@ -232,9 +232,7 @@ public class Members extends UIAction implements ParameterAware {
 
                 addMessage("inviteMember.userInvited");
 
-                if (mailManager.isMailConfigured()) {
-                    mailManager.sendWeblogInvitation(getActionWeblog(), user);
-                }
+                mailManager.sendWeblogInvitation(getActionWeblog(), user);
 
                 log.debug("Invitation successfully recorded");
 

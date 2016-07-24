@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.startup.MailProvider;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
@@ -34,13 +33,13 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailAuthenticationException;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSender;
 
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.text.MessageFormat;
@@ -72,14 +71,17 @@ public class MailManager {
 
     private PropertiesManager propertiesManager;
 
+    private JavaMailSender mailSender;
+
     /**
      * Create file content manager.
      */
-    public MailManager(UserManager umgr, WeblogManager wmgr, PropertiesManager pmgr, URLStrategy strategy) {
+    public MailManager(UserManager umgr, WeblogManager wmgr, PropertiesManager pmgr, URLStrategy strategy, JavaMailSender sender) {
         userManager = umgr;
         weblogManager = wmgr;
         propertiesManager = pmgr;
         urlStrategy = strategy;
+        mailSender = sender;
     }
 
     /**
@@ -87,19 +89,16 @@ public class MailManager {
      * when mail is not properly configured. We'll complain about that at 
      * startup, no need to complain on every attempt to send.
      */
-    public boolean isMailConfigured() {
-        return WebloggerFactory.getMailProvider() != null;
+    private boolean isMailEnabled() {
+        return WebloggerStaticConfig.getBooleanProperty("mail.enabled");
     }
     
     /**
      * Send an email notice that a new pending entry has been submitted.
      */
     public void sendPendingEntryNotice(WeblogEntry entry) {
-        
-        Session mailSession = isMailConfigured() ? WebloggerFactory.getMailProvider().getSession() : null;
 
-        if (mailSession == null) {
-            log.info("Cannot send emails, no mail session configured.");
+        if (!isMailEnabled()) {
             return;
         }
         
@@ -154,6 +153,11 @@ public class MailManager {
     }
 
     public void sendRegistrationApprovalRequest(User user) {
+
+        if (!isMailEnabled()) {
+            return;
+        }
+
         try {
             UserSearchCriteria criteria = new UserSearchCriteria();
             criteria.setStatus(UserStatus.ENABLED);
@@ -194,6 +198,11 @@ public class MailManager {
     }
 
     public void sendRegistrationApprovedNotice(User user) {
+
+        if (!isMailEnabled()) {
+            return;
+        }
+
         try {
             String[] to = new String[] {user.getEmailAddress()};
 
@@ -228,6 +237,11 @@ public class MailManager {
     }
 
     public void sendRegistrationRejectedNotice(User user) {
+
+        if (!isMailEnabled()) {
+            return;
+        }
+
         try {
             String[] to = new String[] {user.getEmailAddress()};
 
@@ -259,12 +273,8 @@ public class MailManager {
      * Send a weblog invitation email.
      */
     public void sendWeblogInvitation(Weblog website, User user) throws MessagingException {
-        
-        Session mailSession = WebloggerFactory.getMailProvider() != null
-                ? WebloggerFactory.getMailProvider().getSession() : null;
 
-        if (mailSession == null) {
-            log.info("Cannot send emails, no mail session configured.");
+        if (!isMailEnabled()) {
             return;
         }
         
@@ -308,15 +318,11 @@ public class MailManager {
      * Send a weblog invitation email.
      */
     public void sendUserActivationEmail(User user) throws MessagingException {
-        
-        Session mailSession = WebloggerFactory.getMailProvider() != null
-                ? WebloggerFactory.getMailProvider().getSession() : null;
 
-        if (mailSession == null) {
-            log.info("Cannot send emails, no mail session configured.");
+        if (!isMailEnabled()) {
             return;
         }
-        
+
         ResourceBundle resources = ResourceBundle.getBundle(
                 "ApplicationResources", Locale.forLanguageTag(user.getLocale()));
 
@@ -357,6 +363,10 @@ public class MailManager {
      */
     public void sendEmailNotification(WeblogEntryComment commentObject, Map<String, List<String>> messages,
                                       I18nMessages resources, boolean notifySubscribers) {
+
+        if (!isMailEnabled()) {
+            return;
+        }
 
         WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
@@ -540,6 +550,10 @@ public class MailManager {
     
 
     public void sendEmailApprovalNotifications(List<WeblogEntryComment> comments, I18nMessages resources) {
+        if (!isMailEnabled()) {
+            return;
+        }
+
         for (WeblogEntryComment comment : comments) {
 
             // Send email notifications because a new comment has been approved
@@ -555,7 +569,11 @@ public class MailManager {
      * Send message to author of approved comment
      */
     public void sendEmailApprovalNotification(WeblogEntryComment cd, I18nMessages resources) {
-        
+
+        if (!isMailEnabled()) {
+            return;
+        }
+
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
         User user = entry.getCreator();
@@ -580,58 +598,45 @@ public class MailManager {
         log.debug("Done sending email message");
     }
     
-    /**
-     * This method is used to send a Message with a pre-defined
-     * mime-type.
-     *
-     * @param from e-mail address of sender
-     * @param to e-mail address(es) of recipients
-     * @param subject subject of e-mail
-     * @param content the body of the e-mail
-     * @param mimeType type of message, i.e. text/plain or text/html
-     * @throws MessagingException the exception to indicate failure
-     */
-    public void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
-            String content, String mimeType) throws MessagingException {
-        
-        MailProvider mailProvider = WebloggerFactory.getMailProvider();
-        if (mailProvider == null) {
+    private void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
+                             String content, String mimeType) throws MessagingException {
+
+        if (!isMailEnabled()) {
             return;
         }
-        
-        Session session = mailProvider.getSession();
-        MimeMessage message = new MimeMessage(session);
-        
+
+        MimeMessage message = mailSender.createMimeMessage();
+
         // n.b. any default from address is expected to be determined by caller.
         if (!StringUtils.isEmpty(from)) {
             InternetAddress sentFrom = new InternetAddress(from);
             message.setFrom(sentFrom);
             log.debug("e-mail from: {}", sentFrom);
         }
-        
+
         if (to!=null) {
             InternetAddress[] sendTo = new InternetAddress[to.length];
-            
+
             for (int i = 0; i < to.length; i++) {
                 sendTo[i] = new InternetAddress(to[i]);
                 log.debug("sending e-mail to: {}", to[i]);
             }
             message.setRecipients(Message.RecipientType.TO, sendTo);
         }
-        
+
         if (cc != null) {
             InternetAddress[] copyTo = new InternetAddress[cc.length];
-            
+
             for (int i = 0; i < cc.length; i++) {
                 copyTo[i] = new InternetAddress(cc[i]);
                 log.debug("copying e-mail to: {}", cc[i]);
             }
             message.setRecipients(Message.RecipientType.CC, copyTo);
         }
-        
+
         if (bcc != null) {
             InternetAddress[] copyTo = new InternetAddress[bcc.length];
-            
+
             for (int i = 0; i < bcc.length; i++) {
                 copyTo[i] = new InternetAddress(bcc[i]);
                 log.debug("blind copying e-mail to: {}", bcc[i]);
@@ -641,45 +646,24 @@ public class MailManager {
         message.setSubject((subject == null) ? "(no subject)" : subject, "UTF-8");
         message.setContent(content, mimeType);
         message.setSentDate(new java.util.Date());
-        
+
         // First collect all the addresses together.
-        Address[] remainingAddresses = message.getAllRecipients();
-        int nAddresses;
         boolean bFailedToSome = false;
-        
         SendFailedException sendex = new SendFailedException("Unable to send message to some recipients");
-        
-        Transport transport = mailProvider.getTransport();
-        
-        // Try to send while there remain some potentially good addresses
-        try { 
-            do {
-                // Avoid a loop if we are stuck
-                nAddresses = remainingAddresses.length;
 
-                try {
-                    // Send to the list of remaining addresses, ignoring the addresses attached to the message
-                    transport.sendMessage(message, remainingAddresses);
-                } catch(SendFailedException ex) {
-                    bFailedToSome=true;
-                    sendex.setNextException(ex);
-
-                    // Extract the remaining potentially good addresses
-                    remainingAddresses=ex.getValidUnsentAddresses();
-                }
-            } while (remainingAddresses!=null && remainingAddresses.length>0 
-                    && remainingAddresses.length!=nAddresses);
-            
-        } finally {
-            transport.close();
+        try {
+            // Send to the list of remaining addresses, ignoring the addresses attached to the message
+            mailSender.send(message);
+        } catch (MailAuthenticationException | MailSendException ex) {
+            bFailedToSome=true;
+            sendex.setNextException(ex);
         }
-        
+
         if (bFailedToSome) {
             throw sendex;
         }
     }
-    
-    
+
     /**
      * This method is used to send a Text Message.
      *

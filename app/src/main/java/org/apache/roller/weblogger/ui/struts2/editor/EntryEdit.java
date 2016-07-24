@@ -374,7 +374,7 @@ public final class EntryEdit extends UIAction {
                 // notify caches
                 cacheManager.invalidate(entry);
 
-                if (PubStatus.PENDING.equals(entry.getStatus()) && mailManager.isMailConfigured()) {
+                if (PubStatus.PENDING.equals(entry.getStatus())) {
                     mailManager.sendPendingEntryNotice(entry);
                 }
                 if ("entryEdit".equals(actionName)) {
