@@ -18,10 +18,18 @@
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:util="http://www.springframework.org/schema/util"
+             xmlns:context="http://www.springframework.org/schema/context"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+          http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
           http://www.springframework.org/schema/util
-          http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+          http://www.springframework.org/schema/util/spring-util-4.3.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <context:property-placeholder location="classpath:tightblog-custom.properties"
+                                  order="1" ignore-unresolvable="true" ignore-resource-not-found="true"/>
+    <context:property-placeholder location="classpath:org/apache/roller/weblogger/config/tightblog.properties"
+                                  order="2"/>
 
     <!-- Any of these values can be overridden and maintained outside of the WAR by placing in a separate
          tightblog-custom.xml file in the servlet container's library folder, e.g. for Tomcat its lib folder
@@ -120,11 +128,29 @@
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
 
+    <beans:bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <beans:property name="protocol" value="${mail.transport.protocol}"/>
+        <beans:property name="host" value="${mail.smtp.host}"/>
+        <beans:property name="port" value="${mail.smtp.port}"/>
+        <beans:property name="username" value="${mail.smtp.user:#{null}}"/>
+        <beans:property name="password" value="${mail.smtp.password:#{null}}"/>
+        <beans:property name="javaMailProperties">
+            <beans:props>
+                <beans:prop key="mail.smtp.auth">${mail.smtp.auth}</beans:prop>
+                <beans:prop key="mail.smtp.starttls.enable">${mail.smtp.starttls.enable}</beans:prop>
+                <beans:prop key="mail.smtp.socketFactory.class">${mail.smtp.socketFactory.class}</beans:prop>
+                <beans:prop key="mail.smtp.socketFactory.port">${mail.smtp.socketFactory.port}</beans:prop>
+                <beans:prop key="mail.smtp.socketFactory.fallback">${mail.smtp.socketFactory.fallback}</beans:prop>
+            </beans:props>
+        </beans:property>
+    </beans:bean>
+
     <beans:bean id="mailManager" class="org.apache.roller.weblogger.business.MailManager">
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="propertiesManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
+        <beans:constructor-arg ref="mailSender"/>
     </beans:bean>
 
     <!-- Renderer Manager -->

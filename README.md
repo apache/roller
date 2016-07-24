@@ -19,8 +19,9 @@ The top-level TightBlog directory consists of the following folders:
 * etc:                    Utility scripts and screenshots for documentation
 
 To obtain the source code:
-* latest:  git clone git@github.com:gmazza/tightblog.git
-* releases: https://github.com/gmazza/tightblog/releases
+* latest (2.0 branch):  git clone git@github.com:gmazza/tightblog.git
+* 1.0 branch: https://github.com/gmazza/tightblog/tree/tb10branch
+* source for a specific release: https://github.com/gmazza/tightblog/releases
 
 To build the application (app/target/tightblog.war) with Maven and Java 8:
   `mvn clean install` from the TightBlog root.

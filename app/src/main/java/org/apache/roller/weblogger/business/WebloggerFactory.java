@@ -22,8 +22,6 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.startup.MailProvider;
-import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.RollerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,19 +46,8 @@ public final class WebloggerFactory {
 
     private static JPAPersistenceStrategy strategy = null;
 
-    private static MailProvider mailProvider = null;
-
     // non-instantiable
     private WebloggerFactory() {
-    }
-
-    /**
-     * Get a reference to the currently configured MailProvider, if available.
-     *
-     * @return MailProvider The configured mail provider, or null if none configured.
-     */
-    public static MailProvider getMailProvider() {
-        return mailProvider;
     }
 
     /**
@@ -129,16 +116,6 @@ public final class WebloggerFactory {
         }
 
         strategy.flush();
-
-        // setup mail provider, if configured
-        try {
-            mailProvider = new MailProvider();
-        } catch (IllegalArgumentException ex) {
-            log.warn("Failed to setup mail provider, continuing anyways. Reason: {}", ex.getMessage());
-        } catch (StartupException ex) {
-            log.warn("Failed to setup mail provider, continuing anyways. Reason: {}", ex.getMessage());
-            log.info("The cause of setting up mail provider error was: ", ex);
-        }
 
         log.info("TightBlog Weblogger business tier successfully bootstrapped");
         log.info("   Version: {}", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
