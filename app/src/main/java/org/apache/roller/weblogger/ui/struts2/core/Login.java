@@ -21,9 +21,9 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig.AuthMethod;
-import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;

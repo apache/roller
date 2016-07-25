@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.UserManager;
@@ -49,7 +50,6 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
-import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
@@ -83,6 +83,8 @@ public class CommentProcessor {
     private static Logger log = LoggerFactory.getLogger(CommentProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/comment";
+
+    private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
 
     @Autowired
     private CacheManager cacheManager;
@@ -159,7 +161,7 @@ public class CommentProcessor {
 
         Weblog weblog;
         WeblogEntry entry;
-        boolean commentApprovalRequired;
+        boolean nonSpamCommentApprovalRequired;
 
         // are we doing a preview? or a post?
         String method = request.getParameter("method");
@@ -196,7 +198,7 @@ public class CommentProcessor {
             return;
         }
 
-        commentApprovalRequired = RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(commentOption) ||
+        nonSpamCommentApprovalRequired = RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(commentOption) ||
                 RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(weblog.getAllowComments());
 
         // we know what the weblog entry is, so setup our urls
@@ -269,7 +271,7 @@ public class CommentProcessor {
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
         // Must have an email and also must be valid
-        } else if (StringUtils.isEmpty(commentForm.getEmail()) || !Utilities.isValidEmailAddress(commentForm.getEmail())) {
+        } else if (StringUtils.isEmpty(commentForm.getEmail()) || !commentForm.getEmail().matches(EMAIL_ADDR_REGEXP)) {
             error = messageUtils.getString("error.commentPostFailedEmailAddress");
             log.debug("Email Address is invalid: {}", commentForm.getEmail());
         // if there is an URL it must be valid
@@ -312,7 +314,7 @@ public class CommentProcessor {
             commentForm.setPreview(true);
         } else {
             if (validationScore == Utilities.PERCENT_100) {
-                if (!ownComment && commentApprovalRequired) {
+                if (!ownComment && nonSpamCommentApprovalRequired) {
                     // Valid comments go into moderation if required
                     commentForm.setStatus(ApprovalStatus.PENDING);
                     message = messageUtils.getString("commentServlet.submittedToModerator");
@@ -349,16 +351,19 @@ public class CommentProcessor {
             if (validationScore >= 0 && (!ApprovalStatus.SPAM.equals(commentForm.getStatus()) ||
                     !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled"))) {
 
-                boolean refreshWeblog = !commentApprovalRequired && !ApprovalStatus.SPAM.equals(commentForm.getStatus());
-                weblogEntryManager.saveComment(commentForm, refreshWeblog);
+                boolean noModerationNeeded = ownComment ||
+                        (!nonSpamCommentApprovalRequired && !ApprovalStatus.SPAM.equals(commentForm.getStatus()));
+                weblogEntryManager.saveComment(commentForm, noModerationNeeded);
                 WebloggerFactory.flush();
 
-                // Send email notifications to subscribers only if comment is 100% valid
-                boolean notifySubscribers = (validationScore == Utilities.PERCENT_100);
-                mailManager.sendEmailNotification(commentForm, messages, messageUtils, notifySubscribers);
+                if (noModerationNeeded) {
+                    mailManager.sendNewCommentNotification(commentForm);
+                } else {
+                    mailManager.sendPendingCommentNotice(commentForm, messages);
+                }
 
                 // only re-index/invalidate the cache if comment isn't moderated
-                if (!commentApprovalRequired) {
+                if (!nonSpamCommentApprovalRequired) {
 
                     // remove entry before (re)adding it, or in case it isn't Published
                     indexManager.removeEntryIndexOperation(entry);

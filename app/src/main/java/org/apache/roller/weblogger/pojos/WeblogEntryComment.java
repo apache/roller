@@ -95,7 +95,8 @@ public class WeblogEntryComment {
     public void setWeblogEntry(WeblogEntry entry) {
         weblogEntry = entry;
     }
-    
+
+    @Basic(optional=false)
     public String getName() {
         return this.name;
     }
@@ -103,7 +104,8 @@ public class WeblogEntryComment {
     public void setName(String name) {
         this.name = name;
     }
-    
+
+    @Basic(optional=false)
     public String getEmail() {
         return this.email;
     }
@@ -223,7 +225,7 @@ public class WeblogEntryComment {
     }
     
     public String toString() {
-        return "{" + id + ", " + name + ", " + email + ", " + postTime + "}";
+        return "{" + id.substring(0, 8) + "..., " + name + ", " + email + ", " + postTime + ", " + notify + "}";
     }
 
     public boolean equals(Object other) {
