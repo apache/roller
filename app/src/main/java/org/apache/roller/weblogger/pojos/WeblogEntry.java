@@ -460,11 +460,7 @@ public class WeblogEntry {
     @Transient
     public List<WeblogEntryComment> getComments() {
         WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        CommentSearchCriteria csc = new CommentSearchCriteria();
-        csc.setWeblog(getWeblog());
-        csc.setEntry(this);
-        csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
-        return wmgr.getComments(csc);
+        return wmgr.getComments(CommentSearchCriteria.approvedComments(this, true));
     }
 
     @Transient

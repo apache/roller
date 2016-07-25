@@ -43,8 +43,6 @@ import java.util.UUID;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.XMLConstants;
@@ -344,40 +342,6 @@ public class Utilities {
         }
 
         return map.getContentType(fileName);
-    }
-
-    /**
-     * Validate the form of an email address.
-     * 
-     * <P>
-     * Return <tt>true</tt> only if
-     * <ul>
-     * <li> <tt>aEmailAddress</tt> can successfully construct an
-     * {@link javax.mail.internet.InternetAddress}
-     * <li>when parsed with "@" as delimiter, <tt>aEmailAddress</tt> contains
-     * two tokens which satisfy
-     * </ul>
-     * <P>
-     * The second condition arises since local email addresses, simply of the
-     * form "<tt>albert</tt>", for example, are valid for
-     * {@link javax.mail.internet.InternetAddress}, but almost always undesired.
-     */
-    public static boolean isValidEmailAddress(String aEmailAddress) {
-        if (aEmailAddress == null) {
-            return false;
-        }
-        boolean result = true;
-        try {
-            // See if its valid
-            new InternetAddress(aEmailAddress);
-            String[] tokens = aEmailAddress.split("@");
-            if (!(tokens.length == 2 && StringUtils.isNotEmpty(tokens[0]) && StringUtils.isNotEmpty(tokens[1]))) {
-                result = false;
-            }
-        } catch (AddressException ex) {
-            result = false;
-        }
-        return result;
     }
 
     /**

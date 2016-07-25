@@ -46,6 +46,14 @@ public class CommentSearchCriteria {
     // Max comments to return (or -1 for no limit)
     private int maxResults = -1;
 
+    public static CommentSearchCriteria approvedComments(WeblogEntry entry, boolean reverseChrono) {
+        CommentSearchCriteria csc = new CommentSearchCriteria();
+        csc.setEntry(entry);
+        csc.setReverseChrono(reverseChrono);
+        csc.setStatus(ApprovalStatus.APPROVED);
+        return csc;
+    }
+
     public Weblog getWeblog() {
         return weblog;
     }

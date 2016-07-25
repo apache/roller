@@ -23,7 +23,12 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.roller.weblogger.business.*;
+import org.apache.roller.weblogger.business.MailManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -35,8 +40,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
-import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -351,8 +354,7 @@ public class Comments extends UIAction {
             cacheManager.invalidate(getActionWeblog());
 
             // if required, send notification for all comments changed
-            I18nMessages resources = I18nMessages.getMessages(getActionWeblog().getLocaleInstance());
-            mailManager.sendEmailApprovalNotifications(approvedComments, resources);
+            mailManager.sendYourCommentWasApprovedNotifications(approvedComments);
 
             // if we've got entries to reindex then do so
             if (!reindexList.isEmpty()) {
