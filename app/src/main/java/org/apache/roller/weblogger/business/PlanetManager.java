@@ -82,13 +82,6 @@ public interface PlanetManager {
     List<Subscription> getSubscriptions();
 
     /**
-     * Task that will update the subscriptions for the weblogger "all" planet (creating the planet first
-     * if necessary) to consist of all blogs hosted by this weblogger instance, adding new and deleting
-     * old as necessary.  This task does not fetch any subscription entries.
-     */
-    void syncAllBlogsPlanet();
-
-    /**
      * Lookup an entry by id.
      */
     SubscriptionEntry getEntryById(String id);

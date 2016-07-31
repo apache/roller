@@ -85,10 +85,6 @@ public class PlanetController {
     private void savePlanet(Planet planet, Planet newData, HttpServletResponse response) throws ServletException {
         try {
             if (planet != null) {
-                if ("all".equals(newData.getTitle())) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    return;
-                }
                 planet.setTitle(newData.getTitle());
                 planet.setHandle(newData.getHandle());
                 planet.setDescription(newData.getDescription());
@@ -110,8 +106,6 @@ public class PlanetController {
     @RequestMapping(value = "/tb-ui/admin/rest/planets", method = RequestMethod.GET)
     public List<Planet> getPlanets() throws ServletException {
         return planetManager.getPlanets().stream()
-                // The "all" planet is considered a special planet and cannot be managed independently
-                .filter(planet -> !planet.getHandle().equals("all"))
                 .collect(Collectors.toList());
     }
 
