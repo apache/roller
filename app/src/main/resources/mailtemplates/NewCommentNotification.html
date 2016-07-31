@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Email template for informing readers of a newly published comment</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body style="background:white;color:black;font-size:12px">
+<span th:text="${comment.name} + #{email.comment.wrote} + ': '">
+    A user wrote
+</span><br><br>
+<span th:utext="${comment.content}">(comment text)</span>
+<br><br><hr>
+<span style="font-size:11px" th:text="#{email.comment.reply} + ': '"><br>
+    Reply:
+</span>
+<a href="replyurl.html" th:href="${commentURL}" th:text="${commentURL}">replyurl</a>
+</body>
+</html>

@@ -145,13 +145,23 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="mailManager" class="org.apache.roller.weblogger.business.StringMailManager">
+    <beans:bean id="mailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <beans:property name="prefix" value="/mailtemplates/" />
+        <beans:property name="templateMode" value="HTML5" />
+    </beans:bean>
+
+    <beans:bean id="mailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <beans:property name="templateResolver" ref="mailTemplateResolver" />
+    </beans:bean>
+
+    <beans:bean id="mailManager" class="org.apache.roller.weblogger.business.MailManagerImpl">
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
         <beans:constructor-arg ref="propertiesManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
         <beans:constructor-arg ref="mailSender"/>
+        <beans:constructor-arg ref="mailTemplateEngine"/>
     </beans:bean>
 
     <!-- Renderer Manager -->
