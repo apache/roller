@@ -21,24 +21,17 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.time.DateUtils;
 
 import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,19 +42,9 @@ public class JPAPlanetManagerImpl implements PlanetManager {
 
     private static Logger log = LoggerFactory.getLogger(JPAPlanetManagerImpl.class);
 
-    private WeblogManager weblogManager;
-    private URLStrategy urlStrategy;
     private JPAPersistenceStrategy strategy;
 
     protected JPAPlanetManagerImpl() {}
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
 
     public void setStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
@@ -191,83 +174,4 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return q.getResultList();
     }
 
-    @Override
-    public void syncAllBlogsPlanet() {
-        log.info("Syncing local weblogs with planet subscriptions list");
-
-        // first, make sure there is an "all" pmgr group
-        Planet planet = getPlanetByHandle("all");
-        if (planet == null) {
-            planet = new Planet();
-            planet.setId(Utilities.generateUUID());
-            planet.setHandle("all");
-            planet.setTitle("All Blogs");
-            savePlanet(planet);
-            strategy.flush();
-        }
-
-        // walk through all enable weblogs and add/update subs as needed
-        List<String> liveUserFeeds = new ArrayList<>();
-        List<Weblog> weblogs = weblogManager.getWeblogs(Boolean.TRUE, 0, -1);
-        for ( Weblog weblog : weblogs ) {
-
-            log.debug("processing weblog - {}", weblog.getHandle());
-            String feedUrl = "weblogger:" + weblog.getHandle();
-
-            // add feed url to the "live" list
-            liveUserFeeds.add(feedUrl);
-
-            // if sub already exists then update it, otherwise add it
-            Subscription sub = getSubscription(planet, feedUrl);
-            if (sub == null) {
-                log.info("ADDING feed: {}", feedUrl);
-
-                sub = new Subscription();
-                sub.setTitle(weblog.getName());
-                sub.setFeedURL(feedUrl);
-                sub.setSiteURL(urlStrategy.getWeblogURL(weblog, true));
-                sub.setLastUpdated(Instant.now().minus(365, ChronoUnit.DAYS));
-                sub.setPlanet(planet);
-                saveSubscription(sub);
-
-                planet.getSubscriptions().add(sub);
-                savePlanet(planet);
-            } else {
-                log.debug("UPDATING feed: {}", feedUrl);
-                sub.setTitle(weblog.getName());
-                saveSubscription(sub);
-            }
-
-            // save as we go
-            strategy.flush();
-        }
-
-        // new subs added, existing subs updated, now delete old subs
-        Set<Subscription> deleteSubs = new HashSet<>();
-        Set<Subscription> subs = planet.getSubscriptions();
-        for (Subscription sub : subs) {
-            // only delete subs from the group if ...
-            // 1. they are local
-            // 2. they are no longer listed as a weblog
-            if (sub.getFeedURL().startsWith("weblogger:") &&
-                    !liveUserFeeds.contains(sub.getFeedURL())) {
-                deleteSubs.add(sub);
-            }
-        }
-
-        // now go back through deleteSubs and do actual delete
-        // this is required because deleting a sub in the loop above
-        // causes a ConcurrentModificationException because we can't
-        // modify a collection while we iterate over it
-        for (Subscription deleteSub : deleteSubs) {
-            log.info("DELETING feed: {}", deleteSub.getFeedURL());
-            deleteSubscription(deleteSub);
-            planet.getSubscriptions().remove(deleteSub);
-        }
-
-        // all done, lets save
-        savePlanet(planet);
-        strategy.flush();
-
-    }
 }
