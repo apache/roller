@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Email template for informing blogger of incoming comment needing approval</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body style="background:white;color:black;font-size:12px">
+<span th:text="${comment.name} + #{email.comment.wrote} + ': '">
+    A user wrote
+</span><br><br>
+<span th:utext="${comment.content}">(comment text)</span>
+<br><br><hr>
+<span style="font-size:11px" th:text="#{email.comment.reply} + ': '"><br>
+    Reply:
+</span>
+<a href="replyurl.html" th:href="${commentURL}" th:text="${commentURL}">replyurl</a>
+
+<div th:if="${messages.size() > 0}">
+    <p th:text="#{commentServlet.email.thereAreErrorMessages}"></p>
+        List of error messages:
+    </p>
+    <ul>
+        <li th:each="item : ${messages.entrySet()}" th:text="#{${item.key}(${item.value})}">sample message</li>
+    </ul>
+</div>
+<br><br><hr>
+<div style="font-size: 11px">
+<span th:text="#{email.comment.commenter.email} + ': ' + ${comment.email}">Commentor's Email Address</span>
+<br>
+<span th:unless="${#strings.isEmpty(comment.url)}" th:text="#{email.comment.commenter.website} + ': ' + ${comment.url}">Commentor's URL</span>
+<br><br>
+</div>
+<span th:text="#{email.comment.management.link} + ': '"></span>
+<br>
+<a href="manageurl.html" th:href="${manageURL}" th:text="${manageURL}">manageurl</a>
+</body>
+</html>

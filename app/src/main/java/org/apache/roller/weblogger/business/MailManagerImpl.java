@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -38,6 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -55,12 +56,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-/**
- * Implementation of MailManager using plain Strings to construct email messages.
- */
-public class StringMailManager implements MailManager {
+public class MailManagerImpl implements MailManager {
 
-    private static Logger log = LoggerFactory.getLogger(StringMailManager.class);
+    private static Logger log = LoggerFactory.getLogger(MailManagerImpl.class);
 
     private UserManager userManager;
 
@@ -74,13 +72,18 @@ public class StringMailManager implements MailManager {
 
     private JavaMailSender mailSender;
 
-    public StringMailManager(UserManager umgr, WeblogManager wmgr, WeblogEntryManager wemgr, PropertiesManager pmgr, URLStrategy strategy, JavaMailSender sender) {
+    private SpringTemplateEngine mailTemplateEngine;
+
+    public MailManagerImpl(UserManager umgr, WeblogManager wmgr, WeblogEntryManager wemgr,
+                           PropertiesManager pmgr, URLStrategy strategy, JavaMailSender sender,
+                           SpringTemplateEngine mailTemplateEngine) {
         userManager = umgr;
         weblogManager = wmgr;
         weblogEntryManager = wemgr;
         propertiesManager = pmgr;
         urlStrategy = strategy;
         mailSender = sender;
+        this.mailTemplateEngine = mailTemplateEngine;
     }
 
     private boolean isMailEnabled() {
@@ -108,12 +111,12 @@ public class StringMailManager implements MailManager {
             List<User> websiteUsers = weblogManager.getWeblogUsers(entry.getWeblog(), true);
             
             // build list of reviewers (website users with author permission)
-            for (User websiteUser : websiteUsers) {
-                if (userManager.checkWeblogRole(websiteUser, entry.getWeblog(), WeblogRole.POST)
-                        && websiteUser.getEmailAddress() != null) {
-                    reviewers.add(websiteUser.getEmailAddress());
+            websiteUsers.stream().forEach(user -> {
+                if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST)
+                        && user.getEmailAddress() != null) {
+                    reviewers.add(user.getEmailAddress());
                 }
-            }
+            });
 
             to = reviewers.toArray(new String[reviewers.size()]);
             
@@ -135,7 +138,7 @@ public class StringMailManager implements MailManager {
             sb.append(
                     MessageFormat.format(
                     resources.getString("weblogEntry.pendingEntryContent"),
-                    new Object[] { screenName, screenName, editURL })
+                    new Object[] { screenName, editURL })
                     );
             content = sb.toString();
             sendTextMessage(from, to, cc, bcc, subject, content);
@@ -341,7 +344,7 @@ public class StringMailManager implements MailManager {
                 activationURL }));
         content = sb.toString();
 
-        sendHTMLMessage(from, to, cc, bcc, subject, content);
+        sendTextMessage(from, to, cc, bcc, subject, content);
     }
 
     @Override
@@ -355,60 +358,18 @@ public class StringMailManager implements MailManager {
         I18nMessages resources = I18nMessages.getMessages(weblog.getLocaleInstance());
         User user = entry.getCreator();
 
-        //------------------------------------------
-        // Form the message to be sent -
-        String msg;
-
-        // first the common stub message for the owner and commenters (if applicable)
-        msg = "<html><body style=\"background: white; ";
-        msg += " color: black; font-size: 12px\">";
-        msg += comment.getName() + " " + resources.getString("email.comment.wrote") + ": ";
-        msg += "<br /><br />";
-        msg += StringEscapeUtils.escapeHtml4(comment.getContent());
-        msg += "<br /><br /><hr /><span style=\"font-size: 11px\">";
-        msg += resources.getString("email.comment.reply") + ": ";
-        msg += "<br />";
-
-        // Build link back to comment
+        Context ctx = new Context(weblog.getLocaleInstance());
+        ctx.setVariable("comment", comment);
         String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true);
-        msg += "<a href=\""+commentURL+"\">"+commentURL+"</a></span>";
-
-        if (messages != null && messages.size() > 0) {
-            msg += "<p>";
-            msg += resources.getString("commentServlet.email.thereAreErrorMessages");
-            msg += "</p>";
-            msg += "<ul>";
-
-            for (Map.Entry<String, List<String>> item : messages.entrySet()) {
-                msg += "<li>";
-                msg += MessageFormat.format(resources.getString(
-                        item.getKey()), item.getValue());
-                msg += "</li>";
-            }
-
-            msg += "</ul>";
-        }
-
-        msg += "<br /><br /><hr /><span style=\"font-size: 11px\">";
-        msg += resources.getString("email.comment.commenter.email") + ": " + comment.getEmail();
-        msg += "<br/>";
-
-        // showing website URL gives more background of commenter, including help in detecting if email is spam.
-        if (!StringUtils.isBlank(comment.getUrl())) {
-            msg += resources.getString("email.comment.commenter.website") + ": " + comment.getUrl();
-            msg += "<br/><br/>";
-        }
-
-        // add link to weblog edit page so user can login to manage comments
-        msg += resources.getString("email.comment.management.link") + ": ";
-        msg += "<br/>";
+        ctx.setVariable("commentURL", commentURL);
+        ctx.setVariable("messages", messages);
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("bean.entryId", entry.getId());
-        String deleteURL = urlStrategy.getActionURL("comments", "/tb-ui/authoring", weblog, parameters, true);
+        String manageURL = urlStrategy.getActionURL("comments", "/tb-ui/authoring", weblog, parameters, true);
+        ctx.setVariable("manageURL", manageURL);
 
-        msg += "<a href=\"" + deleteURL + "\">" + deleteURL + "</a></span>";
-        msg += "</Body></html>";
+        String msg = mailTemplateEngine.process("PendingCommentNotice.html", ctx);
 
         // determine email subject
         String subject = resources.getString("email.comment.moderate.title") + ": ";
@@ -427,13 +388,7 @@ public class StringMailManager implements MailManager {
             String from = user.getEmailAddress();
 
             if (comment.getPending() || weblog.getEmailComments()) {
-                sendHTMLMessage(
-                        from,
-                        bloggerEmailAddrs,
-                        null,
-                        null,
-                        subject,
-                        msg);
+                sendHTMLMessage(from, bloggerEmailAddrs, null, null, subject, msg);
             }
         } catch (Exception e) {
             log.warn("Exception sending pending comment mail", e);
@@ -477,23 +432,12 @@ public class StringMailManager implements MailManager {
             }
         }
 
-        // Determine with mime type to use for e-mail
-        String msg;
-
-        // first the common stub message for the owner and commenters (if applicable)
-        msg = "<html><body style=\"background: white; ";
-        msg += " color: black; font-size: 12px\">";
-        msg += comment.getName() + " " + resources.getString("email.comment.wrote") + ": ";
-        msg += "<br /><br />";
-        msg += StringEscapeUtils.escapeHtml4(comment.getContent());
-        msg += "<br /><br /><hr /><span style=\"font-size: 11px\">";
-        msg += resources.getString("email.comment.reply") + ": ";
-        msg += "<br />";
-
-        // Build link back to comment
+        Context ctx = new Context(weblog.getLocaleInstance());
+        ctx.setVariable("comment", comment);
         String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true);
-        msg += "<a href=\""+commentURL+"\">"+commentURL+"</a></span>";
-        msg += "</Body></html>";
+        ctx.setVariable("commentURL", commentURL);
+
+        String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
 
         String subject = resources.getString("email.comment.title") + ": " + entry.getTitle();
 
@@ -511,13 +455,7 @@ public class StringMailManager implements MailManager {
                         .map(User::getEmailAddress)
                         .collect(Collectors.toList()).toArray(new String[0]);
 
-                sendHTMLMessage(
-                        from,
-                        bloggerEmailAddrs,
-                        null,
-                        null,
-                        subject,
-                        msg);
+                sendHTMLMessage(from, bloggerEmailAddrs, null, null, subject, msg);
             }
 
             // now send to subscribers
@@ -525,13 +463,7 @@ public class StringMailManager implements MailManager {
                 // Form array of commenter addrs
                 String[] commenterAddrs = subscribers.toArray(new String[subscribers.size()]);
 
-                sendHTMLMessage(
-                        from,
-                        null,
-                        null,
-                        commenterAddrs,
-                        subject,
-                        msg);
+                sendHTMLMessage(from, null, null, commenterAddrs, subject, msg);
             }
         } catch (Exception e) {
             log.warn("Exception sending comment notification mail", e);
