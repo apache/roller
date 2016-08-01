@@ -35,7 +35,6 @@ import javax.naming.NamingException;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 
-import org.apache.roller.weblogger.business.startup.DatabaseProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +58,8 @@ public class JPAPersistenceStrategy {
 
     /**
      * Construct by finding JPA EntityManagerFactory.
-     * @param dbProvider database configuration information for manual configuration.
      */
-    protected JPAPersistenceStrategy(DatabaseProvider dbProvider) throws NamingException {
+    protected JPAPersistenceStrategy() throws NamingException {
 
         // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
         Properties emfProps = new Properties();
@@ -78,13 +76,19 @@ public class JPAPersistenceStrategy {
             }
         }
 
-        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-            emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getFullJndiName());
+        boolean usingJNDI = "jndi".equals(WebloggerStaticConfig.getProperty("database.configurationType"));
+        if (usingJNDI) {
+            emfProps.setProperty("javax.persistence.nonJtaDataSource",
+                    WebloggerStaticConfig.getProperty("database.jndi.name"));
         } else {
-            emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
-            emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
+            emfProps.setProperty("javax.persistence.jdbc.driver",
+                    WebloggerStaticConfig.getProperty("database.jdbc.driverClass"));
+            emfProps.setProperty("javax.persistence.jdbc.url",
+                    WebloggerStaticConfig.getProperty("database.jdbc.connectionURL"));
+            emfProps.setProperty("javax.persistence.jdbc.user",
+                    WebloggerStaticConfig.getProperty("database.jdbc.username"));
+            emfProps.setProperty("javax.persistence.jdbc.password",
+                    WebloggerStaticConfig.getProperty("database.jdbc.password"));
         }
 
         this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);

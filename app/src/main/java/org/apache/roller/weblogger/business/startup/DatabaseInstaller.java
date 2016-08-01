@@ -31,6 +31,8 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
+
 
 /**
  * Handles the install/upgrade of the TightBlog Weblogger database when the user
@@ -40,15 +42,15 @@ public class DatabaseInstaller {
 
     private static Logger log = LoggerFactory.getLogger(DatabaseInstaller.class);
     
-    private final DatabaseProvider db;
+    private final DataSource dataSource;
     private final int targetVersion;
     private List<String> messages = new ArrayList<>();
     
     // the name of the property in weblogger_properties table which holds the dbversion value
     private static final String DBVERSION_PROP = "tightblog.database.version";
     
-    public DatabaseInstaller(DatabaseProvider dbProvider) {
-        db = dbProvider;
+    public DatabaseInstaller(DataSource dataSource) {
+        this.dataSource = dataSource;
         targetVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version");
     }
 
@@ -58,7 +60,7 @@ public class DatabaseInstaller {
     public boolean isCreationRequired() {
         Connection con = null;
         try {            
-            con = db.getConnection();
+            con = dataSource.getConnection();
             
             // just check for a couple key database tables
             if (tableExists(con, "weblog") && (tableExists(con, "weblogger_user"))) {
@@ -120,7 +122,7 @@ public class DatabaseInstaller {
         Connection con = null;
         SQLScriptRunner create = null;
         try {
-            con = db.getConnection();
+            con = dataSource.getConnection();
             String handle = getDatabaseHandle(con);
             create = new SQLScriptRunner(handle + "/createdb.sql", true);
             create.runScript(con, true);
@@ -169,7 +171,7 @@ public class DatabaseInstaller {
        
         Connection con = null;
         try {
-            con = db.getConnection();
+            con = dataSource.getConnection();
             if (currentDbVersion < 0) {
                 String msg = "Cannot upgrade database tables, TightBlog database version cannot be determined";
                 errorMessage(msg);
@@ -268,7 +270,7 @@ public class DatabaseInstaller {
         // get the current db version
         Connection con = null;
         try {
-            con = db.getConnection();
+            con = dataSource.getConnection();
             Statement stmt = con.createStatement();
             
             // just check in the weblogger_properties table
