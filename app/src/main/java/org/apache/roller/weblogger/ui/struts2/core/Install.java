@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.List;
 
-import org.apache.roller.weblogger.business.startup.DatabaseProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
 import org.apache.roller.weblogger.business.startup.StartupException;
@@ -33,9 +32,12 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.Utilities;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 
 
 /**
@@ -55,14 +57,14 @@ public class Install extends UIAction {
     private boolean success = false;
     private List<String> messages = null;
 
-    public DatabaseProvider databaseProvider;
-
-    public void setDatabaseProvider(DatabaseProvider databaseProvider) {
-        this.databaseProvider = databaseProvider;
-        databaseInstaller = new DatabaseInstaller(databaseProvider);
-    }
-
     public DatabaseInstaller databaseInstaller;
+
+    private DataSource tbDataSource;
+
+    public void setTbDataSource(DataSource tbDataSource) {
+        this.tbDataSource = tbDataSource;
+        databaseInstaller = new DatabaseInstaller(tbDataSource);
+    }
 
     @Override
     public GlobalRole getRequiredGlobalRole() {
@@ -81,7 +83,7 @@ public class Install extends UIAction {
         }
 
         try {
-            new DatabaseProvider();
+            Utilities.testDataSource(tbDataSource);
         } catch(StartupException se) {
             if (se.getRootCause() != null) {
                 rootCauseException = se.getRootCause();
@@ -181,7 +183,7 @@ public class Install extends UIAction {
 
         Connection con = null;
         try {
-            con = databaseProvider.getConnection();
+            con = tbDataSource.getConnection();
             name = con.getMetaData().getDatabaseProductName();
         } catch (Exception intentionallyIgnored) {
             // ignored

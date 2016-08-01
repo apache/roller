@@ -24,8 +24,10 @@ import java.io.File;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.sql.DataSource;
 
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.util.Utilities;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserCache;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -49,6 +51,8 @@ public class RollerContext extends ContextLoaderListener
     
     private static ServletContext servletContext = null;
 
+    private static ApplicationContext appContext = null;
+
     public RollerContext() {
         super();
     }
@@ -70,7 +74,7 @@ public class RollerContext extends ContextLoaderListener
         // First, initialize everything that requires no database
 
         // Keep a reference to ServletContext object
-        RollerContext.servletContext = sce.getServletContext();
+        servletContext = sce.getServletContext();
 
         // try setting the themes path to <context>/themes
         // NOTE: this should go away at some point
@@ -87,6 +91,8 @@ public class RollerContext extends ContextLoaderListener
         // listeners don't initialize in the order specified in 2.3 containers
         super.contextInitialized(sce);
 
+        appContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
         if (ctxPath == null) {
@@ -95,15 +101,15 @@ public class RollerContext extends ContextLoaderListener
         }
 
         // Now prepare the core services of the app so we can bootstrap
-        boolean autoDatabaseWorkNeeded = false;
+        boolean autoDatabaseWorkNeeded;
+
         try {
             autoDatabaseWorkNeeded = prepare();
         } catch (StartupException ex) {
             log.error("TightBlog Weblogger startup failed during app preparation", ex);
             return;
         }
-        
-        
+
         // if preparation incomplete (e.g., database tables need creating)
         // continue on - BootstrapFilter will start the database install/upgrade process
         // otherwise bootstrap the business tier
@@ -118,7 +124,7 @@ public class RollerContext extends ContextLoaderListener
             
         try {
             // Initialize Spring Security based on Roller configuration
-            initializeSecurityFeatures(servletContext);
+            initializeSecurityFeatures();
         } catch (Exception ex) {
             log.error("Error initializing TightBlog Weblogger web tier", ex);
         }
@@ -137,24 +143,15 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Setup Spring Security security features.
      */
-    protected void initializeSecurityFeatures(ServletContext context) { 
-
-        ApplicationContext ctx =
-                WebApplicationContextUtils.getRequiredWebApplicationContext(context);
-
-        /*String[] beanNames = ctx.getBeanDefinitionNames();
-        for (String name : beanNames)
-            System.out.println(name);*/
-
+    protected void initializeSecurityFeatures() {
         String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
 
         // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) is provided in security.xml.
-        if (ctx.containsBean(daoBeanName)) {
-            DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
+        if (appContext.containsBean(daoBeanName)) {
+            DaoAuthenticationProvider provider = (DaoAuthenticationProvider) appContext.getBean(daoBeanName);
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             provider.setPasswordEncoder(encoder);
         }
-
     }
     
     
@@ -162,10 +159,8 @@ public class RollerContext extends ContextLoaderListener
      * Flush user from any caches maintained by security system.
      */
     public static void flushAuthenticationUserCache(String userName) {                                
-        ApplicationContext ctx = 
-            WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
 		try {
-			UserCache userCache = ctx.getBean("userCache", UserCache.class);
+			UserCache userCache = appContext.getBean("userCache", UserCache.class);
 			if (userCache != null) {
 				userCache.removeUserFromCache(userName);
 			}
@@ -184,10 +179,11 @@ public class RollerContext extends ContextLoaderListener
      */
     private static boolean prepare() throws StartupException {
         boolean autoDatabaseWorkNeeded = true;
-        DatabaseProvider dbProvider = new DatabaseProvider();
+        DataSource ds = appContext.getBean("tbDataSource", DataSource.class);
+        Utilities.testDataSource(ds);
 
         // now we need to deal with database install/upgrade logic
-        DatabaseInstaller dbInstaller = new DatabaseInstaller(dbProvider);
+        DatabaseInstaller dbInstaller = new DatabaseInstaller(ds);
         if("manual".equals(WebloggerStaticConfig.getProperty("installation.type"))) {
             if (dbInstaller.isUpgradeRequired()) {
                 // if we are doing manual install then all that is needed is the app to
@@ -203,6 +199,5 @@ public class RollerContext extends ContextLoaderListener
         }
         return autoDatabaseWorkNeeded;
     }
-
 
 }

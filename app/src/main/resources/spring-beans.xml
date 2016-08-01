@@ -55,11 +55,7 @@
         <beans:property name="menuCache" ref="staticMenuCache"/>
     </beans:bean>
 
-    <beans:bean id="databaseProvider" class="org.apache.roller.weblogger.business.startup.DatabaseProvider"/>
-
-    <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
-        <beans:constructor-arg ref="databaseProvider"/>
-    </beans:bean>
+    <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy"/>
 
     <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
@@ -125,6 +121,19 @@
     </beans:bean>
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
+
+    <beans:bean id="jdbc" abstract="true" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <beans:property name="driverClassName" value="${database.jdbc.driverClass:#{null}}" />
+        <beans:property name="url" value="${database.jdbc.connectionURL:#{null}}" />
+        <beans:property name="username" value="${database.jdbc.username:#{null}}" />
+        <beans:property name="password" value="${database.jdbc.password:#{null}}" />
+    </beans:bean>
+
+    <beans:bean id="jndi" abstract="true" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <beans:property name="jndiName" value="${database.jndi.name:#{null}}"/>
+    </beans:bean>
+
+    <beans:bean id="tbDataSource" parent="${database.configurationType}" />
 
     <beans:bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <beans:property name="protocol" value="${mail.transport.protocol}"/>

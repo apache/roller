@@ -29,9 +29,11 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.sql.Connection;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,6 +47,7 @@ import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -54,6 +57,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.startup.StartupException;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -536,4 +540,21 @@ public class Utilities {
         SitePreference sitePreference = SitePreferenceUtils.getCurrentSitePreference(request);
         return (sitePreference != null && sitePreference.isMobile()) ? DeviceType.MOBILE : DeviceType.NORMAL;
     }
+
+    public static void testDataSource(DataSource mySource) throws StartupException {
+        List<String> startupLog = new ArrayList<>();
+
+        try {
+            Connection testcon = mySource.getConnection();
+            testcon.close();
+        } catch (Exception e) {
+            String errorMsg =
+                    "ERROR: unable to obtain database connection. "
+                            + "Likely problem: bad connection parameters or database unavailable.";
+            startupLog.add(errorMsg);
+            log.error(errorMsg);
+            throw new StartupException(errorMsg, e, startupLog);
+        }
+    }
+
 }
