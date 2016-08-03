@@ -33,7 +33,6 @@ import java.sql.Connection;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,7 +56,6 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.startup.StartupException;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -541,9 +539,7 @@ public class Utilities {
         return (sitePreference != null && sitePreference.isMobile()) ? DeviceType.MOBILE : DeviceType.NORMAL;
     }
 
-    public static void testDataSource(DataSource mySource) throws StartupException {
-        List<String> startupLog = new ArrayList<>();
-
+    public static void testDataSource(DataSource mySource) throws WebloggerException {
         try {
             Connection testcon = mySource.getConnection();
             testcon.close();
@@ -551,9 +547,8 @@ public class Utilities {
             String errorMsg =
                     "ERROR: unable to obtain database connection. "
                             + "Likely problem: bad connection parameters or database unavailable.";
-            startupLog.add(errorMsg);
             log.error(errorMsg);
-            throw new StartupException(errorMsg, e, startupLog);
+            throw new WebloggerException(errorMsg, e);
         }
     }
 

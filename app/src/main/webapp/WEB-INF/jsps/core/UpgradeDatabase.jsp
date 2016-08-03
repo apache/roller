@@ -21,15 +21,28 @@
 <s:if test="error">
     <h2><s:text name="installer.errorUpgradingTables" /></h2>
     <p><s:text name="installer.errorUpgradingTablesExplanation" /></p> 
-<pre>
-<s:iterator value="messages"><s:property/><br /></s:iterator>
-</pre>
+    <pre>
+        <s:iterator value="messages"><s:property/><br /></s:iterator>
+    </pre>
 </s:if>
 
-<s:elseif test="upgradeRequired">
+<s:elseif test="success">
+    <h2><s:text name="installer.tablesUpgraded" /></h2>
 
+    <p><s:text name="installer.tablesUpgradedExplanation" /></p>
+    <p>
+        <s:text name="installer.tryBootstrapping">
+            <s:param><s:url action="install!bootstrap"/></s:param>
+        </s:text>
+    </p>
+    <pre>
+        <s:iterator value="messages"><s:property/><br /></s:iterator>
+    </pre>
+</s:elseif>
+
+<s:else>
     <h2><s:text name="installer.databaseUpgradeNeeded" /></h2>
-    
+
     <p>
         <s:text name="installer.databaseUpgradeNeededExplanation">
             <s:param value="databaseProductName" />
@@ -41,23 +54,6 @@
         <sec:csrfInput/>
         <s:submit value="%{getText('installer.yesUpgradeTables')}" />
     </s:form>
-
-</s:elseif>
-<s:else>
-    
-    <h2><s:text name="installer.tablesUpgraded" /></h2>
-    
-    <p><s:text name="installer.tablesUpgradedExplanation" /></p>
-    <p>
-        <s:text name="installer.tryBootstrapping">
-            <s:param><s:url action="install!bootstrap"/></s:param>
-        </s:text>
-    </p>
-    
-<pre>
-<s:iterator value="messages"><s:property/><br /></s:iterator>
-</pre>
-    
 </s:else>
 
 <br />

@@ -22,14 +22,10 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.startup.RollerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import javax.servlet.ServletContext;
 
 /**
  * Provides access to the Weblogger instance and bootstraps the business tier.
@@ -77,17 +73,6 @@ public final class WebloggerFactory {
         }
 
         return context;
-    }
-
-    /**
-     * Variant of bootstrap() used by the running WAR (not JUnit testing).
-     */
-    public static void bootstrap() {
-        ServletContext servletContext = RollerContext.getServletContext();
-        if (servletContext == null) {
-            throw new RuntimeException("Error bootstrapping Weblogger; no web context available.");
-        }
-        bootstrap(WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext));
     }
 
     /**

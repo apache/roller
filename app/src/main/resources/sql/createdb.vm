@@ -243,6 +243,9 @@ create table weblogger_properties (
     value    $db.TEXT_SQL_TYPE
 );
 
+-- database version for this model
+insert into weblogger_properties(name, value) values ('tightblog.database.version', '100');
+
 -- PLANET FEED AGGREGATOR
 
 create table planet (

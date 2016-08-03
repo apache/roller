@@ -111,7 +111,7 @@ public class SharedTheme {
     }
 
     public String getPreviewPath() {
-        return "/themes/" + getId() + "/" + getPreviewImagePath();
+        return "/blogthemes/" + getId() + "/" + getPreviewImagePath();
     }
 
     public void setPreviewImagePath(String previewImagePath) {

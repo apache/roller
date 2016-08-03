@@ -85,7 +85,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		this.weblogManager = wm;
 
 		// get theme directory from config and verify it
-		this.themeDir = WebloggerStaticConfig.getProperty("themes.dir");
+        this.themeDir = WebloggerStaticConfig.getProperty("themes.dir");
 		if (themeDir == null || themeDir.trim().length() < 1) {
 			throw new RuntimeException("couldn't get themes directory from config");
 		} else {

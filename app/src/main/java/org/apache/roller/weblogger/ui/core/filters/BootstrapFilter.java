@@ -32,14 +32,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 /**
- * Redirects clients to install page when app is not bootstrapped and install
- * type is "auto", otherwise does nothing.
+ * Redirects clients to install page when app is not bootstrapped, otherwise does nothing.
  */
 public class BootstrapFilter implements Filter {
 
@@ -55,17 +53,12 @@ public class BootstrapFilter implements Filter {
         
         log.debug("Entered {}", request.getRequestURI());
         
-        if (!WebloggerFactory.isBootstrapped()
-                && "auto".equals(WebloggerStaticConfig.getProperty("installation.type"))
-                && !isInstallUrl(request.getRequestURI())) {
-                    
+
+        if (!WebloggerFactory.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
             log.debug("Forwarding to install page");
-            
-            // we doing an install, so forward to installer
-            RequestDispatcher rd = context.getRequestDispatcher(
-                "/tb-ui/install/install.rol");
+            // install page will check database connectivity & schema status and bootstrap if all OK.
+            RequestDispatcher rd = context.getRequestDispatcher("/tb-ui/install/install.rol");
             rd.forward(req, res);
-            
         } else {
             chain.doFilter(request, response);
         }
@@ -83,7 +76,7 @@ public class BootstrapFilter implements Filter {
                 || uri.endsWith(".css")));
     }
     
-    
+
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
     }

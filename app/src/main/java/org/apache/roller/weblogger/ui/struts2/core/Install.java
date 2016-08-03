@@ -23,20 +23,25 @@ package org.apache.roller.weblogger.ui.struts2.core;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
-import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.roller.weblogger.util.WebloggerException;
+import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 
@@ -76,42 +81,42 @@ public class Install extends UIAction {
         return WeblogRole.NOBLOGNEEDED;
     }
 
-    public String execute() {
-
+    public String execute() throws WebloggerException {
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
 
         try {
             Utilities.testDataSource(tbDataSource);
-        } catch(StartupException se) {
-            if (se.getRootCause() != null) {
-                rootCauseException = se.getRootCause();
+        } catch(WebloggerException we) {
+            if (we.getRootCause() != null) {
+                rootCauseException = we.getRootCause();
             } else {
-                rootCauseException = se;
+                rootCauseException = we;
             }
-            messages = se.getStartupLog();
+            messages = Collections.singletonList(we.getMessage());
 
             log.debug("Forwarding to database error page");
             setPageTitle("installer.error.connection.pageTitle");
             return DATABASE_ERROR;
         }
 
-        if (databaseInstaller.isCreationRequired()) {
-            log.debug("Forwarding to database table creation page");
-            setPageTitle("installer.database.creation.pageTitle");
-            return CREATE_DATABASE;
-        }
-        if (databaseInstaller.isUpgradeRequired()) {
-            log.debug("Forwarding to database table upgrade page");
-            setPageTitle("installer.database.upgrade.pageTitle");
-            return UPGRADE_DATABASE;
+        if ("auto".equals(WebloggerStaticConfig.getProperty("installation.type"))) {
+            if (databaseInstaller.isCreationRequired()) {
+                log.info("TightBlog database needs creating (auto install configured), forwarding to creation page");
+                setPageTitle("installer.database.creation.pageTitle");
+                return CREATE_DATABASE;
+            }
+
+            if (databaseInstaller.isUpgradeRequired()) {
+                log.info("TightBlog database needs upgrading (auto install configured), forwarding to upgrade page");
+                setPageTitle("installer.database.upgrade.pageTitle");
+                return UPGRADE_DATABASE;
+            }
         }
 
-        setPageTitle("installer.error.unknown.pageTitle");
-        rootCauseException = new Exception("UNKNOWN ERROR");
-        rootCauseException.fillInStackTrace();
-        return BOOTSTRAP;
+        bootstrap();
+        return SUCCESS;
     }
 
 
@@ -123,9 +128,9 @@ public class Install extends UIAction {
         try {
             messages = databaseInstaller.createDatabase();
             success = true;
-        } catch (StartupException se) {
+        } catch (WebloggerException se) {
             error = true;
-            messages = se.getStartupLog();
+            messages = Collections.emptyList();
         }
 
         setPageTitle("installer.database.creation.pageTitle");
@@ -138,11 +143,11 @@ public class Install extends UIAction {
         }
 
         try {
-            messages = databaseInstaller.upgradeDatabase(true);
+            messages = databaseInstaller.upgradeDatabase();
             success = true;
-        } catch (StartupException se) {
+        } catch (WebloggerException se) {
             error = true;
-            messages = se.getStartupLog();
+            messages = Collections.emptyList();
         }
 
         setPageTitle("installer.database.upgrade.pageTitle");
@@ -160,7 +165,10 @@ public class Install extends UIAction {
 
         try {
             // trigger bootstrapping process
-            WebloggerFactory.bootstrap();
+            ServletContext sc = ServletActionContext.getServletContext();
+            ApplicationContext ac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+
+            WebloggerFactory.bootstrap(ac);
             log.info("EXITING - Bootstrap successful, forwarding to Roller");
             return SUCCESS;
 
@@ -218,10 +226,6 @@ public class Install extends UIAction {
             stackTrace = sw.toString().trim();
         }
         return stackTrace;
-    }
-
-    public boolean isUpgradeRequired() {
-        return databaseInstaller.isUpgradeRequired();
     }
 
     public boolean isError() {

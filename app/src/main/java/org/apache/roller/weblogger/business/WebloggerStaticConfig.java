@@ -249,13 +249,9 @@ public final class WebloggerStaticConfig {
     }
     
     /**
-     * Set the "themes.dir" property at runtime.
-     * <p />
-     * Properties are meant to be read-only, but we make this exception because  
-     * we know that some people are still using their themes in the webapp  
-     * context and we can only get that path at runtime (and for unit testing).
-     * <p />
-     * This property is *not* persisted in any way.
+     * Set the "themes.dir" property at runtime, if the current property indicates
+     * webapp context location is desired.  Needed to be done at runtime,
+     * as location of webapp context is dependent on deployment environment.
      */
     public static void setThemesDir(String path) {
         // only do this if the user wants to use the webapp context

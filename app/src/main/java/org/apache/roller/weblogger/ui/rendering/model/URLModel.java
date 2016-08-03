@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Provides access to URL building functionality.
@@ -120,7 +119,7 @@ public class URLModel implements Model {
     }
 
     public String themeResource(String theme, String filePath) {
-        return getSite()+"/themes/"+theme+"/"+filePath;
+        return getSite() + "/blogthemes/" + theme + "/" + filePath;
     }
         
     public String getHome() {
