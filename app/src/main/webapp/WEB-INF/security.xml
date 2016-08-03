@@ -95,11 +95,18 @@
              Also set authentication.method property to "ldap" in your tightblog-custom.properties
              if not using default of "db".
         -->
-        <authentication-provider user-service-ref="dbAuthProvider"/>
+        <authentication-provider ref="dbAuthProvider"/>
         <!--authentication-provider ref="ldapAuthProvider"/-->
     </authentication-manager>
 
-    <beans:bean id="dbAuthProvider" class="org.apache.roller.weblogger.ui.core.security.CustomUserDetailsService">
+    <beans:bean id="dbAuthProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <beans:property name="userDetailsService" ref="userDetailsService"/>
+        <beans:property name="passwordEncoder">
+            <beans:bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean id="userDetailsService" class="org.apache.roller.weblogger.ui.core.security.CustomUserDetailsService">
         <beans:property name="userManager" ref="userManager"/>
     </beans:bean>
 
@@ -123,7 +130,7 @@
         </beans:constructor-arg>
         <beans:constructor-arg name="authoritiesPopulator">
             <beans:bean class="org.springframework.security.ldap.authentication.UserDetailsServiceLdapAuthoritiesPopulator">
-                <beans:constructor-arg name="userService" ref="dbAuthProvider"/>
+                <beans:constructor-arg name="userService" ref="userDetailsService"/>
             </beans:bean>
         </beans:constructor-arg>
     </beans:bean>

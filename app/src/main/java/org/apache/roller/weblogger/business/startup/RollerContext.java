@@ -23,29 +23,21 @@ package org.apache.roller.weblogger.business.startup;
 import java.io.File;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.sql.DataSource;
 
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.util.Utilities;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.userdetails.UserCache;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Initialize the Roller web application/context.
  */
-public class RollerContext extends ContextLoaderListener  
-        implements ServletContextListener {
+public class RollerContext extends ContextLoaderListener {
 
     private static Logger log = LoggerFactory.getLogger(RollerContext.class);
     
@@ -122,51 +114,6 @@ public class RollerContext extends ContextLoaderListener
             WebloggerFactory.bootstrap();
 		}
             
-        try {
-            // Initialize Spring Security based on Roller configuration
-            initializeSecurityFeatures();
-        } catch (Exception ex) {
-            log.error("Error initializing TightBlog Weblogger web tier", ex);
-        }
-        
-    }
-    
-    
-    /** 
-     * Responds to app-destroy event and triggers shutdown sequence.
-     */
-    public void contextDestroyed(ServletContextEvent sce) {
-        log.info("Shutting down");
-        closeWebApplicationContext(servletContext);
-    }
-
-    /**
-     * Setup Spring Security security features.
-     */
-    protected void initializeSecurityFeatures() {
-        String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
-
-        // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) is provided in security.xml.
-        if (appContext.containsBean(daoBeanName)) {
-            DaoAuthenticationProvider provider = (DaoAuthenticationProvider) appContext.getBean(daoBeanName);
-            PasswordEncoder encoder = new BCryptPasswordEncoder();
-            provider.setPasswordEncoder(encoder);
-        }
-    }
-    
-    
-    /**
-     * Flush user from any caches maintained by security system.
-     */
-    public static void flushAuthenticationUserCache(String userName) {                                
-		try {
-			UserCache userCache = appContext.getBean("userCache", UserCache.class);
-			if (userCache != null) {
-				userCache.removeUserFromCache(userName);
-			}
-		} catch (NoSuchBeanDefinitionException exc) {
-			log.debug("No userCache bean in context", exc);
-		}
     }
 
     /**
@@ -184,7 +131,7 @@ public class RollerContext extends ContextLoaderListener
 
         // now we need to deal with database install/upgrade logic
         DatabaseInstaller dbInstaller = new DatabaseInstaller(ds);
-        if("manual".equals(WebloggerStaticConfig.getProperty("installation.type"))) {
+        if ("manual".equals(WebloggerStaticConfig.getProperty("installation.type"))) {
             if (dbInstaller.isUpgradeRequired()) {
                 // if we are doing manual install then all that is needed is the app to
                 // update the version number in weblogger_properties, not run any db scripts
