@@ -613,12 +613,13 @@
 
         </plugins>
 
+        <!-- Needs explicit declaration because of needed resources outside the default location -->
         <testResources>
             <testResource>
                 <directory>../app/src/main/webapp/</directory>
                 <filtering>false</filtering>
                 <includes>
-                    <include>themes/**</include>
+                    <include>blogthemes/**</include>
                 </includes>
             </testResource>
             <testResource>
