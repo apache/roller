@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 
 import org.apache.roller.weblogger.business.FeedManager;
 import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
@@ -63,6 +63,13 @@ public class PlanetController {
         this.feedManager = feedManager;
     }
 
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
+    }
+
     public PlanetController() {
     }
 
@@ -90,7 +97,7 @@ public class PlanetController {
                 planet.setDescription(newData.getDescription());
                 try {
                     planetManager.savePlanet(planet);
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (RollbackException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -114,7 +121,7 @@ public class PlanetController {
         try {
             Planet planetToDelete = planetManager.getPlanet(id);
             planetManager.deletePlanet(planetToDelete);
-            WebloggerFactory.flush();
+            persistenceStrategy.flush();
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             log.error("Error deleting planet - {}", id);
@@ -134,7 +141,7 @@ public class PlanetController {
             if (subToDelete != null) {
                 planetManager.deleteSubscription(subToDelete);
                 subToDelete.getPlanet().getSubscriptions().remove(subToDelete);
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
             }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
@@ -159,7 +166,7 @@ public class PlanetController {
                     sub.setPlanet(planet);
                     planetManager.saveSubscription(sub);
                     planet.getSubscriptions().add(sub);
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
                     return sub;
                 } else {

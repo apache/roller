@@ -28,8 +28,8 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.PingTargetManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
@@ -76,6 +76,13 @@ public class PingController {
         this.weblogManager = weblogManager;
     }
 
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
+    }
+
     public PingController() {
     }
 
@@ -118,7 +125,7 @@ public class PingController {
                 pingTarget.setName(newData.getName());
                 pingTarget.setPingUrl(newData.getPingUrl());
                 pingTargetManager.savePingTarget(pingTarget);
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
                 response.setStatus(HttpServletResponse.SC_OK);
                 return pingTarget;
             } else {
@@ -165,7 +172,7 @@ public class PingController {
             PingTarget ping = pingTargetManager.getPingTarget(pingTargetId);
             ping.setEnabled(state);
             pingTargetManager.savePingTarget(ping);
-            WebloggerFactory.flush();
+            persistenceStrategy.flush();
             response.setStatus(HttpServletResponse.SC_OK);
             return ping;
         } catch (Exception e) {
@@ -179,7 +186,7 @@ public class PingController {
         try {
             PingTarget ping = pingTargetManager.getPingTarget(id);
             pingTargetManager.removePingTarget(ping);
-            WebloggerFactory.flush();
+            persistenceStrategy.flush();
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             log.warn("Error deleting ping target: {}", e.getMessage());

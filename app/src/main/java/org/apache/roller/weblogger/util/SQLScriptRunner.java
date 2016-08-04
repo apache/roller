@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.startup;
+package org.apache.roller.weblogger.util;
 
 import org.apache.commons.lang3.StringUtils;
 

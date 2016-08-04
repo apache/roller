@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.roller.weblogger.business.MailManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -57,6 +57,12 @@ public class Members extends UIAction implements ParameterAware {
 
     public void setMailManager(MailManager manager) {
         mailManager = manager;
+    }
+
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     // user being invited
@@ -142,7 +148,7 @@ public class Members extends UIAction implements ParameterAware {
             
             if (removed > 0 || changed > 0) {
                 log.debug("Weblog permissions updated, flushing changes");                
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
             }
             
         } catch (Exception ex) {
@@ -228,7 +234,7 @@ public class Members extends UIAction implements ParameterAware {
             try {
                 userManager.grantPendingWeblogRole(user, getActionWeblog(),
                         WeblogRole.valueOf(getPermissionString()));
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
 
                 addMessage("inviteMember.userInvited");
 

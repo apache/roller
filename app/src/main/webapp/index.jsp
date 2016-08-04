@@ -18,7 +18,7 @@
 
 // lets see if we have a frontpage blog
 String frontpageBlog =
-        org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty("site.frontpage.weblog.handle");
+        org.apache.roller.weblogger.business.WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty("site.frontpage.weblog.handle");
 
 if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
     // dispatch to frontpage blog
@@ -28,7 +28,7 @@ if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
 } else {
     // new install?  Redirect to register or login page based on whether a user has already been created.
     RequestDispatcher setuppage = null;
-    long userCount = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getUserManager().getUserCount();
+    long userCount = org.apache.roller.weblogger.business.WebloggerContext.getWeblogger().getUserManager().getUserCount();
     if (userCount == 0) {
         setuppage = request.getRequestDispatcher("/tb-ui/register.rol");
     } else {

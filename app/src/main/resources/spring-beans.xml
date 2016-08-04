@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2015 Glen Mazza
+    Copyright 2016 the original author or authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@
     <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy"/>
 
     <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
+        <beans:constructor-arg ref="weblogEntryManager"/>
     </beans:bean>
 
     <beans:bean id="mediaFileManager" class="org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl">
@@ -73,7 +73,6 @@
     <beans:bean id="pingTargetManager" class="org.apache.roller.weblogger.business.jpa.JPAPingTargetManagerImpl">
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:constructor-arg ref="urlStrategy"/>
-        <beans:constructor-arg ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="propertiesManager" class="org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl">
@@ -82,6 +81,7 @@
 
     <beans:bean id="themeManager" class="org.apache.roller.weblogger.business.themes.ThemeManagerImpl">
         <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg name="themeDirOverride" value="${themes.dir:#{null}}"/>
     </beans:bean>
 
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
@@ -348,6 +348,10 @@
     <beans:bean id="RequestMappingFilter" class="org.apache.roller.weblogger.ui.core.filters.RequestMappingFilter">
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="restrictedUrls" ref="customProtectedUrls"/>
+    </beans:bean>
+
+    <beans:bean id="PersistenceSessionFilter" class="org.apache.roller.weblogger.ui.core.filters.PersistenceSessionFilter">
+        <beans:property name="persistenceStrategy" ref="persistenceStrategy"/>
     </beans:bean>
 
     <!-- Caches -->

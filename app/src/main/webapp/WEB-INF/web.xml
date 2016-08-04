@@ -37,7 +37,7 @@
 
     <filter>
         <filter-name>PersistenceSessionFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.PersistenceSessionFilter</filter-class>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
     <filter>
@@ -128,7 +128,7 @@
 
     <!-- Context Listeners -->
     <listener>
-        <listener-class>org.apache.roller.weblogger.business.startup.RollerContext</listener-class>
+        <listener-class>org.apache.roller.weblogger.business.WebloggerContext</listener-class>
     </listener>
     
     <listener>

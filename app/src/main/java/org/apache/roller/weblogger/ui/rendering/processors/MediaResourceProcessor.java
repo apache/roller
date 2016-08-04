@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path="/tb-ui/rendering/media-resources/**")
-public class MediaResourceProcessor {
+public class MediaResourceProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(MediaResourceProcessor.class);
 

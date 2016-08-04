@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
@@ -73,7 +72,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(path="/tb-ui/rendering/page/**")
-public class PageProcessor {
+public class PageProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
 
@@ -374,11 +373,11 @@ public class PageProcessor {
             initData.put("commentForm", commentForm);
         }
 
-        model = Model.getModelMap("pageModelSet", initData);
+        model = getModelMap("pageModelSet", initData);
 
         // Load special models for site-wide blog
         if (isSiteWide) {
-            model.putAll(Model.getModelMap("siteModelSet", initData));
+            model.putAll(getModelMap("siteModelSet", initData));
         }
 
         // lookup Renderer we are going to use

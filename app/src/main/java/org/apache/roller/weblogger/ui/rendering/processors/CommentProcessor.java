@@ -39,8 +39,8 @@ import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
@@ -78,7 +78,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 // how @RequestMapping is combined at the class- and method-levels: http://stackoverflow.com/q/22702568
 @RequestMapping(path="/tb-ui/rendering/comment")
-public class CommentProcessor {
+public class CommentProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(CommentProcessor.class);
 
@@ -126,6 +126,13 @@ public class CommentProcessor {
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
+    }
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     @Autowired
@@ -354,7 +361,7 @@ public class CommentProcessor {
                 boolean noModerationNeeded = ownComment ||
                         (!nonSpamCommentApprovalRequired && !ApprovalStatus.SPAM.equals(commentForm.getStatus()));
                 weblogEntryManager.saveComment(commentForm, noModerationNeeded);
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
 
                 if (noModerationNeeded) {
                     mailManager.sendNewCommentNotification(commentForm);

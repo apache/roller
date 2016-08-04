@@ -22,7 +22,8 @@ package org.apache.roller.weblogger.ui.rendering.requests;
 
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 import org.springframework.mobile.device.DeviceType;
@@ -131,7 +132,7 @@ public class WeblogRequest {
 
     public Weblog getWeblog() {
         if (weblog == null && weblogHandle != null) {
-            weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogHandle, true);
+            weblog = WebloggerContext.getWeblogger().getWeblogManager().getWeblogByHandle(weblogHandle, true);
             if (weblog == null) {
                 throw new IllegalStateException("Unknown Weblog: " + weblogHandle);
             }

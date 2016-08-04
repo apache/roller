@@ -14,16 +14,13 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.roller.weblogger.business.WebloggerFactory;
-
 
 /**
  * Represents a set of functionality to be used at rendering.  Most models require specific objects
@@ -43,16 +40,5 @@ public interface Model {
      * @throws IllegalArgumentException if the model is not fed the specific objects it is expecting
      */
     void init(Map params) throws IllegalStateException;
-
-    static Map<String, Object> getModelMap(String modelBean, Map<String, Object> initData) {
-        HashMap<String, Object> modelMap = new HashMap<>();
-        Set modelSet = WebloggerFactory.getContext().getBean(modelBean, Set.class);
-        for (Object obj : modelSet) {
-            Model m = (Model) obj;
-            m.init(initData);
-            modelMap.put(m.getModelName(), m);
-        }
-        return modelMap;
-    }
 
 }

@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
@@ -240,7 +240,7 @@ public class MediaFile {
      */
     @Transient
     public String getPermalink() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy()
+        return WebloggerContext.getWeblogger().getUrlStrategy()
                 .getMediaFileURL(getDirectory().getWeblog(), this.getId(), true);
     }
 
@@ -250,7 +250,7 @@ public class MediaFile {
      */
     @Transient
     public String getThumbnailURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy()
+        return WebloggerContext.getWeblogger().getUrlStrategy()
                 .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId(), true);
     }
 

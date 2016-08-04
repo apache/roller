@@ -27,7 +27,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+
+import org.apache.roller.weblogger.business.WebloggerContext;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,12 @@ import org.slf4j.LoggerFactory;
 public class PersistenceSessionFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(PersistenceSessionFilter.class);
+
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
+    }
 
     /**
      * Release Roller persistence session at end of request processing.
@@ -54,9 +62,9 @@ public class PersistenceSessionFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } finally {
-            if (WebloggerFactory.isBootstrapped()) {
+            if (WebloggerContext.isBootstrapped()) {
                 log.debug("Releasing TightBlog DB Session");
-                WebloggerFactory.release();
+                persistenceStrategy.release();
             }
         }
         

@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import org.apache.commons.collections.ExtendedProperties;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
@@ -89,12 +89,12 @@ public class ThemeResourceLoader extends ResourceLoader {
             if (sharedThemeParts.length != 2) {
                 throw new ResourceNotFoundException("Invalid Theme resource key " + resourceId);
             }
-            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+            ThemeManager themeMgr = WebloggerContext.getWeblogger().getThemeManager();
             SharedTheme theme = themeMgr.getSharedTheme(sharedThemeParts[0]);
             template = theme.getTemplateByName(sharedThemeParts[1]);
         } else {
             // weblog-only theme in database
-            template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(resourceId);
+            template = WebloggerContext.getWeblogger().getWeblogManager().getTemplate(resourceId);
         }
 
         if (template == null) {
