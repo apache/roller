@@ -26,11 +26,10 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs.CommentOption;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -392,13 +391,13 @@ public class Weblog {
     // Used in templates
     @Transient
     public String getURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, false);
+        return WebloggerContext.getWeblogger().getUrlStrategy().getWeblogURL(this, false);
     }
 
     // Used in a few JSP's
     @Transient
     public String getAbsoluteURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, true);
+        return WebloggerContext.getWeblogger().getUrlStrategy().getWeblogURL(this, true);
     }
 
     public String getAnalyticsCode() {

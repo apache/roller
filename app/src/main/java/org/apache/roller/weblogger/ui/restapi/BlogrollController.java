@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.ui.restapi;
 
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -106,7 +105,7 @@ public class BlogrollController {
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
                     weblogManager.removeBookmark(itemToRemove);
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
                     cacheManager.invalidate(itemToRemove);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -133,7 +132,7 @@ public class BlogrollController {
                     bookmark.setDescription(newData.getDescription());
                     try {
                         weblogManager.saveBookmark(bookmark);
-                        WebloggerFactory.flush();
+                        persistenceStrategy.flush();
                     } catch (RollbackException e) {
                         response.setStatus(HttpServletResponse.SC_CONFLICT);
                         return;
@@ -161,7 +160,7 @@ public class BlogrollController {
                         newData.getUrl(), newData.getDescription());
                 try {
                     weblogManager.saveBookmark(bookmark);
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
                 } catch (RollbackException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                     return;

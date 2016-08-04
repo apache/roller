@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.PostConstruct;
 import javax.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.business.PingTargetManager;
@@ -43,7 +44,6 @@ import org.apache.roller.weblogger.business.PingResult;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.startup.RollerContext;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
@@ -58,8 +58,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     private final JPAPersistenceStrategy strategy;
 
-    private final PropertiesManager propertiesManager;
-
     private final URLStrategy urlStrategy;
 
     // for debugging, will log but not send ping out.
@@ -72,11 +70,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     // Set of updated weblogs which will get pings sent out at the next sendPings() call.
     private Set<Weblog> weblogPingSet = Collections.synchronizedSet(new HashSet<>());
 
-    protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy, URLStrategy urlStrategy,
-                                       PropertiesManager propertiesManager) {
+    protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy, URLStrategy urlStrategy) {
         this.strategy = strategy;
         this.urlStrategy = urlStrategy;
-        this.propertiesManager = propertiesManager;
     }
 
     @Override
@@ -147,11 +143,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return q.getResultList();
     }
 
-    @Override
-    public void initialize() {
-        initializePingTargets();
-    }
-
     /**
      * Initialize the ping targets from the configuration properties. If the current list of ping targets
      * is empty, and the <code>pings.initialPingTargets</code> property is present in the configuration then
@@ -159,10 +150,10 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
      * <p/>
      * Note: this is expected to be called during initialization with transaction demarcation being handled by the
      * caller.
-     *
-     * @see RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
-    private void initializePingTargets() {
+    @Override
+    @PostConstruct
+    public void initialize() {
         // Pattern used to parse ping targets.
         // Each initial commmon ping target is specified in the format {{name}{url}}
         Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
@@ -201,6 +192,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                         ". Skipping this target. Check your setting of the property ", thisTarget, PINGS_INITIAL_PING_TARGETS_PROP);
             }
         }
+        strategy.flush();
     }
 
     @Override

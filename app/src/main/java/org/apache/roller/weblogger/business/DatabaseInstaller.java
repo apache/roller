@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.startup;
+package org.apache.roller.weblogger.business;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,7 +27,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.util.SQLScriptRunner;
 import org.apache.roller.weblogger.util.WebloggerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,7 +148,6 @@ public class DatabaseInstaller {
             runner.runScript(con, true);
             messages.addAll(runner.getMessages());
         } catch (Exception ex) {
-            log.error("ERROR running database script {}", script, ex);
             errorMessage("ERROR processing database script " + script);
             if (runner != null) {
                 messages.addAll(runner.getMessages());

@@ -23,7 +23,10 @@ package org.apache.roller.weblogger.business;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -248,18 +251,6 @@ public final class WebloggerStaticConfig {
         return config.keys();
     }
     
-    /**
-     * Set the "themes.dir" property at runtime, if the current property indicates
-     * webapp context location is desired.  Needed to be done at runtime,
-     * as location of webapp context is dependent on deployment environment.
-     */
-    public static void setThemesDir(String path) {
-        // only do this if the user wants to use the webapp context
-        if("${webapp.context}".equals(config.getProperty("themes.dir"))) {
-            config.setProperty("themes.dir", path);
-        }
-    }
-
     /**
      * Return the value of the authentication.method property as an AuthMethod
      * enum value.  Matching is done by checking the propertyName of each AuthMethod

@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.ui.restapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
@@ -204,7 +203,7 @@ public class TemplateController {
 				weblogManager.saveTemplateRendition(standardRendition);
 
 				// flush results to db
-				WebloggerFactory.flush();
+				persistenceStrategy.flush();
 
 				return ResponseEntity.ok(newTemplate);
 			} else {

@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.Utilities;
@@ -51,7 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path="/tb-ui/rendering/search/**")
-public class SearchProcessor {
+public class SearchProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(SearchProcessor.class);
 
@@ -150,11 +149,11 @@ public class SearchProcessor {
         initData.put("searchRequest", searchRequest);
 
         // Load models for pages
-        model = Model.getModelMap("searchModelSet", initData);
+        model = getModelMap("searchModelSet", initData);
 
         // Load special models for site-wide blog
         if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
-            model.putAll(Model.getModelMap("siteModelSet", initData));
+            model.putAll(getModelMap("siteModelSet", initData));
         }
 
         // lookup Renderer we are going to use

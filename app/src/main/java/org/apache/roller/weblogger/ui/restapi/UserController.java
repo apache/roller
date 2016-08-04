@@ -40,7 +40,6 @@ import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
@@ -496,7 +495,7 @@ public class UserController {
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-        WebloggerFactory.flush();
+        persistenceStrategy.flush();
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/detach", method = RequestMethod.POST)
@@ -508,6 +507,6 @@ public class UserController {
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-        WebloggerFactory.flush();
+        persistenceStrategy.flush();
     }
 }

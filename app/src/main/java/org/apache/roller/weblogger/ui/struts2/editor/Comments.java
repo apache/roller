@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -94,6 +94,13 @@ public class Comments extends UIAction {
 
     public void setMailManager(MailManager manager) {
         mailManager = manager;
+    }
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     @Autowired
@@ -347,7 +354,7 @@ public class Comments extends UIAction {
                 }
             }
 
-            WebloggerFactory.flush();
+            persistenceStrategy.flush();
 
             // notify caches of changes by flushing whole weblog because we can't
             // invalidate deleted comment objects (JPA nulls the fields out).
@@ -490,7 +497,7 @@ public class Comments extends UIAction {
                     // don't update the posttime when updating the comment
                     c.setPostTime(c.getPostTime());
                     weblogEntryManager.saveComment(c, true);
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
                     return getComment(id, p, response);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

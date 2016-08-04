@@ -53,6 +53,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
@@ -96,10 +97,9 @@ public class IndexManagerImpl implements IndexManager {
     /**
      * Creates a new lucene index manager. This should only be created once.
      * Creating the index manager more than once will definately result in
-     * errors. The preferred way of getting an index is through the
-     * RollerContext.
+     * errors.
      */
-    protected IndexManagerImpl() {
+    protected IndexManagerImpl(WeblogEntryManager weManager) {
         serviceScheduler = Executors.newCachedThreadPool();
 
         // we also need to know what our index directory is
@@ -113,6 +113,7 @@ public class IndexManagerImpl implements IndexManager {
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
+        weblogEntryManager = weManager;
     }
 
     @Override
@@ -133,11 +134,8 @@ public class IndexManagerImpl implements IndexManager {
         this.indexComments = indexComments;
     }
 
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
     @Override
+    @PostConstruct
     public void initialize() {
 
         // only initialize the index if search is enabled

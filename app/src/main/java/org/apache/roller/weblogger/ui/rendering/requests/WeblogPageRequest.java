@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
@@ -264,7 +264,7 @@ public class WeblogPageRequest extends WeblogRequest {
     public Template getWeblogTemplate() {
 
         if (template == null && weblogTemplateName != null) {
-            template = WebloggerFactory.getWeblogger().getThemeManager().
+            template = WebloggerContext.getWeblogger().getThemeManager().
                     getWeblogTheme(getWeblog()).getTemplateByPath(weblogTemplateName);
         }
 

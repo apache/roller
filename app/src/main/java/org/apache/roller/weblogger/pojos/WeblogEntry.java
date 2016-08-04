@@ -31,7 +31,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -433,7 +433,7 @@ public class WeblogEntry {
     @Transient
     public boolean getCommentsStillAllowed() {
         if (RuntimeConfigDefs.CommentOption.NONE.equals(RuntimeConfigDefs.CommentOption.valueOf(
-                WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty("users.comments.enabled")))) {
+                WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty("users.comments.enabled")))) {
             return false;
         }
         if (RuntimeConfigDefs.CommentOption.NONE.equals(getWeblog().getAllowComments())) {
@@ -459,7 +459,7 @@ public class WeblogEntry {
 
     @Transient
     public List<WeblogEntryComment> getComments() {
-        WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogEntryManager wmgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
         return wmgr.getComments(CommentSearchCriteria.approvedComments(this, true));
     }
 
@@ -473,7 +473,7 @@ public class WeblogEntry {
      */
     @Transient
     public String getPermalink() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), getAnchor(), true);
+        return WebloggerContext.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), getAnchor(), true);
     }
     
     /** Convenience method for checking published status */
@@ -503,7 +503,7 @@ public class WeblogEntry {
      */
     private String render(String str) {
         log.debug("Applying page plugins to string");
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogEntryManager mgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
         return mgr.processBlogText(this, str);
     }
 

@@ -25,7 +25,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
@@ -165,7 +165,7 @@ public class UIAction extends ActionSupport implements Preparable {
         // first try static config
         String value = WebloggerStaticConfig.getProperty(key);
         if (value == null) {
-            value = WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty(key);
+            value = WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty(key);
         }
         return (value == null) ? key : value;
     }
@@ -174,7 +174,7 @@ public class UIAction extends ActionSupport implements Preparable {
         // first try static config
         String value = WebloggerStaticConfig.getProperty(key);
         if (value == null) {
-            value = WebloggerFactory.getWeblogger().getPropertiesManager().getStringProperty(key);
+            value = WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty(key);
         }
         
         return (value == null) ? false : Boolean.valueOf(value);

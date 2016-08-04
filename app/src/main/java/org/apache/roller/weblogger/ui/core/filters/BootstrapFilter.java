@@ -31,7 +31,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class BootstrapFilter implements Filter {
         log.debug("Entered {}", request.getRequestURI());
         
 
-        if (!WebloggerFactory.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
+        if (!WebloggerContext.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
             log.debug("Forwarding to install page");
             // install page will check database connectivity & schema status and bootstrap if all OK.
             RequestDispatcher rd = context.getRequestDispatcher("/tb-ui/install/install.rol");

@@ -26,7 +26,7 @@ import java.io.InputStream;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.collections.ExtendedProperties;
-import org.apache.roller.weblogger.business.startup.RollerContext;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
@@ -67,7 +67,7 @@ public class WebappResourceLoader extends ResourceLoader {
 		logger.debug("WebappResourceLoader: initialization starting.");
 
 		// get the ServletContext
-		servletContext = RollerContext.getServletContext();
+		servletContext = WebloggerContext.getServletContext();
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Search directory for non-Theme Velocity files = {}", servletContext.getRealPath(servletPath));

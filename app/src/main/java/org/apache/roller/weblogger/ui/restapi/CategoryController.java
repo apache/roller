@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -74,6 +74,13 @@ public class CategoryController {
         this.cacheManager = cacheManager;
     }
 
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
+    }
+
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.PUT)
     public void updateCategory(@PathVariable String id, @RequestBody TextNode newName, Principal p,
                                HttpServletResponse response) throws ServletException {
@@ -86,7 +93,7 @@ public class CategoryController {
                         c.setName(newName.asText());
                         try {
                             weblogManager.saveWeblogCategory(c);
-                            WebloggerFactory.flush();
+                            persistenceStrategy.flush();
                             cacheManager.invalidate(c);
                             response.setStatus(HttpServletResponse.SC_OK);
                         } catch (IllegalArgumentException e) {
@@ -114,7 +121,7 @@ public class CategoryController {
                 try {
                     weblogManager.saveWeblogCategory(wc);
                     weblog.addCategory(wc);
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
                     cacheManager.invalidate(wc);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (IllegalArgumentException e) {
@@ -160,11 +167,11 @@ public class CategoryController {
 
                     if (targetCategory != null) {
                         weblogManager.moveWeblogCategoryContents(categoryToRemove, targetCategory);
-                        WebloggerFactory.flush();
+                        persistenceStrategy.flush();
                     }
 
                     weblogManager.removeWeblogCategory(categoryToRemove);
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
                     cacheManager.invalidate(categoryToRemove);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {

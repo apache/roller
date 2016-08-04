@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
@@ -129,7 +128,7 @@ public class MediaFileView extends UIAction {
                 MediaDirectory dir = mediaFileManager.createMediaDirectory(
                         getActionWeblog(), this.newDirectoryName);
                 // flush changes
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
                 addMessage("mediaFile.directoryCreate.success",
                         this.newDirectoryName);
 
@@ -224,9 +223,9 @@ public class MediaFileView extends UIAction {
             weblogManager.saveWeblog(this.getActionWeblog());
 
             // flush changes
-            WebloggerFactory.flush();
+            persistenceStrategy.flush();
             // for some reason need to release to force a refresh of media directory.
-            WebloggerFactory.release();
+            persistenceStrategy.release();
             addMessage("mediaFile.delete.success");
 
         } catch (IOException e) {
@@ -280,7 +279,7 @@ public class MediaFileView extends UIAction {
             }
 
             // flush changes
-            WebloggerFactory.flush();
+            persistenceStrategy.flush();
             if (movedFiles > 0) {
                 addMessage("mediaFile.move.success");
             }

@@ -25,7 +25,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
@@ -123,7 +123,7 @@ public class Planet implements Comparable<Planet> {
     
     @Transient
     public String getAbsoluteURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getPlanetURL(getHandle());
+        return WebloggerContext.getWeblogger().getUrlStrategy().getPlanetURL(getHandle());
     }
 
     @Transient

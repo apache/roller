@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
@@ -56,7 +55,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path="/tb-ui/authoring/preview/**")
-public class PreviewProcessor {
+public class PreviewProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
 
@@ -194,11 +193,11 @@ public class PreviewProcessor {
         initData.put("parsedRequest", previewRequest);
 
         // Load models for page previewing
-        model = Model.getModelMap("previewModelSet", initData);
+        model = getModelMap("previewModelSet", initData);
 
         // Load special models for site-wide blog
         if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
-            model.putAll(Model.getModelMap("siteModelSet", initData));
+            model.putAll(getModelMap("siteModelSet", initData));
         }
 
         // lookup Renderer we are going to use

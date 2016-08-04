@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path="/planetrss/**")
-public class PlanetFeedProcessor {
+public class PlanetFeedProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PlanetFeedProcessor.class);
 

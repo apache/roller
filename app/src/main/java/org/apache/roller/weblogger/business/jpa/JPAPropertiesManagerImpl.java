@@ -32,6 +32,8 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+
 /**
  * This class implementation reads the application's runtime properties.  At installation
  * time, these properties are initially loaded from the runtimeConfigDefs.xml into the
@@ -80,6 +82,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     }
 
     @Override
+    @PostConstruct
     public void initialize() {
         Map<String, RuntimeConfigProperty> props;
         try {
@@ -90,6 +93,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             // initialize them and save them to that table.
             initializeMissingProps(props);
             saveProperties(props);
+            strategy.flush();
         } catch (Exception e) {
             log.error("Failed to initialize runtime configuration properties."+
                     "Please check that the database has been upgraded!", e);

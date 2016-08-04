@@ -26,10 +26,10 @@ import javax.persistence.RollbackException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -57,6 +57,12 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
+    }
+
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     // the request parameters
@@ -153,7 +159,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         try {
             // save 'em and flush
             propertiesManager.saveProperties(getProperties());
-            WebloggerFactory.flush();
+            persistenceStrategy.flush();
             // notify user of our success
             addMessage("generic.changes.saved");
         } catch (RollbackException ex) {

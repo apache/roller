@@ -23,7 +23,7 @@
 <%@ page import="java.util.List" %>
 <%
 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+UserManager mgr = WebloggerContext.getWeblogger().getUserManager();
 User user = mgr.getEnabledUserByUserName(auth.getName());
 
 if (user == null) {

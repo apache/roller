@@ -27,8 +27,8 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -118,6 +118,13 @@ public final class EntryEdit extends UIAction {
         this.urlStrategy = urlStrategy;
     }
 
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
+    }
+
     // Max Tags to show for autocomplete
     private static final int MAX_TAGS = WebloggerStaticConfig.getIntProperty("services.tagdata.max", 20);
 
@@ -171,7 +178,7 @@ public final class EntryEdit extends UIAction {
 
                 // remove entry itself
                 weblogEntryManager.removeWeblogEntry(entry);
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
 
                 // note to user
                 addMessage("weblogEdit.entryRemoved", entry.getTitle());
@@ -362,7 +369,7 @@ public final class EntryEdit extends UIAction {
                 } else {
                     weblogEntryManager.saveWeblogEntry(entry);
                 }
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
 
                 // notify search of the new entry
                 if (entry.isPublished()) {

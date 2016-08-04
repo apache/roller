@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig.AuthMethod;
 import org.apache.roller.weblogger.pojos.UserCredentials;
@@ -31,7 +32,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 
 /**
@@ -52,7 +52,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) {
 
-        if (!WebloggerFactory.isBootstrapped()) {
+        if (!WebloggerContext.isBootstrapped()) {
             // Should only happen in case of 1st time startup, setup required
             // Thowing a "soft" exception here allows setup to proceed
             throw new UsernameNotFoundException("User info not available yet.");

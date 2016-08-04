@@ -33,11 +33,12 @@ import java.util.Map;
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -47,6 +48,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.util.Utilities;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * Base implementation of a ThemeManager.
@@ -54,9 +56,11 @@ import org.apache.roller.weblogger.util.Utilities;
  * This particular implementation reads theme data off the filesystem and
  * assumes that those themes are not changeable at runtime.
  */
-public class ThemeManagerImpl implements ThemeManager {
+public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
     private static Logger log = LoggerFactory.getLogger(ThemeManagerImpl.class);
+
+    private ServletContext servletContext;
 
 	static FileTypeMap map = null;
 	static {
@@ -81,32 +85,41 @@ public class ThemeManagerImpl implements ThemeManager {
     // list of themes
     private List<SharedTheme> themeList = null;
 
-	protected ThemeManagerImpl(WeblogManager wm) {
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+    protected ThemeManagerImpl(WeblogManager wm, String themeDirOverride) {
 		this.weblogManager = wm;
 
-		// get theme directory from config and verify it
-        this.themeDir = WebloggerStaticConfig.getProperty("themes.dir");
-		if (themeDir == null || themeDir.trim().length() < 1) {
-			throw new RuntimeException("couldn't get themes directory from config");
-		} else {
-			// chop off trailing slash if it exists
-			if (themeDir.endsWith("/")) {
-				themeDir = themeDir.substring(0, themeDir.length() - 1);
-			}
-
-			// make sure it exists and is readable
-			File themeDirFile = new File(themeDir);
-			if (!themeDirFile.exists() || !themeDirFile.isDirectory()
-					|| !themeDirFile.canRead()) {
-				throw new RuntimeException("couldn't access theme dir [" + themeDir + "]");
-			}
-		}
+		// themeDirOverride required when running tests (no servlet).
+        themeDir = themeDirOverride;
 	}
 
 	@Override
     @PostConstruct
     public void initialize() {
 		log.info("Initializing Theme Manager");
+        if (themeDir == null) {
+            // default theme location
+            themeDir = servletContext.getRealPath("/blogthemes");
+        }
+
+        if (!StringUtils.isEmpty(themeDir)) {
+            // chop off trailing slash if it exists
+            if (themeDir.endsWith("/")) {
+                themeDir = themeDir.substring(0, themeDir.length() - 1);
+            }
+
+            // make sure it exists and is readable
+            File themeDirFile = new File(themeDir);
+            if (!themeDirFile.exists() || !themeDirFile.isDirectory()
+                    || !themeDirFile.canRead()) {
+                throw new RuntimeException("couldn't access theme dir [" + themeDir + "]");
+            }
+        }
+
 		if (themeDir != null) {
 			// load all themes from disk and cache them
 			themeMap = loadAllThemesFromDisk();
@@ -193,8 +206,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		String[] themenames = themesdir.list(filter);
 
 		if (themenames == null) {
-			log.warn("No themes found!  Perhaps wrong directory for themes specified?  "
-					+ "(Check themes.dir setting in tightblog[-custom].properties file.)");
+			log.warn("No shared weblog themes found! Looking in location: " + themeDir);
 		} else {
             log.info("Loading themes from " + themesdir.getAbsolutePath() + "...");
 

@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,30 +20,38 @@
  */
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.weblogger.business.search.IndexManager;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoaderListener;
 
 /**
- * Provides access to the Weblogger instance and bootstraps the business tier.
+ * Subclass of Spring's ContextLoaderListener (http://stackoverflow.com/a/11817368/1207540)
+ * used to initialize and configure the Spring web application context.  Also maintains
+ * some globally accessible objects primarily for objects not instantiated by Spring
+ * and hence not easily able to take advantage of its DI features.
  */
-public final class WebloggerFactory {
+public class WebloggerContext extends ContextLoaderListener {
 
-    private static Logger log = LoggerFactory.getLogger(WebloggerFactory.class);
-
-    // Spring Application Context
-    private static ApplicationContext context = null;
+    private static Logger log = LoggerFactory.getLogger(WebloggerContext.class);
 
     // maintain our own singleton instance of Weblogger
     private static Weblogger webloggerInstance = null;
 
-    private static JPAPersistenceStrategy strategy = null;
+    private static ServletContext servletContext = null;
 
     // non-instantiable
-    private WebloggerFactory() {
+    private WebloggerContext() {
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        WebloggerContext.servletContext = sce.getServletContext();
+        super.contextInitialized(sce);
     }
 
     /**
@@ -55,7 +63,7 @@ public final class WebloggerFactory {
 
     /**
      * Accessor to the Weblogger Weblogger business tier.
-     * 
+     *
      * @return Weblogger An instance of Weblogger.
      * @throws IllegalStateException If the app has not been properly bootstrapped yet.
      */
@@ -63,16 +71,12 @@ public final class WebloggerFactory {
         if (!isBootstrapped()) {
             throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
         }
-        
+
         return webloggerInstance;
     }
 
-    public static ApplicationContext getContext() {
-        if (!isBootstrapped()) {
-            throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
-        }
-
-        return context;
+    public static ServletContext getServletContext() {
+        return servletContext;
     }
 
     /**
@@ -84,35 +88,16 @@ public final class WebloggerFactory {
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws RuntimeException If the app cannot be bootstrapped.
      */
-    public static void bootstrap(ApplicationContext inContext) {
+    public static void bootstrap(ApplicationContext context) {
         try {
-            context = inContext;
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
-            strategy = context.getBean("persistenceStrategy", JPAPersistenceStrategy.class);
-            // TODO:  Move below to @PostConstruct in IndexManagerImpl (presently requires webloggerInstance to be active)
-            PropertiesManager propertiesManager = context.getBean("propertiesManager", PropertiesManager.class);
-            propertiesManager.initialize();
-            IndexManager indexManager = context.getBean("indexManager", IndexManager.class);
-            indexManager.initialize();
-            PingTargetManager pingTargetManager = context.getBean("pingTargetManager", PingTargetManager.class);
-            pingTargetManager.initialize();
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }
 
-        strategy.flush();
-
-        log.info("TightBlog Weblogger business tier successfully bootstrapped");
+        log.info("TightBlog Weblogger successfully bootstrapped");
         log.info("   Version: {}", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
         log.info("   Revision: {}", WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));
-    }
-
-    public static void flush() {
-        strategy.flush();
-    }
-
-    public static void release() {
-        strategy.release();
     }
 
 }

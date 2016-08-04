@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -68,6 +68,12 @@ public class TemplateEdit extends UIAction {
 
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
+    }
+
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     private boolean nameChangeable = false;
@@ -193,7 +199,7 @@ public class TemplateEdit extends UIAction {
                     weblogManager.saveTemplateRendition(wtr);
                 }
 
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
 
                 // notify caches
                 cacheManager.invalidate(template);
@@ -262,7 +268,7 @@ public class TemplateEdit extends UIAction {
                 // Remove template and its renditions
                 weblogManager.removeTemplate(template);
                 weblogManager.saveWeblog(getActionWeblog());
-                WebloggerFactory.flush();
+                persistenceStrategy.flush();
 
                 // notify caches
                 cacheManager.invalidate(template);

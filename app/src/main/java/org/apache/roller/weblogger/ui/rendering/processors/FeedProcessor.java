@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
@@ -56,7 +55,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path="/tb-ui/rendering/feed/**")
-public class FeedProcessor {
+public class FeedProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(FeedProcessor.class);
 
@@ -197,7 +196,7 @@ public class FeedProcessor {
         // populate the rendering model
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", feedRequest);
-        model = Model.getModelMap("feedModelSet", initData);
+        model = getModelMap("feedModelSet", initData);
         pageId = "templates/feeds/" + feedRequest.getType() + "-atom.vm";
 
         // lookup Renderer we are going to use

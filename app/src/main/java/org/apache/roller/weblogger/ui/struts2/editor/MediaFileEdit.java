@@ -29,7 +29,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Adds or edits a media file.
@@ -61,6 +62,12 @@ public class MediaFileEdit extends UIAction {
 
     public void setPropertiesManager(PropertiesManager propertiesManager) {
         this.propertiesManager = propertiesManager;
+    }
+
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
     }
 
     // an array of files uploaded by the user, if applicable
@@ -110,7 +117,7 @@ public class MediaFileEdit extends UIAction {
         }
         directoryName = getDirectory().getName();
         bean.setDirectoryId(getDirectory().getId());
-        WebloggerFactory.flush();
+        persistenceStrategy.flush();
     }
 
     /**
@@ -219,7 +226,7 @@ public class MediaFileEdit extends UIAction {
                             addError(error.getKey(), error.getValue());
                         }
 
-                        WebloggerFactory.flush();
+                        persistenceStrategy.flush();
                         // below should not be necessary as createMediaFile refreshes the directory's
                         // file listing but caching of directory's old file listing occurring somehow.
                         mediaFile.getDirectory().getMediaFiles().add(mediaFile);
@@ -256,7 +263,7 @@ public class MediaFileEdit extends UIAction {
                         mediaFileManager.moveMediaFile(mediaFile, targetDirectory);
                     }
 
-                    WebloggerFactory.flush();
+                    persistenceStrategy.flush();
 
                     addMessage("mediaFile.update.success");
                     return SUCCESS;

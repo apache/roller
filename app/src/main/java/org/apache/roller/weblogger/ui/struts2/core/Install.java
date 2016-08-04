@@ -26,8 +26,8 @@ import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.startup.DatabaseInstaller;
+import org.apache.roller.weblogger.business.WebloggerContext;
+import org.apache.roller.weblogger.business.DatabaseInstaller;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -82,7 +82,7 @@ public class Install extends UIAction {
     }
 
     public String execute() throws WebloggerException {
-        if (WebloggerFactory.isBootstrapped()) {
+        if (WebloggerContext.isBootstrapped()) {
             return SUCCESS;
         }
 
@@ -121,7 +121,7 @@ public class Install extends UIAction {
 
 
     public String create() {
-        if (WebloggerFactory.isBootstrapped()) {
+        if (WebloggerContext.isBootstrapped()) {
             return SUCCESS;
         }
 
@@ -138,7 +138,7 @@ public class Install extends UIAction {
     }
 
     public String upgrade() {
-        if (WebloggerFactory.isBootstrapped()) {
+        if (WebloggerContext.isBootstrapped()) {
             return SUCCESS;
         }
 
@@ -158,8 +158,8 @@ public class Install extends UIAction {
     public String bootstrap() {
         log.info("ENTERING");
 
-        if (WebloggerFactory.isBootstrapped()) {
-            log.info("EXITING - already bootstrapped, forwarding to Roller");
+        if (WebloggerContext.isBootstrapped()) {
+            log.info("EXITING - already bootstrapped, forwarding to weblogger");
             return SUCCESS;
         }
 
@@ -168,8 +168,8 @@ public class Install extends UIAction {
             ServletContext sc = ServletActionContext.getServletContext();
             ApplicationContext ac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
 
-            WebloggerFactory.bootstrap(ac);
-            log.info("EXITING - Bootstrap successful, forwarding to Roller");
+            WebloggerContext.bootstrap(ac);
+            log.info("EXITING - Bootstrap successful, forwarding to weblogger");
             return SUCCESS;
 
         } catch (BootstrapException ex) {
