@@ -196,8 +196,7 @@
 
     <definition name=".Members" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Members.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MembersSidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
 </tiles-definitions>

@@ -136,31 +136,13 @@ public interface UserManager {
     UserWeblogRole getWeblogRole(User user, Weblog weblog);
 
     /**
-     * Get user's WeblogRole within a weblog or null if none.  Convenience
-     * version of getWeblogRole(User, Weblog) for callers lacking the User and/or
-     * Weblog objects.
-     *
-     * @param username    Username whose role is being checked
-     * @param weblogHandle target weblog handle of the role
-     * @return UserWeblogRole indicating user's role with weblog or null if no permission
-     */
-    UserWeblogRole getWeblogRole(String username, String weblogHandle);
-
-    /**
      * Grant user specific WeblogRole for a weblog.
      * @param user    User to grant weblog role to
      * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
+     * @param pending Whether grantee approve the role before it becomes effective
      */
-    void grantWeblogRole(User user, Weblog weblog, WeblogRole role);
-
-    /**
-     * Grant user a specific WeblogRole for a weblog, but pending user's acceptance of it
-     * @param user    User to grant weblog role to
-     * @param weblog  Weblog being granted access to
-     * @param role    WeblogRole to grant
-     */
-    void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole role);
+    void grantWeblogRole(User user, Weblog weblog, WeblogRole role, boolean pending);
 
     /**
      * Confirm user's participation with the specified weblog or throw exception if no pending invitation exists.

@@ -44,10 +44,6 @@ public class WebloggerContext extends ContextLoaderListener {
 
     private static ServletContext servletContext = null;
 
-    // non-instantiable
-    private WebloggerContext() {
-    }
-
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         WebloggerContext.servletContext = sce.getServletContext();

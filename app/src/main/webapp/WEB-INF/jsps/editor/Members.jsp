@@ -19,6 +19,16 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<script>
+var contextPath = "${pageContext.request.contextPath}";
+var weblogId = "<s:property value='actionWeblog.id'/>";
+</script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/members.js'/>"></script>
+
+<input id="refreshURL" type="hidden" value="<s:url action='members'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 
 <p class="subtitle">
     <s:text name="memberPermissions.subtitle" >
@@ -28,9 +38,34 @@
 
 <p><s:text name="memberPermissions.description" /></p>
 
-<s:form action="members!save">
-    <sec:csrfInput/>
-    <s:hidden name="weblogId" value="%{actionWeblog.id}" />
+<div class="sidebarFade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
+            <div class="sidebarInner">
+            <h3>
+                <s:text name="memberPermissions.permissionsHelpTitle" />
+            </h3>
+            <hr size="1" noshade="noshade" />
+            <s:text name="memberPermissions.permissionHelp" />
+		    <br />
+		    <br />
+        </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-app="membersApp" ng-controller="MembersController as ctrl">
+  <div id="errorMessageDiv" class="errors" style="display:none">
+    <b>{{ctrl.errorObj}}</b>
+  </div>
+
+  <div id="successMessageDiv" class="messages" style="display:none">
+    <s:if test="weblogId != null">
+      <p><s:text name="generic.changes.saved"/></p>
+    </s:if>
+  </div>
 
     <div style="text-align: right; padding-bottom: 6px;">
         <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -38,98 +73,63 @@
     </div>
 
     <table class="rollertable">
-        <tr>
-           <th width="20%"><s:text name="memberPermissions.userName" /></th>
-           <th width="20%"><s:text name="memberPermissions.administrator" /></th>
-           <th width="20%"><s:text name="memberPermissions.author" /></th>
-           <th width="20%"><s:text name="memberPermissions.limited" /></th>
-           <th width="20%"><s:text name="memberPermissions.remove" /></th>
-        </tr>
-        <s:iterator var="role" value="weblogRoles" status="rowstatus">
-            <s:if test="#role.pending">
-                <tr class="rollertable_pending">
-            </s:if>
-            <s:elseif test="#rowstatus.odd == true">
-                <tr class="rollertable_odd">
-            </s:elseif>
-            <s:else>
-                <tr class="rollertable_even">
-            </s:else>
-
+        <thead>
+          <tr>
+             <th width="20%"><s:text name="memberPermissions.userName" /></th>
+             <th width="20%"><s:text name="memberPermissions.administrator" /></th>
+             <th width="20%"><s:text name="memberPermissions.author" /></th>
+             <th width="20%"><s:text name="memberPermissions.limited" /></th>
+             <th width="20%"><s:text name="memberPermissions.remove" /></th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="role in ctrl.roles" id="{{role.user.id}}" ng-class="{rollertable_pending: role.pending}">
                 <td>
-                    <img src='<s:url value="/images/user.png"/>' border="0" alt="icon" />
-	                <s:property value="#role.user.userName" />
+                  <img src='<s:url value="/images/user.png"/>' border="0" alt="icon" />
+                  {{role.user.userName}}
                 </td>
                 <td>
-                    <input type="radio"
-                        <s:if test='#role.weblogRole.name() == "OWNER"'>checked</s:if>
-                        name='role-<s:property value="#role.user.id" />' value="OWNER" />
+                  <input type="radio" ng-model="role.weblogRole" value='OWNER'>
                 </td>
                 <td>
-	                <input type="radio"
-                        <s:if test='#role.weblogRole.name() == "POST"'>checked</s:if>
-                        name='role-<s:property value="#role.user.id" />' value="POST" />
+                  <input type="radio" ng-model="role.weblogRole" value='POST'>
                 </td>
                 <td>
-                    <input type="radio"
-                        <s:if test='#role.weblogRole.name() == "EDIT_DRAFT"'>checked</s:if>
-                        name='role-<s:property value="#role.user.id" />' value="EDIT_DRAFT" />
+                  <input type="radio" ng-model="role.weblogRole" value='EDIT_DRAFT'>
                 </td>
                 <td>
-                    <input type="radio"
-                        name='role-<s:property value="#role.user.id" />' value="-1" />
+                  <input type="radio" ng-model="role.weblogRole" value='NOBLOGNEEDED'/>
                 </td>
            </tr>
-       </s:iterator>
+       </tbody>
     </table>
     <br />
 
     <div class="control">
-       <s:submit value="%{getText('generic.save')}" />
+       <input ng-click="ctrl.updateRoles()" type="button" value="<s:text name='generic.save'/>" />
     </div>
 
-</s:form>
-
 <br>
 <br>
 
-<p><s:text name="inviteMember.prompt" /></p>
-<s:form>
-    <sec:csrfInput/>
-    <s:hidden id="invite_weblog" name="weblogId" value="%{actionWeblog.id}"/>
+  <p><s:text name="inviteMember.prompt" /></p>
+  <div>
+      <select ng-model="ctrl.userToInvite" size="1" required>
+        <option ng-repeat="(key, value) in ctrl.potentialMembers" value="{{key}}">{{value}}</option>
+      </select>
 
-    <select name="userId" id="membersinvite-select-user"/><br>
+      <label for="permissionString" class="formrow" /><s:text name="inviteMember.permissions" /></label>
 
-    <label for="permissionString" class="formrow" /><s:text name="inviteMember.permissions" /></label>
+      <input type="radio" ng-model="ctrl.inviteeRole" value="OWNER"  />
+      <s:text name="inviteMember.administrator" />
 
-    <input type="radio" name="permissionString" value="OWNER"  />
-    <s:text name="inviteMember.administrator" />
+      <input type="radio" ng-model="ctrl.inviteeRole" value="POST" />
+      <s:text name="inviteMember.author" />
 
-    <input type="radio" name="permissionString" value="POST" checked />
-    <s:text name="inviteMember.author" />
+      <input type="radio" ng-model="ctrl.inviteeRole" value="EDIT_DRAFT" checked />
+      <s:text name="inviteMember.limited" /><br><br>
 
-    <input type="radio" name="permissionString" value="EDIT_DRAFT" />
-    <s:text name="inviteMember.limited" /><br><br>
+      <input ng-click="ctrl.inviteUser()" type="button" value="<s:text name='inviteMember.button.save'/>"/>
+  </div>
 
-    <s:submit id="invite_button" value="%{getText('inviteMember.button.save')}" action="members!invite"/>
-</s:form>
-
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script>
-var contextPath = "${pageContext.request.contextPath}";
-$(function() {
-  $.ajax({
-     type: "GET",
-     url: contextPath + '/tb-ui/authoring/rest/weblog/' + $('#invite_weblog').attr('value') + '/potentialmembers',
-     success: function(data, textStatus, xhr) {
-       for (var key in data) {
-         $('#membersinvite-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
-       }
-       if (document.getElementById('membersinvite-select-user').length == 0) {
-         document.getElementById('invite_button').disabled = true;
-       }
-     }
-  });
-});
-</script>
+</div>

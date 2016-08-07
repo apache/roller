@@ -268,7 +268,7 @@ public class MailManagerImpl implements MailManager {
     }
 
     @Override
-    public void sendWeblogInvitation(User user, Weblog weblog) throws MessagingException {
+    public void sendWeblogInvitation(User user, Weblog weblog) {
 
         if (!isMailEnabled()) {
             return;
@@ -306,7 +306,9 @@ public class MailManagerImpl implements MailManager {
             url
         }));
         content = sb.toString();
-        sendTextMessage(from, to, cc, bcc, subject, content);
+        try {
+            sendTextMessage(from, to, cc, bcc, subject, content);
+        } catch (MessagingException ignored) {}
     }
     
     
@@ -344,7 +346,7 @@ public class MailManagerImpl implements MailManager {
                 activationURL }));
         content = sb.toString();
 
-        sendTextMessage(from, to, cc, bcc, subject, content);
+        sendHTMLMessage(from, to, cc, bcc, subject, content);
     }
 
     @Override

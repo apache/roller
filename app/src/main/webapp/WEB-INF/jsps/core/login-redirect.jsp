@@ -34,10 +34,15 @@ if (user == null) {
 } else {
     List<UserWeblogRole> roles = mgr.getWeblogRoles(user);
 
-    if (!GlobalRole.ADMIN.equals(user.getGlobalRole()) && roles.size() == 1) {
-        Weblog weblog = roles.get(0).getWeblog();
-        response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
-            + user.getLocale() + "&weblogId=" + weblog.getId());
+    if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
+        if (roles.size() == 1) {
+            Weblog weblog = roles.get(0).getWeblog();
+            response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
+                + user.getLocale() + "&weblogId=" + weblog.getId());
+        } else {
+            response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/menu.rol?request_locale="
+                + user.getLocale());
+        }
     } else {
         if (roles.size() > 0) {
             response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
