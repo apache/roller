@@ -62,7 +62,7 @@ $(function() {
 
 var mainMenuApp = angular.module('mainMenuApp', []);
 
-mainMenuApp.controller('MainMenuController', ['$http', function BookmarkController($http) {
+mainMenuApp.controller('MainMenuController', ['$http', function MainMenuController($http) {
     var self = this;
     this.loadItems = function() {
       $http.get(contextPath + '/tb-ui/authoring/rest/loggedinuser/weblogs').then(function(response) {

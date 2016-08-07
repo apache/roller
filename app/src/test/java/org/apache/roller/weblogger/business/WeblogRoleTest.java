@@ -77,7 +77,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertNull(role);
         
         // create weblog roles
-        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.OWNER);
+        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.OWNER, false);
         endSession(true);
         
         // check that create was successful
@@ -91,7 +91,7 @@ public class WeblogRoleTest extends WebloggerTest {
         endSession(true);
         
         // add only draft role
-        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT);
+        userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT, false);
         endSession(true);
 
         // check that user has draft weblog role only
@@ -125,7 +125,7 @@ public class WeblogRoleTest extends WebloggerTest {
         perms = userManager.getWeblogRoles(getManagedWeblog(testWeblog));
         assertEquals(1, perms.size());
 
-        userManager.grantPendingWeblogRole(user, testWeblog, WeblogRole.POST);
+        userManager.grantWeblogRole(user, testWeblog, WeblogRole.POST, true);
         endSession(true);
 
         // confirm weblog role is pending
@@ -165,7 +165,7 @@ public class WeblogRoleTest extends WebloggerTest {
         endSession(true);
 
         // invite user to weblog
-        userManager.grantPendingWeblogRole(user, testWeblog, WeblogRole.EDIT_DRAFT);
+        userManager.grantWeblogRole(user, testWeblog, WeblogRole.EDIT_DRAFT, true);
         endSession(true);
         List<UserWeblogRole> uwrList = userManager.getWeblogRolesIncludingPending(user);
         assertTrue(uwrList.get(0).isPending());

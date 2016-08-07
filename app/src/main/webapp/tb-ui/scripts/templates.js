@@ -90,6 +90,5 @@ templatesApp.controller('TemplatesController', ['$http', function TemplatesContr
            $('#errorMessageDiv').show();
          }
       })
-
     }
   }]);

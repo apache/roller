@@ -61,7 +61,7 @@ public interface MailManager {
      * @param user user being invited
      * @param weblog weblog being invited to.
      */
-    void sendWeblogInvitation(User user, Weblog weblog) throws MessagingException;
+    void sendWeblogInvitation(User user, Weblog weblog);
 
     /**
      * Sends a newly registered user an activation code to confirm the email

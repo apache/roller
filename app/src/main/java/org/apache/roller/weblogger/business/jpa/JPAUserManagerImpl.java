@@ -255,13 +255,6 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public UserWeblogRole getWeblogRole(String username, String weblogHandle) {
-        User userToCheck = getEnabledUserByUserName(username);
-        Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle);
-        return getWeblogRole(userToCheck, weblogToCheck);
-    }
-
-    @Override
     public UserWeblogRole getWeblogRole(User user, Weblog weblog) {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogId"
                 , UserWeblogRole.class);
@@ -288,52 +281,31 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     @Override
-    public void grantWeblogRole(User user, Weblog weblog, WeblogRole role) {
+    public void grantWeblogRole(User user, Weblog weblog, WeblogRole role, boolean pending) {
 
         // first, see if user already has a permission for the specified object
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getId());
         q.setParameter(2, weblog.getId());
-        UserWeblogRole existingPerm = null;
 
-        try {
-            existingPerm = q.getSingleResult();
-        } catch (NoResultException ignored) {}
-
-        // role already exists, so update it
-        if (existingPerm != null) {
-            existingPerm.setWeblogRole(role);
-            existingPerm.setPending(false);
-            this.strategy.store(existingPerm);
-        } else {
-            // it's a new association, so store it
-            UserWeblogRole perm = new UserWeblogRole(user, weblog, role);
-            this.strategy.store(perm);
-        }
-    }
-
-    @Override
-    public void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole desiredRole) {
-
-        // first, see if user already has a role for the specified weblog
-        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogIdIncludingPending",
-                UserWeblogRole.class);
-        q.setParameter(1, user.getId());
-        q.setParameter(2, weblog.getId());
         UserWeblogRole existingRole = null;
         try {
             existingRole = q.getSingleResult();
         } catch (NoResultException ignored) {}
 
-        if (existingRole == null) {
-            UserWeblogRole newRole = new UserWeblogRole(user, weblog, desiredRole);
-            newRole.setPending(true);
+        // role already exists, so update it keeping its pending status.
+        if (existingRole != null) {
+            existingRole.setWeblogRole(role);
+            this.strategy.store(existingRole);
+        } else {
+            // it's a new association, so store it
+            UserWeblogRole newRole = new UserWeblogRole(user, weblog, role);
+            newRole.setPending(pending);
             this.strategy.store(newRole);
         }
     }
 
-    
     @Override
     public void acceptWeblogInvitation(UserWeblogRole uwr) {
         // check role is still in DB
