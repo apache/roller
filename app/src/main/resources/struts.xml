@@ -232,15 +232,18 @@
             <result name="cancel" type="redirectAction">
                 <param name="actionName">mediaFileView</param>
                 <param name="weblogId">${weblogId}</param>
-                <param name="directoryName">${directoryName}</param>
+                <param name="directoryId">${directoryId}</param>
             </result>
             <allowed-methods>cancel,save</allowed-methods>
         </action>
 
-        <action name="mediaFileView!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
+        <action name="mediaFileView!*" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="actionName">mediaFileView</param>
+            <param name="pageTitleReal">mediaFileView.title</param>
+            <param name="desiredMenu">editor</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">POST</param>
             <result name="success" type="tiles">.MediaFileView</result>
-            <allowed-methods>createNewDirectory,deleteFolder,deleteSelected,moveSelected,view</allowed-methods>
         </action>
 
         <action name="mediaFileChooser" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">

@@ -97,7 +97,7 @@
 <s:form id="entry" action="%{#mainAction}!save" method="POST" enctype="multipart/form-data">
     <sec:csrfInput/>
     <s:hidden name="weblogId" />
-    <s:hidden name="directoryName" />
+    <s:hidden name="directoryId" />
     <s:hidden name="mediaFileId" id="mediaFileId" />
     <s:hidden name="bean.permalink" />
 

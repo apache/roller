@@ -561,7 +561,7 @@ public class UserController {
             userManager.grantWeblogRole(invitee, weblog, role, true);
             persistenceStrategy.flush();
             mailManager.sendWeblogInvitation(invitee, weblog);
-            return ResponseEntity.ok("inviteMember.userInvited");
+            return ResponseEntity.ok(messages.getString("inviteMember.userInvited"));
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();
         }

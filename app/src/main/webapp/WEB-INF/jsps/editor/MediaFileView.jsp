@@ -1,6 +1,6 @@
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  The ASF licenses this file to You
+  contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -22,199 +22,44 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
-
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script>
-  $(function() {
-    $(".delete-file-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete-file').dialog('open');
-    });
-    $(".delete-folder-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete-folder').dialog('open');
-    });
-    $(".move-file-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-move-file').dialog('open');
-    });
-
-    $("#confirm-delete-file").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:200,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.delete'/>": function() {
-          document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteSelected" />';
-          document.mediaFileViewForm.submit();
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-    $("#confirm-delete-folder").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:200,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.delete'/>": function() {
-          document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteFolder" />';
-          document.mediaFileViewForm.submit();
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-    $("#confirm-move-file").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:200,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.yes'/>": function() {
-          document.mediaFileViewForm.action='<s:url action="mediaFileView!moveSelected" />';
-          document.mediaFileViewForm.submit();
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-  });
+    var contextPath = "${pageContext.request.contextPath}";
+    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var msg = {
+        confirmLabel: '<s:text name="generic.confirm"/>',
+        deleteLabel: '<s:text name="generic.delete"/>',
+        cancelLabel: '<s:text name="generic.cancel"/>'
+    };
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/mediafileview.js'/>"></script>
 
-<style>
-    .mediaObject {
-         width:120px;
-         height:120px;
-    }
-    .mediaObjectInfo {
-        clear:left;
-        width:130px;
-        margin-left:5px;
-        margin-top:3px;
-        font-size:11px;
-    }
-    .highlight {
-        border: 1px solid #aaa;
-    }
-    #myMenu {
-        margin-left: 0;
-    }
-    span.button {
-        height:15px;
-        width:15px;
-        float:right;
-    }
-</style>
-
-
-<script>
-    toggleState = 'Off'
-
-    function onSelectDirectory(id) {
-        window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblogId=" + '<s:property value="%{actionWeblog.id}" />';
-    }
-
-    function onToggle() {
-        if (toggleState == 'Off') {
-            toggleState = 'On';
-            toggleFunction(true, 'selectedMediaFiles');
-            $("#deleteButton").attr('disabled',false)
-            $("#moveButton").attr('disabled',false)
-            $("#moveTargetMenu").attr('disabled',false)
-        } else {
-            toggleState = 'Off';
-            toggleFunction(false, 'selectedMediaFiles');
-            $("#deleteButton").attr('disabled',true)
-            $("#moveButton").attr('disabled',true)
-            $("#moveTargetMenu").attr('disabled',true)
-        }
-    }
-
-    function onView() {
-        document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
-        document.mediaFileViewForm.submit();
-    }
-
-    <%-- code to toggle buttons on/off as media file/directory selections change --%>
-
-    $(document).ready(function() {
-        $("#deleteButton").attr('disabled',true)
-        $("#moveButton").attr('disabled',true)
-        $("#moveTargetMenu").attr('disabled',true)
-
-        $("input[type=checkbox]").change(function() {
-            var count = 0;
-            $("input[type=checkbox]").each(function(index, element) {
-                if (element.checked) count++;
-            });
-            if (count == 0) {
-                $("#deleteButton").attr('disabled',true)
-                $("#moveButton").attr('disabled',true)
-                $("#moveTargetMenu").attr('disabled',true)
-            } else {
-                $("#deleteButton").attr('disabled',false)
-                $("#moveButton").attr('disabled',false)
-                $("#moveTargetMenu").attr('disabled',false)
-            }
-        });
-    });
-</script>
-
-
-<%-- ********************************************************************* --%>
+<input id="refreshURL" type="hidden" value="<s:url action='mediaFileView'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 
 <%-- Subtitle and folder path --%>
 
-<s:if test='currentDirectory.name.equals("default")'>
+<p class="subtitle">
+    <s:text name="mediaFileView.subtitle" >
+       <s:param value="actionWeblog.handle"/>
+    </s:text>
+</p>
 
-    <p class="subtitle">
-        <s:text name="mediaFileView.subtitle" >
-           <s:param value="actionWeblog.handle"/>
-        </s:text>
-    </p>
-    </p>
-    <p class="pagetip">
-        <s:text name="mediaFileView.rootPageTip" />
-    </p>
+<p class="pagetip">
+    <s:text name="mediaFileView.rootPageTip" />
+</p>
 
-</s:if>
-
-<s:else>
-    <p class="subtitle">
-        <s:text name="mediaFileView.folderName"/>: <s:text name="currentDirectory.name" />
-    </p>
-</s:else>
-
-<s:if test="childFiles">
-
-  <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
-    <sec:csrfInput/>
-    <s:hidden name="weblogId" />
-    <s:hidden name="directoryId" />
-    <s:hidden name="newDirectoryName" />
-    <input type="hidden" name="mediaFileId" value="" />
+<div id="ngapp-div" ng-app="mediaFileViewApp" ng-controller="MediaFileViewController as ctrl">
 
     <div class="control">
         <span style="padding-left:7px">
-            <s:text name="mediaFileView.sortBy" />:
-            <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="left" listValue="right"
-                  onchange="document.mediaFileViewForm.submit();" />
-        </span>
-
-        <span style="float:right">
-            <s:if test="!allDirectories.isEmpty">
-                <%-- Folder to View combo-box --%>
-                <s:text name="mediaFileView.viewFolder" />:
-                <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="name" onchange="onView()" />
-            </s:if>
+            <%-- Folder to View combo-box --%>
+            <s:text name="mediaFileView.viewFolder" />:
+            <%-- ng-options: http://preview.tinyurl.com/z8okbq8 --%>
+            <select ng-model="ctrl.directoryToView"
+                    ng-change="ctrl.loadMediaFiles()"
+                    ng-options="dir.id as dir.name for dir in ctrl.mediaDirectories"
+                    size="1" required></select>
         </span>
     </div>
 
@@ -222,100 +67,98 @@
 
     <%-- Media file folder contents --%>
 
-    <script>
-        function highlight(el, flag) {
-            if (flag) {
-                $(el).addClass("highlight");
-            } else {
-                $(el).removeClass("highlight");
-            }
-        }
-    </script>
-
-    <div  width="720px" height="500px">
+    <div width="720px" height="500px">
         <ul id = "myMenu">
+            <li ng-if="ctrl.mediaFiles.length == 0" style="text-align: center"><s:text name="mediaFileView.noFiles"/></li>
 
-                <s:if test="childFiles.size() ==0">
-                    <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
-                </s:if>
+            <li class="align-images" ng-repeat="mediaFile in ctrl.mediaFiles" id="{{mediaFile.id}}">
+                <div class="mediaObject">
+                    <s:url var="editUrl" action="mediaFileEdit">
+                        <s:param name="weblogId" value="%{actionWeblog.id}" />
+                    </s:url>
 
-                <%-- List media files --%>
+                    <a ng-href="<s:property value='%{editUrl}'/>&amp;mediaFileId={{mediaFile.id}}">
+                        <img ng-if="mediaFile.imageFile"
+                             ng-src='{{mediaFile.thumbnailURL}}'
+                             ng-style="{ 'width' : mediaFile.thumbnailWidth, 'height' : mediaFile.thumbnailHeight }"
+                             alt='{{mediaFile.altText}}'
+                             title='{{mediaFile.name}}'>
 
-                <s:iterator var="mediaFile" value="childFiles">
+                        <s:url var="mediaFileURL" value="/images/page_white.png"></s:url>
+                        <img ng-if="!mediaFile.imageFile" ng-src='<s:property value="%{mediaFileURL}" />'
+                             alt='{{mediaFile.altText}}'
+                             style="padding:40px 50px;">
+                    </a>
+                </div>
 
-                    <li class="align-images"
-                            onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
+                <div class="mediaObjectInfo">
+                    <input type="checkbox"
+                           ng-model="mediaFile.selected"
+                           value="{{mediaFile.id}}">
 
-                        <div class="mediaObject">
-
-                            <s:url var="editUrl" action="mediaFileEdit">
-                                <s:param name="weblogId" value="%{actionWeblog.id}" />
-                                <s:param name="directoryName" value="currentDirectory.name" />
-                                <s:param name="mediaFileId" value="#mediaFile.id" />
-                            </s:url>
-
-                            <s:a href="%{editUrl}">
-                                <s:if test="#mediaFile.imageFile">
-                                    <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
-                                         width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                         height='<s:property value="#mediaFile.thumbnailHeight"/>'
-                                         alt='<s:property value="#mediaFile.altText" />'
-                                         title='<s:property value="#mediaFile.name" />' />
-                                </s:if>
-
-                                <s:else>
-                                    <s:url var="mediaFileURL" value="/images/page_white.png"></s:url>
-                                    <img border="0" src='<s:property value="%{mediaFileURL}" />'
-                                         alt='<s:property value="#mediaFile.altText" />'
-                                         style="padding:40px 50px;" />
-                                </s:else>
-                            </s:a>
-                        </div>
-
-                        <div class="mediaObjectInfo">
-
-                            <input type="checkbox"
-                                   name="selectedMediaFiles"
-                                   value="<s:property value="#mediaFile.id"/>" />
-                            <input type="hidden" id="mediafileidentity"
-                                   value="<s:property value='#mediaFile.id'/>" />
-
-                            <str:truncateNicely lower="47" upper="47">
-                                <s:property value="#mediaFile.name" />
-                            </str:truncateNicely>
-                       </div>
-                    </li>
-                </s:iterator>
+                    {{mediaFile.name | limitTo: 47}}
+               </div>
+            </li>
         </ul>
     </div>
 
     <div style="clear:left;"></div>
 
     <div class="control clearfix" style="margin-top: 15px">
+        <span style="padding-left:7px">
+            <input id="toggleButton" type="button"
+               value='<s:text name="generic.toggle" />' onclick="onToggle()" />
 
-        <s:if test="childFiles.size() > 0">
-            <span style="padding-left:7px;margin-top: 20px">
-                <input id="toggleButton" type="button"
-                   value='<s:text name="generic.toggle" />' onclick="onToggle()" />
+            <input id="deleteButton" type="button"
+               value='<s:text name="mediaFileView.deleteSelected" />' class="delete-file-link"/>
 
-                <input id="deleteButton" type="button"
-                   value='<s:text name="mediaFileView.deleteSelected" />' class="delete-file-link"/>
+            <input id="moveButton" type="button"
+               value='<s:text name="mediaFileView.moveSelected" />' class="move-file-link"/>
 
-                <input id="moveButton" type="button"
-                   value='<s:text name="mediaFileView.moveSelected" />' class="move-file-link"/>
+            <select id="moveTargetMenu" size="1" required
+               ng-model="ctrl.directoryToMoveTo"
+               ng-options="dir.id as dir.name for dir in ctrl.mediaDirectories"></select>
+        </span>
 
-                <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
-            </span>
-        </s:if>
-
-        <s:if test="currentDirectory.name != 'default'">
-            <span style="float:right;">
-                <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" class="delete-folder-link"/>
-            </span>
-        </s:if>
+        <span style="float:right">
+            <%-- disable if named delete for now --%>
+            <input type="button"
+               value='<s:text name="mediaFileView.deleteFolder" />' class="delete-folder-link"/>
+        </span>
     </div>
 
-</s:form>
+    <div class="menu-tr sidebarFade">
+        <div class="sidebarInner">
+
+            <br>
+            <b><s:text name="mediaFileSidebar.actions" /></b>
+            <br>
+            <br>
+
+            <img src='<s:url value="/images/image_add.png"/>' border="0" alt="icon">
+            <s:url var="mediaFileAddURL" action="mediaFileAdd">
+                <s:param name="weblogId" value="%{actionWeblog.id}" />
+            </s:url>
+            <s:a href='%{mediaFileAddURL}&directoryId={{ctrl.directoryToView}}' style='font-weight:bold;'>
+                <s:text name="mediaFileSidebar.add" />
+            </s:a>
+
+            <br><br>
+            <div>
+                <img src='<s:url value="/images/folder_add.png"/>' border="0" alt="icon">
+                <s:text name="mediaFileView.addDirectory" /><br />
+                <div style="padding-left:2em; padding-top:1em">
+                    <s:text name="mediaFileView.directoryName" />
+                    <input type="text" id="newDirectoryNameField" ng-model="ctrl.newDirectoryName" size="10" maxlength="25" onBlur="this.value=this.value.trim()"/>
+                    <input type="button" id="newDirectoryButton"
+                        value='<s:text name="mediaFileView.create" />' ng-click="ctrl.createNewDirectory" />
+                </div>
+            </div>
+
+            <br><br><br>
+        </div>
+    </div>
+</div>
 
 <div id="confirm-delete-file" title="<s:text name='generic.confirm'/>" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.delete.confirm' /></p>
@@ -329,8 +172,6 @@
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.move.confirm' /></p>
 </div>
 
-</s:if>
-
-<br/>
-<br/>
-<br/>
+<br>
+<br>
+<br>

@@ -47,14 +47,14 @@
         <tr>
             <td width="20%" align="right"><s:text name="loginPage.userName" /></td>
             <td width="80%">
-                <input type="text" name="username" id="j_username" size="25" onBlur="this.value=this.value.trim()"/>
+                <input value="gmazza" type="text" name="username" id="j_username" size="25" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 
         <tr>
             <td width="20%" align="right"><s:text name="loginPage.password" /></td>
             <td width="80%">
-                <input type="password" name="password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
+                <input value="1@Password" type="password" name="password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 
