@@ -45,7 +45,7 @@
 				</div>
 				<div class="well">
 				  <h3>Most recent posts</h3>
-				  #set($recentEntries = $model.weblog.getRecentWeblogEntries("nil", 30))
+				  #set($recentEntries = $model.getRecentWeblogEntries("nil", 30))
 				  <ul>#foreach($recentEntry in $recentEntries)
 				      <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
 				  #end</ul>

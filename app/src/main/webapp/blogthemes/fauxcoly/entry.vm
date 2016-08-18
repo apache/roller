@@ -215,7 +215,7 @@
     <h3>Related entries</h3>
     <p class="details">Below are the most recent entries in the category
     <b>$model.weblogEntry.category.name</b>, some may be related to this entry.</p>
-    #set($recentInCat = $model.weblog.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
+    #set($recentInCat = $model.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
     <ul>#foreach($recentEntry in $recentInCat)
         <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
     #end</ul>

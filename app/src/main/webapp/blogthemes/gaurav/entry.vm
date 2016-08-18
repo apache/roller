@@ -243,7 +243,7 @@
 				</div>
 				<div class="well">
 					<h3>Related entries</h3>
-					#set($recentInCat = $model.weblog.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
+					#set($recentInCat = $model.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
 					<ul>#foreach($recentEntry in $recentInCat)
 						  <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
 					#end</ul>
