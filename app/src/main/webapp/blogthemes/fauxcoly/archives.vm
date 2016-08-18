@@ -131,7 +131,7 @@
 
             <h3>Most recent posts</h3>
             <p class="details">Below are the thirty most recent posts in the weblog <b>$model.weblog.name</b>.</p>
-            #set($recentEntries = $model.weblog.getRecentWeblogEntries("nil", 30))
+            #set($recentEntries = $model.getRecentWeblogEntries("nil", 30))
             <ul>#foreach($recentEntry in $recentEntries)
                 <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
             #end</ul>
