@@ -60,7 +60,6 @@ public class MediaFileController {
             List<MediaDirectory> temp =
             mediaFileManager.getMediaDirectories(weblogManager.getWeblog(id))
                     .stream()
-                    .filter(md -> !md.getMediaFiles().isEmpty())
                     .peek(md -> { md.setMediaFiles(null); md.setWeblog(null); })
                     .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
                     .collect(Collectors.toList());

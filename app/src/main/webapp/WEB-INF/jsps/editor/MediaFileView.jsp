@@ -69,7 +69,9 @@
 
     <div width="720px" height="500px">
         <ul id = "myMenu">
-            <li ng-if="ctrl.mediaFiles.length == 0" style="text-align: center"><s:text name="mediaFileView.noFiles"/></li>
+            <li ng-if="ctrl.mediaFiles.length == 0" style="text-align: center;list-style-type:none;">
+               <s:text name="mediaFileView.noFiles"/>
+            </li>
 
             <li class="align-images" ng-repeat="mediaFile in ctrl.mediaFiles" id="{{mediaFile.id}}">
                 <div class="mediaObject">
@@ -105,25 +107,31 @@
     <div style="clear:left;"></div>
 
     <div class="control clearfix" style="margin-top: 15px">
-        <span style="padding-left:7px">
-            <input id="toggleButton" type="button"
-               value='<s:text name="generic.toggle" />' onclick="onToggle()" />
+        <span style="padding-left:7px" ng-show="ctrl.mediaFiles.length > 0">
 
-            <input id="deleteButton" type="button"
-               value='<s:text name="mediaFileView.deleteSelected" />' class="delete-file-link"/>
+            <input type="button" id="toggleButton"
+               value='<s:text name="generic.toggle" />'
+               ng-click="ctrl.onToggle()"
+               />
 
-            <input id="moveButton" type="button"
-               value='<s:text name="mediaFileView.moveSelected" />' class="move-file-link"/>
+            <input type="button" class="delete-file-link"
+               value='<s:text name="mediaFileView.deleteSelected" />'
+               />
+
+            <input type="button" class="move-file-link"
+               value='<s:text name="mediaFileView.moveSelected" />'
+               ng-show="ctrl.mediaDirectories.length > 1">
 
             <select id="moveTargetMenu" size="1" required
                ng-model="ctrl.directoryToMoveTo"
-               ng-options="dir.id as dir.name for dir in ctrl.mediaDirectories"></select>
+               ng-options="dir.id as dir.name for dir in ctrl.mediaDirectories"
+               ng-show="ctrl.mediaDirectories.length > 1"></select>
         </span>
 
         <span style="float:right">
-            <%-- disable if named delete for now --%>
             <input type="button"
-               value='<s:text name="mediaFileView.deleteFolder" />' class="delete-folder-link"/>
+               value='<s:text name="mediaFileView.deleteFolder" />' class="delete-folder-link"
+               ng-show="ctrl.mediaDirectories.length > 1" />
         </span>
     </div>
 
@@ -149,9 +157,10 @@
                 <s:text name="mediaFileView.addDirectory" /><br />
                 <div style="padding-left:2em; padding-top:1em">
                     <s:text name="mediaFileView.directoryName" />
-                    <input type="text" id="newDirectoryNameField" ng-model="ctrl.newDirectoryName" size="10" maxlength="25" onBlur="this.value=this.value.trim()"/>
+                    <input type="text" id="newDirectoryNameField" ng-model="ctrl.newDirectoryName" size="10" maxlength="25"/>
                     <input type="button" id="newDirectoryButton"
-                        value='<s:text name="mediaFileView.create" />' ng-click="ctrl.createNewDirectory" />
+                        value='<s:text name="mediaFileView.create" />' ng-click="ctrl.createNewDirectory()"
+                        ng-disabled="ctrl.newDirectoryName == ''" />
                 </div>
             </div>
 

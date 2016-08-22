@@ -70,11 +70,6 @@ public interface MediaFileManager {
     void removeMediaFile(Weblog weblog, MediaFile mediaFile);
 
     /**
-     * Create default folder for media files in a weblog.
-     */
-    MediaDirectory createDefaultMediaDirectory(Weblog weblog);
-
-    /**
      * Create a media file directory with a given name.
      */
     MediaDirectory createMediaDirectory(Weblog weblog, String name);
@@ -93,11 +88,6 @@ public interface MediaFileManager {
      * Get the list of media file directories for the given weblog.
      */
     List<MediaDirectory> getMediaDirectories(Weblog weblog);
-
-    /**
-     * Get the default folder for media files for the given weblog.
-     */
-    MediaDirectory getDefaultMediaDirectory(Weblog weblog);
 
     /**
      * Move a set of media files to a new directory.

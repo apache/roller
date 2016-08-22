@@ -284,7 +284,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
         }
 
-        mediaFileManager.createDefaultMediaDirectory(newWeblog);
+        // create initial media file directory named "default"
+        mediaFileManager.createMediaDirectory(newWeblog, "default");
 
         // flush so that all data up to this point can be available in db
         this.strategy.flush();

@@ -120,12 +120,12 @@ public class MediaFileTest extends WebloggerTest {
      */
     @Test
     public void testCreateMediaDirectory() throws Exception {
-        MediaDirectory directory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        MediaDirectory directory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaDirectory directoryById = mediaFileManager.getMediaDirectory(directory.getId());
         assertEquals(directory, directoryById);
 
-        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
         assertEquals(directory, rootDirectory);
     }
 
@@ -179,7 +179,7 @@ public class MediaFileTest extends WebloggerTest {
      */
     @Test
     public void testDeleteMediaFile() throws Exception {
-        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);
@@ -216,7 +216,7 @@ public class MediaFileTest extends WebloggerTest {
      */
     @Test
     public void testCreateMediaFile() throws Exception {
-        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
@@ -246,7 +246,7 @@ public class MediaFileTest extends WebloggerTest {
      */
     @Test
     public void testUpdateMediaFile() throws Exception {
-        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
@@ -291,7 +291,7 @@ public class MediaFileTest extends WebloggerTest {
         endSession(true);
         
         testWeblog = getManagedWeblog(testWeblog);
-        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);
@@ -348,7 +348,7 @@ public class MediaFileTest extends WebloggerTest {
         endSession(true);
 
         testWeblog = getManagedWeblog(testWeblog);
-        MediaDirectory rootDirectory = mediaFileManager.getDefaultMediaDirectory(testWeblog);
+        MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);

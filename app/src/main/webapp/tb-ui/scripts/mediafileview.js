@@ -80,24 +80,6 @@ $(function() {
      });
 });
 
-toggleState = 'Off'
-
-function onToggle() {
-    if (toggleState == 'Off') {
-        toggleState = 'On';
-        toggleFunction(true, 'selectedMediaFiles');
-        $("#deleteButton").attr('disabled',false)
-        $("#moveButton").attr('disabled',false)
-        $("#moveTargetMenu").attr('disabled',false)
-    } else {
-        toggleState = 'Off';
-        toggleFunction(false, 'selectedMediaFiles');
-        $("#deleteButton").attr('disabled',true)
-        $("#moveButton").attr('disabled',true)
-        $("#moveTargetMenu").attr('disabled',true)
-    }
-}
-
 var mediaFileViewApp = angular.module('mediaFileViewApp', []);
 
 mediaFileViewApp.config(['$httpProvider', function($httpProvider) {
@@ -130,6 +112,22 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       });
     };
     this.loadMediaDirectories();
+
+    var toggleState = 'Off'
+
+    this.onToggle = function() {
+        if (toggleState == 'Off') {
+            toggleState = 'On';
+            angular.forEach(this.mediaFiles, function(mediaFile) {
+              mediaFile.selected = true;
+            })
+        } else {
+            toggleState = 'Off';
+            angular.forEach(this.mediaFiles, function(mediaFile) {
+              mediaFile.selected = false;
+            })
+        }
+    }
 
     this.createNewDirectory = function() {
       if (!self.newDirectoryName) {

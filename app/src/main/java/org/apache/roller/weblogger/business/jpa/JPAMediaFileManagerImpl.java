@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.roller.weblogger.business.FileContentManager;
@@ -99,10 +100,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         requestedName = requestedName.startsWith("/") ? requestedName.substring(1) : requestedName;
 
-        if (requestedName.equals("") || requestedName.equals("default")) {
-            // Default cannot be created using this method.
-            // Use createDefaultMediaDirectory instead
-            throw new IllegalArgumentException("Invalid media file directory name!");
+        if (StringUtils.isEmpty(requestedName)) {
+            throw new IllegalArgumentException("Empty media file directory name!");
         }
 
         MediaDirectory newDirectory;
@@ -116,13 +115,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             log.debug("Created new Directory {}", requestedName);
         }
         return newDirectory;
-    }
-
-    @Override
-    public MediaDirectory createDefaultMediaDirectory(Weblog weblog) {
-        MediaDirectory defaultDirectory = new MediaDirectory(weblog, "default");
-        this.strategy.store(defaultDirectory);
-        return defaultDirectory;
     }
 
     @Override
@@ -264,15 +256,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     @Override
     public MediaDirectory getMediaDirectory(String id) {
         return this.strategy.load(MediaDirectory.class, id);
-    }
-
-    @Override
-    public MediaDirectory getDefaultMediaDirectory(Weblog weblog) {
-        MediaDirectory temp = getMediaDirectoryByName(weblog, "default");
-        if (temp == null) {
-            throw new IllegalStateException("Required default Media Directory for Weblog: " + weblog.getHandle() + " is missing.");
-        }
-        return temp;
     }
 
     @Override
