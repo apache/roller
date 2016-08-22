@@ -114,7 +114,7 @@ var msg= {
                        <%-- And only show theme option if custom themes are enabled --%>
                        <s:if test="getProp('themes.customtheme.allowed')">
                            <img src='<s:url value="/images/layout.png"/>'>
-                           <s:url var="weblogTheme" action="templates" namespace="/tb-ui/authoring"/>
+                           <s:url var="weblogTheme" action="mediaFileView" namespace="/tb-ui/authoring"/>
                            <s:a href='%{weblogTheme}?weblogId={{role.weblog.id}}'><s:text name="yourWebsites.theme" /></s:a>
                            <br />
                        </s:if>

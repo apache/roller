@@ -79,7 +79,7 @@ public class MediaFileEdit extends UIAction {
     // an array of filenames for uploaded files
     private String uploadedFileFileName = null;
 
-    private String directoryName = null;
+    private String directoryId = null;
 
     public MediaFileEdit() {
         this.desiredMenu = "editor";
@@ -104,10 +104,8 @@ public class MediaFileEdit extends UIAction {
      */
     public void prepare() {
         allDirectories = mediaFileManager.getMediaDirectories(getActionWeblog());
-        if (!StringUtils.isEmpty(bean.getDirectoryId())) {
-            setDirectory(mediaFileManager.getMediaDirectory(bean.getDirectoryId()));
-        } else if (StringUtils.isNotEmpty(directoryName)) {
-            setDirectory(mediaFileManager.getMediaDirectoryByName(getActionWeblog(), directoryName));
+        if (!StringUtils.isEmpty(directoryId)) {
+            setDirectory(mediaFileManager.getMediaDirectory(directoryId));
         } else {
             MediaDirectory root = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
             if (root == null) {
@@ -115,7 +113,7 @@ public class MediaFileEdit extends UIAction {
             }
             setDirectory(root);
         }
-        directoryName = getDirectory().getName();
+        directoryId = getDirectory().getId();
         bean.setDirectoryId(getDirectory().getId());
         persistenceStrategy.flush();
     }
@@ -317,12 +315,12 @@ public class MediaFileEdit extends UIAction {
         this.uploadedFileFileName = uploadedFileFileName;
     }
 
-    public String getDirectoryName() {
-        return directoryName;
+    public String getDirectoryId() {
+        return directoryId;
     }
 
-    public void setDirectoryName(String directoryName) {
-        this.directoryName = directoryName;
+    public void setDirectoryId(String directoryId) {
+        this.directoryId = directoryId;
     }
 
     public List<MediaDirectory> getAllDirectories() {

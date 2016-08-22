@@ -370,12 +370,6 @@ public class MediaFile {
     public static Comparator<MediaFile> NameComparator = (file1, file2) ->
         file1.getName().compareTo(file2.getName());
 
-    public static Comparator<MediaFile> ContentTypeComparator = (file1, file2) ->
-        file1.getContentType().compareTo(file2.getContentType());
-
-    public static Comparator<MediaFile> DateUploadedComparator = (file1, file2) ->
-        file2.getDateUploaded().compareTo(file1.getDateUploaded());
-
     @Transient
     public String getDirectoryId() {
         return directoryId;
