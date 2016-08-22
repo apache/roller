@@ -107,11 +107,7 @@ public class MediaFileEdit extends UIAction {
         if (!StringUtils.isEmpty(directoryId)) {
             setDirectory(mediaFileManager.getMediaDirectory(directoryId));
         } else {
-            MediaDirectory root = mediaFileManager.getDefaultMediaDirectory(getActionWeblog());
-            if (root == null) {
-                root = mediaFileManager.createDefaultMediaDirectory(getActionWeblog());
-            }
-            setDirectory(root);
+            throw new IllegalStateException("Directory not provided.");
         }
         directoryId = getDirectory().getId();
         bean.setDirectoryId(getDirectory().getId());
