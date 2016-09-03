@@ -23,10 +23,7 @@ package org.apache.roller.weblogger.business;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -42,9 +39,8 @@ public final class WebloggerStaticConfig {
 
     private static Logger log = LoggerFactory.getLogger(WebloggerStaticConfig.class);
 
-    private static String default_config = "/org/apache/roller/weblogger/config/tightblog.properties";
+    private static String default_config = "/tightblog.properties";
     private static String custom_config = "/tightblog-custom.properties";
-    private static String junit_config = "/tightblog-junit.properties";
     private static String custom_jvm_param = "tightblog.custom.config";
     private static File custom_config_file = null;
 
@@ -79,26 +75,15 @@ public final class WebloggerStaticConfig {
             InputStream is = configClass.getResourceAsStream(default_config);
             config.load(is);
             
-            // first, see if we can find our junit testing config
-            is = configClass.getResourceAsStream(junit_config);
+            // now, see if we can find our custom config
+            is = configClass.getResourceAsStream(custom_config);
+
             if (is != null) {
-
                 config.load(is);
-                System.out.println("TightBlog Weblogger: Successfully loaded junit properties file from classpath");
-                System.out.println("File path : " + configClass.getResource(junit_config).getFile());
-
+                System.out.println("TightBlog Weblogger: Successfully loaded custom properties file from classpath");
+                System.out.println("File path : " + configClass.getResource(custom_config).getFile());
             } else {
-
-                // now, see if we can find our custom config
-                is = configClass.getResourceAsStream(custom_config);
-
-                if (is != null) {
-                    config.load(is);
-                    System.out.println("TightBlog Weblogger: Successfully loaded custom properties file from classpath");
-                    System.out.println("File path : " + configClass.getResource(custom_config).getFile());
-                } else {
-                    System.out.println("TightBlog Weblogger: No custom properties file found in classpath");
-                }
+                System.out.println("TightBlog Weblogger: No custom properties file found in classpath");
             }
 
             // finally, check for an external config file
@@ -107,12 +92,12 @@ public final class WebloggerStaticConfig {
                 custom_config_file = new File(env_file);
 
                 // make sure the file exists, then try and load it
-                if(custom_config_file.exists()) {
+                if (custom_config_file.exists()) {
                     is = new FileInputStream(custom_config_file);
                     config.load(is);
-                    System.out.println("TightBlog Weblogger: Successfully loaded custom properties from " + custom_config_file.getAbsolutePath());
+                    System.out.println("WebloggerStaticConfig: Successfully loaded custom properties from " + custom_config_file.getAbsolutePath());
                 } else {
-                    System.out.println("TightBlog Weblogger: Failed to load custom properties from " + custom_config_file.getAbsolutePath());
+                    System.out.println("WebloggerStaticConfig: Failed to load custom properties from " + custom_config_file.getAbsolutePath());
                 }
 
             }

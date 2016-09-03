@@ -26,10 +26,17 @@
           http://www.springframework.org/schema/context
           http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-    <context:property-placeholder location="classpath:tightblog-custom.properties"
-                                  order="1" ignore-unresolvable="true" ignore-resource-not-found="true"/>
-    <context:property-placeholder location="classpath:org/apache/roller/weblogger/config/tightblog.properties"
-                                  order="2"/>
+    <beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <beans:property name="locations">
+           <beans:list>
+              <beans:value>classpath:tightblog.properties</beans:value>
+              <beans:value>classpath:tightblog-custom.properties</beans:value>
+              <beans:value>file:#{systemProperties['tightblog.custom.config']}</beans:value>
+           </beans:list>
+        </beans:property>
+        <beans:property name="ignoreResourceNotFound" value="true"/>
+        <beans:property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </beans:bean>
 
     <!-- Any of these values can be overridden and maintained outside of the WAR by placing in a separate
          tightblog-custom.xml file in the servlet container's library folder, e.g. for Tomcat its lib folder
