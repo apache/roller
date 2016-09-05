@@ -52,9 +52,13 @@ public class PropertyDef {
     public String toString() {
         return "["+name+","+key+","+type+","+defaultValue+","+rows+","+cols+"]";
     }
-    
+
     public String getName() {
         return name;
+    }
+
+    public String getNameWithUnderbars() {
+        return name.replace(".", "_");
     }
 
     public void setName(String name) {

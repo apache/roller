@@ -162,6 +162,7 @@
         <action name="globalConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.GlobalConfig">
             <result name="success" type="tiles">.GlobalConfig</result>
+            <result name="error" type="tiles">.GlobalConfig</result>
         </action>
                
         <action name="userAdmin"
