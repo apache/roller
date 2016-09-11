@@ -29,8 +29,6 @@ import org.springframework.mobile.device.DeviceType;
 import org.springframework.mobile.device.site.SitePreference;
 import org.springframework.mobile.device.site.SitePreferenceUtils;
 
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -326,21 +324,6 @@ public class Utilities {
         Set<String> mySet = new HashSet<>();
         Collections.addAll(mySet, tagsarr);
         return mySet;
-    }
-
-    public static String getContentTypeFromFileName(String fileName) {
-
-        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
-
-        // TODO: figure out why PNG is missing from Java MIME types
-        if (map instanceof MimetypesFileTypeMap) {
-            try {
-                ((MimetypesFileTypeMap) map).addMimeTypes("image/png png PNG");
-            } catch (Exception ignored) {
-            }
-        }
-
-        return map.getContentType(fileName);
     }
 
     /**

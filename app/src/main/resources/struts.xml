@@ -5,11 +5,6 @@
 
     <constant name="struts.multipart.parser" value="spring"/>
 
-    <bean type="org.apache.struts2.dispatcher.multipart.MultiPartRequest"
-          name="spring"
-          class="org.apache.roller.weblogger.ui.struts2.util.SpringMultipartParser"
-          scope="default"/>
-
     <!-- Weblogger default package -->
     <package name="weblogger" namespace="/tb-ui" extends="struts-default">
 
@@ -212,22 +207,26 @@
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">
 
-        <action name="mediaFileAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+        <action name="mediaFileAdd" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">mediaFileAdd</param>
             <param name="pageTitle">mediaFileAdd.title</param>
+            <param name="desiredMenu">editor</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">POST</param>
             <result name="input" type="tiles">.MediaFileEdit</result>
-            <result name="success" type="chain">mediaFileView</result>
+            <result name="success" type="tiles">.MediaFileEdit</result>
             <result name="error" type="tiles">.MediaFileEdit</result>
             <allowed-methods>save</allowed-methods>
         </action>
 
-        <action name="mediaFileEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+        <action name="mediaFileEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">mediaFileEdit</param>
             <param name="pageTitle">mediaFile.edit.title</param>
+            <param name="desiredMenu">editor</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">POST</param>
             <result name="input" type="tiles">.MediaFileEdit</result>
-            <result name="success" type="chain">mediaFileView</result>
+            <result name="success" type="tiles">.MediaFileEdit</result>
             <result name="error" type="tiles">.MediaFileEdit</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">mediaFileView</param>
@@ -237,7 +236,7 @@
             <allowed-methods>cancel,save</allowed-methods>
         </action>
 
-        <action name="mediaFileView!*" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="mediaFileView" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="actionName">mediaFileView</param>
             <param name="pageTitleReal">mediaFileView.title</param>
             <param name="desiredMenu">editor</param>

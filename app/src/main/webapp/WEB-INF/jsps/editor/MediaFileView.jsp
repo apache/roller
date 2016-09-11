@@ -86,7 +86,7 @@
                              alt='{{mediaFile.altText}}'
                              title='{{mediaFile.name}}'>
 
-                        <s:url var="mediaFileURL" value="/images/page_white.png"></s:url>
+                        <s:url var="mediaFileURL" value="/images/page_white.png"/>
                         <img ng-if="!mediaFile.imageFile" ng-src='<s:property value="%{mediaFileURL}" />'
                              alt='{{mediaFile.altText}}'
                              style="padding:40px 50px;">

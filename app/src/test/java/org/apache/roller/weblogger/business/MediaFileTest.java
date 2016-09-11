@@ -190,7 +190,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
+        mediaFileManager.createMediaFile(mediaFile, null);
         String id = mediaFile.getId();
         endSession(true);
         assertNotNull(id);
@@ -229,7 +229,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
+        mediaFileManager.createMediaFile(mediaFile, null);
         endSession(true);
         assertNotNull(mediaFile.getId());
         assertNotNull(mediaFile.getId().length() > 0);
@@ -257,7 +257,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
+        mediaFileManager.createMediaFile(mediaFile, null);
 
         rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
@@ -270,7 +270,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile1.setName("updated.gif");
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
-        mediaFileManager.updateMediaFile(testWeblog, mediaFile1);
+        mediaFileManager.updateMediaFile(mediaFile1, null);
         endSession(true);
 
         MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
@@ -301,7 +301,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
+        mediaFileManager.createMediaFile(mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -311,7 +311,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setLength(4000);
         mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile2, null);
+        mediaFileManager.createMediaFile(mediaFile2, null);
 
         endSession(true);
 
@@ -358,7 +358,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile, null);
+        mediaFileManager.createMediaFile(mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -369,7 +369,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setInputStream(getClass()
                 .getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(testWeblog, mediaFile2, null);
+        mediaFileManager.createMediaFile(mediaFile2, null);
 
         endSession(true);
 
