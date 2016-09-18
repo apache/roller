@@ -135,7 +135,6 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     @Override
-    @PostConstruct
     public void initialize() {
 
         // only initialize the index if search is enabled

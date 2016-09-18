@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.business;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -90,6 +91,16 @@ public class WebloggerContext extends ContextLoaderListener {
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }
+        // At this point, a populated database is available, so PropertiesManager can get its values from the DB
+        PropertiesManager propertiesManager = context.getBean("propertiesManager", PropertiesManager.class);
+        propertiesManager.initialize();
+
+        // IndexManager and PingTargetManager need runtime props provided by PropertiesManager, so delaying
+        // their initialization to this point.
+        IndexManager indexManager = context.getBean("indexManager", IndexManager.class);
+        indexManager.initialize();
+        PingTargetManager pingTargetManager = context.getBean("pingTargetManager", PingTargetManager.class);
+        pingTargetManager.initialize();
 
         log.info("TightBlog Weblogger successfully bootstrapped");
         log.info("   Version: {}", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));

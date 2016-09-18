@@ -152,7 +152,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
      * caller.
      */
     @Override
-    @PostConstruct
     public void initialize() {
         // Pattern used to parse ping targets.
         // Each initial commmon ping target is specified in the format {{name}{url}}
