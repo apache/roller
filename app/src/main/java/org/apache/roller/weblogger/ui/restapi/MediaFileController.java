@@ -58,11 +58,14 @@ public class MediaFileController {
         Weblog weblog = weblogManager.getWeblog(id);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
             List<MediaDirectory> temp =
-            mediaFileManager.getMediaDirectories(weblogManager.getWeblog(id))
-                    .stream()
-                    .peek(md -> { md.setMediaFiles(null); md.setWeblog(null); })
-                    .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-                    .collect(Collectors.toList());
+                    mediaFileManager.getMediaDirectories(weblogManager.getWeblog(id))
+                            .stream()
+                            .peek(md -> {
+                                md.setMediaFiles(null);
+                                md.setWeblog(null);
+                            })
+                            .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+                            .collect(Collectors.toList());
             return temp;
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -88,7 +91,7 @@ public class MediaFileController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories", method = RequestMethod.PUT)
     public String addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
-                             Principal p, HttpServletResponse response) throws ServletException {
+                                    Principal p, HttpServletResponse response) throws ServletException {
         try {
             // TODO: check validation of directory names work: invalid, already exists, empty.
 //            addError("mediaFile.error.view.dirNameEmpty");
@@ -103,7 +106,7 @@ public class MediaFileController {
                     response.setStatus(HttpServletResponse.SC_OK);
                     return newDir.getId();
                 } catch (IllegalArgumentException e) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,  e.getMessage());
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -184,9 +187,8 @@ public class MediaFileController {
             if (fileIdsToMove != null && fileIdsToMove.size() > 0) {
                 Weblog weblog = weblogManager.getWeblog(weblogId);
                 MediaDirectory targetDirectory = mediaFileManager.getMediaDirectory(directoryId);
-                if (weblog != null
-                        && targetDirectory != null && weblog.equals(targetDirectory.getWeblog())
-                        && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                if (weblog != null && targetDirectory != null && weblog.equals(targetDirectory.getWeblog()) &&
+                        userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
                     for (String fileId : fileIdsToMove) {
                         MediaFile mediaFile = mediaFileManager.getMediaFile(fileId);

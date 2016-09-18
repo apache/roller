@@ -20,14 +20,10 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.util.Utilities;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -41,14 +37,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name="media_directory")
+@Table(name = "media_directory")
 @NamedQueries({
-        @NamedQuery(name="MediaDirectory.getByWeblog",
-                query="SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 order by d.name"),
-        @NamedQuery(name="MediaDirectory.getByWeblogAndName",
-                query="SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
+        @NamedQuery(name = "MediaDirectory.getByWeblog",
+                query = "SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 order by d.name"),
+        @NamedQuery(name = "MediaDirectory.getByWeblogAndName",
+                query = "SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaDirectory {
@@ -78,7 +76,7 @@ public class MediaDirectory {
         this.id = id;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return name;
     }
@@ -88,7 +86,7 @@ public class MediaDirectory {
     }
 
     @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false)
+    @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return weblog;
     }
@@ -97,8 +95,8 @@ public class MediaDirectory {
         this.weblog = weblog;
     }
 
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.MediaFile.class,
-            cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="directory")
+    @OneToMany(targetEntity = org.apache.roller.weblogger.pojos.MediaFile.class,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "directory")
     @OrderBy("name")
     public Set<MediaFile> getMediaFiles() {
         return mediaFiles;
@@ -110,9 +108,8 @@ public class MediaDirectory {
 
     /**
      * Indicates whether this directory contains the specified file.
-     * 
-     * @param name
-     *            file name
+     *
+     * @param name file name
      * @return true if the file is present in the directory, false otherwise.
      */
     public boolean hasMediaFile(String name) {
@@ -130,9 +127,8 @@ public class MediaDirectory {
 
     /**
      * Returns file with the given name, if present in this directory
-     * 
-     * @param name
-     *            file name
+     *
+     * @param name file name
      * @return media file object
      */
     public MediaFile getMediaFile(String name) {

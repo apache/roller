@@ -20,15 +20,10 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
@@ -39,6 +34,10 @@ import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Page model that provides access to site-wide users, weblogs and entries.
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class SiteModel implements Model {
 
     private static Logger log = LoggerFactory.getLogger(SiteModel.class);
-    
+
     private WeblogPageRequest pageRequest = null;
     private String pageLink = null;
     private URLStrategy urlStrategy;
@@ -72,7 +71,9 @@ public class SiteModel implements Model {
         return "site";
     }
 
-    /** Init page model, requires a WeblogPageRequest object. */
+    /**
+     * Init page model, requires a WeblogPageRequest object.
+     */
     @Override
     public void init(Map initData) {
         this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
@@ -84,23 +85,23 @@ public class SiteModel implements Model {
         Template weblogPage = pageRequest.getWeblogTemplate();
         pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
     }
-    
 
     /**
      * Get pager of WeblogEntry objects across all weblogs, in reverse chrono order by pubTime.
+     *
      * @param sinceDays Limit to past X days in past (or -1 for no limit)
      * @param length    Max number of results to return
      */
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
         return getWeblogEntriesPager(null, null, sinceDays, length);
     }
-    
+
     /**
      * @param queryWeblog Restrict to this weblog
      * @param cat         Restrict to this category
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
-     */   
+     */
     public Pager getWeblogEntriesPager(Weblog queryWeblog, String cat, int sinceDays, int length) {
         return new WeblogEntriesTimePager(
                 weblogEntryManager,
@@ -121,40 +122,41 @@ public class SiteModel implements Model {
      * @param len      Max number of results to return
      */
     public Pager getCommentsPager(int sinceDays, int length) {
-        
+
         String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
                 pageLink, null, null, null, null, 0, false);
 
         return new CommentsPager(
-            weblogEntryManager,
-            urlStrategy,
-            pagerUrl,
-            null,
-            null,
-            sinceDays,
-            pageRequest.getPageNum(),
-            length);
+                weblogEntryManager,
+                urlStrategy,
+                pagerUrl,
+                null,
+                null,
+                sinceDays,
+                pageRequest.getPageNum(),
+                length);
     }
 
-
-    /** Get pager of weblogs whose handles begin with specified letter */
+    /**
+     * Get pager of weblogs whose handles begin with specified letter
+     */
     public Pager getWeblogsByLetterPager(String letter, int length) {
-        
+
         String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
                 pageLink, null, null, null, null, 0, false);
-        
-        if(letter != null && StringUtils.isEmpty(letter)) {
+
+        if (letter != null && StringUtils.isEmpty(letter)) {
             letter = null;
         }
-        
+
         return new WeblogsPager(weblogManager,
-            urlStrategy,
-            pagerUrl,
-            letter,
-            pageRequest.getPageNum(),
-            length);
-    }   
-    
+                urlStrategy,
+                pagerUrl,
+                letter,
+                pageRequest.getPageNum(),
+                length);
+    }
+
     /**
      * Get map with 26 entries, one for each letter A-Z and
      * containing integers reflecting the number of weblogs whose
@@ -162,7 +164,7 @@ public class SiteModel implements Model {
      */
     public Map getWeblogHandleLetterMap() {
         Map results = new HashMap();
-        try {            
+        try {
             results = weblogManager.getWeblogHandleLetterMap();
         } catch (Exception e) {
             log.error("ERROR: fetching weblog handle letter map", e);
@@ -170,21 +172,22 @@ public class SiteModel implements Model {
         return results;
     }
 
-
-    /** Get Website object by handle */
+    /**
+     * Get Website object by handle
+     */
     public Weblog getWeblog(String handle) {
         Weblog weblog = null;
-        try {            
+        try {
             weblog = weblogManager.getWeblogByHandle(handle);
         } catch (Exception e) {
             log.error("ERROR: fetching weblog", e);
         }
         return weblog;
     }
-    
-        
+
     /**
      * Get list of WebsiteDisplay objects, ordered by number of hits.
+     *
      * @param sinceDays Only consider weblogs updated in the last sinceDays
      * @param length    Max number of results to return
      * @return list of Weblog objects with just name, handle, and hitsToday fields populated

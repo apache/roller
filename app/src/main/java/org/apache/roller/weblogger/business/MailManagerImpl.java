@@ -89,57 +89,57 @@ public class MailManagerImpl implements MailManager {
     private boolean isMailEnabled() {
         return WebloggerStaticConfig.getBooleanProperty("mail.enabled");
     }
-    
+
     @Override
     public void sendPendingEntryNotice(WeblogEntry entry) {
 
         if (!isMailEnabled()) {
             return;
         }
-        
+
         try {
             String screenName = entry.getCreator().getScreenName();
             String from = entry.getCreator().getEmailAddress();
-            String cc[] = new String[] {from};
-            String bcc[] = new String[0];
-            String to[];
+            String[] cc = new String[]{from};
+            String[] bcc = new String[0];
+            String[] to;
             String subject;
             String content;
-            
+
             // list of enabled website authors and admins
             List<String> reviewers = new ArrayList<>();
             List<User> websiteUsers = weblogManager.getWeblogUsers(entry.getWeblog(), true);
-            
+
             // build list of reviewers (website users with author permission)
             websiteUsers.stream().forEach(user -> {
-                if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST)
-                        && user.getEmailAddress() != null) {
+                if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST) &&
+                        user.getEmailAddress() != null) {
                     reviewers.add(user.getEmailAddress());
                 }
             });
 
             to = reviewers.toArray(new String[reviewers.size()]);
-            
+
             // Figure URL to entry edit page
             String editURL = urlStrategy.getEntryEditURL(entry.getWeblog().getHandle(), entry.getId(), true);
-            
+
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", entry.getWeblog().getLocaleInstance());
             StringBuilder sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
-                    resources.getString("weblogEntry.pendingEntrySubject"),
-                    new Object[] {
-                entry.getWeblog().getName(),
-                entry.getWeblog().getHandle()
-            }));
+                            resources.getString("weblogEntry.pendingEntrySubject"),
+                            new Object[]{
+                                    entry.getWeblog().getName(),
+                                    entry.getWeblog().getHandle()
+                            }));
             subject = sb.toString();
             sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
-                    resources.getString("weblogEntry.pendingEntryContent"),
-                    new Object[] { screenName, editURL })
-                    );
+                            resources.getString("weblogEntry.pendingEntryContent"),
+                            new Object[]{screenName, editURL})
+            );
             content = sb.toString();
             sendTextMessage(from, to, cc, bcc, subject, content);
         } catch (MessagingException e) {
@@ -171,18 +171,18 @@ public class MailManagerImpl implements MailManager {
             sb.append(
                     MessageFormat.format(
                             resources.getString("mailMessage.approveRegistrationSubject"),
-                            new Object[] {
-                                user.getScreenName()
+                            new Object[]{
+                                    user.getScreenName()
                             }));
             String subject = sb.toString();
             sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
                             resources.getString("mailMessage.approveRegistrationContent"),
-                            new Object[] {
-                                user.getScreenName(),
-                                user.getEmailAddress(),
-                                userAdminURL
+                            new Object[]{
+                                    user.getScreenName(),
+                                    user.getEmailAddress(),
+                                    userAdminURL
                             })
             );
             String content = sb.toString();
@@ -201,7 +201,7 @@ public class MailManagerImpl implements MailManager {
         }
 
         try {
-            String[] to = new String[] {user.getEmailAddress()};
+            String[] to = new String[]{user.getEmailAddress()};
 
             String loginURL = urlStrategy.getLoginURL(true);
 
@@ -211,7 +211,7 @@ public class MailManagerImpl implements MailManager {
             sb.append(
                     MessageFormat.format(
                             resources.getString("mailMessage.registrationApprovedSubject"),
-                            new Object[] {
+                            new Object[]{
                                     user.getScreenName()
                             }));
             String subject = sb.toString();
@@ -219,7 +219,7 @@ public class MailManagerImpl implements MailManager {
             sb.append(
                     MessageFormat.format(
                             resources.getString("mailMessage.registrationApprovedContent"),
-                            new Object[] {
+                            new Object[]{
                                     user.getScreenName(),
                                     user.getUserName(),
                                     loginURL
@@ -241,21 +241,21 @@ public class MailManagerImpl implements MailManager {
         }
 
         try {
-            String[] to = new String[] {user.getEmailAddress()};
+            String[] to = new String[]{user.getEmailAddress()};
 
             ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
             StringBuilder sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
                             resources.getString("mailMessage.registrationRejectedSubject"),
-                            new Object[] {
+                            new Object[]{
                             }));
             String subject = sb.toString();
             sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
                             resources.getString("mailMessage.registrationRejectedContent"),
-                            new Object[] {
+                            new Object[]{
                                     user.getScreenName()
                             })
             );
@@ -273,11 +273,11 @@ public class MailManagerImpl implements MailManager {
         if (!isMailEnabled()) {
             return;
         }
-        
+
         String from = weblog.getCreator().getEmailAddress();
-        String cc[] = new String[] {from};
-        String bcc[] = new String[0];
-        String to[] = new String[] {user.getEmailAddress()};
+        String[] cc = new String[]{from};
+        String[] bcc = new String[0];
+        String[] to = new String[]{user.getEmailAddress()};
         String subject;
         String content;
 
@@ -291,27 +291,27 @@ public class MailManagerImpl implements MailManager {
         StringBuilder sb = new StringBuilder();
         sb.append(MessageFormat.format(
                 resources.getString("inviteMember.notificationSubject"),
-                new Object[] {
-            weblog.getName(),
-            weblog.getHandle()})
-            );
+                new Object[]{
+                        weblog.getName(),
+                        weblog.getHandle()})
+        );
         subject = sb.toString();
         sb = new StringBuilder();
         sb.append(MessageFormat.format(
                 resources.getString("inviteMember.notificationContent"),
-                new Object[] {
-            weblog.getName(),
-            weblog.getHandle(),
-            user.getUserName(),
-            url
-        }));
+                new Object[]{
+                        weblog.getName(),
+                        weblog.getHandle(),
+                        user.getUserName(),
+                        url
+                }));
         content = sb.toString();
         try {
             sendTextMessage(from, to, cc, bcc, subject, content);
-        } catch (MessagingException ignored) {}
+        } catch (MessagingException ignored) {
+        }
     }
-    
-    
+
     @Override
     public void sendUserActivationEmail(User user) throws MessagingException {
 
@@ -325,9 +325,9 @@ public class MailManagerImpl implements MailManager {
         String from = propertiesManager.getStringProperty(
                 "user.account.activation.mail.from");
 
-        String cc[] = new String[0];
-        String bcc[] = new String[0];
-        String to[] = new String[] { user.getEmailAddress() };
+        String[] cc = new String[0];
+        String[] bcc = new String[0];
+        String[] to = new String[]{user.getEmailAddress()};
         String subject = resources.getString(
                 "user.account.activation.mail.subject");
         String content;
@@ -337,13 +337,11 @@ public class MailManagerImpl implements MailManager {
         StringBuilder sb = new StringBuilder();
 
         // activationURL=
-        String activationURL = rootURL
-                + "/tb-ui/emailResponse!activate.rol?activationCode="
-                + user.getActivationCode();
+        String activationURL = rootURL + "/tb-ui/emailResponse!activate.rol?activationCode=" +
+                user.getActivationCode();
         sb.append(MessageFormat.format(
                 resources.getString("user.account.activation.mail.content"),
-                new Object[] { user.getScreenName(), user.getUserName(),
-                activationURL }));
+                new Object[]{user.getScreenName(), user.getUserName(), activationURL}));
         content = sb.toString();
 
         sendHTMLMessage(from, to, cc, bcc, subject, content);
@@ -386,7 +384,6 @@ public class MailManagerImpl implements MailManager {
                     .map(User::getEmailAddress)
                     .collect(Collectors.toList()).toArray(new String[0]);
 
-
             String from = user.getEmailAddress();
 
             if (comment.getPending() || weblog.getEmailComments()) {
@@ -413,7 +410,7 @@ public class MailManagerImpl implements MailManager {
 
         // build list of email addresses to send notification to
         Set<String> subscribers = new TreeSet<>();
-        
+
         // Get all the subscribers to this comment thread
         List<WeblogEntryComment> priorComments = weblogEntryManager.getComments(
                 CommentSearchCriteria.approvedComments(entry, false))
@@ -471,10 +468,9 @@ public class MailManagerImpl implements MailManager {
             log.warn("Exception sending comment notification mail", e);
             log.debug("", e);
         }
-        
+
         log.debug("Done sending email message");
     }
-    
 
     @Override
     public void sendYourCommentWasApprovedNotifications(List<WeblogEntryComment> comments) {
@@ -495,8 +491,7 @@ public class MailManagerImpl implements MailManager {
             sendYourCommentWasApprovedNotification(comment, resources);
         }
     }
-    
-    
+
     private void sendYourCommentWasApprovedNotification(WeblogEntryComment cd, I18nMessages resources) {
 
         WeblogEntry entry = cd.getWeblogEntry();
@@ -507,15 +502,15 @@ public class MailManagerImpl implements MailManager {
 
         // form the message to be sent
         String subject = resources.getString("email.comment.commentApproved");
-        
+
         StringBuilder msg = new StringBuilder();
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
         msg.append(urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true));
-        
+
         // send message to author of approved comment
         try {
-            sendTextMessage(from, new String[] {cd.getEmail()}, null, null, subject, msg.toString());
+            sendTextMessage(from, new String[]{cd.getEmail()}, null, null, subject, msg.toString());
         } catch (Exception e) {
             log.warn("Exception sending comment mail: {}", e.getMessage());
             log.debug("", e);
@@ -526,10 +521,10 @@ public class MailManagerImpl implements MailManager {
     /**
      * This method is used to send a Text Message.
      *
-     * @param from e-mail address of sender
-     * @param to e-mail addresses of recipients
-     * @param cc e-mail address of cc recipients
-     * @param bcc e-mail address of bcc recipients
+     * @param from    e-mail address of sender
+     * @param to      e-mail addresses of recipients
+     * @param cc      e-mail address of cc recipients
+     * @param bcc     e-mail address of bcc recipients
      * @param subject subject of e-mail
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
@@ -542,8 +537,8 @@ public class MailManagerImpl implements MailManager {
     /**
      * This method is used to send a HTML Message
      *
-     * @param from e-mail address of sender
-     * @param to e-mail address(es) of recipients
+     * @param from    e-mail address of sender
+     * @param to      e-mail address(es) of recipients
      * @param subject subject of e-mail
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
@@ -552,7 +547,6 @@ public class MailManagerImpl implements MailManager {
                                  String content) throws MessagingException {
         sendMessage(from, to, cc, bcc, subject, content, "text/html; charset=utf-8");
     }
-
 
     private void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
                              String content, String mimeType) throws MessagingException {
@@ -566,7 +560,7 @@ public class MailManagerImpl implements MailManager {
             log.debug("e-mail from: {}", sentFrom);
         }
 
-        if (to!=null) {
+        if (to != null) {
             InternetAddress[] sendTo = new InternetAddress[to.length];
 
             for (int i = 0; i < to.length; i++) {
@@ -607,7 +601,7 @@ public class MailManagerImpl implements MailManager {
             // Send to the list of remaining addresses, ignoring the addresses attached to the message
             mailSender.send(message);
         } catch (MailAuthenticationException | MailSendException ex) {
-            bFailedToSome=true;
+            bFailedToSome = true;
             sendex.setNextException(ex);
         }
 

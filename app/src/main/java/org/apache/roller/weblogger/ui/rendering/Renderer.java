@@ -23,19 +23,17 @@ import org.apache.roller.weblogger.util.WebloggerException;
 import java.io.Writer;
 import java.util.Map;
 
-
 /**
  * Renders content to writer based on values in a map.
  */
 public interface Renderer {
-    
-    
+
     /**
      * Render the content for this Renderer to the given Writer using
      * the given set of model objects.
-     *
+     * <p>
      * Throws an exception if there is a problem during rendering.
      */
     void render(Map<String, Object> model, Writer writer) throws WebloggerException;
-    
+
 }

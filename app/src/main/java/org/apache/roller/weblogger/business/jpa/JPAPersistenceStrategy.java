@@ -20,24 +20,22 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-
-import javax.annotation.PreDestroy;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.naming.NamingException;
-import javax.persistence.RollbackException;
-import javax.persistence.TypedQuery;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.FlushModeType;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+import javax.persistence.RollbackException;
+import javax.persistence.TypedQuery;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Responsible for the lowest-level interaction with the JPA API.
@@ -50,7 +48,7 @@ public class JPAPersistenceStrategy {
      * The thread local EntityManager.
      */
     private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<>();
-    
+
     /**
      * The EntityManagerFactory for this Roller instance.
      */
@@ -66,10 +64,10 @@ public class JPAPersistenceStrategy {
         Enumeration keys = WebloggerStaticConfig.keys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
-            if (       key.startsWith("javax.persistence.")
-                    || key.startsWith("openjpa.")
-                    || key.startsWith("eclipselink.")
-                    || key.startsWith("hibernate.")) {
+            if (key.startsWith("javax.persistence.") ||
+                    key.startsWith("openjpa.") ||
+                    key.startsWith("eclipselink.") ||
+                    key.startsWith("hibernate.")) {
                 String value = WebloggerStaticConfig.getProperty(key);
                 log.info("{}: {}", key, value);
                 emfProps.setProperty(key, value);
@@ -93,6 +91,7 @@ public class JPAPersistenceStrategy {
 
         this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
     }
+
     /**
      * Refresh changes to the current object.
      */
@@ -109,6 +108,7 @@ public class JPAPersistenceStrategy {
 
     /**
      * Flush changes to the datastore, commit transaction, release em.
+     *
      * @throws RollbackException if the commit fails
      */
     public void flush() throws RollbackException {
@@ -118,26 +118,29 @@ public class JPAPersistenceStrategy {
 
     /**
      * Retrieve object, no transaction needed.
+     *
      * @param clazz the class of object to retrieve
-     * @param id the id of the object to retrieve
+     * @param id    the id of the object to retrieve
      * @return the object retrieved
      */
-    public<R> R load(Class<R> clazz, String id) {
+    public <R> R load(Class<R> clazz, String id) {
         EntityManager em = getEntityManager(false);
         return em.find(clazz, id);
     }
 
     /**
      * Retrieve managed version of object
+     *
      * @return the object retrieved
      */
-    public<R> R merge(R entity) {
+    public <R> R merge(R entity) {
         EntityManager em = getEntityManager(false);
         return em.merge(entity);
     }
 
     /**
      * Store object using an existing transaction.
+     *
      * @param obj the object to persist
      * @return the object persisted
      */
@@ -149,50 +152,55 @@ public class JPAPersistenceStrategy {
         }
         return obj;
     }
-    
+
     /**
      * Remove object from persistence storage.
+     *
      * @param clazz the class of object to remove
-     * @param id the id of the object to remove
+     * @param id    the id of the object to remove
      */
     public void remove(Class clazz, String id) {
         EntityManager em = getEntityManager(true);
         Object po = em.find(clazz, id);
         em.remove(po);
     }
-    
+
     /**
      * Remove object from persistence storage.
+     *
      * @param po the persistent object to remove
      */
     public void remove(Object po) {
         EntityManager em = getEntityManager(true);
         em.remove(po);
     }
-    
+
     /**
      * Remove object from persistence storage.
+     *
      * @param objsToRemove the persistent objects to remove
      */
     public void removeAll(List<?> objsToRemove) {
         EntityManager em = getEntityManager(true);
         objsToRemove.forEach(em::remove);
     }
-    
+
     /**
      * Return true if a transaction is active on the current EntityManager.
+     *
      * @param em the persistence manager
      * @return true if the persistence manager is not null and has an active
-     *         transaction
+     * transaction
      */
     private boolean isTransactionActive(EntityManager em) {
         return em != null && em.getTransaction().isActive();
     }
-    
+
     /**
      * Get the EntityManager associated with the current thread of control.
+     *
      * @param isTransactionRequired true if a transaction is begun if not
-     * already active
+     *                              already active
      * @return the EntityManager
      */
     public EntityManager getEntityManager(boolean isTransactionRequired) {
@@ -202,7 +210,7 @@ public class JPAPersistenceStrategy {
         }
         return em;
     }
-    
+
     /**
      * Get the current ThreadLocal EntityManager
      */
@@ -214,10 +222,11 @@ public class JPAPersistenceStrategy {
         }
         return em;
     }
-    
+
     /**
      * Get named TypedQuery that won't commit changes to DB first (FlushModeType.COMMIT)
-     * @param queryName the name of the query
+     *
+     * @param queryName   the name of the query
      * @param resultClass return type of query
      */
     public <T> TypedQuery<T> getNamedQuery(String queryName, Class<T> resultClass) {
@@ -233,7 +242,7 @@ public class JPAPersistenceStrategy {
      * Get named query with default flush mode (usually FlushModeType.AUTO)
      * FlushModeType.AUTO commits changes to DB prior to running statement
      *
-     * @param queryName the name of the query
+     * @param queryName   the name of the query
      * @param resultClass return type of query
      */
     public <T> TypedQuery<T> getNamedQueryCommitFirst(String queryName, Class<T> resultClass) {
@@ -243,6 +252,7 @@ public class JPAPersistenceStrategy {
 
     /**
      * Create query from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
+     *
      * @param queryString the query
      */
     public Query getDynamicQuery(String queryString) {
@@ -257,6 +267,7 @@ public class JPAPersistenceStrategy {
     /**
      * Create TypedQuery from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
      * Preferred over getDynamicQuery(String) due to it being typesafe.
+     *
      * @param queryString the query
      * @param resultClass return type of query
      */
@@ -272,6 +283,7 @@ public class JPAPersistenceStrategy {
     /**
      * Get named update query with default flush mode (usually FlushModeType.AUTO)
      * FlushModeType.AUTO commits changes to DB prior to running statement
+     *
      * @param queryName the name of the query
      */
     public Query getNamedUpdate(String queryName) {

@@ -31,7 +31,7 @@ public class WebloggerException extends Exception {
     public WebloggerException() {
         super();
     }
-    
+
     /**
      * Construct WebloggerException with message string.
      *
@@ -40,19 +40,17 @@ public class WebloggerException extends Exception {
     public WebloggerException(String message) {
         super(message);
     }
-    
-    
+
     /**
      * Construct WebloggerException, wrapping existing throwable.
      *
-     * @param message Error message
+     * @param message   Error message
      * @param throwable Existing connection to wrap.
      */
     public WebloggerException(String message, Throwable throwable) {
         super(message, throwable);
     }
-    
-    
+
     /**
      * Construct WebloggerException, wrapping existing throwable.
      *
@@ -64,6 +62,7 @@ public class WebloggerException extends Exception {
 
     /**
      * Get root cause object, or null if none.
+     *
      * @return Root cause or null if none.
      */
     public Throwable getRootCause() {
@@ -72,6 +71,7 @@ public class WebloggerException extends Exception {
 
     /**
      * Get root cause message.
+     *
      * @return Root cause message.
      */
     public String getErrorMessageChain() {
@@ -87,6 +87,7 @@ public class WebloggerException extends Exception {
 
     /**
      * Print stack trace for exception and for root cause exception if there is one.
+     *
      * @see java.lang.Throwable#printStackTrace()
      */
     public void printStackTrace() {
@@ -97,9 +98,9 @@ public class WebloggerException extends Exception {
         }
     }
 
-
     /**
      * Print stack trace for exception and for root cause exception if there is one.
+     *
      * @param s Stream to print to.
      */
     public void printStackTrace(PrintStream s) {
@@ -110,9 +111,9 @@ public class WebloggerException extends Exception {
         }
     }
 
-
     /**
      * Print stack trace for exception and for root cause exception if there is one.
+     *
      * @param s Writer to write to.
      */
     public void printStackTrace(PrintWriter s) {

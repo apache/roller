@@ -20,15 +20,16 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.List;
-import java.util.Map;
-import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Model that provides access to planet aggregations, feeds and subscriptions.
@@ -36,9 +37,9 @@ import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 public class PlanetModel implements Model {
 
     private WeblogPageRequest pageRequest = null;
-    private String         pageLink = null;
+    private String pageLink = null;
 
-    private URLStrategy    urlStrategy = null;
+    private URLStrategy urlStrategy = null;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
@@ -55,7 +56,9 @@ public class PlanetModel implements Model {
         return "planet";
     }
 
-    /** Init page model, requires a WeblogPageRequest object. */
+    /**
+     * Init page model, requires a WeblogPageRequest object.
+     */
     @Override
     public void init(Map initData) {
         this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
@@ -67,23 +70,24 @@ public class PlanetModel implements Model {
         Template weblogPage = pageRequest.getWeblogTemplate();
         pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
     }
-    
+
     /**
      * Get pager for WeblogEntry objects from specified Planet group in reverse chrono order.
+     *
      * @param length Max number of results to return
      */
     public Pager getPlanetPager(String planetHandle, int sinceDays, int length) {
-        
+
         String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
                 pageLink, null, null, null, null, 0, false);
-        
+
         return new PlanetEntriesPager(planetManager, urlStrategy,
-            planetHandle, pagerUrl, sinceDays, pageRequest.getPageNum(), length);
+                planetHandle, pagerUrl, sinceDays, pageRequest.getPageNum(), length);
     }
-    
-    
+
     /**
      * Get Planets defined.
+     *
      * @return List of Planet groups defined.
      */
     public List<Planet> getPlanets() {
@@ -92,6 +96,7 @@ public class PlanetModel implements Model {
 
     /**
      * Get Planet by handle.
+     *
      * @param groupHandle Handle of Planet to fetch.
      * @return PlaneGroup specified by handle.
      */
@@ -101,6 +106,7 @@ public class PlanetModel implements Model {
 
     /**
      * Get RSS webpage of specified planet
+     *
      * @param planet planet handle
      * @return RSS webpage of planet
      */

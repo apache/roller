@@ -29,35 +29,35 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 public class Weblogger {
 
     // managers
-    private final PropertiesManager    propertiesManager;
-    private final ThemeManager         themeManager;
-    private final UserManager          userManager;
-    private final WeblogManager        weblogManager;
-    private final WeblogEntryManager   weblogEntryManager;
-    private final PlanetManager        planetManager;
+    private final PropertiesManager propertiesManager;
+    private final ThemeManager themeManager;
+    private final UserManager userManager;
+    private final WeblogManager weblogManager;
+    private final WeblogEntryManager weblogEntryManager;
+    private final PlanetManager planetManager;
 
     // url strategy
-    private final URLStrategy          urlStrategy;
+    private final URLStrategy urlStrategy;
 
     /**
      * Single constructor.
      */
     protected Weblogger(
-            PropertiesManager    propertiesManager,
-            ThemeManager         themeManager,
-            UserManager          userManager,
-            WeblogManager        weblogManager,
-            WeblogEntryManager   weblogEntryManager,
-            PlanetManager        planetManager,
-            URLStrategy          urlStrategy) {
+            PropertiesManager propertiesManager,
+            ThemeManager themeManager,
+            UserManager userManager,
+            WeblogManager weblogManager,
+            WeblogEntryManager weblogEntryManager,
+            PlanetManager planetManager,
+            URLStrategy urlStrategy) {
 
-        this.propertiesManager   = propertiesManager;
-        this.themeManager        = themeManager;
-        this.userManager         = userManager;
-        this.weblogManager       = weblogManager;
-        this.weblogEntryManager  = weblogEntryManager;
-        this.urlStrategy         = urlStrategy;
-        this.planetManager       = planetManager;
+        this.propertiesManager = propertiesManager;
+        this.themeManager = themeManager;
+        this.userManager = userManager;
+        this.weblogManager = weblogManager;
+        this.weblogEntryManager = weblogEntryManager;
+        this.urlStrategy = urlStrategy;
+        this.planetManager = planetManager;
     }
 
     public ThemeManager getThemeManager() {

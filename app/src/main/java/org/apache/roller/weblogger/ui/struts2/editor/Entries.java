@@ -20,6 +20,19 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -27,14 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.*;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A list view of entries of a weblog.
@@ -59,26 +64,25 @@ public class Entries extends UIAction {
 
     // number of comments to show per page
     private static final int COUNT = 30;
-    
+
     // bean for managing submitted data
     private EntriesBean bean = new EntriesBean();
-    
+
     // pager for the entries we are viewing
     private EntriesPager pager = null;
-    
+
     // first entry in the list
     private WeblogEntry firstEntry = null;
-    
+
     // last entry in the list
     private WeblogEntry lastEntry = null;
-    
-    
+
     public Entries() {
         this.actionName = "entries";
         this.desiredMenu = "editor";
         this.pageTitle = "weblogEntryQuery.title";
     }
-    
+
     @Override
     public GlobalRole getRequiredGlobalRole() {
         return GlobalRole.BLOGGER;
@@ -90,11 +94,11 @@ public class Entries extends UIAction {
     }
 
     public String execute() {
-        
+
         if (log.isDebugEnabled()) {
-            log.debug("entries bean is ...\n"+getBean().toString());
+            log.debug("entries bean is ...\n" + getBean().toString());
         }
-        
+
         List<WeblogEntry> entries;
         boolean hasMore = false;
         String status = getBean().getStatus();
@@ -122,57 +126,55 @@ public class Entries extends UIAction {
         entries = new ArrayList<>();
         entries.addAll(rawEntries);
         if (entries.size() > 0) {
-            log.debug("query found "+rawEntries.size()+" results");
+            log.debug("query found " + rawEntries.size() + " results");
 
-            if(rawEntries.size() > COUNT) {
-                entries.remove(entries.size()-1);
+            if (rawEntries.size() > COUNT) {
+                entries.remove(entries.size() - 1);
                 hasMore = true;
             }
 
             setFirstEntry(entries.get(0));
-            setLastEntry(entries.get(entries.size()-1));
+            setLastEntry(entries.get(entries.size() - 1));
         }
 
         // build entries pager
         String baseUrl = buildBaseUrl();
         setPager(new EntriesPager(baseUrl, getBean().getPage(), entries, hasMore));
-                
+
         return LIST;
     }
-    
-    
+
     // use the action data to build a url representing this action, including query data
     private String buildBaseUrl() {
-        
+
         Map<String, String> params = new HashMap<>();
-        
-        if(!StringUtils.isEmpty(getBean().getCategoryName())) {
+
+        if (!StringUtils.isEmpty(getBean().getCategoryName())) {
             params.put("bean.categoryPath", getBean().getCategoryName());
         }
-        if(!StringUtils.isEmpty(getBean().getTagsAsString())) {
+        if (!StringUtils.isEmpty(getBean().getTagsAsString())) {
             params.put("bean.tagsAsString", getBean().getTagsAsString());
         }
-        if(!StringUtils.isEmpty(getBean().getText())) {
+        if (!StringUtils.isEmpty(getBean().getText())) {
             params.put("bean.text", getBean().getText());
         }
-        if(!StringUtils.isEmpty(getBean().getStartDateString())) {
+        if (!StringUtils.isEmpty(getBean().getStartDateString())) {
             params.put("bean.startDateString", getBean().getStartDateString());
         }
-        if(!StringUtils.isEmpty(getBean().getEndDateString())) {
+        if (!StringUtils.isEmpty(getBean().getEndDateString())) {
             params.put("bean.endDateString", getBean().getEndDateString());
         }
-        if(!StringUtils.isEmpty(getBean().getStatus())) {
+        if (!StringUtils.isEmpty(getBean().getStatus())) {
             params.put("bean.status", getBean().getStatus());
         }
-        if(getBean().getSortBy() != null) {
+        if (getBean().getSortBy() != null) {
             params.put("bean.sortBy", getBean().getSortBy().toString());
         }
 
         return urlStrategy.getActionURL("entries", "/tb-ui/authoring", getActionWeblog(),
                 params, false);
     }
-    
-    
+
     /**
      * Get the list of all categories for the action weblog, not including root.
      */
@@ -191,7 +193,7 @@ public class Entries extends UIAction {
         opts.add(Pair.of(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(), getText("weblogEntryQuery.label.updateTime")));
         return opts;
     }
-    
+
     public List<Pair<String, String>> getStatusOptions() {
         List<Pair<String, String>> opts = new ArrayList<>();
         opts.add(Pair.of("ALL", getText("weblogEntryQuery.label.allEntries")));
@@ -233,5 +235,5 @@ public class Entries extends UIAction {
     public void setPager(EntriesPager pager) {
         this.pager = pager;
     }
-    
+
 }

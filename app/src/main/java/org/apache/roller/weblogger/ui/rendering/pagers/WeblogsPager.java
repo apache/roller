@@ -18,15 +18,16 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Paging through a collection of weblogs.
@@ -34,44 +35,43 @@ import org.slf4j.LoggerFactory;
 public class WeblogsPager extends AbstractPager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogsPager.class);
-    
+
     private String letter = null;
     private int length = 0;
-    
+
     // collection for the pager
     private List<Weblog> weblogs;
-    
+
     // are there more items?
     private boolean more = false;
 
     private WeblogManager weblogManager;
 
     public WeblogsPager(
-            WeblogManager  weblogManager,
-            URLStrategy    strat,
-            String         baseUrl,
-            String         letter,
-            int            page,
-            int            length) {
-        
+            WeblogManager weblogManager,
+            URLStrategy strat,
+            String baseUrl,
+            String letter,
+            int page,
+            int length) {
+
         super(strat, baseUrl, page);
 
         this.weblogManager = weblogManager;
         this.letter = letter;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
     public String getNextLink() {
         // need to add letter param if it exists
-        if(letter != null) {
+        if (letter != null) {
             int page = getPage() + 1;
-            if(hasMoreItems()) {
+            if (hasMoreItems()) {
                 Map<String, String> params = new HashMap<>();
-                params.put("page", ""+page);
+                params.put("page", "" + page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
             }
@@ -80,15 +80,14 @@ public class WeblogsPager extends AbstractPager {
             return super.getNextLink();
         }
     }
-    
-    
+
     public String getPrevLink() {
         // need to add letter param if it exists
         if (letter != null) {
             int page = getPage() - 1;
             if (page >= 0) {
                 Map<String, String> params = new HashMap<>();
-                params.put("page", ""+page);
+                params.put("page", "" + page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
             }
@@ -97,14 +96,13 @@ public class WeblogsPager extends AbstractPager {
             return super.getPrevLink();
         }
     }
-    
-    
+
     public List<Weblog> getItems() {
-        
+
         if (weblogs == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             List<Weblog> results = new ArrayList<>();
 
             try {
@@ -114,7 +112,7 @@ public class WeblogsPager extends AbstractPager {
                 } else {
                     rawWeblogs = weblogManager.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }
-                
+
                 // wrap the results
                 int count = 0;
                 for (Weblog weblog : rawWeblogs) {
@@ -124,20 +122,19 @@ public class WeblogsPager extends AbstractPager {
                         more = true;
                     }
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: fetching weblog list", e);
             }
-            
+
             weblogs = results;
         }
-        
+
         return weblogs;
     }
-    
-    
+
     public boolean hasMoreItems() {
         return more;
     }
-    
+
 }

@@ -20,13 +20,13 @@
  */
 package org.apache.roller.weblogger.ui.rendering.comment;
 
-import java.util.Random;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Random;
 
 /**
  * Asks the commenter to answer a simple math question.
@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 public class MathCommentAuthenticator implements CommentAuthenticator {
 
     private static Logger log = LoggerFactory.getLogger(MathCommentAuthenticator.class);
-    
+
     public String getHtml(HttpServletRequest request) {
-        
+
         String answer = "";
-        
+
         HttpSession session = request.getSession(true);
         if (session.getAttribute("mathAnswer") == null) {
             // starting a new test
@@ -54,10 +54,10 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
             answer = request.getParameter("answer");
             answer = (answer == null) ? "" : answer;
         }
-        
+
         // pull existing values out of session
-        Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
-        Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
+        Integer value1o = (Integer) request.getSession().getAttribute("mathValue1");
+        Integer value2o = (Integer) request.getSession().getAttribute("mathValue2");
 
         I18nMessages messages = I18nMessages.getMessages(request.getLocale());
         String str = "<p>";
@@ -67,20 +67,19 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         str += answer + "\" /></p>";
         return str;
     }
-    
-    
+
     public boolean authenticate(HttpServletRequest request) {
-        
+
         boolean authentic = false;
-        
+
         HttpSession session = request.getSession(false);
         String answerString = request.getParameter("answer");
-        
+
         if (answerString != null && session != null) {
             try {
                 int answer = Integer.parseInt(answerString);
                 Integer sum = (Integer) session.getAttribute("mathAnswer");
-                
+
                 if (sum != null && answer == sum) {
                     authentic = true;
                     session.removeAttribute("mathAnswer");
@@ -94,9 +93,9 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
                 log.error("exception", e);
             }
         }
-        
+
         return authentic;
     }
-    
+
 }
 

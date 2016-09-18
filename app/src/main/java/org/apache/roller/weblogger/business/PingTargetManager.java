@@ -20,24 +20,25 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.io.IOException;
-import java.util.List;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Manages ping targets.
  */
 public interface PingTargetManager {
-    
+
     /**
      * Store a ping target.
      *
      * @param pingTarget ping target data object.
      */
     void savePingTarget(PingTarget pingTarget);
-    
+
     /**
      * Remove a ping target.
      */
@@ -50,7 +51,7 @@ public interface PingTargetManager {
      * @return the ping target whose id is specified.
      */
     PingTarget getPingTarget(String id);
-    
+
     /**
      * Get a list of the defined ping targets.
      *
@@ -73,7 +74,7 @@ public interface PingTargetManager {
      * @return true if the <code>pingTargetUrl</code> property of the ping target is a well-formed url.
      */
     boolean isUrlWellFormed(String pingTargetUrl);
-    
+
     /**
      * Check if the host portion of the url of a ping target is known, meaning it is either a well-formed IP address
      * or a hostname that resolves from the server.  The ping target url must parse as a <code>java.net.URL</code> in
@@ -81,7 +82,7 @@ public interface PingTargetManager {
      *
      * @param pingTargetUrl url to check.
      * @return true if the <code>pingTargetUrl</code> (is well-formed and) the <code>host</code> portion of the url of the
-     *         ping target is a valid IP address or a hostname that can be resolved on the server.
+     * ping target is a valid IP address or a hostname that can be resolved on the server.
      */
     boolean isHostnameKnown(String pingTargetUrl);
 
@@ -89,7 +90,7 @@ public interface PingTargetManager {
      * Add the weblog to the set whose URLs will be sent to the ping targets.  Normally called after a blog entry
      * update so the ping targets can be made aware.  This method can be called multiple times for the same weblog
      * (due to repeated edits) without concern of ping duplication as sets naturally discard duplicates.
-     *
+     * <p>
      * If ping processing is suspended, this returns without doing anything.
      *
      * @param changedWeblog the weblog that has been changed.
@@ -99,21 +100,21 @@ public interface PingTargetManager {
     /**
      * Send out pings for all weblogs added via the above addToPingSet(weblog) call to the enabled PingTargets. Set
      * is cleared as part of the sending.
-     *
+     * <p>
      * If ping processing is suspended, this returns without doing anything.
      */
     void sendPings();
 
     /**
      * Send a weblog update ping.
-     *
+     * <p>
      * This implements the <code>WeblogUpdates.ping<code> XML-RPC call
      * described at <a href="http://www.xmlrpc.com/weblogsCom">www.xmlrpc.com</a>
      *
-     * @param pingTarget         the target site to ping
-     * @param website            the website that changed (from which the ping originates)
+     * @param pingTarget the target site to ping
+     * @param website    the website that changed (from which the ping originates)
      * @return a PingResult encapsulating the result message sent by the ping target.
-     * @throws IOException if an IOException occurs during the ping
+     * @throws IOException     if an IOException occurs during the ping
      * @throws XmlRpcException if the XML RPC client throws one
      */
     PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException;

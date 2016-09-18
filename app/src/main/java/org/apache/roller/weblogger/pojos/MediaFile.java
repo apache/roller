@@ -20,13 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.time.Instant;
-import java.util.Comparator;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -43,13 +36,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.time.Instant;
 
 /**
  * Represents a media file
- * 
  */
 @Entity
-@Table(name="media_file")
+@Table(name = "media_file")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaFile {
 
@@ -92,7 +89,7 @@ public class MediaFile {
         this.id = id;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return name;
     }
@@ -103,7 +100,6 @@ public class MediaFile {
 
     /**
      * notes for media file
-     * 
      */
     public String getNotes() {
         return notes;
@@ -113,7 +109,7 @@ public class MediaFile {
         this.notes = notes;
     }
 
-    @Column(name="alt_attr")
+    @Column(name = "alt_attr")
     public String getAltText() {
         return altText;
     }
@@ -122,7 +118,7 @@ public class MediaFile {
         this.altText = altText;
     }
 
-    @Column(name="title_attr")
+    @Column(name = "title_attr")
     public String getTitleText() {
         return titleText;
     }
@@ -141,9 +137,8 @@ public class MediaFile {
 
     /**
      * Size of the media file
-     * 
      */
-    @Column(name="size_in_bytes")
+    @Column(name = "size_in_bytes")
     public long getLength() {
         return length;
     }
@@ -152,7 +147,7 @@ public class MediaFile {
         this.length = length;
     }
 
-    @Column(name="date_uploaded", nullable=false)
+    @Column(name = "date_uploaded", nullable = false)
     public Instant getDateUploaded() {
         return dateUploaded;
     }
@@ -161,7 +156,7 @@ public class MediaFile {
         this.dateUploaded = dateUploaded;
     }
 
-    @Column(name="last_updated")
+    @Column(name = "last_updated")
     public Instant getLastUpdated() {
         return lastUpdated;
     }
@@ -171,7 +166,7 @@ public class MediaFile {
     }
 
     @ManyToOne
-    @JoinColumn(name="directoryid", nullable=false)
+    @JoinColumn(name = "directoryid", nullable = false)
     public MediaDirectory getDirectory() {
         return directory;
     }
@@ -180,7 +175,7 @@ public class MediaFile {
         this.directory = dir;
     }
 
-    @Column(name="content_type", nullable=false)
+    @Column(name = "content_type", nullable = false)
     public String getContentType() {
         return contentType;
     }
@@ -196,7 +191,7 @@ public class MediaFile {
 
     /**
      * Returns underlying file in the file system.
-     * 
+     *
      * @return input stream of file
      */
     @Transient
@@ -225,7 +220,6 @@ public class MediaFile {
 
     /**
      * Indicates whether this is an image file.
-     * 
      */
     @Transient
     public boolean isImageFile() {
@@ -255,7 +249,7 @@ public class MediaFile {
     }
 
     @ManyToOne
-    @JoinColumn(name="creatorid",nullable=false)
+    @JoinColumn(name = "creatorid", nullable = false)
     public User getCreator() {
         return creator;
     }
@@ -348,8 +342,8 @@ public class MediaFile {
     // ------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return "MediaFile [name=" + getName() + ", directory=" + getDirectory()
-                + ", weblog=" + getDirectory().getWeblog() + "]";
+        return "MediaFile [name=" + getName() + ", directory=" + getDirectory() + ", weblog=" +
+                getDirectory().getWeblog() + "]";
     }
 
     public boolean equals(Object other) {
@@ -366,9 +360,6 @@ public class MediaFile {
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
-
-    public static Comparator<MediaFile> NameComparator = (file1, file2) ->
-        file1.getName().compareTo(file2.getName());
 
     @Transient
     public String getDirectoryId() {

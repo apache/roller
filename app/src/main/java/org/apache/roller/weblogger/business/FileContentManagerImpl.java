@@ -20,6 +20,12 @@
  */
 package org.apache.roller.weblogger.business;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -32,15 +38,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.Utilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Manages contents of the file uploaded to TightBlog.
- * 
+ * <p>
  * This base implementation writes file content to a file system.
  */
 public class FileContentManagerImpl implements FileContentManager {
@@ -57,8 +57,8 @@ public class FileContentManagerImpl implements FileContentManager {
         String inStorageDir = WebloggerStaticConfig.getProperty("mediafiles.storage.dir");
         // Note: System property expansion is now handled by WebloggerStaticConfig.
         if (inStorageDir == null || inStorageDir.trim().length() < 1) {
-            inStorageDir = System.getProperty("user.home") + File.separator
-                    + "roller_data" + File.separator + "mediafiles";
+            inStorageDir = System.getProperty("user.home") + File.separator + "tightblog_data" + File.separator +
+                    "mediafiles";
         }
         if (!inStorageDir.endsWith(File.separator)) {
             inStorageDir += File.separator;
@@ -75,8 +75,7 @@ public class FileContentManagerImpl implements FileContentManager {
 
         // make sure file is not a directory
         if (resourceFile.isDirectory()) {
-            throw new IOException("Invalid file id [" + fileId + "], "
-                    + "path is a directory.");
+            throw new IOException("Invalid file id [" + fileId + "], path is a directory.");
         }
 
         // everything looks good, return resource
@@ -91,8 +90,7 @@ public class FileContentManagerImpl implements FileContentManager {
         File dirPath = this.getRealFile(weblog, null);
 
         // create File that we are about to save
-        File saveFile = new File(dirPath.getAbsolutePath() + File.separator
-                + fileId);
+        File saveFile = new File(dirPath.getAbsolutePath() + File.separator + fileId);
 
         byte[] buffer = new byte[Utilities.EIGHT_KB_IN_BYTES];
         int bytesRead;
@@ -222,7 +220,7 @@ public class FileContentManagerImpl implements FileContentManager {
      * forbidden file types.
      */
     private boolean checkFileType(String[] allowFiles, String[] forbidFiles,
-            String fileName, String contentType) {
+                                  String fileName, String contentType) {
 
         // if content type is invalid, reject file
         if (contentType == null || contentType.indexOf('/') == -1) {
@@ -311,8 +309,8 @@ public class FileContentManagerImpl implements FileContentManager {
         if (rangeRule.equals(contentType)) {
             return true;
         }
-        String ruleParts[] = rangeRule.split("/");
-        String typeParts[] = contentType.split("/");
+        String[] ruleParts = rangeRule.split("/");
+        String[] typeParts = contentType.split("/");
         return ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*");
     }
 
@@ -346,8 +344,8 @@ public class FileContentManagerImpl implements FileContentManager {
         // make sure someone isn't trying to sneak outside the uploads dir
         if (!file.getCanonicalPath().startsWith(
                 weblogDir.getCanonicalPath())) {
-            throw new IllegalArgumentException("Invalid path " + filePath + "], "
-                    + "access attempt outside defined uploads dir.");
+            throw new IllegalArgumentException("Invalid path " + filePath +
+                    "], access attempt outside defined uploads dir.");
         }
 
         return file;

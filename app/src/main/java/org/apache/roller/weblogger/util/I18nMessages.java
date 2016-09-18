@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +35,11 @@ import org.slf4j.LoggerFactory;
 public final class I18nMessages {
 
     private static Logger log = LoggerFactory.getLogger(I18nMessages.class);
-    
+
     // locale and bundle we are using for messaging
     private final Locale locale;
     private final ResourceBundle bundle;
-    
+
     // a map of cached messages instances, keyed by locale
     private static Map<Locale, I18nMessages> messagesMap = Collections.synchronizedMap(new HashMap<>());
 
@@ -51,20 +52,20 @@ public final class I18nMessages {
      * Get an instance for a given locale.
      */
     public static I18nMessages getMessages(Locale locale) {
-        
+
         log.debug("request for messages in locale = {}", locale.toString());
-        
+
         // check if we already have a message utils created for that locale
         I18nMessages messages = messagesMap.get(locale);
-        
+
         // if no utils for that language yet then construct
-        if(messages == null) {
+        if (messages == null) {
             messages = new I18nMessages(locale);
-            
+
             // keep a reference to it
             messagesMap.put(messages.getLocale(), messages);
         }
-        
+
         return messages;
     }
 
@@ -79,7 +80,7 @@ public final class I18nMessages {
      * Get a message from the bundle.
      */
     public String getString(String key) {
-        
+
         try {
             return bundle.getString(key);
         } catch (Exception e) {
@@ -109,7 +110,7 @@ public final class I18nMessages {
      * the message contents.
      */
     public String getString(String key, List args) {
-        
+
         try {
             String msg = bundle.getString(key);
             return MessageFormat.format(msg, args);
@@ -125,7 +126,7 @@ public final class I18nMessages {
      * the message contents.
      */
     public String getString(String key, Object[] args) {
-        
+
         try {
             String msg = bundle.getString(key);
             return MessageFormat.format(msg, args);

@@ -20,9 +20,6 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.time.Instant;
-import java.util.List;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -36,9 +33,12 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+import java.util.List;
+
 /**
  * An index operation that rebuilds a given users index (or all indexes).
- * 
+ *
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
@@ -59,9 +59,8 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
 
     /**
      * Create a new operation that will recreate an index.
-     * 
-     * @param website
-     *            The website to rebuild the index for, or null for all users.
+     *
+     * @param website The website to rebuild the index for, or null for all users.
      */
     public RebuildWeblogIndexOperation(IndexManagerImpl mgr, WeblogEntryManager wem,
                                        Weblog website) {

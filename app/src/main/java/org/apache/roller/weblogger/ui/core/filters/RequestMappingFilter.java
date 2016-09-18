@@ -20,17 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.core.filters;
 
-import java.io.IOException;
-import java.util.Set;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.processors.CommentProcessor;
@@ -40,6 +29,18 @@ import org.apache.roller.weblogger.ui.rendering.processors.PageProcessor;
 import org.apache.roller.weblogger.ui.rendering.processors.SearchProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * Handles weblog specific URLs for the form /<weblog handle>/*
@@ -62,9 +63,11 @@ public class RequestMappingFilter implements Filter {
         this.weblogManager = weblogManager;
     }
 
-    public void init(FilterConfig filterConfig) {}
+    public void init(FilterConfig filterConfig) {
+    }
 
-    public void destroy() {}
+    public void destroy() {
+    }
 
     /**
      * Inspect incoming urls and see if they should be routed.
@@ -98,7 +101,7 @@ public class RequestMappingFilter implements Filter {
         String pathInfo = null;
 
         if (servlet != null && servlet.trim().length() > 1) {
-            if(request.getContextPath() != null) {
+            if (request.getContextPath() != null) {
                 servlet = servlet.substring(request.getContextPath().length());
             }
 
@@ -111,14 +114,14 @@ public class RequestMappingFilter implements Filter {
             }
 
             // strip off trailing slash if needed
-            if(servlet.endsWith("/")) {
+            if (servlet.endsWith("/")) {
                 servlet = servlet.substring(0, servlet.length() - 1);
                 trailingSlash = true;
             }
 
-            if(servlet.indexOf('/') != -1) {
+            if (servlet.indexOf('/') != -1) {
                 weblogHandle = servlet.substring(0, servlet.indexOf('/'));
-                pathInfo = servlet.substring(servlet.indexOf('/')+1);
+                pathInfo = servlet.substring(servlet.indexOf('/') + 1);
             } else {
                 weblogHandle = servlet;
             }
@@ -127,20 +130,20 @@ public class RequestMappingFilter implements Filter {
         log.debug("potential weblog handle = {}", weblogHandle);
 
         // check if it's a valid weblog handle
-        if(restrictedUrls.contains(weblogHandle) || !this.isWeblog(weblogHandle)) {
+        if (restrictedUrls.contains(weblogHandle) || !this.isWeblog(weblogHandle)) {
             log.debug("SKIPPED {}", weblogHandle);
             return false;
         }
 
         // parse the rest of the url and build forward url
-        if(pathInfo != null) {
+        if (pathInfo != null) {
             // parse the next portion of the url, we expect <context>/<extra>/<info>
             String[] urlPath = pathInfo.split("/", 2);
 
             weblogRequestContext = urlPath[0];
 
             // last part of request is extra path info
-            if(urlPath.length == 2) {
+            if (urlPath.length == 2) {
                 weblogRequestData = urlPath[1];
             }
         }
@@ -153,15 +156,15 @@ public class RequestMappingFilter implements Filter {
             // shortest form of url /<weblog> or /<weblog>/<locale> and we need
             // to do a redirect to /<weblog>/ or /<weblog>/<locale>/
             String redirectUrl = request.getRequestURI() + "/";
-            if(request.getQueryString() != null) {
-                redirectUrl += "?"+request.getQueryString();
+            if (request.getQueryString() != null) {
+                redirectUrl += "?" + request.getQueryString();
             }
             response.sendRedirect(redirectUrl);
             return true;
         } else if (weblogRequestContext != null && "tags".equals(weblogRequestContext)) {
             // tags section can have an index page at /<weblog>/tags/ and
             // a tags query at /<weblog>/tags/tagToSearch, but that's it
-            if((weblogRequestData == null && !trailingSlash) ||
+            if ((weblogRequestData == null && !trailingSlash) ||
                     (weblogRequestData != null && trailingSlash)) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return true;
@@ -190,7 +193,7 @@ public class RequestMappingFilter implements Filter {
     /**
      * Convenience method for calculating the servlet forward url given a set
      * of information to make the decision with.
-     *
+     * <p>
      * handle is always assumed valid, all other params may be null.
      */
     protected String calculateForwardUrl(HttpServletRequest request, String handle, String context, String data) {
@@ -237,10 +240,10 @@ public class RequestMappingFilter implements Filter {
         boolean isWeblog = false;
         try {
             Weblog weblog = weblogManager.getWeblogByHandle(potentialHandle);
-            if(weblog != null) {
+            if (weblog != null) {
                 isWeblog = true;
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             // doesn't really matter to us why it's not a valid website
         }
         return isWeblog;

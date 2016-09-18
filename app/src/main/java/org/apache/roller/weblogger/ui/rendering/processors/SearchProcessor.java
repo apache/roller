@@ -20,14 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
@@ -45,11 +37,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Handles search queries for weblogs.
  */
 @RestController
-@RequestMapping(path="/tb-ui/rendering/search/**")
+@RequestMapping(path = "/tb-ui/rendering/search/**")
 public class SearchProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(SearchProcessor.class);

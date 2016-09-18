@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    @ExceptionHandler(value= { MethodArgumentNotValidException.class })
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationError handleException(MethodArgumentNotValidException exception) {

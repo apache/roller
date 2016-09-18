@@ -20,12 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -41,20 +35,24 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- * Represents a planet entry, i.e. an entry that was parsed out of an RSS or 
+ * Represents a planet entry, i.e. an entry that was parsed out of an RSS or
  * Atom newsfeed by TightBlog's built-in planet aggregator.
  */
 @Entity
-@Table(name="planet_subscription_entry")
+@Table(name = "planet_subscription_entry")
 @NamedQueries({
-        @NamedQuery(name="SubscriptionEntry.getBySubscription",
-                query="SELECT p FROM SubscriptionEntry p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC")
+        @NamedQuery(name = "SubscriptionEntry.getBySubscription",
+                query = "SELECT p FROM SubscriptionEntry p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC")
 })
 public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
-    
+
     // attributes
     private String id = Utilities.generateUUID();
     private String title;
@@ -66,86 +64,84 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
     private Instant updated;
     private Instant uploaded;
     private String categoriesString;
-    
+
     // associations
     private Subscription subscription = null;
-    
-    
-    public SubscriptionEntry() {}
-    
+
+    public SubscriptionEntry() {
+    }
+
     @Id
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
     public String getTitle() {
         return title;
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getUri() {
         return uri;
     }
-    
+
     public void setUri(String uri) {
         this.uri = uri;
     }
-    
-    @Basic(optional=false)
+
+    @Basic(optional = false)
     public String getPermalink() {
         return permalink;
     }
-    
+
     public void setPermalink(String permalink) {
         this.permalink = permalink;
     }
-    
-    
+
     public String getAuthor() {
         return author;
     }
-    
+
     public void setAuthor(String author) {
         this.author = author;
     }
 
-    @Column(name="content")
+    @Column(name = "content")
     public String getContent() {
         return content;
     }
-    
+
     public void setContent(String content) {
         this.content = content;
     }
 
-    @Column(name="published", nullable=false)
+    @Column(name = "published", nullable = false)
     public Instant getPubTime() {
         return published;
     }
-    
+
     public void setPubTime(Instant published) {
         this.published = published;
     }
 
-    @Column(name="updated")
+    @Column(name = "updated")
     public Instant getUpdateTime() {
         return updated;
     }
-    
+
     public void setUpdateTime(Instant updated) {
         this.updated = updated;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Instant getUploaded() {
         return uploaded;
     }
@@ -154,29 +150,27 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
         this.uploaded = uploaded;
     }
 
-    @Column(name="categories")
+    @Column(name = "categories")
     public String getCategoriesString() {
         return categoriesString;
     }
-    
+
     public void setCategoriesString(String categoriesString) {
         this.categoriesString = categoriesString;
     }
 
-
     @ManyToOne
-    @JoinColumn(name="subscription_id", nullable=false)
+    @JoinColumn(name = "subscription_id", nullable = false)
     public Subscription getSubscription() {
         return subscription;
     }
-    
+
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
-    
-    
+
     //----------------------------------------------------------------- convenience
-    
+
     /**
      * Returns true if any of entry's categories contain a specific string
      * (case-insensitive comparison).
@@ -189,9 +183,9 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
         }
         return false;
     }
-    
+
     //------------------------------------------------------------- implementation
-    
+
     /**
      * Returns categories as list of strings
      */
@@ -204,7 +198,7 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
         }
         return list;
     }
-       
+
     /**
      * Return first entry in category collection.
      */
@@ -239,7 +233,7 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
             }
         }
     }
-    
+
     /**
      * Compare planet entries by comparing permalinks.
      */
@@ -257,7 +251,7 @@ public class SubscriptionEntry implements Comparable<SubscriptionEntry> {
         if (!(other instanceof SubscriptionEntry)) {
             return false;
         }
-        SubscriptionEntry o = (SubscriptionEntry)other;
+        SubscriptionEntry o = (SubscriptionEntry) other;
         return new EqualsBuilder()
                 .append(getUri(), o.getUri())
                 .isEquals();

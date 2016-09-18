@@ -20,7 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.core.filters;
 
-import java.io.IOException;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,10 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 
 /**
  * A special initialization filter which ensures that we have an opportunity to
@@ -46,7 +45,7 @@ public class InitFilter implements Filter {
     private boolean initialized = false;
 
     public void doFilter(ServletRequest req, ServletResponse res,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
 
         if (!initialized) {
 
@@ -82,7 +81,7 @@ public class InitFilter implements Filter {
     public void destroy() {
     }
 
-    protected static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL){
+    protected static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL) {
 
         String url;
 

@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * Handle user logins.
- *
+ * <p>
  * The standard blog login buttons route to login-redirect.rol, which is
  * intercepted by the Spring security.xml to first require a standard login (this class).
  * After successful authentication, login-redirect will either route the user to
@@ -87,7 +87,7 @@ public class Login extends UIAction {
 
     public String execute() {
         // set action error message if there was login error
-        if(getError() != null) {
+        if (getError() != null) {
             addError("error.password.mismatch");
         }
 
@@ -151,5 +151,5 @@ public class Login extends UIAction {
     public void setError(String error) {
         this.error = error;
     }
-    
+
 }

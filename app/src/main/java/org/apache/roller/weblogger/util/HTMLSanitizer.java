@@ -19,28 +19,28 @@ import org.jsoup.safety.Whitelist;
 
 public final class HTMLSanitizer {
 
-    private final static Whitelist NoneWhitelist = Whitelist.none();
+    private static final Whitelist NONE_WHITELIST = Whitelist.none();
 
-    private final static Whitelist LimitedWhitelist = Whitelist.simpleText().addTags("br", "p");
+    private static final Whitelist LIMITED_WHITELIST = Whitelist.simpleText().addTags("br", "p");
 
-    private final static Whitelist BasicWhitelist = Whitelist.basic();
+    private static final Whitelist BASIC_WHITELIST = Whitelist.basic();
 
-    private final static Whitelist BasicImagesWhitelist = Whitelist.basicWithImages();
+    private static final Whitelist BASIC_IMAGES_WHITELIST = Whitelist.basicWithImages();
 
-    private final static Whitelist RelaxedWhitelist = Whitelist.relaxed();
+    private static final Whitelist RELAXED_WHITELIST = Whitelist.relaxed();
 
-    private final static Whitelist RelaxedIframesWhitelist = Whitelist.relaxed()
-        .addTags("iframe")
-        .addAttributes("iframe", "width", "height", "src", "style", "allowfullscreen")
-        .addProtocols("iframe", "src", "http", "https");
+    private static final Whitelist RELAXED_IFRAMES_WHITELIST = Whitelist.relaxed()
+            .addTags("iframe")
+            .addAttributes("iframe", "width", "height", "src", "style", "allowfullscreen")
+            .addProtocols("iframe", "src", "http", "https");
 
     public enum Level {
-        NONE(0, "configForm.htmlsanitizer.none", NoneWhitelist),
-        LIMITED(1, "configForm.htmlsanitizer.limited", LimitedWhitelist),
-        BASIC(2, "configForm.htmlsanitizer.basic", BasicWhitelist),
-        BASIC_IMAGES(3, "configForm.htmlsanitizer.basicimages", BasicImagesWhitelist),
-        RELAXED(4, "configForm.htmlsanitizer.relaxed", RelaxedWhitelist),
-        RELAXED_IFRAMES(5, "configForm.htmlsanitizer.relaxediframes", RelaxedIframesWhitelist),
+        NONE(0, "configForm.htmlsanitizer.none", NONE_WHITELIST),
+        LIMITED(1, "configForm.htmlsanitizer.limited", LIMITED_WHITELIST),
+        BASIC(2, "configForm.htmlsanitizer.basic", BASIC_WHITELIST),
+        BASIC_IMAGES(3, "configForm.htmlsanitizer.basicimages", BASIC_IMAGES_WHITELIST),
+        RELAXED(4, "configForm.htmlsanitizer.relaxed", RELAXED_WHITELIST),
+        RELAXED_IFRAMES(5, "configForm.htmlsanitizer.relaxediframes", RELAXED_IFRAMES_WHITELIST),
         OFF(6, "configForm.htmlsanitizer.off", null);
 
         private String description;

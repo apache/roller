@@ -15,15 +15,6 @@
  */
 package org.apache.roller.weblogger.ui.core.filters;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
@@ -32,11 +23,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.web.filter.GenericFilterBean;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * Sends a 408 code to the front end for invalid sessions that are not trapped by the CSRF checking in
  * CustomAccessDeniedHandlerImpl (i.e., primarily for Ajax GET calls), so a login page redirect or other
  * appropriate handling can be done.
- *
+ * <p>
  * Based on sample originally from DuyHai Doan:
  * https://doanduyhai.wordpress.com/2012/04/21/spring-security-part-vi-session-timeout-handling-for-ajax-calls/
  */

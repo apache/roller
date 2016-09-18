@@ -37,6 +37,7 @@ public interface MailManager {
     /**
      * Sends emails to weblogger admins when someone registers for a blog account and the
      * system is configured to require admin approval of new registrants
+     *
      * @param user new user account requiring approval before it can be used.
      */
     void sendRegistrationApprovalRequest(User user);
@@ -58,7 +59,8 @@ public interface MailManager {
 
     /**
      * Send a user an invitation to join a weblog
-     * @param user user being invited
+     *
+     * @param user   user being invited
      * @param weblog weblog being invited to.
      */
     void sendWeblogInvitation(User user, Weblog weblog);
@@ -76,7 +78,7 @@ public interface MailManager {
      * Sends email to owners and publishers of a blog whenever a blog reader leaves a comment
      * that needs to be moderated.
      *
-     * @param comment pending comment to review.
+     * @param comment  pending comment to review.
      * @param messages any spam or validation issues found, to be placed within the email.
      */
     void sendPendingCommentNotice(WeblogEntryComment comment, Map<String, List<String>> messages);

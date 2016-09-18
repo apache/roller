@@ -21,9 +21,9 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
@@ -435,23 +435,23 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             params.add(size++, "%" + csc.getSearchText().toUpperCase() + "%");
             appendConjuctionToWhereclause(whereClause, "upper(c.content) LIKE ?").append(size);
         }
-        
+
         if (csc.getStartDate() != null) {
             params.add(size++, csc.getStartDate());
             appendConjuctionToWhereclause(whereClause, "c.postTime >= ?").append(size);
         }
-        
+
         if (csc.getEndDate() != null) {
             params.add(size++, csc.getEndDate());
             appendConjuctionToWhereclause(whereClause, "c.postTime <= ?").append(size);
         }
-        
+
         if (csc.getStatus() != null) {
             params.add(size++, csc.getStatus());
             appendConjuctionToWhereclause(whereClause, "c.status = ?").append(size);
         }
-        
-        if(whereClause.length() != 0) {
+
+        if (whereClause.length() != 0) {
             queryString.append(" WHERE ").append(whereClause);
         }
         if (csc.isReverseChrono()) {
@@ -459,7 +459,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         } else {
             queryString.append(" ORDER BY c.postTime ASC");
         }
-        
+
         TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntryComment.class);
         if (csc.getOffset() != 0) {
             query.setFirstResult(csc.getOffset());
@@ -467,18 +467,18 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         if (csc.getMaxResults() != -1) {
             query.setMaxResults(csc.getMaxResults());
         }
-        for (int i=0; i<params.size(); i++) {
-            query.setParameter(i+1, params.get(i));
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
         }
         return query.getResultList();
-        
+
     }
 
     @Override
     public WeblogEntryComment getComment(String id) {
         return this.strategy.load(WeblogEntryComment.class, id);
     }
-    
+
     @Override
     public WeblogEntry getWeblogEntry(String id) {
         return strategy.load(WeblogEntry.class, id);
@@ -553,7 +553,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         TypedQuery<WeblogEntryTagAggregate> query;
         List queryResults;
         int queryLimit = (limit >= 0) ? limit : 25;
-        
+
         query = strategy.getNamedQuery("WeblogEntryTagAggregate.getPopularTagsByWeblog", WeblogEntryTagAggregate.class);
         query.setParameter(1, weblog);
 
@@ -564,12 +564,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             query.setMaxResults(queryLimit);
         }
         queryResults = query.getResultList();
-        
+
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
-        
+
         List<WeblogEntryTagAggregate> results = new ArrayList<>(queryLimit);
-        
+
         for (Object obj : queryResults) {
             Object[] row = (Object[]) obj;
             WeblogEntryTagAggregate t = new WeblogEntryTagAggregate();
@@ -581,16 +581,16 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             results.add(t);
         }
 
-        min = Math.log(1+min);
-        max = Math.log(1+max);
+        min = Math.log(1 + min);
+        max = Math.log(1 + max);
 
         double range = Math.max(.01, max - min) * 1.0001;
         for (WeblogEntryTagAggregate t : results) {
-            t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1+t.getTotal()) - min) / range)));
+            t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1 + t.getTotal()) - min) / range)));
         }
 
         // sort results by name, because query had to sort by total
-        Collections.sort(results, WeblogEntryTagAggregate.Comparator);
+        Collections.sort(results, WeblogEntryTagAggregate.comparator);
 
         return results;
     }
@@ -600,22 +600,22 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         Query query;
         List queryResults;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
-                
+
         List<Object> params = new ArrayList<>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE 1 = 1");
-                
+
         if (website != null) {
             params.add(size++, website.getId());
             queryString.append(" AND w.weblog.id = ?").append(size);
         }
-                       
+
         if (startsWith != null && startsWith.length() > 0) {
             params.add(size++, startsWith + '%');
             queryString.append(" AND w.name LIKE ?").append(size);
         }
-                    
+
         if (sortBy != null && sortBy.equals("count")) {
             sortBy = "w.total DESC";
         } else {
@@ -624,8 +624,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         queryString.append(" GROUP BY w.name ORDER BY ").append(sortBy);
 
         query = strategy.getDynamicQuery(queryString.toString());
-        for (int i=0; i<params.size(); i++) {
-            query.setParameter(i+1, params.get(i));
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
         }
         if (offset != 0) {
             query.setFirstResult(offset);
@@ -634,7 +634,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             query.setMaxResults(limit);
         }
         queryResults = query.getResultList();
-        
+
         List<WeblogEntryTagAggregate> results = new ArrayList<>();
         if (queryResults != null) {
             for (Object obj : queryResults) {
@@ -648,14 +648,14 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (sortByName) {
-            Collections.sort(results, WeblogEntryTagAggregate.Comparator);
+            Collections.sort(results, WeblogEntryTagAggregate.comparator);
         } else {
-            Collections.sort(results, WeblogEntryTagAggregate.CountComparator);
+            Collections.sort(results, WeblogEntryTagAggregate.countComparator);
         }
-        
+
         return results;
     }
-    
+
     @Override
     public boolean getTagExists(String tag, Weblog weblog) {
         if (tag == null) {
@@ -672,13 +672,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(" AND w.weblog = ?2");
             params.add(weblog);
         }
-        
+
         TypedQuery<String> q = strategy.getDynamicQuery(queryString.toString(), String.class);
-        for (int j=0; j<params.size(); j++) {
-            q.setParameter(j+1, params.get(j));
+        for (int j = 0; j < params.size(); j++) {
+            q.setParameter(j + 1, params.get(j));
         }
         List<String> results = q.getResultList();
-        
+
         // OK if at least one article matches the tag
         return (results != null && results.size() > 0);
     }
@@ -717,8 +717,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * Appends given expression to given whereClause. If whereClause already
      * has other conditions, an " AND " is also appended before appending
      * the expression
+     *
      * @param whereClause The given where Clauuse
-     * @param expression The given expression
+     * @param expression  The given expression
      * @return the whereClause.
      */
     private static StringBuilder appendConjuctionToWhereclause(StringBuilder whereClause, String expression) {
@@ -753,7 +754,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     @Override
     public AtomEnclosure generateEnclosure(String url) {
-        if (url == null || url.trim().length() ==0) {
+        if (url == null || url.trim().length() == 0) {
             return null;
         }
 
@@ -772,7 +773,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 String contentType = con.getContentType();
                 long length = con.getContentLength();
 
-                if(contentType == null || length == -1) {
+                if (contentType == null || length == -1) {
                     // Incomplete
                     log.debug("Response valid, but contentType or length is invalid");
                     throw new IllegalArgumentException("weblogEdit.mediaCastLacksContentTypeOrLength");

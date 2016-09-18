@@ -20,10 +20,6 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
@@ -45,6 +41,10 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
 
 /**
  * This is the base class for all index operations.
@@ -159,7 +159,7 @@ public abstract class IndexOperation implements Runnable {
 
     /**
      * Begin writing.
-     * 
+     *
      * @return the index writer
      */
     protected IndexWriter beginWriting() {
@@ -205,11 +205,8 @@ public abstract class IndexOperation implements Runnable {
     /**
      * Create a lucene term from the first token of the input string.
      *
-     * @param field
-     *            The lucene document field to create a term with
-     * @param input
-     *            The input you wish to convert into a term
-     *
+     * @param field The lucene document field to create a term with
+     * @param input The input you wish to convert into a term
      * @return Lucene search term
      */
     public static Term getTerm(String field, String input) {

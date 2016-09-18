@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,8 @@ import org.slf4j.LoggerFactory;
  * Allows callers to test strings against site-level and weblog-level defined blacklist terms.
  * <br />
  * Blacklist is formatted one entry per line.
- * Any line that begins with # is considered to be a comment. 
- * Any line that begins with ( is considered to be a regex expression. 
+ * Any line that begins with # is considered to be a comment.
+ * Any line that begins with ( is considered to be a regex expression.
  * <br />
  */
 public final class Blacklist {
@@ -68,7 +69,9 @@ public final class Blacklist {
         return regexRules.size();
     }
 
-    /** Test String against the RegularExpression rules. */
+    /**
+     * Test String against the RegularExpression rules.
+     */
     private boolean testRegExRules(String str) {
         for (Pattern testPattern : regexRules) {
             // want to see what it is matching on, but only in debug mode
@@ -94,12 +97,11 @@ public final class Blacklist {
      * is performed.
      *
      * @param source The text in which to apply the matching rules.
-     *
      * @return true if a match was found, otherwise false
      */
     private boolean testStringRules(String source) {
         boolean matches = false;
-        
+
         for (Object ruleObj : stringRules) {
             String rule;
             rule = (String) ruleObj;
@@ -123,8 +125,7 @@ public final class Blacklist {
                     log.debug("matched: {}:", rule);
                     break;
                 }
-            }
-            catch (PatternSyntaxException e) {
+            } catch (PatternSyntaxException e) {
                 matches = source.contains(rule);
                 if (matches) {
                     log.debug("matched: {}:", rule);
@@ -132,11 +133,13 @@ public final class Blacklist {
                 }
             }
         }
-        
+
         return matches;
-    }   
-    
-    /** Populate rules for this instance
+    }
+
+    /**
+     * Populate rules for this instance
+     *
      * @param weblogBlacklist String of string and/or regEx rules
      * @param parentBlacklist Optional blacklist whose elements are to be added to this instance.
      **/
@@ -162,7 +165,7 @@ public final class Blacklist {
             } else {
                 stringRules.add(token);
             }
-        }        
+        }
     }
-        
+
 }

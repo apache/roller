@@ -33,7 +33,7 @@ import java.util.Map;
 
 /**
  * Represents a request for a Roller weblog page
- *
+ * <p>
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
@@ -77,13 +77,13 @@ public class WeblogPageRequest extends WeblogRequest {
 
         /*
          * parse path info
-         * 
+         *
          * we expect one of the following forms of url ...
-         * 
+         *
          * /entry/<anchor> - permalink /date/<YYYYMMDD> - date collection view
          * /category/<category> - category collection view /tags/<tag>+<tag> -
          * tags /page/<pagelink> - custom page
-         * 
+         *
          * path info may be null, which indicates the weblog homepage
          */
         if (pathInfo != null && pathInfo.trim().length() > 0) {
@@ -147,11 +147,11 @@ public class WeblogPageRequest extends WeblogRequest {
 
         /*
          * parse request parameters
-         * 
+         *
          * the only params we currently allow are: date - specifies a weblog
          * date string cat - specifies a weblog category anchor - specifies a
          * weblog entry (old way) entry - specifies a weblog entry
-         * 
+         *
          * we only allow request params if the path info is null or on user
          * defined pages (for backwards compatability). this way we prevent
          * mixing of path based and query param style urls.

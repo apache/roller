@@ -28,8 +28,8 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
-import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.Parser;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.EnumMap;
 import java.util.Map;
-
 
 /**
  * Action which handles editing for a single WeblogTemplate.
@@ -106,7 +105,6 @@ public class TemplateEdit extends UIAction {
             }
         }
     }
-
 
     /**
      * Show template edit page.
@@ -235,8 +233,8 @@ public class TemplateEdit extends UIAction {
                     themeManager.getSharedTheme(getActionWeblog().getTheme()));
 
             // if initial save or name changed make sure there isn't a conflict
-            if ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
-                    || (template !=null && !getBean().getName().equals(getTemplate().getName()))) {
+            if ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation())) ||
+                    (template != null && !getBean().getName().equals(getTemplate().getName()))) {
                 if (testTheme.getTemplateByName(getBean().getName()) != null) {
                     addError("templates.error.nameAlreadyExists", getBean().getName());
                 }
@@ -244,9 +242,9 @@ public class TemplateEdit extends UIAction {
 
             // same check for path
             if (bean.getRole().isAccessibleViaUrl() &&
-                    ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation()))
-                            || (template != null && !StringUtils.isEmpty(getBean().getRelativePath()) &&
-                    !getBean().getRelativePath().equals(getTemplate().getRelativePath())))) {
+                    ((template == null && !TemplateDerivation.OVERRIDDEN.equals(getBean().getDerivation())) ||
+                            (template != null && !StringUtils.isEmpty(getBean().getRelativePath()) &&
+                                    !getBean().getRelativePath().equals(getTemplate().getRelativePath())))) {
                 if (testTheme.getTemplateByPath(getBean().getRelativePath()) != null) {
                     addError("templates.error.pathAlreadyExists", getBean().getRelativePath());
                 }
@@ -284,6 +282,7 @@ public class TemplateEdit extends UIAction {
         }
         return INPUT;
     }
+
     public WeblogTemplate getBean() {
         return bean;
     }

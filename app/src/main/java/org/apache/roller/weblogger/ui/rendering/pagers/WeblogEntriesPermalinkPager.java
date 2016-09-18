@@ -20,6 +20,14 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
+import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -29,20 +37,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.Utilities;
-
 /**
- *  Pager for viewing one entry at a time, e.g.:
- *  http://server/tightblog/myblog/entry/my-blog-article
+ * Pager for viewing one entry at a time, e.g.:
+ * http://server/tightblog/myblog/entry/my-blog-article
  */
 public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
-    
+
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
 
@@ -59,16 +59,16 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     WeblogEntry currEntry = null;
     WeblogEntry nextEntry = null;
     WeblogEntry prevEntry = null;
-    
+
     // collection for the pager
     Map<LocalDate, List<WeblogEntry>> entries = null;
 
     public WeblogEntriesPermalinkPager(
             WeblogEntryManager weblogEntryManager,
-            URLStrategy        strat,
-            Weblog             weblog,
-            String             pageLink,
-            String             entryAnchor,
+            URLStrategy strat,
+            Weblog weblog,
+            String pageLink,
+            String entryAnchor,
             Boolean canShowDraftEntries) {
 
         this.urlStrategy = strat;
@@ -96,8 +96,8 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
                 if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     entries = new TreeMap<>();
                     entries.put(currEntry.getPubTime()
-                            .atZone(currEntry.getWeblog().getZoneId())
-                            .toLocalDate(),
+                                    .atZone(currEntry.getWeblog().getZoneId())
+                                    .toLocalDate(),
                             Collections.singletonList(currEntry));
                 }
             } else {
@@ -142,7 +142,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     public String getNextName() {
         if (getNextEntry() != null) {
             String title = Utilities.truncateText(getNextEntry().getTitle(), 15, 20, "...");
-            return messageUtils.getString("weblogEntriesPager.single.next", new Object[] {title});
+            return messageUtils.getString("weblogEntriesPager.single.next", new Object[]{title});
         }
         return null;
     }
@@ -153,31 +153,26 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
     public String getPrevName() {
         if (getPrevEntry() != null) {
             String title = Utilities.truncateText(getPrevEntry().getTitle(), 15, 20, "...");
-            return messageUtils.getString("weblogEntriesPager.single.prev", new Object[] {title});
+            return messageUtils.getString("weblogEntriesPager.single.prev", new Object[]{title});
         }
         return null;
     }
-
 
     public String getNextCollectionLink() {
         return null;
     }
 
-
     public String getNextCollectionName() {
         return null;
     }
 
-
     public String getPrevCollectionLink() {
         return null;
     }
-
 
     public String getPrevCollectionName() {
         return null;
@@ -187,21 +182,20 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         if (nextEntry == null && currEntry.getPubTime() != null) {
             nextEntry = weblogEntryManager.getNextEntry(currEntry, null);
             // make sure that entry is published and not to future
-            if (nextEntry != null && nextEntry.getPubTime().isAfter(Instant.now())
-                    && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
+            if (nextEntry != null && nextEntry.getPubTime().isAfter(Instant.now()) &&
+                    nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                 nextEntry = null;
             }
         }
         return nextEntry;
     }
-    
-    
+
     private WeblogEntry getPrevEntry() {
         if (prevEntry == null && currEntry.getPubTime() != null) {
             prevEntry = weblogEntryManager.getPreviousEntry(currEntry, null);
             // make sure that entry is published and not to future
-            if (prevEntry != null && prevEntry.getPubTime().isAfter(Instant.now())
-                    && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
+            if (prevEntry != null && prevEntry.getPubTime().isAfter(Instant.now()) &&
+                    prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                 prevEntry = null;
             }
         }

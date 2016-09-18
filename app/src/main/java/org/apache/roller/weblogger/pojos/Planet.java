@@ -18,11 +18,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.WebloggerContext;
@@ -37,17 +32,21 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Planet Group.
  */
 @Entity
-@Table(name="planet")
+@Table(name = "planet")
 @NamedQueries({
-        @NamedQuery(name="Planet.getByHandle",
-                query="SELECT p FROM Planet p WHERE p.handle = ?1"),
-        @NamedQuery(name="Planet.getAll",
-                query="SELECT p FROM Planet p")
+        @NamedQuery(name = "Planet.getByHandle",
+                query = "SELECT p FROM Planet p WHERE p.handle = ?1"),
+        @NamedQuery(name = "Planet.getAll",
+                query = "SELECT p FROM Planet p")
 })
 public class Planet implements Comparable<Planet> {
 
@@ -60,36 +59,37 @@ public class Planet implements Comparable<Planet> {
     // associations
     private Set<Subscription> subscriptions = new TreeSet<>();
 
-    public Planet() {}
-    
+    public Planet() {
+    }
+
     public Planet(String handle, String title, String desc) {
         this.id = Utilities.generateUUID();
         this.handle = handle;
         this.title = title;
         this.description = desc;
     }
-    
+
     /**
      * For comparing planets and sorting, ordered by Title.
      */
     public int compareTo(Planet other) {
         return getTitle().compareTo(other.getTitle());
     }
-    
+
     @Id
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
+
     @Basic(optional = false)
     public String getHandle() {
         return handle;
     }
-    
+
     public void setHandle(String handle) {
         this.handle = handle;
     }
@@ -98,7 +98,7 @@ public class Planet implements Comparable<Planet> {
     public String getTitle() {
         return title;
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -106,21 +106,21 @@ public class Planet implements Comparable<Planet> {
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    @OneToMany(targetEntity=Subscription.class,
-            cascade=CascadeType.ALL, mappedBy="planet")
+    @OneToMany(targetEntity = Subscription.class,
+            cascade = CascadeType.ALL, mappedBy = "planet")
     public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
-    
+
     public void setSubscriptions(Set<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
-    
+
     @Transient
     public String getAbsoluteURL() {
         return WebloggerContext.getWeblogger().getUrlStrategy().getPlanetURL(getHandle());
@@ -141,9 +141,13 @@ public class Planet implements Comparable<Planet> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Planet planet = (Planet) o;
 

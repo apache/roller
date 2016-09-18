@@ -20,12 +20,12 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import java.util.List;
-
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.Weblog;
+
+import java.util.List;
 
 /**
  * Manager interface for accessing Theme related objects.
@@ -65,12 +65,10 @@ public interface ThemeManager {
      * Create a weblog template (database-stored, weblog-specific)
      * from a shared (file) template, including the latter's renditions
      *
-     * @param weblog
-     *            The weblog to import the template into
-     * @param sharedTemplate
-     *            The sharedTemplate that should copied from
+     * @param weblog         The weblog to import the template into
+     * @param sharedTemplate The sharedTemplate that should copied from
      * @return WeblogTemplate instance, not persisted to the database.
-     *            (Caller is expected to do persistence if and when desired.)
+     * (Caller is expected to do persistence if and when desired.)
      */
     WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate);
 }

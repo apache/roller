@@ -18,90 +18,80 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.Utilities;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract base for simple pagers.
  */
 public abstract class AbstractPager implements Pager {
-    
+
     final URLStrategy urlStrategy;
     private String url = null;
     private int page = 0;
-    
-    
+
     public AbstractPager(URLStrategy strat, String baseUrl, int pageNum) {
-        
+
         this.urlStrategy = strat;
         this.url = baseUrl;
-        if(pageNum > 0) {
+        if (pageNum > 0) {
             this.page = pageNum;
         }
     }
-    
-    
+
     public String getHomeLink() {
         return url;
     }
-    
-    
+
     public String getHomeName() {
         return "Home";
     }
-    
-    
+
     public String getNextLink() {
-        if(hasMoreItems()) {
+        if (hasMoreItems()) {
             int nextPage = page + 1;
             Map<String, String> params = new HashMap<>();
-            params.put("page", ""+nextPage);
+            params.put("page", "" + nextPage);
             return createURL(url, params);
         }
         return null;
     }
-    
-    
+
     public String getNextName() {
-        if(hasMoreItems()) {
+        if (hasMoreItems()) {
             return "Next";
         }
         return null;
     }
-    
-    
+
     public String getPrevLink() {
         if (page > 0) {
             int prevPage = page - 1;
             Map<String, String> params = new HashMap<>();
-            params.put("page", ""+prevPage);
+            params.put("page", "" + prevPage);
             return createURL(url, params);
         }
         return null;
     }
-    
-    
+
     public String getPrevName() {
         if (page > 0) {
             return "Previous";
         }
         return null;
     }
-    
-    
+
     public boolean hasMoreItems() {
         return false;
     }
-    
-    
+
     protected String createURL(String url, Map<String, String> params) {
         return url + Utilities.getQueryString(params);
     }
 
-    
     public String getUrl() {
         return url;
     }
@@ -117,5 +107,5 @@ public abstract class AbstractPager implements Pager {
     public void setPage(int page) {
         this.page = page;
     }
-    
+
 }

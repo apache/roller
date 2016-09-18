@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -31,9 +29,11 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 /**
  * An operation that adds a new log entry into the index.
- * 
+ *
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class ReIndexEntryOperation extends WriteToIndexOperation {
@@ -56,7 +56,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
      * Adds a web log entry into the index.
      */
     public ReIndexEntryOperation(WeblogEntryManager wem, IndexManagerImpl mgr,
-            WeblogEntry data) {
+                                 WeblogEntry data) {
         super(mgr);
         this.weblogEntryManager = wem;
         this.data = data;

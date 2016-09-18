@@ -20,10 +20,6 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -32,7 +28,9 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class implementation reads the application's runtime properties.  At installation
@@ -40,16 +38,20 @@ import javax.annotation.PostConstruct;
  * properties database table, from where they are subsequently read during runtime.
  * In contrast to the static properties in WebloggerStaticConfig, these values may be changed
  * during runtime on the system administration page and take effect immediately.
- *
+ * <p>
  * This class also provides convenience methods for returning the String, int, or boolean
  * values of RuntimeConfigProperty objects.
  */
 public class JPAPropertiesManagerImpl implements PropertiesManager {
-    
-    /** The logger instance for this class. */
+
+    /**
+     * The logger instance for this class.
+     */
     private static Logger log = LoggerFactory.getLogger(JPAPersistenceStrategy.class);
 
-    /** List of valid runtime configuration properties that can be stored in the database. */
+    /**
+     * List of valid runtime configuration properties that can be stored in the database.
+     */
     private static RuntimeConfigDefs configDefs = null;
 
     private final JPAPersistenceStrategy strategy;
@@ -66,14 +68,14 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
     @Override
     public RuntimeConfigDefs getRuntimeConfigDefs() {
-        if(configDefs == null) {
+        if (configDefs == null) {
             try {
                 configDefs = (RuntimeConfigDefs) Utilities.jaxbUnmarshall(
                         "/org/apache/roller/weblogger/config/runtimeConfigDefs.xsd",
                         "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml",
                         false,
                         RuntimeConfigDefs.class);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 // error while parsing :(
                 log.error("Error parsing runtime config defs", e);
             }
@@ -94,22 +96,21 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             saveProperties(props);
             strategy.flush();
         } catch (Exception e) {
-            log.error("Failed to initialize runtime configuration properties."+
+            log.error("Failed to initialize runtime configuration properties." +
                     "Please check that the database has been upgraded!", e);
             throw new RuntimeException(e);
         }
-        
+
     }
-    
+
     @Override
     public RuntimeConfigProperty getProperty(String name) {
         return strategy.load(RuntimeConfigProperty.class, name);
     }
 
-
     /**
      * Retrieve all properties.
-     * 
+     * <p>
      * Properties are returned in a Map to make them easy to lookup.  The Map
      * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
@@ -137,7 +138,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         this.strategy.store(property);
     }
 
-
     @Override
     public void saveProperties(Map properties) {
         // just go through the list and saveProperties each property
@@ -151,7 +151,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * This method compares the property definitions in the RuntimeConfigDefs
      * file with the properties in the given Map and initializes any properties
      * that were not found in the Map.
-     *
+     * <p>
      * If the Map of props is empty/null then we will initialize all properties.
      **/
     private Map initializeMissingProps(Map<String, RuntimeConfigProperty> props) {
@@ -176,7 +176,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             for (RuntimeConfigDefs.PropertyDef propDef : dGroup.getPropertyDefs()) {
 
                 // do we already have this prop?  if not then add it
-                if(!props.containsKey(propDef.getName())) {
+                if (!props.containsKey(propDef.getName())) {
                     RuntimeConfigProperty newprop =
                             new RuntimeConfigProperty(
                                     propDef.getName(), propDef.getDefaultValue());
@@ -203,7 +203,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             if (prop != null) {
                 value = prop.getValue();
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.warn("Trouble accessing property: {}", name, e);
         }
         log.debug("fetched property [{}={}]", name, value);
@@ -236,7 +236,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         int intval = -1;
         try {
             intval = Integer.parseInt(value);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.warn("Trouble converting to integer: {}", name, e);
         }
         return intval;

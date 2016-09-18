@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 public class PlanetController {
 
     private static Logger log = LoggerFactory.getLogger(PlanetController.class);
-    
+
     @Autowired
     private PlanetManager planetManager;
 
@@ -151,8 +151,8 @@ public class PlanetController {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/planetsubscriptions", method = RequestMethod.PUT)
-    public Subscription addPlanetSubscription(@RequestParam(name="planetId") String planetId, @RequestParam String feedUrl,
-                                      HttpServletResponse response) throws ServletException {
+    public Subscription addPlanetSubscription(@RequestParam(name = "planetId") String planetId, @RequestParam String feedUrl,
+                                              HttpServletResponse response) throws ServletException {
         try {
             Planet planet = planetManager.getPlanet(planetId);
             if (planet == null) {

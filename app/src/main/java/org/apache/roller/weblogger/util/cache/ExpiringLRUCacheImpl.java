@@ -32,10 +32,10 @@ import java.util.Map;
 
 /**
  * An LRU cache where entries expire after a given timeout period.
- *
+ * <p>
  * Negative timeout values indicate entries will never time out but can be
  * pushed out of the cache when the cache reaches its max size
- *
+ * <p>
  * Zero timeout value means entries are invalid just after being placed
  * in and hence never usable.
  */
@@ -47,9 +47,9 @@ public class ExpiringLRUCacheImpl implements Cache {
 
     // for metrics
     protected int hits = 0;
-    protected int misses = 0;
-    protected int puts = 0;
-    protected int removes = 0;
+    private int misses = 0;
+    private int puts = 0;
+    private int removes = 0;
     protected LocalDateTime startTime = LocalDateTime.now();
 
     public ExpiringLRUCacheImpl(int maxsize, long timeoutInMS) {
@@ -93,7 +93,7 @@ public class ExpiringLRUCacheImpl implements Cache {
 
     /**
      * Store an entry in the cache.
-     *
+     * <p>
      * We wrap the cached object in our ExpiringCacheEntry object so that we
      * can track when the entry has expired.
      */
@@ -106,7 +106,7 @@ public class ExpiringLRUCacheImpl implements Cache {
 
     /**
      * Retrieve an entry from the cache.
-     *
+     * <p>
      * This LRU cache supports timeouts, so if the cached object has expired
      * then we return null, just as if the entry wasn't found.
      */
@@ -114,21 +114,21 @@ public class ExpiringLRUCacheImpl implements Cache {
     public synchronized Object get(String key) {
         Object value = null;
         ExpiringCacheEntry entry;
-        
-        synchronized(this) {
+
+        synchronized (this) {
             entry = (ExpiringCacheEntry) this.cache.get(key);
 
             // for metrics
-            if(entry == null) {
+            if (entry == null) {
                 misses++;
             } else {
                 hits++;
             }
         }
-        
+
         if (entry != null) {
             value = entry.getValue();
-            
+
             // if the value is null then that means this entry expired
             if (value == null) {
                 log.debug("EXPIRED {}", key);
@@ -136,16 +136,16 @@ public class ExpiringLRUCacheImpl implements Cache {
                 remove(key);
             }
         }
-        
+
         return value;
     }
 
     // David Flanaghan: http://www.davidflanagan.com/blog/000014.html
     private static class LRULinkedHashMap<String, Object>
             extends LinkedHashMap<String, Object> {
-        protected int maxsize;
+        int maxsize;
 
-        public LRULinkedHashMap(int maxsize) {
+        LRULinkedHashMap(int maxsize) {
             super(maxsize * 4 / 3 + 1, 0.75f, true);
             this.maxsize = maxsize;
         }
@@ -154,6 +154,5 @@ public class ExpiringLRUCacheImpl implements Cache {
             return this.size() > this.maxsize;
         }
     }
-
 
 }

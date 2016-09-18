@@ -24,20 +24,13 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,16 +38,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Responsible for rendering weblog page previews.
- *
+ * <p>
  * This servlet is used as part of the authoring interface to provide previews
  * of what a weblog will look like with a given theme.  It is not available
  * outside of the authoring interface.
  */
 @RestController
-@RequestMapping(path="/tb-ui/authoring/preview/**")
+@RequestMapping(path = "/tb-ui/authoring/preview/**")
 public class PreviewProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
@@ -140,7 +139,7 @@ public class PreviewProcessor extends AbstractProcessor {
         } else if ("tags".equals(previewRequest.getContext()) && previewRequest.getTag() == null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
 
@@ -158,12 +157,12 @@ public class PreviewProcessor extends AbstractProcessor {
         } else if (previewRequest.getWeblogAnchor() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }
         }
 
-        if(page == null) {
+        if (page == null) {
             page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
         }
 
@@ -175,7 +174,6 @@ public class PreviewProcessor extends AbstractProcessor {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
 
         log.debug("preview page found, dealing with it");
 
@@ -205,7 +203,7 @@ public class PreviewProcessor extends AbstractProcessor {
         try {
             log.debug("Looking up renderer");
             renderer = rendererManager.getRenderer(page, previewRequest.getDeviceType());
-        } catch(Exception e) {
+        } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page {}", page.getId(), e);
 
@@ -225,7 +223,7 @@ public class PreviewProcessor extends AbstractProcessor {
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             // bummer, error during rendering
             log.error("Error during rendering for page {}", page.getId(), e);
 

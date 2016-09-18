@@ -65,7 +65,7 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public void removeUser(User user) {
         String userName = user.getUserName();
-        
+
         // remove roles, maintaining both sides of relationship
         List<UserWeblogRole> roles = getWeblogRolesIncludingPending(user);
         this.strategy.removeAll(roles);
@@ -91,7 +91,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     @Override
     public UserCredentials getCredentialsByUserName(String userName) {
-        if (userName==null) {
+        if (userName == null) {
             throw new IllegalArgumentException("userName cannot be null");
         }
 
@@ -122,10 +122,10 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public User getEnabledUserByUserName(String userName) {
 
-        if (userName==null) {
+        if (userName == null) {
             throw new IllegalArgumentException("userName cannot be null");
         }
-        
+
         // check cache first
         if (userNameToIdMap.containsKey(userName)) {
             User user = getUser(userNameToIdMap.get(userName));
@@ -160,7 +160,6 @@ public class JPAUserManagerImpl implements UserManager {
 
         return user;
     }
-
 
     @Override
     public List<User> getUsers(UserSearchCriteria criteria) {
@@ -292,7 +291,8 @@ public class JPAUserManagerImpl implements UserManager {
         UserWeblogRole existingRole = null;
         try {
             existingRole = q.getSingleResult();
-        } catch (NoResultException ignored) {}
+        } catch (NoResultException ignored) {
+        }
 
         // role already exists, so update it keeping its pending status.
         if (existingRole != null) {
@@ -325,7 +325,6 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
 
-    
     @Override
     public List<UserWeblogRole> getWeblogRoles(User user) {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId",

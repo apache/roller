@@ -47,5 +47,5 @@ public class ExcessSizeCommentValidator implements CommentValidator {
         }
         return Utilities.PERCENT_100;
     }
-    
+
 }

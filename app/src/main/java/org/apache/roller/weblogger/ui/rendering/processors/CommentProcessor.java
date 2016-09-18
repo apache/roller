@@ -20,32 +20,19 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
@@ -63,21 +50,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Handles all incoming weblog entry comment posts.
- *
+ * <p>
  * We validate each incoming comment based on various comment settings and if
  * all checks are passed then the comment is saved.
- *
+ * <p>
  * Incoming comments are tested against any site and/or weblog-defined blacklist values. If they
  * are found to be spam, then they are marked as spam and hidden from view.
- *
+ * <p>
  * If email notification is turned on, each new comment will result in an email
  * sent to the blog owner and all who have commented on the same post.
  */
 @RestController
 // how @RequestMapping is combined at the class- and method-levels: http://stackoverflow.com/q/22702568
-@RequestMapping(path="/tb-ui/rendering/comment")
+@RequestMapping(path = "/tb-ui/rendering/comment")
 public class CommentProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(CommentProcessor.class);
@@ -93,7 +92,7 @@ public class CommentProcessor extends AbstractProcessor {
         this.cacheManager = cacheManager;
     }
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     private CommentAuthenticator commentAuthenticator = null;
 
     public void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
@@ -142,7 +141,7 @@ public class CommentProcessor extends AbstractProcessor {
         mailManager = manager;
     }
 
-    @Resource(name="commentValidatorList")
+    @Resource(name = "commentValidatorList")
     private List<CommentValidator> commentValidators;
 
     public void setCommentValidators(List<CommentValidator> commentValidators) {
@@ -152,7 +151,7 @@ public class CommentProcessor extends AbstractProcessor {
     /**
      * Here we handle incoming comment postings.
      */
-    @RequestMapping(path="/**", method = RequestMethod.POST)
+    @RequestMapping(path = "/**", method = RequestMethod.POST)
     public void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         RuntimeConfigDefs.CommentOption commentOption =
@@ -164,7 +163,7 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        String dispatch_url;
+        String dispatchUrl;
 
         Weblog weblog;
         WeblogEntry entry;
@@ -209,8 +208,8 @@ public class CommentProcessor extends AbstractProcessor {
                 RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(weblog.getAllowComments());
 
         // we know what the weblog entry is, so setup our urls
-        dispatch_url = PageProcessor.PATH + "/" + weblog.getHandle();
-        dispatch_url += "/entry/" + Utilities.encode(commentRequest.getWeblogAnchor());
+        dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle();
+        dispatchUrl += "/entry/" + Utilities.encode(commentRequest.getWeblogAnchor());
 
         /*
          * parse request parameters
@@ -277,18 +276,18 @@ public class CommentProcessor extends AbstractProcessor {
         // this checks site-wide settings, weblog settings, and entry settings
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
-        // Must have an email and also must be valid
+            // Must have an email and also must be valid
         } else if (StringUtils.isEmpty(commentForm.getEmail()) || !commentForm.getEmail().matches(EMAIL_ADDR_REGEXP)) {
             error = messageUtils.getString("error.commentPostFailedEmailAddress");
             log.debug("Email Address is invalid: {}", commentForm.getEmail());
-        // if there is an URL it must be valid
-        } else if (StringUtils.isNotEmpty(commentForm.getUrl())
-                && !new UrlValidator(new String[] { "http", "https" }).isValid(commentForm.getUrl())) {
+            // if there is an URL it must be valid
+        } else if (StringUtils.isNotEmpty(commentForm.getUrl()) &&
+                !new UrlValidator(new String[]{"http", "https"}).isValid(commentForm.getUrl())) {
             error = messageUtils.getString("error.commentPostFailedURL");
             log.debug("URL is invalid: {}", commentForm.getUrl());
-       // if this is a real comment post then authenticate request
+            // if this is a real comment post then authenticate request
         } else if (!preview && commentAuthenticator != null && !commentAuthenticator.authenticate(request)) {
-            String[] msg = { request.getParameter("answer") };
+            String[] msg = {request.getParameter("answer")};
             error = messageUtils.getString("error.commentAuthFailed", msg);
             log.debug("Comment failed authentication");
         } else if (!noDisallowedTags) {
@@ -300,7 +299,7 @@ public class CommentProcessor extends AbstractProcessor {
             commentForm.setError(true);
             commentForm.setMessage(error);
             request.setAttribute("commentForm", commentForm);
-            RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
             dispatcher.forward(request, response);
             return;
         }
@@ -399,18 +398,17 @@ public class CommentProcessor extends AbstractProcessor {
         request.setAttribute("commentForm", commentForm);
 
         // off to PageProcessor's POST handling.
-        log.debug("comment processed, forwarding to {}", dispatch_url);
-        RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
+        log.debug("comment processed, forwarding to {}", dispatchUrl);
+        RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
         dispatcher.forward(request, response);
     }
-
 
     /**
      * Used for generating the html used for comment authentication.  This is done
      * outside of the normal rendering process so that we can cache full pages and
      * still set the comment authentication section dynamically.
      */
-    @RequestMapping(value="/authform", method = RequestMethod.GET)
+    @RequestMapping(value = "/authform", method = RequestMethod.GET)
     public void generateAuthForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         response.setContentType("text/html; charset=utf-8");

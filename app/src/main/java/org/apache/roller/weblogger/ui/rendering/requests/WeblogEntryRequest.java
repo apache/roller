@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.ui.rendering.requests;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,14 +37,14 @@ public class WeblogEntryRequest extends WeblogRequest {
     private String weblogAnchor = null;
 
     public WeblogEntryRequest(HttpServletRequest request) {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         /*
          * parse path info.  we expect ...
          * /entry/<anchor> - permalink

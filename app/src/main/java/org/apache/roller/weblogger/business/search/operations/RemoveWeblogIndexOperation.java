@@ -20,9 +20,6 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.io.IOException;
-import java.time.Instant;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -31,9 +28,12 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.time.Instant;
+
 /**
  * An index operation that rebuilds a given users index (or all indexes).
- * 
+ *
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
@@ -53,7 +53,7 @@ public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
 
     /**
      * Create a operation that remove the index data for a weblog.
-     * 
+     *
      * @param weblogHandle The weblog whose index data is to be removed.
      */
     public RemoveWeblogIndexOperation(IndexManagerImpl mgr, String weblogHandle) {

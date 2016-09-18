@@ -18,7 +18,11 @@
 
 package org.apache.roller.weblogger.ui.core.filters;
 
-import java.io.IOException;
+import org.apache.roller.weblogger.business.WebloggerContext;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -27,12 +31,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.roller.weblogger.business.WebloggerContext;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
 
 /**
  * Sole responsibility is to ensure that each request's database
@@ -53,12 +52,12 @@ public class PersistenceSessionFilter implements Filter {
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.debug("Entered {}", request.getRequestURI());
-        
+
         try {
             chain.doFilter(request, response);
         } finally {
@@ -67,14 +66,15 @@ public class PersistenceSessionFilter implements Filter {
                 persistenceStrategy.release();
             }
         }
-        
+
         log.debug("Exiting {}", request.getRequestURI());
     }
-    
-    
-    public void init(FilterConfig filterConfig) throws ServletException {}
-    
-    public void destroy() {}
-    
+
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    public void destroy() {
+    }
+
 }
 

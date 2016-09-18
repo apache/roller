@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -40,6 +38,8 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 /**
  * An operation that searches the index.
  */
@@ -50,11 +50,11 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     private static Logger log = LoggerFactory.getLogger(SearchOperation.class);
 
-    private static String[] SEARCH_FIELDS = new String[] {
+    private static String[] searchFields = new String[]{
             FieldConstants.CONTENT, FieldConstants.TITLE,
-            FieldConstants.C_CONTENT };
+            FieldConstants.C_CONTENT};
 
-    private static Sort SORTER = new Sort(new SortField(
+    private static Sort sorter = new Sort(new SortField(
             FieldConstants.PUBLISHED, SortField.Type.STRING, true));
 
     // ~ Instance fields
@@ -87,11 +87,6 @@ public class SearchOperation extends ReadFromIndexOperation {
         this.term = term;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Runnable#run()
-     */
     public void doRun() {
         final int docLimit = 500;
         searchresults = null;
@@ -102,7 +97,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             searcher = new IndexSearcher(reader);
 
             MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
-                    SEARCH_FIELDS,
+                    searchFields,
                     IndexManagerImpl.getAnalyzer());
 
             // Make it an AND by default. Comment this out for an or (default)
@@ -139,7 +134,7 @@ public class SearchOperation extends ReadFromIndexOperation {
                         .build();
             }
 
-            searchresults = searcher.search(query, docLimit, SORTER);
+            searchresults = searcher.search(query, docLimit, sorter);
 
         } catch (IOException e) {
             log.error("Error searching index", e);
@@ -152,7 +147,7 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     /**
      * Gets the searcher.
-     * 
+     *
      * @return the searcher
      */
     public IndexSearcher getSearcher() {
@@ -161,7 +156,7 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     /**
      * Gets the results.
-     * 
+     *
      * @return the results
      */
     public TopFieldDocs getResults() {
@@ -170,7 +165,7 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     /**
      * Gets the results count.
-     * 
+     *
      * @return the results count
      */
     public int getResultsCount() {
@@ -182,9 +177,8 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     /**
      * Sets the website handle.
-     * 
-     * @param websiteHandle
-     *            the new website handle
+     *
+     * @param websiteHandle the new website handle
      */
     public void setWebsiteHandle(String websiteHandle) {
         this.websiteHandle = websiteHandle;
@@ -192,9 +186,8 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     /**
      * Sets the category.
-     * 
-     * @param category
-     *            the new category
+     *
+     * @param category the new category
      */
     public void setCategory(String category) {
         this.category = category;
@@ -202,9 +195,8 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     /**
      * Sets the locale.
-     * 
-     * @param locale
-     *            the new locale
+     *
+     * @param locale the new locale
      */
     public void setLocale(String locale) {
         this.locale = locale;

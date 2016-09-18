@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  * Controller for weblogger backend tasks, e.g., cache and system runtime configuration.
  */
 @RestController
-@RequestMapping(path="/tb-ui/admin/rest/server")
+@RequestMapping(path = "/tb-ui/admin/rest/server")
 public class AdminController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogController.class);

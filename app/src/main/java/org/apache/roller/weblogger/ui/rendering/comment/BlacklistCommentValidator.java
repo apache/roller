@@ -53,6 +53,7 @@ public class BlacklistCommentValidator implements CommentValidator {
 
     /**
      * Test comment, applying weblog's blacklist
+     *
      * @return True if comment matches a blacklist term
      */
     private boolean checkComment(WeblogEntryComment comment) {
@@ -60,10 +61,8 @@ public class BlacklistCommentValidator implements CommentValidator {
 
         Blacklist bl = weblogManager.getWeblogBlacklist(comment.getWeblogEntry().getWeblog());
 
-        if (bl.isBlacklisted(comment.getUrl())
-                || bl.isBlacklisted(comment.getEmail())
-                || bl.isBlacklisted(comment.getName())
-                || bl.isBlacklisted(comment.getContent())) {
+        if (bl.isBlacklisted(comment.getUrl()) || bl.isBlacklisted(comment.getEmail()) ||
+                bl.isBlacklisted(comment.getName()) || bl.isBlacklisted(comment.getContent())) {
             isBlacklisted = true;
         }
         return isBlacklisted;

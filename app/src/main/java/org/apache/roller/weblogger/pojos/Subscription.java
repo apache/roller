@@ -18,11 +18,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -37,21 +32,24 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
+import java.time.Instant;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Planet Subscription.
  */
 @Entity
-@Table(name="planet_subscription")
+@Table(name = "planet_subscription")
 @NamedQueries({
-        @NamedQuery(name="Subscription.getAll",
-                query="SELECT p FROM Subscription p ORDER BY p.feedURL DESC"),
-        @NamedQuery(name="Subscription.getByPlanetAndFeedURL",
-                query="SELECT s FROM Subscription s WHERE s.planet = ?1 AND s.feedURL = ?2")
+        @NamedQuery(name = "Subscription.getAll",
+                query = "SELECT p FROM Subscription p ORDER BY p.feedURL DESC"),
+        @NamedQuery(name = "Subscription.getByPlanetAndFeedURL",
+                query = "SELECT s FROM Subscription s WHERE s.planet = ?1 AND s.feedURL = ?2")
 })
 public class Subscription implements Comparable<Subscription> {
-    
+
     // attributes
     private String id = Utilities.generateUUID();
     private String title;
@@ -63,78 +61,76 @@ public class Subscription implements Comparable<Subscription> {
     private Planet planet;
     private Set<SubscriptionEntry> entries = new HashSet<>();
 
-    public Subscription() {}
-    
+    public Subscription() {
+    }
+
     @Id
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    @Basic(optional=false)
+
+    @Basic(optional = false)
     public String getTitle() {
         return title;
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @Column(name="feed_url", nullable=false)
+    @Column(name = "feed_url", nullable = false)
     public String getFeedURL() {
         return feedURL;
     }
-    
+
     public void setFeedURL(String feedUrl) {
         this.feedURL = feedUrl;
     }
 
-    @Column(name="site_url")
+    @Column(name = "site_url")
     public String getSiteURL() {
         return siteURL;
     }
-    
+
     public void setSiteURL(String siteUrl) {
         this.siteURL = siteUrl;
     }
 
-
-    @Column(name="last_updated")
+    @Column(name = "last_updated")
     public Instant getLastUpdated() {
         return lastUpdated;
     }
-    
+
     public void setLastUpdated(Instant lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
     @ManyToOne
-    @JoinColumn(name="planetid", nullable=false)
+    @JoinColumn(name = "planetid", nullable = false)
     @JsonIgnore
     public Planet getPlanet() {
         return planet;
     }
-    
+
     public void setPlanet(Planet planet) {
         this.planet = planet;
     }
 
-
-    @OneToMany(targetEntity=SubscriptionEntry.class,
-            cascade=CascadeType.ALL, mappedBy="subscription", orphanRemoval=true)
+    @OneToMany(targetEntity = SubscriptionEntry.class,
+            cascade = CascadeType.ALL, mappedBy = "subscription", orphanRemoval = true)
     @JsonIgnore
     public Set<SubscriptionEntry> getEntries() {
         return entries;
     }
-    
+
     public void setEntries(Set<SubscriptionEntry> entries) {
         this.entries = entries;
     }
-    
-    
+
     /**
      * Add a SubscriptionEntry to this Subscription.
      */
@@ -143,7 +139,7 @@ public class Subscription implements Comparable<Subscription> {
         entry.setSubscription(this);
         this.getEntries().add(entry);
     }
-    
+
     /**
      * Add a collection of SubscriptionEntry to this Subscription.
      */
@@ -168,12 +164,18 @@ public class Subscription implements Comparable<Subscription> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Subscription that = (Subscription) o;
 
-        if (!feedURL.equals(that.feedURL)) return false;
+        if (!feedURL.equals(that.feedURL)) {
+            return false;
+        }
         return planet != null ? planet.equals(that.planet) : that.planet == null;
 
     }

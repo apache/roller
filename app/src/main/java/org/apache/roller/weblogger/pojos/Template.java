@@ -40,16 +40,16 @@ public interface Template {
     @XmlEnum
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum ComponentType {
-        @XmlEnumValue("weblog") WEBLOG("Weblog", "text/html", true, "template.weblog.description"),
-        @XmlEnumValue("permalink") PERMALINK("Permalink", "text/html", true, "template.permalink.description"),
-        @XmlEnumValue("search") SEARCH("Search", "text/html", true, "template.search.description"),
-        @XmlEnumValue("tagsIndex") TAGSINDEX("Tag Index", "text/html", true, "template.tagsIndex.description"),
-        @XmlEnumValue("stylesheet") STYLESHEET("Stylesheet", "text/css", false, "template.stylesheet.description"),
-        @XmlEnumValue("javascript") JAVASCRIPT("JavaScript file", "application/javascript", false,
+        @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, "template.weblog.description"),
+        @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, "template.permalink.description"),
+        @XmlEnumValue("search")SEARCH("Search", "text/html", true, "template.search.description"),
+        @XmlEnumValue("tagsIndex")TAGSINDEX("Tag Index", "text/html", true, "template.tagsIndex.description"),
+        @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, "template.stylesheet.description"),
+        @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false,
                 "template.javascript.description"),
-        @XmlEnumValue("customInternal") CUSTOM_INTERNAL("Custom internal", "text/html", false,
+        @XmlEnumValue("customInternal")CUSTOM_INTERNAL("Custom internal", "text/html", false,
                 "template.customInternal.description"),
-        @XmlEnumValue("customExternal") CUSTOM_EXTERNAL("Custom external", "text/html", false,
+        @XmlEnumValue("customExternal")CUSTOM_EXTERNAL("Custom external", "text/html", false,
                 "template.customExternal.description");
 
         private final String readableName;
@@ -88,7 +88,9 @@ public interface Template {
         }
 
         // so JSON will serialize name
-        public String getName() { return name(); }
+        public String getName() {
+            return name();
+        }
 
     }
 
@@ -96,10 +98,10 @@ public interface Template {
      * The template derivation provides the background for this template, useful for doing validation
      * during template customization.  Enum values:
      * SHARED - file-based only, the template came from a shared theme and was not overridden by the user
-     *          during template customization.
+     * during template customization.
      * OVERRIDDEN - A database-stored template that overrides one provided by a shared theme.
      * SPECIFICBLOG - A database-stored template that does not override a shared template.  It is defined
-     *                for a single blog only.
+     * for a single blog only.
      */
     enum TemplateDerivation {
         SHARED("Default"),
@@ -118,24 +120,20 @@ public interface Template {
         }
     }
 
-
     /**
      * The unique identifier for this Template.
      */
     String getId();
-
 
     /**
      * A simple name for this Template.
      */
     String getName();
 
-
     /**
      * A description of the contents of this Template.
      */
     String getDescription();
-
 
     /**
      * The last time the template was modified.
@@ -163,5 +161,5 @@ public interface Template {
      * Can be null or empty if hidden.
      */
     String getRelativePath();
-    
+
 }

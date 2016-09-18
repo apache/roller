@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,16 @@
 */
 package org.apache.roller.weblogger.ui.rendering.generators;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
+import org.apache.roller.weblogger.util.Utilities;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
@@ -38,24 +48,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
-import org.apache.roller.weblogger.util.Utilities;
-
-
 /**
  * HTML generator for a small weblog calendar, commonly used on the weblog sidebars.
  * The small calendar identifies days that have blog entries, but not the entries'
  * titles (see BigWeblogCalendar for that.)
  */
 public class WeblogCalendar {
-    
+
     protected WeblogEntryManager weblogEntryManager;
     protected URLStrategy urlStrategy;
     protected WeblogPageRequest pageRequest = null;
@@ -125,7 +124,7 @@ public class WeblogCalendar {
         }
         List entries = weblogEntryManager.getWeblogEntries(wesc);
         if (entries.size() > 0) {
-            WeblogEntry nearestEntry = (WeblogEntry)entries.get(0);
+            WeblogEntry nearestEntry = (WeblogEntry) entries.get(0);
             nearestMonth = nearestEntry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1);
         }
         return nearestMonth;
@@ -142,9 +141,10 @@ public class WeblogCalendar {
 
     /**
      * Create URL for use on view-weblog page
+     *
      * @param day       Day for URL or null if no entries on that day
      * @param alwaysURL Always return a URL, never return null
-     * @return          URL for day, or null if no weblog entry on that day
+     * @return URL for day, or null if no weblog entry on that day
      */
     protected String computeUrl(LocalDate day, boolean createMonthURL, boolean alwaysURL) {
         String dateString = getDateStringOfEntryOnDay(day);
@@ -201,9 +201,9 @@ public class WeblogCalendar {
     private String computePrevMonthUrl() {
         return computeUrl(prevMonth, true, true);
     }
-    
+
     private String computeTodayMonthUrl() {
-    	String url;
+        String url;
         if (pageLink == null) {
             // create default URL
             url = urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false);
@@ -211,7 +211,7 @@ public class WeblogCalendar {
             // create page URL
             url = urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, cat, null, null, -1, false);
         }
-    	return url;
+        return url;
     }
 
     private Calendar newCalendarInstance() {
@@ -223,7 +223,7 @@ public class WeblogCalendar {
     public String generateHTML() {
         String ret;
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter( sw, true );
+        PrintWriter pw = new PrintWriter(sw, true);
 
         Locale locale = pageRequest.getWeblog().getLocaleInstance();
 
@@ -245,36 +245,33 @@ public class WeblogCalendar {
 
         // start with the first day of the week containing the first day of the month
         dayIndex.set(Calendar.DAY_OF_MONTH, dayIndex.getMinimum(Calendar.DAY_OF_MONTH));
-        while (dayIndex.get( Calendar.DAY_OF_WEEK ) != dayIndex.getFirstDayOfWeek() ) {
-            dayIndex.add( Calendar.DATE, -1 );
+        while (dayIndex.get(Calendar.DAY_OF_WEEK) != dayIndex.getFirstDayOfWeek()) {
+            dayIndex.add(Calendar.DATE, -1);
         }
 
         // create table of 5 weeks, 7 days per row
         pw.print("<table cellspacing=\"0\" border=\"0\" ");
-        pw.print(" summary=\"" + bundle.getString("calendar.summary")
-                + "\" class=\"hCalendarTable" + mClassSuffix+"\">");
-        pw.print("<tr><td colspan=\"7\" align=\"center\" "+
-                "class=\"hCalendarMonthYearRow"+mClassSuffix+"\">");
+        pw.print(" summary=\"" + bundle.getString("calendar.summary") + "\" class=\"hCalendarTable" + mClassSuffix + "\">");
+        pw.print("<tr><td colspan=\"7\" align=\"center\" " +
+                "class=\"hCalendarMonthYearRow" + mClassSuffix + "\">");
         if (prevMonth != null) {
-            pw.print("<a href=\"" + computePrevMonthUrl()
-                    + "\" title=\"" + bundle.getString("calendar.prev")
-                    + "\" class=\"hCalendarNavBar\">&laquo;</a> ");
+            pw.print("<a href=\"" + computePrevMonthUrl() + "\" title=\"" + bundle.getString("calendar.prev") +
+                    "\" class=\"hCalendarNavBar\">&laquo;</a> ");
         }
-        pw.print( formatTitle.format(dayInMonth) );
+        pw.print(formatTitle.format(dayInMonth));
         if (nextMonth != null) {
-            pw.print(" <a href=\"" + computeNextMonthUrl()
-                    + "\" title=\"" + bundle.getString("calendar.next")
-                    + "\" class=\"hCalendarNavBar\">&raquo;</a>");
+            pw.print(" <a href=\"" + computeNextMonthUrl() + "\" title=\"" + bundle.getString("calendar.next") +
+                    "\" class=\"hCalendarNavBar\">&raquo;</a>");
         }
         pw.print("</td></tr>");
 
         // emit the HTML calendar
-        for ( int w=-1; w<6; w++ ) {
+        for (int w = -1; w < 6; w++) {
             pw.print("<tr>");
-            for ( int d=0; d<7; d++ ) {
-                if ( w == -1 ) {
-                    pw.print("<th class=\"hCalendarDayNameRow" + mClassSuffix+"\" align=\"center\">");
-                    pw.print( dayNames[d] );
+            for (int d = 0; d < 7; d++) {
+                if (w == -1) {
+                    pw.print("<th class=\"hCalendarDayNameRow" + mClassSuffix + "\" align=\"center\">");
+                    pw.print(dayNames[d]);
                     pw.print("</th>");
                     continue;
                 }
@@ -282,14 +279,14 @@ public class WeblogCalendar {
                 // determine URL for this calendar day
                 LocalDate tddate = LocalDate.from(new Timestamp(dayIndex.getTimeInMillis()).toLocalDateTime());
                 String url = computeUrl(tddate, false, false);
-                String content = getContent( tddate );
+                String content = getContent(tddate);
 
                 // day is in calendar month
-                if ((dayIndex.get(Calendar.MONTH) == monthToDisplay.get(Calendar.MONTH))
-                        && (dayIndex.get(Calendar.YEAR) == monthToDisplay.get(Calendar.YEAR))) {
-                    if ((dayIndex.get(Calendar.DAY_OF_MONTH) == todayCal.get(Calendar.DAY_OF_MONTH))
-                            && (dayIndex.get(Calendar.MONTH) == todayCal.get(Calendar.MONTH))
-                            && (dayIndex.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR))) {
+                if ((dayIndex.get(Calendar.MONTH) == monthToDisplay.get(Calendar.MONTH)) &&
+                        (dayIndex.get(Calendar.YEAR) == monthToDisplay.get(Calendar.YEAR))) {
+                    if ((dayIndex.get(Calendar.DAY_OF_MONTH) == todayCal.get(Calendar.DAY_OF_MONTH)) &&
+                            (dayIndex.get(Calendar.MONTH) == todayCal.get(Calendar.MONTH)) &&
+                            (dayIndex.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR))) {
                         printDayInThisMonth(pw, dayIndex, url, content, true);
                     } else {
                         printDayInThisMonth(pw, dayIndex, url, content, false);
@@ -300,16 +297,16 @@ public class WeblogCalendar {
                 }
 
                 // increment calendar by one day
-                dayIndex.add( Calendar.DATE, 1 );
+                dayIndex.add(Calendar.DATE, 1);
             }
             pw.print("</tr>");
         }
 
-        pw.print("<tr class=\"hCalendarNextPrev" + mClassSuffix+"\">");
+        pw.print("<tr class=\"hCalendarNextPrev" + mClassSuffix + "\">");
         pw.print("<td colspan=\"7\" align=\"center\">");
 
-        pw.print("<a href=\"" + computeTodayMonthUrl()
-                +"\" class=\"hCalendarNavBar\">" + bundle.getString("calendar.today") + "</a>");
+        pw.print("<a href=\"" + computeTodayMonthUrl() + "\" class=\"hCalendarNavBar\">" +
+                bundle.getString("calendar.today") + "</a>");
 
         pw.print("</td></tr></table>");
 
@@ -326,11 +323,11 @@ public class WeblogCalendar {
 
         if (content != null) {
             pw.print("<td class=\"" + mainClass + "\">");
-            pw.print( content );
+            pw.print(content);
             pw.print("</td>");
-        } else if (url!=null) {
+        } else if (url != null) {
             pw.print("<td class=\"" + mainClass + "\">");
-            pw.print("<a href=\""+url+"\" class=\"hCalendarDayTitle"  + mClassSuffix + "\">");
+            pw.print("<a href=\"" + url + "\" class=\"hCalendarDayTitle" + mClassSuffix + "\">");
             pw.print(cal.get(Calendar.DAY_OF_MONTH));
             pw.print("</a></td>");
         } else {

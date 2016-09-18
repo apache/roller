@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequest;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -79,12 +78,12 @@ public class SpringMultipartParser implements MultiPartRequest {
 
     public String[] getContentType(String fieldName) {
         List<MultipartFile> files = multipartMap.get(fieldName);
-        if(files == null) {
+        if (files == null) {
             return null;
         }
         String[] contentTypes = new String[files.size()];
         int i = 0;
-        for(MultipartFile file : files) {
+        for (MultipartFile file : files) {
             contentTypes[i++] = file.getContentType();
         }
         return contentTypes;
@@ -97,12 +96,12 @@ public class SpringMultipartParser implements MultiPartRequest {
 
     public String[] getFileNames(String fieldName) {
         List<MultipartFile> files = multipartMap.get(fieldName);
-        if(files == null) {
+        if (files == null) {
             return null;
         }
         String[] fileNames = new String[files.size()];
         int i = 0;
-        for(MultipartFile file : files) {
+        for (MultipartFile file : files) {
             fileNames[i++] = file.getOriginalFilename();
         }
         return fileNames;
@@ -110,12 +109,12 @@ public class SpringMultipartParser implements MultiPartRequest {
 
     public String[] getFilesystemName(String fieldName) {
         List<File> files = multiFileMap.get(fieldName);
-        if(files == null) {
+        if (files == null) {
             return null;
         }
         String[] fileNames = new String[files.size()];
         int i = 0;
-        for(File file : files) {
+        for (File file : files) {
             fileNames[i++] = file.getName();
         }
         return fileNames;

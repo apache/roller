@@ -61,176 +61,175 @@ import java.util.ResourceBundle;
 @RestController
 public class TemplateController {
 
-	private static Logger log = LoggerFactory.getLogger(TemplateController.class);
+    private static Logger log = LoggerFactory.getLogger(TemplateController.class);
 
-	private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
-
-	@Autowired
-	private JPAPersistenceStrategy persistenceStrategy = null;
-
-	public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-		this.persistenceStrategy = persistenceStrategy;
-	}
-
-	@Autowired
-	private UserManager userManager;
-
-	public void setUserManager(UserManager userManager) {
-		this.userManager = userManager;
-	}
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
     @Autowired
-	private WeblogManager weblogManager;
+    private JPAPersistenceStrategy persistenceStrategy = null;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
+    }
+
+    @Autowired
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    @Autowired
+    private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
-	@Autowired
-	private ThemeManager themeManager;
+    @Autowired
+    private ThemeManager themeManager;
 
-	public void setThemeManager(ThemeManager themeManager) {
-		this.themeManager = themeManager;
-	}
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
 
-	@RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
-	public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
-												 HttpServletResponse response) {
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
+    public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
+                                                 HttpServletResponse response) {
 
-		Weblog weblog = weblogManager.getWeblog(id);
-		if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+        Weblog weblog = weblogManager.getWeblog(id);
+        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
-			WeblogTemplateData wtd = new WeblogTemplateData();
+            WeblogTemplateData wtd = new WeblogTemplateData();
 
-			WeblogTheme theme = new WeblogTheme(weblogManager, weblog,
-					themeManager.getSharedTheme(weblog.getTheme()));
+            WeblogTheme theme = new WeblogTheme(weblogManager, weblog,
+                    themeManager.getSharedTheme(weblog.getTheme()));
 
-			List<? extends Template> raw = theme.getTemplates();
-			List<Template> pages = new ArrayList<>();
-			pages.addAll(raw);
-			wtd.templates = pages;
+            List<? extends Template> raw = theme.getTemplates();
+            List<Template> pages = new ArrayList<>();
+            pages.addAll(raw);
+            wtd.templates = pages;
 
-			// build list of action types that may be added
-			List<ComponentType> availableRoles = new ArrayList<>(Arrays.asList(ComponentType.values()));
+            // build list of action types that may be added
+            List<ComponentType> availableRoles = new ArrayList<>(Arrays.asList(ComponentType.values()));
 
-			// remove from above list any already existing for the theme
-			pages.stream().filter(p -> p.getRole().isSingleton()).forEach(p ->
-				availableRoles.removeIf(r -> r.name().equals(p.getRole().name())));
+            // remove from above list any already existing for the theme
+            pages.stream().filter(p -> p.getRole().isSingleton()).forEach(p ->
+                    availableRoles.removeIf(r -> r.name().equals(p.getRole().name())));
 
-			wtd.availableTemplateRoles = availableRoles;
-			return wtd;
-		} else {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
-		}
-	}
+            wtd.availableTemplateRoles = availableRoles;
+            return wtd;
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+    }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public class WeblogTemplateData {
+        List<Template> templates;
+        List<ComponentType> availableTemplateRoles;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	public class WeblogTemplateData {
-		List<Template> templates;
-		List<ComponentType> availableTemplateRoles;
+        public List<Template> getTemplates() {
+            return templates;
+        }
 
-		public List<Template> getTemplates() {
-			return templates;
-		}
+        public void setTemplates(List<Template> templates) {
+            this.templates = templates;
+        }
 
-		public void setTemplates(List<Template> templates) {
-			this.templates = templates;
-		}
+        public List<ComponentType> getAvailableTemplateRoles() {
+            return availableTemplateRoles;
+        }
 
-		public List<ComponentType> getAvailableTemplateRoles() {
-			return availableTemplateRoles;
-		}
+        public void setAvailableTemplateRoles(List<ComponentType> availableTemplateRoles) {
+            this.availableTemplateRoles = availableTemplateRoles;
+        }
+    }
 
-		public void setAvailableTemplateRoles(List<ComponentType> availableTemplateRoles) {
-			this.availableTemplateRoles = availableTemplateRoles;
-		}
-	}
+    @RequestMapping(value = "/tb-ui/authoring/rest/template/{id}", method = RequestMethod.DELETE)
+    public void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response)
+            throws ServletException {
 
-	@RequestMapping(value = "/tb-ui/authoring/rest/template/{id}", method = RequestMethod.DELETE)
-	public void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response)
-			throws ServletException {
+        try {
+            WeblogTemplate template = weblogManager.getTemplate(id);
+            if (template != null) {
+                if (userManager.checkWeblogRole(p.getName(), template.getWeblog().getHandle(), WeblogRole.OWNER)) {
+                    weblogManager.removeTemplate(template);
+                    persistenceStrategy.flush();
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error deleting template with ID: ", id, e);
+            throw new ServletException(e.getMessage());
+        }
+    }
 
-		try {
-			WeblogTemplate template = weblogManager.getTemplate(id);
-			if (template != null) {
-				if (userManager.checkWeblogRole(p.getName(), template.getWeblog().getHandle(), WeblogRole.OWNER)) {
-					weblogManager.removeTemplate(template);
-					persistenceStrategy.flush();
-					response.setStatus(HttpServletResponse.SC_OK);
-				} else {
-					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-				}
-			} else {
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			}
-		} catch (Exception e) {
-			log.error("Error deleting template with ID: ", id, e);
-			throw new ServletException(e.getMessage());
-		}
-	}
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", method = RequestMethod.POST)
+    public ResponseEntity addTemplate(@PathVariable String weblogId, @RequestBody WeblogTemplate incomingTemplateData,
+                                      Principal p) throws ServletException {
+        try {
+            Weblog weblog = weblogManager.getWeblog(weblogId);
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                incomingTemplateData.setWeblog(weblog);
+                ValidationError maybeError = advancedValidate(incomingTemplateData);
+                if (maybeError != null) {
+                    return ResponseEntity.badRequest().body(maybeError);
+                }
 
-	@RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", method = RequestMethod.POST)
-	public ResponseEntity addTemplate(@PathVariable String weblogId, @RequestBody WeblogTemplate incomingTemplateData,
-							Principal p) throws ServletException {
-		try {
-			Weblog weblog = weblogManager.getWeblog(weblogId);
-			if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-				incomingTemplateData.setWeblog(weblog);
-				ValidationError maybeError = advancedValidate(incomingTemplateData);
-				if (maybeError != null) {
-					return ResponseEntity.badRequest().body(maybeError);
-				}
+                WeblogTemplate newTemplate = new WeblogTemplate();
+                newTemplate.setId(Utilities.generateUUID());
+                newTemplate.setWeblog(incomingTemplateData.getWeblog());
+                newTemplate.setRole(incomingTemplateData.getRole());
+                newTemplate.setName(incomingTemplateData.getName());
+                newTemplate.setLastModified(Instant.now());
 
-				WeblogTemplate newTemplate = new WeblogTemplate();
-				newTemplate.setId(Utilities.generateUUID());
-				newTemplate.setWeblog(incomingTemplateData.getWeblog());
-				newTemplate.setRole(incomingTemplateData.getRole());
-				newTemplate.setName(incomingTemplateData.getName());
-				newTemplate.setLastModified(Instant.now());
+                // save the new Template
+                weblogManager.saveTemplate(newTemplate);
 
-				// save the new Template
-				weblogManager.saveTemplate(newTemplate);
+                // Create weblog template codes for available types.
+                WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
+                        newTemplate, RenditionType.NORMAL);
+                if (newTemplate.getRole() != ComponentType.STYLESHEET && newTemplate.getRole() != ComponentType.JAVASCRIPT) {
+                    standardRendition.setRendition(bundle.getString("templateEdit.newTemplateContent"));
+                }
+                standardRendition.setParser(Parser.VELOCITY);
+                weblogManager.saveTemplateRendition(standardRendition);
 
-				// Create weblog template codes for available types.
-				WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
-						newTemplate, RenditionType.NORMAL);
-				if (newTemplate.getRole() != ComponentType.STYLESHEET && newTemplate.getRole() != ComponentType.JAVASCRIPT) {
-					standardRendition.setRendition(bundle.getString("templateEdit.newTemplateContent"));
-				}
-				standardRendition.setParser(Parser.VELOCITY);
-				weblogManager.saveTemplateRendition(standardRendition);
+                // flush results to db
+                persistenceStrategy.flush();
 
-				// flush results to db
-				persistenceStrategy.flush();
+                return ResponseEntity.ok(newTemplate);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
 
-				return ResponseEntity.ok(newTemplate);
-			} else {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-		} catch (Exception e) {
-			throw new ServletException(e.getMessage());
-		}
-	}
+    private ValidationError advancedValidate(WeblogTemplate data) {
+        BindException be = new BindException(data, "new data object");
 
-	private ValidationError advancedValidate(WeblogTemplate data) {
-		BindException be = new BindException(data, "new data object");
+        WeblogTemplate template = weblogManager.getTemplateByName(data.getWeblog(), data.getName());
+        if (template != null && !template.getId().equals(data.getId())) {
+            be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.nameAlreadyExists")));
+        }
 
-		WeblogTemplate template = weblogManager.getTemplateByName(data.getWeblog(), data.getName());
-		if (template != null && !template.getId().equals(data.getId())) {
-			be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.nameAlreadyExists")));
-		}
+        if (data.getRole().isSingleton()) {
+            template = weblogManager.getTemplateByAction(data.getWeblog(), data.getRole());
+            if (template != null && !template.getId().equals(data.getId())) {
+                be.addError(new ObjectError("WeblogTemplate",
+                        bundle.getString("templates.error.singletonActionAlreadyExists")));
+            }
+        }
 
-		if (data.getRole().isSingleton()) {
-			template = weblogManager.getTemplateByAction(data.getWeblog(), data.getRole());
-			if (template != null && !template.getId().equals(data.getId())) {
-				be.addError(new ObjectError("WeblogTemplate",
-						bundle.getString("templates.error.singletonActionAlreadyExists")));
-			}
-		}
-
-		return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
-	}
+        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
+    }
 
 }

@@ -55,7 +55,7 @@ public class ExpiringCacheEntry {
      * If the value has expired then we return null.
      */
     public Object getValue() {
-        if(this.hasExpired()) {
+        if (this.hasExpired()) {
             return null;
         } else {
             return this.value;

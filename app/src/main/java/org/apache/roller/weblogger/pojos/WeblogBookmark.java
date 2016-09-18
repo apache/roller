@@ -37,25 +37,27 @@ import javax.persistence.Table;
  * Represents a single blogroll link for a weblog.
  */
 @Entity
-@Table(name="blogroll_link")
+@Table(name = "blogroll_link")
 @NamedQueries({
-        @NamedQuery(name="Bookmark.getByWeblog",
-                query="SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.position")
+        @NamedQuery(name = "Bookmark.getByWeblog",
+                query = "SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.position")
 })
 public class WeblogBookmark implements Comparable<WeblogBookmark> {
-    
+
     private Weblog weblog;
-    
+
     private String id;
     private String name;
     private String description;
     private String url;
     private Integer position;
 
-    /** Default constructor, for use in form beans only. */
+    /**
+     * Default constructor, for use in form beans only.
+     */
     public WeblogBookmark() {
     }
-    
+
     public WeblogBookmark(Weblog parent, String name, String url, String desc) {
         this.id = Utilities.generateUUID();
         this.weblog = parent;
@@ -69,7 +71,7 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
@@ -84,61 +86,60 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
         }
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getUrl() {
         return this.url;
     }
-    
+
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
     /**
      * Position determines order of display
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public java.lang.Integer getPosition() {
         return this.position;
     }
-    
+
     public void setPosition(java.lang.Integer position) {
         this.position = position;
     }
-    
 
     @ManyToOne
-    @JoinColumn(name="weblogid", nullable=false)
+    @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return this.weblog;
     }
-    
+
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         return "{" + getId() + ", " + getName() + ", " + getUrl() + "}";
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -146,20 +147,20 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
         if (!(other instanceof WeblogBookmark)) {
             return false;
         }
-        WeblogBookmark o = (WeblogBookmark)other;
+        WeblogBookmark o = (WeblogBookmark) other;
         return new EqualsBuilder()
-        .append(getName(), o.getName())
-        .append(getWeblog(), o.getWeblog())
-        .append(getUrl(), o.getUrl())
-        .isEquals();
+                .append(getName(), o.getName())
+                .append(getWeblog(), o.getWeblog())
+                .append(getUrl(), o.getUrl())
+                .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
-        .append(getName())
-        .append(getWeblog())
-        .append(getUrl())
-        .toHashCode();
+                .append(getName())
+                .append(getWeblog())
+                .append(getUrl())
+                .toHashCode();
     }
 
     /**
@@ -168,5 +169,5 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
     public int compareTo(WeblogBookmark o) {
         return position.compareTo(o.getPosition());
     }
-    
+
 }

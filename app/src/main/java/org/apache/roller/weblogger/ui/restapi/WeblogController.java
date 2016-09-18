@@ -112,7 +112,7 @@ public class WeblogController {
 
         User user = userManager.getEnabledUserByUserName(p.getName());
 
-        if(!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
+        if (!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
             return ResponseEntity.status(403).body(bundle.getString("weblogSettings.createNotAuthorized"));
         }
 
@@ -135,7 +135,7 @@ public class WeblogController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.POST)
     public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p,
-                                            HttpServletResponse response) throws ServletException {
+                                       HttpServletResponse response) throws ServletException {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
         if (maybeError != null) {
             return maybeError;
@@ -186,7 +186,7 @@ public class WeblogController {
                 }
 
                 // ROL-1050: apply comment defaults to existing entries
-                if(newData.isApplyCommentDefaults()) {
+                if (newData.isApplyCommentDefaults()) {
                     weblogEntryManager.applyCommentDefaultsToEntries(weblog);
                 }
 
@@ -207,7 +207,6 @@ public class WeblogController {
             throw new ServletException(e.getMessage());
         }
     }
-
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.DELETE)
     public void deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response)
@@ -231,7 +230,7 @@ public class WeblogController {
         BindException be = new BindException(data, "new data object");
 
         // make sure handle isn't already taken
-        if(isAdd) {
+        if (isAdd) {
             if (weblogManager.getWeblogByHandle(data.getHandle()) != null) {
                 be.addError(new ObjectError("Weblog object", bundle.getString("weblogSettings.error.handleExists")));
             }

@@ -20,27 +20,20 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import java.io.IOException;
-import java.time.Clock;
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.SharedTemplate;
-import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
-import org.apache.roller.weblogger.util.Utilities;
-import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
-import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
+import org.apache.roller.weblogger.util.Utilities;
+import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
 import org.apache.roller.weblogger.util.cache.SiteWideCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +43,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Clock;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Responsible for rendering weblog feeds.
  */
 @RestController
-@RequestMapping(path="/tb-ui/rendering/feed/**")
+@RequestMapping(path = "/tb-ui/rendering/feed/**")
 public class FeedProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(FeedProcessor.class);
@@ -257,11 +257,11 @@ public class FeedProcessor extends AbstractProcessor {
     /**
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
-     *
+     * <p>
      * <handle>/<type>[[/cat/{category}]|[/tag/{tag}]]
-     *
+     * <p>
      * examples ...
-     *
+     * <p>
      * foo/entries
      * foo/comments/cat/technology
      * foo/entries/tag/travel

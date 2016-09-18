@@ -21,70 +21,65 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
-
 
 /**
  * Paging through a collection of comments.
  */
 public class CommentsPager {
-    
+
     // the collection for the pager
     private final List<WeblogEntryComment> items;
-    
+
     // base url for the pager
     private final String baseUrl;
-    
+
     // what page we are on
     private final int pageNum;
-    
+
     // are there more items?
     private final boolean moreItems;
-    
-    
+
     public CommentsPager(String url, int page, List<WeblogEntryComment> comments, boolean hasMore) {
         this.baseUrl = url;
         this.pageNum = page;
         this.items = comments;
         this.moreItems = hasMore;
     }
-    
-    
+
     public String getNextLink() {
-        if(isMoreItems()) {
+        if (isMoreItems()) {
             int nextPage = pageNum + 1;
             Map<String, String> params = new HashMap<String, String>();
-            params.put("bean.page", ""+nextPage);
+            params.put("bean.page", "" + nextPage);
             return createURL(baseUrl, params);
         }
         return null;
     }
-    
-    
+
     public String getPrevLink() {
         if (pageNum > 0) {
             int prevPage = pageNum - 1;
             Map<String, String> params = new HashMap<String, String>();
-            params.put("bean.page", ""+prevPage);
+            params.put("bean.page", "" + prevPage);
             return createURL(baseUrl, params);
         }
         return null;
     }
-    
-    
+
     private String createURL(String base, Map<String, String> params) {
         String qString = Utilities.getQueryString(params);
-        
-        if(base.indexOf('?') != -1) {
+
+        if (base.indexOf('?') != -1) {
             // if base url already has params them just append our query string
             return base + "&" + qString.substring(1);
         } else {
             return base + qString;
         }
     }
-    
-    
+
     public List<WeblogEntryComment> getItems() {
         return items;
     }
@@ -92,5 +87,5 @@ public class CommentsPager {
     public boolean isMoreItems() {
         return moreItems;
     }
-    
+
 }

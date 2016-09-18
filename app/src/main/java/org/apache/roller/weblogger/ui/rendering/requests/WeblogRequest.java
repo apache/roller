@@ -30,25 +30,24 @@ import org.springframework.mobile.device.DeviceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Represents a request to a weblog.
- * 
+ * <p>
  * This is a fairly generic parsed request which is only trying to figure out
- * the elements of a weblog request which apply to all weblogs.  We try to 
+ * the elements of a weblog request which apply to all weblogs.  We try to
  * determine the weblogHandle, and then what extra path info remains.  The basic
  * format is like this ...
- * 
+ * <p>
  * /<weblogHandle>[/extra/path/info]
- * 
+ * <p>
  * All weblog urls require a weblogHandle, so we ensure that part of the url is
  * properly specified, and path info is always optional.
- *
+ * <p>
  * NOTE: this class purposely exposes a getPathInfo() method which provides the
  * path info specified by the request that has not been parsed by this
  * particular class.  this makes it relatively easy for subclasses to extend
  * this class and simply pick up where it left off in the parsing process.
- *
+ * <p>
  * NOTE: It is extremely important to mention that this class and all of its
  * subclasses are meant to be extremely light weight.  Meaning they should
  * avoid time consuming operations whenever possible, especially operations
@@ -68,7 +67,8 @@ public class WeblogRequest {
     private Weblog weblog = null;
     private Locale localeInstance = null;
 
-    public WeblogRequest() {}
+    public WeblogRequest() {
+    }
 
     public WeblogRequest(HttpServletRequest request) {
 
@@ -81,43 +81,43 @@ public class WeblogRequest {
         deviceType = Utilities.getDeviceType(request);
 
         String path = request.getPathInfo();
-        
+
         log.debug("parsing path {}", path);
-        
+
         // first, cleanup extra slashes and extract the weblog weblogHandle
-        if(path != null && path.trim().length() > 1) {
-            
+        if (path != null && path.trim().length() > 1) {
+
             // strip off the leading slash
             path = path.substring(1);
-            
+
             // strip off trailing slash if needed
-            if(path.endsWith("/")) {
+            if (path.endsWith("/")) {
                 path = path.substring(0, path.length() - 1);
             }
-            
+
             String[] pathElements = path.split("/", 2);
-            if(pathElements[0].trim().length() > 0) {
+            if (pathElements[0].trim().length() > 0) {
                 this.weblogHandle = pathElements[0];
             } else {
                 // no weblogHandle in path info
                 throw new IllegalArgumentException("Not a weblog request, " + request.getRequestURL());
             }
-            
+
             // if there is more left of the path info then hold onto it
-            if(pathElements.length == 2) {
+            if (pathElements.length == 2) {
                 path = pathElements[1];
             } else {
                 path = null;
             }
         }
-        
-        if(path != null && path.trim().length() > 0) {
+
+        if (path != null && path.trim().length() > 0) {
             this.pathInfo = path;
         }
-        
+
         log.debug("handle = {}, pathInfo = {}", weblogHandle, pathInfo);
     }
-    
+
     public String getWeblogHandle() {
         return weblogHandle;
     }
@@ -125,7 +125,7 @@ public class WeblogRequest {
     public void setWeblogHandle(String weblogHandle) {
         this.weblogHandle = weblogHandle;
     }
-    
+
     public String getPathInfo() {
         return pathInfo;
     }
@@ -146,10 +146,10 @@ public class WeblogRequest {
 
     /**
      * Get the Locale instance to be used for this request.
-     *
+     * <p>
      * The Locale is determined via these rules ...
-     *   1. if a locale is explicitly specified, then it is used
-     *   2. if no locale is specified, then use the weblog default locale
+     * 1. if a locale is explicitly specified, then it is used
+     * 2. if no locale is specified, then use the weblog default locale
      */
     public Locale getLocaleInstance() {
         if (localeInstance == null) {

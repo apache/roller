@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -32,6 +30,8 @@ import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Model which provides information needed to render a feed.
@@ -58,7 +58,9 @@ public class FeedModel implements Model {
         this.propertiesManager = propertiesManager;
     }
 
-    /** Template context name to be used for model */
+    /**
+     * Template context name to be used for model
+     */
     @Override
     public String getModelName() {
         return "model";
@@ -79,46 +81,45 @@ public class FeedModel implements Model {
     public Weblog getWeblog() {
         return feedRequest.getWeblog();
     }
-    
+
     /**
      * Get category path or name specified by request.
      */
     public String getCategoryName() {
         return feedRequest.getCategoryName();
     }
-    
+
     /**
-     * Gets most recent entries limited by: weblog and category specified in 
+     * Gets most recent entries limited by: weblog and category specified in
      * request plus the weblog.entryDisplayCount.
      */
     public Pager getWeblogEntriesPager() {
-        return new FeedEntriesPager(feedRequest);        
+        return new FeedEntriesPager(feedRequest);
     }
-    
-    
+
     public boolean isSiteWideFeed() {
         return feedRequest.isSiteWideFeed();
     }
 
     /**
-     * Gets most recent comments limited by: weblog specified in request and 
+     * Gets most recent comments limited by: weblog specified in request and
      * the weblog.entryDisplayCount.
      */
     public Pager getCommentsPager() {
         return new FeedCommentsPager(feedRequest);
-    }    
-        
+    }
+
     /**
      * Returns the tag specified in the request /?tag=foo
      */
     public String getTag() {
         return feedRequest.getTag();
-    }    
+    }
 
     public class FeedEntriesPager extends WeblogEntriesTimePager {
-        
+
         private WeblogFeedRequest feedRequest;
-        
+
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, urlStrategy,
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
@@ -135,11 +136,11 @@ public class FeedModel implements Model {
         }
 
     }
-    
+
     public class FeedCommentsPager extends CommentsPager {
-        
+
         private WeblogFeedRequest feedRequest;
-        
+
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getType(), null, null),
@@ -149,18 +150,18 @@ public class FeedModel implements Model {
 
             this.feedRequest = feedRequest;
         }
-        
+
         protected String createURL(String url, Map<String, String> params) {
             String category = feedRequest.getCategoryName();
             if (category != null) {
                 params.put("cat", Utilities.encode(category));
-            }  
+            }
             return super.createURL(url, params);
         }
-        
+
         public String getUrl() {
             return createURL(super.getUrl(), new HashMap<>());
         }
-    }      
+    }
 
 }

@@ -20,14 +20,14 @@
  */
 package org.apache.roller.weblogger.business;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for accessing static configuration properties, those in tightblog.properties
@@ -39,10 +39,10 @@ public final class WebloggerStaticConfig {
 
     private static Logger log = LoggerFactory.getLogger(WebloggerStaticConfig.class);
 
-    private static String default_config = "/tightblog.properties";
-    private static String custom_config = "/tightblog-custom.properties";
-    private static String custom_jvm_param = "tightblog.custom.config";
-    private static File custom_config_file = null;
+    private static String defaultConfig = "/tightblog.properties";
+    private static String customConfig = "/tightblog-custom.properties";
+    private static String customJvmParam = "tightblog.custom.config";
+    private static File customConfigFile = null;
 
     private static Properties config;
 
@@ -51,7 +51,8 @@ public final class WebloggerStaticConfig {
     private static String absoluteContextURL = null;
 
     // no, you may not instantiate this class :p
-    private WebloggerStaticConfig() {}
+    private WebloggerStaticConfig() {
+    }
 
     // enum constant for properties file-configured authentication option (Database username/passwords or LDAP).
     public enum AuthMethod {
@@ -72,43 +73,43 @@ public final class WebloggerStaticConfig {
             Class configClass = Class.forName("org.apache.roller.weblogger.business.WebloggerStaticConfig");
 
             // first, lets load our default properties
-            InputStream is = configClass.getResourceAsStream(default_config);
+            InputStream is = configClass.getResourceAsStream(defaultConfig);
             config.load(is);
-            
+
             // now, see if we can find our custom config
-            is = configClass.getResourceAsStream(custom_config);
+            is = configClass.getResourceAsStream(customConfig);
 
             if (is != null) {
                 config.load(is);
                 System.out.println("TightBlog Weblogger: Successfully loaded custom properties file from classpath");
-                System.out.println("File path : " + configClass.getResource(custom_config).getFile());
+                System.out.println("File path : " + configClass.getResource(customConfig).getFile());
             } else {
                 System.out.println("TightBlog Weblogger: No custom properties file found in classpath");
             }
 
             // finally, check for an external config file
-            String env_file = System.getProperty(custom_jvm_param);
-            if(env_file != null && env_file.length() > 0) {
-                custom_config_file = new File(env_file);
+            String envFile = System.getProperty(customJvmParam);
+            if (envFile != null && envFile.length() > 0) {
+                customConfigFile = new File(envFile);
 
                 // make sure the file exists, then try and load it
-                if (custom_config_file.exists()) {
-                    is = new FileInputStream(custom_config_file);
+                if (customConfigFile.exists()) {
+                    is = new FileInputStream(customConfigFile);
                     config.load(is);
-                    System.out.println("WebloggerStaticConfig: Successfully loaded custom properties from " + custom_config_file.getAbsolutePath());
+                    System.out.println("WebloggerStaticConfig: Successfully loaded custom properties from " + customConfigFile.getAbsolutePath());
                 } else {
-                    System.out.println("WebloggerStaticConfig: Failed to load custom properties from " + custom_config_file.getAbsolutePath());
+                    System.out.println("WebloggerStaticConfig: Failed to load custom properties from " + customConfigFile.getAbsolutePath());
                 }
 
             }
 
             // some debugging for those that want it
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("WebloggerStaticConfig looks like this ...");
 
                 String key;
                 Enumeration keys = config.keys();
-                while(keys.hasMoreElements()) {
+                while (keys.hasMoreElements()) {
                     key = (String) keys.nextElement();
                     log.debug(key + " = {}", config.getProperty(key));
                 }
@@ -122,20 +123,22 @@ public final class WebloggerStaticConfig {
 
     /**
      * Retrieve a property value
-     * @param     key Name of the property
-     * @return    String Value of property requested, null if not found
+     *
+     * @param key Name of the property
+     * @return String Value of property requested, null if not found
      */
     public static String getProperty(String key) {
         log.debug("Fetching property [{} = {}]", key, config.getProperty(key));
         String value = config.getProperty(key);
         return value == null ? null : value.trim();
     }
-    
+
     /**
      * Retrieve a property value
-     * @param     key Name of the property
-     * @param     defaultValue Default value of property if not found     
-     * @return    String Value of property requested or defaultValue
+     *
+     * @param key          Name of the property
+     * @param defaultValue Default value of property if not found
+     * @return String Value of property requested or defaultValue
      */
     public static String getProperty(String key, String defaultValue) {
         log.debug("Fetching property [{} = {}], default value = {}", key, config.getProperty(key), defaultValue);
@@ -143,7 +146,7 @@ public final class WebloggerStaticConfig {
         if (value == null) {
             return defaultValue;
         }
-        
+
         return value.trim();
     }
 
@@ -191,17 +194,16 @@ public final class WebloggerStaticConfig {
 
     /**
      * Special method which sets the non-persisted absolute url to this site.
-     *
+     * <p>
      * This property is *not* persisted in any way.
      */
     public static void setAbsoluteContextURL(String url) {
         absoluteContextURL = url;
     }
 
-
     /**
      * Get the absolute url to this site.
-     *
+     * <p>
      * This method will just return the value of the "site.absoluteurl"
      * property if it is set, otherwise it will return the non-persisted
      * value which is set by the InitFilter.
@@ -217,7 +219,7 @@ public final class WebloggerStaticConfig {
 
     /**
      * Special method which sets the non-persisted relative url to this site.
-     *
+     * <p>
      * This property is *not* persisted in any way.
      */
     public static void setRelativeContextURL(String url) {
@@ -230,19 +232,21 @@ public final class WebloggerStaticConfig {
 
     /**
      * Retrieve all property keys
+     *
      * @return Enumeration A list of all keys
      **/
     public static Enumeration keys() {
         return config.keys();
     }
-    
+
     /**
      * Return the value of the authentication.method property as an AuthMethod
      * enum value.  Matching is done by checking the propertyName of each AuthMethod
      * enum object.
-     * <p />
+     * <p/>
+     *
      * @throws IllegalArgumentException if property value defined in the properties
-     * file is missing or not the property name of any AuthMethod enum object.
+     *                                  file is missing or not the property name of any AuthMethod enum object.
      */
     public static AuthMethod getAuthMethod() {
         return AuthMethod.valueOf(getProperty("authentication.method", "DB").toUpperCase());

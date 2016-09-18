@@ -20,6 +20,13 @@
  */
 package org.apache.roller.weblogger.ui.rendering.comment;
 
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -28,24 +35,17 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.Utilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Check against Akismet service. Expects to a valid Akismet API key in the
  * Spring configuration ("apiKey") property.
  * You can get a free personal use key by registering as a user at wordpress.com.
  * See Akismet site for API details (https://akismet.com/development/api/#comment-check)
- *
+ * <p>
  * Per the Akismet docs, to test for non-blatant spam, use a commenter name of "viagra-test-123".
- *
+ * <p>
  * To test for blatant spam, set test_discard=1 and is_test=1 to the request created
  * in the validate() method below.
- *
+ * <p>
  * Before using Akismet, good to verify your apiKey works using cURL or similar tool:
  * curl --data "key=...your key...&blog=http://www.myblogurl.com/blog/" https://rest.akismet.com/1.1/verify-key
  * Returns "valid" if good, "invalid" otherwise.
@@ -69,7 +69,9 @@ public class AkismetCommentValidator implements CommentValidator {
 
     private URLStrategy urlStrategy;
 
-    /** Creates a new instance of AkismetCommentValidator */
+    /**
+     * Creates a new instance of AkismetCommentValidator
+     */
     public AkismetCommentValidator(URLStrategy urlStrategy, String apiKey) {
         this.urlStrategy = urlStrategy;
         this.apiKey = apiKey;
@@ -82,16 +84,16 @@ public class AkismetCommentValidator implements CommentValidator {
     public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         StringBuilder sb = new StringBuilder();
         sb.append("blog=").append(
-            urlStrategy.getWeblogURL(comment.getWeblogEntry().getWeblog(), true)).append("&");
-        sb.append("user_ip="        ).append(comment.getRemoteHost()).append("&");
-        sb.append("user_agent="     ).append(comment.getUserAgent()).append("&");
-        sb.append("referrer="       ).append(comment.getReferrer()).append("&");
-        sb.append("permalink="      ).append(comment.getWeblogEntry().getPermalink()).append("&");
-        sb.append("comment_type="   ).append("comment").append("&");
-        sb.append("comment_author=" ).append(comment.getName()).append("&");
+                urlStrategy.getWeblogURL(comment.getWeblogEntry().getWeblog(), true)).append("&");
+        sb.append("user_ip=").append(comment.getRemoteHost()).append("&");
+        sb.append("user_agent=").append(comment.getUserAgent()).append("&");
+        sb.append("referrer=").append(comment.getReferrer()).append("&");
+        sb.append("permalink=").append(comment.getWeblogEntry().getPermalink()).append("&");
+        sb.append("comment_type=").append("comment").append("&");
+        sb.append("comment_author=").append(comment.getName()).append("&");
         sb.append("comment_author_email=").append(comment.getEmail()).append("&");
-        sb.append("comment_author_url="  ).append(comment.getUrl()).append("&");
-        sb.append("comment_content="     ).append(comment.getContent());
+        sb.append("comment_author_url=").append(comment.getUrl()).append("&");
+        sb.append("comment_content=").append(comment.getContent());
 
         try {
             URL url = new URL("http://" + apiKey + ".rest.akismet.com/1.1/comment-check");
@@ -99,7 +101,7 @@ public class AkismetCommentValidator implements CommentValidator {
             conn.setDoOutput(true);
 
             conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
-            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8"); 
+            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
             conn.setRequestProperty("Content-length", Integer.toString(sb.length()));
 
             OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
@@ -116,8 +118,7 @@ public class AkismetCommentValidator implements CommentValidator {
                 }
                 messages.put("comment.validator.akismetMessage", null);
                 return 0;
-            }
-            else {
+            } else {
                 return Utilities.PERCENT_100;
             }
         } catch (Exception e) {

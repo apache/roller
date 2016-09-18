@@ -20,25 +20,24 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The Theme object encapsulates all elements of a single weblog theme. It is
  * used mostly to contain all the templates for a theme, but does contain other
  * theme related attributes such as name, last modified date, etc.
  */
-@XmlRootElement(name="sharedtheme")
+@XmlRootElement(name = "sharedtheme")
 public class SharedTheme {
 
     private String id = null;
@@ -52,7 +51,7 @@ public class SharedTheme {
     private boolean enabled = true;
 
     // JAXB loads here; ThemeManagerImpl moves them to the three maps.
-    @XmlElements(@XmlElement(name="template"))
+    @XmlElements(@XmlElement(name = "template"))
     private Set<SharedTemplate> tempTemplates = new HashSet<>();
 
     public Set<SharedTemplate> getTempTemplates() {

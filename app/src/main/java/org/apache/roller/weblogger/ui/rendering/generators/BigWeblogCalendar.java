@@ -36,7 +36,7 @@ import java.util.Map;
  * HTML generator for big calendar that displays blog entry titles for each day.
  */
 public class BigWeblogCalendar extends WeblogCalendar {
-    
+
     private Map<LocalDate, List<WeblogEntry>> monthMap;
     protected DateTimeFormatter singleDayFormat;
 
@@ -58,14 +58,14 @@ public class BigWeblogCalendar extends WeblogCalendar {
         // get the 8 char YYYYMMDD datestring for day, returns null if no weblog entry on that day
         String dateString;
         List<WeblogEntry> entries = monthMap.get(day);
-        if ( entries != null ) {
+        if (entries != null) {
             dateString = entries.get(0).getPubTime().atZone(ZoneId.systemDefault()).toLocalDate().format(eightCharDateFormat);
 
             // append 8 char date string on end of selfurl
             String dayUrl = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
 
             sb.append("<div class=\"hCalendarDayTitleBig\"><a href=\"");
-            sb.append( dayUrl );
+            sb.append(dayUrl);
             sb.append("\">");
             sb.append(singleDayFormat.format(day));
             sb.append("</a></div>");
@@ -76,14 +76,14 @@ public class BigWeblogCalendar extends WeblogCalendar {
                 sb.append("\">");
 
                 String title = entry.getTitle().trim();
-                if ( title.length()==0 ) {
+                if (title.length() == 0) {
                     title = entry.getAnchor();
                 }
-                if ( title.length() > 20 ) {
-                    title = title.substring(0,20)+"...";
+                if (title.length() > 20) {
+                    title = title.substring(0, 20) + "...";
                 }
 
-                sb.append( title );
+                sb.append(title);
                 sb.append("</a></div>");
             }
 

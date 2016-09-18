@@ -28,23 +28,22 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
-
 /**
  * Represents someone that wants to receive notifications about changed
  * items.
- *
+ * <p>
  * A BlogEventListener can be registered with the CacheManager and then will
  * receive all the various object invalidation events happening in the
  * system.
  */
 public interface BlogEventListener {
-    
+
     void invalidate(WeblogEntry entry);
-    
+
     void invalidate(Weblog website);
-    
+
     void invalidate(WeblogBookmark bookmark);
-    
+
     void invalidate(WeblogEntryComment comment);
 
     void invalidate(User user);
