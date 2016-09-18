@@ -20,14 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -40,14 +32,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * Serves media files uploaded by users.
- *
+ * <p>
  * Since we keep resources in a location outside of the webapp context we need a
  * way to serve them up.
  */
 @RestController
-@RequestMapping(path="/tb-ui/rendering/media-resources/**")
+@RequestMapping(path = "/tb-ui/rendering/media-resources/**")
 public class MediaResourceProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(MediaResourceProcessor.class);
@@ -66,8 +65,8 @@ public class MediaResourceProcessor extends AbstractProcessor {
         log.info("Initializing MediaResourceProcessor...");
     }
 
-    @RequestMapping(method = { RequestMethod.GET, RequestMethod.HEAD })
-        public void getMediaResource(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
+    public void getMediaResource(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         Weblog weblog;
 

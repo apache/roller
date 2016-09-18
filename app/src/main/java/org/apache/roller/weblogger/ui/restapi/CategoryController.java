@@ -112,7 +112,7 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.PUT)
-    public void addCategory(@RequestParam(name="weblogId") String weblogId, @RequestBody TextNode categoryName, Principal p,
+    public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody TextNode categoryName, Principal p,
                             HttpServletResponse response) throws ServletException {
         try {
             Weblog weblog = weblogManager.getWeblog(weblogId);
@@ -136,8 +136,8 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.GET)
-    public List<WeblogCategory> getWeblogCategories(@RequestParam(name="weblogId") String weblogId,
-                                                    @RequestParam(required=false) String skipCategoryId) {
+    public List<WeblogCategory> getWeblogCategories(@RequestParam(name = "weblogId") String weblogId,
+                                                    @RequestParam(required = false) String skipCategoryId) {
         return weblogManager.getWeblogCategories(weblogManager.getWeblog(weblogId))
                 .stream()
                 .filter(cat -> !cat.getId().equals(skipCategoryId))
@@ -153,7 +153,7 @@ public class CategoryController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.DELETE)
     public void removeCategory(@PathVariable String id, @RequestParam(required = false) String targetCategoryId,
-            Principal p, HttpServletResponse response)
+                               Principal p, HttpServletResponse response)
             throws ServletException {
 
         try {

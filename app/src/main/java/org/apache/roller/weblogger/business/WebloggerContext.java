@@ -20,15 +20,15 @@
  */
 package org.apache.roller.weblogger.business;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 
 /**
  * Subclass of Spring's ContextLoaderListener (http://stackoverflow.com/a/11817368/1207540)
@@ -78,12 +78,12 @@ public class WebloggerContext extends ContextLoaderListener {
 
     /**
      * Bootstrap the Roller Weblogger business tier.
-     *
+     * <p>
      * There are two possible application contexts, the web-level defined in web.xml
      * (activated when running the WAR) and the unit tests configured in WebloggerTest
      *
      * @throws IllegalStateException If the app has not been properly prepared yet.
-     * @throws RuntimeException If the app cannot be bootstrapped.
+     * @throws RuntimeException      If the app cannot be bootstrapped.
      */
     public static void bootstrap(ApplicationContext context) {
         try {

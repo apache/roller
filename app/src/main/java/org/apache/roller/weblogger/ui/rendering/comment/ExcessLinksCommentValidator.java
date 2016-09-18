@@ -18,14 +18,14 @@
 
 package org.apache.roller.weblogger.ui.rendering.comment;
 
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.Utilities;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Validates comment only if its number of links don't exceed the configured threshold.
@@ -54,5 +54,5 @@ public class ExcessLinksCommentValidator implements CommentValidator {
         }
         return Utilities.PERCENT_100;
     }
-    
+
 }

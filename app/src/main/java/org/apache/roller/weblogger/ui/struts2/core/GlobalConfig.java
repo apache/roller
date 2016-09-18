@@ -20,25 +20,29 @@
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.persistence.RollbackException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.persistence.RollbackException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Action which handles editing of global configuration.
@@ -67,13 +71,13 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
 
     // the request parameters
     private Map<String, String[]> params = Collections.emptyMap();
-    
+
     // map of config properties
     private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
-    
+
     // the runtime config def used to populate the display
     private RuntimeConfigDefs globalConfigDef = null;
-    
+
     // work around checkbox issue in cases where user inadvertently does a
     // GET on the GlobalConfig!save URL and thus sets all checkboxes to false
     private String httpMethod = "GET";
@@ -91,7 +95,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public WeblogRole getRequiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
     }
-    
+
     /**
      * Prepare action by loading runtime properties map.
      */
@@ -102,8 +106,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         setWeblogs(weblogManager.getWeblogs(true, 0, -1));
         globalConfigDef = propertiesManager.getRuntimeConfigDefs();
     }
-    
-    
+
     /**
      * Display global properties editor form.
      */
@@ -111,8 +114,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public String execute() {
         return SUCCESS;
     }
-    
-    
+
     /**
      * Save global properties.
      */
@@ -120,42 +122,41 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         if (!"POST".equals(httpMethod)) {
             return ERROR;
         }
-        
+
         // only set values for properties that are already defined
         RuntimeConfigProperty updProp;
         String incomingProp;
         for (String propName : getProperties().keySet()) {
             updProp = getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
-            
+
             log.debug("Checking property [{}]", propName);
             log.debug("Request value is [{}]", incomingProp);
-            
+
             // some special treatment for booleans
             // this is a bit hacky since we are assuming that any prop
             // with a value of "true" or "false" is meant to be a boolean
             // it may not always be the case, but we should be okay for now
             // null check below needed w/Oracle
-            if( updProp.getValue() != null
-                    && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
-                
-                if(incomingProp == null || !incomingProp.equals("on")) {
+            if (updProp.getValue() != null && (updProp.getValue().equals("true") ||
+                    updProp.getValue().equals("false"))) {
+
+                if (incomingProp == null || !incomingProp.equals("on")) {
                     incomingProp = "false";
-                }
-                else {
+                } else {
                     incomingProp = "true";
                 }
             }
-            
+
             // only work on props that were submitted with the request
-            if(incomingProp != null) {
+            if (incomingProp != null) {
                 log.debug("Setting new value for [{}]", propName);
-                
+
                 // NOTE: the old way had some locale sensitive way to do this??
                 updProp.setValue(incomingProp.trim());
             }
         }
-        
+
         try {
             // save 'em and flush
             propertiesManager.saveProperties(getProperties());
@@ -166,14 +167,13 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             log.error("Error saving roller properties", ex);
             addError("generic.error.check.logs");
         }
-                
+
         return SUCCESS;
     }
-    
-    
+
     public void setParameters(Map<String, String[]> parameters) {
         this.params = parameters;
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Parameter map:");
 
@@ -182,11 +182,11 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             }
         }
     }
-    
+
     // convenience method for getting a single parameter as a String
     private String getParameter(String key) {
         String[] p = this.params.get(key);
-        if(p != null && p.length > 0) {
+        if (p != null && p.length > 0) {
             return p[0];
         }
         return null;
@@ -242,11 +242,11 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public void setGlobalConfigDef(RuntimeConfigDefs def) {
         this.globalConfigDef = def;
     }
-    
+
     public void setServletRequest(HttpServletRequest req) {
         httpMethod = req.getMethod();
     }
-    
+
     public Collection<Weblog> getWeblogs() {
         return weblogs;
     }

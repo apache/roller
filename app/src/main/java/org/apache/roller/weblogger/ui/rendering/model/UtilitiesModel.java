@@ -20,6 +20,14 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
+import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -28,13 +36,6 @@ import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
-import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Model which provides access to system messages and certain properties
@@ -50,13 +51,17 @@ public class UtilitiesModel implements Model {
         this.propertiesManager = propertiesManager;
     }
 
-    /** Template context name to be used for model */
+    /**
+     * Template context name to be used for model
+     */
     @Override
     public String getModelName() {
         return "utils";
     }
 
-    /** Init page model, will take but does not require a WeblogRequest object. */
+    /**
+     * Init page model, will take but does not require a WeblogRequest object.
+     */
     @Override
     public void init(Map initData) {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -65,12 +70,16 @@ public class UtilitiesModel implements Model {
                 (weblogRequest == null) ? Locale.ENGLISH : weblogRequest.getLocaleInstance());
     }
 
-    /** Return message string */
+    /**
+     * Return message string
+     */
     public String msg(String key) {
         return messages.getString(key);
     }
 
-    /** Return parameterized message string */
+    /**
+     * Return parameterized message string
+     */
     public String msg(String key, List args) {
         return messages.getString(key, args);
     }
@@ -87,8 +96,8 @@ public class UtilitiesModel implements Model {
         return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
     }
 
-
     //-------------------------------------------------------------- Date utils
+
     /**
      * Return date for current time.
      */
@@ -161,6 +170,7 @@ public class UtilitiesModel implements Model {
 
     /**
      * URL encoding.
+     *
      * @param s a string to be URL-encoded
      * @return URL encoding of s using character encoding UTF-8; null if s is null.
      */

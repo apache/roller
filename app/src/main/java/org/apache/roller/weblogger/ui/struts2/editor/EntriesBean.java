@@ -26,12 +26,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.Utilities;
 
-
 /**
  * A bean for managing entries query data.
  */
 public class EntriesBean {
-    
+
     private String endDateString = null;
     private String startDateString = null;
     private String categoryName = null;
@@ -40,20 +39,19 @@ public class EntriesBean {
     private String status = "ALL";
     private WeblogEntrySearchCriteria.SortBy sortBy = WeblogEntrySearchCriteria.SortBy.UPDATE_TIME;
     private int page = 0;
-    
-    
+
     public EntriesBean() {
     }
-    
+
     // convenience method
     public Set<String> getTags() {
-        if(getTagsAsString() != null) {
+        if (getTagsAsString() != null) {
             return Utilities.splitStringAsTags(getTagsAsString());
         } else {
             return null;
         }
     }
-    
+
     public LocalDateTime getStartDate() {
         return getDate(getStartDateString());
     }
@@ -63,11 +61,12 @@ public class EntriesBean {
     }
 
     private LocalDateTime getDate(String dateToParse) {
-        if(!StringUtils.isEmpty(dateToParse)) {
+        if (!StringUtils.isEmpty(dateToParse)) {
             try {
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("MM/dd/yy");
                 return LocalDateTime.parse(dateToParse, df);
-            } catch(Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
         return null;
     }
@@ -75,43 +74,43 @@ public class EntriesBean {
     public String getCategoryName() {
         return categoryName;
     }
-    
+
     public void setCategoryName(String categoryId) {
         this.categoryName = categoryId;
     }
-    
+
     public String getTagsAsString() {
         return tagsAsString;
     }
-    
+
     public void setTagsAsString(String tags) {
         this.tagsAsString = tags;
     }
-    
+
     public String getText() {
         return text;
     }
-    
+
     public void setText(String text) {
         this.text = text;
     }
-    
+
     public String getStatus() {
         return status;
     }
-    
+
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     public void setSortBy(WeblogEntrySearchCriteria.SortBy sortBy) {
         this.sortBy = sortBy;
     }
-    
+
     public WeblogEntrySearchCriteria.SortBy getSortBy() {
         return sortBy;
     }
-    
+
     public int getPage() {
         return page;
     }
@@ -135,12 +134,12 @@ public class EntriesBean {
     public void setStartDateString(String startDateString) {
         this.startDateString = startDateString;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        
+
         buf.append("startDate = ").append(getStartDate()).append("\n");
         buf.append("endDate = ").append(getEndDate()).append("\n");
         buf.append("status = ").append(getStatus()).append("\n");
@@ -149,7 +148,7 @@ public class EntriesBean {
         buf.append("tags = ").append(getTagsAsString()).append("\n");
         buf.append("text = ").append(getText()).append("\n");
         buf.append("page = ").append(getPage()).append("\n");
-        
+
         return buf.toString();
     }
 }

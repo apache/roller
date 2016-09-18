@@ -20,10 +20,8 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig.AuthMethod;
@@ -32,7 +30,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.apache.roller.weblogger.business.UserManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Spring Security UserDetailsService implemented using Weblogger API.

@@ -32,15 +32,15 @@ public interface TemplateRendition {
     @XmlType
     @XmlEnum
     enum RenditionType {
-        @XmlEnumValue("normal") NORMAL,
-        @XmlEnumValue("tablet") TABLET,
-        @XmlEnumValue("mobile") MOBILE;
+        @XmlEnumValue("normal")NORMAL,
+        @XmlEnumValue("tablet")TABLET,
+        @XmlEnumValue("mobile")MOBILE;
     }
 
     @XmlType
     @XmlEnum
     public enum Parser {
-        @XmlEnumValue("velocity") VELOCITY("Velocity");
+        @XmlEnumValue("velocity")VELOCITY("Velocity");
 
         private final String readableName;
 

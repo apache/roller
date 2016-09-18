@@ -28,13 +28,13 @@ import org.slf4j.LoggerFactory;
  * An operation that writes to index.
  */
 public abstract class WriteToIndexOperation extends IndexOperation {
-    
+
     public WriteToIndexOperation(IndexManager mgr) {
         super(mgr);
     }
 
     private static Logger log = LoggerFactory.getLogger(WriteToIndexOperation.class);
-    
+
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();
@@ -44,7 +44,7 @@ public abstract class WriteToIndexOperation extends IndexOperation {
 
         } catch (Exception e) {
             log.error("Error acquiring write lock on index", e);
-            
+
         } finally {
             manager.getReadWriteLock().writeLock().unlock();
         }

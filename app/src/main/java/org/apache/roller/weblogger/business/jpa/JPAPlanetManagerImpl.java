@@ -20,20 +20,19 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.Subscription;
+import org.apache.roller.weblogger.pojos.SubscriptionEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-
-import org.apache.commons.lang.time.DateUtils;
-
-import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.SubscriptionEntry;
-import org.apache.roller.weblogger.pojos.Subscription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Manages Planet Roller objects and entry aggregations in a database.
@@ -44,7 +43,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
 
     private JPAPersistenceStrategy strategy;
 
-    protected JPAPlanetManagerImpl() {}
+    protected JPAPlanetManagerImpl() {
+    }
 
     public void setStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
@@ -91,7 +91,6 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     public Subscription getSubscription(String id) {
         return strategy.load(Subscription.class, id);
     }
-
 
     @Override
     public List<Planet> getPlanets() {
@@ -146,8 +145,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         sb.append(" ORDER BY e.pubTime DESC");
 
         TypedQuery<SubscriptionEntry> query = strategy.getDynamicQuery(sb.toString(), SubscriptionEntry.class);
-        for (int i=0; i<params.size(); i++) {
-            query.setParameter(i+1, params.get(i));
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
         }
         if (offset - 1 > 0) {
             query.setFirstResult((offset - 1) * len);

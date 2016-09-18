@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.util.Comparator;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.util.Utilities;
@@ -36,12 +34,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="weblog_entry_tag")
+@Table(name = "weblog_entry_tag")
 @NamedQueries({
-        @NamedQuery(name="WeblogEntryTag.getByWeblog",
-                query="SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1")
+        @NamedQuery(name = "WeblogEntryTag.getByWeblog",
+                query = "SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1")
 })
-public class WeblogEntryTag  {
+public class WeblogEntryTag {
 
     private String id = Utilities.generateUUID();
     private Weblog weblog = null;
@@ -58,55 +56,52 @@ public class WeblogEntryTag  {
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
     /**
      * ID of weblog that this tag refers to.
      */
     @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false)
+    @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return this.weblog;
     }
-    
+
     public void setWeblog(Weblog website) {
         this.weblog = website;
     }
 
-
     @ManyToOne
-    @JoinColumn(name="entryid",nullable=false)
+    @JoinColumn(name = "entryid", nullable = false)
     public WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }
-    
+
     public void setWeblogEntry(WeblogEntry data) {
         weblogEntry = data;
     }
-    
-    
+
     /**
      * Tag value.
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return this.name;
     }
-    
-    public void setName( String name ) {
+
+    public void setName(String name) {
         this.name = name;
     }
 
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         return ("{" + getId() + ", " + getName() + "}");
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -114,21 +109,18 @@ public class WeblogEntryTag  {
         if (!(other instanceof WeblogEntryTag)) {
             return false;
         }
-        WeblogEntryTag o = (WeblogEntryTag)other;
+        WeblogEntryTag o = (WeblogEntryTag) other;
         return new EqualsBuilder()
-        .append(getName(), o.getName())
-        .append(getWeblogEntry(), o.getWeblogEntry())
-        .isEquals();
-    }
-    
-    public int hashCode() {
-        return new HashCodeBuilder()
-        .append(getName())
-        .append(getWeblogEntry())
-        .toHashCode();
+                .append(getName(), o.getName())
+                .append(getWeblogEntry(), o.getWeblogEntry())
+                .isEquals();
     }
 
-    public static Comparator<WeblogEntryTag> Comparator = (tag1, tag2) ->
-        tag1.getName().compareTo(tag2.getName());
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(getName())
+                .append(getWeblogEntry())
+                .toHashCode();
+    }
 
 }

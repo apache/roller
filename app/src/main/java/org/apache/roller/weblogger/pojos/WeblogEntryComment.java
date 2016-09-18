@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -38,21 +36,24 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.time.Instant;
 
 @Entity
-@Table(name="weblog_entry_comment")
+@Table(name = "weblog_entry_comment")
 @NamedQueries({
-        @NamedQuery(name="WeblogEntryComment.getCountAllDistinctByStatus",
-                query="SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1"),
-        @NamedQuery(name="WeblogEntryComment.getCountDistinctByWeblog&Status",
-                query="SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2"),
+        @NamedQuery(name = "WeblogEntryComment.getCountAllDistinctByStatus",
+                query = "SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1"),
+        @NamedQuery(name = "WeblogEntryComment.getCountDistinctByWeblog&Status",
+                query = "SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2"),
 })
 public class WeblogEntryComment {
-    
+
     // approval status states
     // Reason for having both PENDING and DISAPPROVED is that the former triggers
     // email notifications upon subsequent approval while the latter does not.
-    public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
+    public enum ApprovalStatus {
+        APPROVED, DISAPPROVED, SPAM, PENDING
+    }
 
     // attributes
     private String id = Utilities.generateUUID();
@@ -70,7 +71,8 @@ public class WeblogEntryComment {
     // associations
     private WeblogEntry weblogEntry = null;
 
-    public WeblogEntryComment() {}
+    public WeblogEntryComment() {
+    }
 
     // transient fields involved during comment submittal
     private boolean error = false;
@@ -81,22 +83,22 @@ public class WeblogEntryComment {
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
 
     @ManyToOne
-    @JoinColumn(name="entryid", nullable=false)
+    @JoinColumn(name = "entryid", nullable = false)
     public WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }
-    
+
     public void setWeblogEntry(WeblogEntry entry) {
         weblogEntry = entry;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return this.name;
     }
@@ -105,41 +107,41 @@ public class WeblogEntryComment {
         this.name = name;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getEmail() {
         return this.email;
     }
-    
+
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
     public String getUrl() {
         return this.url;
     }
-    
+
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
     public String getContent() {
         return this.content;
     }
-    
+
     public void setContent(String content) {
         this.content = content;
     }
-    
-    @Basic(optional=false)
+
+    @Basic(optional = false)
     public Instant getPostTime() {
         return this.postTime;
     }
-    
+
     public void setPostTime(Instant postTime) {
         this.postTime = postTime;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     public ApprovalStatus getStatus() {
         return status;
@@ -148,47 +150,47 @@ public class WeblogEntryComment {
     public void setStatus(ApprovalStatus status) {
         this.status = status;
     }
-    
+
     /**
      * True if person who wrote comment wishes to be notified of new comments
      * on the same weblog entry.
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Boolean getNotify() {
         return this.notify;
     }
-    
+
     public void setNotify(Boolean notify) {
         this.notify = notify;
     }
-    
+
     /**
      * Host name or IP of person who wrote comment.
      */
     public String getRemoteHost() {
         return this.remoteHost;
     }
-    
+
     public void setRemoteHost(String remoteHost) {
         this.remoteHost = remoteHost;
     }
-    
+
     public String getReferrer() {
         return referrer;
     }
-    
+
     public void setReferrer(String referrer) {
         this.referrer = StringEscapeUtils.escapeHtml4(referrer);
     }
-    
+
     public String getUserAgent() {
         return userAgent;
     }
-    
+
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
     }
-    
+
     /**
      * Indicates that weblog owner considers this comment to be spam.
      */
@@ -204,7 +206,7 @@ public class WeblogEntryComment {
     public Boolean getPending() {
         return ApprovalStatus.PENDING.equals(getStatus());
     }
-    
+
     /**
      * Indicates that comment has been approved for display on weblog.
      */
@@ -212,7 +214,7 @@ public class WeblogEntryComment {
     public Boolean getApproved() {
         return ApprovalStatus.APPROVED.equals(getStatus());
     }
-    
+
     /**
      * Timestamp to be used to formulate comment permlink.
      */
@@ -223,7 +225,7 @@ public class WeblogEntryComment {
         }
         return null;
     }
-    
+
     public String toString() {
         return "{" + id.substring(0, 8) + "..., " + name + ", " + email + ", " + postTime + ", " + notify + "}";
     }
@@ -235,20 +237,20 @@ public class WeblogEntryComment {
         if (!(other instanceof WeblogEntryComment)) {
             return false;
         }
-        WeblogEntryComment o = (WeblogEntryComment)other;
+        WeblogEntryComment o = (WeblogEntryComment) other;
         return new EqualsBuilder()
-            .append(getName(), o.getName()) 
-            .append(getPostTime(), o.getPostTime()) 
-            .append(getWeblogEntry(), o.getWeblogEntry()) 
-            .isEquals();
+                .append(getName(), o.getName())
+                .append(getPostTime(), o.getPostTime())
+                .append(getWeblogEntry(), o.getWeblogEntry())
+                .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
-            .append(getName())
-            .append(getPostTime())
-            .append(getWeblogEntry())
-            .toHashCode();
+                .append(getName())
+                .append(getPostTime())
+                .append(getWeblogEntry())
+                .toHashCode();
     }
 
     public void setData(WeblogEntryComment other) {

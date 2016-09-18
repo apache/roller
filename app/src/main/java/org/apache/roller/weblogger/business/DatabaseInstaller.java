@@ -20,20 +20,18 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.roller.weblogger.util.SQLScriptRunner;
 import org.apache.roller.weblogger.util.WebloggerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles the install/upgrade of the TightBlog Weblogger database when the user
@@ -42,27 +40,27 @@ import javax.sql.DataSource;
 public class DatabaseInstaller {
 
     private static Logger log = LoggerFactory.getLogger(DatabaseInstaller.class);
-    
+
     private final DataSource dataSource;
     private final int targetVersion;
     private List<String> messages = new ArrayList<>();
-    
+
     // the name of the property in weblogger_properties table which holds the dbversion value
     private static final String DBVERSION_PROP = "tightblog.database.version";
-    
+
     public DatabaseInstaller(DataSource dataSource) {
         this.dataSource = dataSource;
         targetVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version");
     }
 
-    /** 
+    /**
      * Determine if database schema needs to be upgraded.
      */
     public boolean isCreationRequired() {
         Connection con = null;
-        try {            
+        try {
             con = dataSource.getConnection();
-            
+
             // just check for a couple key database tables
             if (tableExists(con, "weblog") && tableExists(con, "weblogger_user")) {
                 return false;
@@ -74,12 +72,13 @@ public class DatabaseInstaller {
                 if (con != null) {
                     con.close();
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Determine if database schema needs to be upgraded.
      */
@@ -90,12 +89,12 @@ public class DatabaseInstaller {
     public List<String> getMessages() {
         return messages;
     }
-    
+
     private void errorMessage(String msg) {
         messages.add(msg);
         log.error(msg);
-    }    
-    
+    }
+
     private void successMessage(String msg) {
         messages.add(msg);
         log.trace(msg);
@@ -103,6 +102,7 @@ public class DatabaseInstaller {
 
     /**
      * Create database tables.
+     *
      * @return List of messages created during processing
      */
     public List<String> createDatabase() throws WebloggerException {
@@ -112,6 +112,7 @@ public class DatabaseInstaller {
 
     /**
      * Upgrade database if dbVersion is older than desiredVersion.
+     *
      * @return List of messages created during processing
      */
     public List<String> upgradeDatabase() throws WebloggerException {
@@ -158,7 +159,8 @@ public class DatabaseInstaller {
                 if (con != null) {
                     con.close();
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -174,26 +176,26 @@ public class DatabaseInstaller {
         }
         return false;
     }
-    
+
     private int getDatabaseVersion() throws WebloggerException {
         int dbversion = -1;
-        
+
         // get the current db version
         Connection con = null;
         try {
             con = dataSource.getConnection();
             Statement stmt = con.createStatement();
-            
+
             // just check in the weblogger_properties table
             ResultSet rs = stmt.executeQuery(
                     "select value from weblogger_properties where name = '" + DBVERSION_PROP + "'");
-            
+
             if (rs.next()) {
                 dbversion = Integer.parseInt(rs.getString(1));
             }
-        } catch(Exception e) {
-            String msg = "Current TightBlog database version cannot be determined, check "
-                    + DBVERSION_PROP + " in weblogger_properties table";
+        } catch (Exception e) {
+            String msg = "Current TightBlog database version cannot be determined, check " + DBVERSION_PROP +
+                    " in weblogger_properties table";
             errorMessage(msg);
             throw new WebloggerException(msg, e);
         } finally {
@@ -201,9 +203,10 @@ public class DatabaseInstaller {
                 if (con != null) {
                     con.close();
                 }
-            } catch (Exception ignored) {}
-        }       
+            } catch (Exception ignored) {
+            }
+        }
         return dbversion;
     }
-    
+
 }

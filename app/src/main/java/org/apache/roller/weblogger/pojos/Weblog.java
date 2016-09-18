@@ -20,10 +20,6 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -49,7 +45,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
-
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Weblogs have a many-to-many association with users. They also have one-to-many and
@@ -57,48 +58,48 @@ import javax.validation.constraints.Pattern;
  * other objects.
  */
 @Entity
-@Table(name="weblog")
+@Table(name = "weblog")
 @NamedQueries({
-        @NamedQuery(name="Weblog.getByHandle",
-                query="SELECT w FROM Weblog w WHERE w.handle = ?1"),
-        @NamedQuery(name="Weblog.getByLetterOrderByHandle",
-                query="SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle"),
-        @NamedQuery(name="Weblog.getCountAllDistinct",
-                query="SELECT COUNT(w) FROM Weblog w"),
-        @NamedQuery(name="Weblog.getCountByHandleLike",
-                query="SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
-        @NamedQuery(name="Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                query="SELECT w FROM Weblog w WHERE w.visible = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
-        @NamedQuery(name="Weblog.updateDailyHitCountZero",
-                query="UPDATE Weblog w SET w.hitsToday = 0")
+        @NamedQuery(name = "Weblog.getByHandle",
+                query = "SELECT w FROM Weblog w WHERE w.handle = ?1"),
+        @NamedQuery(name = "Weblog.getByLetterOrderByHandle",
+                query = "SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle"),
+        @NamedQuery(name = "Weblog.getCountAllDistinct",
+                query = "SELECT COUNT(w) FROM Weblog w"),
+        @NamedQuery(name = "Weblog.getCountByHandleLike",
+                query = "SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
+        @NamedQuery(name = "Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
+                query = "SELECT w FROM Weblog w WHERE w.visible = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
+        @NamedQuery(name = "Weblog.updateDailyHitCountZero",
+                query = "UPDATE Weblog w SET w.hitsToday = 0")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Weblog {
 
-    private String  id               = Utilities.generateUUID();
+    private String id = Utilities.generateUUID();
     @NotBlank(message = "{weblogSettings.error.handleNull}")
     @Pattern(regexp = "[a-z0-9\\-]*", message = "{weblogSettings.error.invalidHandle}")
-    private String  handle           = null;
+    private String handle = null;
     @NotBlank(message = "{weblogSettings.error.nameNull}")
-    private String  name             = null;
-    private String  tagline          = null;
-    private EditFormat editFormat    = EditFormat.HTML;
-    private String  blacklist        = null;
+    private String name = null;
+    private String tagline = null;
+    private EditFormat editFormat = EditFormat.HTML;
+    private String blacklist = null;
     private CommentOption allowComments = CommentOption.MUSTMODERATE;
-    private Boolean emailComments    = Boolean.FALSE;
+    private Boolean emailComments = Boolean.FALSE;
     @NotBlank(message = "{weblogSettings.error.themeNull}")
-    private String  theme            = null;
-    private String  locale           = null;
-    private String  timeZone         = null;
-    private Boolean visible          = Boolean.TRUE;
+    private String theme = null;
+    private String locale = null;
+    private String timeZone = null;
+    private Boolean visible = Boolean.TRUE;
     private Instant dateCreated = Instant.now();
-    private int     defaultCommentDays = -1;
-    private int     entriesPerPage   = 15;
+    private int defaultCommentDays = -1;
+    private int entriesPerPage = 15;
     private Instant lastModified = Instant.now();
-    private String  about            = null;
-    private User    creator          = null;
-    private String  analyticsCode    = null;
-    private int     hitsToday        = 0;
+    private String about = null;
+    private User creator = null;
+    private String analyticsCode = null;
+    private int hitsToday = 0;
     private boolean applyCommentDefaults = false;
 
     // needed when viewing theme previews, to ensure proper templates being called
@@ -123,8 +124,6 @@ public class Weblog {
         }
     }
 
-
-
     // Associated objects
     @JsonIgnore
     private List<WeblogCategory> weblogCategories = new ArrayList<>();
@@ -133,8 +132,9 @@ public class Weblog {
     @JsonIgnore
     private List<MediaDirectory> mediaDirectories = new ArrayList<>();
 
-    public Weblog() {}
-    
+    public Weblog() {
+    }
+
     public Weblog(
             String handle,
             User creator,
@@ -143,7 +143,7 @@ public class Weblog {
             String theme,
             String locale,
             String timeZone) {
-        
+
         this.handle = handle;
         this.creator = creator;
         this.name = name;
@@ -157,36 +157,36 @@ public class Weblog {
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
+
     /**
      * Short URL safe string that uniquely identifies the weblog.
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getHandle() {
         return this.handle;
     }
-    
+
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
+
     /**
      * Weblog name (title)
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public int getHitsToday() {
         return hitsToday;
     }
@@ -201,13 +201,13 @@ public class Weblog {
     public String getTagline() {
         return this.tagline;
     }
-    
+
     public void setTagline(String tagline) {
         this.tagline = tagline;
     }
 
     @ManyToOne
-    @JoinColumn(name="creatorid",nullable=false)
+    @JoinColumn(name = "creatorid", nullable = false)
     @JsonIgnore
     public User getCreator() {
         return creator;
@@ -217,48 +217,48 @@ public class Weblog {
         this.creator = creator;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     public EditFormat getEditFormat() {
         return this.editFormat;
     }
-    
+
     public void setEditFormat(EditFormat editFormat) {
         this.editFormat = editFormat;
     }
-    
+
     public String getBlacklist() {
         return this.blacklist;
     }
-    
+
     public void setBlacklist(String blacklist) {
         this.blacklist = blacklist;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     public CommentOption getAllowComments() {
         return this.allowComments;
     }
-    
+
     public void setAllowComments(CommentOption allowComments) {
         this.allowComments = allowComments;
     }
 
-    @Column(name="commentdays", nullable=false)
+    @Column(name = "commentdays", nullable = false)
     public int getDefaultCommentDays() {
         return defaultCommentDays;
     }
-    
+
     public void setDefaultCommentDays(int defaultCommentDays) {
         this.defaultCommentDays = defaultCommentDays;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Boolean getEmailComments() {
         return this.emailComments;
     }
-    
+
     public void setEmailComments(Boolean emailComments) {
         this.emailComments = emailComments;
     }
@@ -266,28 +266,28 @@ public class Weblog {
     public String getTheme() {
         return this.theme;
     }
-    
+
     public void setTheme(String theme) {
         this.theme = theme;
     }
-    
+
     public String getLocale() {
         return this.locale;
     }
-    
+
     public void setLocale(String locale) {
         this.locale = locale;
     }
-    
+
     public String getTimeZone() {
         return this.timeZone;
     }
-    
+
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Instant getDateCreated() {
         return dateCreated;
     }
@@ -321,9 +321,10 @@ public class Weblog {
         this.setTempPreviewWeblog(other.isTempPreviewWeblog());
         this.setBookmarks(other.getBookmarks());
     }
-    
+
     /**
      * Parse locale value and instantiate a Locale object.
+     *
      * @return Locale
      */
     @Transient
@@ -334,41 +335,42 @@ public class Weblog {
 
     /**
      * Return TimeZone instance for value of timeZone, else return system default instance.
+     *
      * @return TimeZone
      */
     @Transient
     @JsonIgnore
     public ZoneId getZoneId() {
         if (getTimeZone() == null) {
-            this.setTimeZone( TimeZone.getDefault().getID() );
+            this.setTimeZone(TimeZone.getDefault().getID());
         }
         return TimeZone.getTimeZone(getTimeZone()).toZoneId();
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public int getEntriesPerPage() {
         return entriesPerPage;
     }
-    
+
     public void setEntriesPerPage(int entriesPerPage) {
         this.entriesPerPage = entriesPerPage;
     }
-    
+
     /**
      * If false, weblog will be hidden from public view.
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Boolean getVisible() {
         return this.visible;
     }
-    
+
     public void setVisible(Boolean visible) {
         this.visible = visible;
     }
-    
+
     /**
      * The last time any visible part of this weblog was modified.
-     * This includes a change to weblog settings, entries, themes, templates, 
+     * This includes a change to weblog settings, entries, themes, templates,
      * comments, categories, bookmarks, etc.  This can be used by cache managers
      * to determine if blog content should be invalidated and reloaded.
      */
@@ -424,21 +426,21 @@ public class Weblog {
      */
     public void addCategory(WeblogCategory category) {
         // make sure category is not null
-        if(category == null || category.getName() == null) {
+        if (category == null || category.getName() == null) {
             throw new IllegalArgumentException("Category cannot be null and must have a valid name");
         }
 
         // make sure we don't already have a category with that name
-        if(hasCategory(category.getName())) {
-            throw new IllegalArgumentException("Duplicate category name '"+category.getName()+"'");
+        if (hasCategory(category.getName())) {
+            throw new IllegalArgumentException("Duplicate category name '" + category.getName() + "'");
         }
 
         // add it to our list of categories
         getWeblogCategories().add(category);
     }
 
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogCategory.class,
-            cascade=CascadeType.REMOVE, mappedBy="weblog")
+    @OneToMany(targetEntity = org.apache.roller.weblogger.pojos.WeblogCategory.class,
+            cascade = CascadeType.REMOVE, mappedBy = "weblog")
     @OrderBy("position")
     public List<WeblogCategory> getWeblogCategories() {
         return weblogCategories;
@@ -450,15 +452,15 @@ public class Weblog {
 
     public boolean hasCategory(String name) {
         for (WeblogCategory cat : getWeblogCategories()) {
-            if(name.equals(cat.getName())) {
+            if (name.equals(cat.getName())) {
                 return true;
             }
         }
         return false;
     }
 
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogBookmark.class,
-            cascade={CascadeType.ALL}, mappedBy="weblog", orphanRemoval=true)
+    @OneToMany(targetEntity = org.apache.roller.weblogger.pojos.WeblogBookmark.class,
+            cascade = {CascadeType.ALL}, mappedBy = "weblog", orphanRemoval = true)
     public List<WeblogBookmark> getBookmarks() {
         return bookmarks;
     }
@@ -467,8 +469,8 @@ public class Weblog {
         this.bookmarks = bookmarks;
     }
 
-    @OneToMany(targetEntity=MediaDirectory.class,
-            cascade={CascadeType.ALL}, mappedBy="weblog")
+    @OneToMany(targetEntity = MediaDirectory.class,
+            cascade = {CascadeType.ALL}, mappedBy = "weblog")
     public List<MediaDirectory> getMediaDirectories() {
         return mediaDirectories;
     }
@@ -502,7 +504,7 @@ public class Weblog {
      */
     public boolean hasBookmark(String name) {
         for (WeblogBookmark bookmark : this.getBookmarks()) {
-            if(name.toLowerCase().equals(bookmark.getName().toLowerCase())) {
+            if (name.toLowerCase().equals(bookmark.getName().toLowerCase())) {
                 return true;
             }
         }
@@ -513,7 +515,6 @@ public class Weblog {
      * Indicates whether this weblog contains the specified media file directory
      *
      * @param name directory name
-     *
      * @return true if directory is present, false otherwise.
      */
     public boolean hasMediaDirectory(String name) {
@@ -566,7 +567,7 @@ public class Weblog {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return  "{" + getId() + ", " + getHandle() + ", " + getName() + "}";
+        return "{" + getId() + ", " + getHandle() + ", " + getName() + "}";
     }
 
     public boolean equals(Object other) {
@@ -576,7 +577,7 @@ public class Weblog {
         if (!(other instanceof Weblog)) {
             return false;
         }
-        Weblog o = (Weblog)other;
+        Weblog o = (Weblog) other;
         return new EqualsBuilder()
                 .append(getHandle(), o.getHandle())
                 .isEquals();

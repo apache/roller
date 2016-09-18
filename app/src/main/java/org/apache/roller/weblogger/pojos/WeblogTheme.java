@@ -22,6 +22,9 @@
 package org.apache.roller.weblogger.pojos;
 
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
+import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -29,14 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.roller.weblogger.business.themes.SharedTheme;
-import org.apache.roller.weblogger.pojos.Template.ComponentType;
-import org.apache.roller.weblogger.pojos.Template.TemplateDerivation;
-
-
 /**
  * A Theme which is specifically tied to a given weblog.
- *
+ * <p>
  * A WeblogTheme is what is used throughout the rendering process to do the
  * rendering for a given weblog design.
  */
@@ -97,7 +95,7 @@ public class WeblogTheme {
 
         return new ArrayList<>(pageMap.values());
     }
-    
+
     /**
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
@@ -113,8 +111,7 @@ public class WeblogTheme {
         }
         return template;
     }
-    
-    
+
     /**
      * Lookup the specified template by name.
      * Returns null if the template cannot be found.
@@ -130,8 +127,7 @@ public class WeblogTheme {
         }
         return template;
     }
-    
-    
+
     /**
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.

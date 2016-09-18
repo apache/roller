@@ -18,39 +18,34 @@
 
 package org.apache.roller.weblogger.util.cache;
 
-
 /**
  * Base interface representing a cache in Roller.
  */
 public interface Cache {
-    
+
     /**
      * put an item in the cache.
      */
     void put(String key, Object value);
-    
-    
+
     /**
      * get an item from the cache.
      */
     Object get(String key);
-    
-    
+
     /**
      * remove an item from the cache.
      */
     void remove(String key);
-    
-    
+
     /**
      * clear the entire cache.
      */
     void clear();
-    
-    
+
     /**
      * get cache stats.
      */
     CacheStats getStats();
-    
+
 }

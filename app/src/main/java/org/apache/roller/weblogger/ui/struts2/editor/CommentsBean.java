@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
@@ -32,49 +33,48 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
  * A bean for managing comments.
  */
 public class CommentsBean {
-    
+
     private String entryId = null;
     private String searchString = null;
     private String startDateString = null;
     private String endDateString = null;
     private String approvedString = "ALL";
     private int page = 0;
-    
+
     private String[] approvedComments = new String[0];
     private String[] spamComments = new String[0];
     private String[] deleteComments = new String[0];
-    
+
     // Limit updates to just this set of comma-separated IDs
     private String ids = null;
 
     public void loadCheckboxes(List<WeblogEntryComment> comments) {
-        
+
         List<String> allComments = new ArrayList<>();
         List<String> approvedList = new ArrayList<>();
         List<String> spamList = new ArrayList<>();
-        
+
         for (WeblogEntryComment comment : comments) {
             allComments.add(comment.getId());
-            
+
             if (ApprovalStatus.APPROVED.equals(comment.getStatus())) {
                 approvedList.add(comment.getId());
-            } else if(ApprovalStatus.SPAM.equals(comment.getStatus())) {
+            } else if (ApprovalStatus.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
-        
+
         // list of ids we are working on
         String[] idArray = allComments.toArray(new String[allComments.size()]);
         setIds(StringUtils.join(idArray, ','));
-        
+
         // approved ids list
         setApprovedComments(approvedList.toArray(new String[approvedList.size()]));
-        
+
         // spam ids list
         setSpamComments(spamList.toArray(new String[spamList.size()]));
     }
-    
-    
+
     public ApprovalStatus getStatus() {
         switch (approvedString) {
             case "ONLY_APPROVED":
@@ -92,11 +92,12 @@ public class CommentsBean {
     }
 
     public LocalDate getStartDate() {
-        if(!StringUtils.isEmpty(getStartDateString())) {
+        if (!StringUtils.isEmpty(getStartDateString())) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
                 return LocalDate.parse(getStartDateString(), formatter);
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
         return null;
     }
@@ -110,7 +111,8 @@ public class CommentsBean {
                     day = LocalDate.now();
                 }
                 return day;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return null;
     }
@@ -118,15 +120,15 @@ public class CommentsBean {
     public String getIds() {
         return ids;
     }
-    
+
     public void setIds(String ids) {
         this.ids = ids;
     }
-    
+
     public String getSearchString() {
         return searchString;
     }
-    
+
     public void setSearchString(String searchString) {
         this.searchString = searchString;
     }

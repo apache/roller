@@ -30,28 +30,28 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-
 /**
  * This POJO represents a single property of the blog server
  */
 @Entity
-@Table(name="weblogger_properties")
+@Table(name = "weblogger_properties")
 @NamedQueries({
-        @NamedQuery(name="RuntimeConfigProperty.getAll",
-                query="SELECT r FROM RuntimeConfigProperty r")
+        @NamedQuery(name = "RuntimeConfigProperty.getAll",
+                query = "SELECT r FROM RuntimeConfigProperty r")
 })
 public class RuntimeConfigProperty {
-    
+
     private String name;
     private String value;
-    
-    public RuntimeConfigProperty() {}
+
+    public RuntimeConfigProperty() {
+    }
 
     public RuntimeConfigProperty(String name, String value) {
         this.name = name;
         this.value = value;
     }
-    
+
     /**
      * Getter for property name.
      *
@@ -61,11 +61,11 @@ public class RuntimeConfigProperty {
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Getter for property value.
      *
@@ -74,17 +74,17 @@ public class RuntimeConfigProperty {
     public String getValue() {
         return this.value;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         return (getName() + "=" + getValue());
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -92,16 +92,16 @@ public class RuntimeConfigProperty {
         if (!(other instanceof RuntimeConfigProperty)) {
             return false;
         }
-        RuntimeConfigProperty o = (RuntimeConfigProperty)other;
+        RuntimeConfigProperty o = (RuntimeConfigProperty) other;
         return new EqualsBuilder()
-        .append(getName(), o.getName())
-        .isEquals();
+                .append(getName(), o.getName())
+                .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
-        .append(getName())
-        .toHashCode();
+                .append(getName())
+                .toHashCode();
     }
-    
+
 }

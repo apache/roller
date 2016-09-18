@@ -21,18 +21,18 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A URLStrategy used by the preview rendering system.
  */
 public class PreviewURLStrategy extends MultiWeblogURLStrategy {
-    
+
     private final String previewTheme;
     private static final String PREVIEW_URL_SEGMENT = "/tb-ui/authoring/preview/";
 
@@ -43,9 +43,9 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     public PreviewURLStrategy(String theme) {
         previewTheme = theme;
     }
-    
+
     /**
-     * Get root url for a given *preview* weblog.  
+     * Get root url for a given *preview* weblog.
      */
     @Override
     public String getWeblogURL(Weblog weblog, boolean absolute) {
@@ -81,8 +81,8 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
      * Get url for a collection of entries on a given weblog.
      */
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, List tags,
-                                  int pageNum, boolean absolute) {
-        
+                                         int pageNum, boolean absolute) {
+
         String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
         if (category != null && dateString == null) {
@@ -103,7 +103,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         if (pageNum > 0) {
             params.put("page", Integer.toString(pageNum));
         }
-        
+
         if (previewTheme != null) {
             params.put("theme", Utilities.encode(previewTheme));
         }
@@ -116,7 +116,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
      */
     @Override
     public String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
-                            String dateString, String tag, int pageNum, boolean absolute) {
+                                   String dateString, String tag, int pageNum, boolean absolute) {
 
         String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
@@ -126,28 +126,28 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         } else if (theme != null) {
             params.put("theme", Utilities.encode(theme));
         }
-        
-        if(pageLink != null) {
+
+        if (pageLink != null) {
             pathinfo += "page/" + pageLink;
-            
+
             // for custom pages we only allow query params
-            if(dateString != null) {
+            if (dateString != null) {
                 params.put("date", dateString);
             }
-            if(category != null) {
+            if (category != null) {
                 params.put("cat", Utilities.encode(category));
             }
-            if(tag != null) {
+            if (tag != null) {
                 params.put("tag", Utilities.encode(tag));
             }
-            if(pageNum > 0) {
+            if (pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
             }
         } else {
             // if there is no page link then this is just a typical collection url
             return getWeblogCollectionURL(weblog, category, dateString, tag, pageNum, absolute);
         }
-        
+
         return pathinfo + Utilities.getQueryString(params);
     }
 

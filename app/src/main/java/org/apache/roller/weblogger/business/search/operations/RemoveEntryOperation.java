@@ -20,14 +20,14 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * An operation that removes the weblog from the index.

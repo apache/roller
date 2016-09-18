@@ -48,7 +48,7 @@ public class ParsedMenu {
         this.id = id;
     }
 
-    @XmlElements(@XmlElement(name="tab"))
+    @XmlElements(@XmlElement(name = "tab"))
     public List<ParsedTab> getTabs() {
         return tabs;
     }
@@ -81,7 +81,7 @@ public class ParsedMenu {
             this.titleKey = titleKey;
         }
 
-        @XmlAttribute(name="globalRole")
+        @XmlAttribute(name = "globalRole")
         public GlobalRole getRequiredGlobalRole() {
             return requiredGlobalRole;
         }
@@ -90,7 +90,7 @@ public class ParsedMenu {
             this.requiredGlobalRole = role;
         }
 
-        @XmlAttribute(name="weblogRole")
+        @XmlAttribute(name = "weblogRole")
         public WeblogRole getRequiredWeblogRole() {
             return requiredWeblogRole;
         }
@@ -108,7 +108,7 @@ public class ParsedMenu {
             this.enabledProperty = enabledProperty;
         }
 
-        @XmlElements(@XmlElement(name="tabItem"))
+        @XmlElements(@XmlElement(name = "tabItem"))
         public List<ParsedTabItem> getTabItems() {
             return tabItems;
         }
@@ -158,8 +158,8 @@ public class ParsedMenu {
             this.action = action;
         }
 
-        @XmlElementWrapper(name="subactions")
-        @XmlElement(name="subaction")
+        @XmlElementWrapper(name = "subactions")
+        @XmlElement(name = "subaction")
         public Set<String> getSubActions() {
             return subActions;
         }
@@ -168,7 +168,7 @@ public class ParsedMenu {
             this.subActions = subActions;
         }
 
-        @XmlAttribute(name="globalRole")
+        @XmlAttribute(name = "globalRole")
         public GlobalRole getRequiredGlobalRole() {
             return requiredGlobalRole;
         }
@@ -177,7 +177,7 @@ public class ParsedMenu {
             this.requiredGlobalRole = requiredGlobalRole;
         }
 
-        @XmlAttribute(name="weblogRole")
+        @XmlAttribute(name = "weblogRole")
         public WeblogRole getRequiredWeblogRole() {
             return requiredWeblogRole;
         }

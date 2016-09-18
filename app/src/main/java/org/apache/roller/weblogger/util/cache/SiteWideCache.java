@@ -65,18 +65,18 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
 
     public Instant getLastModified() {
         Instant lastModified = null;
-        
+
         // first try our cached version
         if (this.lastUpdateTime != null) {
             lastModified = (Instant) this.lastUpdateTime.getValue();
         }
-        
+
         // still null, we need to get a fresh value
         if (lastModified == null) {
             lastModified = Instant.now();
             this.lastUpdateTime = new ExpiringCacheEntry(lastModified, timeoutInMS);
         }
-        
+
         return lastModified;
     }
 
@@ -90,7 +90,6 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
         }
     }
 
-
     /**
      * A weblog has changed.
      */
@@ -100,7 +99,6 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
             this.lastUpdateTime = null;
         }
     }
-
 
     /**
      * A bookmark has changed, invalidate only if site blog itself changed.
@@ -119,16 +117,14 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
             invalidate(comment.getWeblogEntry().getWeblog());
         }
     }
-    
-    
+
     /**
      * A user profile has changed.
      */
     public void invalidate(User user) {
         // ignored
     }
-    
-    
+
     /**
      * A category has changed, invalidate only if site blog itself changed.
      */

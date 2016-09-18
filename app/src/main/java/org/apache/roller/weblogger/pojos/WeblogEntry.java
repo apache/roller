@@ -20,13 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
@@ -51,33 +44,39 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Represents a Weblog Entry.
  */
 @Entity
-@Table(name="weblog_entry")
+@Table(name = "weblog_entry")
 @NamedQueries({
-        @NamedQuery(name="WeblogEntry.getByCategory",
-                query="SELECT w FROM WeblogEntry w WHERE w.category = ?1"),
-        @NamedQuery(name="WeblogEntry.getByWeblog&AnchorOrderByPubTimeDesc",
-                query="SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC"),
-        @NamedQuery(name="WeblogEntry.getByWeblog&Anchor",
-                query="SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2"),
-        @NamedQuery(name="WeblogEntry.getByWeblog",
-                query="SELECT w FROM WeblogEntry w WHERE w.weblog = ?1"),
-        @NamedQuery(name="WeblogEntry.getCountDistinctByStatus",
-                query="SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1"),
-        @NamedQuery(name="WeblogEntry.getCountDistinctByStatus&Weblog",
-                query="SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1 AND e.weblog = ?2"),
-        @NamedQuery(name="WeblogEntry.updateCommentDaysByWeblog",
-                query="UPDATE WeblogEntry e SET e.commentDays = ?1 WHERE e.weblog = ?2")
+        @NamedQuery(name = "WeblogEntry.getByCategory",
+                query = "SELECT w FROM WeblogEntry w WHERE w.category = ?1"),
+        @NamedQuery(name = "WeblogEntry.getByWeblog&AnchorOrderByPubTimeDesc",
+                query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC"),
+        @NamedQuery(name = "WeblogEntry.getByWeblog&Anchor",
+                query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2"),
+        @NamedQuery(name = "WeblogEntry.getByWeblog",
+                query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1"),
+        @NamedQuery(name = "WeblogEntry.getCountDistinctByStatus",
+                query = "SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1"),
+        @NamedQuery(name = "WeblogEntry.getCountDistinctByStatus&Weblog",
+                query = "SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1 AND e.weblog = ?2"),
+        @NamedQuery(name = "WeblogEntry.updateCommentDaysByWeblog",
+                query = "UPDATE WeblogEntry e SET e.commentDays = ?1 WHERE e.weblog = ?2")
 })
 public class WeblogEntry {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntry.class);
-    
-    public enum PubStatus {DRAFT, PUBLISHED, PENDING, SCHEDULED}
+
+    public enum PubStatus { DRAFT, PUBLISHED, PENDING, SCHEDULED }
 
     // Simple properties
     private String id;
@@ -113,16 +112,16 @@ public class WeblogEntry {
     private String creatorId;
 
     //----------------------------------------------------------- Construction
-    
+
     public WeblogEntry() {
     }
-    
+
     public WeblogEntry(WeblogEntry otherData) {
         this.setData(otherData);
     }
-    
+
     //---------------------------------------------------------- Initialization
-    
+
     /**
      * Set bean properties based on other bean.
      */
@@ -147,7 +146,7 @@ public class WeblogEntry {
         this.setEnclosureLength(other.getEnclosureLength());
         this.setTags(other.getTags());
     }
-    
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
@@ -165,51 +164,51 @@ public class WeblogEntry {
         if (!(other instanceof WeblogEntry)) {
             return false;
         }
-        WeblogEntry o = (WeblogEntry)other;
+        WeblogEntry o = (WeblogEntry) other;
         return new EqualsBuilder()
-            .append(getAnchor(), o.getAnchor()) 
-            .append(getWeblog(), o.getWeblog()) 
-            .isEquals();
+                .append(getAnchor(), o.getAnchor())
+                .append(getWeblog(), o.getWeblog())
+                .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
-            .append(getAnchor())
-            .append(getWeblog())
-            .toHashCode();
+                .append(getAnchor())
+                .append(getWeblog())
+                .toHashCode();
     }
-    
+
     @Id
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
 
     @ManyToOne
-    @JoinColumn(name="categoryid",nullable=false)
+    @JoinColumn(name = "categoryid", nullable = false)
     public WeblogCategory getCategory() {
         return this.category;
     }
-    
+
     public void setCategory(WeblogCategory category) {
         this.category = category;
     }
-       
+
     @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false)
+    @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return this.weblog;
     }
-    
+
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
 
     @ManyToOne
-    @JoinColumn(name="creatorid",nullable=false)
+    @JoinColumn(name = "creatorid", nullable = false)
     public User getCreator() {
         return creator;
     }
@@ -218,22 +217,22 @@ public class WeblogEntry {
         this.creator = creator;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getTitle() {
         return this.title;
     }
-    
+
     public void setTitle(String title) {
-        this.title  = Utilities.removeHTML(title);
+        this.title = Utilities.removeHTML(title);
     }
-    
+
     /**
      * Summary for weblog entry (maps to RSS description and Atom summary).
      */
     public String getSummary() {
         return summary;
     }
-    
+
     public void setSummary(String summary) {
         this.summary = summary;
     }
@@ -252,11 +251,11 @@ public class WeblogEntry {
     /**
      * Search description for weblog entry (intended for HTML header).
      */
-    @Column(name="search_description")
+    @Column(name = "search_description")
     public String getSearchDescription() {
         return searchDescription;
     }
-    
+
     public void setSearchDescription(String searchDescription) {
         this.searchDescription = Utilities.removeHTML(searchDescription);
     }
@@ -264,16 +263,16 @@ public class WeblogEntry {
     /**
      * Content text for weblog entry (maps to RSS content:encoded and Atom content).
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getText() {
         return this.text;
     }
-    
+
     public void setText(String text) {
         this.text = text;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     public Weblog.EditFormat getEditFormat() {
         return this.editFormat;
@@ -283,7 +282,7 @@ public class WeblogEntry {
         this.editFormat = editFormat;
     }
 
-    @Column(name="enclosure_url")
+    @Column(name = "enclosure_url")
     public String getEnclosureUrl() {
         return enclosureUrl;
     }
@@ -292,7 +291,7 @@ public class WeblogEntry {
         this.enclosureUrl = enclosureUrl;
     }
 
-    @Column(name="enclosure_type")
+    @Column(name = "enclosure_type")
     public String getEnclosureType() {
         return enclosureType;
     }
@@ -301,7 +300,7 @@ public class WeblogEntry {
         this.enclosureType = enclosureType;
     }
 
-    @Column(name="enclosure_length")
+    @Column(name = "enclosure_length")
     public Long getEnclosureLength() {
         return enclosureLength;
     }
@@ -310,21 +309,21 @@ public class WeblogEntry {
         this.enclosureLength = enclosureLength;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getAnchor() {
         return this.anchor;
     }
-    
+
     public void setAnchor(String anchor) {
         this.anchor = anchor;
     }
 
     //-------------------------------------------------------------------------
-    
+
     /**
      * <p>Publish time is the time that an entry is to be (or was) made available
      * for viewing by newsfeed readers and visitors to the weblogger site.</p>
-     *
+     * <p>
      * <p>TightBlog stores time using the timezone of the server itself. When
      * times are displayed in a user's weblog they must be translated
      * to the user's timeZone.</p>
@@ -332,42 +331,42 @@ public class WeblogEntry {
     public Instant getPubTime() {
         return this.pubTime;
     }
-    
+
     public void setPubTime(Instant pubTime) {
         this.pubTime = pubTime;
     }
-    
+
     /**
      * <p>Update time is the last time that an weblog entry was saved in the
      * Roller weblog editor or via web services API (XML-RPC or Atom).</p>
-     *
+     * <p>
      * <p>Roller stores time using the timeZone of the server itself. When
      * times are displayed  in a user's weblog they must be translated
      * to the user's timeZone.</p>
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Instant getUpdateTime() {
         return this.updateTime;
     }
-    
+
     public void setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     public PubStatus getStatus() {
         return this.status;
     }
-    
+
     public void setStatus(PubStatus status) {
         this.status = status;
     }
-    
+
     /**
      * Number of days after pubTime that comments should be allowed, -1 for no limit.
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Integer getCommentDays() {
         return commentDays;
     }
@@ -375,25 +374,25 @@ public class WeblogEntry {
     public void setCommentDays(Integer commentDays) {
         this.commentDays = commentDays;
     }
-    
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogEntryTag.class,
-            cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="weblogEntry", orphanRemoval=true)
+
+    @OneToMany(targetEntity = org.apache.roller.weblogger.pojos.WeblogEntryTag.class,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "weblogEntry", orphanRemoval = true)
     @OrderBy("name")
     public Set<WeblogEntryTag> getTags() {
-         return tagSet;
+        return tagSet;
     }
 
     public void setTags(Set<WeblogEntryTag> tagSet) {
-         this.tagSet = tagSet;
+        this.tagSet = tagSet;
     }
 
     /**
-     *  Replace the current set of tags with those in the new list.  Any WeblogEntryTags
-     *  already attached to the instance and remaining in the new list will be reused.
+     * Replace the current set of tags with those in the new list.  Any WeblogEntryTags
+     * already attached to the instance and remaining in the new list will be reused.
      */
     public void updateTags(Set<String> newTags) {
         Locale localeObject = getWeblog().getLocaleInstance();
-        Set<WeblogEntryTag> newTagSet =  new HashSet<>();
+        Set<WeblogEntryTag> newTagSet = new HashSet<>();
         for (String tagStr : newTags) {
             String normalizedString = Utilities.normalizeTag(tagStr, localeObject);
             boolean found = false;
@@ -475,8 +474,10 @@ public class WeblogEntry {
     public String getPermalink() {
         return WebloggerContext.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), getAnchor(), true);
     }
-    
-    /** Convenience method for checking published status */
+
+    /**
+     * Convenience method for checking published status
+     */
     @Transient
     public boolean isPublished() {
         return PubStatus.PUBLISHED.equals(getStatus());

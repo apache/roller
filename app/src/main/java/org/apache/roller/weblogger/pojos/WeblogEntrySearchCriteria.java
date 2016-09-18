@@ -17,15 +17,16 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
+
 import java.time.Instant;
 import java.util.Set;
 
-import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-
 public class WeblogEntrySearchCriteria {
 
-    public enum SortOrder {ASCENDING, DESCENDING}
-    public enum SortBy {PUBLICATION_TIME, UPDATE_TIME}
+    public enum SortOrder { ASCENDING, DESCENDING }
+
+    public enum SortBy { PUBLICATION_TIME, UPDATE_TIME }
 
     // Weblog or null to get for all weblogs.
     private Weblog weblog;

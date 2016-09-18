@@ -23,41 +23,54 @@ package org.apache.roller.weblogger.business.search;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * Interface to Roller's Lucene-based search facility.
  */
-public interface IndexManager
-{
+public interface IndexManager {
     ReadWriteLock getReadWriteLock();
 
-    /** Does index need to be rebuilt */
+    /**
+     * Does index need to be rebuilt
+     */
     boolean isInconsistentAtStartup();
-    
-    /** Remove weblog from index, returns immediately and operates in background */
+
+    /**
+     * Remove weblog from index, returns immediately and operates in background
+     */
     void removeWeblogIndexOperation(Weblog weblog);
-    
-    /** Remove entry from index, returns immediately and operates in background */
+
+    /**
+     * Remove entry from index, returns immediately and operates in background
+     */
     void removeEntryIndexOperation(WeblogEntry entry);
-    
-    /** Add entry to index, returns immediately and operates in background */
+
+    /**
+     * Add entry to index, returns immediately and operates in background
+     */
     void addEntryIndexOperation(WeblogEntry entry);
-    
-    /** Reindex entry, returns immediately and operates in background */
+
+    /**
+     * Reindex entry, returns immediately and operates in background
+     */
     void addEntryReIndexOperation(WeblogEntry entry);
-    
-    /** Execute operation immediately */
+
+    /**
+     * Execute operation immediately
+     */
     void executeIndexOperationNow(final IndexOperation op);
 
     void resetSharedReader();
 
     IndexReader getSharedIndexReader();
 
-    /** Return directory used by Lucene index */
+    /**
+     * Return directory used by Lucene index
+     */
     Directory getIndexDirectory();
 
     boolean isSearchEnabled();
@@ -69,7 +82,9 @@ public interface IndexManager
      */
     void initialize();
 
-    /** Shutdown to be called on application shutdown */
+    /**
+     * Shutdown to be called on application shutdown
+     */
     void shutdown();
 
     void rebuildWeblogIndex(Weblog weblog);

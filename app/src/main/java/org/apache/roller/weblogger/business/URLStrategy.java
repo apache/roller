@@ -21,45 +21,45 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.Map;
 import org.apache.roller.weblogger.pojos.Weblog;
 
+import java.util.Map;
 
 /**
  * An interface representing the Roller Planet url strategy.
- *
+ * <p>
  * Implementations of this interface provide methods which can be used to form
  * all of the public urls used by Roller Planet.
  */
 public interface URLStrategy {
-    
+
     /**
      * Get a version of this url strategy meant for use in previewing and set
      * it to preview a given theme.
      */
     URLStrategy getPreviewURLStrategy(String previewTheme);
-    
+
     /**
      * Url to login page.
      */
     String getLoginURL(boolean absolute);
-    
+
     /**
      * Url to logout page.
      */
     String getLogoutURL(boolean absolute);
-    
+
     /**
      * Url to register page.
      */
     String getRegisterURL(boolean absolute);
-    
+
     /**
      * Get a url to a UI action in a given namespace, optionally specifying a weblog object
      * if that is needed by the action.
      */
     String getActionURL(String action, String namespace, Weblog weblog, Map<String, String> params, boolean absolute);
-    
+
     /**
      * Get a url to add a new weblog entry.
      */
@@ -127,12 +127,12 @@ public interface URLStrategy {
      * Get url for a feed on a given weblog.
      */
     String getWeblogFeedURL(Weblog weblog, String type, String category, String tag);
-    
+
     /**
      * Get url to search endpoint on a given weblog.
      */
     String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute);
-    
+
     /**
      * Get URL of a planet's newsfeed.
      */

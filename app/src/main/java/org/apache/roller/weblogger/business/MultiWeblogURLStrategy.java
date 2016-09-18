@@ -20,19 +20,19 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Weblogger URLStrategy which builds urls for a multi-weblog environment.
  */
 public class MultiWeblogURLStrategy implements URLStrategy {
-    
-    public MultiWeblogURLStrategy() {}
+
+    public MultiWeblogURLStrategy() {
+    }
 
     @Override
     public URLStrategy getPreviewURLStrategy(String previewTheme) {
@@ -139,14 +139,14 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     @Override
     public String getWeblogCommentsURL(Weblog weblog, String entryAnchor, boolean absolute) {
-        return getWeblogEntryURL(weblog, entryAnchor, absolute)+"#comments";
+        return getWeblogEntryURL(weblog, entryAnchor, absolute) + "#comments";
     }
 
     @Override
     public String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp, boolean absolute) {
-        return getWeblogEntryURL(weblog, entryAnchor, absolute)+"#comment-"+timeStamp;
+        return getWeblogEntryURL(weblog, entryAnchor, absolute) + "#comment-" + timeStamp;
     }
-    
+
     @Override
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                          int pageNum, boolean absolute) {
@@ -155,10 +155,10 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
         Map<String, String> params = new HashMap<>();
 
-        if(category != null && dateString == null) {
+        if (category != null && dateString == null) {
             pathinfo.append("category/").append(Utilities.encodePath(category));
-        } else if(dateString != null && category == null) {
-            pathinfo.append("date/").append(dateString);  
+        } else if (dateString != null && category == null) {
+            pathinfo.append("date/").append(dateString);
         } else if (tag != null) {
             pathinfo.append("tags/").append(Utilities.encodePath(tag));
         } else {
@@ -170,43 +170,43 @@ public class MultiWeblogURLStrategy implements URLStrategy {
             }
         }
 
-        if(pageNum > 0) {
+        if (pageNum > 0) {
             params.put("page", Integer.toString(pageNum));
         }
-        
+
         return pathinfo.toString() + Utilities.getQueryString(params);
     }
-    
+
     @Override
     public String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
-                            String dateString, String tag, int pageNum, boolean absolute) {
+                                   String dateString, String tag, int pageNum, boolean absolute) {
 
         StringBuilder pathinfo = new StringBuilder();
         Map<String, String> params = new HashMap<>();
-        
+
         pathinfo.append(getWeblogURL(weblog, absolute));
-        
-        if(pageLink != null) {
+
+        if (pageLink != null) {
             pathinfo.append("page/").append(pageLink);
-            
+
             // for custom pages we only allow query params
-            if(dateString != null) {
+            if (dateString != null) {
                 params.put("date", dateString);
             }
-            if(category != null) {
+            if (category != null) {
                 params.put("cat", Utilities.encode(category));
             }
-            if(tag != null) {
+            if (tag != null) {
                 params.put("tag", Utilities.encode(tag));
             }
-            if(pageNum > 0) {
+            if (pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
             }
         } else {
             // if there is no page link then this is just a typical collection url
             return getWeblogCollectionURL(weblog, category, dateString, tag, pageNum, absolute);
         }
-        
+
         return pathinfo.toString() + Utilities.getQueryString(params);
     }
 
@@ -214,7 +214,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     public String getWeblogFeedURL(Weblog weblog, String type, String category, String tag) {
 
         String url = getWeblogURL(weblog, true) + "feed/" + type;
-        
+
         Map<String, String> params = new HashMap<>();
         if (category != null && category.trim().length() > 0) {
             params.put("cat", Utilities.encode(category));
@@ -231,19 +231,19 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         String url = getWeblogURL(weblog, absolute) + "search";
 
         Map<String, String> params = new HashMap<>();
-        if(query != null) {
+        if (query != null) {
             params.put("q", Utilities.encode(query));
-            
+
             // other stuff only makes sense if there is a query
-            if(category != null) {
+            if (category != null) {
                 params.put("cat", Utilities.encode(category));
             }
-            if(pageNum > 0) {
+            if (pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
             }
         }
-        
+
         return url + Utilities.getQueryString(params);
     }
-    
+
 }

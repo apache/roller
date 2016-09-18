@@ -20,7 +20,10 @@
  */
 package org.apache.roller.weblogger.ui.core.filters;
 
-import java.io.IOException;
+import org.apache.roller.weblogger.business.WebloggerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -31,11 +34,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.roller.weblogger.business.WebloggerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
 
 /**
  * Redirects clients to install page when app is not bootstrapped, otherwise does nothing.
@@ -48,12 +47,11 @@ public class BootstrapFilter implements Filter {
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.debug("Entered {}", request.getRequestURI());
-        
 
         if (!WebloggerContext.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
             log.debug("Forwarding to install page");
@@ -63,24 +61,23 @@ public class BootstrapFilter implements Filter {
         } else {
             chain.doFilter(request, response);
         }
-        
+
         log.debug("Exiting {}", request.getRequestURI());
     }
-    
-    
+
     private boolean isInstallUrl(String uri) {
         return (uri != null && (
-                   uri.endsWith("bootstrap.rol")
-                || uri.endsWith("create.rol") 
-                || uri.endsWith("upgrade.rol") 
-                || uri.endsWith(".js") 
-                || uri.endsWith(".css")));
+                uri.endsWith("bootstrap.rol") ||
+                        uri.endsWith("create.rol") ||
+                        uri.endsWith("upgrade.rol") ||
+                        uri.endsWith(".js") ||
+                        uri.endsWith(".css")));
     }
-    
 
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
     }
-    
-    public void destroy() {}    
+
+    public void destroy() {
+    }
 }

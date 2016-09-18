@@ -21,18 +21,19 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -161,8 +162,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(tmp, "png", baos);
 
-            fileContentManager.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId()
-                    + "_sm", new ByteArrayInputStream(baos.toByteArray()));
+            fileContentManager.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId() +
+                    "_sm", new ByteArrayInputStream(baos.toByteArray()));
 
             strategy.flush();
             // Refresh associated parent for changes

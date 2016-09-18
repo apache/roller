@@ -20,29 +20,31 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.util.List;
-import java.util.Map;
-import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.util.Blacklist;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface to weblog and weblog custom template management.
  */
 public interface WeblogManager {
-    
+
     /**
      * Add new weblog, give creator admin permission, creates blogroll,
      * creates categories and other objects required for new weblog.
+     *
      * @param newWeblog New weblog to be created, must have creator.
      */
     void addWeblog(Weblog newWeblog);
-    
+
     /**
      * Store a single weblog.
      */
@@ -52,14 +54,15 @@ public interface WeblogManager {
      * Remove weblog object.
      */
     void removeWeblog(Weblog weblog);
-    
+
     /**
      * Get weblog object by name.
      */
     Weblog getWeblog(String id);
-    
+
     /**
      * Get weblog specified by handle (or null if enabled weblog not found).
+     *
      * @param handle Handle of weblog
      * @return Weblog instance or null if not found
      */
@@ -67,23 +70,26 @@ public interface WeblogManager {
 
     /**
      * Get weblog specified by handle with option to return only enabled weblogs.
+     *
      * @param handle Handle of weblog
      * @return Weblog instance or null if not found
      */
     Weblog getWeblogByHandle(String handle, Boolean enabled);
-    
+
     /**
      * Get weblogs optionally restricted by user, enabled and active status.
-     * @param visible   Get all with this visible state (or null or all)
-     * @param offset    Offset into results (for paging)
-     * @param length    Maximum number of results to return (for paging)
+     *
+     * @param visible Get all with this visible state (or null or all)
+     * @param offset  Offset into results (for paging)
+     * @param length  Maximum number of results to return (for paging)
      * @return List of Weblog objects.
      */
     List<Weblog> getWeblogs(Boolean visible, int offset, int length);
-    
+
     /**
      * Get users of a weblog.
-     * @param weblog Weblog to retrieve users for
+     *
+     * @param weblog      Weblog to retrieve users for
      * @param enabledOnly Include only enabled users?
      * @return List of User objects.
      */
@@ -96,16 +102,16 @@ public interface WeblogManager {
      */
     Map<String, Long> getWeblogHandleLetterMap();
 
-    /** 
-     * Get collection of weblogs whose handles begin with specified letter 
+    /**
+     * Get collection of weblogs whose handles begin with specified letter
      */
     List<Weblog> getWeblogsByLetter(char letter, int offset, int length);
-    
+
     /**
      * Store a custom weblog template.
      */
     void saveTemplate(WeblogTemplate data);
-    
+
     /**
      * Remove a custom template.
      */
@@ -120,7 +126,7 @@ public interface WeblogManager {
      * Get a custom template by the action it supports.
      */
     WeblogTemplate getTemplateByAction(Weblog w, ComponentType a);
-    
+
     /**
      * Get a custom template by its name.
      */
@@ -140,13 +146,13 @@ public interface WeblogManager {
      * Get all custom templates for a weblog
      */
     List<WeblogTemplate> getTemplates(Weblog w);
-    
+
     /**
      * Get count of active weblogs, returning long type as that is what the
      * JPA COUNT aggregate returns (http://stackoverflow.com/a/3574441/1207540)
-     */    
+     */
     long getWeblogCount();
-    
+
     /**
      * Get a HitCountData by weblog.
      *
@@ -157,16 +163,16 @@ public interface WeblogManager {
 
     /**
      * Get HitCountData objects for the hotest weblogs.
-     *
+     * <p>
      * The results may be constrained to a certain number of days back from the
      * current time, as well as pagable via the offset and length params.
-     *
+     * <p>
      * The results are ordered by highest counts in descending order, and any
      * weblogs which are not active or enabled are not included.
      *
      * @param sinceDays Number of days in the past to consider.
-     * @param offset What index in the results to begin from.
-     * @param length The number of results to return.
+     * @param offset    What index in the results to begin from.
+     * @param length    The number of results to return.
      * @return A List of Weblogs, ranked by descending hit count.
      */
     List<Weblog> getHotWeblogs(int sinceDays, int offset, int length);
@@ -241,7 +247,8 @@ public interface WeblogManager {
 
     /**
      * Get category specified by weblog and name.
-     * @param weblog      Weblog of WeblogCategory.
+     *
+     * @param weblog       Weblog of WeblogCategory.
      * @param categoryName Name of WeblogCategory
      * @return WeblogCategory, or null if not found.
      */

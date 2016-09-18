@@ -44,37 +44,37 @@ import java.util.List;
 
 /**
  * POJO that represents a single user defined template page.
- *
+ * <p>
  * This template is different from the generic template because it also
  * contains a reference to the website it is part of.
  */
 @Entity
-@Table(name="weblog_template")
+@Table(name = "weblog_template")
 @NamedQueries({
-    @NamedQuery(name="WeblogTemplate.getByWeblog",
-            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1"),
-    @NamedQuery(name="WeblogTemplate.getByWeblogOrderByName",
-            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name"),
-    @NamedQuery(name="WeblogTemplate.getByWeblog&RelativePath",
-            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.relativePath = ?2"),
-    @NamedQuery(name="WeblogTemplate.getByRole",
-            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.role = ?2"),
-    @NamedQuery(name="WeblogTemplate.getByWeblog&Name",
-        query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2")
+        @NamedQuery(name = "WeblogTemplate.getByWeblog",
+                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1"),
+        @NamedQuery(name = "WeblogTemplate.getByWeblogOrderByName",
+                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name"),
+        @NamedQuery(name = "WeblogTemplate.getByWeblog&RelativePath",
+                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.relativePath = ?2"),
+        @NamedQuery(name = "WeblogTemplate.getByRole",
+                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.role = ?2"),
+        @NamedQuery(name = "WeblogTemplate.getByWeblog&Name",
+                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2")
 })
 public class WeblogTemplate implements Template {
-    
+
     // attributes
     private String id = null;
     private ComponentType role = null;
-    private String  name = null;
-    private String  description = null;
-    private String  relativePath = null;
+    private String name = null;
+    private String description = null;
+    private String relativePath = null;
     private Instant lastModified = null;
     private TemplateDerivation derivation = TemplateDerivation.SPECIFICBLOG;
 
-    private String  contentsStandard = null;
-    private String  contentsMobile = null;
+    private String contentsStandard = null;
+    private String contentsMobile = null;
 
     // associations
     @JsonIgnore
@@ -83,18 +83,19 @@ public class WeblogTemplate implements Template {
     @JsonIgnore
     private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
-    public WeblogTemplate() {}
+    public WeblogTemplate() {
+    }
 
     @Id
     public String getId() {
         return this.id;
     }
-    
-    public void setId( String id ) {
+
+    public void setId(String id) {
         this.id = id;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     public ComponentType getRole() {
         return role;
@@ -104,43 +105,43 @@ public class WeblogTemplate implements Template {
         this.role = role;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return this.name;
     }
-    
-    public void setName( String name ) {
+
+    public void setName(String name) {
         this.name = name;
     }
 
     public String getDescription() {
         return this.description;
     }
-    
-    public void setDescription( String description ) {
+
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    @Column(name="relative_path")
+    @Column(name = "relative_path")
     public String getRelativePath() {
         return this.relativePath;
     }
-    
+
     public void setRelativePath(String relativePath) {
         this.relativePath = relativePath;
     }
 
-    @Column(name="updatetime", nullable=false)
+    @Column(name = "updatetime", nullable = false)
     public Instant getLastModified() {
         return lastModified;
     }
-    
+
     public void setLastModified(Instant newtime) {
         lastModified = newtime;
     }
 
     @ManyToOne
-    @JoinColumn(name="weblogid", nullable=false)
+    @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return this.weblog;
     }
@@ -149,8 +150,8 @@ public class WeblogTemplate implements Template {
         this.weblog = weblog;
     }
 
-    @OneToMany(targetEntity=WeblogTemplateRendition.class,
-            cascade=CascadeType.ALL, mappedBy="weblogTemplate")
+    @OneToMany(targetEntity = WeblogTemplateRendition.class,
+            cascade = CascadeType.ALL, mappedBy = "weblogTemplate")
     public List<WeblogTemplateRendition> getTemplateRenditions() {
         return templateRenditions;
     }
@@ -170,15 +171,15 @@ public class WeblogTemplate implements Template {
 
     public void addTemplateRendition(WeblogTemplateRendition newRendition) {
         if (hasTemplateRendition(newRendition)) {
-            throw new IllegalArgumentException("Rendition type '" + newRendition.getRenditionType()
-                    + " for template '" + this.getName() + "' already exists.");
+            throw new IllegalArgumentException("Rendition type '" + newRendition.getRenditionType() +
+                    " for template '" + this.getName() + "' already exists.");
         }
         templateRenditions.add(newRendition);
     }
 
     public boolean hasTemplateRendition(WeblogTemplateRendition proposed) {
         for (WeblogTemplateRendition rnd : templateRenditions) {
-            if(rnd.getRenditionType().equals(proposed.getRenditionType())) {
+            if (rnd.getRenditionType().equals(proposed.getRenditionType())) {
                 return true;
             }
         }
@@ -190,7 +191,7 @@ public class WeblogTemplate implements Template {
         return this.contentsStandard;
     }
 
-    public void setContentsStandard( String contents ) {
+    public void setContentsStandard(String contents) {
         this.contentsStandard = contents;
     }
 
@@ -199,7 +200,7 @@ public class WeblogTemplate implements Template {
         return this.contentsMobile;
     }
 
-    public void setContentsMobile( String contents ) {
+    public void setContentsMobile(String contents) {
         this.contentsMobile = contents;
     }
 
@@ -226,18 +227,18 @@ public class WeblogTemplate implements Template {
         if (!(other instanceof WeblogTemplate)) {
             return false;
         }
-        WeblogTemplate o = (WeblogTemplate)other;
+        WeblogTemplate o = (WeblogTemplate) other;
         return new EqualsBuilder()
-            .append(getName(), o.getName())
-            .append(getWeblog(), o.getWeblog())
-            .isEquals();
+                .append(getName(), o.getName())
+                .append(getWeblog(), o.getWeblog())
+                .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
-            .append(getName())
-            .append(getWeblog())
-            .toHashCode();
+                .append(getName())
+                .append(getWeblog())
+                .toHashCode();
     }
 
 }

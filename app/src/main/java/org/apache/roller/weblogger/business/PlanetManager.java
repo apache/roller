@@ -20,11 +20,12 @@
  */
 package org.apache.roller.weblogger.business;
 
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.Subscription;
+import org.apache.roller.weblogger.pojos.SubscriptionEntry;
+
 import java.time.Instant;
 import java.util.List;
-import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.SubscriptionEntry;
-import org.apache.roller.weblogger.pojos.Subscription;
 
 /**
  * Manages Planets, Subscriptions, and Entries.
@@ -41,7 +42,7 @@ public interface PlanetManager {
      */
     void savePlanet(Planet sub);
 
-    /** 
+    /**
      * Delete planet and any subscriptions that are orphaned.
      */
     void deletePlanet(Planet planet);
@@ -55,13 +56,13 @@ public interface PlanetManager {
      * Get planet by handle.
      */
     Planet getPlanetByHandle(String handle);
-    
+
     /**
      * Save or update a subscription
      */
     void saveSubscription(Subscription sub);
 
-    /** 
+    /**
      * Delete subscription, remove it from planets, cache, etc.
      */
     void deleteSubscription(Subscription subscription);
@@ -90,10 +91,10 @@ public interface PlanetManager {
      * Get Entries for a planet in reverse chronological order, optionally
      * constrained to a certain begin time.
      *
-     * @param planet Restrict to entries from one planet.
+     * @param planet    Restrict to entries from one planet.
      * @param startDate The oldest date for entries to include, null for no limit
-     * @param offset Offset into results (for paging)
-     * @param len Maximum number of results to return (for paging)
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
      */
     List<SubscriptionEntry> getEntries(Planet planet, Instant startDate, int offset, int len);
 

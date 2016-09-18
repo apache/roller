@@ -20,16 +20,17 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.SubscriptionEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.SubscriptionEntry;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Paging through a collection of planet entries.
@@ -37,28 +38,28 @@ import org.slf4j.LoggerFactory;
 public class PlanetEntriesPager extends AbstractPager {
 
     private static Logger log = LoggerFactory.getLogger(PlanetEntriesPager.class);
-    
+
     private String planetName = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     // the collection for the pager
     private List<SubscriptionEntry> entries = null;
-    
+
     // are there more items?
     private boolean more = false;
 
     private PlanetManager planetManager;
-    
+
     public PlanetEntriesPager(
-            PlanetManager  planetManager,
-            URLStrategy    strat,
-            String         planetName,
-            String         baseUrl,
-            int            sinceDays,
-            int            page,
-            int            length) {
-        
+            PlanetManager planetManager,
+            URLStrategy strat,
+            String planetName,
+            String baseUrl,
+            int sinceDays,
+            int page,
+            int length) {
+
         super(strat, baseUrl, page);
 
         this.planetManager = planetManager;
@@ -69,10 +70,9 @@ public class PlanetEntriesPager extends AbstractPager {
         // initialize the collection
         getItems();
     }
-    
-    
+
     public List<SubscriptionEntry> getItems() {
-        
+
         if (planetName == null) {
             return null;
         }
@@ -101,18 +101,17 @@ public class PlanetEntriesPager extends AbstractPager {
                         more = true;
                     }
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: get aggregation", e);
             }
-            
+
             entries = results;
         }
-        
+
         return entries;
     }
-    
-    
+
     public boolean hasMoreItems() {
         return more;
     }

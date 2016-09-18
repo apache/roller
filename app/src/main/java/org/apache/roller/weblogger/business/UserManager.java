@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
-import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -34,7 +33,7 @@ import java.util.List;
  * Interface to User and WeblogRole management.
  */
 public interface UserManager {
-    
+
     /**
      * Save a user.
      *
@@ -52,7 +51,7 @@ public interface UserManager {
     /**
      * Get count of enabled users, returning long type as that is what the
      * JPA COUNT aggregate returns (http://stackoverflow.com/a/3574441/1207540)
-     */    
+     */
     long getUserCount();
 
     /**
@@ -65,10 +64,10 @@ public interface UserManager {
 
     /**
      * Lookup an enabled user by UserName.
-     * 
+     * <p>
      * This lookup is restricted to 'enabled' users by default.  So this method
      * will return null if the user is found but is not enabled.
-     * 
+     *
      * @param userName User Name of user to lookup.
      * @return The user, or null if not found or not enabled.
      */
@@ -86,7 +85,7 @@ public interface UserManager {
      * Update user password.  This method takes an unencrypted password
      * and will encrypt it prior to storing in database.
      *
-     * @param userId internal ID of user
+     * @param userId      internal ID of user
      * @param newPassword unencrypted password.
      */
     void updateCredentials(String userId, String newPassword);
@@ -94,16 +93,17 @@ public interface UserManager {
     /**
      * Lookup users based on supplied criteria
      *
-     * @param criteria  UserSearchCriteria object indicating search parameters
+     * @param criteria UserSearchCriteria object indicating search parameters
      * @return list of User objects matching desired criteria
      */
     List<User> getUsers(UserSearchCriteria criteria);
 
     /**
      * Check user's rights for a specified weblog
-     * @param user    User whose role is being checked
-     * @param weblog  Target weblog of the role
-     * @param role    Minimum WeblogRole being checked for
+     *
+     * @param user   User whose role is being checked
+     * @param weblog Target weblog of the role
+     * @param role   Minimum WeblogRole being checked for
      * @return true if user has WeblogRole or a more powerful one
      */
     boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role);
@@ -111,11 +111,12 @@ public interface UserManager {
     /**
      * Check user's rights given username and weblog handle.  Convenience
      * overload for callers not having the User and/or Weblog objects.
-     * @param username    Username whose role is being checked
+     *
+     * @param username     Username whose role is being checked
      * @param weblogHandle target weblog handle of the role
-     * @param role    Minimum WeblogRole being checked for
+     * @param role         Minimum WeblogRole being checked for
      * @return true if user has WeblogRole or more powerful, or is global admin.
-     *         false if not or if either username and/or weblogHandle can't be found.
+     * false if not or if either username and/or weblogHandle can't be found.
      */
     boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role);
 
@@ -129,14 +130,16 @@ public interface UserManager {
 
     /**
      * Get user's WeblogRole within a weblog or null if none.
-     * @param user    User whose role is being checked
-     * @param weblog  Target weblog of the role
+     *
+     * @param user   User whose role is being checked
+     * @param weblog Target weblog of the role
      * @return UserWeblogRole indicating user's role with weblog or null if no permission
      */
     UserWeblogRole getWeblogRole(User user, Weblog weblog);
 
     /**
      * Grant user specific WeblogRole for a weblog.
+     *
      * @param user    User to grant weblog role to
      * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
@@ -147,12 +150,14 @@ public interface UserManager {
     /**
      * Confirm user's participation with the specified weblog or throw exception if no pending invitation exists.
      * (changes state of WeblogRole record to pending = false)
+     *
      * @param userWeblogRole pending UserWeblogRole object containing user and weblog combination
      */
     void acceptWeblogInvitation(UserWeblogRole userWeblogRole);
-    
+
     /**
      * Revoke from user his WeblogRole for a given weblog.
+     *
      * @param userWeblogRole UserWeblogRole object containing user and weblog combination to remove
      */
     void revokeWeblogRole(UserWeblogRole userWeblogRole);

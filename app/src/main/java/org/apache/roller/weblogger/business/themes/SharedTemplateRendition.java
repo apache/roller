@@ -21,8 +21,6 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
@@ -34,10 +32,10 @@ public class SharedTemplateRendition implements TemplateRendition {
     private Parser parser = Parser.VELOCITY;
     private RenditionType renditionType = RenditionType.NORMAL;
     private String contentsFile = null;
-	private String template = null;
+    private String template = null;
 
-	public SharedTemplateRendition() {
-	}
+    public SharedTemplateRendition() {
+    }
 
     public String getContentsFile() {
         return contentsFile;
@@ -47,14 +45,14 @@ public class SharedTemplateRendition implements TemplateRendition {
         this.contentsFile = contentsFile;
     }
 
-	public RenditionType getRenditionType() {
-		return renditionType;
-	}
+    public RenditionType getRenditionType() {
+        return renditionType;
+    }
 
-    @XmlAttribute(name="device")
-	public void setRenditionType(RenditionType type) {
-		this.renditionType = type;
-	}
+    @XmlAttribute(name = "device")
+    public void setRenditionType(RenditionType type) {
+        this.renditionType = type;
+    }
 
     public Parser getParser() {
         return parser;
@@ -72,22 +70,32 @@ public class SharedTemplateRendition implements TemplateRendition {
         this.template = template;
     }
 
-	// ------------------------------------------------------- Good citizenship
+    // ------------------------------------------------------- Good citizenship
 
-	public String toString() {
-        return "{" + this.contentsFile + ", [" + this.renditionType +"], " + this.parser + "}";
-	}
+    public String toString() {
+        return "{" + this.contentsFile + ", [" + this.renditionType + "], " + this.parser + "}";
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         SharedTemplateRendition that = (SharedTemplateRendition) o;
 
-        if (parser != that.parser) return false;
-        if (renditionType != that.renditionType) return false;
-        if (contentsFile != null ? !contentsFile.equals(that.contentsFile) : that.contentsFile != null) return false;
+        if (parser != that.parser) {
+            return false;
+        }
+        if (renditionType != that.renditionType) {
+            return false;
+        }
+        if (contentsFile != null ? !contentsFile.equals(that.contentsFile) : that.contentsFile != null) {
+            return false;
+        }
         return template.equals(that.template);
     }
 

@@ -28,15 +28,15 @@ import java.util.Map;
  * its requirements.
  */
 public interface Model {
-    
+
     /**
      * Name to be used when referring to this model (e.g., the $(model name). seen within templates).
      */
     String getModelName();
-    
-    
+
     /**
      * Initialize.
+     *
      * @throws IllegalArgumentException if the model is not fed the specific objects it is expecting
      */
     void init(Map params) throws IllegalStateException;

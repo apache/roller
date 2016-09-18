@@ -20,20 +20,20 @@
  */
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * Paging through a collection of comments.
@@ -41,18 +41,18 @@ import org.slf4j.LoggerFactory;
 public class CommentsPager extends AbstractPager {
 
     private static Logger log = LoggerFactory.getLogger(CommentsPager.class);
-    
+
     private Weblog weblog = null;
     private int sinceDays = -1;
     private int length = 0;
     private String categoryName = null;
-    
+
     // the collection for the pager
     private List<WeblogEntryComment> comments = null;
-    
+
     // are there more items?
     private boolean more = false;
-    
+
     // most recent update time of current set of entries
     private Instant lastUpdated = null;
 
@@ -60,14 +60,14 @@ public class CommentsPager extends AbstractPager {
 
     public CommentsPager(
             WeblogEntryManager weblogEntryManager,
-            URLStrategy    strat,
-            String         baseUrl,
-            Weblog         weblog,
-            String         categoryName,
-            int            sinceDays,
-            int            page,
-            int            length) {
-        
+            URLStrategy strat,
+            String baseUrl,
+            Weblog weblog,
+            String categoryName,
+            int sinceDays,
+            int page,
+            int length) {
+
         super(strat, baseUrl, page);
 
         this.weblogEntryManager = weblogEntryManager;
@@ -75,25 +75,24 @@ public class CommentsPager extends AbstractPager {
         this.categoryName = categoryName;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
     public List<WeblogEntryComment> getItems() {
-        
+
         if (comments == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             List<WeblogEntryComment> results = new ArrayList<>();
-            
+
             LocalDateTime startDate = null;
             if (sinceDays > 0) {
                 startDate = LocalDateTime.now().minusDays(sinceDays);
             }
-            
+
             try {
                 CommentSearchCriteria csc = new CommentSearchCriteria();
                 csc.setWeblog(weblog);
@@ -106,7 +105,7 @@ public class CommentsPager extends AbstractPager {
                 csc.setMaxResults(length + 1);
 
                 List<WeblogEntryComment> commentsList = weblogEntryManager.getComments(csc);
-                
+
                 // wrap the results
                 int count = 0;
                 for (WeblogEntryComment comment : commentsList) {
@@ -116,23 +115,24 @@ public class CommentsPager extends AbstractPager {
                         more = true;
                     }
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: fetching comment list", e);
             }
-            
+
             comments = results;
         }
-        
+
         return comments;
     }
-    
-    
+
     public boolean hasMoreItems() {
         return more;
     }
-    
-    /** Get last updated time from items in pager */
+
+    /**
+     * Get last updated time from items in pager
+     */
     public Instant getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by post time, so use that

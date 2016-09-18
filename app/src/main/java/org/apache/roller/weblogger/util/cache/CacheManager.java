@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
@@ -37,11 +38,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * A governing class for Roller cache objects.
- *
+ * <p>
  * The purpose of the CacheManager is to provide a level of abstraction between
  * classes that use a cache and the implementations of a cache.  This allows
  * us to create easily pluggable cache implementations.
- * 
+ * <p>
  * The other purpose is to provide a single interface for interacting with all
  * Roller caches at the same time.  This is beneficial because as data
  * changes in the system we often need to notify all caches that some part of
@@ -51,20 +52,21 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public final class CacheManager {
 
     private static Logger log = LoggerFactory.getLogger(CacheManager.class);
-    
+
     // a set of all registered cache handlers
     private Set<BlogEventListener> cacheHandlers = new HashSet<>();
 
     public void setCacheHandlers(@Qualifier("cache.customHandlers") Set<BlogEventListener> customHandlers) {
         cacheHandlers.addAll(customHandlers);
     }
-    
+
     // a map of all registered caches
     private Map<String, Cache> caches = new HashMap<>();
 
-    public CacheManager() {}
+    public CacheManager() {
+    }
 
-    public Cache constructCache(String id, int size, long timeoutInMS) {
+    Cache constructCache(String id, int size, long timeoutInMS) {
         Cache cache = new ExpiringLRUCacheImpl(size, timeoutInMS);
         caches.put(id, cache);
         return cache;
@@ -72,79 +74,72 @@ public final class CacheManager {
 
     /**
      * Register a BlogEventListener to listen for object invalidations.
-     *
+     * <p>
      * This is here so that it's possible to add classes which would respond
      * to object invalidations without necessarily having to create a cache.
-     *
-     * An example would be a handler designed to notify other machines in a 
+     * <p>
+     * An example would be a handler designed to notify other machines in a
      * cluster when an object has been invalidated, or possibly the search
      * index management classes are interested in knowing when objects are
      * invalidated.
      */
-    public void registerHandler(BlogEventListener handler) {
+    void registerHandler(BlogEventListener handler) {
 
         log.debug("Registering handler {}", handler);
 
-        if(handler != null) {
+        if (handler != null) {
             cacheHandlers.add(handler);
         }
     }
-    
-    
+
     public void invalidate(WeblogEntry entry) {
-        
+
         log.debug("invalidating entry = {}", entry.getAnchor());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(entry);
         }
     }
-    
-    
+
     public void invalidate(Weblog website) {
-        
+
         log.debug("invalidating website {}", website.getHandle());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(website);
         }
     }
-    
-    
+
     public void invalidate(WeblogBookmark bookmark) {
-        
+
         log.debug("invalidating bookmark {}", bookmark.getId());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(bookmark);
         }
     }
-    
-    
+
     public void invalidate(WeblogEntryComment comment) {
-        
+
         log.debug("invalidating comment {}", comment.getId());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(comment);
         }
     }
-    
-    
+
     public void invalidate(User user) {
-        
+
         log.debug("invalidating user {}", user.getUserName());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(user);
         }
     }
-    
-    
+
     public void invalidate(WeblogCategory category) {
-        
+
         log.debug("invalidating category {}", category.getId());
         for (BlogEventListener handler : cacheHandlers) {
             handler.invalidate(category);
         }
     }
-    
-    
+
     public void invalidate(WeblogTemplate template) {
         log.debug("invalidating template {}", template.getId());
         for (BlogEventListener handler : cacheHandlers) {
@@ -152,7 +147,6 @@ public final class CacheManager {
         }
     }
 
-    
     /**
      * Flush the entire cache system.
      */
@@ -161,17 +155,17 @@ public final class CacheManager {
             cache.clear();
         }
     }
-    
+
     /**
      * Flush a single cache.
      */
     public void clear(String cacheId) {
         Cache cache = caches.get(cacheId);
-        if(cache != null) {
+        if (cache != null) {
             cache.clear();
         }
     }
-    
+
     /**
      * Retrieve stats from all registered caches.
      */

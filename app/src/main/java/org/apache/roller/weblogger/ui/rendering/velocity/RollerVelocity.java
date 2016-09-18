@@ -35,89 +35,87 @@ import org.slf4j.LoggerFactory;
  * in velocity.properties (in the order given in the resource.loader
  * property value in that file) to obtain the Template to use for the
  * given template name.
- *
+ * <p>
  * Further, ThemeResourceLoader parses out the |xxxxx portion added in
  * the getTemplate() overrides to determine the proper device type's rendition
  * to use.
- *
+ * <p>
  * We construct our own instance of VelocityEngine, initialize it, and provide
  * access to the instance via the Singleton getInstance() method.
  */
 public class RollerVelocity {
-    
+
     public static final String VELOCITY_CONFIG = "/velocity.properties";
 
     private static Logger log = LoggerFactory.getLogger(RollerVelocity.class);
-    
-    private static VelocityEngine velocityEngine = null;
 
+    private static VelocityEngine velocityEngine = null;
 
     static {
         log.info("Initializing Velocity Rendering Engine");
-        
+
         // initialize the Velocity engine
         Properties velocityProps = new Properties();
-        
+
         try {
             InputStream instream = RollerVelocity.class.getClassLoader().getResourceAsStream(VELOCITY_CONFIG);
 
             velocityProps.load(instream);
-            
+
             log.debug("Velocity engine props = {}", velocityProps);
-            
+
             // construct the VelocityEngine
             velocityEngine = new VelocityEngine();
-            
+
             // init velocity with our properties
             velocityEngine.init(velocityProps);
-            
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    
-    
+
     /**
      * Access to the VelocityEngine.
-     *
+     * <p>
      * This shouldn't ever be needed, but it's here just in case someone
      * really needs to do something special.
      */
     public static VelocityEngine getEngine() {
         return velocityEngine;
     }
-    
+
     /**
      * Convenience static method for retrieving a Velocity template.
-     * @throws org.apache.velocity.exception.ResourceNotFoundException,
-     *       org.apache.velocity.exception.ParseErrorException
+     *
+     * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name) {
         return velocityEngine.getTemplate(name + "|normal");
     }
 
-     /**
+    /**
      * Convenience static method for retrieving a Velocity template.
-     * @throws org.apache.velocity.exception.ResourceNotFoundException,
-     *       org.apache.velocity.exception.ParseErrorException
+     *
+     * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, DeviceType deviceType) {
         return velocityEngine.getTemplate(name + "|" + deviceType);
     }
-    
+
     /**
      * Convenience static method for retrieving a Velocity template.
-     * @throws org.apache.velocity.exception.ResourceNotFoundException,
-     *       org.apache.velocity.exception.ParseErrorException
+     *
+     * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, String encoding) {
         return velocityEngine.getTemplate(name + "|normal", encoding);
     }
-	
+
     /**
      * Convenience static method for retrieving a Velocity template.
-     * @throws org.apache.velocity.exception.ResourceNotFoundException,
-     *       org.apache.velocity.exception.ParseErrorException
+     *
+     * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, DeviceType deviceType, String encoding) {
         return velocityEngine.getTemplate(name + "|" + deviceType, encoding);

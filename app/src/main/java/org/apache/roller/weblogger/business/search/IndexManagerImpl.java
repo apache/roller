@@ -20,14 +20,6 @@
  */
 package org.apache.roller.weblogger.business.search;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -48,13 +40,19 @@ import org.apache.roller.weblogger.business.search.operations.RebuildWeblogIndex
 import org.apache.roller.weblogger.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.RemoveWeblogIndexOperation;
 import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperation;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Lucene implementation of IndexManager. This is the central entry point into
@@ -68,7 +66,7 @@ public class IndexManagerImpl implements IndexManager {
     private WeblogEntryManager weblogEntryManager;
     private final ExecutorService serviceScheduler;
 
-    private final int MAX_TOKEN_COUNT = 100;
+    private final int maxTokenCount = 100;
 
     private static Logger log = LoggerFactory.getLogger(IndexManagerImpl.class);
 
@@ -235,7 +233,7 @@ public class IndexManagerImpl implements IndexManager {
 
     /**
      * This is the analyzer that will be used to tokenize comment text.
-     * 
+     *
      * @return Analyzer to be used in manipulating the database.
      */
     public static Analyzer getAnalyzer() {
@@ -279,7 +277,7 @@ public class IndexManagerImpl implements IndexManager {
      * Get the directory that is used by the lucene index. This method will
      * return null if there is no index at the directory location. If we are
      * using a RAM index, the directory will be a ram directory.
-     * 
+     *
      * @return Directory The directory containing the index, or null if error.
      */
     @Override
@@ -334,7 +332,7 @@ public class IndexManagerImpl implements IndexManager {
 
             IndexWriterConfig config = new IndexWriterConfig(
                     new LimitTokenCountAnalyzer(
-                            IndexManagerImpl.getAnalyzer(), MAX_TOKEN_COUNT));
+                            IndexManagerImpl.getAnalyzer(), maxTokenCount));
 
             writer = new IndexWriter(dir, config);
 
@@ -358,9 +356,9 @@ public class IndexManagerImpl implements IndexManager {
                 IndexWriter writer = null;
                 try {
                     IndexWriterConfig config = new IndexWriterConfig(
-                            new LimitTokenCountAnalyzer(IndexManagerImpl.getAnalyzer(), MAX_TOKEN_COUNT));
+                            new LimitTokenCountAnalyzer(IndexManagerImpl.getAnalyzer(), maxTokenCount));
                     writer = new IndexWriter(fsdir, config);
-                    writer.addIndexes(new Directory[] { dir });
+                    writer.addIndexes(new Directory[]{dir});
                     writer.commit();
                     indexConsistencyMarker.delete();
                 } catch (IOException e) {

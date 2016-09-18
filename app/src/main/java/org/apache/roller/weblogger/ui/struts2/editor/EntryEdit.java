@@ -235,8 +235,8 @@ public final class EntryEdit extends UIAction {
                 entry.setDateString(pubDateFormat.format(zdt.toLocalDate()));
 
                 if (log.isDebugEnabled()) {
-                    log.debug("pubtime vals are " + entry.getDateString() + ", " + entry.getHours() + ", "
-                            + entry.getMinutes() + ", " + entry.getSeconds());
+                    log.debug("pubtime vals are " + entry.getDateString() + ", " + entry.getHours() + ", " +
+                            entry.getMinutes() + ", " + entry.getSeconds());
                 }
             }
         }
@@ -277,7 +277,7 @@ public final class EntryEdit extends UIAction {
         Instant pubtime = null;
 
         String dateString = entry.getDateString();
-        if(!StringUtils.isEmpty(dateString)) {
+        if (!StringUtils.isEmpty(dateString)) {
             try {
                 LocalDate newDate = LocalDate.parse(dateString, pubDateFormat);
 
@@ -291,7 +291,6 @@ public final class EntryEdit extends UIAction {
 
         return pubtime;
     }
-
 
     /**
      * Processing logic common for saving drafts and publishing entries
@@ -450,6 +449,7 @@ public final class EntryEdit extends UIAction {
             case PENDING:
                 addMessage("weblogEdit.submittedForReview");
                 break;
+            default:
         }
     }
 
@@ -471,12 +471,13 @@ public final class EntryEdit extends UIAction {
     }
 
     public boolean isCommentingEnabled() {
-        return !CommentOption.NONE.equals(CommentOption.valueOf(getProp("users.comments.enabled")))
-                && !CommentOption.NONE.equals(getActionWeblog().getAllowComments());
+        return !CommentOption.NONE.equals(CommentOption.valueOf(getProp("users.comments.enabled"))) &&
+                !CommentOption.NONE.equals(getActionWeblog().getAllowComments());
     }
 
     /**
      * Get recent published weblog entries
+     *
      * @return List of published WeblogEntry objects sorted by publication time.
      */
     public List<WeblogEntry> getRecentPublishedEntries() {
@@ -485,6 +486,7 @@ public final class EntryEdit extends UIAction {
 
     /**
      * Get recent scheduled weblog entries
+     *
      * @return List of scheduled WeblogEntry objects sorted by publication time.
      */
     public List<WeblogEntry> getRecentScheduledEntries() {
@@ -493,6 +495,7 @@ public final class EntryEdit extends UIAction {
 
     /**
      * Get recent draft weblog entries
+     *
      * @return List of draft WeblogEntry objects sorted by update time.
      */
     public List<WeblogEntry> getRecentDraftEntries() {
@@ -501,6 +504,7 @@ public final class EntryEdit extends UIAction {
 
     /**
      * Get recent pending weblog entries
+     *
      * @return List of pending WeblogEntry objects sorted by update time.
      */
     public List<WeblogEntry> getRecentPendingEntries() {
@@ -545,7 +549,8 @@ public final class EntryEdit extends UIAction {
     }
 
     private static class WeblogTagData {
-        public WeblogTagData() {}
+        public WeblogTagData() {
+        }
 
         private String prefix;
         private String weblog;

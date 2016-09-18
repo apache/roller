@@ -39,14 +39,14 @@ import java.util.Comparator;
  * Tag aggregate data.
  */
 @Entity
-@Table(name="weblog_entry_tag_agg")
+@Table(name = "weblog_entry_tag_agg")
 @NamedQueries({
-        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblog",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 " +
+        @NamedQuery(name = "WeblogEntryTagAggregate.getPopularTagsByWeblog",
+                query = "SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 " +
                         "GROUP BY w.name ORDER BY SUM(w.total) DESC")
 })
 public class WeblogEntryTagAggregate {
-    
+
     private String name = null;
     private Weblog weblog = null;
     private int total = 0;
@@ -56,33 +56,33 @@ public class WeblogEntryTagAggregate {
     }
 
     //------------------------------------------------------- Simple properties
-    
+
     @ManyToOne
-    @JoinColumn(name="weblogid", nullable=true)
+    @JoinColumn(name = "weblogid", nullable = true)
     @Id
     public Weblog getWeblog() {
         return this.weblog;
     }
-    
+
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Id
     public String getName() {
         return this.name;
     }
-    
-    public void setName( String name ) {
+
+    public void setName(String name) {
         this.name = name;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public int getTotal() {
         return this.total;
     }
-    
+
     public void setTotal(int total) {
         this.total = total;
     }
@@ -97,11 +97,11 @@ public class WeblogEntryTagAggregate {
     }
 
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         return "{" + (getWeblog() != null ? getWeblog().getHandle() + ", " : "") + getName() + ", " + getTotal() + "}";
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -109,24 +109,24 @@ public class WeblogEntryTagAggregate {
         if (!(other instanceof WeblogEntryTagAggregate)) {
             return false;
         }
-        WeblogEntryTagAggregate o = (WeblogEntryTagAggregate)other;
+        WeblogEntryTagAggregate o = (WeblogEntryTagAggregate) other;
         return new EqualsBuilder()
-        .append(getName(), o.getName())
-        .append(getWeblog(), o.getWeblog())
-        .isEquals();
+                .append(getName(), o.getName())
+                .append(getWeblog(), o.getWeblog())
+                .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
-        .append(getName())
-        .append(getWeblog())
-        .toHashCode();
+                .append(getName())
+                .append(getWeblog())
+                .toHashCode();
     }
 
-    public static java.util.Comparator<WeblogEntryTagAggregate> Comparator = (weta1, weta2) ->
-        weta1.getName().compareToIgnoreCase(weta2.getName());
+    public static java.util.Comparator<WeblogEntryTagAggregate> comparator = (weta1, weta2) ->
+            weta1.getName().compareToIgnoreCase(weta2.getName());
 
-    public static Comparator<WeblogEntryTagAggregate> CountComparator = (weta1, weta2) -> {
+    public static Comparator<WeblogEntryTagAggregate> countComparator = (weta1, weta2) -> {
         // higher numbers first for counts
         int compVal = Integer.valueOf(weta2.getTotal()).compareTo(weta1.getTotal());
 
@@ -136,6 +136,5 @@ public class WeblogEntryTagAggregate {
         }
         return compVal;
     };
-
 
 }

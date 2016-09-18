@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.ui.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -31,20 +32,20 @@ public class WeblogSearchRequest extends WeblogRequest {
     private String query = null;
     private int pageNum = 0;
     private String weblogCategoryName = null;
-    
+
     public WeblogSearchRequest(HttpServletRequest request) {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
 
         if (pathInfo != null) {
             throw new IllegalArgumentException("Invalid path info: " + request.getRequestURL());
         }
-        
+
         /*
          * parse request parameters
          *
@@ -57,16 +58,16 @@ public class WeblogSearchRequest extends WeblogRequest {
                 request.getParameter("q").trim().length() > 0) {
             this.query = request.getParameter("q");
         }
-        
+
         if (request.getParameter("page") != null) {
             String pageInt = request.getParameter("page");
             try {
                 this.pageNum = Integer.parseInt(pageInt);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 // ignored, bad input
             }
         }
-        
+
         if (request.getParameter("cat") != null && request.getParameter("cat").trim().length() > 0) {
             this.weblogCategoryName = Utilities.decode(request.getParameter("cat"));
         }

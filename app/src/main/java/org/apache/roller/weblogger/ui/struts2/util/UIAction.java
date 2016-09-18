@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  * Extends the Struts2 ActionSupport class to add in support for handling an
  * error and status success.  Other actions extending this one only need to
  * call setError() and setSuccess() accordingly.
- * 
+ * <p>
  * NOTE: as a small convenience, all errors and messages are assumed to be keys
  * which point to a success in a resource bundle, so we automatically call
  * getText(key) on the param passed into setError() and setSuccess().
@@ -60,7 +60,7 @@ public class UIAction extends ActionSupport implements Preparable {
     private static final List<Locale> LOCALES;
     private static final List TIME_ZONES;
 
-    private static Comparator<Locale> LocaleComparator = (locale1, locale2) -> {
+    private static Comparator<Locale> localeComparator = (locale1, locale2) -> {
         int compName = locale1.getDisplayName().compareTo(locale2.getDisplayName());
         if (compName == 0) {
             return locale1.toString().compareTo(locale2.toString());
@@ -72,7 +72,7 @@ public class UIAction extends ActionSupport implements Preparable {
     static {
         // build locales list
         LOCALES = Arrays.asList(Locale.getAvailableLocales());
-        Collections.sort(LOCALES, LocaleComparator);
+        Collections.sort(LOCALES, localeComparator);
 
         // build time zones list
         TIME_ZONES = Arrays.asList(TimeZone.getAvailableIDs());
@@ -81,10 +81,10 @@ public class UIAction extends ActionSupport implements Preparable {
 
     // a result that sends the user to an access denied warning
     public static final String DENIED = "access-denied";
-    
+
     // a common result name used to indicate the result should list some data
     public static final String LIST = "list";
-    
+
     // a result for a cancel.
     public static final String CANCEL = "cancel";
 
@@ -96,7 +96,7 @@ public class UIAction extends ActionSupport implements Preparable {
 
     // the authenticated user accessing this action, or null if client is not logged in
     private User authenticatedUser = null;
-    
+
     // the weblog this action is intended to work on, or null if no weblog specified
     private Weblog actionWeblog = null;
 
@@ -105,13 +105,13 @@ public class UIAction extends ActionSupport implements Preparable {
 
     // the weblog id of the action weblog
     private String weblogId = null;
-    
+
     // action name (used by tabbed menu utility)
     protected String actionName = null;
-    
+
     // the name of the menu this action wants to show, or null for no menu
     protected String desiredMenu = null;
-    
+
     // page title, called by some Tiles JSPs (e.g., tiles-simplepage.jsp)
     protected String pageTitle = null;
 
@@ -144,6 +144,7 @@ public class UIAction extends ActionSupport implements Preparable {
     public boolean isUserIsAdmin() {
         return getAuthenticatedUser() != null && GlobalRole.ADMIN.equals(getAuthenticatedUser().getGlobalRole());
     }
+
     /**
      * Cancel.
      *
@@ -156,11 +157,11 @@ public class UIAction extends ActionSupport implements Preparable {
     public String getSiteURL() {
         return WebloggerStaticConfig.getRelativeContextURL();
     }
-    
+
     public String getAbsoluteSiteURL() {
         return WebloggerStaticConfig.getAbsoluteContextURL();
     }
-    
+
     public String getProp(String key) {
         // first try static config
         String value = WebloggerStaticConfig.getProperty(key);
@@ -169,14 +170,14 @@ public class UIAction extends ActionSupport implements Preparable {
         }
         return (value == null) ? key : value;
     }
-    
+
     public boolean getBooleanProp(String key) {
         // first try static config
         String value = WebloggerStaticConfig.getProperty(key);
         if (value == null) {
             value = WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty(key);
         }
-        
+
         return (value == null) ? false : Boolean.valueOf(value);
     }
 
@@ -234,15 +235,15 @@ public class UIAction extends ActionSupport implements Preparable {
     public void addError(String errorKey) {
         addActionError(getText(errorKey));
     }
-    
+
     public void addError(String errorKey, String param) {
         addActionError(getText(errorKey, errorKey, param));
     }
-    
+
     public void addError(String errorKey, List args) {
         addActionError(getText(errorKey, args));
     }
-    
+
     /**
      * This simply returns the result of hasActionErrors() but we need it
      * because without it you can't easily check if there were errors since
@@ -251,20 +252,19 @@ public class UIAction extends ActionSupport implements Preparable {
     public boolean errorsExist() {
         return hasActionErrors();
     }
-    
-    
+
     public void addMessage(String msgKey) {
         addActionMessage(getText(msgKey));
     }
-    
+
     public void addMessage(String msgKey, String param) {
         addActionMessage(getText(msgKey, msgKey, param));
     }
-    
+
     public void addMessage(String msgKey, List args) {
         addActionMessage(getText(msgKey, args));
     }
-    
+
     /**
      * This simply returns the result of hasActionMessages() but we need it
      * because without it you can't easily check if there were messages since
@@ -273,7 +273,6 @@ public class UIAction extends ActionSupport implements Preparable {
     public boolean messagesExist() {
         return hasActionMessages();
     }
-    
 
     public User getAuthenticatedUser() {
         return authenticatedUser;
@@ -306,7 +305,7 @@ public class UIAction extends ActionSupport implements Preparable {
     public void setWeblogId(String weblogId) {
         this.weblogId = weblogId;
     }
-    
+
     public String getPageTitle() {
         return getText(pageTitle);
     }
@@ -325,7 +324,7 @@ public class UIAction extends ActionSupport implements Preparable {
     public String getActionName() {
         return this.actionName;
     }
-    
+
     public void setActionName(String actionName) {
         this.actionName = actionName;
     }
@@ -337,30 +336,30 @@ public class UIAction extends ActionSupport implements Preparable {
     public void setDesiredMenu(String desiredMenu) {
         this.desiredMenu = desiredMenu;
     }
-    
+
     public Menu getMenu() {
         return menuHelper.getMenu(getDesiredMenu(), getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(), getActionName()
         );
     }
-    
+
     public String getShortDateFormat() {
         DateFormat sdf = DateFormat.getDateInstance(
                 DateFormat.SHORT, getLocale());
         if (sdf instanceof SimpleDateFormat) {
-            return ((SimpleDateFormat)sdf).toPattern();
+            return ((SimpleDateFormat) sdf).toPattern();
         }
         return "yyyy/MM/dd";
     }
-    
+
     public String getMediumDateFormat() {
         DateFormat sdf = DateFormat.getDateInstance(
                 DateFormat.MEDIUM, getLocale());
         if (sdf instanceof SimpleDateFormat) {
-            return ((SimpleDateFormat)sdf).toPattern();
+            return ((SimpleDateFormat) sdf).toPattern();
         }
         return "MMM dd, yyyy";
     }
-    
+
     public List<Locale> getLocalesList() {
         return LOCALES;
     }

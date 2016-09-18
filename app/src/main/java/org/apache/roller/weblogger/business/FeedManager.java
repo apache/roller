@@ -20,10 +20,10 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.time.Instant;
-
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
+
+import java.time.Instant;
 
 /**
  * A FeedManager is responsible for actually pulling subscriptions from
@@ -31,39 +31,39 @@ import org.apache.roller.weblogger.pojos.Subscription;
  * as well as saving them to the DB.
  */
 public interface FeedManager {
-    
+
     /**
      * Fetch a single subscription.
-     *
+     * <p>
      * This method takes in a feed url and is expected to fetch that feed and
      * return a transient instance of a Subscription representing the
      * given feed.
-     *
-     * It is important to understand that this method will *NOT* return a 
+     * <p>
+     * It is important to understand that this method will *NOT* return a
      * persistent version of an existing Subscription if it happens to
-     * exist.  This method is only here to pull feeds from their source 
+     * exist.  This method is only here to pull feeds from their source
      * so that they may be used in any way desired by the rest of the system.
      *
      * @param feedURL The feed url to use when fetching the subscription.
      * @return Subscription The fetched subscription.
      */
     Subscription fetchSubscription(String feedURL);
-    
+
     /**
      * Conditionally fetch a single subscription.
-     *
+     * <p>
      * This method takes in a feed url and its known last modified date and should
      * return a transient Subscription for the feed only if the given feed has
      * been updated since the lastModified date.  This method is meant provide
      * a more efficient way to fetch subscriptions which are being updated so
      * subscriptions are not continually fetched when unnecessary.
-     *
-     * It is important to understand that this method will *NOT* return a 
+     * <p>
+     * It is important to understand that this method will *NOT* return a
      * persistent version of an existing Subscription if it happens to
-     * exist.  This method is only here to pull feeds from their source 
+     * exist.  This method is only here to pull feeds from their source
      * so that they may be used in any way desired by the rest of the system.
      *
-     * @param feedURL The feed url to use when fetching the subscription.
+     * @param feedURL      The feed url to use when fetching the subscription.
      * @param lastModified Last modified date to check against to determine
      *                     whether a new fetch is necessary.
      * @return Subscription The fetched subscription.

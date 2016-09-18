@@ -20,6 +20,26 @@
  */
 package org.apache.roller.weblogger.util;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.mobile.device.DeviceType;
+import org.springframework.mobile.device.site.SitePreference;
+import org.springframework.mobile.device.site.SitePreferenceUtils;
+
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,27 +61,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.mobile.device.DeviceType;
-import org.springframework.mobile.device.site.SitePreference;
-import org.springframework.mobile.device.site.SitePreferenceUtils;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -85,6 +84,7 @@ public class Utilities {
 
     /**
      * Removes html tags from input.
+     *
      * @param str String potentially containing html tags
      * @return plain text string, all HTML tags removed.
      */
@@ -114,7 +114,7 @@ public class Utilities {
 
             String line;
             boolean insidePara = false;
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
 
                 if (!insidePara && line.trim().length() > 0) {
                     // start of a new paragraph
@@ -136,7 +136,7 @@ public class Utilities {
                 buf.append("</p>");
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.warn("trouble rendering text.", e);
         }
 
@@ -167,10 +167,10 @@ public class Utilities {
      * as such), the latter when the blogger edits the comment with the UI.  This
      * method converts the latter back to the former for DB serialization and subsequent
      * browser rendering.
-     *
+     * <p>
      * Each readline() call below strips off the \n, necessitating the addition of
      * the "\r\n" after each line.
-     *
+     * <p>
      * See: https://www.w3.org/TR/html5/forms.html#concept-textarea-api-value
      */
     public static String apiValueToFormSubmissionValue(InputStream is) throws IOException {
@@ -218,6 +218,7 @@ public class Utilities {
 
     /**
      * Extract (keep) JUST the HTML from the String.
+     *
      * @param str String to remove HTML from
      * @return String with HTML removed
      */
@@ -242,9 +243,8 @@ public class Utilities {
                 // move start forward and find another tag
                 start = endTag + 1;
                 beginTag = str.indexOf('<', start);
-            }
-            // if no endTag found, break
-            else {
+            } else {
+                // if no endTag found, break
                 break;
             }
         }
@@ -272,10 +272,8 @@ public class Utilities {
             byte3 = (bByte3) ? (aValue[i + 2] & 0xFF) : 0;
 
             tt.append(strBase64Chars.charAt(byte1 / 4));
-            tt.append(strBase64Chars
-                    .charAt((byte2 / 16) + ((byte1 & 0x3) * 16)));
-            tt.append(((bByte2) ? strBase64Chars.charAt((byte3 / 64)
-                    + ((byte2 & 0xF) * 4)) : '='));
+            tt.append(strBase64Chars.charAt((byte2 / 16) + ((byte1 & 0x3) * 16)));
+            tt.append(((bByte2) ? strBase64Chars.charAt((byte3 / 64) + ((byte2 & 0xF) * 4)) : '='));
             tt.append(((bByte3) ? strBase64Chars.charAt(byte3 & 0x3F) : '='));
         }
 
@@ -284,6 +282,7 @@ public class Utilities {
 
     /**
      * Removes non-alphanumerics from tags.
+     *
      * @param tag tag to strip invalid chars from
      * @return tag without invalid chars.
      */
@@ -298,14 +297,12 @@ public class Utilities {
 
             // fast-path exclusions quotes and commas are obvious
             // 34 = double-quote, 44 = comma
-            switch (c) {
-            case 34:
-            case 44:
+            if (c == 34 || c == 44) {
                 continue;
             }
 
-            if ((33 <= c && c <= 126) || Character.isUnicodeIdentifierPart(c)
-                    || Character.isUnicodeIdentifierStart(c)) {
+            if ((33 <= c && c <= 126) || Character.isUnicodeIdentifierPart(c) ||
+                    Character.isUnicodeIdentifierStart(c)) {
                 sb.append(c);
             }
         }
@@ -393,7 +390,7 @@ public class Utilities {
 
     public static String getEncodedTagsString(List tags) {
         StringBuilder tagsString = new StringBuilder();
-        if(tags != null && tags.size() > 0) {
+        if (tags != null && tags.size() > 0) {
             String tag;
             Iterator tagsIT = tags.iterator();
 
@@ -402,7 +399,7 @@ public class Utilities {
             tagsString.append(encode(tag));
 
             // do rest of tags, joining them with a '+'
-            while(tagsIT.hasNext()) {
+            while (tagsIT.hasNext()) {
                 tag = (String) tagsIT.next();
                 tagsString.append("+");
                 tagsString.append(encode(tag));
@@ -443,7 +440,7 @@ public class Utilities {
             JAXBContext jaxbContext = JAXBContext.newInstance(classesToBeBound);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             jaxbUnmarshaller.setSchema(schema);
-            jaxbUnmarshaller.setEventHandler( (event) -> {
+            jaxbUnmarshaller.setEventHandler((event) -> {
                 log.error("Parsing error: " +
                         event.getMessage() + "; Line #" +
                         event.getLocator().getLineNumber() + "; Column #" +
@@ -463,11 +460,10 @@ public class Utilities {
      * <em>truncated to second granularity</em>. Returns true if the response
      * status was set, false if not.
      *
-     * @param request - the request
-     * @param response - the response
+     * @param request                - the request
+     * @param response               - the response
      * @param lastModifiedTimeMillis - the last modified time millis
-     * @param deviceType - standard or mobile, null to not check
-     *
+     * @param deviceType             - standard or mobile, null to not check
      * @return true if a response status was sent, false otherwise.
      */
     public static boolean respondIfNotModified(HttpServletRequest request, HttpServletResponse response,
@@ -494,10 +490,9 @@ public class Utilities {
         String eTag = (deviceType == null) ? null : deviceType.name();
 
         String previousToken = request.getHeader("If-None-Match");
-        if (eTag != null && previousToken != null && eTag.equals(previousToken)
-                && lastModifiedTimeMillis <= sinceDate
-                || (eTag == null || previousToken == null)
-                && lastModifiedTimeMillis <= sinceDate) {
+        if (eTag != null && previousToken != null && eTag.equals(previousToken) &&
+                lastModifiedTimeMillis <= sinceDate ||
+                (eTag == null || previousToken == null) && lastModifiedTimeMillis <= sinceDate) {
 
             log.debug("NOT MODIFIED {}", request.getRequestURL());
 
@@ -545,8 +540,8 @@ public class Utilities {
             testcon.close();
         } catch (Exception e) {
             String errorMsg =
-                    "ERROR: unable to obtain database connection. "
-                            + "Likely problem: bad connection parameters or database unavailable.";
+                    "ERROR: unable to obtain database connection. " +
+                            "Likely problem: bad connection parameters or database unavailable.";
             log.error(errorMsg);
             throw new WebloggerException(errorMsg, e);
         }

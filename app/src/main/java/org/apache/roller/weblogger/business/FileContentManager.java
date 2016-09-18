@@ -20,14 +20,14 @@
  */
 package org.apache.roller.weblogger.business;
 
+import org.apache.roller.weblogger.pojos.Weblog;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
  * Interface for managing contents of the files uploaded to the weblogger.
@@ -36,58 +36,55 @@ public interface FileContentManager {
 
     /**
      * Get a reference to the content of a specific file in a weblog's uploads area.
-     * 
+     * <p>
      * This method always returns a valid file content object or will throw an exception
      * if the specified path doesn't exist, or can't be read.
-     * 
+     *
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
-     *
      * @throws FileNotFoundException If file does not exist.
-     * @throws IOException Some other problem accessing or reading file.
+     * @throws IOException           Some other problem accessing or reading file.
      */
     File getFileContent(Weblog weblog, String fileId) throws IOException;
 
     /**
      * Save a file's content to weblog's uploads area.
-     * 
+     *
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
-     * @param is InputStream to read the file from.
-     *
+     * @param is     InputStream to read the file from.
      * @throws FileNotFoundException If path to save location does not exist.
-     * @throws IOException If there is an unexpected error during the save.
+     * @throws IOException           If there is an unexpected error during the save.
      */
     void saveFileContent(Weblog weblog,
-            String fileId,
-            InputStream is)
+                         String fileId,
+                         InputStream is)
             throws IOException;
 
     /**
      * Delete file content from weblog's uploads area.
-     * 
+     *
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
-     *
      * @throws FileNotFoundException If file does not exist.
-     * @throws IOException If path does not exist or there is an unexpected error during the delete.
+     * @throws IOException           If path does not exist or there is an unexpected error during the delete.
      */
     void deleteFile(Weblog weblog, String fileId) throws IOException;
 
     /**
      * Determine if file can be saved given current WebloggerStaticConfig settings.
-     * 
-     * @param weblog The weblog we are working on.
-     * @param fileName name of the file to be saved
+     *
+     * @param weblog      The weblog we are working on.
+     * @param fileName    name of the file to be saved
      * @param contentType content type of the file
-     * @param size size of the file in bytes.
-     * @param messages output parameter for resource bundle messages, or null if not necessary to receive them
-     * @return true if the file can be saved, false otherwise. 
+     * @param size        size of the file in bytes.
+     * @param messages    output parameter for resource bundle messages, or null if not necessary to receive them
+     * @return true if the file can be saved, false otherwise.
      */
     boolean canSave(Weblog weblog,
-            String fileName,
-            String contentType,
-            long size,
-            Map<String, List<String>> messages);
+                    String fileName,
+                    String contentType,
+                    long size,
+                    Map<String, List<String>> messages);
 
 }

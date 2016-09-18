@@ -20,8 +20,9 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
+
+import java.time.Instant;
 
 public class CommentSearchCriteria {
 

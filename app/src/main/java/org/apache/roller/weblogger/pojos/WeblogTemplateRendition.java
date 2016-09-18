@@ -39,27 +39,27 @@ import javax.persistence.Table;
  * A pojo that will maintain different device-specific renditions for one template
  */
 @Entity
-@Table(name="weblog_template_rendition")
+@Table(name = "weblog_template_rendition")
 public class WeblogTemplateRendition implements TemplateRendition {
 
-	private String id = Utilities.generateUUID();
+    private String id = Utilities.generateUUID();
     private WeblogTemplate weblogTemplate = null;
-	// rendition contents
-	private String rendition = "";
-	private RenditionType renditionType = null;
-	private Parser parser = null;
+    // rendition contents
+    private String rendition = "";
+    private RenditionType renditionType = null;
+    private Parser parser = null;
 
-	public WeblogTemplateRendition(WeblogTemplate template, RenditionType renditionType) {
-		this.weblogTemplate = template;
-		this.renditionType = renditionType;
+    public WeblogTemplateRendition(WeblogTemplate template, RenditionType renditionType) {
+        this.weblogTemplate = template;
+        this.renditionType = renditionType;
         weblogTemplate.addTemplateRendition(this);
-	}
+    }
 
-	public WeblogTemplateRendition() {
-	}
+    public WeblogTemplateRendition() {
+    }
 
-	@ManyToOne
-	@JoinColumn(name="templateid", nullable=false)
+    @ManyToOne
+    @JoinColumn(name = "templateid", nullable = false)
     public WeblogTemplate getWeblogTemplate() {
         return weblogTemplate;
     }
@@ -69,66 +69,63 @@ public class WeblogTemplateRendition implements TemplateRendition {
     }
 
     @Id
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@Basic(optional=false)
-	public String getRendition() {
-		return rendition;
-	}
+    @Basic(optional = false)
+    public String getRendition() {
+        return rendition;
+    }
 
-	public void setRendition(String rendition) {
-		this.rendition = rendition;
-	}
+    public void setRendition(String rendition) {
+        this.rendition = rendition;
+    }
 
-	@Column(name="device_type", nullable=false)
-	@Enumerated(EnumType.STRING)
-	public RenditionType getRenditionType() {
-		return renditionType;
-	}
+    @Column(name = "device_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    public RenditionType getRenditionType() {
+        return renditionType;
+    }
 
-	public void setRenditionType(RenditionType renditionType) {
-		this.renditionType = renditionType;
-	}
+    public void setRenditionType(RenditionType renditionType) {
+        this.renditionType = renditionType;
+    }
 
-	// ------------------------------------------------------- Good citizenship
+    // ------------------------------------------------------- Good citizenship
 
-	public String toString() {
-        return "{" + getId()
-				+ ", " + getRenditionType()
-                + ", Templ: " + getWeblogTemplate()
-                + "}";
-	}
+    public String toString() {
+        return "{" + getId() + ", " + getRenditionType() + ", Templ: " + getWeblogTemplate() + "}";
+    }
 
-	public boolean equals(Object other) {
-		if (other == this) {
+    public boolean equals(Object other) {
+        if (other == this) {
             return true;
         }
-		if (!(other instanceof WeblogTemplateRendition)) {
+        if (!(other instanceof WeblogTemplateRendition)) {
             return false;
         }
-		WeblogTemplateRendition o = (WeblogTemplateRendition) other;
-		return new EqualsBuilder().append(getWeblogTemplate().getId(),o.getWeblogTemplate().getId())
-				.append(getRenditionType(), o.getRenditionType()).isEquals();
-	}
+        WeblogTemplateRendition o = (WeblogTemplateRendition) other;
+        return new EqualsBuilder().append(getWeblogTemplate().getId(), o.getWeblogTemplate().getId())
+                .append(getRenditionType(), o.getRenditionType()).isEquals();
+    }
 
-	public int hashCode() {
-		return new HashCodeBuilder().append(getWeblogTemplate().getId())
-				.append(getRenditionType()).toHashCode();
-	}
+    public int hashCode() {
+        return new HashCodeBuilder().append(getWeblogTemplate().getId())
+                .append(getRenditionType()).toHashCode();
+    }
 
-	@Enumerated(EnumType.STRING)
-	public Parser getParser() {
-		return parser;
-	}
+    @Enumerated(EnumType.STRING)
+    public Parser getParser() {
+        return parser;
+    }
 
-	public void setParser(Parser renditionLanguage) {
-		this.parser = renditionLanguage;
-	}
+    public void setParser(Parser renditionLanguage) {
+        this.parser = renditionLanguage;
+    }
 
 }

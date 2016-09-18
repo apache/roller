@@ -30,13 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
 
-
 /**
  * RendererFactory for Velocity, creates VelocityRenderers.
  */
 public class VelocityRendererFactory implements RendererFactory {
     private static Logger log = LoggerFactory.getLogger(VelocityRendererFactory.class);
-    
+
     public Renderer getRenderer(Template template, DeviceType deviceType) {
         Renderer renderer = null;
         TemplateRendition tr;
@@ -60,11 +59,11 @@ public class VelocityRendererFactory implements RendererFactory {
         // VelocityRenderer handles Velocity templates only
         if (Parser.VELOCITY.equals(tr.getParser())) {
             try {
-               renderer = new VelocityRenderer(template, deviceType);
+                renderer = new VelocityRenderer(template, deviceType);
             } catch (Exception ex) {
-				log.error("ERROR creating VelocityRenderer", ex);
+                log.error("ERROR creating VelocityRenderer", ex);
                 return null;
-            }            
+            }
         }
         return renderer;
     }

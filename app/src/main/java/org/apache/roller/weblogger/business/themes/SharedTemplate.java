@@ -20,8 +20,8 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,12 +35,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * A SharedTemplate represents a template which is part of a SharedTheme.
  */
 public class SharedTemplate implements Template {
-    
+
     private String id = null;
     private ComponentType role = null;
     private String name = null;
@@ -57,12 +56,12 @@ public class SharedTemplate implements Template {
         addTemplateRendition(templateRendition);
     }
 
-
     //hash map to cache template Code objects parsed
     private Map<RenditionType, SharedTemplateRendition> templateRenditionHashMap = new HashMap<>();
-    
-    public SharedTemplate() {}
-    
+
+    public SharedTemplate() {
+    }
+
     public String getId() {
         return id;
     }
@@ -95,7 +94,7 @@ public class SharedTemplate implements Template {
         this.relativePath = relativePath;
     }
 
-    public void addTemplateRendition(SharedTemplateRendition rendition){
+    public void addTemplateRendition(SharedTemplateRendition rendition) {
         this.templateRenditionHashMap.put(rendition.getRenditionType(), rendition);
     }
 
@@ -108,8 +107,8 @@ public class SharedTemplate implements Template {
         return templateRenditionHashMap;
     }
 
-    @XmlJavaTypeAdapter(value=MapAdapter.class)
-    @XmlElements(@XmlElement(name="renditions"))
+    @XmlJavaTypeAdapter(value = MapAdapter.class)
+    @XmlElements(@XmlElement(name = "renditions"))
     public void setRenditionMap(Map<RenditionType, SharedTemplateRendition> renditionTable) {
         this.templateRenditionHashMap = renditionTable;
     }
@@ -117,14 +116,14 @@ public class SharedTemplate implements Template {
     static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<RenditionType, SharedTemplateRendition>> {
 
         static class AdaptedMap {
-            @XmlElements(@XmlElement(name="rendition"))
+            @XmlElements(@XmlElement(name = "rendition"))
             public List<SharedTemplateRendition> renditions = new ArrayList<>();
         }
 
         @Override
         public Map<RenditionType, SharedTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
             Map<RenditionType, SharedTemplateRendition> map = new HashMap<>();
-            for(SharedTemplateRendition item : list.renditions) {
+            for (SharedTemplateRendition item : list.renditions) {
                 map.put(item.getRenditionType(), item);
             }
             return map;

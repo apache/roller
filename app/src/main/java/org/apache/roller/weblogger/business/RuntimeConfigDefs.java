@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement(name="runtime-configs")
+@XmlRootElement(name = "runtime-configs")
 public class RuntimeConfigDefs {
 
     private List<ConfigGroup> configGroups = null;
@@ -39,7 +39,7 @@ public class RuntimeConfigDefs {
         return configGroups;
     }
 
-    @XmlElement(name="config-group")
+    @XmlElement(name = "config-group")
     public void setConfigGroups(List<ConfigGroup> configGroups) {
         this.configGroups = configGroups;
     }

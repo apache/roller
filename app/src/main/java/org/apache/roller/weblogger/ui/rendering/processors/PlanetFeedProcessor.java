@@ -20,26 +20,19 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.themes.SharedTemplate;
 import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.apache.roller.weblogger.util.cache.ExpiringCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +41,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.HashMap;
+
 /**
  * Responsible for displaying Planet newsfeeds
  */
 @RestController
-@RequestMapping(path="/planetrss/**")
+@RequestMapping(path = "/planetrss/**")
 public class PlanetFeedProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PlanetFeedProcessor.class);
@@ -125,9 +124,7 @@ public class PlanetFeedProcessor extends AbstractProcessor {
         // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
-        if (accepts != null && userAgent != null
-                && accepts.contains("*/*")
-                && userAgent.startsWith("Mozilla")) {
+        if (accepts != null && userAgent != null && accepts.contains("*/*") && userAgent.startsWith("Mozilla")) {
             // client is a browser and now that we offer styled feeds we want
             // browsers to load the page rather than popping up the download
             // dialog, so we provide a content-type that browsers will display
@@ -143,7 +140,7 @@ public class PlanetFeedProcessor extends AbstractProcessor {
         if (request.getParameter("page") != null) {
             try {
                 page = Integer.parseInt(request.getParameter("page"));
-            } catch(NumberFormatException ignored) {
+            } catch (NumberFormatException ignored) {
             }
             page = Math.max(page, 1);
         }
@@ -233,7 +230,7 @@ public class PlanetFeedProcessor extends AbstractProcessor {
     /**
      * Generate a cache key from a parsed planet request. This generates a key
      * of the form planet.key:{planetname}/feed/{page}
-     *
+     * <p>
      * example: planet.key:testplanet/feed/2
      */
     private String generateKey(String planet, int page) {

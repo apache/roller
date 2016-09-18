@@ -20,29 +20,15 @@
  */
 package org.apache.roller.weblogger.ui.restapi;
 
-import java.security.Principal;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TreeMap;
-import java.util.UUID;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs.RegistrationOption;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -53,7 +39,6 @@ import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs.RegistrationOption;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
@@ -66,11 +51,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
@@ -78,6 +62,18 @@ import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.security.Principal;
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.TreeMap;
+import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -172,7 +168,7 @@ public class UserController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers", method = RequestMethod.GET)
     public Map<String, String> getPotentialNewBlogMembers(@PathVariable String weblogId, Principal p,
-                                                      HttpServletResponse response)
+                                                          HttpServletResponse response)
             throws ServletException {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
@@ -212,7 +208,7 @@ public class UserController {
         }
         Map<String, String> sortedMap = userMap.entrySet().stream().sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                (e1, e2) -> e2, LinkedHashMap::new));
+                        (e1, e2) -> e2, LinkedHashMap::new));
         return sortedMap;
     }
 
@@ -417,8 +413,8 @@ public class UserController {
                         // first person in is always an admin
                         user.setGlobalRole(GlobalRole.ADMIN);
                     } else {
-                        user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole")
-                                ? GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
+                        user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole") ?
+                                GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
                     }
                 } else {
                     // users can't alter own roles or status
@@ -471,10 +467,10 @@ public class UserController {
                             be.addError(new ObjectError("User object", bundle.getString("error.useradmin.nonenabled.only.enabled")));
                         }
                         break;
+                    default:
                 }
             }
         }
-
 
         String maybePassword = data.credentials.getPasswordText();
         if (!StringUtils.isEmpty(maybePassword)) {

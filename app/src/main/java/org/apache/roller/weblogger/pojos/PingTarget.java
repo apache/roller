@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.util.Utilities;
@@ -32,20 +30,20 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
+import java.time.Instant;
 
 /**
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.
- * 
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 @Entity
-@Table(name="ping_target")
+@Table(name = "ping_target")
 @NamedQueries({
-        @NamedQuery(name="PingTarget.getPingTargetsOrderByName",
-                query="SELECT p FROM PingTarget p ORDER BY p.name"),
-        @NamedQuery(name="PingTarget.getEnabledPingTargets",
-                query="SELECT p FROM PingTarget p where p.enabled = true")
+        @NamedQuery(name = "PingTarget.getPingTargetsOrderByName",
+                query = "SELECT p FROM PingTarget p ORDER BY p.name"),
+        @NamedQuery(name = "PingTarget.getEnabledPingTargets",
+                query = "SELECT p FROM PingTarget p where p.enabled = true")
 })
 public class PingTarget {
 
@@ -61,8 +59,8 @@ public class PingTarget {
     /**
      * Constructor.
      *
-     * @param name    the descriptive name of this target
-     * @param pingUrl the URL to which to send the ping
+     * @param name       the descriptive name of this target
+     * @param pingUrl    the URL to which to send the ping
      * @param autoEnable if true, pings sent to target by default
      */
     public PingTarget(String name, String pingUrl, boolean autoEnable) {
@@ -82,7 +80,6 @@ public class PingTarget {
         this.id = id;
     }
 
-
     /**
      * Name is given by the administrator, it is descriptive and
      * not necessarily unique.
@@ -90,7 +87,7 @@ public class PingTarget {
      * @return the name of this ping target
      */
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getName() {
         return this.name;
     }
@@ -99,13 +96,12 @@ public class PingTarget {
         this.name = name;
     }
 
-
     /**
      * Get the URL to ping.
      *
      * @return the URL to ping.
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getPingUrl() {
         return pingUrl;
     }
@@ -132,7 +128,7 @@ public class PingTarget {
      *
      * @return true if ping target is enabled, false otherwise.
      */
-    @Basic(optional=false)
+    @Basic(optional = false)
     public boolean isEnabled() {
         return enabled;
     }
@@ -140,7 +136,6 @@ public class PingTarget {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
 
     //------------------------------------------------------- Good citizenship
 
@@ -160,16 +155,16 @@ public class PingTarget {
         if (!(other instanceof PingTarget)) {
             return false;
         }
-        PingTarget o = (PingTarget)other;
+        PingTarget o = (PingTarget) other;
         return new EqualsBuilder()
-            .append(getId(), o.getId()) 
-            .isEquals();
+                .append(getId(), o.getId())
+                .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
-            .append(getId())
-            .toHashCode();
+                .append(getId())
+                .toHashCode();
     }
 
 }

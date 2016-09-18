@@ -372,7 +372,7 @@ public class Comments extends UIAction {
 
             // reset form and load fresh comments list
             CommentsBean freshBean = new CommentsBean();
-            
+
             // Maintain filter options
             freshBean.setSearchString(getBean().getSearchString());
             freshBean.setStartDateString(getBean().getStartDateString());
@@ -448,7 +448,7 @@ public class Comments extends UIAction {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/comment/{id}", method = RequestMethod.GET)
     public CommentData getComment(@PathVariable String id, Principal p, HttpServletResponse response)
-    throws ServletException {
+            throws ServletException {
         try {
             WeblogEntryComment c = weblogEntryManager.getComment(id);
             if (c == null) {

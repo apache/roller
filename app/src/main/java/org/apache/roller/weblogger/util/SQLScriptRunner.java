@@ -22,34 +22,42 @@ package org.apache.roller.weblogger.util;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * SQL script runner, parses script and allows you to run it. 
+ * SQL script runner, parses script and allows you to run it.
  * You can run the script multiple times if necessary.
  * Assumes that anything on an input line after "--" or ";" can be ignored.
  */
 public class SQLScriptRunner {
-    
+
     private List<String> commands = new ArrayList<String>();
     private List<String> messages = new ArrayList<String>();
-    private boolean      failed = false;
-    private boolean      errors = false;
-        
-    
-    /** Creates a new instance of SQLScriptRunner from an InputStream */
+    private boolean failed = false;
+    private boolean errors = false;
+
+    /**
+     * Creates a new instance of SQLScriptRunner from an InputStream
+     */
     public SQLScriptRunner(InputStream is) throws IOException {
         getCommands(is);
     }
-    
-    /** Creates a new instance of SQLScriptRunner from a file-based reference
-     * @param scriptPath reference to the file
+
+    /**
+     * Creates a new instance of SQLScriptRunner from a file-based reference
+     *
+     * @param scriptPath   reference to the file
      * @param isClasspath, if true, classpath reference relative to /classes/dbscripts folder;
      *                     if false, reference is an absolute file-based reference
      */
@@ -98,37 +106,43 @@ public class SQLScriptRunner {
         in.close();
     }
 
-    /** Number of SQL commands in script */
+    /**
+     * Number of SQL commands in script
+     */
     public int getCommandCount() {
         return commands.size();
     }
-    
-    
-    /** Return messages from last run of script, empty if no previous run */
+
+    /**
+     * Return messages from last run of script, empty if no previous run
+     */
     public List<String> getMessages() {
         return messages;
     }
-    
-    
-    /** Returns true if last call to runScript() threw an exception */
+
+    /**
+     * Returns true if last call to runScript() threw an exception
+     */
     public boolean getFailed() {
         return failed;
     }
-    
-    
-    /** Returns true if last run had any errors */
+
+    /**
+     * Returns true if last run had any errors
+     */
     public boolean getErrors() {
         return errors;
     }
-    
-    
-    /** Run script, logs messages, and optionally throws exception on error */
+
+    /**
+     * Run script, logs messages, and optionally throws exception on error
+     */
     public void runScript(
             Connection con, boolean stopOnError) throws SQLException {
         failed = false;
         errors = false;
         for (String command : commands) {
-            
+
             // run each command
             try {
                 Statement stmt = con.createStatement();
@@ -136,18 +150,17 @@ public class SQLScriptRunner {
                 if (!con.getAutoCommit()) {
                     con.commit();
                 }
-                
+
                 // on success, echo command to messages
                 successMessage(command);
-                
+
             } catch (SQLException ex) {
                 if (command.contains("drop foreign key") || command.contains("drop index")) {
                     errorMessage("INFO: SQL command [" + command + "] failed, ignored.");
                     continue;
                 }
                 // add error message with text of SQL command to messages
-                errorMessage("ERROR: SQLException executing SQL [" + command 
-                        + "] : " + ex.getLocalizedMessage());
+                errorMessage("ERROR: SQLException executing SQL [" + command + "] : " + ex.getLocalizedMessage());
                 // add stack trace to messages
                 StringWriter sw = new StringWriter();
                 ex.printStackTrace(new PrintWriter(sw));
@@ -159,13 +172,11 @@ public class SQLScriptRunner {
             }
         }
     }
-    
-    
+
     private void errorMessage(String msg) {
         messages.add(msg);
-    }    
-    
-    
+    }
+
     private void successMessage(String msg) {
         messages.add(msg);
     }

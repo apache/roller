@@ -151,7 +151,7 @@ public class BlogrollController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/bookmarks", method = RequestMethod.PUT)
-    public void addBookmark(@RequestParam(name="weblogId") String weblogId, @RequestBody WeblogBookmark newData, Principal p,
+    public void addBookmark(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogBookmark newData, Principal p,
                             HttpServletResponse response) throws ServletException {
         try {
             Weblog weblog = weblogManager.getWeblog(weblogId);

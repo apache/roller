@@ -43,7 +43,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
-
 /**
  * Walk user through install process.
  */
@@ -87,7 +86,7 @@ public class Install extends UIAction {
 
         try {
             Utilities.testDataSource(tbDataSource);
-        } catch(WebloggerException we) {
+        } catch (WebloggerException we) {
             if (we.getRootCause() != null) {
                 rootCauseException = we.getRootCause();
             } else {
@@ -115,7 +114,6 @@ public class Install extends UIAction {
         bootstrap();
         return SUCCESS;
     }
-
 
     public String create() {
         if (WebloggerContext.isBootstrapped()) {
@@ -151,7 +149,6 @@ public class Install extends UIAction {
         return UPGRADE_DATABASE;
     }
 
-
     public String bootstrap() {
         log.info("ENTERING");
 
@@ -177,7 +174,6 @@ public class Install extends UIAction {
         setPageTitle("installer.error.unknown.pageTitle");
         return BOOTSTRAP;
     }
-
 
     public String getDatabaseProductName() {
         String name = "unknown";
@@ -205,7 +201,6 @@ public class Install extends UIAction {
         String value = WebloggerStaticConfig.getProperty(key);
         return (value == null) ? key : value;
     }
-
 
     public Throwable getRootCauseException() {
         return rootCauseException;

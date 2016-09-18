@@ -40,7 +40,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Adds or edits a media file.
  */
@@ -117,7 +116,7 @@ public class MediaFileEdit extends UIAction {
     /**
      * Validates media file to be added.
      */
-    public void myValidate() {
+    private void myValidate() {
         if (StringUtils.isEmpty(bean.getName())) {
             addError("MediaFile.error.nameNull");
         } else {
@@ -140,7 +139,7 @@ public class MediaFileEdit extends UIAction {
 
     /**
      * Show form for adding a new media file.
-     * 
+     *
      * @return String The result of the action.
      */
     @SkipValidation
@@ -170,7 +169,7 @@ public class MediaFileEdit extends UIAction {
 
     /**
      * Save a media file.
-     * 
+     *
      * @return String The result of the action.
      */
     public String save() {
@@ -188,10 +187,8 @@ public class MediaFileEdit extends UIAction {
                     String fileName = getUploadedFileFileName();
 
                     // make sure fileName is valid
-                    if (fileName.indexOf('/') != -1
-                            || fileName.indexOf('\\') != -1
-                            || fileName.contains("..")
-                            || fileName.indexOf('\000') != -1) {
+                    if (fileName.indexOf('/') != -1 || fileName.indexOf('\\') != -1 ||
+                            fileName.contains("..") || fileName.indexOf('\000') != -1) {
                         addError("uploadFiles.error.badPath", fileName);
                     } else {
                         mediaFile.setName(fileName);
@@ -206,8 +203,8 @@ public class MediaFileEdit extends UIAction {
                         // we double check and see if we can guess the content
                         // type via the Java MIME type facilities.
                         mediaFile.setContentType(this.uploadedFileContentType);
-                        if (mediaFile.getContentType() == null
-                                || mediaFile.getContentType().endsWith("/octet-stream")) {
+                        if (mediaFile.getContentType() == null ||
+                                mediaFile.getContentType().endsWith("/octet-stream")) {
                             String ctype = Utilities.getContentTypeFromFileName(mediaFile.getName());
                             if (null != ctype) {
                                 mediaFile.setContentType(ctype);
@@ -269,7 +266,6 @@ public class MediaFileEdit extends UIAction {
         }
         return INPUT;
     }
-
 
     public MediaFile getBean() {
         return bean;

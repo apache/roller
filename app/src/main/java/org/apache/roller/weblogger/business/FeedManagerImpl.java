@@ -20,14 +20,6 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import com.rometools.rome.feed.module.DCModule;
 import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndContent;
@@ -49,12 +41,20 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class FeedManagerImpl implements FeedManager {
 
@@ -120,7 +120,7 @@ public class FeedManagerImpl implements FeedManager {
             HttpUriRequest method = new HttpGet(feedURL);
             method.setHeader("User-Agent", "TightBlogPlanetAggregator");
             try (CloseableHttpResponse response = client.execute(method);
-                InputStream stream = response.getEntity().getContent()) {
+                 InputStream stream = response.getEntity().getContent()) {
                 if (!(stream instanceof EmptyInputStream)) {
                     SyndFeedInput input = new SyndFeedInput();
                     feed = input.build(new XmlReader(stream));
@@ -186,9 +186,9 @@ public class FeedManagerImpl implements FeedManager {
         if (items.length > 1) {
             weblogHandle = items[1];
         }
-        
+
         log.debug("Handling LOCAL feed - {}", feedURL);
-        
+
         Weblog localWeblog;
         localWeblog = weblogManager.getWeblogByHandle(weblogHandle);
         if (localWeblog == null) {
@@ -197,23 +197,23 @@ public class FeedManagerImpl implements FeedManager {
         }
 
         // if weblog hasn't changed since last fetch then bail
-        if(lastModified != null && !localWeblog.getLastModified().isAfter(lastModified)) {
+        if (lastModified != null && !localWeblog.getLastModified().isAfter(lastModified)) {
             log.debug("Skipping unmodified local blog {}", feedURL);
             return null;
         }
-        
+
         // build planet subscription from weblog
         Subscription newSub = new Subscription();
         newSub.setFeedURL(feedURL);
         newSub.setSiteURL(urlStrategy.getWeblogURL(localWeblog, true));
         newSub.setTitle(localWeblog.getName());
         newSub.setLastUpdated(localWeblog.getLastModified());
-        
+
         // must have a last updated time
-        if(newSub.getLastUpdated() == null) {
+        if (newSub.getLastUpdated() == null) {
             newSub.setLastUpdated(Instant.now());
         }
-        
+
         // lookup recent entries from weblog and add them to the subscription
         int entryCount = propertiesManager.getIntProperty("site.newsfeeds.maxEntries");
 
@@ -275,7 +275,7 @@ public class FeedManagerImpl implements FeedManager {
         newEntry.setUri(romeEntry.getUri());
 
         // Play some games to get the author
-        DCModule entrydc = (DCModule)romeEntry.getModule(DCModule.URI);
+        DCModule entrydc = (DCModule) romeEntry.getModule(DCModule.URI);
         if (romeEntry.getAuthor() != null) {
             newEntry.setAuthor(romeEntry.getAuthor());
         } else {
@@ -301,7 +301,7 @@ public class FeedManagerImpl implements FeedManager {
 
         // get content and unescape if it is 'text/plain'
         if (romeEntry.getContents().size() > 0) {
-            SyndContent content= romeEntry.getContents().get(0);
+            SyndContent content = romeEntry.getContents().get(0);
             if (content != null && content.getType().equals("text/plain")) {
                 newEntry.setContent(StringEscapeUtils.unescapeHtml4(content.getValue()));
             } else if (content != null) {
@@ -310,7 +310,7 @@ public class FeedManagerImpl implements FeedManager {
         }
 
         // no content, try summary
-        if (StringUtils.isBlank(newEntry.getContent()) && romeEntry.getDescription() != null)  {
+        if (StringUtils.isBlank(newEntry.getContent()) && romeEntry.getDescription() != null) {
             newEntry.setContent(romeEntry.getDescription().getValue());
         }
 
@@ -332,7 +332,7 @@ public class FeedManagerImpl implements FeedManager {
             throw new IllegalArgumentException("cannot update null subscription");
         }
 
-        log.debug("updating feed: "+sub.getFeedURL());
+        log.debug("updating feed: " + sub.getFeedURL());
         long subStartTime = System.currentTimeMillis();
 
         Subscription updatedSub = fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
@@ -381,7 +381,7 @@ public class FeedManagerImpl implements FeedManager {
 
     @Override
     public void updateSubscriptions(Planet group) {
-        if(group == null) {
+        if (group == null) {
             throw new IllegalArgumentException("cannot update null group");
         }
 
@@ -406,7 +406,7 @@ public class FeedManagerImpl implements FeedManager {
         updateSubscriptions(subs);
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in {} seconds",
-                (endTime-startTime) / DateUtils.MILLIS_PER_SECOND);
+                (endTime - startTime) / DateUtils.MILLIS_PER_SECOND);
     }
 
     private void updateSubscriptions(Collection<Subscription> subscriptions) {

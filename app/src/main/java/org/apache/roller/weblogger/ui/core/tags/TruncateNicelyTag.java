@@ -1,50 +1,51 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  *
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
 */
 package org.apache.roller.weblogger.ui.core.tags;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import org.apache.commons.lang3.math.NumberUtils;
-
 import java.io.IOException;
 import java.io.StringWriter;
 
 /**
  * Code grabbed from retired Jakarta Tablibs project: http://jakarta.apache.org/taglibs/string/
- *
+ * <p>
  * A more intelligent substring.  It attempts to cut off a string after
  * a space, following predefined or user-supplied lower and upper limits,
  * useful for making short descriptions from long text.  Can also strip
  * HTML, or if not, intelligently close any tags that were left open.
  * It adds on a user-defined ending.
- *
+ * <p>
  * <dl>
  * <dt>lower</dt><dd>
- *             Minimum length to truncate at, default 10.
+ * Minimum length to truncate at, default 10.
  * </dd>
  * <dt>upper</dt><dd>
- *             Maximum length to truncate at, -1 (default) for no maximum.
+ * Maximum length to truncate at, -1 (default) for no maximum.
  * </dd>
  * <dt>appendToEnd</dt><dd>
- *             String to append to end of truncated string, default "..."
+ * String to append to end of truncated string, default "..."
  * </dd>
  * </dl>
  *
@@ -132,19 +133,18 @@ public class TruncateNicelyTag extends BodyTagSupport {
      *                    truncated. The append is does not count towards
      *                    any lower/upper limits.
      */
-    private static String truncateNicely(String str, int lower, int upper, String appendToEnd)
-    {
+    private static String truncateNicely(String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
         str = removeXml(str);
 
         // quickly adjust the upper if it is set lower than 'lower'
-        if(upper < lower) {
+        if (upper < lower) {
             upper = lower;
         }
 
         // now determine if the string fits within the upper limit
         // if it does, go straight to return, do not pass 'go' and collect $200
-        if(str.length() > upper) {
+        if (str.length() > upper) {
             // the magic location int
             int loc;
 
@@ -152,7 +152,7 @@ public class TruncateNicelyTag extends BodyTagSupport {
             loc = str.lastIndexOf(' ', upper);
 
             // now we'll see if the location is greater than the lower limit
-            if(loc >= lower) {
+            if (loc >= lower) {
                 // yes it was, so we'll cut it off here
                 str = str.substring(0, loc);
             } else {
@@ -175,12 +175,12 @@ public class TruncateNicelyTag extends BodyTagSupport {
     public int doEndTag() throws JspException {
 
         String text = "";
-        if(bodyContent != null) {
+        if (bodyContent != null) {
             StringWriter body = new StringWriter();
             try {
                 bodyContent.writeOut(body);
                 text = body.toString();
-            } catch(IOException ioe) {
+            } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
         }
@@ -205,12 +205,11 @@ public class TruncateNicelyTag extends BodyTagSupport {
         int sz = str.length();
         StringBuilder buffer = new StringBuilder(sz);
         boolean inTag = false;
-        for (int i=0; i<sz; i++) {
+        for (int i = 0; i < sz; i++) {
             char ch = str.charAt(i);
             if (ch == '<') {
                 inTag = true;
-            } else
-            if (ch == '>') {
+            } else if (ch == '>') {
                 inTag = false;
                 continue;
             }

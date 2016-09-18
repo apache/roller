@@ -28,16 +28,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents a request for a Roller weblog feed.
- * 
+ * <p>
  * /tb-ui/rendering/feeds/*
- *
+ * <p>
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
 public class WeblogFeedRequest extends WeblogRequest {
 
     private static Logger log = LoggerFactory.getLogger(WeblogFeedRequest.class);
-    
+
     // type is "entries" or "comments"
     private String type = null;
     private String categoryName = null;
@@ -49,17 +49,17 @@ public class WeblogFeedRequest extends WeblogRequest {
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
     public WeblogFeedRequest(HttpServletRequest request) {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path {}", pathInfo);
-        
+
         /*
          * parse the path info.  Format:
          * /<type>
@@ -81,10 +81,10 @@ public class WeblogFeedRequest extends WeblogRequest {
         if (request.getParameter("page") != null) {
             try {
                 page = Integer.parseInt(request.getParameter("page"));
-            } catch(NumberFormatException ignored) {
+            } catch (NumberFormatException ignored) {
             }
-        }     
-        
+        }
+
         if (tag != null && categoryName != null) {
             throw new IllegalArgumentException("Please specify either category or tag but not both: " + request.getRequestURL());
         }
@@ -106,7 +106,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     }
 
     public String getTag() {
-      return tag;
+        return tag;
     }
 
     public int getPage() {

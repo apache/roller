@@ -20,6 +20,19 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
+import org.apache.roller.weblogger.business.PingResult;
+import org.apache.roller.weblogger.business.PingTargetManager;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.pojos.PingTarget;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.TypedQuery;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -36,21 +49,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.PostConstruct;
-import javax.persistence.TypedQuery;
-
-import org.apache.roller.weblogger.business.PingTargetManager;
-import org.apache.roller.weblogger.business.PingResult;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.client.XmlRpcClient;
-import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JPAPingTargetManagerImpl implements PingTargetManager {
 
@@ -98,11 +96,11 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
         try {
             URL parsedUrl = new URL(url);
-            // OK.  If we get here, it parses ok.  Now just check 
+            // OK.  If we get here, it parses ok.  Now just check
             // that the protocol is http and there is a host portion.
             boolean isHttp = parsedUrl.getProtocol().equals("http");
-            boolean hasHost = (parsedUrl.getHost() != null) && 
-                (parsedUrl.getHost().trim().length() > 0);
+            boolean hasHost = (parsedUrl.getHost() != null) &&
+                    (parsedUrl.getHost().trim().length() > 0);
             return isHttp && hasHost;
         } catch (MalformedURLException e) {
             return false;
@@ -155,18 +153,18 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public void initialize() {
         // Pattern used to parse ping targets.
         // Each initial commmon ping target is specified in the format {{name}{url}}
-        Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
-        String PINGS_INITIAL_PING_TARGETS_PROP = "pings.initialPingTargets";
+        Pattern nestedBracePair = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
+        String pingsInitialPingTargetsProp = "pings.initialPingTargets";
 
         if (!getPingTargets().isEmpty()) {
             log.debug("Ping targets are defined in the database already, skipping initialization.");
             return;
         }
 
-        String configuredVal = WebloggerStaticConfig.getProperty(PINGS_INITIAL_PING_TARGETS_PROP);
+        String configuredVal = WebloggerStaticConfig.getProperty(pingsInitialPingTargetsProp);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
             log.debug("No (or empty) value of {} present in the configuration.  Skipping initialization of ping targets.",
-                    PINGS_INITIAL_PING_TARGETS_PROP);
+                    pingsInitialPingTargetsProp);
             return;
         }
 
@@ -179,7 +177,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                 continue;
             }
             // parse the ith target and store it
-            Matcher m = NESTED_BRACE_PAIR.matcher(thisTarget);
+            Matcher m = nestedBracePair.matcher(thisTarget);
             if (m.matches() && m.groupCount() == 2) {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
@@ -188,7 +186,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                 savePingTarget(pingTarget);
             } else {
                 log.error("Unable to parse configured initial ping target '{}'." +
-                        ". Skipping this target. Check your setting of the property ", thisTarget, PINGS_INITIAL_PING_TARGETS_PROP);
+                        ". Skipping this target. Check your setting of the property ", thisTarget, pingsInitialPingTargetsProp);
             }
         }
         strategy.flush();
@@ -239,7 +237,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                             hadDateUpdate = true;
                         }
                     }
-                } catch (IOException|XmlRpcException ex) {
+                } catch (IOException | XmlRpcException ex) {
                     log.debug("exception", ex);
                 }
             }
@@ -284,7 +282,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     private PingResult parseResult(Object obj) {
         // Deal with the fact that some buggy ping targets may not respond with the proper struct type.
         if (obj == null) {
-            return new PingResult(null,null);
+            return new PingResult(null, null);
         }
         try {
             // normal case: response is a struct (represented as a Map) with Boolean flerror and String fields.
@@ -294,7 +292,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
             // This effectively assumes flerror = false, and sets message = obj.toString();
             log.info("Invalid ping result of type: {}, proceeding with stand-in representative.", obj.getClass().getName());
-            return new PingResult(null,obj.toString());
+            return new PingResult(null, obj.toString());
         }
     }
 

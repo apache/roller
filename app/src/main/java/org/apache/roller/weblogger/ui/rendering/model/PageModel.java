@@ -19,11 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.ui.rendering.model; 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+package org.apache.roller.weblogger.ui.rendering.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -41,14 +37,17 @@ import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.generators.BigWeblogCalendar;
 import org.apache.roller.weblogger.ui.rendering.generators.WeblogCalendar;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
-import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager.PagingInterval;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPermalinkPager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
+import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager.PagingInterval;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Model which provides information needed to render a weblog page.
@@ -104,20 +103,23 @@ public class PageModel implements Model {
      * Creates an un-initialized new instance, Weblogger calls init() to complete
      * construction.
      */
-    public PageModel() {}
-    
-    
-    /** 
+    public PageModel() {
+    }
+
+    /**
      * Template context name to be used for model.
      */
-    /** Template context name to be used for model */
+    /**
+     * Template context name to be used for model
+     */
     @Override
     public String getModelName() {
         return "model";
     }
 
-
-    /** Init page model, requires a WeblogPageRequest object. */
+    /**
+     * Init page model, requires a WeblogPageRequest object.
+     */
     @Override
     public void init(Map initData) {
         this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
@@ -128,11 +130,10 @@ public class PageModel implements Model {
 
         // see if there is a comment form
         this.commentForm = (WeblogEntryComment) initData.get("commentForm");
-        
-        // custom request parameters
-        this.requestParameters = (Map)initData.get("requestParameters");
-    }
 
+        // custom request parameters
+        this.requestParameters = (Map) initData.get("requestParameters");
+    }
 
     /**
      * Get the weblog locale used to render this page, null if no locale.
@@ -140,8 +141,7 @@ public class PageModel implements Model {
     public String getLocale() {
         return null;
     }
-    
-    
+
     /**
      * Get weblog being displayed.
      */
@@ -173,8 +173,8 @@ public class PageModel implements Model {
         if (preview) {
             return "";
         } else {
-            if (propertiesManager.getBooleanProperty("analytics.code.override.allowed")
-                    && !StringUtils.isBlank(pageRequest.getWeblog().getAnalyticsCode())) {
+            if (propertiesManager.getBooleanProperty("analytics.code.override.allowed") &&
+                    !StringUtils.isBlank(pageRequest.getWeblog().getAnalyticsCode())) {
                 return pageRequest.getWeblog().getAnalyticsCode();
             } else {
                 return propertiesManager.getStringProperty("analytics.default.tracking.code");
@@ -191,8 +191,7 @@ public class PageModel implements Model {
         }
         return weblogEntry;
     }
-    
-    
+
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
@@ -221,7 +220,8 @@ public class PageModel implements Model {
 
     /**
      * Get up to 100 most recent published entries in weblog.
-     * @param cat Category name or null for no category restriction
+     *
+     * @param cat    Category name or null for no category restriction
      * @param length Max entries to return (1-100)
      * @return List of weblog entry objects.
      */
@@ -247,6 +247,7 @@ public class PageModel implements Model {
 
     /**
      * Get up to 100 most recent approved and non-spam comments in weblog.
+     *
      * @param length Max entries to return (1-100)
      * @return List of comment objects.
      */
@@ -269,8 +270,8 @@ public class PageModel implements Model {
     /**
      * Get a list of WeblogEntryTagAggregate objects for the most popular tags
      *
-     * @param length    Max number of tags to return.
-     * @return          Collection of WeblogEntryTag objects
+     * @param length Max number of tags to return.
+     * @return Collection of WeblogEntryTag objects
      */
     public List<WeblogEntryTagAggregate> getPopularTags(int length) {
         List<WeblogEntryTagAggregate> results = new ArrayList<>();
@@ -282,31 +283,29 @@ public class PageModel implements Model {
         return results;
     }
 
-
     /**
      * Returns the list of tags specified in the request /tags/foo+bar
      */
     public String getTag() {
         return pageRequest.getTag();
     }
-    
-
-	/**
-	 * Access to device type, which is either 'mobile' or 'standard'
-	 * @return device type
-	 */
-	public String getDeviceType() {
-        return pageRequest.getDeviceType().toString();
-	}
-
 
     /**
-     * A map of entries representing this page. The collection is grouped by 
-     * days of entries.  Each value is a list of entry objects keyed by the 
+     * Access to device type, which is either 'mobile' or 'standard'
+     *
+     * @return device type
+     */
+    public String getDeviceType() {
+        return pageRequest.getDeviceType().toString();
+    }
+
+    /**
+     * A map of entries representing this page. The collection is grouped by
+     * days of entries.  Each value is a list of entry objects keyed by the
      * date they were published.
      */
     public WeblogEntriesPager getWeblogEntriesPager() {
-        
+
         // determine which mode to use
         if (pageRequest.getWeblogAnchor() != null) {
             return new WeblogEntriesPermalinkPager(
@@ -353,13 +352,13 @@ public class PageModel implements Model {
         }
         return commentForm;
     }
-    
+
     /**
      * Get request parameter by name.
      */
     public String getRequestParameter(String paramName) {
         if (requestParameters != null) {
-            String[] values = (String[])requestParameters.get(paramName);
+            String[] values = (String[]) requestParameters.get(paramName);
             if (values != null && values.length > 0) {
                 return values[0];
             }

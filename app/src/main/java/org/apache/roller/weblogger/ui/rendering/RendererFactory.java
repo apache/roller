@@ -24,25 +24,24 @@ package org.apache.roller.weblogger.ui.rendering;
 import org.apache.roller.weblogger.pojos.Template;
 import org.springframework.mobile.device.DeviceType;
 
-
 /**
  * Returns Renderer best suited to render a Template or null if available.
- *
+ * <p>
  * Implementations of this interface are used to handle the actual lookup of
  * what Renderer object should be used to render a given resource.
  */
 public interface RendererFactory {
-    
+
     /**
      * Get a Renderer that will handle the given Template.
      * If a RendererFactory does not have a Renderer which can handle the
      * content then it may return null.
-     *
+     * <p>
      * This method purposely does not throw exceptions because the rendering
      * system as a whole does not care if a given factory generates an exception
      * while trying to find a renderer.  It is up to the factory itself to
      * report any relevant exceptions itself.
      */
     Renderer getRenderer(Template template, DeviceType deviceType);
-    
+
 }

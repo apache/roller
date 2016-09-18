@@ -20,6 +20,25 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Template.ComponentType;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.ServletContextAware;
+
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -30,29 +49,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
-import org.apache.roller.weblogger.pojos.TemplateRendition;
-import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.Template.ComponentType;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.util.Utilities;
-import org.springframework.web.context.ServletContextAware;
-
 /**
  * Base implementation of a ThemeManager.
- * 
+ * <p>
  * This particular implementation reads theme data off the filesystem and
  * assumes that those themes are not changeable at runtime.
  */
@@ -62,25 +61,26 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
     private ServletContext servletContext;
 
-	static FileTypeMap map = null;
-	static {
-		// TODO: figure out why PNG is missing from Java MIME types
-		map = FileTypeMap.getDefaultFileTypeMap();
-		if (map instanceof MimetypesFileTypeMap) {
-			try {
-				((MimetypesFileTypeMap) map).addMimeTypes("image/png png PNG");
-			} catch (Exception ignored) {
-			}
-		}
-	}
+    static FileTypeMap map = null;
 
-	private final WeblogManager weblogManager;
+    static {
+        // TODO: figure out why PNG is missing from Java MIME types
+        map = FileTypeMap.getDefaultFileTypeMap();
+        if (map instanceof MimetypesFileTypeMap) {
+            try {
+                ((MimetypesFileTypeMap) map).addMimeTypes("image/png png PNG");
+            } catch (Exception ignored) {
+            }
+        }
+    }
 
-	// directory where themes are kept
-	private String themeDir = null;
+    private final WeblogManager weblogManager;
 
-	// map of themes in format (theme id, Theme)
-	private Map<String, SharedTheme> themeMap = null;
+    // directory where themes are kept
+    private String themeDir = null;
+
+    // map of themes in format (theme id, Theme)
+    private Map<String, SharedTheme> themeMap = null;
 
     // list of themes
     private List<SharedTheme> themeList = null;
@@ -91,16 +91,16 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     }
 
     protected ThemeManagerImpl(WeblogManager wm, String themeDirOverride) {
-		this.weblogManager = wm;
+        this.weblogManager = wm;
 
-		// themeDirOverride required when running tests (no servlet).
+        // themeDirOverride required when running tests (no servlet).
         themeDir = themeDirOverride;
-	}
+    }
 
-	@Override
+    @Override
     @PostConstruct
     public void initialize() {
-		log.info("Initializing Theme Manager");
+        log.info("Initializing Theme Manager");
         if (themeDir == null) {
             // default theme location
             themeDir = servletContext.getRealPath("/blogthemes");
@@ -114,35 +114,34 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
             // make sure it exists and is readable
             File themeDirFile = new File(themeDir);
-            if (!themeDirFile.exists() || !themeDirFile.isDirectory()
-                    || !themeDirFile.canRead()) {
+            if (!themeDirFile.exists() || !themeDirFile.isDirectory() || !themeDirFile.canRead()) {
                 throw new RuntimeException("couldn't access theme dir [" + themeDir + "]");
             }
         }
 
-		if (themeDir != null) {
-			// load all themes from disk and cache them
-			themeMap = loadAllThemesFromDisk();
+        if (themeDir != null) {
+            // load all themes from disk and cache them
+            themeMap = loadAllThemesFromDisk();
 
             // for convenience create an alphabetized list also
             themeList = new ArrayList<>(this.themeMap.values());
             themeList.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
-			log.info("Successfully loaded {} themes from disk.", this.themeMap.size());
-		}
-	}
+            log.info("Successfully loaded {} themes from disk.", this.themeMap.size());
+        }
+    }
 
     @Override
-	public SharedTheme getSharedTheme(String id) {
-		SharedTheme theme = this.themeMap.get(id);
-		if (theme == null) {
-			throw new IllegalArgumentException("Couldn't find theme [" + id + "]");
-		}
-		return theme;
-	}
+    public SharedTheme getSharedTheme(String id) {
+        SharedTheme theme = this.themeMap.get(id);
+        if (theme == null) {
+            throw new IllegalArgumentException("Couldn't find theme [" + id + "]");
+        }
+        return theme;
+    }
 
     @Override
-	public WeblogTheme getWeblogTheme(Weblog weblog) {
-		WeblogTheme weblogTheme = null;
+    public WeblogTheme getWeblogTheme(Weblog weblog) {
+        WeblogTheme weblogTheme = null;
 
         SharedTheme staticTheme = this.themeMap.get(weblog.getTheme());
         if (staticTheme != null) {
@@ -151,63 +150,62 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
             log.warn("Unable to find shared theme {}", weblog.getTheme());
         }
 
-		// TODO: if theme is not found should we provide default theme?
-		return weblogTheme;
-	}
+        // TODO: if theme is not found should we provide default theme?
+        return weblogTheme;
+    }
 
-	@Override
+    @Override
     public List<SharedTheme> getEnabledSharedThemesList() {
-		return themeList;
-	}
+        return themeList;
+    }
 
-	@Override
+    @Override
     public WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) {
-		WeblogTemplate weblogTemplate = new WeblogTemplate();
-		weblogTemplate.setWeblog(weblog);
-		weblogTemplate.setRole(sharedTemplate.getRole());
-		weblogTemplate.setName(sharedTemplate.getName());
-		weblogTemplate.setDescription(sharedTemplate.getDescription());
-		weblogTemplate.setRelativePath(sharedTemplate.getRelativePath());
-		weblogTemplate.setLastModified(Instant.now());
+        WeblogTemplate weblogTemplate = new WeblogTemplate();
+        weblogTemplate.setWeblog(weblog);
+        weblogTemplate.setRole(sharedTemplate.getRole());
+        weblogTemplate.setName(sharedTemplate.getName());
+        weblogTemplate.setDescription(sharedTemplate.getDescription());
+        weblogTemplate.setRelativePath(sharedTemplate.getRelativePath());
+        weblogTemplate.setLastModified(Instant.now());
 
-		// create weblog template code objects and save them
-		for (RenditionType type : RenditionType.values()) {
+        // create weblog template code objects and save them
+        for (RenditionType type : RenditionType.values()) {
 
-			// Get the template for the new theme
-			TemplateRendition templateCode = sharedTemplate.getTemplateRendition(type);
-			if (templateCode != null) {
-				// See if we already have some code for this template already (eg previous theme)
-				WeblogTemplateRendition weblogTemplateCode = new WeblogTemplateRendition(weblogTemplate, type);
-				weblogTemplateCode.setRenditionType(type);
-				weblogTemplateCode.setRendition(templateCode.getRendition());
-				weblogTemplateCode.setParser(templateCode.getParser());
-			}
+            // Get the template for the new theme
+            TemplateRendition templateCode = sharedTemplate.getTemplateRendition(type);
+            if (templateCode != null) {
+                // See if we already have some code for this template already (eg previous theme)
+                WeblogTemplateRendition weblogTemplateCode = new WeblogTemplateRendition(weblogTemplate, type);
+                weblogTemplateCode.setRenditionType(type);
+                weblogTemplateCode.setRendition(templateCode.getRendition());
+                weblogTemplateCode.setParser(templateCode.getParser());
+            }
 
-		}
+        }
 
-		return weblogTemplate;
-	}
+        return weblogTemplate;
+    }
 
+    /**
+     * This is a convenience method which loads all the theme data from themes
+     * stored on the filesystem in the roller webapp /themes/ directory.
+     */
+    private Map<String, SharedTheme> loadAllThemesFromDisk() {
 
-	/**
-	 * This is a convenience method which loads all the theme data from themes
-	 * stored on the filesystem in the roller webapp /themes/ directory.
-	 */
-	private Map<String, SharedTheme> loadAllThemesFromDisk() {
+        Map<String, SharedTheme> themeMap = new HashMap<>();
 
-		Map<String, SharedTheme> themeMap = new HashMap<>();
+        // first, get a list of the themes available
+        File themesdir = new File(this.themeDir);
+        FilenameFilter filter = (dir, name) -> {
+            File file = new File(dir.getAbsolutePath() + File.separator + name);
+            return file.isDirectory() && !file.getName().startsWith(".");
+        };
+        String[] themenames = themesdir.list(filter);
 
-		// first, get a list of the themes available
-		File themesdir = new File(this.themeDir);
-		FilenameFilter filter = (dir, name) -> {
-			File file = new File(dir.getAbsolutePath() + File.separator + name);
-			return file.isDirectory() && !file.getName().startsWith(".");
-		};
-		String[] themenames = themesdir.list(filter);
-
-		if (themenames == null) {
-			log.warn("No shared weblog themes found! Looking in location: " + themeDir);
-		} else {
+        if (themenames == null) {
+            log.warn("No shared weblog themes found! Looking in location: " + themeDir);
+        } else {
             log.info("Loading themes from " + themesdir.getAbsolutePath() + "...");
 
             // now go through each theme and load it into a Theme object
@@ -223,8 +221,8 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
             }
         }
 
-		return themeMap;
-	}
+        return themeMap;
+    }
 
     private SharedTheme loadThemeData(String themeName) {
         String themePath = this.themeDir + File.separator + themeName;

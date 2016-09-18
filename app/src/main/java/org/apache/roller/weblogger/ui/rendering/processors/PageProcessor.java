@@ -35,11 +35,11 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
-import org.apache.roller.weblogger.util.cache.SiteWideCache;
-import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CachedContent;
+import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
+import org.apache.roller.weblogger.util.cache.SiteWideCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ import java.util.Map;
 
 /**
  * Rendering processor that provides access to weblog pages.
- *
+ * <p>
  * General approach of most rendering processor, including this one:
  * <ul>
  * <li>Create a request object to parse the request</li>
@@ -71,7 +71,7 @@ import java.util.Map;
  * </ul>
  */
 @RestController
-@RequestMapping(path="/tb-ui/rendering/page/**")
+@RequestMapping(path = "/tb-ui/rendering/page/**")
 public class PageProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
@@ -135,7 +135,7 @@ public class PageProcessor extends AbstractProcessor {
     // pages consuming any part of the WeblogPageCache.
     private boolean cacheLoggedInPages = true;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     public void setCacheLoggedInPages(@Qualifier("cache.cacheLoggedInPages") boolean boolVal) {
         cacheLoggedInPages = boolVal;
     }
@@ -143,7 +143,7 @@ public class PageProcessor extends AbstractProcessor {
     // use site & weblog blacklists to check incoming referrers, returning a 403 if a match.
     private boolean processReferrers = false;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     public void setProcessReferrers(@Qualifier("site.blacklist.check.referrers") boolean boolVal) {
         processReferrers = boolVal;
     }
@@ -443,13 +443,13 @@ public class PageProcessor extends AbstractProcessor {
 
     /**
      * Handle POST requests.
-     * 
+     * <p>
      * We have this here because the comment servlet actually forwards some of
      * its requests on to us to render some pages with custom messaging. We may
      * want to revisit this approach in the future and see if we can do this in
      * a different way, but for now this is the easy way.
      */
-    @RequestMapping(method=RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public void getPageViaPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // make sure caching is disabled
@@ -469,7 +469,7 @@ public class PageProcessor extends AbstractProcessor {
     /**
      * Process the incoming request to extract referrer info and pass it on to
      * the referrer processing queue for tracking.
-     * 
+     *
      * @return true if referrer was spam, false otherwise
      */
     private boolean processReferrer(HttpServletRequest request, WeblogPageRequest pageRequest) {
@@ -500,8 +500,7 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         // ignore referrers coming from users own blog
-        if (referrerUrl != null && !referrerUrl.startsWith(basePageUrl)
-                && !referrerUrl.startsWith(basePageUrlWWW)) {
+        if (referrerUrl != null && !referrerUrl.startsWith(basePageUrl) && !referrerUrl.startsWith(basePageUrlWWW)) {
 
             // treat editor referral as direct
             int lastSlash = requestUrl.indexOf('/', 8);
@@ -527,11 +526,11 @@ public class PageProcessor extends AbstractProcessor {
     /**
      * Generate a cache key from a parsed weblog page request.
      * This generates a key of the form ...
-     *
+     * <p>
      * <handle>/<ctx>[/anchor][/user]
-     *   or
+     * or
      * <handle>/<ctx>[/template][/date][/category][/user]
-     *
+     * <p>
      * Examples:
      * foo
      * foo/entry_anchor
@@ -545,12 +544,12 @@ public class PageProcessor extends AbstractProcessor {
         key.append("weblogpage.key").append(":");
         key.append(pageRequest.getWeblogHandle());
 
-        if(pageRequest.getWeblogAnchor() != null) {
+        if (pageRequest.getWeblogAnchor() != null) {
             String anchor = null;
             try {
                 // may contain spaces or other bad chars
                 anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
-            } catch(UnsupportedEncodingException ex) {
+            } catch (UnsupportedEncodingException ex) {
                 // ignored
             }
 
@@ -591,7 +590,7 @@ public class PageProcessor extends AbstractProcessor {
         key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
 
         // we allow for arbitrary query params for custom pages
-        if(pageRequest.getWeblogTemplateName() != null &&
+        if (pageRequest.getWeblogTemplateName() != null &&
                 pageRequest.getCustomParams().size() > 0) {
             String queryString = paramsToString(pageRequest.getCustomParams());
 
@@ -608,7 +607,7 @@ public class PageProcessor extends AbstractProcessor {
 
         StringBuilder string = new StringBuilder();
         for (Map.Entry<String, String[]> entry : map.entrySet()) {
-            if(entry.getKey() != null) {
+            if (entry.getKey() != null) {
                 string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
             }
         }

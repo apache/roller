@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.pojos;
 
-import java.time.Instant;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -38,68 +36,67 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
-
+import java.time.Instant;
 
 @Entity
-@Table(name="weblogger_user")
+@Table(name = "weblogger_user")
 @NamedQueries({
-        @NamedQuery(name="User.getByEnabled&EndDateOrderByStartDateDesc",
-                query="SELECT u FROM User u WHERE u.status = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name="User.getByEndDateOrderByStartDateDesc",
-                query="SELECT u FROM User u WHERE u.dateCreated < ?1 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name="User.getByUserName&Enabled",
-                query="SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED"),
-        @NamedQuery(name="User.getByEndDate&StartDateOrderByStartDateDesc",
-                query="SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name="User.getGlobalRole",
-                query="SELECT u.globalRole FROM User u WHERE u.userName = ?1"),
-        @NamedQuery(name="User.getCountEnabledDistinct",
-                query="SELECT COUNT(u) FROM User u WHERE u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED")
+        @NamedQuery(name = "User.getByEnabled&EndDateOrderByStartDateDesc",
+                query = "SELECT u FROM User u WHERE u.status = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
+        @NamedQuery(name = "User.getByEndDateOrderByStartDateDesc",
+                query = "SELECT u FROM User u WHERE u.dateCreated < ?1 ORDER BY u.dateCreated DESC"),
+        @NamedQuery(name = "User.getByUserName&Enabled",
+                query = "SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED"),
+        @NamedQuery(name = "User.getByEndDate&StartDateOrderByStartDateDesc",
+                query = "SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
+        @NamedQuery(name = "User.getGlobalRole",
+                query = "SELECT u.globalRole FROM User u WHERE u.userName = ?1"),
+        @NamedQuery(name = "User.getCountEnabledDistinct",
+                query = "SELECT COUNT(u) FROM User u WHERE u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
-    private String  id;
+    private String id;
 
     @NotBlank(message = "{error.add.user.missingUserName}")
     @Pattern(regexp = "[a-z0-9]*", message = "{error.add.user.badUserName}")
-    private String  userName;
+    private String userName;
     private GlobalRole globalRole;
 
     @NotBlank(message = "{Register.error.screenNameNull}")
-    private String  screenName;
+    private String screenName;
     private UserStatus status = UserStatus.DISABLED;
 
     @NotBlank(message = "{Register.error.emailAddressNull}")
     @Email(message = "{error.add.user.badEmail}")
-    private String  emailAddress;
+    private String emailAddress;
     private Instant dateCreated;
-    private String  locale;
-    private String  activationCode;
+    private String locale;
+    private String activationCode;
     private Instant lastLogin;
 
     public User() {
     }
-    
+
     @Id
     public String getId() {
         return this.id;
     }
-    
-    public void setId( String id ) {
+
+    public void setId(String id) {
         this.id = id;
     }
-    
-    
-    @Basic(optional=false)
+
+    @Basic(optional = false)
     public String getUserName() {
         return this.userName;
     }
-    
-    public void setUserName( String userName ) {
+
+    public void setUserName(String userName) {
         this.userName = userName;
     }
-    
-    @Column(name="global_role", nullable=false)
+
+    @Column(name = "global_role", nullable = false)
     @Enumerated(EnumType.STRING)
     public GlobalRole getGlobalRole() {
         return this.globalRole;
@@ -109,7 +106,7 @@ public class User {
         this.globalRole = globalRole;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     public UserStatus getStatus() {
         return status;
@@ -123,27 +120,27 @@ public class User {
         return globalRole.getWeight() >= roleToCheck.getWeight();
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getScreenName() {
         return this.screenName;
     }
-    
-    public void setScreenName( String screenName ) {
+
+    public void setScreenName(String screenName) {
         this.screenName = screenName;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getEmailAddress() {
         return this.emailAddress;
     }
-    
-    public void setEmailAddress( String emailAddress ) {
+
+    public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public Instant getDateCreated() {
-         return dateCreated;
+        return dateCreated;
     }
 
     public void setDateCreated(Instant dateTime) {
@@ -161,7 +158,7 @@ public class User {
     public String getLocale() {
         return this.locale;
     }
-    
+
     public void setLocale(String locale) {
         this.locale = locale;
     }
@@ -169,13 +166,13 @@ public class User {
     public String getActivationCode() {
         return activationCode;
     }
-    
+
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }
 
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         String stringVal = "{" + getId();
         stringVal += ", " + getUserName();
@@ -186,7 +183,7 @@ public class User {
         stringVal += "}";
         return stringVal;
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -194,10 +191,10 @@ public class User {
         if (!(other instanceof User)) {
             return false;
         }
-        User o = (User)other;
+        User o = (User) other;
         return new EqualsBuilder().append(getId(), o.getId()).isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }

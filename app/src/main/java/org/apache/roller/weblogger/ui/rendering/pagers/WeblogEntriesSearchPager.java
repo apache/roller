@@ -21,62 +21,60 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * Pager for navigating through search results.
  */
 public class WeblogEntriesSearchPager implements WeblogEntriesPager {
-    
+
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
-    
+
     // url strategy
     URLStrategy urlStrategy = null;
-    
+
     private Map<LocalDate, List<WeblogEntry>> entries = null;
-    
+
     private Weblog weblog = null;
-    private String      query = null;
-    private String      category = null;
-    private int         page = 0;
-    private boolean     moreResults = false;
-    
-    
+    private String query = null;
+    private String category = null;
+    private int page = 0;
+    private boolean moreResults = false;
+
     public WeblogEntriesSearchPager(URLStrategy strat, WeblogSearchRequest searchRequest,
                                     Map<LocalDate, List<WeblogEntry>> entries, boolean more) {
-        
+
         // url strategy for building urls
         this.urlStrategy = strat;
-        
+
         // store search results
         this.entries = entries;
-        
+
         // data from search request
         this.weblog = searchRequest.getWeblog();
         this.query = searchRequest.getQuery();
         this.category = searchRequest.getWeblogCategoryName();
         this.page = searchRequest.getPageNum();
-        
+
         // does this pager have more results?
         this.moreResults = more;
-        
+
         // get a message utils instance to handle i18n of messages
         Locale viewLocale = weblog.getLocaleInstance();
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
-    
-    
+
     public Map<LocalDate, List<WeblogEntry>> getEntries() {
         return entries;
     }
@@ -93,9 +91,8 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
         return messageUtils.getString("weblogEntriesPager.search.home");
     }
 
-    
     public String getNextLink() {
-        if(moreResults) {
+        if (moreResults) {
             return urlStrategy.getWeblogSearchURL(weblog, query, category, page + 1, false);
         }
         return null;
@@ -109,7 +106,7 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     }
 
     public String getPrevLink() {
-        if(page > 0) {
+        if (page > 0) {
             return urlStrategy.getWeblogSearchURL(weblog, query, category, page - 1, false);
         }
         return null;
@@ -122,7 +119,6 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
         return null;
     }
 
-    
     public String getNextCollectionLink() {
         return null;
     }
@@ -138,5 +134,5 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     public String getPrevCollectionName() {
         return null;
     }
-    
+
 }

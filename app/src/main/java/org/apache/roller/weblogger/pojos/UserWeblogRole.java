@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.pojos; 
+package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -40,23 +40,23 @@ import java.time.Instant;
 /**
  * WeblogRole that a user has for a specific weblog
  */
-@Entity(name="UserWeblogRole")
-@Table(name="user_weblog_role")
+@Entity(name = "UserWeblogRole")
+@Table(name = "user_weblog_role")
 @NamedQueries({
-        @NamedQuery(name="UserWeblogRole.getByUserId",
-                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.pending <> TRUE"),
-        @NamedQuery(name="UserWeblogRole.getByUserIdIncludingPending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1"),
-        @NamedQuery(name="UserWeblogRole.getByWeblogId",
-                query="SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending <> TRUE"),
-        @NamedQuery(name="UserWeblogRole.getByWeblogId&Pending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending = TRUE"),
-        @NamedQuery(name="UserWeblogRole.getByWeblogIdIncludingPending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1"),
-        @NamedQuery(name="UserWeblogRole.getByUserId&WeblogId",
-                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2 AND p.pending <> true"),
-        @NamedQuery(name="UserWeblogRole.getByUserId&WeblogIdIncludingPending",
-                query="SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2")
+        @NamedQuery(name = "UserWeblogRole.getByUserId",
+                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.pending <> TRUE"),
+        @NamedQuery(name = "UserWeblogRole.getByUserIdIncludingPending",
+                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1"),
+        @NamedQuery(name = "UserWeblogRole.getByWeblogId",
+                query = "SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending <> TRUE"),
+        @NamedQuery(name = "UserWeblogRole.getByWeblogId&Pending",
+                query = "SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending = TRUE"),
+        @NamedQuery(name = "UserWeblogRole.getByWeblogIdIncludingPending",
+                query = "SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1"),
+        @NamedQuery(name = "UserWeblogRole.getByUserId&WeblogId",
+                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2 AND p.pending <> true"),
+        @NamedQuery(name = "UserWeblogRole.getByUserId&WeblogIdIncludingPending",
+                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2")
 })
 public class UserWeblogRole {
 
@@ -90,7 +90,7 @@ public class UserWeblogRole {
     }
 
     @ManyToOne
-    @JoinColumn(name="userid",nullable=false)
+    @JoinColumn(name = "userid", nullable = false)
     public User getUser() {
         return user;
     }
@@ -100,7 +100,7 @@ public class UserWeblogRole {
     }
 
     @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false)
+    @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return weblog;
     }
@@ -109,7 +109,7 @@ public class UserWeblogRole {
         this.weblog = weblog;
     }
 
-    @Column(name="weblog_role", nullable=false)
+    @Column(name = "weblog_role", nullable = false)
     @Enumerated(EnumType.STRING)
     public WeblogRole getWeblogRole() {
         return weblogRole;
@@ -127,7 +127,7 @@ public class UserWeblogRole {
         this.dateCreated = dateCreated;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public boolean isPending() {
         return pending;
     }
@@ -135,7 +135,6 @@ public class UserWeblogRole {
     public void setPending(boolean pending) {
         this.pending = pending;
     }
-
 
     public String toString() {
         String sb = "UserWeblogRole: ";
@@ -152,7 +151,7 @@ public class UserWeblogRole {
         if (!(other instanceof UserWeblogRole)) {
             return false;
         }
-        UserWeblogRole o = (UserWeblogRole)other;
+        UserWeblogRole o = (UserWeblogRole) other;
         return new EqualsBuilder()
                 .append(getUser().getId(), o.getUser().getId())
                 .append(getWeblog().getId(), o.getWeblog().getId())

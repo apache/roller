@@ -20,31 +20,31 @@
  */
 package org.apache.roller.weblogger.business.search.operations;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexWriter;
-import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * An operation that adds a new log entry into the index.
  */
 public class AddEntryOperation extends WriteToIndexOperation {
-    
+
     //~ Static fields/initializers =============================================
 
     private static Logger log = LoggerFactory.getLogger(AddEntryOperation.class);
-    
+
     //~ Instance fields ========================================================
-    
+
     private WeblogEntry data;
     private WeblogEntryManager weblogEntryManager;
-    
+
     //~ Constructors ===========================================================
-    
+
     /**
      * Adds a web log entry into the index.
      */
@@ -53,12 +53,12 @@ public class AddEntryOperation extends WriteToIndexOperation {
         this.weblogEntryManager = wem;
         this.data = data;
     }
-    
+
     //~ Methods ================================================================
-    
+
     public void doRun() {
         IndexWriter writer = beginWriting();
-        
+
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
@@ -73,5 +73,5 @@ public class AddEntryOperation extends WriteToIndexOperation {
         } finally {
             endWriting();
         }
-    }   
+    }
 }

@@ -34,21 +34,20 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-
 @Entity
-@Table(name="weblog_category")
+@Table(name = "weblog_category")
 @NamedQueries({
-        @NamedQuery(name="WeblogCategory.getByWeblog",
-                query="SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 order by w.position"),
+        @NamedQuery(name = "WeblogCategory.getByWeblog",
+                query = "SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 order by w.position"),
 
-        @NamedQuery(name="WeblogCategory.getByWeblog&Name",
-                query="SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.name = ?2"),
+        @NamedQuery(name = "WeblogCategory.getByWeblog&Name",
+                query = "SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.name = ?2"),
 
-        @NamedQuery(name="WeblogCategory.removeByWeblog",
-                query="DELETE FROM WeblogCategory w WHERE w.weblog = ?1")
+        @NamedQuery(name = "WeblogCategory.removeByWeblog",
+                query = "DELETE FROM WeblogCategory w WHERE w.weblog = ?1")
 })
 public class WeblogCategory implements Comparable<WeblogCategory> {
-    
+
     // unique internal ID of object
     private String id = null;
     // category name
@@ -60,7 +59,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
 
     public WeblogCategory() {
     }
-    
+
     public WeblogCategory(
             Weblog weblog,
             String name) {
@@ -79,7 +78,6 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
             this.position = weblog.getWeblogCategories().get(size - 1).getPosition() + 1;
         }
     }
-
 
     @Id
     public String getId() {
@@ -109,7 +107,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
     }
 
     @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false)
+    @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return weblog;
     }

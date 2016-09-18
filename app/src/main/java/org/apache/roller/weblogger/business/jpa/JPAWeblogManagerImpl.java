@@ -28,12 +28,10 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.roller.weblogger.pojos.UserStatus;
-import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -43,9 +41,10 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +62,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class JPAWeblogManagerImpl implements WeblogManager {
-    
+
     private static Logger log = LoggerFactory.getLogger(JPAWeblogManagerImpl.class);
-    
+
     private UserManager userManager;
     private PropertiesManager propertiesManager;
     private LazyExpiringCache weblogBlacklistCache = null;
@@ -100,7 +99,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     // cached mapping of weblogHandles -> weblogIds
-    private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
+    private Map<String, String> weblogHandleToIdMap = new Hashtable<>();
 
     protected JPAWeblogManagerImpl(MediaFileManager mfm, JPAPersistenceStrategy strat,
                                    CacheManager cacheManager) {
@@ -132,25 +131,25 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove entry from cache mapping
         this.weblogHandleToIdMap.remove(weblog.getHandle());
     }
-    
+
     /**
      * convenience method for removing contents of a weblog.
      */
     private void removeWeblogContents(Weblog weblog) {
-        
+
         // remove tags
         TypedQuery<WeblogEntryTag> tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog",
                 WeblogEntryTag.class);
         tagQuery.setParameter(1, weblog);
         List<WeblogEntryTag> results = tagQuery.getResultList();
-        
+
         for (WeblogEntryTag tagData : results) {
             if (tagData.getWeblogEntry() != null) {
                 tagData.getWeblogEntry().getTags().remove(tagData);
             }
             this.strategy.remove(tagData);
         }
-        
+
         // remove associated templates
         TypedQuery<WeblogTemplate> templateQuery = strategy.getNamedQuery("WeblogTemplate.getByWeblog",
                 WeblogTemplate.class);
@@ -160,7 +159,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         for (WeblogTemplate template : templates) {
             this.strategy.remove(template);
         }
-        
+
         // remove bookmarks
         TypedQuery<WeblogBookmark> bookmarkQuery = strategy.getNamedQuery("Bookmark.getByWeblog",
                 WeblogBookmark.class);
@@ -183,9 +182,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             weblogEntryManager.removeWeblogEntry(entry);
         }
         this.strategy.flush();
-        
+
         // delete all weblog categories
-        Query removeCategories= strategy.getNamedUpdate("WeblogCategory.removeByWeblog");
+        Query removeCategories = strategy.getNamedUpdate("WeblogCategory.removeByWeblog");
         removeCategories.setParameter(1, weblog);
         removeCategories.executeUpdate();
 
@@ -199,13 +198,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategory and Weblog
-        this.strategy.flush();        
+        this.strategy.flush();
     }
 
     @Override
     public void saveTemplate(WeblogTemplate template) {
         this.strategy.store(template);
-        
+
         // update weblog last modified date.  date updated by saveWeblog()
         saveWeblog(template.getWeblog());
     }
@@ -236,7 +235,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     private void addWeblogContents(Weblog newWeblog) {
-        
+
         if (getWeblogCount() == 1) {
             // first weblog, let's make it the frontpage one.
             RuntimeConfigProperty frontpageBlogProp = propertiesManager.getProperty("site.frontpage.weblog.handle");
@@ -246,7 +245,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(newWeblog.getCreator(), newWeblog, WeblogRole.OWNER, false);
-        
+
         String cats = WebloggerStaticConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = null;
         if (cats != null) {
@@ -304,11 +303,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     @Override
     public Weblog getWeblogByHandle(String handle, Boolean visible) {
-        
+
         if (handle == null) {
             throw new IllegalArgumentException("Handle cannot be null");
         }
-        
+
         // check cache first
         // NOTE: if we ever allow changing handles then this needs updating
         if (weblogHandleToIdMap.containsKey(handle)) {
@@ -325,7 +324,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 weblogHandleToIdMap.remove(handle);
             }
         }
-        
+
         TypedQuery<Weblog> query = strategy.getNamedQuery("Weblog.getByHandle", Weblog.class);
         query.setParameter(1, handle);
         Weblog weblog;
@@ -334,13 +333,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         } catch (NoResultException e) {
             weblog = null;
         }
-        
+
         // add mapping to cache
         if (weblog != null) {
             log.debug("weblogHandleToId CACHE MISS - {}", handle);
             weblogHandleToIdMap.put(weblog.getHandle(), weblog.getId());
         }
-        
+
         if (weblog != null && (visible == null || visible.equals(weblog.getVisible()))) {
             return weblog;
         } else {
@@ -350,12 +349,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     @Override
     public List<Weblog> getWeblogs(Boolean visible, int offset, int length) {
-        
+
         List<Object> params = new ArrayList<>();
         int size = 0;
         String queryString;
         StringBuilder whereClause = new StringBuilder();
-        
+
         queryString = "SELECT w FROM Weblog w WHERE 1=1 ";
 
         if (visible != null) {
@@ -365,7 +364,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
 
         whereClause.append(" ORDER BY w.dateCreated DESC");
-        
+
         TypedQuery<Weblog> query = strategy.getDynamicQuery(queryString + whereClause.toString(), Weblog.class);
         if (offset != 0) {
             query.setFirstResult(offset);
@@ -373,10 +372,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (length != -1) {
             query.setMaxResults(length);
         }
-        for (int i=0; i<params.size(); i++) {
-           query.setParameter(i+1, params.get(i));
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
         }
-        
+
         return query.getResultList();
     }
 
@@ -404,13 +403,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         return this.strategy.load(WeblogTemplate.class, id);
     }
-    
+
     /**
      * Using JPA directly because Weblogger's Query API does too much memory allocation.
      */
     @Override
     public WeblogTemplate getTemplateByPath(Weblog weblog, String path) {
-        
+
         if (weblog == null) {
             throw new IllegalArgumentException("userName is null");
         }
@@ -429,10 +428,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return null;
         }
     }
-    
+
     @Override
     public WeblogTemplate getTemplateByAction(Weblog weblog, ComponentType action) {
-        
+
         if (weblog == null) {
             throw new IllegalArgumentException("weblog is null");
         }
@@ -440,7 +439,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (action == null) {
             throw new IllegalArgumentException("Action name is null");
         }
-        
+
         TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByRole",
                 WeblogTemplate.class);
         query.setParameter(1, weblog);
@@ -449,20 +448,20 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
-        }        
+        }
     }
 
     @Override
     public WeblogTemplate getTemplateByName(Weblog weblog, String templateName) {
-        
+
         if (weblog == null) {
             throw new IllegalArgumentException("weblog is null");
         }
-        
+
         if (templateName == null) {
             throw new IllegalArgumentException("Template name is null");
         }
-        
+
         TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByWeblog&Name",
                 WeblogTemplate.class);
         query.setParameter(1, weblog);
@@ -491,7 +490,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Map<String, Long> results = new TreeMap<>();
         TypedQuery<Long> query = strategy.getNamedQuery(
                 "Weblog.getCountByHandleLike", Long.class);
-        for (int i=0; i<26; i++) {
+        for (int i = 0; i < 26; i++) {
             char currentChar = lc.charAt(i);
             query.setParameter(1, currentChar + "%");
             List row = query.getResultList();
@@ -607,7 +606,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 indexManager.addEntryReIndexOperation(entry);
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Unexpected exception running task", e);
         }
         log.debug("finished promoting entries");
@@ -615,9 +614,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     @Override
     public void incrementHitCount(Weblog weblog) {
-        if(weblog != null) {
+        if (weblog != null) {
             Long count = hitsTally.get(weblog.getId());
-            if(count == null) {
+            if (count == null) {
                 count = 1L;
             } else {
                 count = count + 1;
@@ -655,7 +654,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         weblog.setHitsToday(getHitCount(weblog) + amount);
         strategy.store(weblog);
     }
-
 
     @Override
     public void saveWeblogCategory(WeblogCategory cat) {

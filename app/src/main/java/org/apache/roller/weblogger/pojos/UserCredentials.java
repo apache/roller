@@ -33,13 +33,13 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
 @Entity
-@Table(name="weblogger_user")
+@Table(name = "weblogger_user")
 @NamedQueries({
-        @NamedQuery(name="UserCredentials.getByUserName",
-                query="SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
+        @NamedQuery(name = "UserCredentials.getByUserName",
+                query = "SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
                         "AND u.id = uc.id AND u.status = org.apache.roller.weblogger.pojos.UserStatus.ENABLED"),
-        @NamedQuery(name="UserCredentials.changePassword",
-                query="UPDATE UserCredentials u SET u.password = ?1 WHERE u.id = ?2")
+        @NamedQuery(name = "UserCredentials.changePassword",
+                query = "UPDATE UserCredentials u SET u.password = ?1 WHERE u.id = ?2")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCredentials {
@@ -63,30 +63,30 @@ public class UserCredentials {
         return this.id;
     }
 
-    public void setId( String id ) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    @Basic(optional=false)
+    @Basic(optional = false)
     public String getUserName() {
         return this.userName;
     }
 
-    public void setUserName( String userName ) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    @Column(name="encr_password")
+    @Column(name = "encr_password")
     @JsonIgnore
     public String getPassword() {
         return this.password;
     }
 
-    public void setPassword( String password ) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    @Column(name="global_role", nullable=false)
+    @Column(name = "global_role", nullable = false)
     @Enumerated(EnumType.STRING)
     public GlobalRole getGlobalRole() {
         return this.globalRole;
