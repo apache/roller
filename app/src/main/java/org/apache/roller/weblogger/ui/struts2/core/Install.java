@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.WebloggerException;
 import org.apache.struts2.ServletActionContext;
-import org.springframework.beans.factory.access.BootstrapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -62,7 +61,7 @@ public class Install extends UIAction {
     private boolean success = false;
     private List<String> messages = null;
 
-    public DatabaseInstaller databaseInstaller;
+    private DatabaseInstaller databaseInstaller;
 
     private DataSource tbDataSource;
 
@@ -101,18 +100,16 @@ public class Install extends UIAction {
             return DATABASE_ERROR;
         }
 
-        if ("auto".equals(WebloggerStaticConfig.getProperty("installation.type"))) {
-            if (databaseInstaller.isCreationRequired()) {
-                log.info("TightBlog database needs creating (auto install configured), forwarding to creation page");
-                setPageTitle("installer.database.creation.pageTitle");
-                return CREATE_DATABASE;
-            }
+        if (databaseInstaller.isCreationRequired()) {
+            log.info("TightBlog database needs creating, forwarding to creation page");
+            setPageTitle("installer.database.creation.pageTitle");
+            return CREATE_DATABASE;
+        }
 
-            if (databaseInstaller.isUpgradeRequired()) {
-                log.info("TightBlog database needs upgrading (auto install configured), forwarding to upgrade page");
-                setPageTitle("installer.database.upgrade.pageTitle");
-                return UPGRADE_DATABASE;
-            }
+        if (databaseInstaller.isUpgradeRequired()) {
+            log.info("TightBlog database needs upgrading, forwarding to upgrade page");
+            setPageTitle("installer.database.upgrade.pageTitle");
+            return UPGRADE_DATABASE;
         }
 
         bootstrap();
@@ -171,10 +168,6 @@ public class Install extends UIAction {
             WebloggerContext.bootstrap(ac);
             log.info("EXITING - Bootstrap successful, forwarding to weblogger");
             return SUCCESS;
-
-        } catch (BootstrapException ex) {
-            log.error("BootstrapException", ex);
-            rootCauseException = ex;
         } catch (Exception e) {
             log.error("Exception", e);
             rootCauseException = e;

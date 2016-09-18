@@ -82,7 +82,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     }
 
     @Override
-    @PostConstruct
     public void initialize() {
         Map<String, RuntimeConfigProperty> props;
         try {
