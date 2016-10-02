@@ -119,7 +119,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void createMediaFile(Weblog weblog, MediaFile mediaFile, Map<String, List<String>> errors) throws IOException {
+    public void createMediaFile(MediaFile mediaFile, Map<String, List<String>> errors) throws IOException {
+        Weblog weblog = mediaFile.getDirectory().getWeblog();
+
         if (!fileContentManager.canSave(weblog, mediaFile.getName(),
                 mediaFile.getContentType(), mediaFile.getLength(), errors)) {
             return;
@@ -142,7 +144,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             File fileContent = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId());
             BufferedImage img;
 
-            img = ImageIO.read(new FileInputStream(fileContent));
+            FileInputStream fis = new FileInputStream(fileContent);
+            img = ImageIO.read(fis);
 
             // determine and save width and height
             mediaFile.setWidth(img.getWidth());
@@ -175,7 +178,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void updateMediaFile(Weblog weblog, MediaFile mediaFile) {
+    public void updateMediaFile(MediaFile mediaFile, InputStream is) throws IOException {
         mediaFile.setLastUpdated(Instant.now());
         strategy.store(mediaFile);
 
@@ -183,35 +186,30 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
 
-        updateWeblogLastModifiedDate(weblog);
-    }
-
-    @Override
-    public void updateMediaFile(Weblog weblog, MediaFile mediaFile, InputStream is) throws IOException {
-        mediaFile.setLastUpdated(Instant.now());
-        strategy.store(mediaFile);
-
-        strategy.flush();
-        // Refresh associated parent for changes
-        strategy.refresh(mediaFile.getDirectory());
-
+        Weblog weblog = mediaFile.getDirectory().getWeblog();
         updateWeblogLastModifiedDate(weblog);
 
-        Map<String, List<String>> msgs = new HashMap<>();
-        if (!fileContentManager.canSave(weblog, mediaFile.getName(),
-                mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
-            throw new IOException(msgs.toString());
-        }
-        fileContentManager.saveFileContent(weblog, mediaFile.getId(), is);
+        if (is != null) {
+            Map<String, List<String>> msgs = new HashMap<>();
+            if (!fileContentManager.canSave(weblog, mediaFile.getName(),
+                    mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
+                throw new IOException(msgs.toString());
+            }
+            fileContentManager.saveFileContent(weblog, mediaFile.getId(), is);
 
-        if (mediaFile.isImageFile()) {
-            updateThumbnail(mediaFile);
+            if (mediaFile.isImageFile()) {
+                updateThumbnail(mediaFile);
+            }
         }
     }
 
     @Override
-    public MediaFile getMediaFile(String id) throws IOException {
-        return getMediaFile(id, false);
+    public MediaFile getMediaFile(String id) {
+        try {
+            return getMediaFile(id, false);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Override

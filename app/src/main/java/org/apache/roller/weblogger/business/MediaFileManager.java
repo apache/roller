@@ -43,22 +43,18 @@ public interface MediaFileManager {
      *
      * @param errors object to receive message bundle keys and argument values or null if not desired to receive them
      */
-    void createMediaFile(Weblog weblog, MediaFile mediaFile, Map<String, List<String>> errors) throws IOException;
-
-    /**
-     * Update metadata for a media file
-     */
-    void updateMediaFile(Weblog weblog, MediaFile mediaFile);
+    void createMediaFile(MediaFile mediaFile, Map<String, List<String>> errors) throws IOException;
 
     /**
      * Update metadata for a media file and content.
+     * @param fis - new uploaded file (null if it hasn't changed)
      */
-    void updateMediaFile(Weblog website, MediaFile mf, InputStream fis) throws IOException;
+    void updateMediaFile(MediaFile mf, InputStream fis) throws IOException;
 
     /**
-     * Get media file metadata by file id
+     * Get media file metadata by file id, null if does not exist
      */
-    MediaFile getMediaFile(String id) throws IOException;
+    MediaFile getMediaFile(String id);
 
     /**
      * Get media file metadata optionally including the actual content

@@ -27,6 +27,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -51,6 +52,8 @@ import java.time.Instant;
 public class MediaFile {
 
     private String id = Utilities.generateUUID();
+
+    @NotBlank(message = "{MediaFile.error.nameNull}")
     private String name;
     private String altText;
     private String titleText;
@@ -195,6 +198,7 @@ public class MediaFile {
      * @return input stream of file
      */
     @Transient
+    @JsonIgnore
     public InputStream getInputStream() {
         if (is != null) {
             return is;
@@ -362,6 +366,7 @@ public class MediaFile {
     }
 
     @Transient
+    @JsonIgnore
     public String getDirectoryId() {
         return directoryId;
     }

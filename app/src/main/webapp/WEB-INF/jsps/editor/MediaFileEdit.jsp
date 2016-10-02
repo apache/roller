@@ -1,6 +1,6 @@
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  The ASF licenses this file to You
+  contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -20,86 +20,43 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
-
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $("input[type='file']").change(function() {
-            var name = '';
-            var fileControls = $("input[type='file']");
-            for (var i=0; i<fileControls.size(); i++) {
-                if (jQuery.trim(fileControls.get(i).value).length > 0) {
-                    name = fileControls.get(i).value;
-                }
-            }
-            $("#entry_bean_name").get(0).disabled = false;
-            $("#entry_bean_name").get(0).value = name;
-        });
-
-        // do not send empty file fields
-        $('#entry').submit(function() {
-          var fileVal = $('#fileControl').val();
-          if (fileVal === undefined || fileVal === "") {
-             $('#fileControl').removeAttr('name');
-          }
-        });
-        $('#cancelbtn').click(function() {
-          $('#entry').attr('novalidate','');
-        });
-    });
-
-    function getFileName(fullName) {
-       var backslashIndex = fullName.lastIndexOf('/');
-       var fwdslashIndex = fullName.lastIndexOf('\\');
-       var fileName;
-       if (backslashIndex >= 0) {
-           fileName = fullName.substring(backslashIndex + 1);
-       } else if (fwdslashIndex >= 0) {
-           fileName = fullName.substring(fwdslashIndex + 1);
-       }
-       else {
-           fileName = fullName;
-       }
-       return fileName;
-    }
+    var contextPath = "${pageContext.request.contextPath}";
+    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var mediaFileId = "<s:property value='%{#parameters.mediaFileId}'/>";
+    var directoryId = "<s:property value='%{#parameters.directoryId}'/>";
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/mediafileedit.js'/>"></script>
 
-<s:if test="actionName == 'mediaFileEdit'">
-    <s:set var="subtitleKey">mediaFileEdit.subtitle</s:set>
-    <s:set var="mainAction">mediaFileEdit</s:set>
-    <s:set var="pageTip">mediaFileEdit.pagetip</s:set>
-    <s:if test="bean.imageFile">
-        <div class="mediaFileThumbnail">
-            <a href='<s:property value="bean.permalink" />' target="_blank">
-                <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
+<div ng-app="mediaFileEditApp" ng-controller="MediaFileEditController as ctrl">
+
+    <s:if test="actionName == 'mediaFileEdit'">
+        <s:set var="subtitleKey">mediaFileEdit.subtitle</s:set>
+        <s:set var="mainAction">mediaFileEdit</s:set>
+        <s:set var="pageTip">mediaFileEdit.pagetip</s:set>
+        <div ng-if="ctrl.mediaFileData.imageFile" class="mediaFileThumbnail">
+            <a ng-href='{{ctrl.mediaFileData.permalink}}' target="_blank">
+                <img align="right" alt="thumbnail" ng-src='{{ctrl.mediaFileData.thumbnailURL}}'
                      title='<s:text name="mediaFileEdit.clickToView" />' />
             </a>
         </div>
     </s:if>
-</s:if>
-
-<s:else>
-    <s:set var="subtitleKey">mediaFileAdd.title</s:set>
-    <s:set var="mainAction">mediaFileAdd</s:set>
-    <s:set var="pageTip">mediaFileAdd.pageTip</s:set>
-</s:else>
+    <s:else>
+        <s:set var="subtitleKey">mediaFileAdd.title</s:set>
+        <s:set var="mainAction">mediaFileAdd</s:set>
+        <s:set var="pageTip">mediaFileAdd.pageTip</s:set>
+    </s:else>
 
 
-<p class="subtitle">
-    <s:text name="%{#subtitleKey}">
-        <s:param value="bean.name" />
-    </s:text>
-</p>
+    <p class="subtitle">
+        <s:text name="%{#subtitleKey}"/> {{ctrl.mediaFileData.name}}
+    </p>
 
-<p class="pagetip">
-    <s:text name="%{#pageTip}"/>
-</p>
-
-<s:form id="entry" action="%{#mainAction}!save" method="POST" enctype="multipart/form-data">
-    <sec:csrfInput/>
-    <s:hidden name="weblogId" />
-    <s:hidden name="directoryId" />
-    <s:hidden name="mediaFileId" id="mediaFileId" />
-    <s:hidden name="bean.permalink" />
+    <p class="pagetip">
+        <s:text name="%{#pageTip}"/>
+    </p>
 
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
@@ -108,79 +65,72 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="generic.name" /></label>
+                <label for="name"><s:text name="generic.name" /></label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
+                <input id="name" type="text" ng-model="ctrl.mediaFileData.name" size="50" maxlength="255" style="width:30%"/>
             </td>
         </tr>
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
+                <label for="altText"><s:text name="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
             </td>
             <td>
-                <s:textfield name="bean.altText" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
+                <input id="altText" type="text" ng-model="ctrl.mediaFileData.altText" size="50" maxlength="255" style="width:30%"/>
             </td>
         </tr>
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
+                <label for="titleText"><s:text name="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
             </td>
             <td>
-                <s:textfield name="bean.titleText" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
+                <input id="titleText" type="text" ng-model="ctrl.mediaFileData.titleText" size="50" maxlength="255" style="width:30%"/>
             </td>
         </tr>
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
+                <label for="anchor"><s:text name="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
             </td>
             <td>
-                <s:textfield name="bean.anchor" size="50" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
+                <input id="anchor" type="text" ng-model="ctrl.mediaFileData.anchor" size="50" maxlength="255" style="width:30%"/>
             </td>
         </tr>
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="generic.notes"/></label>
+                <label for="notes"><s:text name="generic.notes"/></label>
             </td>
             <td>
-                <s:textarea name="bean.notes" cols="50" rows="5" maxlength="255" onBlur="this.value=this.value.trim()" style="width:30%"/>
+                <input id="notes" type="text" ng-model="ctrl.mediaFileData.notes" size="50" maxlength="255" style="width:30%"/>
             </td>
        </tr>
 <s:if test="actionName == 'mediaFileEdit'">
        <tr>
             <td class="entryEditFormLabel">
-                <label for="fileInfo"><s:text name="mediaFileEdit.fileInfo" /></label>
+                <s:text name="mediaFileEdit.fileInfo" />
             </td>
             <td>
-                <s:text name="mediaFileEdit.fileTypeSize">
-                    <s:param value="bean.contentType" />
-                    <s:param value="bean.length" />
-                </s:text>
-                <s:if test="bean.imageFile">
-                    <s:text name="mediaFileEdit.fileDimensions">
-                        <s:param value="bean.width" />
-                        <s:param value="bean.height" />
-                    </s:text>
-                </s:if>
+                <b><s:text name="mediaFileEdit.fileType"/></b>: {{ctrl.mediaFileData.contentType}}
+                <b><s:text name="mediaFileEdit.fileSize"/></b>: {{ctrl.mediaFileData.length}}
+                <b><s:text name="mediaFileEdit.fileDimensions"/></b>: {{ctrl.mediaFileData.width}} x {{ctrl.mediaFileData.height}} pixels
             </td>
        </tr>
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.permalink" /></label>
+                <label for="permalink"><s:text name="mediaFileEdit.permalink" /></label>
             </td>
             <td>
-                <a href='<s:text name="bean.permalink" />' target="_blank"
+                <a href='{{ctrl.mediaFileData.permalink}}' target="_blank"
                    title='<s:text name="mediaFileEdit.linkTitle" />'>
-                   <s:url var="linkIconURL" value="/images/link.png"></s:url>
+                   <s:url var="linkIconURL" value="/images/link.png"/>
                    <img border="0" src='<s:property value="%{linkIconURL}" />'
                        style="padding:2px 2px;" alt="link" />
                 </a>
-                <input type="text" id="clip_text" size="50" style="width:90%" value='<s:text name="bean.permalink" />' readonly />
+                <input id="permalink" type="text" size="50" style="width:90%" value='{{ctrl.mediaFileData.permalink}}' readonly />
             </td>
        </tr>
 </s:if>
@@ -189,38 +139,45 @@
                 <label for="directoryId"><s:text name="mediaFileEdit.folder" /></label>
             </td>
             <td>
-                <s:select name="bean.directoryId" list="allDirectories"
-                    listKey="id" listValue="name" />
+                <select id="directoryId" ng-model="ctrl.directoryId"
+                        ng-options="dir.id as dir.name for dir in ctrl.mediaDirectories"
+                        size="1" required></select>
             </td>
        </tr>
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="title"><s:text name="mediaFileEdit.fileLocation" /></label>
+                <label for="fileControl"><s:text name="mediaFileEdit.fileLocation" /></label>
             </td>
             <td>
                 <div id="fileControldiv" class="miscControl">
                     <s:if test="actionName == 'mediaFileEdit'">
-                        <input type="file" name="uploadedFile" size="30" value="" id="fileControl"/>
+                        <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value=""/>
                     </s:if>
                     <s:else>
-                        <input type="file" name="uploadedFile" size="30" value="" id="fileControl" required/>
+                        <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value="" required/>
                     </s:else>
                 </div>
             </td>
         </tr>
-
     </table>
 
     <br />
     <div class="control">
+        <button ng-click="ctrl.saveMediaFile()" value=
         <s:if test="actionName == 'mediaFileEdit'">
-           <s:submit value="%{getText('generic.save')}"/>
+             "<s:text name='generic.save'/>">
         </s:if>
         <s:else>
-           <s:submit value="%{getText('mediaFileAdd.upload')}"/>
+             "<s:text name='mediaFileAdd.upload'/>">
         </s:else>
-        <s:submit id="cancelbtn" value="%{getText('generic.cancel')}" action="mediaFileEdit!cancel" />
+        <br><br>
+        <form>
+            <!--sec:csrfInput/-->
+            <s:hidden name="weblogId" />
+            <s:hidden name="directoryId" />
+            <s:submit id="cancelbtn" value="%{getText('generic.cancel')}" action="mediaFileView" />
+        </form>
     </div>
 
-</s:form>
+</div>

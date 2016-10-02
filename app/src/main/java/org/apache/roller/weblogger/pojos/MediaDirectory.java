@@ -20,6 +20,7 @@
 */
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -98,6 +99,7 @@ public class MediaDirectory {
     @OneToMany(targetEntity = org.apache.roller.weblogger.pojos.MediaFile.class,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "directory")
     @OrderBy("name")
+    @JsonIgnore
     public Set<MediaFile> getMediaFiles() {
         return mediaFiles;
     }
