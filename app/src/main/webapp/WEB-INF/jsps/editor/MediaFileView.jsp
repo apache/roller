@@ -26,6 +26,7 @@
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var weblogId = "<s:property value='actionWeblog.id'/>";
+    var directoryId = "<s:property value='%{#parameters.directoryId}'/>";
     var msg = {
         confirmLabel: '<s:text name="generic.confirm"/>',
         deleteLabel: '<s:text name="generic.delete"/>',
@@ -50,6 +51,10 @@
 </p>
 
 <div id="ngapp-div" ng-app="mediaFileViewApp" ng-controller="MediaFileViewController as ctrl">
+
+    <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMsg">
+       <b>{{ctrl.errorMsg}}</b>
+    </div>
 
     <div class="control">
         <span style="padding-left:7px">
@@ -82,7 +87,6 @@
                     <a ng-href="<s:property value='%{editUrl}'/>&amp;mediaFileId={{mediaFile.id}}">
                         <img ng-if="mediaFile.imageFile"
                              ng-src='{{mediaFile.thumbnailURL}}'
-                             ng-style="{ 'width' : mediaFile.thumbnailWidth, 'height' : mediaFile.thumbnailHeight }"
                              alt='{{mediaFile.altText}}'
                              title='{{mediaFile.name}}'>
 

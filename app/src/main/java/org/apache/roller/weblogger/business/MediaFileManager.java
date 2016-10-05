@@ -35,21 +35,15 @@ import java.util.Map;
  */
 public interface MediaFileManager {
 
-    int MAX_WIDTH = 120;
-    int MAX_HEIGHT = 120;
-
-    /**
-     * Create a media file
-     *
-     * @param errors object to receive message bundle keys and argument values or null if not desired to receive them
-     */
-    void createMediaFile(MediaFile mediaFile, Map<String, List<String>> errors) throws IOException;
+    int MAX_THUMBNAIL_WIDTH = 120;
+    int MAX_THUMBNAIL_HEIGHT = 120;
 
     /**
      * Update metadata for a media file and content.
-     * @param fis - new uploaded file (null if it hasn't changed)
+     * @param mf - Media File to update (if its inputStream is non-null file will be uploaded as well)
+     * @param errors object to receive message bundle keys and argument values or null if not desired to receive them
      */
-    void updateMediaFile(MediaFile mf, InputStream fis) throws IOException;
+    void storeMediaFile(MediaFile mf, Map<String, List<String>> errors) throws IOException;
 
     /**
      * Get media file metadata by file id, null if does not exist

@@ -14,14 +14,15 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.util;
 
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -98,22 +99,6 @@ public final class I18nMessages {
         try {
             String msg = bundle.getString(key);
             return MessageFormat.format(msg, Collections.singletonList(param));
-        } catch (Exception e) {
-            // send a warning in the logs
-            log.warn("Error getting key {}", key, e);
-            return key;
-        }
-    }
-
-    /**
-     * Get a message from the bundle and substitute the given args into
-     * the message contents.
-     */
-    public String getString(String key, List args) {
-
-        try {
-            String msg = bundle.getString(key);
-            return MessageFormat.format(msg, args);
         } catch (Exception e) {
             // send a warning in the logs
             log.warn("Error getting key {}", key, e);

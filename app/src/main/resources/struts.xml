@@ -213,10 +213,7 @@
             <param name="desiredMenu">editor</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
-            <result name="input" type="tiles">.MediaFileEdit</result>
             <result name="success" type="tiles">.MediaFileEdit</result>
-            <result name="error" type="tiles">.MediaFileEdit</result>
-            <allowed-methods>save</allowed-methods>
         </action>
 
         <action name="mediaFileEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -225,15 +222,7 @@
             <param name="desiredMenu">editor</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
-            <result name="input" type="tiles">.MediaFileEdit</result>
             <result name="success" type="tiles">.MediaFileEdit</result>
-            <result name="error" type="tiles">.MediaFileEdit</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">mediaFileView</param>
-                <param name="weblogId">${weblogId}</param>
-                <param name="directoryId">${directoryId}</param>
-            </result>
-            <allowed-methods>cancel,save</allowed-methods>
         </action>
 
         <action name="mediaFileView" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
@@ -333,13 +322,12 @@
             <result name="success" type="tiles">.ThemeEdit</result>
         </action>
 
-        <action name="templates!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="templates" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">templates</param>
             <param name="desiredMenu">editor</param>
             <param name="pageTitleReal">templates.title</param>
             <result name="success" type="tiles">.Templates</result>
-            <allowed-methods>newTheme</allowed-methods>
         </action>
 
         <action name="templateEdit!*" method="{1}"
@@ -355,7 +343,6 @@
             <param name="desiredMenu">editor</param>
             <param name="pageTitleReal">memberPermissions.title</param>
             <result name="success" type="tiles">.Members</result>
-            <allowed-methods>invite,save</allowed-methods>
         </action>
 
     </package>

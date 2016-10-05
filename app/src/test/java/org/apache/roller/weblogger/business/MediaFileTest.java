@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -182,6 +183,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
+        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setName("test4.jpg");
         mediaFile.setNotes("This is a test image 4");
@@ -190,7 +192,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 
-        mediaFileManager.createMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, null);
         String id = mediaFile.getId();
         endSession(true);
         assertNotNull(id);
@@ -215,11 +217,12 @@ public class MediaFileTest extends WebloggerTest {
      * Test creation of media file.
      */
     @Test
-    public void testCreateMediaFile() throws Exception {
+    public void teststoreMediaFile() throws Exception {
         MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
+        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setName("test.jpg");
         mediaFile.setNotes("This is a test image");
@@ -229,7 +232,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        mediaFileManager.createMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, null);
         endSession(true);
         assertNotNull(mediaFile.getId());
         assertNotNull(mediaFile.getId().length() > 0);
@@ -250,6 +253,7 @@ public class MediaFileTest extends WebloggerTest {
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
+        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setName("test5.jpg");
         mediaFile.setNotes("This is a test image 5");
@@ -257,7 +261,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, null);
 
         rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
@@ -270,7 +274,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile1.setName("updated.gif");
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
-        mediaFileManager.updateMediaFile(mediaFile1, null);
+        mediaFileManager.storeMediaFile(mediaFile1, null);
         endSession(true);
 
         MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
@@ -294,6 +298,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
+        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setName("test6_1.jpg");
@@ -301,9 +306,10 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
+        mediaFile2.setId(Utilities.generateUUID());
         mediaFile2.setCreator(testUser);
         mediaFile2.setDirectory(rootDirectory);
         mediaFile2.setName("test6_2.jpg");
@@ -311,7 +317,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setLength(4000);
         mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(mediaFile2, null);
+        mediaFileManager.storeMediaFile(mediaFile2, null);
 
         endSession(true);
 
@@ -351,6 +357,7 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
+        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setName("test7_1.jpg");
@@ -358,9 +365,10 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
+        mediaFile2.setId(Utilities.generateUUID());
         mediaFile2.setCreator(testUser);
         mediaFile2.setDirectory(rootDirectory);
         mediaFile2.setName("test7_2.jpg");
@@ -369,7 +377,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setInputStream(getClass()
                 .getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.createMediaFile(mediaFile2, null);
+        mediaFileManager.storeMediaFile(mediaFile2, null);
 
         endSession(true);
 

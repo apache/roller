@@ -48,10 +48,7 @@ var contextPath = "${pageContext.request.contextPath}";
                 <div class="mediaObject" onclick=
                 "window.parent.onSelectMediaFile('{{:name}}', '{{:permalink}}', '{{:altText}}', '{{:titleText}}', '{{:anchor}}', {{:imageFile}})">
                     {{if imageFile}}
-                        <s:url var="mediaFileThumbnailURL" value="{{:thumbnailURL}}"></s:url>
-                        <img border="0" src='{{:thumbnailURL}}'
-                             width='{{:thumbnailWidth}}'
-                             height='{{:thumbnailHeight}}' />
+                        <img border="0" src='{{:thumbnailURL}}' />
                     {{/if}}
                 </div>
 

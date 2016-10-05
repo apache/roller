@@ -20,9 +20,9 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -32,6 +32,10 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -54,15 +58,18 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private final JPAPersistenceStrategy strategy;
     private final FileContentManager fileContentManager;
+    private final PropertiesManager propertiesManager;
 
     private static Logger log = LoggerFactory.getLogger(JPAMediaFileManagerImpl.class);
 
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
-    protected JPAMediaFileManagerImpl(FileContentManager fcm, JPAPersistenceStrategy persistenceStrategy) {
+    protected JPAMediaFileManagerImpl(FileContentManager fcm, JPAPersistenceStrategy persistenceStrategy,
+                                      PropertiesManager propManager) {
         this.fileContentManager = fcm;
         this.strategy = persistenceStrategy;
+        this.propertiesManager = propManager;
     }
 
     @Override
@@ -98,45 +105,32 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     @Override
     public MediaDirectory createMediaDirectory(Weblog weblog, String requestedName) {
-
         requestedName = requestedName.startsWith("/") ? requestedName.substring(1) : requestedName;
 
-        if (StringUtils.isEmpty(requestedName)) {
-            throw new IllegalArgumentException("Empty media file directory name!");
+        if (!propertiesManager.getBooleanProperty("uploads.enabled")) {
+            throw new IllegalArgumentException("error.upload.disabled");
         }
 
         MediaDirectory newDirectory;
-
         if (weblog.hasMediaDirectory(requestedName)) {
-            throw new IllegalArgumentException("Directory exists");
+            throw new IllegalArgumentException("mediaFile.directoryCreate.error.exists");
         } else {
             newDirectory = new MediaDirectory(weblog, requestedName);
+
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<MediaDirectory>> errors = validator.validate(newDirectory);
+            if (errors.size() > 0) {
+                // strip away { and } from message string
+                String origMessage = errors.iterator().next().getMessage();
+                throw new IllegalArgumentException(origMessage.substring(1, origMessage.length() - 1));
+            }
             this.strategy.store(newDirectory);
             this.strategy.flush();
+            weblog.getMediaDirectories().add(newDirectory);
             log.debug("Created new Directory {}", requestedName);
         }
         return newDirectory;
-    }
-
-    @Override
-    public void createMediaFile(MediaFile mediaFile, Map<String, List<String>> errors) throws IOException {
-        Weblog weblog = mediaFile.getDirectory().getWeblog();
-
-        if (!fileContentManager.canSave(weblog, mediaFile.getName(),
-                mediaFile.getContentType(), mediaFile.getLength(), errors)) {
-            return;
-        }
-        strategy.store(mediaFile);
-
-        // Refresh associated parent for changes
-        strategy.flush();
-        strategy.refresh(mediaFile.getDirectory());
-
-        fileContentManager.saveFileContent(weblog, mediaFile.getId(), mediaFile.getInputStream());
-
-        if (mediaFile.isImageFile()) {
-            updateThumbnail(mediaFile);
-        }
     }
 
     private void updateThumbnail(MediaFile mediaFile) {
@@ -147,29 +141,39 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             FileInputStream fis = new FileInputStream(fileContent);
             img = ImageIO.read(fis);
 
-            // determine and save width and height
-            mediaFile.setWidth(img.getWidth());
-            mediaFile.setHeight(img.getHeight());
-            strategy.store(mediaFile);
+            // Some graphics (e.g., Microsoft icons) not processable by ImageIO
+            if (img != null) {
+                // determine and save width and height
+                mediaFile.setWidth(img.getWidth());
+                mediaFile.setHeight(img.getHeight());
+                strategy.store(mediaFile);
 
-            int newWidth = mediaFile.getThumbnailWidth();
-            int newHeight = mediaFile.getThumbnailHeight();
+                int newWidth = mediaFile.getThumbnailWidth();
+                int newHeight = mediaFile.getThumbnailHeight();
 
-            // create thumbnail image
-            Image newImage = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-            BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = tmp.createGraphics();
-            g2.drawImage(newImage, 0, 0, newWidth, newHeight, null);
-            g2.dispose();
+                // create thumbnail image
+                Image newImage = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+                BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2 = tmp.createGraphics();
+                g2.drawImage(newImage, 0, 0, newWidth, newHeight, null);
+                g2.dispose();
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(tmp, "png", baos);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(tmp, "png", baos);
 
-            fileContentManager.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId() +
-                    "_sm", new ByteArrayInputStream(baos.toByteArray()));
+                fileContentManager.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId() +
+                        "_sm", new ByteArrayInputStream(baos.toByteArray()));
+
+            } else {
+                FileInputStream fis2 = new FileInputStream(fileContent);
+                fileContentManager.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId() + "_sm",
+                        fis2);
+
+                mediaFile.setWidth(MediaFileManager.MAX_THUMBNAIL_WIDTH);
+                mediaFile.setHeight(MediaFileManager.MAX_THUMBNAIL_HEIGHT);
+            }
 
             strategy.flush();
-            // Refresh associated parent for changes
             strategy.refresh(mediaFile.getDirectory());
 
         } catch (Exception e) {
@@ -178,7 +182,14 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void updateMediaFile(MediaFile mediaFile, InputStream is) throws IOException {
+    public void storeMediaFile(MediaFile mediaFile, Map<String, List<String>> errors) throws IOException {
+        Weblog weblog = mediaFile.getDirectory().getWeblog();
+
+        if (!fileContentManager.canSave(weblog, mediaFile.getName(),
+                mediaFile.getContentType(), mediaFile.getLength(), errors)) {
+            return;
+        }
+
         mediaFile.setLastUpdated(Instant.now());
         strategy.store(mediaFile);
 
@@ -186,16 +197,16 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
 
-        Weblog weblog = mediaFile.getDirectory().getWeblog();
         updateWeblogLastModifiedDate(weblog);
 
-        if (is != null) {
+        InputStream updatedFileStream = mediaFile.getInputStream();
+        if (updatedFileStream != null) {
             Map<String, List<String>> msgs = new HashMap<>();
             if (!fileContentManager.canSave(weblog, mediaFile.getName(),
                     mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
                 throw new IOException(msgs.toString());
             }
-            fileContentManager.saveFileContent(weblog, mediaFile.getId(), is);
+            fileContentManager.saveFileContent(weblog, mediaFile.getId(), updatedFileStream);
 
             if (mediaFile.isImageFile()) {
                 updateThumbnail(mediaFile);

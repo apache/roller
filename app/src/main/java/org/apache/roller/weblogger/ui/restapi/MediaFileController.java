@@ -10,12 +10,12 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.util.ValidationError;
-import org.hibernate.validator.constraints.NotBlank;
+import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,19 +27,18 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @RestController
 public class MediaFileController {
 
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
 
     @Autowired
     private WeblogManager weblogManager;
@@ -118,16 +117,50 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediafile/{id}", method = RequestMethod.POST, consumes = {"multipart/form-data"})
-    public ResponseEntity updateMediaFile(@PathVariable String id, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData, Principal p,
-                                       HttpServletResponse response, @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
-        throws ServletException {
+    @RequestMapping(value = "/tb-ui/authoring/rest/mediafiles", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    public ResponseEntity postMediaFile(Principal p, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData,
+                                          @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
+            throws ServletException {
 
-        // does file exist and user have write access to file?
+        boolean newMediaFile = (mediaFileData.getId() == null);
+
+        // Does user have ability to update files in the given directory
         User user = userManager.getEnabledUserByUserName(p.getName());
-        MediaFile mf = mediaFileManager.getMediaFile(id);
-        if (user == null || mf == null || !userManager.checkWeblogRole(user, mf.getDirectory().getWeblog(), WeblogRole.POST)) {
-            return ResponseEntity.status(404).body(bundle.getString("error.title.404"));
+        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+        I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+        MediaFile mf;
+        if (newMediaFile) {
+            if (uploadedFile == null) {
+                return ResponseEntity.badRequest().body("Upload File must be provided.");
+            }
+
+            mf = new MediaFile();
+            mf.setId(Utilities.generateUUID());
+            mf.setCreator(user);
+
+            if (mediaFileData.getDirectory() == null) {
+                return ResponseEntity.badRequest().body("Media Directory was not provided.");
+            }
+            MediaDirectory dir = mediaFileManager.getMediaDirectory(mediaFileData.getDirectory().getId());
+            if (dir == null) {
+                return ResponseEntity.badRequest().body("Specified media directory could not be found.");
+            }
+            mf.setDirectory(dir);
+        } else {
+            mf = mediaFileManager.getMediaFile(mediaFileData.getId());
+            if (mf == null) {
+                return ResponseEntity.badRequest().body("Media file could not be found.");
+            }
+        }
+
+        if (user == null || mf.getDirectory() == null || !userManager.checkWeblogRole(user, mf.getDirectory().getWeblog(), WeblogRole.POST)) {
+            return ResponseEntity.status(403).body(messages.getString("error.title.403"));
+        }
+
+        MediaFile fileWithSameName = mf.getDirectory().getMediaFile(mediaFileData.getName());
+        if (fileWithSameName != null && !fileWithSameName.getId().equals(mediaFileData.getId())) {
+            return ResponseEntity.badRequest().body(messages.getString("MediaFile.error.duplicateName"));
         }
 
         // update media file with new metadata
@@ -136,16 +169,8 @@ public class MediaFileController {
         mf.setTitleText(mediaFileData.getTitleText());
         mf.setAnchor(mediaFileData.getAnchor());
         mf.setNotes(mediaFileData.getNotes());
-        mf.setCreator(user);
 
-        // Move file
-        /*
-            if (!getBean().getDirectoryId().equals(mediaFile.getDirectory().getId())) {
-                log.debug("Processing move of {}", mediaFile.getId());
-                MediaDirectory targetDirectory = mediaFileManager.getMediaDirectory(getBean().getDirectoryId());
-                mediaFileManager.moveMediaFile(mediaFile, targetDirectory);
-            }
-        */
+        Map<String, List<String>> errors = new HashMap<>();
 
         try {
             // check if uploadedFile provided, update if so
@@ -153,135 +178,46 @@ public class MediaFileController {
                 mf.setInputStream(uploadedFile.getInputStream());
                 mf.setLength(uploadedFile.getSize());
                 mf.setContentType(uploadedFile.getContentType());
-                mediaFileManager.updateMediaFile(mf, mf.getInputStream());
-            } else {
-                mediaFileManager.updateMediaFile(mf, null);
+                mf.setCreator(user);
             }
-            persistenceStrategy.flush();
-            // addMessage("mediaFile.update.success");
+
+            mediaFileManager.storeMediaFile(mf, errors);
+
+            if (errors.size() > 0) {
+                Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();
+                return ResponseEntity.badRequest().body(messages.getString(msg.getKey(), msg.getValue().toArray()));
+            }
+
             return ResponseEntity.ok(mf);
         } catch (IOException e) {
-            //log.error("Error uploading file {}", bean.getName(), e);
-            //addError("mediaFileAdd.errorUploading", bean.getName());
+            log.error("Error uploading file {}", mf.getName(), e);
             throw new ServletException(e.getMessage());
         }
-
-    }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediadirectory/{id}/files", method = RequestMethod.POST, consumes = {"multipart/form-data"})
-    public ResponseEntity addMediaFile(@PathVariable String id, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData, Principal p,
-                                       HttpServletResponse response, @RequestPart("uploadFile") @NotNull @NotBlank MultipartFile uploadedFile)
-            throws ServletException {
-
-        // does user have write access to directory?
-        User user = userManager.getEnabledUserByUserName(p.getName());
-        MediaDirectory dir = mediaFileManager.getMediaDirectory(id);
-        if (user == null || dir == null || !userManager.checkWeblogRole(user, dir.getWeblog(), WeblogRole.POST)) {
-            return ResponseEntity.status(403).body(bundle.getString("error.title.403"));
-        }
-
-        mediaFileData.setDirectory(dir);
-        ValidationError maybeError = advancedValidate(mediaFileData);
-        if (maybeError != null) {
-            return ResponseEntity.badRequest().body(maybeError);
-        }
-
-        try {
-            MediaFile newMediaFile = new MediaFile();
-            newMediaFile.setName(mediaFileData.getName());
-            newMediaFile.setAltText(mediaFileData.getAltText());
-            newMediaFile.setTitleText(mediaFileData.getTitleText());
-            newMediaFile.setAnchor(mediaFileData.getAnchor());
-            newMediaFile.setNotes(mediaFileData.getNotes());
-            newMediaFile.setDirectory(mediaFileData.getDirectory());
-            newMediaFile.setCreator(user);
-
-            newMediaFile.setLength(uploadedFile.getSize());
-            newMediaFile.setInputStream(uploadedFile.getInputStream());
-            newMediaFile.setContentType(uploadedFile.getContentType());
-
-            Map<String, List<String>> errors = new HashMap<>();
-            mediaFileManager.createMediaFile(newMediaFile, errors);
-    /*
-            for (Map.Entry<String, List<String>> error : errors.entrySet()) {
-                addError(error.getKey(), error.getValue());
-            }
-    */
-            persistenceStrategy.flush();
-            // below should not be necessary as createMediaFile refreshes the directory's
-            // file listing but caching of directory's old file listing occurring somehow.
-            newMediaFile.getDirectory().getMediaFiles().add(newMediaFile);
-
-            return ResponseEntity.ok(newMediaFile);
-            //addMessage("uploadFiles.uploadedFiles");
-            //addMessage("uploadFiles.uploadedFile", mediaFile.getName());
-            // this.pageTitle = "mediaFileAddSuccess.title";
-
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-/*
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediafile/{id}", method = RequestMethod.POST)
-    public ResponseEntity updateMediaFile(@PathVariable String id, @Valid @RequestBody MediaFile newData, Principal p,
-            HttpServletResponse response) throws ServletException {
-
-    }
-
-    private ResponseEntity saveMediaFile(MediaFile mediaFile, MediaFile newData, HttpServletResponse response, boolean newMediaFile) throws ServletException {
-
-    }
-*/
-
-    private ValidationError advancedValidate(MediaFile data) {
-        BindException be = new BindException(data, "new data object");
-
-        MediaFile fileWithSameName = data.getDirectory().getMediaFile(data.getName());
-        if (fileWithSameName != null && !fileWithSameName.getId().equals(data.getId())) {
-            be.addError(new ObjectError("MediaFile object", bundle.getString("MediaFile.error.duplicateName")));
-        }
-
-        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories", method = RequestMethod.PUT)
-    public String addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
+    public ResponseEntity addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
                                     Principal p, HttpServletResponse response) throws ServletException {
         try {
-            // TODO: check validation of directory names work: invalid, already exists, empty.
-//            addError("mediaFile.error.view.dirNameEmpty");
-//            addError("mediaFile.error.view.dirNameInvalid");
-//            addMessage("mediaFile.directoryCreate.success", this.newDirectoryName);
-//            addError("mediaFile.directoryCreate.error.exists", this.newDirectoryName);
-
-/*
-            if (!propertiesManager.getBooleanProperty("uploads.enabled")) {
-                addError("error.upload.disabled");
-            }
-            if (uploadedFile == null || !uploadedFile.exists()) {
-                addError("error.upload.nofile");
-            }
-*/
-
+            User user = userManager.getEnabledUserByUserName(p.getName());
+            Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+            I18nMessages messages = I18nMessages.getMessages(userLocale);
 
             Weblog weblog = weblogManager.getWeblog(weblogId);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 try {
                     MediaDirectory newDir = mediaFileManager.createMediaDirectory(weblog, directoryName.asText().trim());
-                    persistenceStrategy.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
-                    return newDir.getId();
+                    return ResponseEntity.ok(newDir.getId());
                 } catch (IllegalArgumentException e) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+                    return ResponseEntity.badRequest().body(messages.getString(e.getMessage()));
                 }
             } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return ResponseEntity.status(403).body(messages.getString("error.title.403"));
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
-        return null;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/mediadirectory/{id}", method = RequestMethod.DELETE)
