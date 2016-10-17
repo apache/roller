@@ -342,7 +342,8 @@ public class CommentProcessor extends AbstractProcessor {
                 if (messages.size() > 0) {
                     for (Map.Entry<String, List<String>> item : messages.entrySet()) {
                         if (item.getValue() != null) {
-                            log.debug(messageUtils.getString(item.getKey(), item.getValue()));
+                            log.debug(messageUtils.getString(item.getKey(), item.getValue() != null ?
+                                    item.getValue().toArray() : null));
                         } else {
                             log.debug(messageUtils.getString(item.getKey()));
                         }

@@ -26,7 +26,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
-import org.apache.roller.weblogger.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
@@ -51,7 +50,7 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaFile {
 
-    private String id = Utilities.generateUUID();
+    private String id;
 
     @NotBlank(message = "{MediaFile.error.nameNull}")
     private String name;
@@ -71,14 +70,10 @@ public class MediaFile {
 
     private InputStream is;
 
-    @JsonIgnore
     private MediaDirectory directory;
 
     private File content;
     private File thumbnail;
-
-    // Not persisted, for use on forms only.
-    private String directoryId;
 
     public MediaFile() {
     }
@@ -328,15 +323,15 @@ public class MediaFile {
         int newHeight = getHeight();
 
         if (getWidth() > getHeight()) {
-            if (getWidth() > MediaFileManager.MAX_WIDTH) {
-                newHeight = (int) ((float) getHeight() * ((float) MediaFileManager.MAX_WIDTH / (float) getWidth()));
-                newWidth = MediaFileManager.MAX_WIDTH;
+            if (getWidth() > MediaFileManager.MAX_THUMBNAIL_WIDTH) {
+                newHeight = (int) ((float) getHeight() * ((float) MediaFileManager.MAX_THUMBNAIL_WIDTH / (float) getWidth()));
+                newWidth = MediaFileManager.MAX_THUMBNAIL_WIDTH;
             }
 
         } else {
-            if (getHeight() > MediaFileManager.MAX_HEIGHT) {
-                newWidth = (int) ((float) getWidth() * ((float) MediaFileManager.MAX_HEIGHT / (float) getHeight()));
-                newHeight = MediaFileManager.MAX_HEIGHT;
+            if (getHeight() > MediaFileManager.MAX_THUMBNAIL_HEIGHT) {
+                newWidth = (int) ((float) getWidth() * ((float) MediaFileManager.MAX_THUMBNAIL_HEIGHT / (float) getHeight()));
+                newHeight = MediaFileManager.MAX_THUMBNAIL_HEIGHT;
             }
         }
         thumbnailHeight = newHeight;
@@ -365,13 +360,4 @@ public class MediaFile {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
-    @Transient
-    @JsonIgnore
-    public String getDirectoryId() {
-        return directoryId;
-    }
-
-    public void setDirectoryId(String directoryId) {
-        this.directoryId = directoryId;
-    }
 }

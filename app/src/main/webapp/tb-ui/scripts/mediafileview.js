@@ -99,8 +99,13 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/mediadirectories').then(function(response) {
         self.mediaDirectories = response.data;
         if (self.mediaDirectories && self.mediaDirectories.length > 0) {
-          self.directoryToView = self.mediaDirectories[0].id;
-          self.directoryToMoveTo = self.mediaDirectories[0].id;
+          if (directoryId) {
+            self.directoryToView = directoryId;
+            self.directoryToMoveTo = directoryId;
+          } else {
+            self.directoryToView = self.mediaDirectories[0].id;
+            self.directoryToMoveTo = self.mediaDirectories[0].id;
+          }
           self.loadMediaFiles();
         }
       });
@@ -136,8 +141,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       $http.put(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/mediadirectories',
          JSON.stringify(self.newDirectoryName)).then(
         function(response) {
-          $('#errorMessageDiv').hide();
-          $('#successMessageDiv').show();
+          self.errorMsg = null;
           self.loadMediaDirectories();
           self.directoryToView = response.data;
           self.newDirectoryName = '';
@@ -149,8 +153,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
     this.deleteFolder = function() {
       $http.delete(contextPath + '/tb-ui/authoring/rest/mediadirectory/' + self.directoryToView).then(
         function(response) {
-          $('#errorMessageDiv').hide();
-          $('#successMessageDiv').show();
+          self.errorMsg = null;
           self.loadMediaDirectories();
         },
         self.commonErrorResponse
@@ -166,8 +169,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       $http.post(contextPath + '/tb-ui/authoring/rest/mediafiles/weblog/' + weblogId,
       JSON.stringify(selectedFiles)).then(
         function(response) {
-          $('#errorMessageDiv').hide();
-          $('#successMessageDiv').show();
+          self.errorMsg = null;
           self.loadMediaFiles();
         },
         self.commonErrorResponse
@@ -184,8 +186,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       "/todirectory/" + self.directoryToMoveTo,
       JSON.stringify(selectedFiles)).then(
         function(response) {
-          $('#errorMessageDiv').hide();
-          $('#successMessageDiv').show();
+          self.errorMsg = null;
           self.loadMediaFiles();
         },
         self.commonErrorResponse
@@ -196,9 +197,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
          if (response.status == 408)
            window.location.replace($('#refreshURL').attr('value'));  // return;
          if (response.status == 400) {
-           self.errorObj = response.data;
-           $('#successMessageDiv').hide();
-           $('#errorMessageDiv').show();
+           self.errorMsg = response.data;
          }
     }
 

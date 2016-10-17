@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.util.Utilities;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -52,9 +53,12 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaDirectory {
 
+    @NotBlank
     private String id;
+    @NotBlank(message = "{mediaFile.error.view.dirNameEmpty}")
     @Pattern(regexp = "[a-zA-Z0-9\\-]+", message = "{mediaFile.error.view.dirNameInvalid}")
     String name;
+    @JsonIgnore
     Weblog weblog;
     Set<MediaFile> mediaFiles = new HashSet<>();
 
@@ -65,7 +69,6 @@ public class MediaDirectory {
         this.id = Utilities.generateUUID();
         this.name = name;
         this.weblog = weblog;
-        weblog.getMediaDirectories().add(this);
     }
 
     @Id

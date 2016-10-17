@@ -21,16 +21,26 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+
+<s:url var="mediaFileViewUrl" action="mediaFileView">
+    <s:param name="weblogId" value="%{actionWeblog.id}" />
+</s:url>
+
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var weblogId = "<s:property value='actionWeblog.id'/>";
     var mediaFileId = "<s:property value='%{#parameters.mediaFileId}'/>";
     var directoryId = "<s:property value='%{#parameters.directoryId}'/>";
+    var mediaViewUrl = "<s:property value='%{mediaFileViewUrl}'/>";
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/mediafileedit.js'/>"></script>
 
 <div ng-app="mediaFileEditApp" ng-controller="MediaFileEditController as ctrl">
+
+    <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMsg">
+       <b>{{ctrl.errorMsg}}</b>
+    </div>
 
     <s:if test="actionName == 'mediaFileEdit'">
         <s:set var="subtitleKey">mediaFileEdit.subtitle</s:set>
@@ -51,7 +61,7 @@
 
 
     <p class="subtitle">
-        <s:text name="%{#subtitleKey}"/> {{ctrl.mediaFileData.name}}
+        <s:text name="%{#subtitleKey}"/>
     </p>
 
     <p class="pagetip">
@@ -133,17 +143,16 @@
                 <input id="permalink" type="text" size="50" style="width:90%" value='{{ctrl.mediaFileData.permalink}}' readonly />
             </td>
        </tr>
-</s:if>
+
        <tr>
             <td class="entryEditFormLabel">
                 <label for="directoryId"><s:text name="mediaFileEdit.folder" /></label>
             </td>
             <td>
-                <select id="directoryId" ng-model="ctrl.directoryId"
-                        ng-options="dir.id as dir.name for dir in ctrl.mediaDirectories"
-                        size="1" required></select>
+                <input id="directoryId" type="text" size="30" style="width:30%" value='{{ctrl.mediaFileData.directory.name}}' readonly />
             </td>
        </tr>
+</s:if>
 
         <tr>
             <td class="entryEditFormLabel">
@@ -164,20 +173,9 @@
 
     <br />
     <div class="control">
-        <button ng-click="ctrl.saveMediaFile()" value=
-        <s:if test="actionName == 'mediaFileEdit'">
-             "<s:text name='generic.save'/>">
-        </s:if>
-        <s:else>
-             "<s:text name='mediaFileAdd.upload'/>">
-        </s:else>
-        <br><br>
-        <form>
-            <!--sec:csrfInput/-->
-            <s:hidden name="weblogId" />
-            <s:hidden name="directoryId" />
-            <s:submit id="cancelbtn" value="%{getText('generic.cancel')}" action="mediaFileView" />
-        </form>
+        <input type="button" value="<s:text name='generic.save'/>" ng-click="ctrl.saveMediaFile()"/>
+        <a href="<s:property value='%{mediaFileViewUrl}'/>&amp;directoryId={{ctrl.mediaFileData.directory.id}}">
+            <input type="button" value="<s:text name='generic.cancel'/>"/>
+        </a>
     </div>
-
 </div>

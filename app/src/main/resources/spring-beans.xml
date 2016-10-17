@@ -71,6 +71,7 @@
     <beans:bean id="mediaFileManager" class="org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl">
         <beans:constructor-arg ref="fileContentManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
+        <beans:constructor-arg ref="propertiesManager"/>
     </beans:bean>
 
     <beans:bean id="fileContentManager" class="org.apache.roller.weblogger.business.FileContentManagerImpl">

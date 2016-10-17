@@ -7,8 +7,6 @@ $(document).ready(function() {
                 name = fileControls.get(i).value;
             }
         }
-//        $("#entry_bean_name").get(0).disabled = false;
-//        $("#entry_bean_name").get(0).value = name;
     });
 
     // do not send empty file fields
@@ -67,52 +65,54 @@ mediaFileEditApp.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 mediaFileEditApp.service('fileUpload', ['$http', function ($http) {
+    var self = this;
+
     this.uploadFileToUrl = function(file, mediaData, uploadUrl){
         var fd = new FormData();
         if (file) {
             fd.append('uploadFile', file);
         }
         fd.append('mediaFileData', new Blob([JSON.stringify(mediaData)], {type: "application/json"}));
-        $http.post(uploadUrl, fd, {
+        return $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined}
         })
-        .success(function(){
-        })
-        .error(function(){
-        });
     }
 }]);
 
-mediaFileEditApp.controller('MediaFileEditController', ['$http', 'fileUpload', function MediaFileEditController($http,
-fileUpload) {
+mediaFileEditApp.controller('MediaFileEditController', ['$http', 'fileUpload', function MediaFileEditController($http, fileUpload) {
     var self = this;
-
-    this.loadMediaDirectories = function() {
-        $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/mediadirectories').then(function(response) {
-            self.mediaDirectories = response.data;
-        });
-    }
+    var mediaFileData = {};
+    var errorMsg = null;
 
     this.loadMediaFile = function() {
         $http.get(contextPath + '/tb-ui/authoring/rest/mediafile/' + mediaFileId).then(function(response) {
             self.mediaFileData = response.data;
         });
     };
-    this.loadMediaDirectories();
 
     if (mediaFileId) {
         this.loadMediaFile();
+    } else {
+        this.mediaFileData = { directory : {"id": directoryId} };
     }
 
-    this.saveMediaFile = function(){
-        var uploadUrl = contextPath;
-        if (mediaFileId) {
-          uploadUrl += '/tb-ui/authoring/rest/mediafile/' + mediaFileId;
-        } else {
-          uploadUrl += '/tb-ui/authoring/rest/mediadirectory/' + directoryId + '/files';
-        }
-        fileUpload.uploadFileToUrl(self.myMediaFile, self.mediaFileData, uploadUrl);
+    this.saveMediaFile = function() {
+        var uploadUrl = contextPath + '/tb-ui/authoring/rest/mediafiles';
+        fileUpload.uploadFileToUrl(self.myMediaFile, self.mediaFileData, uploadUrl)
+        .success(function(){
+            window.location.replace(mediaViewUrl + '&directoryId=' + self.mediaFileData.directory.id);
+        })
+        .error(function(response, status) {
+             if (status == 408) {
+               self.errorMsg = null;
+               window.location.replace(mediaViewUrl + '&directoryId=' + self.mediaFileData.directory.id);  // return;
+             }
+             if (status == 400) {
+               self.errorMsg = response;
+             }
+        });
+
     };
 
 }]);

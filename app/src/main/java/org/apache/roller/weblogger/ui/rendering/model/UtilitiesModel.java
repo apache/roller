@@ -81,7 +81,7 @@ public class UtilitiesModel implements Model {
      * Return parameterized message string
      */
     public String msg(String key, List args) {
-        return messages.getString(key, args);
+        return messages.getString(key, (args != null) ? args.toArray() : null);
     }
 
     public String autoformat(String s) {
