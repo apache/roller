@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public class JPAUserManagerImpl implements UserManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of userNames -> userIds
-    private Map<String, String> userNameToIdMap = new HashMap<String, String>();
+    private Map<String, String> userNameToIdMap = Collections.synchronizedMap(new HashMap<String, String>());
     
 
     @com.google.inject.Inject
