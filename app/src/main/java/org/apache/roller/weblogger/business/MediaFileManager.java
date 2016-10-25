@@ -25,7 +25,6 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

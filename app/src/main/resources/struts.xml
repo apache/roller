@@ -330,11 +330,13 @@
             <result name="success" type="tiles">.Templates</result>
         </action>
 
-        <action name="templateEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.TemplateEdit">
-            <result name="input" type="tiles">.TemplateEdit</result>
-            <result name="list" type="chain">templates</result>
-            <allowed-methods>delete,save</allowed-methods>
+        <action name="templateEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="actionName">templateEdit</param>
+            <param name="desiredMenu">editor</param>
+            <param name="pageTitleReal">templates.title</param>
+            <result name="success" type="tiles">.TemplateEdit</result>
+            <!--result name="list" type="chain">templates</result-->
         </action>
 
         <action name="members" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">

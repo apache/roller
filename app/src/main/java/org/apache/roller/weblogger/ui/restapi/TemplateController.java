@@ -21,11 +21,14 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -34,12 +37,13 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.Parser;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
@@ -51,11 +55,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @RestController
@@ -91,6 +97,13 @@ public class TemplateController {
 
     public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
+    }
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
@@ -170,60 +183,178 @@ public class TemplateController {
         }
     }
 
+    @RequestMapping(value = "/tb-ui/authoring/rest/template/{id}", method = RequestMethod.GET)
+    public WeblogTemplate getWeblogTemplate(@PathVariable String id, Principal p, HttpServletResponse response) {
+
+        WeblogTemplate template = weblogManager.getTemplate(id);
+
+        boolean permitted = template != null &&
+                userManager.checkWeblogRole(p.getName(), template.getWeblog().getHandle(), WeblogRole.POST);
+        if (permitted) {
+            if (themeManager.getSharedTheme(template.getWeblog().getTheme()).getTemplateByName(template.getName()) != null) {
+                template.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
+            }
+            attachRenditions(template);
+            return template;
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+    }
+
+    // need to add / at end of URL due to template name possibly having a period in it (e.g., basic-custom.css).
+    // none of other solutions (http://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-truncated)
+    // seemed to work.
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templatename/{templateName}/", method = RequestMethod.GET)
+    public WeblogTemplate getWeblogTemplateByName(@PathVariable String weblogId, @PathVariable String templateName, Principal p, HttpServletResponse response) {
+
+
+        Weblog weblog = weblogManager.getWeblog(weblogId);
+        // First-time override of a shared template
+        SharedTheme sharedTheme = themeManager.getSharedTheme(weblog.getTheme());
+        Template sharedTemplate = sharedTheme.getTemplateByName(templateName);
+
+        boolean permitted = sharedTemplate != null &&
+                userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST);
+        if (permitted) {
+            WeblogTemplate template = themeManager.createWeblogTemplate(weblog, sharedTemplate);
+            attachRenditions(template);
+            return template;
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+    }
+
+    private void attachRenditions(WeblogTemplate template) {
+        WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(RenditionType.NORMAL);
+        if (maybeTemplate != null) {
+            template.setContentsStandard(maybeTemplate.getRendition());
+        } else {
+            template.setContentsStandard("");
+        }
+
+        maybeTemplate = template.getTemplateRendition(RenditionType.MOBILE);
+        if (maybeTemplate != null) {
+            template.setContentsMobile(maybeTemplate.getRendition());
+        }
+    }
+
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", method = RequestMethod.POST)
-    public ResponseEntity addTemplate(@PathVariable String weblogId, @RequestBody WeblogTemplate incomingTemplateData,
+    public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
                                       Principal p) throws ServletException {
         try {
-            Weblog weblog = weblogManager.getWeblog(weblogId);
-            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                incomingTemplateData.setWeblog(weblog);
-                ValidationError maybeError = advancedValidate(incomingTemplateData);
+
+            boolean createNew = false;
+            WeblogTemplate templateToSave = weblogManager.getTemplate(templateData.getId());
+
+            // Check user permissions
+            User user = userManager.getEnabledUserByUserName(p.getName());
+            Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+            I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+            Weblog weblog = (templateToSave == null) ? weblogManager.getWeblog(weblogId) : templateToSave.getWeblog();
+
+            if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+
+                // create new?
+                if (templateToSave == null) {
+                    createNew = true;
+                    templateToSave = new WeblogTemplate();
+                    templateToSave.setId(Utilities.generateUUID());
+                    templateToSave.setWeblog(weblog);
+                    templateToSave.setRole(templateData.getRole());
+
+                    if (templateData.getContentsStandard() != null) {
+                        WeblogTemplateRendition wtr = new WeblogTemplateRendition(templateToSave, RenditionType.NORMAL);
+                        wtr.setParser(Parser.VELOCITY);
+                        wtr.setRendition(templateData.getContentsStandard());
+                    }
+
+                    if (templateData.getContentsMobile() != null) {
+                        WeblogTemplateRendition wtr = new WeblogTemplateRendition(templateToSave, RenditionType.MOBILE);
+                        wtr.setParser(Parser.VELOCITY);
+                        wtr.setRendition(templateData.getContentsMobile());
+                    }
+
+                } else {
+
+                    WeblogTemplateRendition maybeNormal = templateToSave.getTemplateRendition(RenditionType.NORMAL);
+                    if (maybeNormal != null) {
+                        maybeNormal.setRendition(templateData.getContentsStandard());
+                    }
+
+                    WeblogTemplateRendition maybeMobile = templateToSave.getTemplateRendition(RenditionType.MOBILE);
+                    if (maybeMobile != null) {
+                        maybeMobile.setRendition(templateData.getContentsMobile());
+                    }
+                }
+
+                // some properties relevant only for certain template roles
+                if (!templateToSave.getRole().isSingleton()) {
+                    templateToSave.setDescription(templateData.getDescription());
+                }
+
+                if (templateToSave.getRole().isAccessibleViaUrl()) {
+                    templateToSave.setRelativePath(templateData.getRelativePath());
+                }
+
+                if (Template.TemplateDerivation.SPECIFICBLOG.equals(templateToSave.getDerivation())) {
+                    templateToSave.setName(templateData.getName());
+                }
+
+                templateToSave.setLastModified(Instant.now());
+
+                ValidationError maybeError = advancedValidate(templateToSave, createNew);
                 if (maybeError != null) {
                     return ResponseEntity.badRequest().body(maybeError);
                 }
 
-                WeblogTemplate newTemplate = new WeblogTemplate();
-                newTemplate.setId(Utilities.generateUUID());
-                newTemplate.setWeblog(incomingTemplateData.getWeblog());
-                newTemplate.setRole(incomingTemplateData.getRole());
-                newTemplate.setName(incomingTemplateData.getName());
-                newTemplate.setLastModified(Instant.now());
+                // persist the template
+                weblogManager.saveTemplate(templateToSave);
 
-                // save the new Template
-                weblogManager.saveTemplate(newTemplate);
-
-                // Create weblog template codes for available types.
-                WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
-                        newTemplate, RenditionType.NORMAL);
-                if (newTemplate.getRole() != ComponentType.STYLESHEET && newTemplate.getRole() != ComponentType.JAVASCRIPT) {
-                    standardRendition.setRendition(bundle.getString("templateEdit.newTemplateContent"));
+                for (WeblogTemplateRendition wtr : templateToSave.getTemplateRenditions()) {
+                    weblogManager.saveTemplateRendition(wtr);
                 }
-                standardRendition.setParser(Parser.VELOCITY);
-                weblogManager.saveTemplateRendition(standardRendition);
 
                 // flush results to db
                 persistenceStrategy.flush();
 
-                return ResponseEntity.ok(newTemplate);
+                // notify caches
+                cacheManager.invalidate(templateToSave);
+
+                return ResponseEntity.ok(templateToSave.getId());
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return ResponseEntity.status(403).body(messages.getString("error.title.403"));
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
     }
 
-    private ValidationError advancedValidate(WeblogTemplate data) {
-        BindException be = new BindException(data, "new data object");
+    private ValidationError advancedValidate(WeblogTemplate templateToCheck, boolean initialSave) {
+        BindException be = new BindException(templateToCheck, "new data object");
 
-        WeblogTemplate template = weblogManager.getTemplateByName(data.getWeblog(), data.getName());
-        if (template != null && !template.getId().equals(data.getId())) {
+        // make sure relative path exists if required
+        if (!initialSave && templateToCheck.getRole().isAccessibleViaUrl()) {
+            if (StringUtils.isEmpty(templateToCheck.getRelativePath())) {
+                be.addError(new ObjectError("WeblogTemplate", bundle.getString("templateEdit.error.relativePathRequired")));
+            } else {
+                WeblogTemplate test = weblogManager.getTemplateByPath(templateToCheck.getWeblog(), templateToCheck.getRelativePath());
+                if (test != null && !test.getId().equals(templateToCheck.getId())) {
+                    be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.pathAlreadyExists")));
+                }
+            }
+        }
+
+        WeblogTemplate template = weblogManager.getTemplateByName(templateToCheck.getWeblog(), templateToCheck.getName());
+        if (template != null && !template.getId().equals(templateToCheck.getId())) {
             be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.nameAlreadyExists")));
         }
 
-        if (data.getRole().isSingleton()) {
-            template = weblogManager.getTemplateByAction(data.getWeblog(), data.getRole());
-            if (template != null && !template.getId().equals(data.getId())) {
+        if (templateToCheck.getRole().isSingleton()) {
+            template = weblogManager.getTemplateByAction(templateToCheck.getWeblog(), templateToCheck.getRole());
+            if (template != null && !template.getId().equals(templateToCheck.getId())) {
                 be.addError(new ObjectError("WeblogTemplate",
                         bundle.getString("templates.error.singletonActionAlreadyExists")));
             }

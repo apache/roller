@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 import java.time.Instant;
+import java.util.Map;
 
 /**
  * The Template interface represents the abstract concept of a single unit
@@ -51,6 +53,14 @@ public interface Template {
                 "template.customInternal.description"),
         @XmlEnumValue("customExternal")CUSTOM_EXTERNAL("Custom external", "text/html", false,
                 "template.customExternal.description");
+
+
+        // fromObject() allows for enum deserialization (used with front-end template saves)
+        // see https://github.com/FasterXML/jackson-databind/issues/158#issuecomment-13092598
+        @JsonCreator
+        public static ComponentType fromObject(Map<String,Object> data) { // or can use JsonNode, or custom POJO
+            return ComponentType.valueOf((String) data.get("name"));
+        }
 
         private final String readableName;
 

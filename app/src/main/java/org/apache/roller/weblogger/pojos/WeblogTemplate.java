@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -67,6 +68,7 @@ public class WeblogTemplate implements Template {
     // attributes
     private String id = null;
     private ComponentType role = null;
+    @NotBlank(message = "{templates.error.nameNull}")
     private String name = null;
     private String description = null;
     private String relativePath = null;
