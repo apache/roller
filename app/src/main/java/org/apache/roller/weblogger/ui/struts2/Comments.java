@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.ui.struts2.editor;
+package org.apache.roller.weblogger.ui.struts2;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,7 +38,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;

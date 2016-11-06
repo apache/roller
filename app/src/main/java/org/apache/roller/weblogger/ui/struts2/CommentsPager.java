@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.struts2.editor;
+package org.apache.roller.weblogger.ui.struts2;
 
 import java.util.HashMap;
 import java.util.List;

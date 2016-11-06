@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.ui.struts2.core;
+package org.apache.roller.weblogger.ui.struts2;
 
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.ui.struts2.UIAction;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs.RegistrationOption;
 
 import java.util.List;

@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.struts2.core;
+package org.apache.roller.weblogger.ui.struts2;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.business.DatabaseInstaller;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.WebloggerException;
 import org.apache.struts2.ServletActionContext;

@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.struts2.editor;
+package org.apache.roller.weblogger.ui.struts2;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MailManager;
@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;

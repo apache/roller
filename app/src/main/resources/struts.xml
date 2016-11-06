@@ -16,11 +16,9 @@
         <!-- define our own interceptors and a custom interceptor stack -->
         <interceptors>
             <interceptor name="UIActionInterceptor"
-                         class="org.apache.roller.weblogger.ui.struts2.util.UIActionInterceptor" />
+                         class="org.apache.roller.weblogger.ui.struts2.UIActionInterceptor" />
             <interceptor name="UISecurityInterceptor"
-                         class="org.apache.roller.weblogger.ui.struts2.util.UISecurityInterceptor" />
-            <interceptor name="UIActionPrepareInterceptor"
-                         class="org.apache.roller.weblogger.ui.struts2.util.UIActionPrepareInterceptor" />
+                         class="org.apache.roller.weblogger.ui.struts2.UISecurityInterceptor" />
 
             <!-- Define a custom interceptor stack for Roller so that we can
                  add in our own custom interceptors.  We basically copy the
@@ -95,38 +93,37 @@
             <result>/WEB-INF/jsps/core/logout-redirect.jsp</result>
         </action>
 
-        <action name="login" class="org.apache.roller.weblogger.ui.struts2.core.Login">
+        <action name="login" class="org.apache.roller.weblogger.ui.struts2.Login">
             <result type="tiles">.Login</result>
         </action>
 
-        <action name="register" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="register" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="pageTitleReal">newUser.addNewUser</param>
             <param name="requiredGlobalRole">NOAUTHNEEDED</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.Profile</result>
         </action>
 
-        <action name="emailResponse!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.Login">
+        <action name="emailResponse!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.Login">
             <result name="successActivate" type="tiles">.Login</result>
             <allowed-methods>activate</allowed-methods>
         </action>
 
-        <action name="profile" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="profile" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="pageTitleReal">yourProfile.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.Profile</result>
         </action>
 
-        <action name="createWeblog" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="createWeblog" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="pageTitleReal">weblogSettings.create.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 
-        <action name="menu" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="menu" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="pageTitleReal">yourWebsites.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
@@ -139,8 +136,7 @@
     <!-- Weblogger install/bootstrap actions -->
     <package name="weblogger-install" namespace="/tb-ui/install" extends="weblogger">
 
-        <action name="install"
-                class="org.apache.roller.weblogger.ui.struts2.core.Install">
+        <action name="install" class="org.apache.roller.weblogger.ui.struts2.Install">
             <param name="actionName">install</param>
             <result name="database_error" type="tiles">.DatabaseError</result>
             <result name="create_database" type="tiles">.CreateDatabase</result>
@@ -156,13 +152,12 @@
     <!-- Weblogger Admin UI (includes planet) -->
     <package name="weblogger-admin" namespace="/tb-ui/admin" extends="weblogger">
 
-        <action name="globalConfig!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.GlobalConfig">
+        <action name="globalConfig!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.GlobalConfig">
             <result name="success" type="tiles">.GlobalConfig</result>
             <allowed-methods>save</allowed-methods>
         </action>
 
-        <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">userAdmin</param>
             <param name="pageTitleReal">userAdmin.title.userAdministration</param>
             <param name="desiredMenu">admin</param>
@@ -170,7 +165,7 @@
             <result name="success" type="tiles">.UserAdmin</result>
         </action>
 
-        <action name="pingTargets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="pingTargets" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">pingTargets</param>
             <param name="pageTitleReal">pingTargets.pingTargets</param>
             <param name="desiredMenu">admin</param>
@@ -178,7 +173,7 @@
             <result name="success" type="tiles">.PingTargets</result>
         </action>
 
-        <action name="cacheInfo" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="cacheInfo" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">cacheInfo</param>
             <param name="pageTitleReal">cacheInfo.title</param>
             <param name="desiredMenu">admin</param>
@@ -186,7 +181,7 @@
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
 
-        <action name="planetEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="planetEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">planetEdit</param>
             <param name="pageTitleReal">planetSubscriptions.title</param>
             <param name="desiredMenu">admin</param>
@@ -194,7 +189,7 @@
             <result name="success" type="tiles">.PlanetEdit</result>
         </action>
 
-        <action name="planets" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="planets" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">planets</param>
             <param name="pageTitleReal">planets.pagetitle</param>
             <param name="desiredMenu">admin</param>
@@ -207,7 +202,7 @@
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">
 
-        <action name="mediaFileAdd" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="mediaFileAdd" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileAdd</param>
             <param name="pageTitle">mediaFileAdd.title</param>
             <param name="desiredMenu">editor</param>
@@ -216,7 +211,7 @@
             <result name="success" type="tiles">.MediaFileEdit</result>
         </action>
 
-        <action name="mediaFileEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="mediaFileEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileEdit</param>
             <param name="pageTitle">mediaFile.edit.title</param>
             <param name="desiredMenu">editor</param>
@@ -225,7 +220,7 @@
             <result name="success" type="tiles">.MediaFileEdit</result>
         </action>
 
-        <action name="mediaFileView" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="mediaFileView" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileView</param>
             <param name="pageTitleReal">mediaFileView.title</param>
             <param name="desiredMenu">editor</param>
@@ -234,7 +229,7 @@
             <result name="success" type="tiles">.MediaFileView</result>
         </action>
 
-        <action name="mediaFileChooser" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="mediaFileChooser" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileChooser</param>
             <param name="pageTitleReal">mediaFileImageChooser.title</param>
             <param name="desiredMenu">editor</param>
@@ -243,8 +238,7 @@
             <result name="success" type="tiles">.MediaFileChooser</result>
         </action>
 
-        <action name="entryAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
+        <action name="entryAdd!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.EntryEdit">
             <param name="actionName">entryAdd</param>
             <param name="pageTitle">weblogEdit.title.newEntry</param>
             <result name="input" type="tiles">.EntryEdit</result>
@@ -256,8 +250,7 @@
             <allowed-methods>publish,saveDraft</allowed-methods>
         </action>
 
-        <action name="entryEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
+        <action name="entryEdit!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.EntryEdit">
             <param name="actionName">entryEdit</param>
             <param name="pageTitle">weblogEdit.title.editEntry</param>
             <result name="input" type="tiles">.EntryEdit</result>
@@ -270,13 +263,11 @@
             <allowed-methods>firstSave,publish,remove,removeViaList,saveDraft</allowed-methods>
         </action>
 
-        <action name="entries"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Entries">
+        <action name="entries" class="org.apache.roller.weblogger.ui.struts2.Entries">
             <result name="list" type="tiles">.Entries</result>
         </action>
 
-        <action name="comments!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Comments">
+        <action name="comments!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.Comments">
             <result name="list" type="tiles">.Comments</result>
             <param name="actionName">comments</param>
             <param name="desiredMenu">editor</param>
@@ -288,7 +279,7 @@
             <allowed-methods>query,update,updateMade</allowed-methods>
         </action>
 
-        <action name="categories" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="categories" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
             <param name="desiredMenu">editor</param>
@@ -297,7 +288,7 @@
             <result name="success" type="tiles">.Categories</result>
         </action>
 
-        <action name="bookmarks"  class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="bookmarks"  class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">OWNER</param>
             <param name="desiredMenu">editor</param>
@@ -306,7 +297,7 @@
             <result name="success" type="tiles">.Bookmarks</result>
         </action>
 
-        <action name="weblogConfig" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="weblogConfig" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">weblogConfig</param>
             <param name="desiredMenu">editor</param>
@@ -314,7 +305,7 @@
             <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 
-        <action name="themeEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="themeEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">themeEdit</param>
             <param name="desiredMenu">editor</param>
@@ -322,7 +313,7 @@
             <result name="success" type="tiles">.ThemeEdit</result>
         </action>
 
-        <action name="templates" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="templates" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">templates</param>
             <param name="desiredMenu">editor</param>
@@ -330,16 +321,15 @@
             <result name="success" type="tiles">.Templates</result>
         </action>
 
-        <action name="templateEdit" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="templateEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">templateEdit</param>
             <param name="desiredMenu">editor</param>
             <param name="pageTitleReal">templates.title</param>
             <result name="success" type="tiles">.TemplateEdit</result>
-            <!--result name="list" type="chain">templates</result-->
         </action>
 
-        <action name="members" class="org.apache.roller.weblogger.ui.struts2.util.UIAction">
+        <action name="members" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">members</param>
             <param name="desiredMenu">editor</param>

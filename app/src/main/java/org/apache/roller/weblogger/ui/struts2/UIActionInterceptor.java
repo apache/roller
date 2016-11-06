@@ -16,12 +16,13 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.struts2.util;
+package org.apache.roller.weblogger.ui.struts2;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.struts2.UIAction;
 import org.apache.struts2.StrutsStatics;
 
 import com.opensymphony.xwork2.ActionInvocation;

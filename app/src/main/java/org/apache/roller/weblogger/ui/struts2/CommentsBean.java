@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.struts2.editor;
+package org.apache.roller.weblogger.ui.struts2;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

@@ -18,9 +18,10 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.ui.struts2.util;
+package org.apache.roller.weblogger.ui.struts2;
 
 import org.apache.roller.weblogger.WebloggerTest;
+import org.apache.roller.weblogger.ui.struts2.UIAction;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -28,7 +29,7 @@ public class UIActionTest extends WebloggerTest {
 
     @Test
     public void testCleanTextEmpty() {
-        assertEquals(null,UIAction.cleanTextKey(null));
+        assertEquals(null, UIAction.cleanTextKey(null));
         assertEquals("",UIAction.cleanTextKey(""));
         assertEquals(null,UIAction.cleanTextArg(null));
         assertEquals("",UIAction.cleanTextArg(""));
