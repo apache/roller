@@ -84,7 +84,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     // cached mapping of entryAnchors -> entryIds
-    private Map<String, String> entryAnchorToIdMap = new HashMap<>();
+    private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<>());
 
     protected JPAWeblogEntryManagerImpl(PingTargetManager mgr, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Weblog Manager");

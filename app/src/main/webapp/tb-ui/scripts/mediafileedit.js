@@ -107,8 +107,7 @@ mediaFileEditApp.controller('MediaFileEditController', ['$http', 'fileUpload', f
              if (status == 408) {
                self.errorMsg = null;
                window.location.replace(mediaViewUrl + '&directoryId=' + self.mediaFileData.directory.id);  // return;
-             }
-             if (status == 400) {
+             } else if (status == 400) {
                self.errorMsg = response;
              }
         });

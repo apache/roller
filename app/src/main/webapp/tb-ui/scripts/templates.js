@@ -75,7 +75,8 @@ templatesApp.controller('TemplatesController', ['$http', function TemplatesContr
       $('#successMessageDiv').hide();
       var newData = {
         "name" : this.newTemplateName,
-        "role" : this.selectedRole
+        "role" : this.selectedRole,
+        "contentsStandard" : ""
       };
       $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates', JSON.stringify(newData)).then(
         function(response) {

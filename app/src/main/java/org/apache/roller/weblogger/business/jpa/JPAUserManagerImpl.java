@@ -39,6 +39,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     // cached mapping of userNames -> userIds
-    private Map<String, String> userNameToIdMap = new HashMap<>();
+    private Map<String, String> userNameToIdMap = Collections.synchronizedMap(new HashMap<>());
 
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
         this.strategy = strat;

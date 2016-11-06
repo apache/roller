@@ -19,187 +19,107 @@
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
-
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
 <script>
-  $(function() {
-    $(".delete-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete').dialog('open');
-    });
-
-    $("#confirm-delete").dialog({
-      autoOpen: false,
-      resizable: true,
-      height:200,
-      modal: true,
-      buttons: {
-        "<s:text name='generic.delete'/>": function() {
-          document.templateEdit.action = "<s:url action='templateEdit!delete' />";
-          document.templateEdit.submit();
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-
-    $( "#template-code-tabs" ).tabs();
-  });
+    var contextPath = "${pageContext.request.contextPath}";
+    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var templateId = "<s:property value='%{#parameters.templateId}'/>";
+    var templateName = "<s:property value='%{#parameters.templateName}'/>";
+    var weblogUrl = "<s:property value='actionWeblog.absoluteURL' />";
+    var msg = {
+        deleteLabel: "<fmt:message key='generic.delete'/>",
+        cancelLabel: "<fmt:message key='generic.cancel'/>"
+    };
 </script>
+<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/templateedit.js'/>"></script>
 
 <p class="subtitle">
-   <s:text name="templateEdit.subtitle" >
-       <s:param value="bean.name" />
-       <s:param value="actionWeblog.handle" />
-   </s:text>
+   <fmt:message key="templateEdit.subtitle"/>
 </p>
 
-<s:if test="template.required">
-    <p class="pagetip"><s:text name="templateEdit.tip.required" /></p>
-</s:if>
-<s:else>
-    <p class="pagetip"><s:text name="templateEdit.tip" /></p>
-</s:else>
+<c:choose>
+    <c:when test="template.required">
+        <p class="pagetip"><fmt:message key="templateEdit.tip.required" /></p>
+    </c:when>
+    <c:otherwise>
+        <p class="pagetip"><fmt:message key="templateEdit.tip" /></p>
+    </c:otherwise>
+</c:choose>
                 
-<s:form action="templateEdit!save">
-    <sec:csrfInput/>
-    <s:hidden name="weblogId" />
-    <s:hidden name="bean.id"/>
-    <s:hidden name="bean.derivation"/>
+<div ng-app="tightblogApp" ng-controller="TemplateEditController as ctrl">
 
-    <%-- ================================================================== --%>
-    <%-- Name, link and description: disabled when page is a required page --%>
-    
+    <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj">
+      <b>{{ctrl.errorObj.errorMessage}}</b>
+      <ul>
+         <li ng-repeat="em in ctrl.errorObj.errors">{{em}}</li>
+      </ul>
+    </div>
+
     <table cellspacing="5">
         <tr>
-            <td class="label"><s:text name="generic.name" />&nbsp;</td>
+            <td class="label"><fmt:message key="generic.name"/>&nbsp;</td>
             <td class="field">
-                <s:if test="nameChangeable">
-                    <s:textfield name="bean.name" size="50" maxlength="255"/>
-                </s:if>
-                <s:else>
-                    <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
-                </s:else>
+                <input id="name" type="text" ng-model="ctrl.templateData.name" size="50" maxlength="255" style="background: #e5e5e5" ng-readonly="ctrl.templateData.derivation != 'Blog-Only'"/>
             </td>
         </tr>
         
         <tr>
-            <td class="label"><s:text name="templateEdit.role" />&nbsp;</td>
+            <td class="label"><fmt:message key="templateEdit.role" />&nbsp;</td>
             <td class="field">
-                 <s:textfield name="bean.role" size="50" readonly="true" cssStyle="background: #e5e5e5" />
+                 <input id="role" type="text" ng-model="ctrl.templateData.role.readableName" size="50" readonly/>
             </td>
         </tr>
         
-       <s:if test="bean.role.accessibleViaUrl">
-            <tr>
-                <td class="label" valign="top"><s:text name="templateEdit.path" />&nbsp;</td>
-                <td class="field">
-                    <s:textfield name="bean.relativePath" size="50" maxlength="255" onkeyup="updatePageURLDisplay()" />
-                    <br/>
-                    <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red"><s:property value="bean.relativePath" /></span>
-                    <s:if test="template.relativePath != null">
-                        [<a id="launchLink" onClick="launchPage()"><s:text name="templateEdit.launch" /></a>]
-                    </s:if>
-                </td>
-            </tr>
-        </s:if>
-
-        <s:if test="!template.role.singleton">
-            <tr>
-                <td class="label" valign="top" style="padding-top: 4px">
-                    <s:text name="generic.description"/>&nbsp;</td>
-                <td class="field">
-                    <s:textarea name="bean.description" cols="50" rows="2" maxlength="255"/>
-                </td>
-            </tr>
-        </s:if>
-
-        <tr>
-            <td class="label"><s:text name="templateEdit.templateLanguage" />&nbsp;</td>
+        <tr ng-if="ctrl.templateData.role.accessibleViaUrl">
+            <td class="label" valign="top"><fmt:message key="templateEdit.path" />&nbsp;</td>
             <td class="field">
-                <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
+                <input id="path" type="text" ng-model="ctrl.templateData.relativePath" size="50" maxlength="255"/>
+                <br/>
+                <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red">{{ctrl.templateData.relativePath}}</span>
+                <span ng-if="ctrl.lastSavedRelativePath != null">
+                    [<a id="launchLink" ng-click="ctrl.launchPage()"><fmt:message key="templateEdit.launch" /></a>]
+                </span>
+            </td>
+        </tr>
+
+        <tr ng-if="!ctrl.template.role.singleton">
+            <td class="label" valign="top" style="padding-top: 4px">
+                <fmt:message key="generic.description"/>&nbsp;
+            </td>
+            <td class="field">
+                <textarea id="description" type="text" ng-model="ctrl.templateData.description" cols="50" rows="2"></textarea>
             </td>
         </tr>
 
     </table>
 
-    <%-- ================================================================== --%>
-    <%-- Tabs for each of the two content areas: Standard and Mobile --%>
-
-    <div id="template-code-tabs">
-    <ul>
-        <li class="selected"><a href="#tabStandard"><em>Standard</em></a></li>
-        <s:if test="bean.contentsMobile != null">
-            <li><a href="#tabMobile"><em>Mobile</em></a></li>
-        </s:if>
-    </ul>
-    <div>
-        <div id="tabStandard">
-            <s:textarea name="bean.contentsStandard" cols="80" rows="30" cssStyle="width:100%" />
-        </div>
-        <s:if test="bean.contentsMobile != null">
-            <div id="tabMobile">
-                <s:textarea name="bean.contentsMobile" cols="80" rows="30" cssStyle="width:100%" />
+    <div data-template-tabs>
+        <ul>
+            <li><a href="#tabStandard"><em>Standard</em></a></li>
+            <li ng-show="ctrl.templateData.contentsMobile != null">
+                <a href="#tabMobile"><em>Mobile</em></a>
+            </li>
+        </ul>
+        <div>
+            <div id="tabStandard">
+                <textarea ng-model="ctrl.templateData.contentsStandard" rows="30" style="width:100%"></textarea>
             </div>
-        </s:if>
+            <div id="tabMobile" ng-show="ctrl.templateData.contentsMobile != null">
+                <textarea ng-model="ctrl.templateData.contentsMobile" rows="30" style="width:100%"></textarea>
+            </div>
+        </div>
     </div>
-    </div>
-
-    <%-- ================================================================== --%>
-    <%-- Save, Close and Resize text area buttons--%>
 
     <table style="width:100%">
         <tr>
             <td>
-                <s:submit value="%{getText('generic.save')}" />
-                <input type="button" value='<s:text name="generic.cancel"/>'
-                    onclick="window.location='<s:url action="templates"><s:param name="weblogId" value="%{weblogId}"/></s:url>'" />
-                <s:if test="template != null && template.id != null">
-                    <s:submit class="delete-link" value="%{getText('templateEdit.delete')}"/>
-                </s:if>
+                <input ng-click="ctrl.saveTemplate()" type="button" value="<fmt:message key='generic.save'/>">
+                <input type="button" value="<fmt:message key='generic.cancel'/>"
+                    onclick="window.location='<s:url action="templates"><s:param name="weblogId" value="%{weblogId}"/></s:url>'">
             </td>
         </tr>
     </table>
 
-</s:form>
-
-<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="templateEdit.confirmDelete"/></p>
 </div>
-
-<script>
-var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';
-var originalLink = '<s:property value="bean.relativePath" />';
-var type = '<s:property value="bean.type" /> ' ;
-
-// Update page URL when user changes link
-function updatePageURLDisplay() {
-    var previewSpan = document.getElementById('linkPreview');
-    var n1 = previewSpan.firstChild;
-    var n2 = document.createTextNode(document.getElementById('templateEdit_bean_relativePath').value);
-    if (n1 == null) {
-        previewSpan.appendChild(n2);
-    } else {
-        previewSpan.replaceChild(n2, n1);
-    }           
-}
-// Don't launch page if user has changed link, it'll be a 404
-function launchPage() {
-    if (originalLink != document.getElementById('templateEdit_bean_relativePath').value) {
-        window.alert("Link changed, please save before launching");
-    } else {
-        window.open(weblogURL + 'page/' + originalLink, '_blank');
-    }
-}
-</script>
-
- <script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'></s:url>"></script>
- <script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'></s:url>"></script>
-
- <script>
-     $(function() {
-         $( "#template-code-tabs" ).tabs();
-     });
- </script>

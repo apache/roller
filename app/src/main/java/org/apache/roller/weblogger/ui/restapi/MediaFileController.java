@@ -124,7 +124,7 @@ public class MediaFileController {
 
         boolean newMediaFile = (mediaFileData.getId() == null);
 
-        // Does user have ability to update files in the given directory
+        // Check user permissions
         User user = userManager.getEnabledUserByUserName(p.getName());
         Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
         I18nMessages messages = I18nMessages.getMessages(userLocale);
