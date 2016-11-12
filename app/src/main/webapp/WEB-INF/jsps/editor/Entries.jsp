@@ -33,7 +33,7 @@
       height:170,
       modal: true,
       buttons: {
-        "<s:text name='generic.delete'/>": function() {
+        "<fmt:message key='generic.delete'/>": function() {
           document.location.href='<s:url action="entryEdit!removeViaList" />?weblogId=<s:property value="weblogId"/>&entryId='
             + encodeURIComponent($(this).data('entryId'));
           $( this ).dialog( "close" );
@@ -57,8 +57,120 @@
     </s:text>
 </p>
 <p class="pagetip">
-    <s:text name="weblogEntryQuery.tip" />
+    <fmt:message key="weblogEntryQuery.tip" />
 </p>
+
+<div class="sidebarFade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+
+            <div class="sidebarInner">
+
+                <h3><fmt:message key="weblogEntryQuery.sidebarTitle" /></h3>
+                <hr size="1" noshade="noshade" />
+
+                <p><fmt:message key="weblogEntryQuery.sidebarDescription" /></p>
+
+                <s:form action="entries">
+                    <sec:csrfInput/>
+                    <s:hidden name="weblogId" />
+
+                    <%-- ========================================================= --%>
+                    <%-- filter by category --%>
+
+                    <div class="sideformrow">
+                        <label for="categoryId" class="sideformrow">
+                        <fmt:message key="weblogEntryQuery.label.category" /></label>
+                        <s:select name="bean.categoryName" list="categories" listKey="left" listValue="right" size="1" />
+                    </div>
+                    <br />
+                    <br />
+
+                    <%-- ========================================================= --%>
+                    <%-- filter by date --%>
+
+                    <div class="sideformrow">
+                        <label for="startDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.startDate" />:</label>
+                        <script>
+                        $(function() {
+                            $( "#entries_startDateString" ).datepicker({
+                                showOn: "button",
+                                buttonImage: "../../images/calendar.png",
+                                buttonImageOnly: true,
+                                changeMonth: true,
+                                changeYear: true
+                            });
+                        });
+                        </script>
+                        <s:textfield name="startDateString" size="12" readonly="true"/>
+                    </div>
+
+                    <div class="sideformrow">
+                        <label for="endDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.endDate" />:</label>
+                        <script>
+                        $(function() {
+                            $( "#entries_endDateString" ).datepicker({
+                                showOn: "button",
+                                buttonImage: "../../images/calendar.png",
+                                buttonImageOnly: true,
+                                changeMonth: true,
+                                changeYear: true
+                            });
+                        });
+                        </script>
+                        <s:textfield name="endDateString" size="12" readonly="true"/>
+                    </div>
+                    <br />
+                    <br />
+
+                    <%-- ========================================================= --%>
+                    <%-- filter by status --%>
+
+                    <div class="sideformrow">
+                        <label for="status" class="sideformrow">
+                            <fmt:message key="weblogEntryQuery.label.status" />:
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                        </label>
+                        <div>
+                            <s:radio theme="strutsoverride" name="bean.status" list="statusOptions" listKey="left" listValue="right" />
+                        </div>
+                    </div>
+
+                    <%-- ========================================================= --%>
+                    <%-- sort by --%>
+
+                    <div class="sideformrow">
+                        <label for="status" class="sideformrow">
+                            <fmt:message key="weblogEntryQuery.label.sortby" />:
+                            <br />
+                            <br />
+                        </label>
+                        <div>
+                            <s:radio theme="strutsoverride" name="bean.sortBy" list="sortByOptions" listKey="left" listValue="right" />
+                        </div>
+                    </div>
+
+                    <%-- ========================================================= --%>
+                    <%-- search button --%>
+
+                    <br />
+
+                    <s:submit value="%{getText('weblogEntryQuery.button.query')}" />
+
+                </s:form>
+
+                <br />
+                <br />
+            </div> <!-- sidebarInner -->
+
+        </div>
+    </div>
+</div>
 
 
 <%-- ============================================================= --%>
@@ -96,9 +208,9 @@
         <br /><center>
             &laquo;
             <a href='<s:property value="pager.prevLink" />'>
-            <s:text name="weblogEntryQuery.prev" /></a>
+            <fmt:message key="weblogEntryQuery.prev" /></a>
             | <a href='<s:property value="pager.nextLink" />'>
-            <s:text name="weblogEntryQuery.next" /></a>
+            <fmt:message key="weblogEntryQuery.next" /></a>
             &raquo;
         </center><br />
     </s:if>
@@ -106,17 +218,17 @@
         <br /><center>
             &laquo;
             <a href='<s:property value="pager.prevLink" />'>
-            <s:text name="weblogEntryQuery.prev" /></a>
-            | <s:text name="weblogEntryQuery.next" />
+            <fmt:message key="weblogEntryQuery.prev" /></a>
+            | <fmt:message key="weblogEntryQuery.next" />
             &raquo;
         </center><br />
     </s:elseif>
     <s:elseif test="pager.nextLink != null">
         <br /><center>
             &laquo;
-            <s:text name="weblogEntryQuery.prev" />
+            <fmt:message key="weblogEntryQuery.prev" />
             | <a class="" href='<s:property value="pager.nextLink" />'>
-            <s:text name="weblogEntryQuery.next" /></a>
+            <fmt:message key="weblogEntryQuery.next" /></a>
             &raquo;
         </center><br />
     </s:elseif>
@@ -131,20 +243,20 @@
 
 <p>
     <span class="draftEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <s:text name="weblogEntryQuery.draft" />&nbsp;&nbsp;
+    <fmt:message key="weblogEntryQuery.draft" />&nbsp;&nbsp;
     <span class="pendingEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <s:text name="weblogEntryQuery.pending" />&nbsp;&nbsp;
+    <fmt:message key="weblogEntryQuery.pending" />&nbsp;&nbsp;
     <span class="scheduledEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <s:text name="weblogEntryQuery.scheduled" />&nbsp;&nbsp;
+    <fmt:message key="weblogEntryQuery.scheduled" />&nbsp;&nbsp;
 </p>
 
 <table class="rollertable" width="100%">
 
 <tr>
-    <th width="5%"><s:text name="weblogEntryQuery.pubTime" /></th>
-    <th width="5%"><s:text name="weblogEntryQuery.updateTime" /></th>
-    <th><s:text name="weblogEntryQuery.title" /></th>
-    <th width="5%"><s:text name="weblogEntryQuery.category" /></th>
+    <th width="5%"><fmt:message key="weblogEntryQuery.pubTime" /></th>
+    <th width="5%"><fmt:message key="weblogEntryQuery.updateTime" /></th>
+    <th><fmt:message key="weblogEntryQuery.title" /></th>
+    <th width="5%"><fmt:message key="weblogEntryQuery.category" /></th>
     <th width="5%"></th>
     <th width="5%"></th>
     <th width="5%"></th>
@@ -198,19 +310,19 @@
             <s:param name="weblogId" value="%{actionWeblog.id}" />
             <s:param name="entryId" value="#post.id" />
         </s:url>
-        <s:a href="%{editUrl}"><s:text name="generic.edit" /></s:a>
+        <s:a href="%{editUrl}"><fmt:message key="generic.edit" /></s:a>
     </td>
 
     <td>
-        <a href="#" class="delete-link" data-entryId="<s:property value='#post.id'/>"><s:text name="generic.delete" /></a>
+        <a href="#" class="delete-link" data-entryId="<s:property value='#post.id'/>"><fmt:message key="generic.delete" /></a>
     </td>
 
     </tr>
 </s:iterator>
 </table>
 
-<div id="confirm-delete" title="<s:text name='weblogEdit.deleteEntry'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="weblogEntryRemove.areYouSure"/></p>
+<div id="confirm-delete" title="<fmt:message key='weblogEdit.deleteEntry'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="weblogEntryRemove.areYouSure"/></p>
 </div>
 
 <s:if test="pager.items.isEmpty">

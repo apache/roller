@@ -671,7 +671,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(cat.getWeblog());
-        wesc.setCatName(cat.getName());
+        wesc.setCategoryName(cat.getName());
 
         if (weblogEntryManager.getWeblogEntries(wesc).size() > 0) {
             throw new IllegalStateException("Cannot remove category with entries");
@@ -688,7 +688,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // get all entries in category and subcats
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(srcCat.getWeblog());
-        wesc.setCatName(srcCat.getName());
+        wesc.setCategoryName(srcCat.getName());
         List<WeblogEntry> results = weblogEntryManager.getWeblogEntries(wesc);
 
         // Loop through entries in src cat, assign them to dest cat

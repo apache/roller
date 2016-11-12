@@ -193,7 +193,7 @@ public class WeblogEntryTest extends WebloggerTest {
         // get all (non-future) PUBLISHED entries in category 
         WeblogEntrySearchCriteria wesc9 = new WeblogEntrySearchCriteria();
         wesc9.setWeblog(testWeblog);
-        wesc9.setCatName("General");
+        wesc9.setCategoryName("General");
         wesc9.setStatus(PubStatus.PUBLISHED);
         entries = weblogEntryManager.getWeblogEntries(wesc9);
         assertNotNull(entries);
@@ -228,7 +228,7 @@ public class WeblogEntryTest extends WebloggerTest {
         // get all entries in category
         WeblogEntrySearchCriteria wesc5 = new WeblogEntrySearchCriteria();
         wesc5.setWeblog(testWeblog);
-        wesc5.setCatName("General");
+        wesc5.setCategoryName("General");
         entries = weblogEntryManager.getWeblogEntries(wesc5);
         assertNotNull(entries);
         assertEquals(5, entries.size());
