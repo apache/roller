@@ -52,8 +52,8 @@ public class EntriesPager {
     public String getNextLink() {
         if (isMoreItems()) {
             int nextPage = pageNum + 1;
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("bean.page", "" + nextPage);
+            Map<String, String> params = new HashMap<>();
+            params.put("page", "" + nextPage);
             return createURL(baseUrl, params);
         }
         return null;
@@ -62,8 +62,8 @@ public class EntriesPager {
     public String getPrevLink() {
         if (pageNum > 0) {
             int prevPage = pageNum - 1;
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("bean.page", "" + prevPage);
+            Map<String, String> params = new HashMap<>();
+            params.put("page", "" + prevPage);
             return createURL(baseUrl, params);
         }
         return null;

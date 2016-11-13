@@ -261,8 +261,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(" AND e.pubTime <= ?").append(size);
         }
 
-        if (criteria.getCatName() != null) {
-            params.add(size++, criteria.getCatName());
+        if (!StringUtils.isEmpty(criteria.getCategoryName())) {
+            params.add(size++, criteria.getCategoryName());
             queryString.append(" AND e.category.name = ?").append(size);
         }
 

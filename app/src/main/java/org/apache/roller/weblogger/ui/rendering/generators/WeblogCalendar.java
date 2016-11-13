@@ -102,7 +102,7 @@ public class WeblogCalendar {
         wesc.setWeblog(weblog);
         wesc.setStartDate(startTime.atZone(ZoneId.systemDefault()).toInstant());
         wesc.setEndDate(endTime.atZone(ZoneId.systemDefault()).toInstant());
-        wesc.setCatName(cat);
+        wesc.setCategoryName(cat);
         wesc.setStatus(PubStatus.PUBLISHED);
         loadWeblogEntries(wesc);
     }
@@ -112,7 +112,7 @@ public class WeblogCalendar {
 
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(weblog);
-        wesc.setCatName(cat);
+        wesc.setCategoryName(cat);
         wesc.setStatus(PubStatus.PUBLISHED);
         wesc.setMaxResults(1);
         if (succeedingMonth) {

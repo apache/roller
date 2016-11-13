@@ -27,11 +27,10 @@
     <definition name=".tiles-tabbedpage" template="/WEB-INF/jsps/tiles/tiles-tabbedpage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
         <put-attribute name="menu"         value="/WEB-INF/jsps/tiles/menu.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
-        <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
         <put-attribute name="angularString" value="" />
     </definition>
@@ -50,7 +49,6 @@
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
-        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
@@ -134,7 +132,6 @@
     <!-- weblog editor pages (and associates) -->
     <definition name=".MediaFileEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".MediaFileChooser" extends=".tiles-popuppage" >
@@ -144,7 +141,6 @@
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".EntryEdit" extends=".tiles-tabbedpage" >
@@ -155,8 +151,6 @@
 
     <definition name=".Entries" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Entries.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntriesSidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
     <definition name=".Comments" extends=".tiles-tabbedpage" >
@@ -167,12 +161,10 @@
 
     <definition name=".Categories" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
     <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
     <definition name=".WeblogConfig" extends=".tiles-tabbedpage" >
@@ -185,17 +177,14 @@
 
     <definition name=".Templates" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Templates.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".TemplateEdit" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateEdit.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".Members" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Members.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
 </tiles-definitions>

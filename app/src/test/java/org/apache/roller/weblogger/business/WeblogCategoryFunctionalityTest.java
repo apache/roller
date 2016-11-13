@@ -166,7 +166,7 @@ public class WeblogCategoryFunctionalityTest extends WebloggerTest {
     private List<WeblogEntry> retrieveWeblogEntries(WeblogCategory category, boolean publishedOnly) {
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(category.getWeblog());
-        wesc.setCatName(category.getName());
+        wesc.setCategoryName(category.getName());
         if (publishedOnly) {
             wesc.setStatus(PubStatus.PUBLISHED);
         }

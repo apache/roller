@@ -238,7 +238,7 @@ public class PageModel implements Model {
         }
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(pageRequest.getWeblog());
-        wesc.setCatName(cat);
+        wesc.setCategoryName(cat);
         wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         wesc.setMaxResults(length);
         recentEntries = weblogEntryManager.getWeblogEntries(wesc);

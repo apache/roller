@@ -285,7 +285,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 if (endTime != null) {
                     wesc.setEndDate(endTime.atZone(ZoneId.systemDefault()).toInstant());
                 }
-                wesc.setCatName(catName);
+                wesc.setCategoryName(catName);
                 if (tag != null) {
                     wesc.setTags(Collections.singleton(tag));
                 }

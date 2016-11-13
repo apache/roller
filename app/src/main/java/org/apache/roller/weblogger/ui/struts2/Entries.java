@@ -65,7 +65,12 @@ public class Entries extends UIAction {
     private static final int COUNT = 30;
 
     // bean for managing submitted data
-    private EntriesBean bean = new EntriesBean();
+    private WeblogEntrySearchCriteria bean = new WeblogEntrySearchCriteria();
+
+    // other search criteria that needs conversion before it can be placed in a WeblogEntrySearchCriteria instance
+    private String endDateString = null;
+    private String startDateString = null;
+    private int page = 0;
 
     // pager for the entries we are viewing
     private EntriesPager pager = null;
@@ -95,33 +100,29 @@ public class Entries extends UIAction {
     public String execute() {
 
         if (log.isDebugEnabled()) {
-            log.debug("entries bean is ...\n" + getBean().toString());
+            log.debug("entries bean is ...\n" + bean.toString());
         }
 
         List<WeblogEntry> entries;
         boolean hasMore = false;
-        String status = getBean().getStatus();
 
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(getActionWeblog());
-        if (getBean().getStartDateString() != null) {
-            LocalDate ld = LocalDate.parse(getBean().getStartDateString(), searchDateFormatter);
-            wesc.setStartDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        bean.setWeblog(getActionWeblog());
+        if (!StringUtils.isEmpty(startDateString)) {
+            LocalDate ld = LocalDate.parse(startDateString, searchDateFormatter);
+            bean.setStartDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        } else {
+            bean.setStartDate(null);
         }
-        if (getBean().getEndDateString() != null) {
-            LocalDate ld = LocalDate.parse(getBean().getEndDateString(), searchDateFormatter).plusDays(1);
-            wesc.setEndDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        if (!StringUtils.isEmpty(endDateString)) {
+            LocalDate ld = LocalDate.parse(endDateString, searchDateFormatter).plusDays(1);
+            bean.setEndDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        } else {
+            bean.setEndDate(null);
         }
-        if (!"".equals(getBean().getCategoryName())) {
-            wesc.setCatName(getBean().getCategoryName());
-        }
-        wesc.setTags(getBean().getTags());
-        wesc.setStatus("ALL".equals(status) ? null : WeblogEntry.PubStatus.valueOf(status));
-        wesc.setText(getBean().getText());
-        wesc.setSortBy(getBean().getSortBy());
-        wesc.setOffset(getBean().getPage() * COUNT);
-        wesc.setMaxResults(COUNT + 1);
-        List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(wesc);
+
+        bean.setOffset(page * COUNT);
+        bean.setMaxResults(COUNT + 1);
+        List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(bean);
         entries = new ArrayList<>();
         entries.addAll(rawEntries);
         if (entries.size() > 0) {
@@ -138,7 +139,7 @@ public class Entries extends UIAction {
 
         // build entries pager
         String baseUrl = buildBaseUrl();
-        setPager(new EntriesPager(baseUrl, getBean().getPage(), entries, hasMore));
+        setPager(new EntriesPager(baseUrl, page, entries, hasMore));
 
         return LIST;
     }
@@ -148,26 +149,20 @@ public class Entries extends UIAction {
 
         Map<String, String> params = new HashMap<>();
 
-        if (!StringUtils.isEmpty(getBean().getCategoryName())) {
-            params.put("bean.categoryPath", getBean().getCategoryName());
+        if (!StringUtils.isEmpty(bean.getCategoryName())) {
+            params.put("bean.categoryPath", bean.getCategoryName());
         }
-        if (!StringUtils.isEmpty(getBean().getTagsAsString())) {
-            params.put("bean.tagsAsString", getBean().getTagsAsString());
+        if (!StringUtils.isEmpty(startDateString)) {
+            params.put("startDateString", startDateString);
         }
-        if (!StringUtils.isEmpty(getBean().getText())) {
-            params.put("bean.text", getBean().getText());
+        if (!StringUtils.isEmpty(endDateString)) {
+            params.put("endDateString", endDateString);
         }
-        if (!StringUtils.isEmpty(getBean().getStartDateString())) {
-            params.put("bean.startDateString", getBean().getStartDateString());
+        if (bean.getStatus() != null) {
+            params.put("bean.status", bean.getStatus().name());
         }
-        if (!StringUtils.isEmpty(getBean().getEndDateString())) {
-            params.put("bean.endDateString", getBean().getEndDateString());
-        }
-        if (!StringUtils.isEmpty(getBean().getStatus())) {
-            params.put("bean.status", getBean().getStatus());
-        }
-        if (getBean().getSortBy() != null) {
-            params.put("bean.sortBy", getBean().getSortBy().toString());
+        if (bean.getSortBy() != null) {
+            params.put("bean.sortBy", bean.getSortBy().name());
         }
 
         return urlStrategy.getActionURL("entries", "/tb-ui/authoring", getActionWeblog(),
@@ -195,7 +190,7 @@ public class Entries extends UIAction {
 
     public List<Pair<String, String>> getStatusOptions() {
         List<Pair<String, String>> opts = new ArrayList<>();
-        opts.add(Pair.of("ALL", getText("weblogEntryQuery.label.allEntries")));
+        opts.add(Pair.of("", getText("weblogEntryQuery.label.allEntries")));
         opts.add(Pair.of("DRAFT", getText("weblogEntryQuery.label.draftOnly")));
         opts.add(Pair.of("PUBLISHED", getText("weblogEntryQuery.label.publishedOnly")));
         opts.add(Pair.of("PENDING", getText("weblogEntryQuery.label.pendingOnly")));
@@ -203,11 +198,11 @@ public class Entries extends UIAction {
         return opts;
     }
 
-    public EntriesBean getBean() {
+    public WeblogEntrySearchCriteria getBean() {
         return bean;
     }
 
-    public void setBean(EntriesBean bean) {
+    public void setBean(WeblogEntrySearchCriteria bean) {
         this.bean = bean;
     }
 
@@ -235,4 +230,27 @@ public class Entries extends UIAction {
         this.pager = pager;
     }
 
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public String getEndDateString() {
+        return endDateString;
+    }
+
+    public void setEndDateString(String endDateString) {
+        this.endDateString = endDateString;
+    }
+
+    public String getStartDateString() {
+        return startDateString;
+    }
+
+    public void setStartDateString(String startDateString) {
+        this.startDateString = startDateString;
+    }
 }

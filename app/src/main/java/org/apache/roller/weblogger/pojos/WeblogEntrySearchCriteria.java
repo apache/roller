@@ -37,7 +37,7 @@ public class WeblogEntrySearchCriteria {
     // End date or null for no end date.
     private Instant endDate;
     // Category name or null for all categories.
-    private String catName;
+    private String categoryName;
     // If provided, set of tags to search blog entries for, just one needs to match to retrieve entry
     private Set<String> tags;
     // Publication status of the weblog entry (DRAFT, PUBLISHED, etc.)
@@ -86,12 +86,12 @@ public class WeblogEntrySearchCriteria {
         this.endDate = endDate;
     }
 
-    public String getCatName() {
-        return catName;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCatName(String catName) {
-        this.catName = catName;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public Set<String> getTags() {

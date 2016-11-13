@@ -54,7 +54,7 @@
             
             <div id="rightcontent_wrap">
                 <div id="rightcontent"> 
-                    <tiles:insertAttribute name="sidebar" />
+                    <tiles:insertAttribute name="sidebar" ignore="true" />
                 </div>
             </div>
         </div>
