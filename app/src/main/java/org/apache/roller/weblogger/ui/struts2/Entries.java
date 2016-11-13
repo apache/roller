@@ -109,17 +109,12 @@ public class Entries extends UIAction {
         bean.setWeblog(getActionWeblog());
         if (!StringUtils.isEmpty(startDateString)) {
             LocalDate ld = LocalDate.parse(startDateString, searchDateFormatter);
-            bean.setStartDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-        } else {
-            bean.setStartDate(null);
+            bean.setStartDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
         }
         if (!StringUtils.isEmpty(endDateString)) {
             LocalDate ld = LocalDate.parse(endDateString, searchDateFormatter).plusDays(1);
-            bean.setEndDate(ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-        } else {
-            bean.setEndDate(null);
+            bean.setEndDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
         }
-
         bean.setOffset(page * COUNT);
         bean.setMaxResults(COUNT + 1);
         List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(bean);
