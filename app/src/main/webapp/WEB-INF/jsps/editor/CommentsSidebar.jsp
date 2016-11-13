@@ -40,8 +40,8 @@
     <s:hidden name="weblogId" />
     
     <div class="sideformrow">
-        <label for="searchString" class="sideformrow"><s:text name="commentManagement.searchString" />:</label>   
-        <s:textfield name="bean.searchString" size="15" onBlur="this.value=this.value.trim()"/>
+        <label for="searchText" class="sideformrow"><s:text name="commentManagement.searchString" />:</label>
+        <s:textfield name="bean.searchText" size="15" onBlur="this.value=this.value.trim()"/>
     </div>
     <br />
     <br />
@@ -50,7 +50,7 @@
         <label for="startDateString" class="sideformrow"><s:text name="commentManagement.startDate" />:</label>
             <script>
             $(function() {
-                $( "#commentsQuery_bean_startDateString" ).datepicker({
+                $( "#commentsQuery_startDateString" ).datepicker({
                     showOn: "button",
                     buttonImage: "../../images/calendar.png",
                     buttonImageOnly: true,
@@ -59,14 +59,14 @@
                 });
             });
             </script>
-            <s:textfield name="bean.startDateString" size="12" readonly="true"/>
+            <s:textfield name="startDateString" size="12" readonly="true"/>
     </div>
         
     <div class="sideformrow">
         <label for="endDateString" class="sideformrow"><s:text name="commentManagement.endDate" />:</label>
             <script>
             $(function() {
-                $( "#commentsQuery_bean_endDateString" ).datepicker({
+                $( "#commentsQuery_endDateString" ).datepicker({
                     showOn: "button",
                     buttonImage: "../../images/calendar.png",
                     buttonImageOnly: true,
@@ -75,13 +75,13 @@
                 });
             });
             </script>
-            <s:textfield name="bean.endDateString" size="12" readonly="true"/>
+            <s:textfield name="endDateString" size="12" readonly="true"/>
     </div>
     <br />
     <br />
   
     <div class="sideformrow">
-        <label for="approvedString" class="sideformrow">
+        <label for="status" class="sideformrow">
             <s:text name="commentManagement.pendingStatus" />
             <br />
             <br />
@@ -90,7 +90,7 @@
             <br />
         </label> 
         <div>
-            <s:radio theme="strutsoverride" name="bean.approvedString" list="commentStatusOptions" listKey="left" listValue="right" />
+            <s:radio theme="strutsoverride" name="bean.status" list="commentStatusOptions" listKey="left" listValue="right" />
         </div>
     </div> 
     <br />

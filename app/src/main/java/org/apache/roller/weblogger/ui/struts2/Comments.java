@@ -133,7 +133,20 @@ public class Comments extends UIAction {
     private static final int COUNT = 30;
 
     // bean for managing submitted data
-    private CommentsBean bean = new CommentsBean();
+    private CommentSearchCriteria bean = new CommentSearchCriteria();
+
+    // other search criteria that needs conversion before it can be placed in a CommentSearchCriteria instance
+    private String endDateString = null;
+    private String startDateString = null;
+    private String entryId = null;
+    private int page = 0;
+
+    private String[] approvedComments = new String[0];
+    private String[] spamComments = new String[0];
+    private String[] deleteComments = new String[0];
+
+    // Limit updates to just this set of comma-separated IDs
+    private String ids = null;
 
     // pager for the comments we are viewing
     private CommentsPager pager = null;
@@ -160,27 +173,28 @@ public class Comments extends UIAction {
         boolean hasMore = false;
 
         // lookup weblog entry if necessary
-        if (!StringUtils.isEmpty(getBean().getEntryId())) {
-            setQueryEntry(weblogEntryManager.getWeblogEntry(getBean().getEntryId()));
+        if (!StringUtils.isEmpty(entryId)) {
+            setQueryEntry(weblogEntryManager.getWeblogEntry(entryId));
         }
 
-        CommentSearchCriteria csc = new CommentSearchCriteria();
-        csc.setWeblog(getActionWeblog());
-        csc.setEntry(getQueryEntry());
-        csc.setSearchText(getBean().getSearchString());
-        if (getBean().getStartDate() != null) {
-            LocalDate ld = LocalDate.parse(getBean().getStartDateString(), searchDateFormatter);
-            csc.setStartDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
-        }
-        if (getBean().getEndDate() != null) {
-            LocalDate ld = LocalDate.parse(getBean().getEndDateString(), searchDateFormatter).plusDays(1);
-            csc.setEndDate(ld.plusDays(1).atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
-        }
-        csc.setStatus(getBean().getStatus());
-        csc.setOffset(getBean().getPage() * COUNT);
-        csc.setMaxResults(COUNT + 1);
+        bean.setWeblog(getActionWeblog());
+        bean.setEntry(getQueryEntry());
+        bean.setSearchText(getBean().getSearchText());
 
-        List<WeblogEntryComment> rawComments = weblogEntryManager.getComments(csc);
+        if (!StringUtils.isEmpty(startDateString)) {
+            LocalDate ld = LocalDate.parse(startDateString, searchDateFormatter);
+            bean.setStartDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
+        }
+
+        if (!StringUtils.isEmpty(endDateString)) {
+            LocalDate ld = LocalDate.parse(endDateString, searchDateFormatter).plusDays(1);
+            bean.setEndDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
+        }
+
+        bean.setOffset(page * COUNT);
+        bean.setMaxResults(COUNT + 1);
+
+        List<WeblogEntryComment> rawComments = weblogEntryManager.getComments(bean);
         comments.addAll(rawComments);
 
         if (comments.size() > 0) {
@@ -195,7 +209,7 @@ public class Comments extends UIAction {
 
         // build comments pager
         String baseUrl = buildBaseUrl();
-        setPager(new CommentsPager(baseUrl, getBean().getPage(), comments, hasMore));
+        setPager(new CommentsPager(baseUrl, page, comments, hasMore));
     }
 
     // use the action data to build a url representing this action, including
@@ -204,20 +218,20 @@ public class Comments extends UIAction {
 
         Map<String, String> params = new HashMap<>();
 
-        if (!StringUtils.isEmpty(getBean().getEntryId())) {
-            params.put("bean.entryId", getBean().getEntryId());
+        if (!StringUtils.isEmpty(entryId)) {
+            params.put("entryId", entryId);
         }
-        if (!StringUtils.isEmpty(getBean().getSearchString())) {
-            params.put("bean.searchString", getBean().getSearchString());
+        if (!StringUtils.isEmpty(getBean().getSearchText())) {
+            params.put("bean.searchText", getBean().getSearchText());
         }
-        if (!StringUtils.isEmpty(getBean().getStartDateString())) {
-            params.put("bean.startDateString", getBean().getStartDateString());
+        if (!StringUtils.isEmpty(startDateString)) {
+            params.put("startDateString", startDateString);
         }
-        if (!StringUtils.isEmpty(getBean().getEndDateString())) {
-            params.put("bean.endDateString", getBean().getEndDateString());
+        if (!StringUtils.isEmpty(endDateString)) {
+            params.put("endDateString", endDateString);
         }
-        if (!StringUtils.isEmpty(getBean().getApprovedString())) {
-            params.put("bean.approvedString", getBean().getApprovedString());
+        if (bean.getStatus() != null) {
+            params.put("bean.status", bean.getStatus().name());
         }
 
         return urlStrategy.getActionURL(actionName, "/tb-ui/authoring", getActionWeblog(), params, false);
@@ -229,7 +243,7 @@ public class Comments extends UIAction {
         loadComments();
 
         // load bean data using comments list
-        getBean().loadCheckboxes(getPager().getItems());
+        loadCheckboxes(getPager().getItems());
 
         return LIST;
     }
@@ -243,21 +257,22 @@ public class Comments extends UIAction {
         loadComments();
 
         // load bean data using comments list
-        getBean().loadCheckboxes(getPager().getItems());
+        loadCheckboxes(getPager().getItems());
 
-        CommentSearchCriteria csc = new CommentSearchCriteria();
-        csc.setWeblog(getActionWeblog());
-        csc.setSearchText(getBean().getSearchString());
-        if (getBean().getStartDate() != null) {
-            csc.setStartDate(getBean().getStartDate().atStartOfDay()
-                    .atZone(getActionWeblog().getZoneId()).toInstant());
-        }
-        if (getBean().getEndDate() != null) {
-            csc.setEndDate(getBean().getEndDate().plusDays(1).atStartOfDay()
-                    .atZone(getActionWeblog().getZoneId()).toInstant());
-        }
-        csc.setStatus(getBean().getStatus());
+        bean.setWeblog(getActionWeblog());
+        bean.setSearchText(getBean().getSearchText());
 
+        if (!StringUtils.isEmpty(startDateString)) {
+            LocalDate ld = LocalDate.parse(startDateString, searchDateFormatter);
+            bean.setStartDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
+        }
+
+        if (!StringUtils.isEmpty(endDateString)) {
+            LocalDate ld = LocalDate.parse(endDateString, searchDateFormatter).plusDays(1);
+            bean.setEndDate(ld.atStartOfDay().atZone(getActionWeblog().getZoneId()).toInstant());
+        }
+
+        bean.setStatus(getBean().getStatus());
         return LIST;
     }
 
@@ -282,7 +297,7 @@ public class Comments extends UIAction {
             Set<WeblogEntry> reindexList = new HashSet<>();
 
             // delete all comments with delete box checked
-            List<String> deletes = Arrays.asList(getBean().getDeleteComments());
+            List<String> deletes = Arrays.asList(getDeleteComments());
             if (deletes.size() > 0) {
                 log.debug("Processing deletes - {}", deletes.size());
 
@@ -301,15 +316,15 @@ public class Comments extends UIAction {
             // loop through IDs of all comments displayed on page
             // approvedIds will always be empty for global comment management, as the JSP
             // which populates this value doesn't display approved checkboxes
-            List<String> approvedIds = Arrays.asList(getBean().getApprovedComments());
+            List<String> approvedIds = Arrays.asList(getApprovedComments());
 
-            List<String> spamIds = Arrays.asList(getBean().getSpamComments());
+            List<String> spamIds = Arrays.asList(getSpamComments());
             log.debug("{} comments marked as spam", spamIds.size());
 
             // track comments approved via moderation
             List<WeblogEntryComment> approvedComments = new ArrayList<>();
 
-            String[] ids = StringUtils.split(getBean().getIds(), ',');
+            String[] ids = StringUtils.split(getIds(), ',');
 
             for (String id : ids) {
                 log.debug("processing id - {}", id);
@@ -370,19 +385,11 @@ public class Comments extends UIAction {
             }
 
             // reset form and load fresh comments list
-            CommentsBean freshBean = new CommentsBean();
+            CommentSearchCriteria freshBean = new CommentSearchCriteria();
 
             // Maintain filter options
-            freshBean.setSearchString(getBean().getSearchString());
-            freshBean.setStartDateString(getBean().getStartDateString());
-            freshBean.setEndDateString(getBean().getEndDateString());
-            freshBean.setSearchString(getBean().getSearchString());
-            freshBean.setApprovedString(getBean().getApprovedString());
-
-            // but if we're editing an entry's comments stick with that entry
-            if (bean.getEntryId() != null) {
-                freshBean.setEntryId(bean.getEntryId());
-            }
+            freshBean.setSearchText(getBean().getSearchText());
+            freshBean.setStatus(getBean().getStatus());
             setBean(freshBean);
 
             return SUCCESS;
@@ -397,19 +404,19 @@ public class Comments extends UIAction {
 
     public List<Pair<String, String>> getCommentStatusOptions() {
         List<Pair<String, String>> opts = new ArrayList<>();
-        opts.add(Pair.of("ALL", getText("generic.all")));
-        opts.add(Pair.of("ONLY_PENDING", getText("commentManagement.onlyPending")));
-        opts.add(Pair.of("ONLY_APPROVED", getText("commentManagement.onlyApproved")));
-        opts.add(Pair.of("ONLY_DISAPPROVED", getText("commentManagement.onlyDisapproved")));
-        opts.add(Pair.of("ONLY_SPAM", getText("commentManagement.onlySpam")));
+        opts.add(Pair.of("", getText("generic.all")));
+        opts.add(Pair.of("PENDING", getText("commentManagement.onlyPending")));
+        opts.add(Pair.of("APPROVED", getText("commentManagement.onlyApproved")));
+        opts.add(Pair.of("DISAPPROVED", getText("commentManagement.onlyDisapproved")));
+        opts.add(Pair.of("SPAM", getText("commentManagement.onlySpam")));
         return opts;
     }
 
-    public CommentsBean getBean() {
+    public CommentSearchCriteria getBean() {
         return bean;
     }
 
-    public void setBean(CommentsBean bean) {
+    public void setBean(CommentSearchCriteria bean) {
         this.bean = bean;
     }
 
@@ -443,6 +450,97 @@ public class Comments extends UIAction {
 
     public void setQueryEntry(WeblogEntry queryEntry) {
         this.queryEntry = queryEntry;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public String getEndDateString() {
+        return endDateString;
+    }
+
+    public void setEndDateString(String endDateString) {
+        this.endDateString = endDateString;
+    }
+
+    public String getStartDateString() {
+        return startDateString;
+    }
+
+    public void setStartDateString(String startDateString) {
+        this.startDateString = startDateString;
+    }
+
+    public String getEntryId() {
+        return entryId;
+    }
+
+    public void setEntryId(String entryId) {
+        this.entryId = entryId;
+    }
+
+    public String[] getSpamComments() {
+        return spamComments;
+    }
+
+    public void setSpamComments(String[] spamComments) {
+        this.spamComments = spamComments;
+    }
+
+    public String[] getDeleteComments() {
+        return deleteComments;
+    }
+
+    public void setDeleteComments(String[] deleteComments) {
+        this.deleteComments = deleteComments;
+    }
+
+    public String[] getApprovedComments() {
+        return approvedComments;
+    }
+
+    public void setApprovedComments(String[] approvedComments) {
+        this.approvedComments = approvedComments;
+    }
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
+
+    public void loadCheckboxes(List<WeblogEntryComment> comments) {
+
+        List<String> allComments = new ArrayList<>();
+        List<String> approvedList = new ArrayList<>();
+        List<String> spamList = new ArrayList<>();
+
+        for (WeblogEntryComment comment : comments) {
+            allComments.add(comment.getId());
+
+            if (ApprovalStatus.APPROVED.equals(comment.getStatus())) {
+                approvedList.add(comment.getId());
+            } else if (ApprovalStatus.SPAM.equals(comment.getStatus())) {
+                spamList.add(comment.getId());
+            }
+        }
+
+        // list of ids we are working on
+        String[] idArray = allComments.toArray(new String[allComments.size()]);
+        setIds(StringUtils.join(idArray, ','));
+
+        // approved ids list
+        setApprovedComments(approvedList.toArray(new String[approvedList.size()]));
+
+        // spam ids list
+        setSpamComments(spamList.toArray(new String[spamList.size()]));
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/comment/{id}", method = RequestMethod.GET)

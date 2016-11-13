@@ -30,29 +30,29 @@
 <s:if test="pager.items != null">
     $(document).ready(function(){
         $('#checkallapproved').click(function() {
-            toggleFunction(true,"bean.approvedComments");
+            toggleFunction(true,"approvedComments");
         });
         $('#clearallapproved').click(function() {
-            toggleFunction(false,"bean.approvedComments");
+            toggleFunction(false,"approvedComments");
         });
         $('#checkallspam').click(function() {
-            toggleFunction(true,"bean.spamComments");
+            toggleFunction(true,"spamComments");
         });
         $('#clearallspam').click(function() {
-            toggleFunction(false,"bean.spamComments");
+            toggleFunction(false,"spamComments");
         });
         $('#checkalldelete').click(function() {
-            toggleFunction(true,"bean.deleteComments");
+            toggleFunction(true,"deleteComments");
         });
         $('#clearalldelete').click(function() {
-            toggleFunction(false,"bean.deleteComments");
+            toggleFunction(false,"deleteComments");
         });
     });
 </s:if>
 </script>
 
 <p class="subtitle">
-    <s:if test="bean.entryId != null && !bean.entryId.equals('') ">
+    <s:if test="entryId != null && !entryId.equals('') ">
         <s:text name="commentManagement.entry.subtitle">
             <s:param value="queryEntry.title"/>
         </s:text>
@@ -78,13 +78,13 @@
 
 <s:form id="commentsForm" action="comments">
     <sec:csrfInput/>
-    <s:hidden name="bean.ids" />
-    <s:hidden name="bean.startDateString" />
-    <s:hidden name="bean.endDateString" />
-    <s:hidden name="bean.approvedString" />
-    <s:hidden name="bean.entryId" />
-    <s:hidden name="bean.searchString" />
     <s:hidden name="weblogId" />
+    <s:hidden name="entryId" />
+    <s:hidden name="startDateString" />
+    <s:hidden name="endDateString" />
+    <s:hidden name="ids" />
+    <s:hidden name="bean.status" />
+    <s:hidden name="bean.searchText" />
 
 
 <%-- ============================================================= --%>
@@ -199,13 +199,13 @@
              we are effectively just creating a checkbox list of 1 item for each status for each iteration of our collection --%>
                 <tr>
                     <td>
-                        <s:checkboxlist name="bean.approvedComments" list="{#comment}" listKey="id" listValue="name" />
+                        <s:checkboxlist name="approvedComments" list="{#comment}" listKey="id" listValue="name" />
                     </td>
                     <td>
-                        <s:checkboxlist name="bean.spamComments" list="{#comment}" listKey="id" listValue="name" />
+                        <s:checkboxlist name="spamComments" list="{#comment}" listKey="id" listValue="name" />
                     </td>
                     <td>
-                        <s:checkboxlist name="bean.deleteComments" list="{#comment}" listKey="id" listValue="name" />
+                        <s:checkboxlist name="deleteComments" list="{#comment}" listKey="id" listValue="name" />
                     </td>
 
                     <%-- ======================================================== --%>
