@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -17,315 +17,221 @@
 
   Source file modified from the original ASF source; all changes made
   are also under Apache License.
--->
+--%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
 <script>
-  $(function() {
-    $("#confirm-delete").dialog({
-      autoOpen: false,
-      resizable: false,
-      height:170,
-      modal: true,
-      buttons: {
-        "<fmt:message key='generic.delete'/>": function() {
-          document.location.href='<s:url action="entryEdit!removeViaList" />?weblogId=<s:property value="weblogId"/>&entryId='
-            + encodeURIComponent($(this).data('entryId'));
-          $( this ).dialog( "close" );
-        },
-        Cancel: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-
-    $(".delete-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete').data('entryId',  $(this).attr("data-entryId")).dialog('open');
-    });
-  });
+    var contextPath = "${pageContext.request.contextPath}";
+    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var msg = {
+        deleteLabel: "<fmt:message key='generic.delete'/>",
+        cancelLabel: "<fmt:message key='generic.cancel'/>"
+    };
 </script>
+
+<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/entries.js'/>"></script>
+
+<input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 
 <p class="subtitle">
     <s:text name="weblogEntryQuery.subtitle" >
         <s:param value="actionWeblog.handle" />
     </s:text>
 </p>
+
 <p class="pagetip">
     <fmt:message key="weblogEntryQuery.tip" />
 </p>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
+<div id="ngapp-div" ng-app="tightblogApp" ng-controller="EntriesController as ctrl">
 
-            <div class="sidebarInner">
+    {{entryArr = ctrl.entriesData.entries;""}}
+    <div class="sidebarFade">
+        <div class="menu-tr">
+            <div class="menu-tl">
 
-                <h3><fmt:message key="weblogEntryQuery.sidebarTitle" /></h3>
-                <hr size="1" noshade="noshade" />
+                <div class="sidebarInner">
 
-                <p><fmt:message key="weblogEntryQuery.sidebarDescription" /></p>
+                    <h3><fmt:message key="weblogEntryQuery.sidebarTitle" /></h3>
+                    <hr size="1" noshade="noshade" />
 
-                <s:form action="entries">
-                    <sec:csrfInput/>
-                    <s:hidden name="weblogId" />
+                    <p><fmt:message key="weblogEntryQuery.sidebarDescription" /></p>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by category --%>
-
-                    <div class="sideformrow">
-                        <label for="categoryId" class="sideformrow">
-                        <fmt:message key="weblogEntryQuery.label.category" /></label>
-                        <s:select name="bean.categoryName" list="categories" listKey="left" listValue="right" size="1" />
-                    </div>
-                    <br />
-                    <br />
-
-                    <%-- ========================================================= --%>
-                    <%-- filter by date --%>
-
-                    <div class="sideformrow">
-                        <label for="startDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.startDate" />:</label>
-                        <script>
-                        $(function() {
-                            $( "#entries_startDateString" ).datepicker({
-                                showOn: "button",
-                                buttonImage: "../../images/calendar.png",
-                                buttonImageOnly: true,
-                                changeMonth: true,
-                                changeYear: true
-                            });
-                        });
-                        </script>
-                        <s:textfield name="startDateString" size="12" readonly="true"/>
-                    </div>
-
-                    <div class="sideformrow">
-                        <label for="endDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.endDate" />:</label>
-                        <script>
-                        $(function() {
-                            $( "#entries_endDateString" ).datepicker({
-                                showOn: "button",
-                                buttonImage: "../../images/calendar.png",
-                                buttonImageOnly: true,
-                                changeMonth: true,
-                                changeYear: true
-                            });
-                        });
-                        </script>
-                        <s:textfield name="endDateString" size="12" readonly="true"/>
-                    </div>
-                    <br />
-                    <br />
-
-                    <%-- ========================================================= --%>
-                    <%-- filter by status --%>
-
-                    <div class="sideformrow">
-                        <label for="status" class="sideformrow">
-                            <fmt:message key="weblogEntryQuery.label.status" />:
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                        </label>
-                        <div>
-                            <s:radio theme="strutsoverride" name="bean.status" list="statusOptions" listKey="left" listValue="right" />
+                    <div>
+                        <div class="sideformrow">
+                            <label for="categoryId" class="sideformrow">
+                            <fmt:message key="weblogEntryQuery.label.category" /></label>
+                            <select ng-model="ctrl.searchParams.categoryName" size="1" required>
+                               <option ng-repeat="(key, value) in ctrl.lookupFields.categories" value="{{key}}">{{value}}</option>
+                            </select>
                         </div>
-                    </div>
+                        <br /><br />
 
-                    <%-- ========================================================= --%>
-                    <%-- sort by --%>
-
-                    <div class="sideformrow">
-                        <label for="status" class="sideformrow">
-                            <fmt:message key="weblogEntryQuery.label.sortby" />:
-                            <br />
-                            <br />
-                        </label>
-                        <div>
-                            <s:radio theme="strutsoverride" name="bean.sortBy" list="sortByOptions" listKey="left" listValue="right" />
+                        <div class="sideformrow">
+                            <label for="startDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.startDate" />:</label>
+                            <input type="text" id="startDateString" ng-model="ctrl.searchParams.startDateString" size="12" readonly="true"/>
                         </div>
+
+                        <div class="sideformrow">
+                            <label for="endDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.endDate" />:</label>
+                            <input type="text" id="endDateString" ng-model="ctrl.searchParams.endDateString" size="12" readonly="true"/>
+                        </div>
+                        <br /><br />
+
+                        <div class="sideformrow">
+                            <label for="status" class="sideformrow">
+                                <fmt:message key="weblogEntryQuery.label.status" />:
+                            </label>
+                            <div>
+                                <select ng-model="ctrl.searchParams.status" size="1" required>
+                                    <option ng-repeat="(key, value) in ctrl.lookupFields.statusOptions" value="{{key}}">{{value}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sideformrow">
+                            <label for="status" class="sideformrow">
+                                <fmt:message key="weblogEntryQuery.label.sortby" />:
+                                <br /><br />
+                            </label>
+                            <div>
+                                <div ng-repeat="(key, value) in ctrl.lookupFields.sortByOptions">
+                                    <input type="radio" name="sortBy" ng-model="ctrl.searchParams.sortBy" ng-value='key'> {{value}}<br>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <input ng-click="ctrl.loadEntries()" type="button" value="<fmt:message key='weblogEntryQuery.button.query'/>" />
                     </div>
-
-                    <%-- ========================================================= --%>
-                    <%-- search button --%>
-
-                    <br />
-
-                    <s:submit value="%{getText('weblogEntryQuery.button.query')}" />
-
-                </s:form>
-
-                <br />
-                <br />
-            </div> <!-- sidebarInner -->
-
+                </div> <!-- sidebarInner -->
+            </div>
         </div>
     </div>
-</div>
-
-
-<%-- ============================================================= --%>
-<%-- Number of entries and date message --%>
-<%-- ============================================================= --%>
-
-<div class="tablenav">
-
-    <div style="float:left;">
-        <s:text name="weblogEntryQuery.nowShowing">
-            <s:param value="pager.items.size()" />
-        </s:text>
-    </div>
-    <s:if test="pager.items.size() > 0">
-        <div style="float:right;">
-            <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
-            <s:if test="firstEntry.pubTime != null">
-                <javatime:format value="${firstEntry.pubTime}" pattern="${dateFormat}"/>
-            </s:if>
-            ---
-            <s:if test="lastEntry.pubTime != null">
-                <javatime:format value="${lastEntry.pubTime}" pattern="${dateFormat}"/>
-            </s:if>
-
-        </div>
-    </s:if>
-    <br />
 
 
     <%-- ============================================================= --%>
-    <%-- Next / previous links --%>
+    <%-- Number of entries and date message --%>
     <%-- ============================================================= --%>
 
-    <s:if test="pager.prevLink != null && pager.nextLink != null">
-        <br /><center>
-            &laquo;
-            <a href='<s:property value="pager.prevLink" />'>
-            <fmt:message key="weblogEntryQuery.prev" /></a>
-            | <a href='<s:property value="pager.nextLink" />'>
-            <fmt:message key="weblogEntryQuery.next" /></a>
-            &raquo;
-        </center><br />
-    </s:if>
-    <s:elseif test="pager.prevLink != null">
-        <br /><center>
-            &laquo;
-            <a href='<s:property value="pager.prevLink" />'>
-            <fmt:message key="weblogEntryQuery.prev" /></a>
-            | <fmt:message key="weblogEntryQuery.next" />
-            &raquo;
-        </center><br />
-    </s:elseif>
-    <s:elseif test="pager.nextLink != null">
-        <br /><center>
-            &laquo;
-            <fmt:message key="weblogEntryQuery.prev" />
-            | <a class="" href='<s:property value="pager.nextLink" />'>
-            <fmt:message key="weblogEntryQuery.next" /></a>
-            &raquo;
-        </center><br />
-    </s:elseif>
-    <s:else><br /></s:else>
+    <div class="tablenav">
 
-</div> <%-- class="tablenav" --%>
+        <div style="float:left;">
+            {{entryArr.length}} <fmt:message key="weblogEntryQuery.nowShowing"/>
+        </div>
+        <span ng-if="entryArr.length > 0">
+            <div style="float:right;">
+                <span ng-if="entryArr[0].pubTime != null">
+                    {{entryArr[0].pubTime | date:'short'}}
+                </span>
+                ---
+                <span ng-if="entryArr[entryArr.length - 1].pubTime != null">
+                    {{entryArr[entryArr.length - 1].pubTime | date:'short'}}
+                </span>
+            </div>
+        </span>
+        <br><br>
+
+        <%-- ============================================================= --%>
+        <%-- Next / previous links --%>
+        <%-- ============================================================= --%>
+
+        <span ng-if="ctrl.pageNum > 0 || ctrl.entriesData.hasMore">
+            <center>
+                &laquo;
+                <input type="button" value="<fmt:message key='weblogEntryQuery.prev'/>"
+                    ng-disabled="ctrl.pageNum <= 0" ng-click="ctrl.previousPage()">
+                |
+                <input type="button" value="<fmt:message key='weblogEntryQuery.next'/>"
+                    ng-disabled="!ctrl.entriesData.hasMore" ng-click="ctrl.nextPage()">
+                &raquo;
+            </center>
+        </span>
+
+        <br>
+    </div>
 
 
-<%-- ============================================================= --%>
-<%-- Entry table--%>
-<%-- ============================================================= --%>
+    <%-- ============================================================= --%>
+    <%-- Entry table--%>
+    <%-- ============================================================= --%>
 
-<p>
-    <span class="draftEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <fmt:message key="weblogEntryQuery.draft" />&nbsp;&nbsp;
-    <span class="pendingEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <fmt:message key="weblogEntryQuery.pending" />&nbsp;&nbsp;
-    <span class="scheduledEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <fmt:message key="weblogEntryQuery.scheduled" />&nbsp;&nbsp;
-</p>
+    <p>
+        <span class="draftEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <fmt:message key="weblogEntryQuery.draft" />&nbsp;&nbsp;
+        <span class="pendingEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <fmt:message key="weblogEntryQuery.pending" />&nbsp;&nbsp;
+        <span class="scheduledEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <fmt:message key="weblogEntryQuery.scheduled" />&nbsp;&nbsp;
+    </p>
 
-<table class="rollertable" width="100%">
+    <table class="rollertable" width="100%">
 
-<tr>
-    <th width="5%"><fmt:message key="weblogEntryQuery.pubTime" /></th>
-    <th width="5%"><fmt:message key="weblogEntryQuery.updateTime" /></th>
-    <th><fmt:message key="weblogEntryQuery.title" /></th>
-    <th width="5%"><fmt:message key="weblogEntryQuery.category" /></th>
-    <th width="5%"></th>
-    <th width="5%"></th>
-    <th width="5%"></th>
-</tr>
-
-<s:iterator var="post" value="pager.items">
-    <%-- <td> with style if comment is spam or pending --%>
-    <s:if test="#post.status.name() == 'DRAFT'">
-        <tr class="draftentry">
-    </s:if>
-    <s:elseif test="#post.status.name() == 'PENDING'">
-        <tr class="pendingentry">
-    </s:elseif>
-    <s:elseif test="#post.status.name() == 'SCHEDULED'">
-        <tr class="scheduledentry">
-    </s:elseif>
-    <s:else>
         <tr>
-    </s:else>
+            <th width="5%"><fmt:message key="weblogEntryQuery.pubTime" /></th>
+            <th width="5%"><fmt:message key="weblogEntryQuery.updateTime" /></th>
+            <th><fmt:message key="weblogEntryQuery.title" /></th>
+            <th width="5%"><fmt:message key="weblogEntryQuery.category" /></th>
+            <th width="5%"></th>
+            <th width="5%"></th>
+            <th width="5%"></th>
+        </tr>
 
-    <td>
-        <s:if test="#post.pubTime != null">
-            <s:set var="tempTime1" value="#post.pubTime"/>
-            <javatime:format value="${tempTime1}" pattern="${dateFormat}"/>
-        </s:if>
-    </td>
+        <tr ng-repeat="entry in ctrl.entriesData.entries"
+            ng-class="{DRAFT : 'draftentry', PENDING : 'pendingentry', SCHEDULED : 'scheduledentry'}[entry.status]">
 
-    <td>
-        <s:if test="#post.updateTime != null">
-            <s:set var="tempTime2" value="#post.updateTime"/>
-            <javatime:format value="${tempTime2}" pattern="${dateFormat}"/>
-        </s:if>
-    </td>
+            <td>
+                <span ng-if="entry.pubTime != null">
+                  {{entry.pubTime | date:'short'}}
+                </span>
+            </td>
 
-    <td>
-        <str:truncateNicely upper="80"><s:property value="#post.title" /></str:truncateNicely>
-    </td>
+            <td>
+                <span ng-if="entry.updateTime != null">
+                  {{entry.updateTime | date:'short'}}
+                </span>
+            </td>
 
-    <td>
-        <s:property value="#post.category.name" />
-    </td>
+            <td>
+                {{entry.title | limitTo:80}}
+            </td>
 
-    <td>
-        <s:if test="#post.status.name() == 'PUBLISHED'">
-            <a href='<s:property value="#post.permalink" />'><s:text name="weblogEntryQuery.view" /></a>
-        </s:if>
-    </td>
+            <td>
+                {{entry.category.name}}
+            </td>
 
-    <td>
-        <s:url var="editUrl" action="entryEdit">
-            <s:param name="weblogId" value="%{actionWeblog.id}" />
-            <s:param name="entryId" value="#post.id" />
-        </s:url>
-        <s:a href="%{editUrl}"><fmt:message key="generic.edit" /></s:a>
-    </td>
+            <td>
+                <span ng-if="entry.status == 'PUBLISHED'">
+                    <a ng-href='{{entry.permalink}}' target="_blank"><fmt:message key="weblogEntryQuery.view" /></a>
+                </span>
+            </td>
 
-    <td>
-        <a href="#" class="delete-link" data-entryId="<s:property value='#post.id'/>"><fmt:message key="generic.delete" /></a>
-    </td>
+            <td>
+                <a target="_blank" ng-href="<s:url action='entryEdit'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>&entryId={{entry.id}}">
+                    <fmt:message key="generic.edit" />
+                </a>
+            </td>
 
-    </tr>
-</s:iterator>
-</table>
+            <td>
+                <button confirm-delete-dialog="confirm-delete" id-to-delete="{{entry.id}}"><fmt:message key="generic.delete" /></button>
+            </td>
 
-<div id="confirm-delete" title="<fmt:message key='weblogEdit.deleteEntry'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="weblogEntryRemove.areYouSure"/></p>
+            </tr>
+    </table>
+
+    <div id="confirm-delete" title="<fmt:message key='weblogEdit.deleteEntry'/>" style="display:none">
+       <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="weblogEntryRemove.areYouSure"/></p>
+    </div>
+
+    <span ng-if="ctrl.entriesData.entries.length == 0">
+        <fmt:message key="weblogEntryQuery.noneFound" />
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+    </span>
+
 </div>
-
-<s:if test="pager.items.isEmpty">
-    <s:text name="weblogEntryQuery.noneFound" />
-    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-</s:if>

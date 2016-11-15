@@ -152,12 +152,6 @@ public final class EntryEdit extends UIAction {
     }
 
     @SkipValidation
-    public String removeViaList() {
-        String result = removeCommon();
-        return (SUCCESS.equals(result)) ? LIST : result;
-    }
-
-    @SkipValidation
     public String remove() {
         String result = removeCommon();
         return (SUCCESS.equals(result)) ? "deleted" : result;
