@@ -53,7 +53,7 @@ $(function() {
            click: function() {
               $(this).dialog("close");
            }
-         }
+        }
        ]
      });
     $("#confirm-move-file").dialog({

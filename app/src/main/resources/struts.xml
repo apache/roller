@@ -260,11 +260,16 @@
                 <param name="weblogId">${weblogId}</param>
             </result>
             <result name="list" type="chain">entries</result>
-            <allowed-methods>firstSave,publish,remove,removeViaList,saveDraft</allowed-methods>
+            <allowed-methods>firstSave,publish,remove,saveDraft</allowed-methods>
         </action>
 
-        <action name="entries" class="org.apache.roller.weblogger.ui.struts2.Entries">
-            <result name="list" type="tiles">.Entries</result>
+        <action name="entries" class="org.apache.roller.weblogger.ui.struts2.UIAction">
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">POST</param>
+            <param name="desiredMenu">editor</param>
+            <param name="actionName">entries</param>
+            <param name="pageTitleReal">weblogEntryQuery.title</param>
+            <result name="success" type="tiles">.Entries</result>
         </action>
 
         <action name="comments!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.Comments">
