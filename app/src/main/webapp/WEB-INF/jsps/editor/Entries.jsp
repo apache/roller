@@ -20,8 +20,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
-<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
@@ -56,7 +54,6 @@
     <div class="sidebarFade">
         <div class="menu-tr">
             <div class="menu-tl">
-
                 <div class="sidebarInner">
 
                     <h3><fmt:message key="weblogEntryQuery.sidebarTitle" /></h3>

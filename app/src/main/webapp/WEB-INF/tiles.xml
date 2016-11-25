@@ -155,8 +155,6 @@
 
     <definition name=".Comments" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
     </definition>
 
     <definition name=".Categories" extends=".tiles-tabbedpage" >

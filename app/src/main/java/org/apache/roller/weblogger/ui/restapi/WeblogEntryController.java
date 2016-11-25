@@ -54,7 +54,7 @@ public class WeblogEntryController {
     private static Logger log = LoggerFactory.getLogger(WeblogController.class);
 
     // number of entries to show per page
-    private static final int ENTRIES_PER_PAGE = 30;
+    private static final int ITEMS_PER_PAGE = 30;
 
     @Autowired
     private UserManager userManager;
@@ -109,13 +109,13 @@ public class WeblogEntryController {
             WeblogEntryData data = new WeblogEntryData();
 
             criteria.setWeblog(weblog);
-            criteria.setOffset(page * ENTRIES_PER_PAGE);
-            criteria.setMaxResults(ENTRIES_PER_PAGE + 1);
+            criteria.setOffset(page * ITEMS_PER_PAGE);
+            criteria.setMaxResults(ITEMS_PER_PAGE + 1);
             List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(criteria);
             data.entries = new ArrayList<>();
             data.entries.addAll(rawEntries);
 
-            if (rawEntries.size() > ENTRIES_PER_PAGE) {
+            if (rawEntries.size() > ITEMS_PER_PAGE) {
                 data.entries.remove(data.entries.size() - 1);
                 data.hasMore = true;
             }
