@@ -264,24 +264,21 @@
         </action>
 
         <action name="entries" class="org.apache.roller.weblogger.ui.struts2.UIAction">
+            <param name="actionName">entries</param>
+            <param name="pageTitleReal">weblogEntryQuery.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
             <param name="desiredMenu">editor</param>
-            <param name="actionName">entries</param>
-            <param name="pageTitleReal">weblogEntryQuery.title</param>
             <result name="success" type="tiles">.Entries</result>
         </action>
 
-        <action name="comments!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.Comments">
-            <result name="list" type="tiles">.Comments</result>
+        <action name="comments" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">comments</param>
+            <param name="pageTitleReal">commentManagement.title</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">POST</param>
             <param name="desiredMenu">editor</param>
-            <result name="success" type="redirectAction">
-                <param name="actionName">comments!updateMade</param>
-                <param name="bean.entryId">${bean.entryId}</param>
-                <param name="weblogId">${weblogId}</param>
-            </result>
-            <allowed-methods>query,update,updateMade</allowed-methods>
+            <result name="success" type="tiles">.Comments</result>
         </action>
 
         <action name="categories" class="org.apache.roller.weblogger.ui.struts2.UIAction">

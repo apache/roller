@@ -19,374 +19,225 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
-<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
+<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-
-<input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
 
 <script>
-<s:if test="pager.items != null">
-    $(document).ready(function(){
-        $('#checkallapproved').click(function() {
-            toggleFunction(true,"approvedComments");
-        });
-        $('#clearallapproved').click(function() {
-            toggleFunction(false,"approvedComments");
-        });
-        $('#checkallspam').click(function() {
-            toggleFunction(true,"spamComments");
-        });
-        $('#clearallspam').click(function() {
-            toggleFunction(false,"spamComments");
-        });
-        $('#checkalldelete').click(function() {
-            toggleFunction(true,"deleteComments");
-        });
-        $('#clearalldelete').click(function() {
-            toggleFunction(false,"deleteComments");
-        });
-    });
-</s:if>
+    var contextPath = "${pageContext.request.contextPath}";
+    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var entryId = "<s:property value='%{#parameters.entryId}'/>";
+    var nowShowingTmpl = "<fmt:message key='commentManagement.nowShowing'/>";
+    var commentHeaderTmpl = "<fmt:message key='commentManagement.commentHeader'/>";
+    var entryTitleTmpl = "<fmt:message key='commentManagement.entry.subtitle'/>";
 </script>
 
-<p class="subtitle">
-    <s:if test="entryId != null && !entryId.equals('') ">
-        <s:text name="commentManagement.entry.subtitle">
-            <s:param value="queryEntry.title"/>
-        </s:text>
-    </s:if>
-    <s:else>
-        <s:text name="commentManagement.website.subtitle">
-            <s:param value="%{actionWeblog.handle}"/>
-        </s:text>
-    </s:else>
-</p>
+<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/comments.js'/>"></script>
 
-<s:if test="pager.items.isEmpty">
-    <s:text name="commentManagement.noCommentsFound" />
+<s:if test="%{#parameters.entryId == null}">
+    <input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 </s:if>
 <s:else>
-    <p class="pagetip">
-        <s:text name="commentManagement.tip" />
+    <input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>&entryId=<s:property value='%{#parameters.entryId}'/>"/>
+</s:else>
+
+<div id="ngapp-div" ng-app="tightblogApp" ng-controller="CommentsController as ctrl">
+
+    <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMsg">
+       <b>{{ctrl.errorMsg}}</b>
+    </div>
+
+    <p class="subtitle">
+        <span ng-show="ctrl.entryTitleMsg != ''">
+            <span ng-bind-html="ctrl.entryTitleMsg"></span>
+        </span>
+
+        <span ng-show="ctrl.entryTitleMsg == null || ctrl.entryTitleMsg.length() == 0">
+            <s:text name="commentManagement.website.subtitle">
+                <s:param value="%{actionWeblog.handle}"/>
+            </s:text>
+        </span>
     </p>
 
-<%-- ============================================================= --%>
-<%-- Comment table / form with checkboxes --%>
-<%-- ============================================================= --%>
+    {{commentArr = ctrl.commentData.comments;""}}
 
-<s:form id="commentsForm" action="comments">
-    <sec:csrfInput/>
-    <s:hidden name="weblogId" />
-    <s:hidden name="entryId" />
-    <s:hidden name="startDateString" />
-    <s:hidden name="endDateString" />
-    <s:hidden name="ids" />
-    <s:hidden name="bean.status" />
-    <s:hidden name="bean.searchText" />
+        <p class="pagetip">
+            <fmt:message key="commentManagement.tip" />
+        </p>
+        <div class="sidebarFade">
+            <div class="menu-tr">
+                <div class="menu-tl">
+                    <div class="sidebarInner">
 
+                        <h3><fmt:message key="commentManagement.sidebarTitle" /></h3>
+                        <hr size="1" noshade="noshade" />
 
-<%-- ============================================================= --%>
-<%-- Number of comments and date message --%>
-<%-- ============================================================= --%>
+                        <p><fmt:message key="commentManagement.sidebarDescription" /></p>
 
-        <div class="tablenav">
+                        <div class="sideformrow">
+                            <label for="searchText" class="sideformrow"><fmt:message key="commentManagement.searchString" />:</label>
+                            <input type="text" ng-model="ctrl.searchParams.searchText" size="30"/>
+                        </div>
+                        <br />
+                        <br />
 
-            <div style="float:left;">
-                <s:text name="commentManagement.nowShowing">
-                    <s:param value="pager.items.size()" />
-                </s:text>
+                        <div class="sideformrow">
+                            <label for="startDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.startDate" />:</label>
+                            <input type="text" id="startDateString" ng-model="ctrl.searchParams.startDateString" size="12" readonly="true"/>
+                        </div>
+
+                        <div class="sideformrow">
+                            <label for="endDateString" class="sideformrow"><fmt:message key="weblogEntryQuery.label.endDate" />:</label>
+                            <input type="text" id="endDateString" ng-model="ctrl.searchParams.endDateString" size="12" readonly="true"/>
+                        </div>
+                        <br /><br />
+
+                        <div class="sideformrow">
+                            <label for="status" class="sideformrow">
+                                <fmt:message key="commentManagement.pendingStatus" />:
+                            </label>
+                            <div>
+                                <select ng-model="ctrl.searchParams.status" size="1" required>
+                                    <option ng-repeat="(key, value) in ctrl.lookupFields.statusOptions" value="{{key}}">{{value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br><br>
+                        <input ng-click="ctrl.loadComments()" type="button" value="<fmt:message key='weblogEntryQuery.button.query'/>" />
+                        <br>
+                    </div>
+                </div>
             </div>
-            <div style="float:right;">
+        </div>
 
-                <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
-                <s:if test="firstComment.postTime != null">
-                    <javatime:format value="${firstComment.postTime}" pattern="${dateFormat}"/>
-                </s:if>
-                ---
-                <s:if test="lastComment.postTime != null">
-                    <javatime:format value="${lastComment.postTime}" pattern="${dateFormat}"/>
-                </s:if>
+    <div ng-if="commentArr.length == 0">
+        <fmt:message key="commentManagement.noCommentsFound" />
+    </div>
+    <div ng-if="commentArr.length > 0">
+
+        <%-- ============================================================= --%>
+        <%-- Number of comments and date message --%>
+        <%-- ============================================================= --%>
+
+            <div class="tablenav">
+
+            <div style="float:left" ng-bind-html="ctrl.nowShowingMsg"></div>
+
+            <span ng-if="commentArr.length > 0">
+                <div style="float:right;">
+                    {{commentArr[0].postTime | date:'short'}}
+                    ---
+                    {{commentArr[commentArr.length - 1].postTime | date:'short'}}
+                </div>
+            </span>
+            <br><br>
+
+
+            <%-- ============================================================= --%>
+            <%-- Next / previous links --%>
+            <%-- ============================================================= --%>
+
+            <span ng-if="ctrl.pageNum > 0 || ctrl.commentData.hasMore">
+                <center>
+                    &laquo;
+                    <input type="button" value="<fmt:message key='weblogEntryQuery.prev'/>"
+                        ng-disabled="ctrl.pageNum <= 0" ng-click="ctrl.previousPage()">
+                    |
+                    <input type="button" value="<fmt:message key='weblogEntryQuery.next'/>"
+                        ng-disabled="!ctrl.commentData.hasMore" ng-click="ctrl.nextPage()">
+                    &raquo;
+                </center>
+            </span>
+
             </div>
-            <br />
 
 
-    <%-- ============================================================= --%>
-    <%-- Next / previous links --%>
-    <%-- ============================================================= --%>
-
-            <s:if test="pager.prevLink != null && pager.nextLink != null">
-                <br /><center>
-                    &laquo;
-                    <a href='<s:property value="pager.prevLink" />'>
-                    <s:text name="commentManagement.prev" /></a>
-                    | <a href='<s:property value="pager.nextLink" />'>
-                    <s:text name="commentManagement.next" /></a>
-                    &raquo;
-                </center><br />
-            </s:if>
-            <s:elseif test="pager.prevLink != null">
-                <br /><center>
-                    &laquo;
-                    <a href='<s:property value="pager.prevLink" />'>
-                    <s:text name="commentManagement.prev" /></a>
-                    | <s:text name="commentManagement.next" />
-                    &raquo;
-                </center><br />
-            </s:elseif>
-            <s:elseif test="pager.nextLink != null">
-                <br /><center>
-                    &laquo;
-                    <s:text name="commentManagement.prev" />
-                    | <a class="" href='<s:property value="pager.nextLink" />'>
-                    <s:text name="commentManagement.next" /></a>
-                    &raquo;
-                </center><br />
-            </s:elseif>
-            <s:else><br /></s:else>
-
-        </div> <%-- class="tablenav" --%>
-
-
-        <table class="rollertable" width="100%">
+                <table class="rollertable" width="100%">
 
             <%-- ======================================================== --%>
             <%-- Comment table header --%>
 
             <tr>
-                <th width="5%"><s:text name="commentManagement.columnApproved" /></th>
-                <th width="5%"><s:text name="commentManagement.columnSpam" /></th>
-                <th width="5%" ><s:text name="generic.delete" /></th>
-                <th ><s:text name="commentManagement.columnComment" /></th>
+                <th width="8%"><fmt:message key="commentManagement.showhide" /></th>
+                <th width="8%" ><fmt:message key="generic.delete" /></th>
+                <th ><fmt:message key="commentManagement.columnComment" /></th>
             </tr>
 
-            <%-- ======================================================== --%>
-            <%-- Select ALL and NONE buttons --%>
-
             <tr class="actionrow">
-                <td align="center">
-                    <s:text name="commentManagement.select" /><br/>
-                    <span id="checkallapproved"><a href="#"><s:text name="generic.all" /></a></span><br />
-                    <span id="clearallapproved"><a href="#"><s:text name="generic.none" /></a></span>
-                </td>
-                <td align="center">
-                    <s:text name="commentManagement.select" /><br/>
-                    <span id="checkallspam"><a href="#"><s:text name="generic.all" /></a></span><br />
-                    <span id="clearallspam"><a href="#"><s:text name="generic.none" /></a></span>
-                </td>
-                <td align="center">
-                    <s:text name="commentManagement.select" /><br/>
-                    <span id="checkalldelete"><a href="#"><s:text name="generic.all" /></a></span><br />
-                    <span id="clearalldelete"><a href="#"><s:text name="generic.none" /></a></span>
-                </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
                 <td align="right">
                     <br />
                     <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <s:text name="commentManagement.pending" />&nbsp;&nbsp;
+                    <fmt:message key="commentManagement.pending" />&nbsp;&nbsp;
                     <span class="spamCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <s:text name="commentManagement.spam" />&nbsp;&nbsp;
+                    <fmt:message key="commentManagement.spam" />&nbsp;&nbsp;
                 </td>
             </tr>
 
+            <%-- ========================================================= --%>
+            <%-- Loop through comments --%>
+            <%-- ========================================================= --%>
 
-<%-- ========================================================= --%>
-<%-- Loop through comments --%>
-<%-- ========================================================= --%>
+            <tr ng-repeat="comment in commentArr">
+                <td>
+                    <input ng-if="comment.status == 'SPAM' || comment.status == 'DISAPPROVED' || comment.status == 'PENDING'"
+                        type="button" value="<fmt:message key='commentManagement.approve'/>" ng-click="ctrl.approveComment(comment)"/>
+                    <input ng-if="comment.status == 'APPROVED'"
+                        type="button" value="<fmt:message key='commentManagement.hide'/>" ng-click="ctrl.hideComment(comment)"/>
+                </td>
+                <td>
+                    <input type="button" value="<fmt:message key='generic.delete'/>" ng-click="ctrl.deleteComment(comment)"/>
+                </td>
 
-            <s:iterator var="comment" value="pager.items" status="rowstatus">
-                        <%-- a bit funky to use checkbox list here, but using checkbox didn't work for me :(
-             we are effectively just creating a checkbox list of 1 item for each status for each iteration of our collection --%>
-                <tr>
-                    <td>
-                        <s:checkboxlist name="approvedComments" list="{#comment}" listKey="id" listValue="name" />
-                    </td>
-                    <td>
-                        <s:checkboxlist name="spamComments" list="{#comment}" listKey="id" listValue="name" />
-                    </td>
-                    <td>
-                        <s:checkboxlist name="deleteComments" list="{#comment}" listKey="id" listValue="name" />
-                    </td>
+                <td ng-class="{SPAM : 'spamcomment', PENDING : 'pendingcomment', DISAPPROVED : 'pendingcomment'}[comment.status]">
 
-                    <%-- ======================================================== --%>
-    <%-- Display comment details and text --%>
-
-    <%-- <td> with style if comment is spam or pending --%>
-                    <s:if test="#comment.status.name() == 'SPAM'">
-                        <td class="spamcomment">
-                    </s:if>
-                    <s:elseif test="#comment.status.name() == 'PENDING'">
-                        <td class="pendingcomment">
-                    </s:elseif>
-                    <s:else>
-                        <td>
-                    </s:else>
-
-                        <%-- comment details table in table --%>
-                        <table class="innertable" >
-                            <tr>
-                                <td class="viewbody">
-                                <div class="viewdetails bot">
-                                    <div class="details">
-                                        <s:text name="commentManagement.entryTitled" />&nbsp;:&nbsp;
-                                        <a href='<s:property value="#comment.weblogEntry.permalink" />'>
-                                        <s:property value="#comment.weblogEntry.title" /></a>
-                                    </div>
-                                    <div class="details">
-                                        <s:text name="commentManagement.commentBy" />&nbsp;:&nbsp;
-                                        <s:if test="#comment.email != null && #comment.name != null">
-                                        <s:text name="commentManagement.commentByBoth" >
-                                            <s:param><s:property value="#comment.name" /></s:param>
-                                            <s:param><s:property value="#comment.email" /></s:param>
-                                            <s:param><s:property value="#comment.email" /></s:param>
-                                            <s:param><s:property value="#comment.remoteHost" /></s:param>
-                                        </s:text>
-                                        </s:if>
-                                        <s:elseif test="#comment.email == null && #comment.name == null">
-                                            <s:text name="commentManagement.commentByIP" >
-                                                <s:param><s:property value="#comment.remoteHost" /></s:param>
-                                            </s:text>
-                                        </s:elseif>
-                                        <s:else>
-                                            <s:text name="commentManagement.commentByName" >
-                                                <s:param><s:property value="#comment.name" /></s:param>
-                                                <s:param><s:property value="#comment.remoteHost" /></s:param>
-                                            </s:text>
-                                        </s:else>
-                                    </div>
-                                    <s:if test="#comment.url != null && !#comment.url.equals('')">
-                                        <div class="details">
-                                            <s:text name="commentManagement.commentByURL" />&nbsp;:&nbsp;
-                                            <a href='<s:property value="#comment.url" />'>
-                                            <str:truncateNicely upper="60" appendToEnd="..."><s:property value="#comment.url" /></str:truncateNicely></a>
-                                        </div>
-                                    </s:if>
-                                    <div class="details">
-                                        <s:text name="commentManagement.postTime" />&nbsp;:&nbsp;
-                                        <s:set var="tempTime" value="#comment.postTime"/>
-                                        <javatime:format value="${tempTime}" pattern="${dateFormat}"/>
-                                    </div>
+                    <%-- comment details table in table --%>
+                    <table class="innertable" >
+                        <tr>
+                            <td class="viewbody">
+                            <div class="viewdetails bot">
+                                <div class="details">
+                                    <fmt:message key="commentManagement.entryTitled" />&nbsp;:&nbsp;
+                                    <a ng-href='{{comment.weblogEntry.permalink}}'>
+                                    {{comment.weblogEntry.title}}</a>
                                 </div>
-                                <div class="viewdetails bot">
-                                     <div class="details bot">
-                                          <s:if test="#comment.content.length() > 1000">
-                                               <div class="bot" id="comment-<s:property value="#comment.id"/>">
-                                                   <str:truncateNicely upper="1000" appendToEnd="...">
-                                                       <s:property value="#comment.content"/>
-                                                   </str:truncateNicely>
-                                               </div>
-                                               <div id="link-<s:property value="#comment.id"/>">
-                                                    <a onclick='readMoreComment("<s:property value="#comment.id"/>")'><s:text name="commentManagement.readmore" /></a>
-                                               </div>
-                                          </s:if>
-                                          <s:else>
-                                               <span width="200px" id="comment-<s:property value="#comment.id"/>"><s:property value="#comment.content"/></span>
-                                          </s:else>
-                                     </div>
-                                     <div class="details">
-                                          <a id="editlink-<s:property value="#comment.id"/>" onclick='editComment("<s:property value="#comment.id"/>")'>
-                                               <s:text name="generic.edit" />
-                                          </a>
-                                     </div>
-                                     <div class="details">
-                                          <span id="savelink-<s:property value="#comment.id"/>" style="display: none">
-                                               <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text name="generic.save" /></a> &nbsp;|&nbsp;
-                                          </span>
-                                          <span id="cancellink-<s:property value="#comment.id"/>" style="display: none">
-                                               <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'><s:text name="generic.cancel" /></a>
-                                          </span>
-                                     </div>
+                                <div class="details">
+                                    <fmt:message key="commentManagement.commentBy" />&nbsp;:&nbsp;
+                                    <span ng-bind-html="ctrl.getCommentHeader(comment)"></span>
                                 </div>
-                            </tr>
-                        </table> <%-- end comment details table in table --%>
-                    </td>
-                </tr>
-            </s:iterator>
+                                <span ng-if="comment.url">
+                                    <div class="details">
+                                        <fmt:message key="commentManagement.commentByURL" />:&nbsp;
+                                        <a ng-href='{{comment.url}}'>
+                                        {{comment.url | limitTo:60}}{{comment.url.length > 60 ? '...' : ''}}
+                                        </a>
+                                    </div>
+                                </span>
+                                <div class="details">
+                                    <fmt:message key="commentManagement.postTime" />: {{comment.postTime | date:'short'}}
+                                </div>
+                            </div>
+                            <div class="viewdetails bot">
+                                 <div class="details bot">
+                                      <textarea style='width:100%' rows='10' ng-model="comment.content" ng-readonly="!comment.editable"></textarea>
+                                 </div>
+                                 <div class="details" ng-show="!comment.editable">
+                                      <a ng-click="ctrl.editComment(comment)"><fmt:message key="generic.edit"/></a>
+                                 </div>
+                                 <div class="details" ng-show="comment.editable">
+                                      <a ng-click="ctrl.saveComment(comment)"><fmt:message key="generic.save"/></a> &nbsp;|&nbsp;
+                                      <a ng-click="ctrl.editCommentCancel(comment)"><fmt:message key="generic.cancel"/></a>
+                                 </div>
+                            </div>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </table>
-        <br />
-
-
-    <script>
-    $(function() {
-        $.ajaxSetup({
-            statusCode: { 408: function() { document.commentsForm.submit(); } }
-        });
-    });
-
-    var comments = {};
-
-    function editComment(id) {
-        // make sure we have the full comment
-        if ($("#link-" + id).size() > 0) readMoreComment(id, editComment);
-
-        // save the original comment value
-        comments[id] = $("#comment-" + id).html();
-
-        $("#editlink-" + id).hide();
-        $("#savelink-" + id).show();
-        $("#cancellink-" + id).show();
-
-        // put comment in a textarea for editing
-        $("#comment-" + id).html("<textarea style='width:100%' rows='10'>" + comments[id] + "</textarea>");
-    }
-
-    function saveComment(id) {
-        var content = $("#comment-" + id).children()[0].value;
-        $.ajax({
-            type: "PUT",
-            url: '${pageContext.request.contextPath}/tb-ui/authoring/rest/comment/' + id,
-            data: content,
-            dataType: "text",
-            processData: "false",
-            contentType: "text/plain",
-            success: function (rdata) {
-                if (status != "success") {
-                    var cdata = eval("(" + rdata + ")");
-                    $("#editlink-" + id).show();
-                    $("#savelink-" + id).hide();
-                    $("#cancellink-" + id).hide();
-                    $("#comment-" + id).html(cdata.content);
-                } else {
-                    alert('<s:text name="commentManagement.saveError" />');
-                }
-            },
-            error: {
-
-            }
-        });
-    }
-
-    function editCommentCancel(id) {
-        $("#editlink-" + id).show();
-        $("#savelink-" + id).hide();
-        $("#cancellink-" + id).hide();
-        if (comments[id]) {
-            $("#comment-" + id).html(comments[id]);
-            comments[id] = null;
-        }
-    }
-
-    function readMoreComment(id, callback) {
-        $.ajax({
-            type: "GET",
-            url: '${pageContext.request.contextPath}/tb-ui/authoring/rest/comment/' + id,
-            success: function(data) {
-                var cdata = eval("(" + data + ")");
-                $("#comment-" + cdata.id).text(cdata.content);
-                $("#link-" + id).detach();
-                if (callback) callback(id);
-            }
-        });
-    }
-</script>
-
-
-<%-- ========================================================= --%>
-<%-- Save changes and cancel buttons --%>
-<%-- ========================================================= --%>
-
-        <s:submit action="comments!update" value="%{getText('commentManagement.update')}" />
-
-    </s:form>
-
-</s:else>
+        <br>
+    </div>
+</div>

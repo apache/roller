@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
@@ -457,6 +458,7 @@ public class WeblogEntry {
     }
 
     @Transient
+    @JsonIgnore
     public List<WeblogEntryComment> getComments() {
         WeblogEntryManager wmgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
         return wmgr.getComments(CommentSearchCriteria.approvedComments(this, true));

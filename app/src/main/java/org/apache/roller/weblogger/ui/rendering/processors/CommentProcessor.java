@@ -241,7 +241,7 @@ public class CommentProcessor extends AbstractProcessor {
         commentForm.setUrl(urlCheck);
 
         // Validate content
-        commentForm.setContent(request.getParameter("content"));
+        commentForm.setContent(StringUtils.left(request.getParameter("content"), 2000));
         HTMLSanitizer.Level sanitizerLevel = HTMLSanitizer.Level.valueOf(
                 propertiesManager.getStringProperty("comments.html.whitelist"));
         Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
@@ -272,11 +272,16 @@ public class CommentProcessor extends AbstractProcessor {
         String error = null;
         I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
 
-        // check if comments are allowed for this entry
+        // validate comment
         // this checks site-wide settings, weblog settings, and entry settings
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
-            // Must have an email and also must be valid
+        } else if (StringUtils.isBlank(commentForm.getContent())) {
+            error = messageUtils.getString("macro.weblog.commentwarning");
+            log.debug("Comment field is blank");
+        } else if (StringUtils.isBlank(commentForm.getName())) {
+            error = messageUtils.getString("error.commentPostNameMissing");
+            log.debug("Name field is blank");
         } else if (StringUtils.isEmpty(commentForm.getEmail()) || !commentForm.getEmail().matches(EMAIL_ADDR_REGEXP)) {
             error = messageUtils.getString("error.commentPostFailedEmailAddress");
             log.debug("Email Address is invalid: {}", commentForm.getEmail());
