@@ -17,8 +17,6 @@
         <interceptors>
             <interceptor name="UIActionInterceptor"
                          class="org.apache.roller.weblogger.ui.struts2.UIActionInterceptor" />
-            <interceptor name="UISecurityInterceptor"
-                         class="org.apache.roller.weblogger.ui.struts2.UISecurityInterceptor" />
 
             <!-- Define a custom interceptor stack for Roller so that we can
                  add in our own custom interceptors.  We basically copy the
@@ -50,9 +48,7 @@
                 <interceptor-ref name="UIActionInterceptor">
                     <param name="excludeMethods">cancel</param>
                 </interceptor-ref>
-                <interceptor-ref name="UISecurityInterceptor">
-                    <param name="excludeMethods">cancel</param>
-                </interceptor-ref>
+
                 <!-- prepare interceptor placed later in the stack so weblog and userid can
                      be populated by the UIActionInterceptor. -->
                 <interceptor-ref name="prepare">
