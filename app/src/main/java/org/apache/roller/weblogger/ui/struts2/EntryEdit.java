@@ -27,17 +27,13 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
-import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.util.Utilities;
@@ -46,13 +42,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -65,7 +55,6 @@ import java.util.stream.Collectors;
 /**
  * Edit a new or existing entry.
  */
-@RestController
 public final class EntryEdit extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(EntryEdit.class);
@@ -124,9 +113,6 @@ public final class EntryEdit extends UIAction {
         this.persistenceStrategy = persistenceStrategy;
     }
 
-    // Max Tags to show for autocomplete
-    private static final int MAX_TAGS = WebloggerStaticConfig.getIntProperty("services.tagdata.max", 20);
-
     // the entry we are adding or editing
     private WeblogEntry entry = null;
 
@@ -153,11 +139,6 @@ public final class EntryEdit extends UIAction {
 
     @SkipValidation
     public String remove() {
-        String result = removeCommon();
-        return (SUCCESS.equals(result)) ? "deleted" : result;
-    }
-
-    private String removeCommon() {
         entry = weblogEntryManager.getWeblogEntry(entryId);
         if (entry != null) {
             try {
@@ -176,7 +157,7 @@ public final class EntryEdit extends UIAction {
                 // note to user
                 addMessage("weblogEdit.entryRemoved", entry.getTitle());
 
-                return SUCCESS;
+                return "deleted";
 
             } catch (Exception e) {
                 log.error("Error removing entry {}", getEntry().getId(), e);
@@ -437,7 +418,8 @@ public final class EntryEdit extends UIAction {
                 break;
             case SCHEDULED:
                 addMessage("weblogEdit.scheduledEntry",
-                        DateTimeFormatter.ISO_DATE_TIME.format(getEntry().getPubTime()));
+                        DateTimeFormatter.ISO_DATE_TIME.withZone(entry.getWeblog().getZoneId())
+                                .format(getEntry().getPubTime()));
                 break;
             case PENDING:
                 addMessage("weblogEdit.submittedForReview");
@@ -468,111 +450,12 @@ public final class EntryEdit extends UIAction {
                 !CommentOption.NONE.equals(getActionWeblog().getAllowComments());
     }
 
-    /**
-     * Get recent published weblog entries
-     *
-     * @return List of published WeblogEntry objects sorted by publication time.
-     */
-    public List<WeblogEntry> getRecentPublishedEntries() {
-        return getRecentEntries(PubStatus.PUBLISHED, WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME);
-    }
-
-    /**
-     * Get recent scheduled weblog entries
-     *
-     * @return List of scheduled WeblogEntry objects sorted by publication time.
-     */
-    public List<WeblogEntry> getRecentScheduledEntries() {
-        return getRecentEntries(PubStatus.SCHEDULED, WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME);
-    }
-
-    /**
-     * Get recent draft weblog entries
-     *
-     * @return List of draft WeblogEntry objects sorted by update time.
-     */
-    public List<WeblogEntry> getRecentDraftEntries() {
-        return getRecentEntries(PubStatus.DRAFT, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
-    }
-
-    /**
-     * Get recent pending weblog entries
-     *
-     * @return List of pending WeblogEntry objects sorted by update time.
-     */
-    public List<WeblogEntry> getRecentPendingEntries() {
-        return getRecentEntries(PubStatus.PENDING, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
-    }
-
-    private List<WeblogEntry> getRecentEntries(PubStatus pubStatus, WeblogEntrySearchCriteria.SortBy sortBy) {
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(getActionWeblog());
-        wesc.setMaxResults(20);
-        wesc.setStatus(pubStatus);
-        wesc.setSortBy(sortBy);
-        return weblogEntryManager.getWeblogEntries(wesc);
-    }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/tagdata/{handle}", method = RequestMethod.GET)
-    public WeblogTagData getWeblogTagData(@PathVariable String handle, @RequestParam("prefix") String prefix)
-            throws ServletException {
-
-        List<WeblogEntryTagAggregate> tags;
-
-        try {
-            Weblog weblog = weblogManager.getWeblogByHandle(handle);
-            tags = weblogEntryManager.getTags(weblog, null, prefix, 0, MAX_TAGS);
-
-            WeblogTagData wtd = new WeblogTagData();
-            wtd.setWeblog(handle);
-            wtd.setPrefix(prefix);
-            wtd.setTagcounts(tags);
-            return wtd;
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
-        }
-    }
-
     public String getEntryId() {
         return entryId;
     }
 
     public void setEntryId(String entryId) {
         this.entryId = entryId;
-    }
-
-    private static class WeblogTagData {
-        public WeblogTagData() {
-        }
-
-        private String prefix;
-        private String weblog;
-        private List<WeblogEntryTagAggregate> tagcounts;
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public void setPrefix(String prefix) {
-            this.prefix = prefix;
-        }
-
-        public String getWeblog() {
-            return weblog;
-        }
-
-        public void setWeblog(String weblog) {
-            this.weblog = weblog;
-        }
-
-        public List<WeblogEntryTagAggregate> getTagcounts() {
-            return tagcounts;
-        }
-
-        public void setTagcounts(List<WeblogEntryTagAggregate> tagcounts) {
-            this.tagcounts = tagcounts;
-        }
-
     }
 
 }

@@ -16,9 +16,11 @@
 */
 package org.apache.roller.weblogger.ui.restapi;
 
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -26,6 +28,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
@@ -55,6 +59,9 @@ public class WeblogEntryController {
 
     // number of entries to show per page
     private static final int ITEMS_PER_PAGE = 30;
+
+    // Max Tags to show for autocomplete
+    private static final int MAX_TAGS = WebloggerStaticConfig.getIntProperty("services.tagdata.max", 20);
 
     @Autowired
     private UserManager userManager;
@@ -96,6 +103,13 @@ public class WeblogEntryController {
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
+    }
+
+    @Autowired
+    private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
     }
 
     @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
@@ -234,6 +248,101 @@ public class WeblogEntryController {
             log.error("Error removing entry {}", id, e);
             throw new ServletException(e.getMessage());
         }
-
     }
+
+    @RequestMapping(value = "/{id}/tagdata", method = RequestMethod.GET)
+    public WeblogTagData getWeblogTagData(@PathVariable String id, @RequestParam("prefix") String prefix)
+            throws ServletException {
+
+        List<WeblogEntryTagAggregate> tags;
+
+        try {
+            Weblog weblog = weblogManager.getWeblog(id);
+            tags = weblogEntryManager.getTags(weblog, null, prefix, 0, MAX_TAGS);
+
+            WeblogTagData wtd = new WeblogTagData();
+            wtd.setPrefix(prefix);
+            wtd.setTagcounts(tags);
+            return wtd;
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private static class WeblogTagData {
+        private String prefix;
+        private List<WeblogEntryTagAggregate> tagcounts;
+
+        public WeblogTagData() {
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public List<WeblogEntryTagAggregate> getTagcounts() {
+            return tagcounts;
+        }
+
+        public void setTagcounts(List<WeblogEntryTagAggregate> tagcounts) {
+            this.tagcounts = tagcounts;
+        }
+    }
+
+    @RequestMapping(value = "/{weblogId}/recententries/{pubStatus}", method = RequestMethod.GET)
+    private List<RecentWeblogEntryData> getRecentEntries(@PathVariable String weblogId,
+                                                         @PathVariable WeblogEntry.PubStatus pubStatus,
+                                               Principal p, HttpServletResponse response) {
+
+
+        Weblog weblog = weblogManager.getWeblog(weblogId);
+        if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(weblog);
+            wesc.setMaxResults(20);
+            wesc.setStatus(pubStatus);
+            List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
+            List<RecentWeblogEntryData> recentEntries = new ArrayList<>();
+            for (WeblogEntry entry : entries) {
+                RecentWeblogEntryData recentEntry = new RecentWeblogEntryData();
+                recentEntry.setTitle(entry.getTitle());
+                recentEntry.setEditUrl(urlStrategy.getEntryEditURL(weblog.getId(), entry.getId(), true));
+                recentEntries.add(recentEntry);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            return recentEntries;
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return null;
+        }
+    }
+
+    private static class RecentWeblogEntryData {
+        private String title;
+        private String editUrl;
+
+        public RecentWeblogEntryData() {
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getEditUrl() {
+            return editUrl;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setEditUrl(String editUrl) {
+            this.editUrl = editUrl;
+        }
+    }
+
 }
