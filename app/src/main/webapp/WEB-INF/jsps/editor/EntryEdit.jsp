@@ -19,11 +19,17 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+
+<script>
+    var contextPath = "${pageContext.request.contextPath}";
+    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var entryId = "<s:property value='%{#parameters.entryId}'/>";
+</script>
 
 <script>
   $(function() {
@@ -50,6 +56,8 @@
   });
 </script>
 
+<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/entryedit.js'/>"></script>
 
 <style>
 #tagAutoCompleteWrapper {
@@ -334,7 +342,7 @@ $( "#tagAutoComplete" )
     .autocomplete({
         delay: 500,
         source: function(request, response) {
-            $.getJSON("${pageContext.request.contextPath}/tb-ui/authoring/rest/tagdata/<s:property value='%{actionWeblog.handle}' />",
+            $.getJSON("${pageContext.request.contextPath}/tb-ui/authoring/rest/weblogentries/<s:property value='%{actionWeblog.id}' />/tagdata",
             { prefix: extractLast( request.term ) },
             function(data) {
                 response($.map(data.tagcounts, function (dataValue) {

@@ -14,16 +14,19 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade">
+<div class="sidebarFade" id="ngapp-div" ng-app="tightblogApp" ng-controller="EntryEditController as ctrl">
     <div class="menu-tr">
         <div class="menu-tl">
             
             <div class="sidebarInner">
                 
-                <h3><s:text name="weblogEdit.comments" /></h3>
+                <h3><fmt:message key="weblogEdit.comments" /></h3>
 
                 <s:set var="localCommentCount" value="entry.commentCount"/>
                 <s:if test="#localCommentCount > 0">
@@ -37,90 +40,67 @@
                     </s:text>
                 </s:if>
                 <s:else>
-                    <span><s:text name="generic.none" /></span>
+                    <span><fmt:message key="generic.none" /></span>
                 </s:else>
                 
-                <hr size="1" noshade="noshade" />  
-                <h3><s:text name="weblogEdit.pendingEntries" /></h3>
-                
-                <s:set var="pendingEntries" value="recentPendingEntries" />
-                <s:if test="#pendingEntries.isEmpty">
-                    <span><s:text name="generic.none" /></span>
-                </s:if>
-                <s:iterator var="post" value="#pendingEntries">
-                    <span class="entryEditSidebarLink">
-                        <s:url var="editUrl" action="entryEdit">
-                            <s:param name="weblogId" value="%{actionWeblog.id}" />
-                            <s:param name="entryId" value="#post.id" />
-                        </s:url>
-                        <img src='<s:url value="/images/table_error.png"/>' 
-                             align="absmiddle" border="0" alt="icon" title="Edit" />
-                             <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
-                    </span><br />
-                </s:iterator>
-                
-                
-                <hr size="1" noshade="noshade" />            
-                <h3><s:text name="weblogEdit.draftEntries" /></h3>
-                
-                <s:set var="draftEntries" value="recentDraftEntries" />
-                <s:if test="#draftEntries.isEmpty">
-                    <span><s:text name="generic.none" /></span>
-                </s:if>
-                <s:iterator var="post" value="#draftEntries">
-                    <span class="entryEditSidebarLink">
-                        <s:url var="editUrl" action="entryEdit">
-                            <s:param name="weblogId" value="%{actionWeblog.id}" />
-                            <s:param name="entryId" value="#post.id" />
-                        </s:url>
-                        <img src='<s:url value="/images/table_edit.png"/>' 
-                             align="absmiddle" border="0" alt="icon" title="Edit" />
-                             <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
-                    </span><br />
-                </s:iterator>
-                
-                
+                <div ng-show="ctrl.recentEntries.PENDING.length > 0">
+                    <hr size="1" noshade="noshade" />
+                    <h3><fmt:message key="weblogEdit.pendingEntries" /></h3>
+
+                    <span ng-repeat="post in ctrl.recentEntries.PENDING">
+                        <span class="entryEditSidebarLink">
+                            <img src='<s:url value="/images/table_error.png"/>'
+                                 align="absmiddle" border="0" alt="icon" title="Edit" />
+                            <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
+                        </span>
+                        <br>
+                    </span>
+                </div>
+
+                <div ng-show="ctrl.recentEntries.DRAFT.length > 0">
+                    <hr size="1" noshade="noshade" />
+                    <h3><fmt:message key="weblogEdit.draftEntries" /></h3>
+
+                    <span ng-repeat="post in ctrl.recentEntries.DRAFT">
+                        <span class="entryEditSidebarLink">
+                            <img src='<s:url value="/images/table_error.png"/>'
+                                 align="absmiddle" border="0" alt="icon" title="Edit" />
+                            <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
+                        </span>
+                        <br>
+                    </span>
+                </div>
+
                 <s:if test="userAnAuthor">
                     
-                    <hr size="1" noshade="noshade" />
-                    <h3><s:text name="weblogEdit.publishedEntries" /></h3>
-                    
-                    <s:set var="pubEntries" value="recentPublishedEntries" />
-                    <s:if test="#pubEntries.isEmpty">
-                        <span><s:text name="generic.none" /></span>
-                    </s:if>
-                    <s:iterator var="post" value="#pubEntries">
-                        <span class="entryEditSidebarLink">
-                            <s:url var="editUrl" action="entryEdit">
-                                <s:param name="weblogId" value="%{actionWeblog.id}" />
-                                <s:param name="entryId" value="#post.id" />
-                            </s:url>
-                            <img src='<s:url value="/images/table_edit.png"/>' 
-                                 align="absmiddle" border="0" alt="icon" title="Edit" />
-                            <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
-                        </span><br />
-                    </s:iterator>
-                    
-                    
-                    <hr size="1" noshade="noshade" />            
-                    <h3><s:text name="weblogEdit.scheduledEntries" /></h3>
-                    
-                    <s:set var="schedEntries" value="recentScheduledEntries" />
-                    <s:if test="#schedEntries.isEmpty">
-                        <span><s:text name="generic.none" /></span>
-                    </s:if>
-                    <s:iterator var="post" value="#schedEntries">
-                        <span class="entryEditSidebarLink">
-                            <s:url var="editUrl" action="entryEdit">
-                                <s:param name="weblogId" value="%{actionWeblog.id}" />
-                                <s:param name="entryId" value="#post.id" />
-                            </s:url>
-                            <img src='<s:url value="/images/table_edit.png"/>' 
-                                 align="absmiddle" border="0" alt="icon" title="Edit" />
-                            <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
-                        </span><br />
-                    </s:iterator>
-                    
+                    <div ng-show="ctrl.recentEntries.PUBLISHED.length > 0">
+                        <hr size="1" noshade="noshade" />
+                        <h3><fmt:message key="weblogEdit.publishedEntries" /></h3>
+
+                        <span ng-repeat="post in ctrl.recentEntries.PUBLISHED">
+                            <span class="entryEditSidebarLink">
+                                <img src='<s:url value="/images/table_error.png"/>'
+                                     align="absmiddle" border="0" alt="icon" title="Edit" />
+                                <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
+                            </span>
+                            <br>
+                        </span>
+                    </div>
+
+                    <div ng-show="ctrl.recentEntries.SCHEDULED.length > 0">
+                        <hr size="1" noshade="noshade" />
+                        <h3><fmt:message key="weblogEdit.scheduledEntries" /></h3>
+
+                        <span ng-repeat="post in ctrl.recentEntries.SCHEDULED">
+                            <span class="entryEditSidebarLink">
+                                <img src='<s:url value="/images/table_error.png"/>'
+                                     align="absmiddle" border="0" alt="icon" title="Edit" />
+                                <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
+                            </span>
+                            <br>
+                        </span>
+                    </div>
+
                 </s:if>
                 
                 <br />
