@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.util;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +50,10 @@ import java.sql.Connection;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -310,20 +306,6 @@ public class Utilities {
     public static String normalizeTag(String tag, Locale locale) {
         tag = Utilities.stripInvalidTagCharacters(tag);
         return locale == null ? tag.toLowerCase() : tag.toLowerCase(locale);
-    }
-
-    /**
-     * @param tags String holding space separated list of tags
-     * @return List of strings, one string for each tag
-     */
-    public static Set<String> splitStringAsTags(String tags) {
-        String[] tagsarr = StringUtils.split(tags, TAG_SPLIT_CHARS);
-        if (tagsarr == null) {
-            return Collections.emptySet();
-        }
-        Set<String> mySet = new HashSet<>();
-        Collections.addAll(mySet, tagsarr);
-        return mySet;
     }
 
     /**

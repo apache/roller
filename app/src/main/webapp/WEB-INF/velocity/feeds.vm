@@ -30,10 +30,10 @@
 #macro(showEntriesAtom10 $entries)
 #foreach($entry in $entries)
     <entry>
-        <id>$entry.permalink</id>
+        <id>$url.entry($entry.anchor)</id>
         <title type="html">$utils.escapeXML($entry.title)</title>
         <author><name>$entry.creator.screenName</name></author>
-        <link rel="alternate" type="text/html" href="$entry.permalink"/>
+        <link rel="alternate" type="text/html" href="$url.entry($entry.anchor)"/>
         <published>$utils.formatIsoOffsetDateTime($entry.pubTime)</published>
         <updated>$utils.formatIsoOffsetDateTime($entry.updateTime)</updated>
         <category term="$utils.escapeXML($entry.category.name)" label="$utils.escapeXML($entry.category.name)" />

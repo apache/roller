@@ -234,29 +234,22 @@
             <result name="success" type="tiles">.MediaFileChooser</result>
         </action>
 
-        <action name="entryAdd!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.EntryEdit">
+        <action name="entryAdd" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">entryAdd</param>
-            <param name="pageTitle">weblogEdit.title.newEntry</param>
-            <result name="input" type="tiles">.EntryEdit</result>
-            <result name="success" type="redirectAction">
-                <param name="actionName">entryEdit!firstSave</param>
-                <param name="weblogId">${weblogId}</param>
-                <param name="entryId">${entry.id}</param>
-            </result>
-            <allowed-methods>publish,saveDraft</allowed-methods>
+            <param name="pageTitleReal">weblogEdit.title.newEntry</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">EDIT_DRAFT</param>
+            <param name="desiredMenu">editor</param>
+            <result name="success" type="tiles">.EntryEdit</result>
         </action>
 
-        <action name="entryEdit!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.EntryEdit">
+        <action name="entryEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">entryEdit</param>
-            <param name="pageTitle">weblogEdit.title.editEntry</param>
-            <result name="input" type="tiles">.EntryEdit</result>
-            <result name="error" type="chain">menu</result>
-            <result name="deleted" type="redirectAction">
-                <param name="actionName">entryAdd</param>
-                <param name="weblogId">${weblogId}</param>
-            </result>
-            <result name="list" type="chain">entries</result>
-            <allowed-methods>firstSave,publish,remove,saveDraft</allowed-methods>
+            <param name="pageTitleReal">weblogEdit.title.editEntry</param>
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">EDIT_DRAFT</param>
+            <param name="desiredMenu">editor</param>
+            <result name="success" type="tiles">.EntryEdit</result>
         </action>
 
         <action name="entries" class="org.apache.roller.weblogger.ui.struts2.UIAction">

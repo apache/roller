@@ -20,7 +20,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade" id="ngapp-div" ng-app="tightblogApp" ng-controller="EntryEditController as ctrl">
+<div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
             
@@ -28,20 +28,12 @@
                 
                 <h3><fmt:message key="weblogEdit.comments" /></h3>
 
-                <s:set var="localCommentCount" value="entry.commentCount"/>
-                <s:if test="#localCommentCount > 0">
-                    <s:url var="commentsURL" action="comments">
-                       <s:param name="entryId" value="entryId" />
-                       <s:param name="weblogId" value="weblogId" />
-                    </s:url>
-                    <s:text name="weblogEdit.hasComments">
-                        <s:param value="%{commentsURL}" />
-                        <s:param value="localCommentCount" />
-                    </s:text>
-                </s:if>
-                <s:else>
-                    <span><fmt:message key="generic.none" /></span>
-                </s:else>
+                <div ng-show="ctrl.entry.commentCount > 0">
+                    <a ng-href="{{ctrl.entry.commentsUrl}}" ng-bind-html="ctrl.commentCountMsg"></a>
+                </div>
+                <div ng-show="ctrl.entry.commentCount == 0">
+                    <fmt:message key="generic.none" />
+                </div>
                 
                 <div ng-show="ctrl.recentEntries.PENDING.length > 0">
                     <hr size="1" noshade="noshade" />
@@ -49,7 +41,7 @@
 
                     <span ng-repeat="post in ctrl.recentEntries.PENDING">
                         <span class="entryEditSidebarLink">
-                            <img src='<s:url value="/images/table_error.png"/>'
+                            <img src='${pageContext.request.contextPath}/images/table_edit.png'
                                  align="absmiddle" border="0" alt="icon" title="Edit" />
                             <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
                         </span>
@@ -63,7 +55,7 @@
 
                     <span ng-repeat="post in ctrl.recentEntries.DRAFT">
                         <span class="entryEditSidebarLink">
-                            <img src='<s:url value="/images/table_error.png"/>'
+                            <img src='${pageContext.request.contextPath}/images/table_edit.png'
                                  align="absmiddle" border="0" alt="icon" title="Edit" />
                             <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
                         </span>
@@ -71,42 +63,37 @@
                     </span>
                 </div>
 
-                <s:if test="userAnAuthor">
-                    
-                    <div ng-show="ctrl.recentEntries.PUBLISHED.length > 0">
-                        <hr size="1" noshade="noshade" />
-                        <h3><fmt:message key="weblogEdit.publishedEntries" /></h3>
+                <div ng-show="ctrl.recentEntries.PUBLISHED.length > 0">
+                    <hr size="1" noshade="noshade" />
+                    <h3><fmt:message key="weblogEdit.publishedEntries" /></h3>
 
-                        <span ng-repeat="post in ctrl.recentEntries.PUBLISHED">
-                            <span class="entryEditSidebarLink">
-                                <img src='<s:url value="/images/table_error.png"/>'
-                                     align="absmiddle" border="0" alt="icon" title="Edit" />
-                                <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
-                            </span>
-                            <br>
+                    <span ng-repeat="post in ctrl.recentEntries.PUBLISHED">
+                        <span class="entryEditSidebarLink">
+                            <img src='${pageContext.request.contextPath}/images/table_edit.png'
+                                 align="absmiddle" border="0" alt="icon" title="Edit" />
+                            <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
                         </span>
-                    </div>
+                        <br>
+                    </span>
+                </div>
 
-                    <div ng-show="ctrl.recentEntries.SCHEDULED.length > 0">
-                        <hr size="1" noshade="noshade" />
-                        <h3><fmt:message key="weblogEdit.scheduledEntries" /></h3>
+                <div ng-show="ctrl.recentEntries.SCHEDULED.length > 0">
+                    <hr size="1" noshade="noshade" />
+                    <h3><fmt:message key="weblogEdit.scheduledEntries" /></h3>
 
-                        <span ng-repeat="post in ctrl.recentEntries.SCHEDULED">
-                            <span class="entryEditSidebarLink">
-                                <img src='<s:url value="/images/table_error.png"/>'
-                                     align="absmiddle" border="0" alt="icon" title="Edit" />
-                                <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
-                            </span>
-                            <br>
+                    <span ng-repeat="post in ctrl.recentEntries.SCHEDULED">
+                        <span class="entryEditSidebarLink">
+                            <img src='${pageContext.request.contextPath}/images/table_edit.png'
+                                 align="absmiddle" border="0" alt="icon" title="Edit" />
+                            <a ng-href="{{post.editUrl}}">{{post.title | limitTo:50}}{{post.title > 50 ? '...' : ''}}</a>
                         </span>
-                    </div>
+                        <br>
+                    </span>
+                </div>
 
-                </s:if>
-                
-                <br />
-                <br />
+                <br>
+                <br>
             </div>
-            
         </div>
     </div>
 </div>

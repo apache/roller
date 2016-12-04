@@ -202,8 +202,7 @@
                             <div class="viewdetails bot">
                                 <div class="details">
                                     <fmt:message key="commentManagement.entryTitled" />&nbsp;:&nbsp;
-                                    <a ng-href='{{comment.weblogEntry.permalink}}'>
-                                    {{comment.weblogEntry.title}}</a>
+                                    <a ng-href='{{comment.weblogEntry.permalink}}'>{{comment.weblogEntry.title}}</a>
                                 </div>
                                 <div class="details">
                                     <fmt:message key="commentManagement.commentBy" />&nbsp;:&nbsp;

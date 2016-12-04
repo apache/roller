@@ -29,10 +29,10 @@
     <generator uri="https://github.com/gmazza/tightblog" version="$generatorVersion">TightBlog</generator>
   #foreach( $entry in $entries )
   <entry>
-    <id>$utils.escapeXML($entry.permalink)</id>
+    <id>$utils.escapeXML($url.entry($entry.anchor))</id>
     <title type="html">$utils.escapeXML($entry.title)</title>
     <author><name>$entry.author</name></author>
-    <link rel="alternate" type="text/html" href="$utils.escapeXML($entry.permalink)"/>
+    <link rel="alternate" type="text/html" href="$utils.escapeXML($url.entry($entry.anchor))"/>
     <published>$utils.formatIsoOffsetDateTime($entry.pubTime)</published>
     #if( $utils.isNotEmpty($entry.updateTime) )
        <updated>$utils.formatIsoOffsetDateTime($entry.updateTime)</updated>

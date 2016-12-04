@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -563,8 +564,7 @@ public class WeblogEntryTest extends WebloggerTest {
         entry = weblogEntryManager.getWeblogEntry(id);
         assertEquals(2, entry.getTags().size());
 
-        Set<String> updatedTags = Utilities.splitStringAsTags("testwillstaytag testnewtag testnewtag3");
-        entry.updateTags(updatedTags);
+        entry.updateTags(new HashSet<>(Arrays.asList("testwillstaytag testnewtag testnewtag3".split("\\s+"))));
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
@@ -669,8 +669,7 @@ public class WeblogEntryTest extends WebloggerTest {
 
             testWeblog = getManagedWeblog(testWeblog);
             entry = weblogEntryManager.getWeblogEntryByAnchor(testWeblog, "entry2");
-            Set<String> updatedTags = Utilities.splitStringAsTags("one three five");
-            entry.updateTags(updatedTags);
+            entry.updateTags(new HashSet<>(Arrays.asList("one three five".split("\\s+"))));
             weblogEntryManager.saveWeblogEntry(entry);
 
             endSession(true);

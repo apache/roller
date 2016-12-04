@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.util.Utilities;
@@ -66,6 +67,7 @@ public class WeblogEntryTag {
      */
     @ManyToOne
     @JoinColumn(name = "weblogid", nullable = false)
+    @JsonIgnore
     public Weblog getWeblog() {
         return this.weblog;
     }
@@ -76,6 +78,7 @@ public class WeblogEntryTag {
 
     @ManyToOne
     @JoinColumn(name = "entryid", nullable = false)
+    @JsonIgnore
     public WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }

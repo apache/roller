@@ -97,6 +97,15 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     }
 
     @Override
+    public String getCommentManagementURL(String weblogId, String entryId, boolean absolute) {
+        String url = getRootURL(absolute) + "/tb-ui/authoring/comments.rol";
+        Map<String, String> params = new HashMap<>();
+        params.put("weblogId", weblogId);
+        params.put("entryId", entryId);
+        return url + Utilities.getQueryString(params);
+    }
+
+    @Override
     public String getWeblogConfigURL(String weblogHandle, boolean absolute) {
         String url = getRootURL(absolute) + "/tb-ui/authoring/weblogConfig.rol";
         Map<String, String> params = new HashMap<>();

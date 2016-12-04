@@ -71,6 +71,11 @@ public interface URLStrategy {
     String getEntryEditURL(String weblogId, String entryId, boolean absolute);
 
     /**
+     * Get a url for the comments for a specific weblog entry.
+     */
+    String getCommentManagementURL(String weblogId, String entryId, boolean absolute);
+
+    /**
      * Get a url to weblog config page.
      */
     String getWeblogConfigURL(String weblogHandle, boolean absolute);

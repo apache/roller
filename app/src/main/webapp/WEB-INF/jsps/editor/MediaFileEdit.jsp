@@ -159,14 +159,12 @@
                 <label for="fileControl"><s:text name="mediaFileEdit.fileLocation" /></label>
             </td>
             <td>
-                <div id="fileControldiv" class="miscControl">
-                    <s:if test="actionName == 'mediaFileEdit'">
-                        <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value=""/>
-                    </s:if>
-                    <s:else>
-                        <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value="" required/>
-                    </s:else>
-                </div>
+                <s:if test="actionName == 'mediaFileEdit'">
+                    <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value=""/>
+                </s:if>
+                <s:else>
+                    <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value="" required/>
+                </s:else>
             </td>
         </tr>
     </table>

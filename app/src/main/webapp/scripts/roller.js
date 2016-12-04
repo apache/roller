@@ -1,6 +1,6 @@
 /*
 * Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
+* contributor license agreements.  The ASF licenses this file to You
 * under the Apache License, Version 2.0 (the "License"); you may not
 * use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -14,8 +14,10 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
-
 function setCookie(name,value,expires,path,domain,secure) {
   document.cookie = name + "=" + escape (value) +
     ((expires) ? "; expires=" + expires.toGMTString() : "") +
@@ -61,55 +63,6 @@ function forgetUser(theForm) {
     deleteCookie("commentAuthor","/");
     deleteCookie("commentEmail","/");
     deleteCookie("commentUrl","/");
-}
-
-/* This function is used to show/hide elements with a display:none style attribute */
-function toggle(targetId) {
-    if (document.getElementById) {
-        target = document.getElementById(targetId);
-      if (target) {
-        if (target.style.display == "none") {
-      		target.style.display = "";
-      	} else {
-      		target.style.display = "none";
-      	}
-      }
-    }
-}
-
-function togglePlusMinus(targetId) {
-    if (document.getElementById) {
-        target = document.getElementById(targetId);
-    	if (target) {
-            if (target.innerHTML == "+") {
-                target.innerHTML = "-";
-            } else {
-                target.innerHTML = "+";
-            }
-        }
-    }
-}
-
-function toggleControl(toggleId, targetId) {
-    var expanded;
-    if (document.getElementById) {
-        target = document.getElementById(targetId);
-        toggle = document.getElementById(toggleId);
-    	if (target.style.display == "none") {
-    		target.style.display = "";
-            expanded = true;
-
-    	} else {
-    		target.style.display = "none";
-            expanded = false;
-    	}
-        togglePlusMinus("i" + targetId);
-
-        // set a cookie to remember this preference
-        var expires = new Date();
-        expires.setTime(expires.getTime() + 24 * 365 * 60 * 60 * 1000); // sets it for approx 365 days.
-        setCookie("control_"+targetId,expanded,expires,"/");
-    }
 }
 
 // Toggle check boxes

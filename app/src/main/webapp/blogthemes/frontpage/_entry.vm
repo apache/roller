@@ -1,5 +1,5 @@
 <div class="entry">
-    <a class="entryTitle" href="$utils.escapeHTML($entry.permalink)">
+    <a class="entryTitle" href="$utils.escapeHTML($url.entry($entry.anchor))">
         $utils.truncateText($entry.title, 50, 50, "...")
     </a><br /> 
     <p class="entryDetails">

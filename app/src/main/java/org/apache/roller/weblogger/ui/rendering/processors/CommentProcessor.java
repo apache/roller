@@ -25,6 +25,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RuntimeConfigDefs;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
@@ -111,6 +112,13 @@ public class CommentProcessor extends AbstractProcessor {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
     }
 
     @Autowired
@@ -261,7 +269,8 @@ public class CommentProcessor extends AbstractProcessor {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Doing comment posting for entry = {}", entry.getPermalink());
+            log.debug("Doing comment posting for entry = {}", urlStrategy.getWeblogEntryURL(entry.getWeblog(),
+                    entry.getAnchor(), true));
             log.debug("name = " + commentForm.getName());
             log.debug("email = " + commentForm.getEmail());
             log.debug("url = " + commentForm.getUrl());

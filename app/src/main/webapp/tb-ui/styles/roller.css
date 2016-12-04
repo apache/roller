@@ -543,6 +543,7 @@ div.control {
     width: 100%;
     /*height: 2.5em; Buttons don't line up */
 }
+
 div.controlToggle {
     width: 100%;
     height: 25px;
@@ -732,9 +733,6 @@ pre {
 .toplabel {
     font-weight: bold;
     margin: 10px 0px 0px 0px;
-}
-.miscControl {
-    margin-bottom: 5px;
 }
 
 .chooser {

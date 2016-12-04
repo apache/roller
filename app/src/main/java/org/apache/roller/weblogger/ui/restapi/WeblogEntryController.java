@@ -16,6 +16,10 @@
 */
 package org.apache.roller.weblogger.ui.restapi;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.MailManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -23,18 +27,26 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.pojos.AtomEnclosure;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
+import org.apache.roller.weblogger.util.ValidationError;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,18 +56,32 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.security.Principal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/tb-ui/authoring/rest/weblogentries")
 public class WeblogEntryController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+
+    private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     // number of entries to show per page
     private static final int ITEMS_PER_PAGE = 30;
@@ -82,6 +108,13 @@ public class WeblogEntryController {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
     }
 
     @Autowired
@@ -112,6 +145,13 @@ public class WeblogEntryController {
         this.urlStrategy = urlStrategy;
     }
 
+    @Autowired
+    private MailManager mailManager;
+
+    public void setMailManager(MailManager manager) {
+        mailManager = manager;
+    }
+
     @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
     public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
                                               @RequestBody WeblogEntrySearchCriteria criteria, Principal principal,
@@ -127,13 +167,16 @@ public class WeblogEntryController {
             criteria.setMaxResults(ITEMS_PER_PAGE + 1);
             List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(criteria);
             data.entries = new ArrayList<>();
-            data.entries.addAll(rawEntries);
+            data.entries.addAll(rawEntries.stream().peek(re -> re.setWeblog(null))
+                    .peek(re -> re.getCategory().setWeblog(null))
+                    .collect(Collectors.toList()));
 
             if (rawEntries.size() > ITEMS_PER_PAGE) {
                 data.entries.remove(data.entries.size() - 1);
                 data.hasMore = true;
             }
 
+            response.setStatus(HttpServletResponse.SC_OK);
             return data;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -154,7 +197,6 @@ public class WeblogEntryController {
         }
     }
 
-
     @RequestMapping(value = "/{weblogId}/searchfields", method = RequestMethod.GET)
     public WeblogEntrySearchFields getWeblogEntrySearchFields(@PathVariable String weblogId, Principal principal,
                                                               HttpServletResponse response) {
@@ -166,7 +208,7 @@ public class WeblogEntryController {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
 
-        if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+        if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.POST)) {
             WeblogEntrySearchFields fields = new WeblogEntrySearchFields();
 
             // categories
@@ -294,55 +336,326 @@ public class WeblogEntryController {
     }
 
     @RequestMapping(value = "/{weblogId}/recententries/{pubStatus}", method = RequestMethod.GET)
-    private List<RecentWeblogEntryData> getRecentEntries(@PathVariable String weblogId,
+    private List<WeblogEntry> getRecentEntries(@PathVariable String weblogId,
                                                          @PathVariable WeblogEntry.PubStatus pubStatus,
                                                Principal p, HttpServletResponse response) {
 
-
         Weblog weblog = weblogManager.getWeblog(weblogId);
-        if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
+        WeblogRole minimumRole = (pubStatus == PubStatus.DRAFT || pubStatus == PubStatus.PENDING) ?
+                WeblogRole.EDIT_DRAFT : WeblogRole.POST;
+        if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), minimumRole)) {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(weblog);
             wesc.setMaxResults(20);
             wesc.setStatus(pubStatus);
             List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
-            List<RecentWeblogEntryData> recentEntries = new ArrayList<>();
-            for (WeblogEntry entry : entries) {
-                RecentWeblogEntryData recentEntry = new RecentWeblogEntryData();
-                recentEntry.setTitle(entry.getTitle());
-                recentEntry.setEditUrl(urlStrategy.getEntryEditURL(weblog.getId(), entry.getId(), true));
-                recentEntries.add(recentEntry);
-            }
+            List<WeblogEntry> recentEntries = entries.stream().map(r -> new WeblogEntry(r.getTitle(),
+                    urlStrategy.getEntryEditURL(weblog.getId(), r.getId(), true))).collect(Collectors.toList());
             response.setStatus(HttpServletResponse.SC_OK);
             return recentEntries;
+        } else if (WeblogRole.POST.equals(minimumRole) &&
+                userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
+            // contributors get empty array for certain pub statuses
+            response.setStatus(HttpServletResponse.SC_OK);
+            return new ArrayList<>();
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }
     }
 
-    private static class RecentWeblogEntryData {
-        private String title;
-        private String editUrl;
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
+        try {
+            WeblogEntry entry = weblogEntryManager.getWeblogEntry(id);
+            if (entry != null) {
+                Weblog weblog = entry.getWeblog();
+                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
+                    String tagsAsString = String.join(" ", entry.getTags().stream().map(WeblogEntryTag::getName).collect(Collectors.toSet()));
+                    entry.setTagsAsString(tagsAsString);
+                    entry.setCommentsUrl(urlStrategy.getCommentManagementURL(weblog.getId(), entry.getId(), true));
+                    entry.setPermalink(urlStrategy.getWeblogEntryURL(weblog, entry.getAnchor(), true));
+                    entry.setPreviewUrl(urlStrategy.getPreviewURLStrategy(null).getWeblogEntryURL(weblog,
+                            entry.getAnchor(), true));
 
-        public RecentWeblogEntryData() {
+                    if (entry.getPubTime() != null) {
+                        log.debug("entry pubtime is {}", entry.getPubTime());
+                        ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getZoneId());
+                        entry.setHours(zdt.getHour());
+                        entry.setMinutes(zdt.getMinute());
+                        entry.setCreator(null);
+                        entry.setDateString(pubDateFormat.format(zdt.toLocalDate()));
+                    }
+
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return entry;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error retrieving entry {}", id, e);
+            throw new ServletException(e.getMessage());
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/{weblogId}/entryeditmetadata", method = RequestMethod.GET)
+    public EntryEditMetadata getEntryEditMetadata(@PathVariable String weblogId, Principal principal,
+                                                              HttpServletResponse response) {
+
+        // Get user permissions and locale
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+        I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+        Weblog weblog = weblogManager.getWeblog(weblogId);
+
+        if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
+            EntryEditMetadata fields = new EntryEditMetadata();
+
+            // categories
+            fields.categories = new LinkedHashMap<>();
+            for (WeblogCategory cat : weblog.getWeblogCategories()) {
+                fields.categories.put(cat.getId(), cat.getName());
+            }
+
+            fields.author = userManager.checkWeblogRole(user, weblog, WeblogRole.POST);
+            fields.commentingEnabled = !RuntimeConfigDefs.CommentOption.NONE.equals(
+                    RuntimeConfigDefs.CommentOption.valueOf(propertiesManager.getStringProperty("users.comments.enabled"))) &&
+                    !RuntimeConfigDefs.CommentOption.NONE.equals(weblog.getAllowComments());
+            fields.defaultCommentDays = weblog.getDefaultCommentDays();
+            fields.defaultEditFormat = weblog.getEditFormat();
+            fields.timezone = weblog.getTimeZone();
+
+            for (Weblog.EditFormat format : Weblog.EditFormat.values()) {
+                fields.editFormatDescriptions.put(format, messages.getString(format.getDescription()));
+            }
+
+            // comment day options
+            fields.commentDayOptions = new LinkedHashMap<>();
+            fields.commentDayOptions.put("-1", messages.getString("weblogEdit.unlimitedCommentDays"));
+            fields.commentDayOptions.put("0", messages.getString("weblogEdit.days0"));
+            fields.commentDayOptions.put("3", messages.getString("weblogEdit.days3"));
+            fields.commentDayOptions.put("7", messages.getString("weblogEdit.days7"));
+            fields.commentDayOptions.put("14", messages.getString("weblogEdit.days14"));
+            fields.commentDayOptions.put("30", messages.getString("weblogEdit.days30"));
+            fields.commentDayOptions.put("60", messages.getString("weblogEdit.days60"));
+            fields.commentDayOptions.put("90", messages.getString("weblogEdit.days90"));
+            return fields;
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
         }
 
-        public String getTitle() {
-            return title;
+    }
+
+    public class EntryEditMetadata {
+        Map<String, String> categories;
+        Map<String, String> commentDayOptions;
+        boolean author = false;
+        boolean commentingEnabled = false;
+        int defaultCommentDays = -1;
+        Weblog.EditFormat defaultEditFormat;
+        Map<Weblog.EditFormat, String> editFormatDescriptions = new HashMap<>();
+        String timezone;
+
+        // getters needed for JSON serialization: http://stackoverflow.com/a/35822500
+        public Map<String, String> getCategories() {
+            return categories;
         }
 
-        public String getEditUrl() {
-            return editUrl;
+        public Map<String, String> getCommentDayOptions() {
+            return commentDayOptions;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
+        public boolean isAuthor() {
+            return author;
         }
 
-        public void setEditUrl(String editUrl) {
-            this.editUrl = editUrl;
+        public boolean isCommentingEnabled() {
+            return commentingEnabled;
         }
+
+        public int getDefaultCommentDays() {
+            return defaultCommentDays;
+        }
+
+        public Weblog.EditFormat getDefaultEditFormat() {
+            return defaultEditFormat;
+        }
+
+        public Map<Weblog.EditFormat, String> getEditFormatDescriptions() {
+            return editFormatDescriptions;
+        }
+
+        public String getTimezone() {
+            return timezone;
+        }
+    }
+
+    // publish
+    // save
+    // submit for review
+    @RequestMapping(value = "/{weblogId}/entries", method = RequestMethod.POST)
+    public ResponseEntity postEntry(@PathVariable String weblogId, @Valid @RequestBody WeblogEntry entryData,
+                                       Principal p) throws ServletException {
+
+        try {
+
+            boolean createNew = false;
+            WeblogEntry entry = null;
+
+            if (entryData.getId() != null) {
+                entry = weblogEntryManager.getWeblogEntry(entryData.getId());
+            }
+
+            // Check user permissions
+            User user = userManager.getEnabledUserByUserName(p.getName());
+            Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+            I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+            Weblog weblog = (entry == null) ? weblogManager.getWeblog(weblogId) : entry.getWeblog();
+
+            WeblogRole necessaryRole = (PubStatus.PENDING.equals(entryData.getStatus())
+                    || PubStatus.DRAFT.equals(entryData.getStatus())) ? WeblogRole.EDIT_DRAFT : WeblogRole.POST;
+            if (weblog != null && userManager.checkWeblogRole(user, weblog, necessaryRole)) {
+
+                // create new?
+                if (entry == null) {
+                    createNew = true;
+                    entry = new WeblogEntry();
+                    entry.setId(Utilities.generateUUID());
+                    entry.setCreator(user);
+                    entry.setWeblog(weblog);
+                    entry.setEditFormat(entryData.getEditFormat());
+                }
+
+                entry.setUpdateTime(Instant.now());
+                if (PubStatus.PUBLISHED.equals(entryData.getStatus())) {
+                    Instant pubTime = calculatePubTime(entryData);
+                    entry.setPubTime((pubTime != null) ? pubTime : entry.getUpdateTime());
+
+                    if (entry.getPubTime().isAfter(Instant.now().plus(1, ChronoUnit.MINUTES))) {
+                        entryData.setStatus(PubStatus.SCHEDULED);
+                    }
+                }
+
+                entry.setStatus(entryData.getStatus());
+                entry.setTitle(entryData.getTitle());
+                entry.setText(entryData.getText());
+                entry.setSummary(entryData.getSummary());
+                entry.setNotes(entryData.getNotes());
+                if (!StringUtils.isEmpty(entryData.getTagsAsString())) {
+                    entry.updateTags(new HashSet<>(Arrays.asList(entryData.getTagsAsString().trim().split("\\s+"))));
+                } else {
+                    entry.updateTags(new HashSet<>());
+                }
+                entry.setSearchDescription(entryData.getSearchDescription());
+                entry.setEnclosureUrl(entryData.getEnclosureUrl());
+                entry.setCategory(weblogManager.getWeblogCategory(entryData.getCategory().getId()));
+
+                entry.setCommentDays(entryData.getCommentDays());
+
+                if (!StringUtils.isEmpty(entry.getEnclosureUrl())) {
+                    // Fetch MediaCast resource
+                    log.debug("Checking MediaCast attributes");
+                    AtomEnclosure enclosure;
+
+                    try {
+                        enclosure = weblogEntryManager.generateEnclosure(entry.getEnclosureUrl());
+                    } catch (IllegalArgumentException e) {
+                        BindException be = new BindException(entry, "new data object");
+                        be.addError(new ObjectError("Enclosure URL", messages.getString(e.getMessage())));
+                        return ResponseEntity.badRequest().body(ValidationError.fromBindingErrors(be));
+                    }
+
+                    // set enclosure attributes
+                    entry.setEnclosureUrl(enclosure.getUrl());
+                    entry.setEnclosureType(enclosure.getContentType());
+                    entry.setEnclosureLength(enclosure.getLength());
+                }
+
+                weblogEntryManager.saveWeblogEntry(entry);
+                persistenceStrategy.flush();
+
+                // notify search of the new entry
+                if (entry.isPublished()) {
+                    indexManager.addEntryReIndexOperation(entry);
+                } else if (!createNew) {
+                    indexManager.removeEntryIndexOperation(entry);
+                }
+
+                // notify caches
+                cacheManager.invalidate(entry);
+
+                if (PubStatus.PENDING.equals(entry.getStatus())) {
+                    mailManager.sendPendingEntryNotice(entry);
+                }
+
+                SuccessfulSaveResponse ssr = new SuccessfulSaveResponse();
+                ssr.entryId = entry.getId();
+
+                switch (entry.getStatus()) {
+                    case DRAFT:
+                        ssr.message = messages.getString("weblogEdit.draftSaved");
+                        break;
+                    case PUBLISHED:
+                        ssr.message = messages.getString("weblogEdit.publishedEntry");
+                        break;
+                    case SCHEDULED:
+                        ssr.message = messages.getString("weblogEdit.scheduledEntry",
+                                DateTimeFormatter.ISO_DATE_TIME.withZone(entry.getWeblog().getZoneId())
+                                        .format(entry.getPubTime()));
+                        break;
+                    case PENDING:
+                        ssr.message = "weblogEdit.submittedForReview";
+                        break;
+                    default:
+                }
+
+                return ResponseEntity.ok(ssr);
+            } else {
+                return ResponseEntity.status(403).body(messages.getString("error.title.403"));
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    public class SuccessfulSaveResponse {
+        private String entryId;
+        private String message;
+
+        public String getEntryId() {
+            return entryId;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
+
+    private Instant calculatePubTime(WeblogEntry entry) {
+        Instant pubtime = null;
+
+        String dateString = entry.getDateString();
+        if (!StringUtils.isEmpty(dateString)) {
+            try {
+                LocalDate newDate = LocalDate.parse(dateString, pubDateFormat);
+
+                // Now handle the time from the hour, minute and second combos
+                pubtime = newDate.atTime(entry.getHours(), entry.getMinutes())
+                        .atZone(entry.getWeblog().getZoneId()).toInstant();
+            } catch (Exception e) {
+                log.error("Error calculating pubtime", e);
+            }
+        }
+
+        return pubtime;
     }
 
 }

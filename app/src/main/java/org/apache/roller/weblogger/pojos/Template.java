@@ -54,11 +54,10 @@ public interface Template {
         @XmlEnumValue("customExternal")CUSTOM_EXTERNAL("Custom external", "text/html", false,
                 "template.customExternal.description");
 
-
         // fromObject() allows for enum deserialization (used with front-end template saves)
         // see https://github.com/FasterXML/jackson-databind/issues/158#issuecomment-13092598
         @JsonCreator
-        public static ComponentType fromObject(Map<String,Object> data) { // or can use JsonNode, or custom POJO
+        public static ComponentType fromObject(Map<String, Object> data) { // or can use JsonNode, or custom POJO
             return ComponentType.valueOf((String) data.get("name"));
         }
 

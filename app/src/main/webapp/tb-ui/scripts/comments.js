@@ -1,5 +1,4 @@
 $(function() {
-
     $( "#startDateString" ).datepicker({
         showOn: "button",
         buttonImage: "../../images/calendar.png",
