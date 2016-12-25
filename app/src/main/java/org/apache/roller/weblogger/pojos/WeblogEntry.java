@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,9 @@ public class WeblogEntry {
 
     // Simple properties
     private String id;
+    @NotBlank(message = "{Entry.error.titleNull}")
     private String title;
+    @NotBlank(message = "{Entry.error.textNull}")
     private String text;
     private String summary;
     private String notes;
@@ -106,15 +109,21 @@ public class WeblogEntry {
     // temporary non-persisted fields used for form entry
     private int hours = 0;
     private int minutes = 0;
-    private int seconds = 0;
     private String tagsAsString;
     private String dateString;
-    private String categoryId;
-    private String creatorId;
+    private String editUrl;
+    private String commentsUrl;
+    private String permalink;
+    private String previewUrl;
 
     //----------------------------------------------------------- Construction
 
     public WeblogEntry() {
+    }
+
+    public WeblogEntry(String title, String editUrl) {
+        this.title = title;
+        this.editUrl = editUrl;
     }
 
     public WeblogEntry(WeblogEntry otherData) {
@@ -431,6 +440,8 @@ public class WeblogEntry {
      * commentDays field as well as the weblog and site-wide configs.
      */
     @Transient
+    @JsonIgnore
+    // Not serialized into JSON as necessary weblog object not always present.
     public boolean getCommentsStillAllowed() {
         if (RuntimeConfigDefs.CommentOption.NONE.equals(RuntimeConfigDefs.CommentOption.valueOf(
                 WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty("users.comments.enabled")))) {
@@ -474,7 +485,11 @@ public class WeblogEntry {
      */
     @Transient
     public String getPermalink() {
-        return WebloggerContext.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), getAnchor(), true);
+        return permalink;
+    }
+
+    public void setPermalink(String permalink) {
+        this.permalink = permalink;
     }
 
     /**
@@ -511,15 +526,6 @@ public class WeblogEntry {
     }
 
     @Transient
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    @Transient
     public int getHours() {
         return hours;
     }
@@ -538,15 +544,6 @@ public class WeblogEntry {
     }
 
     @Transient
-    public int getSeconds() {
-        return seconds;
-    }
-
-    public void setSeconds(int seconds) {
-        this.seconds = seconds;
-    }
-
-    @Transient
     public String getDateString() {
         return dateString;
     }
@@ -556,11 +553,29 @@ public class WeblogEntry {
     }
 
     @Transient
-    public String getCreatorId() {
-        return creatorId;
+    public String getEditUrl() {
+        return editUrl;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setEditUrl(String editUrl) {
+        this.editUrl = editUrl;
+    }
+
+    @Transient
+    public String getCommentsUrl() {
+        return commentsUrl;
+    }
+
+    public void setCommentsUrl(String commentsUrl) {
+        this.commentsUrl = commentsUrl;
+    }
+
+    @Transient
+    public String getPreviewUrl() {
+        return previewUrl;
+    }
+
+    public void setPreviewUrl(String previewUrl) {
+        this.previewUrl = previewUrl;
     }
 }

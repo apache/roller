@@ -10,7 +10,7 @@
         #if($model.permalink)
         <h2 class="entryTitle">$entry.title</h2>
         #else
-        <h2 class="entryTitle"><a href="$entry.permalink">$entry.title</a></h2>
+        <h2 class="entryTitle"><a href="$url.entry($entry.anchor)">$entry.title</a></h2>
         #end
 
         <div class="entryContent">

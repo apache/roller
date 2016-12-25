@@ -208,7 +208,6 @@ public class TemplateController {
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templatename/{templateName}/", method = RequestMethod.GET)
     public WeblogTemplate getWeblogTemplateByName(@PathVariable String weblogId, @PathVariable String templateName, Principal p, HttpServletResponse response) {
 
-
         Weblog weblog = weblogManager.getWeblog(weblogId);
         // First-time override of a shared template
         SharedTheme sharedTheme = themeManager.getSharedTheme(weblog.getTheme());

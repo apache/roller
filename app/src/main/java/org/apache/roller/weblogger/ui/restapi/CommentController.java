@@ -107,7 +107,7 @@ public class CommentController {
 
     @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
     public CommentData getWeblogComments(@PathVariable String weblogId, @PathVariable int page,
-                                         @RequestParam(required=false) String entryId, @RequestBody CommentSearchCriteria criteria,
+                                         @RequestParam(required = false) String entryId, @RequestBody CommentSearchCriteria criteria,
                                          Principal principal, HttpServletResponse response) {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
@@ -196,8 +196,6 @@ public class CommentController {
         }
     }
 
-
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void deleteComment(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
@@ -250,8 +248,8 @@ public class CommentController {
                     WeblogEntryComment.ApprovalStatus oldStatus = comment.getStatus();
                     comment.setStatus(status);
                     // send approval notification only first time, not after any subsequent hide and approves.
-                    if ((oldStatus == ApprovalStatus.PENDING || oldStatus == ApprovalStatus.SPAM)
-                            && status == ApprovalStatus.APPROVED) {
+                    if ((oldStatus == ApprovalStatus.PENDING || oldStatus == ApprovalStatus.SPAM) &&
+                            status == ApprovalStatus.APPROVED) {
                         mailManager.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
                     }
                     weblogEntryManager.saveComment(comment, true);

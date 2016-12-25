@@ -19,7 +19,7 @@
     </li>
     <li data-theme="a">
       #if(!$model.permalink)
-        <a href="$entry.permalink" data-transition="slide">
+        <a href="$url.entry($entry.anchor)" data-transition="slide">
       #end
         <p class="ui-li-desc content-textbox">
             #if($model.permalink || $utils.isEmpty($entry.summary))

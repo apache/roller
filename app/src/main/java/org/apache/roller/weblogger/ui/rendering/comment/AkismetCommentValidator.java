@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.ui.rendering.comment;
 
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
@@ -82,13 +83,15 @@ public class AkismetCommentValidator implements CommentValidator {
     }
 
     public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
+        WeblogEntry entry = comment.getWeblogEntry();
         StringBuilder sb = new StringBuilder();
         sb.append("blog=").append(
-                urlStrategy.getWeblogURL(comment.getWeblogEntry().getWeblog(), true)).append("&");
+                urlStrategy.getWeblogURL(entry.getWeblog(), true)).append("&");
         sb.append("user_ip=").append(comment.getRemoteHost()).append("&");
         sb.append("user_agent=").append(comment.getUserAgent()).append("&");
         sb.append("referrer=").append(comment.getReferrer()).append("&");
-        sb.append("permalink=").append(comment.getWeblogEntry().getPermalink()).append("&");
+        sb.append("permalink=").append(urlStrategy.getWeblogEntryURL(entry.getWeblog(),
+                entry.getAnchor(), true)).append("&");
         sb.append("comment_type=").append("comment").append("&");
         sb.append("comment_author=").append(comment.getName()).append("&");
         sb.append("comment_author_email=").append(comment.getEmail()).append("&");

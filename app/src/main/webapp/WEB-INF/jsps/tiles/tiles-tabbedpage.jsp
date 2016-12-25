@@ -29,7 +29,7 @@
             <tiles:insertAttribute name="styles" />
         </style>
     </head>
-    <body>
+    <body <tiles:insertAttribute name="angularString"/> >
         <div id="banner">
             <tiles:insertAttribute name="bannerStatus" />
         </div>

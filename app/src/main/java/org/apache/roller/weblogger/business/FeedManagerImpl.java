@@ -244,8 +244,8 @@ public class FeedManagerImpl implements FeedManager {
             entry.setTitle(blogEntry.getTitle());
             entry.setPubTime(blogEntry.getPubTime());
             entry.setContent(content);
-            entry.setPermalink(blogEntry.getPermalink());
-            entry.setUri(blogEntry.getPermalink());
+            entry.setPermalink(urlStrategy.getWeblogEntryURL(blogEntry.getWeblog(), blogEntry.getAnchor(), true));
+            entry.setUri(entry.getPermalink());
             entry.setCategoriesString(blogEntry.getCategory().getName());
             entry.setUploaded(Instant.now());
             newSub.addEntry(entry);

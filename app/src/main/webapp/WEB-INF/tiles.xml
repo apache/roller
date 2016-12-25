@@ -147,6 +147,7 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+        <put-attribute name="angularString" value="id='ngapp-div' ng-app='tightblogApp' ng-controller='EntryEditController as ctrl'"/>
     </definition>
 
     <definition name=".Entries" extends=".tiles-tabbedpage" >
