@@ -114,14 +114,6 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     }
 
     @Override
-    public String getPlanetURL(String planet) {
-        String url = getRootURL(true) + "/planetrss";
-        Map<String, String> params = new HashMap<>();
-        params.put("planet", planet);
-        return url + Utilities.getQueryString(params);
-    }
-
-    @Override
     public String getWeblogURL(Weblog weblog, boolean absolute) {
         return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
     }

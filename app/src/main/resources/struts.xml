@@ -145,7 +145,7 @@
     </package>
 
 
-    <!-- Weblogger Admin UI (includes planet) -->
+    <!-- Weblogger Admin UI -->
     <package name="weblogger-admin" namespace="/tb-ui/admin" extends="weblogger">
 
         <action name="globalConfig!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.GlobalConfig">
@@ -177,21 +177,6 @@
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
 
-        <action name="planetEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">planetEdit</param>
-            <param name="pageTitleReal">planetSubscriptions.title</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.PlanetEdit</result>
-        </action>
-
-        <action name="planets" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">planets</param>
-            <param name="pageTitleReal">planets.pagetitle</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.Planets</result>
-        </action>
     </package>
 
 

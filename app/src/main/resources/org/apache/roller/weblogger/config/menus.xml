@@ -12,12 +12,6 @@ Defines the menus provided with Weblogger
             <tabItem action="pingTargets"
                      titleKey="tabbedmenu.admin.pingTargets">
             </tabItem>
-            <tabItem action="planets"
-                     titleKey="tabbedmenu.admin.planets">
-                <subactions>
-                    <subaction>planetEdit</subaction>
-                </subactions>
-            </tabItem>
             <tabItem action="cacheInfo"
                      titleKey="tabbedmenu.admin.cacheInfo"/>
         </tab>

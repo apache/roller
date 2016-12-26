@@ -121,14 +121,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
     </definition>
 
-    <definition name=".PlanetEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetEdit.jsp" />
-    </definition>
-
-    <definition name=".Planets" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/Planets.jsp" />
-    </definition>
-
     <!-- weblog editor pages (and associates) -->
     <definition name=".MediaFileEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />

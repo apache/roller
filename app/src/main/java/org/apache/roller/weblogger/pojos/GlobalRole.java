@@ -24,7 +24,7 @@ public enum GlobalRole {
     BLOGGER(1),
     // Users can create new blogs
     BLOGCREATOR(2),
-    // Blog server admin rights: server settings, planet management, user management, etc.
+    // Blog server admin rights: server settings, user management, etc.
     ADMIN(3);
 
     private int weight;

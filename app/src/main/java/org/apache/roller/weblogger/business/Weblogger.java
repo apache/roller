@@ -34,7 +34,6 @@ public class Weblogger {
     private final UserManager userManager;
     private final WeblogManager weblogManager;
     private final WeblogEntryManager weblogEntryManager;
-    private final PlanetManager planetManager;
 
     // url strategy
     private final URLStrategy urlStrategy;
@@ -48,7 +47,6 @@ public class Weblogger {
             UserManager userManager,
             WeblogManager weblogManager,
             WeblogEntryManager weblogEntryManager,
-            PlanetManager planetManager,
             URLStrategy urlStrategy) {
 
         this.propertiesManager = propertiesManager;
@@ -57,7 +55,6 @@ public class Weblogger {
         this.weblogManager = weblogManager;
         this.weblogEntryManager = weblogEntryManager;
         this.urlStrategy = urlStrategy;
-        this.planetManager = planetManager;
     }
 
     public ThemeManager getThemeManager() {
@@ -84,7 +81,4 @@ public class Weblogger {
         return urlStrategy;
     }
 
-    public PlanetManager getPlanetManager() {
-        return planetManager;
-    }
 }
