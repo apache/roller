@@ -185,7 +185,7 @@ tightblogApp.controller('EntryEditController', ['$http', '$interpolate', '$sce',
 
                  // move into RTE.
                  if ('RICHTEXT' == self.entry.editFormat) {
-                     if (!this.quillEditor) {
+                     if (!self.quillEditor) {
                          self.initializeQuill();
                      }
                      $("#ql-editor-1").html(self.entry.text);
