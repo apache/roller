@@ -62,7 +62,7 @@ var msg= {
 <input type="hidden" id="recordId" value="<s:property value='%{#parameters.weblogId}'/>"/>
 <input type="hidden" id="refreshURL" value="<s:url action='themeEdit'/>?weblogId=%{#parameters.weblogId}"/>
 
-<s:form id="themeForm" action="templates!newTheme">
+<s:form id="themeForm" action="templates">
     <sec:csrfInput/>
     <s:hidden name="weblogId"/>
 
