@@ -17,11 +17,6 @@
 -- Source file modified from the original ASF source; all changes made
 -- are also under Apache License.
 
--- planet tables
-drop table planet_subscription_entry;
-drop table planet_subscription;
-drop table planet;
-
 -- non-associated tables
 drop table weblogger_properties;
 

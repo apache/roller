@@ -36,10 +36,6 @@
                         ## 1) SITE-WIDE entries (the default)
                         #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
 
-                        ## 2) PLANET-entries
-                        ## set($pager = $planet.getPlanetPager($planetName, $since, $maxResults))
-                        ## The below pager code should work against either:
-
                         #if($pager.items.size() > 0)
                             #set($entryCount = $pager.items.size() - 1)
                             #set($startDate = $pager.items.get(0).pubTime)

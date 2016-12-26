@@ -51,7 +51,6 @@
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
-        <beans:constructor-arg ref="planetManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
     </beans:bean>
 
@@ -113,19 +112,6 @@
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="propertiesManager" ref="propertiesManager"/>
-    </beans:bean>
-
-    <beans:bean id="feedManager" class="org.apache.roller.weblogger.business.FeedManagerImpl">
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-        <beans:property name="weblogManager" ref="weblogManager"/>
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="planetManager" ref="planetManager"/>
-        <beans:property name="strategy" ref="persistenceStrategy"/>
-        <beans:property name="propertiesManager" ref="propertiesManager"/>
-    </beans:bean>
-
-    <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
-        <beans:property name="strategy" ref="persistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
@@ -219,11 +205,6 @@
         <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
     </beans:bean>
 
-    <beans:bean id="planetModel" class="org.apache.roller.weblogger.ui.rendering.model.PlanetModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="planetManager" ref="planetManager"/>
-    </beans:bean>
-
     <beans:bean id="feedModel" class="org.apache.roller.weblogger.ui.rendering.model.FeedModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
@@ -249,7 +230,6 @@
                 <beans:ref bean="pageModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
-                <beans:ref bean="planetModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>
@@ -342,7 +322,6 @@
                 <beans:value>entrycomment</beans:value>
                 <beans:value>comments</beans:value>
                 <beans:value>resource</beans:value>
-                <beans:value>planetrss</beans:value>
             </beans:set>
         </beans:property>
     </beans:bean>
@@ -396,12 +375,6 @@
         <beans:property name="size" value="50"/>
         <beans:property name="timeoutSec" value="1800"/>
         <beans:property name="propertiesManager" ref="propertiesManager"/>
-    </beans:bean>
-
-    <beans:bean id="planetCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.ExpiringCache">
-        <beans:property name="cacheHandlerId" value="cache.planet"/>
-        <beans:property name="size" value="10"/>
-        <beans:property name="timeoutSec" value="1800"/>
     </beans:bean>
 
     <beans:bean id="filterMultipartResolver"

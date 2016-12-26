@@ -5,9 +5,6 @@
          Avoiding DB configuration here to allow the same persistence.xml to be used between
          testing and prod (which have different DB configuration)
     -->
-    <class>org.apache.roller.weblogger.pojos.Planet</class>
-    <class>org.apache.roller.weblogger.pojos.Subscription</class>
-    <class>org.apache.roller.weblogger.pojos.SubscriptionEntry</class>
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
     <class>org.apache.roller.weblogger.pojos.MediaDirectory</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>

@@ -35,11 +35,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Loads non-theme Velocity resources from the webapp (global Velocity macros
- * configured in velocity.properties as well as the feed/planet templates, error
+ * configured in velocity.properties as well as the feed templates, error
  * templates, etc.)
  * <p>
  * All paths requested should be relative to the WEB-INF/velocity folder, e.g.:
- * "templates/feeds/planet-atom.vm", "templates/error-page.vm".
+ * "templates/feeds/entries-atom.vm", "templates/error-page.vm".
  * <p>
  * To enable caching and cache refreshing the webapp.resource.loader.cache and
  * webapp.resource.loader.modificationCheckInterval properties need to be set in

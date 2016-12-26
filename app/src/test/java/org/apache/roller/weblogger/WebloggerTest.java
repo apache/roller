@@ -15,7 +15,6 @@
 */
 package org.apache.roller.weblogger;
 
-import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
@@ -24,9 +23,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.Planet;
-import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -71,13 +67,6 @@ abstract public class WebloggerTest {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    @Resource
-    protected PlanetManager planetManager;
-
-    public void setPlanetManager(PlanetManager manager) {
-        this.planetManager = manager;
     }
 
     @Resource
@@ -280,79 +269,4 @@ abstract public class WebloggerTest {
         strategy.flush();
     }
 
-    protected Planet setupPlanet(String handle) throws Exception {
-        Planet testPlanet = new Planet(handle, handle, handle);
-        planetManager.savePlanet(testPlanet);
-        strategy.flush();
-
-        // query to make sure we return the persisted object
-        Planet group = planetManager.getPlanet(testPlanet.getId());
-        if (group == null) {
-            throw new IllegalStateException("error inserting new group");
-        }
-        return group;
-    }
-
-    protected void teardownPlanet(String handle) throws Exception {
-        Planet planet = planetManager.getPlanetByHandle(handle);
-        planetManager.deletePlanet(planet);
-        strategy.flush();
-    }
-
-    protected Subscription setupSubscription(Planet planet, String feedUrl)
-            throws Exception {
-        // store
-        Subscription testSub = new Subscription();
-        testSub.setFeedURL(feedUrl);
-        testSub.setTitle(feedUrl);
-        testSub.setPlanet(planet);
-        planetManager.saveSubscription(testSub);
-
-        // flush
-        strategy.flush();
-        strategy.refresh(planet);
-
-        // query to make sure we return the persisted object
-        Subscription sub = planetManager.getSubscription(testSub.getId());
-
-        if (sub == null) {
-            throw new IllegalStateException("error inserting new subscription");
-        }
-        return sub;
-    }
-
-    protected void teardownSubscription(String id) throws Exception {
-        Subscription sub = planetManager.getSubscription(id);
-        planetManager.deleteSubscription(sub);
-        strategy.flush();
-    }
-
-    protected SubscriptionEntry setupEntry(Subscription sub, String title)
-            throws Exception {
-        // make sure we are using a persistent object
-        Subscription testSub = planetManager.getSubscription(sub.getId());
-
-        // store
-        SubscriptionEntry testEntry = new SubscriptionEntry();
-        testEntry.setPermalink(title);
-        testEntry.setUri(title);
-        testEntry.setTitle(title);
-        Instant testLDT = Instant.now();
-        testEntry.setPubTime(testLDT);
-        testEntry.setSubscription(testSub);
-        testEntry.setUploaded(testLDT);
-        testSub.getEntries().add(testEntry);
-        planetManager.saveSubscription(testSub);
-
-        // flush
-        strategy.flush();
-
-        // query to make sure we return the persisted object
-        SubscriptionEntry entry = planetManager.getEntryById(testEntry.getId());
-
-        if (entry == null) {
-            throw new IllegalStateException("error inserting new entry");
-        }
-        return entry;
-    }
 }

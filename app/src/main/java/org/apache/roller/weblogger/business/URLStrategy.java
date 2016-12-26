@@ -26,10 +26,10 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import java.util.Map;
 
 /**
- * An interface representing the Roller Planet url strategy.
+ * An interface representing the TightBlog URL strategy.
  * <p>
  * Implementations of this interface provide methods which can be used to form
- * all of the public urls used by Roller Planet.
+ * all of the public urls used by the system.
  */
 public interface URLStrategy {
 
@@ -138,8 +138,4 @@ public interface URLStrategy {
      */
     String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute);
 
-    /**
-     * Get URL of a planet's newsfeed.
-     */
-    String getPlanetURL(String planet);
 }
