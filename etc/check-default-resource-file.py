@@ -24,7 +24,7 @@
 #     has one or more, "xxx.yyy" will not be marked as unused, so some unused strings may
 #     end up remaining in the resource file.
 #
-#     Caveat #2: certainly strings are dynamically generated in the code (weblogEntriesPager.*.*
+#     Caveat #2: certain strings are dynamically generated in the code (weblogEntriesPager.*.*
 #     for example) and hence will show up in the list as false positives -- don't delete them.
 #
 # 3.) Removal is best from the IntelliJ Resource Bundle view, where you can delete the key and it
