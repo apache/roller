@@ -181,6 +181,7 @@
     <!-- page models, additional models can be added as shown here: http://stackoverflow.com/a/13160350/1207540 -->
     <beans:bean id="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="userManager" ref="userManager"/>
         <beans:property name="propertiesManager" ref="propertiesManager"/>

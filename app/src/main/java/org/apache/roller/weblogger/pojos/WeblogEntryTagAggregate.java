@@ -21,6 +21,7 @@
 
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -51,6 +52,9 @@ public class WeblogEntryTagAggregate {
     private Weblog weblog = null;
     private int total = 0;
     private int intensity = 0;
+
+    // temporary non-persisted fields used for forms
+    private String viewUrl;
 
     public WeblogEntryTagAggregate() {
     }
@@ -88,6 +92,7 @@ public class WeblogEntryTagAggregate {
     }
 
     @Transient
+    @JsonIgnore
     public int getIntensity() {
         return intensity;
     }
@@ -137,4 +142,12 @@ public class WeblogEntryTagAggregate {
         return compVal;
     };
 
+    @Transient
+    public String getViewUrl() {
+        return viewUrl;
+    }
+
+    public void setViewUrl(String viewUrl) {
+        this.viewUrl = viewUrl;
+    }
 }

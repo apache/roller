@@ -25,8 +25,10 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
+import org.apache.roller.weblogger.ui.restapi.TagController;
 import org.apache.roller.weblogger.util.Blacklist;
 
 import java.util.List;
@@ -268,4 +270,58 @@ public interface WeblogManager {
      * Obtain the combined blacklist (global-defined & weblog-defined) for a given weblog.
      */
     Blacklist getWeblogBlacklist(Weblog weblog);
+
+    /**
+     * Get list of WeblogEntryTagAggregate objects identifying the most used tags for a weblog.
+     * There are no offset/length params just a limit.
+     *
+     * @param weblog Weblog or null to get for all weblogs.
+     * @param offset 0-based index into results
+     * @param limit  Max objects to return (or -1 for no limit)
+     * @return List of most popular tags.
+     */
+    List<WeblogEntryTagAggregate> getPopularTags(Weblog weblog, int offset, int limit);
+
+    /**
+     * Get list of WeblogEntryTagAggregate objects for the tags comprising a weblog.
+     *
+     * @param website    Weblog or null to get for all weblogs.
+     * @param sortBy     Sort by either 'name' or 'count' (null for name)
+     * @param startsWith Prefix for tags to be returned (null or a string of length > 0)
+     * @param offset     0-based index into returns
+     * @param limit      Max objects to return (or -1 for no limit)
+     * @return List of tags matching the criteria.
+     */
+    List<WeblogEntryTagAggregate> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit);
+
+    /**
+     * Does the specified tag exist?  Optionally confined to a specific weblog.
+     * <p/>
+     * This checks if the Weblog (or all weblogs) has at least one blog entry with
+     * the given tag.
+     *
+     * @param weblog The weblog to confine the check to.
+     * @param tag    The tag to search for.
+     * @return True if the tag exists, false otherwise.
+     */
+    boolean getTagExists(Weblog weblog, String tag);
+
+    /**
+     * Remove all tags with a given name from a weblog's entries
+     *
+     * @param weblog The weblog to remove the tag from
+     * @param tagName Tag name to remove.
+     */
+    void removeTag(Weblog weblog, String tagName);
+
+    /**
+     * Add a tag to all entries having a current tag.
+     *
+     * @param weblog The weblog whose entries tag will be added to
+     * @param currentTag The entries, having this tag, that will receive the new tag.
+     * @param newTag New tag to add to entries having currentTag, if they don't have this tag already.
+     * @return Map with keys of "updated" and "unchanged" indicating number of entries updated, where
+     *         unchanged refers to entries having currentTag but already having newTag.
+     */
+    Map<String, Integer> addTag(Weblog weblog, String currentTag, String newTag);
 }

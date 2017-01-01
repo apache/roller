@@ -25,17 +25,26 @@ Defines the menus provided with Weblogger
                     <subaction>entryEdit</subaction>
                 </subactions>
             </tabItem>
+
             <tabItem action="entries"
                      titleKey="tabbedmenu.weblog.archives"
                      weblogRole="POST">
             </tabItem>
+
             <tabItem action="comments"
                      titleKey="tabbedmenu.weblog.commentManagement"
                      weblogRole="POST"/>
+
             <tabItem action="categories"
                      titleKey="tabbedmenu.weblog.categories"
                      weblogRole="POST">
             </tabItem>
+
+            <tabItem action="tags"
+                     titleKey="tabbedmenu.weblog.tags"
+                     weblogRole="POST">
+            </tabItem>
+
             <tabItem action="bookmarks"
                      titleKey="tabbedmenu.bookmarks.allFolders"
                      weblogRole="OWNER">

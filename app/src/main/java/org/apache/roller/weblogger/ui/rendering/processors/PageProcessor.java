@@ -264,7 +264,7 @@ public class PageProcessor extends AbstractProcessor {
                 return;
             }
 
-            // If request specified tags section index, then look for custom template
+        // If request specified tags section index, then look for custom template
         } else if ("tags".equals(pageRequest.getContext()) && pageRequest.getTag() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
@@ -272,17 +272,7 @@ public class PageProcessor extends AbstractProcessor {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
 
-            // if we don't have a custom tags page then 404, we don't let
-            // this one fall through to the default template
-            if (page == null) {
-                if (!response.isCommitted()) {
-                    response.reset();
-                }
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-
-            // If this is a permalink then look for a permalink template
+        // If this is a permalink then look for a permalink template
         } else if (pageRequest.getWeblogAnchor() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
@@ -338,7 +328,7 @@ public class PageProcessor extends AbstractProcessor {
             }
         } else if (pageRequest.getTag() != null) {
             // tags specified. make sure they exist.
-            invalid = !weblogEntryManager.getTagExists(pageRequest.getTag(), (isSiteWide) ? null : weblog);
+            invalid = !weblogManager.getTagExists((isSiteWide) ? null : weblog, pageRequest.getTag());
         }
 
         if (invalid) {

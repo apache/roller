@@ -38,7 +38,13 @@ import javax.persistence.Table;
 @Table(name = "weblog_entry_tag")
 @NamedQueries({
         @NamedQuery(name = "WeblogEntryTag.getByWeblog",
-                query = "SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1")
+                query = "SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1"),
+        @NamedQuery(name = "WeblogEntryTag.getByWeblogAndName",
+                query = "SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2"),
+        @NamedQuery(name = "WeblogEntryTag.getEntryIdByWeblogAndName",
+                query = "SELECT w.weblogEntry.id FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2"),
+        @NamedQuery(name = "WeblogEntryTag.removeByWeblogAndTagName",
+                query = "DELETE FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2")
 })
 public class WeblogEntryTag {
 
@@ -48,6 +54,12 @@ public class WeblogEntryTag {
     private String name = null;
 
     public WeblogEntryTag() {
+    }
+
+    public WeblogEntryTag(Weblog weblog, WeblogEntry weblogEntry, String name) {
+        this.weblog = weblog;
+        this.weblogEntry = weblogEntry;
+        this.name = name;
     }
 
     /**

@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import javax.naming.NamingException;
+import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.FlushModeType;
@@ -34,7 +35,9 @@ import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -124,7 +127,23 @@ public class JPAPersistenceStrategy {
      * @return the object retrieved
      */
     public <R> R load(Class<R> clazz, String id) {
+        return load(clazz, id, false);
+    }
+
+    /**
+     * Retrieve object without accessing cache, no transaction needed.
+     *
+     * @param clazz the class of object to retrieve
+     * @param id    the id of the object to retrieve
+     * @return the object retrieved
+     */
+    public <R> R load(Class<R> clazz, String id, boolean bypassCache) {
         EntityManager em = getEntityManager(false);
+        if (bypassCache) {
+            Map<String, Object> props = new HashMap<>();
+            props.put("javax.persistence.cache.retrieveMode", CacheRetrieveMode.BYPASS);
+            return em.find(clazz, id, props);
+        }
         return em.find(clazz, id);
     }
 

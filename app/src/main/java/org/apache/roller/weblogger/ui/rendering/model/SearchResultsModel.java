@@ -185,7 +185,7 @@ public class SearchResultsModel extends PageModel {
             }
             handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
 
-            entry = weblogEntryManager.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
+            entry = weblogEntryManager.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue(), false);
 
             if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle())) &&
                     doc.getField(FieldConstants.CATEGORY) != null) {

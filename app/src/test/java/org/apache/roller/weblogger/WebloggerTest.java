@@ -108,7 +108,7 @@ abstract public class WebloggerTest {
      * Convenience method that returns managed copy of given WeblogEntry.
      */
     protected WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) {
-        return weblogEntryManager.getWeblogEntry(weblogEntry.getId());
+        return weblogEntryManager.getWeblogEntry(weblogEntry.getId(), false);
     }
 
     /**
@@ -220,7 +220,7 @@ abstract public class WebloggerTest {
         strategy.flush();
 
         // query for object
-        WeblogEntry entry = weblogEntryManager.getWeblogEntry(testEntry.getId());
+        WeblogEntry entry = weblogEntryManager.getWeblogEntry(testEntry.getId(), false);
 
         if (entry == null) {
             throw new IllegalStateException("error setting up weblog entry");
@@ -230,7 +230,7 @@ abstract public class WebloggerTest {
     }
 
     protected void teardownWeblogEntry(String id) throws Exception {
-        WeblogEntry entry = weblogEntryManager.getWeblogEntry(id);
+        WeblogEntry entry = weblogEntryManager.getWeblogEntry(id, false);
         weblogEntryManager.removeWeblogEntry(entry);
         strategy.flush();
     }
