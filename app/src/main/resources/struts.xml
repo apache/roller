@@ -264,6 +264,15 @@
             <result name="success" type="tiles">.Categories</result>
         </action>
 
+        <action name="tags" class="org.apache.roller.weblogger.ui.struts2.UIAction">
+            <param name="requiredGlobalRole">BLOGGER</param>
+            <param name="requiredWeblogRole">POST</param>
+            <param name="desiredMenu">editor</param>
+            <param name="actionName">tags</param>
+            <param name="pageTitleReal">tagsForm.rootTitle</param>
+            <result name="success" type="tiles">.Tags</result>
+        </action>
+
         <action name="bookmarks"  class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">OWNER</param>

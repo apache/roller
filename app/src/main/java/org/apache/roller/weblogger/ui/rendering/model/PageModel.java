@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.Template;
@@ -67,6 +68,12 @@ public class PageModel implements Model {
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     protected WeblogEntryManager weblogEntryManager;
@@ -276,7 +283,7 @@ public class PageModel implements Model {
     public List<WeblogEntryTagAggregate> getPopularTags(int length) {
         List<WeblogEntryTagAggregate> results = new ArrayList<>();
         try {
-            results = weblogEntryManager.getPopularTags(pageRequest.getWeblog(), 0, length);
+            results = weblogManager.getPopularTags(pageRequest.getWeblog(), 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching popular tags for weblog {}", pageRequest.getWeblog().getName(), e);
         }

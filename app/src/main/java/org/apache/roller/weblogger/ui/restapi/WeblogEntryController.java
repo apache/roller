@@ -65,14 +65,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -263,7 +261,7 @@ public class WeblogEntryController {
             throws ServletException {
 
         try {
-            WeblogEntry itemToRemove = weblogEntryManager.getWeblogEntry(id);
+            WeblogEntry itemToRemove = weblogEntryManager.getWeblogEntry(id, false);
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
@@ -300,7 +298,7 @@ public class WeblogEntryController {
 
         try {
             Weblog weblog = weblogManager.getWeblog(id);
-            tags = weblogEntryManager.getTags(weblog, null, prefix, 0, MAX_TAGS);
+            tags = weblogManager.getTags(weblog, null, prefix, 0, MAX_TAGS);
 
             WeblogTagData wtd = new WeblogTagData();
             wtd.setPrefix(prefix);
@@ -367,7 +365,7 @@ public class WeblogEntryController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
         try {
-            WeblogEntry entry = weblogEntryManager.getWeblogEntry(id);
+            WeblogEntry entry = weblogEntryManager.getWeblogEntry(id, true);
             if (entry != null) {
                 Weblog weblog = entry.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
@@ -509,7 +507,7 @@ public class WeblogEntryController {
             WeblogEntry entry = null;
 
             if (entryData.getId() != null) {
-                entry = weblogEntryManager.getWeblogEntry(entryData.getId());
+                entry = weblogEntryManager.getWeblogEntry(entryData.getId(), false);
             }
 
             // Check user permissions

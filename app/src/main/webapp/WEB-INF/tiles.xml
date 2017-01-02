@@ -154,6 +154,10 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
     </definition>
 
+    <definition name=".Tags" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Tags.jsp" />
+    </definition>
+
     <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
     </definition>

@@ -183,6 +183,8 @@ create table weblog_entry_tag (
     name            varchar(255)  not null
 );
 
+alter table weblog_entry_tag add constraint wtag_name_uq unique (weblogid, entryid, name);
+
 alter table weblog_entry_tag add constraint wtag_entryid_fk
     foreign key ( entryid ) references weblog_entry( id ) ;
 

@@ -105,7 +105,7 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // make sure entry was created
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
         
@@ -115,7 +115,7 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // make sure entry was updated
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
         assertEquals("testtest", entry.getTitle());
         
@@ -124,7 +124,7 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // make sure entry was deleted
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNull(entry);
     }
 
@@ -173,7 +173,7 @@ public class WeblogEntryTest extends WebloggerTest {
         entry5 = getManagedWeblogEntry(entry5);
         
         // get entry by id
-        entry = weblogEntryManager.getWeblogEntry(entry1.getId());
+        entry = weblogEntryManager.getWeblogEntry(entry1.getId(), false);
         assertNotNull(entry);
         assertEquals(entry1.getAnchor(), entry.getAnchor());
         assertEquals(entry1.getSearchDescription(), "sample search description");
@@ -328,7 +328,7 @@ public class WeblogEntryTest extends WebloggerTest {
             endSession(true);
 
             // make sure entry was created
-            entry = weblogEntryManager.getWeblogEntry(id);
+            entry = weblogEntryManager.getWeblogEntry(id, false);
             assertNotNull(entry);
             assertEquals(testEntry, entry);
             assertNotNull(entry.getTags());
@@ -361,12 +361,12 @@ public class WeblogEntryTest extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         addTag(entry, "testTag2");
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertEquals(3, entry.getTags().size());
 
         // teardown our test entry
@@ -385,12 +385,12 @@ public class WeblogEntryTest extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         addTag(entry, "testTag");
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertEquals(1, entry.getTags().size());
 
         // teardown our test entry
@@ -411,16 +411,16 @@ public class WeblogEntryTest extends WebloggerTest {
             weblogEntryManager.saveWeblogEntry(entry);
             endSession(true);
 
-            entry = weblogEntryManager.getWeblogEntry(id);
+            entry = weblogEntryManager.getWeblogEntry(id, false);
             assertEquals(2, entry.getTags().size());
             endSession(true);
 
-            entry = weblogEntryManager.getWeblogEntry(id);
+            entry = weblogEntryManager.getWeblogEntry(id, false);
             entry.setTags(Collections.emptySet());
             weblogEntryManager.saveWeblogEntry(entry);
             endSession(true);
 
-            entry = weblogEntryManager.getWeblogEntry(id);
+            entry = weblogEntryManager.getWeblogEntry(id, false);
             assertEquals(0, entry.getTags().size());
             endSession(true);
 
@@ -462,15 +462,15 @@ public class WeblogEntryTest extends WebloggerTest {
         String tag2 = "blahtag";
         
         // test site-wide
-        assertTrue(weblogEntryManager.getTagExists(tag2, null));
-        assertFalse(weblogEntryManager.getTagExists(tag1, null));
+        assertTrue(weblogManager.getTagExists(null, tag2));
+        assertFalse(weblogManager.getTagExists(null, tag1));
         
         // test weblog specific
         testWeblog = getManagedWeblog(testWeblog);
         weblog = getManagedWeblog(weblog);
-        assertTrue(weblogEntryManager.getTagExists(tag2, testWeblog));
-        assertFalse(weblogEntryManager.getTagExists(tag1, testWeblog));
-        assertFalse(weblogEntryManager.getTagExists(tag2, weblog));
+        assertTrue(weblogManager.getTagExists(testWeblog, tag2));
+        assertFalse(weblogManager.getTagExists(testWeblog, tag1));
+        assertFalse(weblogManager.getTagExists(weblog, tag2));
         
         // teardown our test data
         teardownWeblogEntry(id1);
@@ -561,14 +561,14 @@ public class WeblogEntryTest extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertEquals(2, entry.getTags().size());
 
         entry.updateTags(new HashSet<>(Arrays.asList("testwillstaytag testnewtag testnewtag3".split("\\s+"))));
         weblogEntryManager.saveWeblogEntry(entry);
         endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         Set<String> tagNames = entry.getTags().stream()
                 .map(WeblogEntryTag::getName)
                 .collect(Collectors.toCollection(HashSet<String>::new));
@@ -594,15 +594,15 @@ public class WeblogEntryTest extends WebloggerTest {
             // let's make sure we are starting from scratch
 
             // site-wide
-            List<WeblogEntryTagAggregate> tags = weblogEntryManager.getTags(null, null, null, 0, -1);
+            List<WeblogEntryTagAggregate> tags = weblogManager.getTags(null, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // first weblog
-            tags = weblogEntryManager.getTags(testWeblog, null, null, 0, -1);
+            tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // second weblog
-            tags = weblogEntryManager.getTags(testWeblog2, null, null, 0, -1);
+            tags = weblogManager.getTags(testWeblog2, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // setup some test entries to use
@@ -620,7 +620,7 @@ public class WeblogEntryTest extends WebloggerTest {
             endSession(true);
 
             testWeblog = getManagedWeblog(testWeblog);
-            tags = weblogEntryManager.getTags(testWeblog, null, null, 0, -1);
+            tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
             assertEquals(3, tags.size());
 
             HashMap<String,Integer> expectedWeblogTags = new HashMap<>();
@@ -648,7 +648,7 @@ public class WeblogEntryTest extends WebloggerTest {
             endSession(true);
 
             // let's fetch "site" tags now
-            tags = weblogEntryManager.getTags(null, null, null, 0, -1);
+            tags = weblogManager.getTags(null, null, null, 0, -1);
             assertEquals(4, tags.size());
 
             HashMap<String, Integer> expectedSiteTags = new HashMap<>();
@@ -675,7 +675,7 @@ public class WeblogEntryTest extends WebloggerTest {
             endSession(true);
 
             testWeblog = getManagedWeblog(testWeblog);
-            tags = weblogEntryManager.getTags(testWeblog, null, null, 0, -1);
+            tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
             assertEquals(4, tags.size());
 
             expectedWeblogTags = new HashMap<>();
@@ -694,7 +694,7 @@ public class WeblogEntryTest extends WebloggerTest {
                         expectedCount.intValue(), stat.getTotal());
             }
 
-            tags = weblogEntryManager.getTags(null, null, null, 0, -1);
+            tags = weblogManager.getTags(null, null, null, 0, -1);
             assertEquals(5, tags.size());
 
             expectedSiteTags = new HashMap<>();
@@ -733,15 +733,15 @@ public class WeblogEntryTest extends WebloggerTest {
         // let's make sure we are starting from scratch
 
         // site-wide
-        List<WeblogEntryTagAggregate> tags = weblogEntryManager.getTags(null, null, null, 0, -1);
+        List<WeblogEntryTagAggregate> tags = weblogManager.getTags(null, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // first weblog
-        tags = weblogEntryManager.getTags(testWeblog, null, null, 0, -1);
+        tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // second weblog
-        tags = weblogEntryManager.getTags(testWeblog2, null, null, 0, -1);
+        tags = weblogManager.getTags(testWeblog2, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // setup some test entries to use
@@ -753,7 +753,7 @@ public class WeblogEntryTest extends WebloggerTest {
 
         endSession(true);
 
-        tags = weblogEntryManager.getTags(testWeblog, null, null, 0, -1);
+        tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
         assertEquals(2, tags.size());
 
         HashMap<String, Integer> expectedWeblogTags = new HashMap<>();
@@ -777,7 +777,7 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // let's fetch "site" tags now
-        tags = weblogEntryManager.getTags(null, null, null, 0, -1);
+        tags = weblogManager.getTags(null, null, null, 0, -1);
         assertEquals(3, tags.size());
 
         HashMap<String, Integer> expectedSiteTags = new HashMap<>();
@@ -831,7 +831,7 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // make sure entry was created
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
         assertEquals(entry.getEnclosureUrl(), "http://podcast-schmodcast.com");
@@ -844,7 +844,7 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // make sure entry was updated
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
         assertEquals("testtest", entry.getTitle());
         
@@ -853,7 +853,7 @@ public class WeblogEntryTest extends WebloggerTest {
         endSession(true);
         
         // make sure entry was deleted
-        entry = weblogEntryManager.getWeblogEntry(id);
+        entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNull(entry);
     }
 

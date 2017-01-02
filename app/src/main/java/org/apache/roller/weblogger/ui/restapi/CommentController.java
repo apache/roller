@@ -117,7 +117,7 @@ public class CommentController {
 
             criteria.setWeblog(weblog);
             if (entryId != null) {
-                criteria.setEntry(weblogEntryManager.getWeblogEntry(entryId));
+                criteria.setEntry(weblogEntryManager.getWeblogEntry(entryId, false));
                 data.entryTitle = criteria.getEntry().getTitle();
             }
             criteria.setOffset(page * ITEMS_PER_PAGE);

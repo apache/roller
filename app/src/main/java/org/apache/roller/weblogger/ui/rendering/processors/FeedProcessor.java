@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.SharedTemplate;
 import org.apache.roller.weblogger.pojos.Template;
@@ -73,13 +72,6 @@ public class FeedProcessor extends AbstractProcessor {
 
     public void setSiteWideCache(SiteWideCache siteWideCache) {
         this.siteWideCache = siteWideCache;
-    }
-
-    @Autowired
-    private WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
     }
 
     @Autowired
@@ -176,7 +168,7 @@ public class FeedProcessor extends AbstractProcessor {
             }
         } else if (feedRequest.getTag() != null) {
             // tags specified. make sure they exist.
-            invalid = !weblogEntryManager.getTagExists(feedRequest.getTag(), (feedRequest.isSiteWideFeed()) ? null : weblog);
+            invalid = !weblogManager.getTagExists((feedRequest.isSiteWideFeed()) ? null : weblog, feedRequest.getTag());
         } else if (!"entries".equals(feedRequest.getType()) && !"comments".equals(feedRequest.getType())) {
             invalid = true;
         }

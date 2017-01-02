@@ -62,7 +62,7 @@ public class AddEntryOperation extends WriteToIndexOperation {
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
-        this.data = weblogEntryManager.getWeblogEntry(this.data.getId());
+        this.data = weblogEntryManager.getWeblogEntry(this.data.getId(), false);
 
         try {
             if (writer != null) {
