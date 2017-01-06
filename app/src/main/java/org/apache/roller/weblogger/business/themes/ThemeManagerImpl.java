@@ -74,7 +74,11 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         }
     }
 
-    private final WeblogManager weblogManager;
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
 
     // directory where themes are kept
     private String themeDir = null;
@@ -90,8 +94,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         this.servletContext = servletContext;
     }
 
-    protected ThemeManagerImpl(WeblogManager wm, String themeDirOverride) {
-        this.weblogManager = wm;
+    protected ThemeManagerImpl(String themeDirOverride) {
 
         // themeDirOverride required when running tests (no servlet).
         themeDir = themeDirOverride;
@@ -271,7 +274,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
             template.setId(sharedTheme.getId() + ":" + template.getName());
 
             // see if a mobile rendition needs adding
-            if (sharedTheme.getDualTheme()) {
+            if (sharedTheme.isDualTheme()) {
                 SharedTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
 
                 if (mobileRendition != null) {

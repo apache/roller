@@ -151,7 +151,7 @@ public class SearchProcessor extends AbstractProcessor {
         model = getModelMap("searchModelSet", initData);
 
         // Load special models for site-wide blog
-        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
             model.putAll(getModelMap("siteModelSet", initData));
         }
 

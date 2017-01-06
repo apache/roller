@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.util.cache;
 
-import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
@@ -44,10 +44,10 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
     // keep a cached version of cache last refresh time for 304 Not Modified calculations
     private ExpiringCacheEntry lastUpdateTime = null;
 
-    private PropertiesManager propertiesManager;
+    private ThemeManager themeManager;
 
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
     }
 
     @PostConstruct
@@ -104,7 +104,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A bookmark has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogBookmark bookmark) {
-        if (enabled && propertiesManager.isSiteWideWeblog(bookmark.getWeblog().getHandle())) {
+        if (enabled && themeManager.getSharedTheme(bookmark.getWeblog().getTheme()).isSiteWide()) {
             invalidate(bookmark.getWeblog());
         }
     }
@@ -113,7 +113,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A comment has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogEntryComment comment) {
-        if (enabled && propertiesManager.isSiteWideWeblog(comment.getWeblogEntry().getWeblog().getHandle())) {
+        if (enabled && themeManager.getSharedTheme(comment.getWeblogEntry().getWeblog().getTheme()).isSiteWide()) {
             invalidate(comment.getWeblogEntry().getWeblog());
         }
     }
@@ -129,7 +129,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A category has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogCategory category) {
-        if (enabled && propertiesManager.isSiteWideWeblog(category.getWeblog().getHandle())) {
+        if (enabled && themeManager.getSharedTheme(category.getWeblog().getTheme()).isSiteWide()) {
             invalidate(category.getWeblog());
         }
     }
@@ -138,7 +138,7 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
      * A weblog template has changed, invalidate only if site blog itself changed.
      */
     public void invalidate(WeblogTemplate template) {
-        if (enabled && propertiesManager.isSiteWideWeblog(template.getWeblog().getHandle())) {
+        if (enabled && themeManager.getSharedTheme(template.getWeblog().getTheme()).isSiteWide()) {
             invalidate(template.getWeblog());
         }
     }

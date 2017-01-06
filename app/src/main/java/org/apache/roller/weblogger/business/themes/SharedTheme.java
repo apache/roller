@@ -47,6 +47,11 @@ public class SharedTheme {
     // the preview image path is relative from the shared theme's base folder
     private String previewImagePath = null;
     private Boolean dualTheme = false;
+
+    // Site-wide blogs provide aggregated data from all weblogs to this weblog
+    // For better caching performance don't use a siteWide blog unless using this
+    // extra data.
+    private Boolean siteWide = false;
     private Instant lastModified = null;
     private boolean enabled = true;
 
@@ -117,12 +122,20 @@ public class SharedTheme {
         this.previewImagePath = previewImagePath;
     }
 
-    public Boolean getDualTheme() {
+    public Boolean isDualTheme() {
         return dualTheme;
     }
 
     public void setDualTheme(Boolean dualTheme) {
         this.dualTheme = dualTheme;
+    }
+
+    public Boolean isSiteWide() {
+        return siteWide;
+    }
+
+    public void setSiteWide(Boolean siteWide) {
+        this.siteWide = siteWide;
     }
 
     /**

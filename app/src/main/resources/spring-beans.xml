@@ -87,8 +87,8 @@
     </beans:bean>
 
     <beans:bean id="themeManager" class="org.apache.roller.weblogger.business.themes.ThemeManagerImpl">
-        <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg name="themeDirOverride" value="${themes.dir:#{null}}"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
@@ -104,6 +104,7 @@
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="userManager" ref="userManager"/>
         <beans:property name="propertiesManager" ref="propertiesManager"/>
+        <beans:property name="themeManager" ref="themeManager"/>
         <beans:property name="weblogBlacklistCache" ref="weblogBlacklistCache"/>
     </beans:bean>
 
@@ -375,7 +376,7 @@
         <beans:property name="cacheHandlerId" value="cache.sitewide"/>
         <beans:property name="size" value="50"/>
         <beans:property name="timeoutSec" value="1800"/>
-        <beans:property name="propertiesManager" ref="propertiesManager"/>
+        <beans:property name="themeManager" ref="themeManager"/>
     </beans:bean>
 
     <beans:bean id="filterMultipartResolver"

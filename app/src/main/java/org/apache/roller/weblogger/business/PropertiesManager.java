@@ -84,18 +84,6 @@ public interface PropertiesManager {
     int getIntProperty(String name);
 
     /**
-     * Return true if given weblog handle points to the front-page weblog and
-     * that weblog is also configured to have site-wide data available.
-     * <p>
-     * This information is important because if site-wide aggregation is enabled
-     * the weblog page caching technique for the blog is different (and less efficient),
-     * as it will need to be updated whenever any blog is updated, also more
-     * models are made available for the page processing of the blog to
-     * have the site data.
-     */
-    boolean isSiteWideWeblog(String weblogHandle);
-
-    /**
      * Get the Blacklist object for the Weblogger instance (not including any
      * weblog-specific blacklist terms.)
      */

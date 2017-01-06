@@ -54,11 +54,6 @@
             <type>string</type>
             <default-value></default-value>
         </property-def>
-        <property-def name="site.frontpage.weblog.aggregated" key="configForm.frontpageWeblogAggregated"
-            description="configForm.tip.frontpageWeblogAggregated">
-            <type>boolean</type>
-            <default-value>false</default-value>
-        </property-def>
     </config-group>
 
     <!-- User Settings Group -->

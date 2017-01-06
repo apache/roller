@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
@@ -63,13 +62,6 @@ public class PreviewProcessor extends AbstractProcessor {
 
     public void setRendererManager(RendererManager rendererManager) {
         this.rendererManager = rendererManager;
-    }
-
-    @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     @Autowired
@@ -194,7 +186,7 @@ public class PreviewProcessor extends AbstractProcessor {
         model = getModelMap("previewModelSet", initData);
 
         // Load special models for site-wide blog
-        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
             model.putAll(getModelMap("siteModelSet", initData));
         }
 

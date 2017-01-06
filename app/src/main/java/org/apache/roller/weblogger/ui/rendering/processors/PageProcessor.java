@@ -171,7 +171,7 @@ public class PageProcessor extends AbstractProcessor {
             }
 
             // is this the site-wide weblog?
-            isSiteWide = propertiesManager.isSiteWideWeblog(pageRequest.getWeblogHandle());
+            isSiteWide = themeManager.getSharedTheme(pageRequest.getWeblog().getTheme()).isSiteWide();
 
             if (this.processReferrers && !isSiteWide) {
                 boolean spam = processReferrer(request, pageRequest);

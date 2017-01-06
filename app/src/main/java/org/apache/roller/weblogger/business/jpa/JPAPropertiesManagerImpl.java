@@ -243,12 +243,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     }
 
     @Override
-    public boolean isSiteWideWeblog(String weblogHandle) {
-        boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
-        return (siteWide && weblogHandle.equals(getStringProperty("site.frontpage.weblog.handle")));
-    }
-
-    @Override
     public Blacklist getSiteBlacklist() {
         return siteBlacklist;
     }

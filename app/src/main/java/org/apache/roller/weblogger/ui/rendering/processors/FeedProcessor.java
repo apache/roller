@@ -20,9 +20,9 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.themes.SharedTemplate;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -89,10 +89,10 @@ public class FeedProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private PropertiesManager propertiesManager;
+    private ThemeManager themeManager;
 
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -113,7 +113,7 @@ public class FeedProcessor extends AbstractProcessor {
             }
 
             // Is this the site-wide weblog? If so, make a combined feed using all blogs...
-            feedRequest.setSiteWideFeed(propertiesManager.isSiteWideWeblog(weblog.getHandle()));
+            feedRequest.setSiteWideFeed(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
 
         } catch (Exception e) {
             // invalid feed request format or weblog doesn't exist
