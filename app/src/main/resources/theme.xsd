@@ -23,6 +23,7 @@
                 <xs:element name="description" minOccurs="0" type="xs:string"/>
                 <xs:element name="author" minOccurs="0" type="xs:string"/>
                 <xs:element name="dualTheme" type="xs:boolean" minOccurs="0" default="false"/>
+                <xs:element name="siteWide" type="xs:boolean" minOccurs="0" default="false"/>
                 <xs:element name="previewImagePath" type="xs:string"/>
                 <xs:element name="template" maxOccurs="unbounded">
                     <xs:complexType>

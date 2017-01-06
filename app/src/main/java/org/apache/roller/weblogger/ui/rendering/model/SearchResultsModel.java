@@ -105,7 +105,7 @@ public class SearchResultsModel extends PageModel {
         SearchOperation search = new SearchOperation(indexManager);
         search.setTerm(searchRequest.getQuery());
 
-        if (propertiesManager.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
+        if (themeManager.getSharedTheme(searchRequest.getWeblog().getTheme()).isSiteWide()) {
             this.websiteSpecificSearch = false;
         } else {
             search.setWebsiteHandle(searchRequest.getWeblogHandle());

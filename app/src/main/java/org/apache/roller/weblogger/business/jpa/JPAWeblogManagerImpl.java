@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
@@ -71,6 +72,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private LazyExpiringCache weblogBlacklistCache = null;
     private WeblogEntryManager weblogEntryManager;
     private IndexManager indexManager;
+    private ThemeManager themeManager;
     private final MediaFileManager mediaFileManager;
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
@@ -99,6 +101,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.indexManager = indexManager;
     }
 
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
     // cached mapping of weblogHandles -> weblogIds
     private Map<String, String> weblogHandleToIdMap = new Hashtable<>();
 
@@ -114,7 +120,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public void saveWeblog(Weblog weblog) {
         weblog.setLastModified(Instant.now());
         strategy.merge(weblog);
-        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
             cacheManager.invalidate(weblog);
         }
     }
@@ -124,7 +130,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove contents first, then remove weblog
         this.removeWeblogContents(weblog);
         this.strategy.remove(weblog);
-        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
             cacheManager.invalidate(weblog);
         }
         this.strategy.flush();
@@ -223,7 +229,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(template);
         // update weblog last modified date.  date updated by saveWeblog()
         saveWeblog(template.getWeblog());
-        if (propertiesManager.isSiteWideWeblog(template.getWeblog().getHandle())) {
+        if (themeManager.getSharedTheme(template.getWeblog().getTheme()).isSiteWide()) {
             cacheManager.invalidate(template.getWeblog());
         }
     }
@@ -570,7 +576,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         weblog.invalidateCache();
         this.strategy.remove(bookmark);
 
-        if (propertiesManager.isSiteWideWeblog(weblog.getHandle())) {
+        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
             cacheManager.invalidate(weblog);
         }
     }
