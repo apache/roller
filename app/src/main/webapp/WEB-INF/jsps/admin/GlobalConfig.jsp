@@ -14,152 +14,168 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle"><s:text name="configForm.subtitle" /></p>
-<p><s:text name="configForm.prompt" /></p>
+<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
-<s:form action="globalConfig!save">
-    <sec:csrfInput/>
+<script>
+    var contextPath = "${pageContext.request.contextPath}";
+</script>
 
-    <table class="formtable">
+<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<s:url value='/tb-ui/scripts/globalconfig.js'/>"></script>
 
-    <s:iterator var="dg" value="globalConfigDef.configGroups">
+<input id="refreshURL" type="hidden" value="<s:url action='globalConfig'/>"/>
 
+<p><fmt:message key="configForm.prompt" /></p>
+
+<div id="successMessageDiv" class="messages" ng-show="ctrl.saveResponseMessage" ng-cloak>
+    <p>{{ctrl.saveResponseMessage}}</p>
+</div>
+
+<table class="formtable">
+
+    <tr>
+        <td colspan="3"><h2><fmt:message key="configForm.siteSettings" /></h2></td>
+    </tr>
+    <tr>
+        <td class="label"><fmt:message key="configForm.frontpageWeblogHandle" /></td>
+        <td class="field">
+            <select ng-model="ctrl.webloggerProps.mainBlog.id" size="1" required>
+                <option ng-repeat="(key, value) in ctrl.metadata.weblogList" value="{{key}}">{{value}}</option>
+                <option value=""><fmt:message key="configForm.none" /></option>
+            </select>
+        </td>
+        <td class="description"><fmt:message key="configForm.tip.frontpageWeblogHandle"/></td>
+    </tr>
+    <tr>
+        <td class="label"><fmt:message key="configForm.requiredRegistrationProcess" /></td>
+        <td class="field">
+             <select ng-model="ctrl.webloggerProps.registrationPolicy" size="1" required>
+                 <option ng-repeat="(key, value) in ctrl.metadata.registrationOptions" value="{{key}}">{{value}}</option>
+             </select>
+        </td>
+        <td class="description"><fmt:message key="configForm.tip.requiredRegistrationProcess"/></td>
+    </tr>
         <tr>
-            <td colspan="3"><h2><s:text name="%{#dg.key}" /></h2></td>
+            <td class="label"><fmt:message key="configForm.newUsersCreateBlogs" /></td>
+            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCreateBlogs"></td>
+            <td class="description"><fmt:message key="configForm.tip.newUsersCreateBlogs"/></td>
+        </tr>
+    <tr>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3"><h2><fmt:message key="configForm.weblogSettings" /></h2></td>
+    </tr>
+    <tr>
+           <td class="label"><fmt:message key="configForm.weblogSettings" /></td>
+           <td class="field">
+               <select ng-model="ctrl.webloggerProps.blogHtmlPolicy" size="1" required>
+                   <option ng-repeat="(key, value) in ctrl.metadata.blogHtmlLevels" value="{{key}}">{{value}}</option>
+               </select>
+           </td>
+           <td class="description"><fmt:message key="configForm.tip.htmlWhitelistLevel"/></td>
+    </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.allowCustomTheme" /></td>
+            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCustomizeThemes"></td>
+            <td class="description"><fmt:message key="configForm.tip.allowCustomTheme"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.newsfeedMaxEntries" /></td>
+            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.newsfeedItemsPage" size='35'></td>
+            <td class="description"><fmt:message key="configForm.tip.newsfeedMaxEntries"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.defaultAnalyticsTrackingCode" /></td>
+            <td class="field"><textarea rows="10" cols="70" ng-model="ctrl.webloggerProps.defaultAnalyticsCode"></textarea></td>
+            <td class="description"><fmt:message key="configForm.tip.defaultAnalyticsTrackingCode"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.allowAnalyticsCodeOverride" /></td>
+            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersOverrideAnalyticsCode"></td>
+            <td class="description"><fmt:message key="configForm.tip.allowAnalyticsCodeOverride"/></td>
+        </tr>
+    <tr>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3"><h2><fmt:message key="configForm.commentSettings" /></h2></td>
+    </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.enableComments" /></td>
+            <td class="field">
+                <select ng-model="ctrl.webloggerProps.commentPolicy" size="1" required>
+                    <option ng-repeat="(key, value) in ctrl.metadata.commentOptions" value="{{key}}">{{value}}</option>
+                </select>
+            </td>
+            <td class="description"></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.commentHtmlWhitelistLevel" /></td>
+            <td class="field">
+                <select ng-model="ctrl.webloggerProps.commentHtmlPolicy" size="1" required>
+                    <option ng-repeat="(key, value) in ctrl.metadata.commentHtmlLevels" value="{{key}}">{{value}}</option>
+                </select>
+            </td>
+            <td class="description"><fmt:message key="configForm.tip.commentHtmlWhitelistLevel"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.ignoreSpamComments" /></td>
+            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.autodeleteSpam"></td>
+            <td class="description"><fmt:message key="configForm.tip.ignoreSpamComments"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.emailComments" /></td>
+            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCommentNotifications"></td>
+            <td class="description"></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="weblogSettings.ignoreUrls" /></td>
+            <td class="field"><textarea rows="7" cols="80" ng-model="ctrl.webloggerProps.commentSpamFilter"></textarea></td>
+            <td class="description"><fmt:message key="weblogSettings.tip.ignoreUrls"/></td>
+        </tr>
+    <tr>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3"><h2><fmt:message key="configForm.fileUploadSettings" /></h2></td>
+    </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.enableFileUploads" /></td>
+            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersUploadMediaFiles"></td>
+            <td class="description"><fmt:message key="configForm.tip.enableFileUploads"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.allowedExtensions" /></td>
+            <td class="field"><input type="text" ng-model="ctrl.webloggerProps.allowedFileExtensions" size='35'></td>
+            <td class="description"><fmt:message key="configForm.tip.allowedExtensions"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.forbiddenExtensions" /></td>
+            <td class="field"><input type="text" ng-model="ctrl.webloggerProps.disallowedFileExtensions" size='35'></td>
+            <td class="description"><fmt:message key="configForm.tip.forbiddenExtensions"/></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.maxFileSize" /></td>
+            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileSizeMb" size='35'></td>
+            <td class="description"></td>
+        </tr>
+        <tr>
+            <td class="label"><fmt:message key="configForm.maxDirSize" /></td>
+            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
+            <td class="description"><fmt:message key="configForm.tip.maxDirSize"/></td>
         </tr>
 
-        <s:iterator var="pd" value="#dg.propertyDefs">
-          <s:if test="%{!#pd.hidden}">
-            <tr>
-                <td class="label"><s:text name="%{#pd.key}" /></td>
+</table>
 
-                  <%-- special condition for front page blog --%>
-                  <s:if test="#pd.name == 'site.frontpage.weblog.handle'">
-                      <td class="field">
-                          <select name='<s:property value="#pd.name"/>'>
-                                <option value=''>
-                                    <s:text name="configForm.none" />
-                                </option>
-                                <s:iterator var="weblog" value="weblogs">
-                                    <option value='<s:property value="#weblog.handle"/>'
-                                        <s:if test='properties[#pd.name].value == #weblog.handle'>selected='true'</s:if> >
-                                        <s:property value="#weblog.name"/>
-                                    </option>
-                                 </s:iterator>
-                          </select>
-                      </td>
-                  </s:if>
-
-                  <%-- special condition for required registration procedure --%>
-                  <s:elseif test="#pd.name == 'user.registration.process'">
-                      <td class="field">
-                          <select name='<s:property value="#pd.name"/>'>
-                                <s:iterator var="item" value="registrationOptions">
-                                    <option value='<s:property value="#item.left"/>'
-                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:text name="%{#item.right}"/>
-                                    </option>
-                                </s:iterator>
-                          </select>
-                      </td>
-                  </s:elseif>
-
-                  <%-- special condition for HTML sanitizing levels --%>
-                  <s:elseif test="#pd.name == 'site.html.whitelist'">
-                      <td class="field">
-                          <select name='<s:property value="#pd.name"/>'>
-                                <s:iterator var="item" value="HTMLSanitizingLevels">
-                                    <option value='<s:property value="#item.left"/>'
-                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:text name="%{#item.right}"/>
-                                    </option>
-                                </s:iterator>
-                          </select>
-                      </td>
-                  </s:elseif>
-
-                  <%-- special condition for Comment HTML sanitizing levels --%>
-                  <s:elseif test="#pd.name == 'comments.html.whitelist'">
-                      <td class="field">
-                          <select name='<s:property value="#pd.name"/>'>
-                                <s:iterator var="item" value="CommentHTMLSanitizingLevels">
-                                    <option value='<s:property value="#item.left"/>'
-                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:text name="%{#item.right}"/>
-                                    </option>
-                                </s:iterator>
-                          </select>
-                      </td>
-                  </s:elseif>
-
-                  <%-- special condition for Comment options --%>
-                  <s:elseif test="#pd.name == 'users.comments.enabled'">
-                      <td class="field">
-                          <select name='<s:property value="#pd.name"/>'>
-                                <s:iterator var="item" value="commentOptions">
-                                    <option value='<s:property value="#item.left"/>'
-                                        <s:if test='properties[#pd.name].value == #item.left'>selected='true'</s:if> >
-                                        <s:text name="%{#item.right}"/>
-                                    </option>
-                                </s:iterator>
-                          </select>
-                      </td>
-                  </s:elseif>
-
-                  <%-- "string" type means use a simple textbox --%>
-                  <s:elseif test="#pd.type == 'string'">
-                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>'
-                        value='<s:property value="properties[#pd.name].value"/>' size="35" onBlur="this.value=this.value.trim()"/></td>
-                  </s:elseif>
-
-                  <%-- "text" type means use a full textarea --%>
-                  <s:elseif test="#pd.type == 'text'">
-                    <td class="field">
-                      <%-- avoid whitespace around property tag so it does not appear in the textedit --%>
-                      <textarea name='<s:property value="#pd.name"/>'
-                                rows="<s:property value="#pd.rows"/>"
-                                cols="<s:property value="#pd.cols"/>"
-                                onBlur="this.value=this.value.trim()"><s:property value="properties[#pd.name].value"/></textarea>
-                    </td>
-                  </s:elseif>
-
-                  <%-- "boolean" type means use a checkbox --%>
-                  <s:elseif test="#pd.type == 'boolean'">
-                      <s:if test="properties[#pd.name].value == 'true'">
-                          <td class="field"><input type="checkbox"
-                            name='<s:property value="#pd.name"/>' CHECKED></td>
-                      </s:if>
-                      <s:else>
-                          <td class="field"><input type="checkbox"
-                            name='<s:property value="#pd.name"/>'></td>
-                      </s:else>
-                  </s:elseif>
-
-                  <%-- if it's something we don't understand then use textbox --%>
-                  <s:else>
-                    <td class="field"><input type="text"
-                        name='<s:property value="#pd.name"/>' size="50" onBlur="this.value=this.value.trim()"/></td>
-                  </s:else>
-
-                <td class="description"><s:text name="%{#pd.description}"/></td>
-            </tr>
-
-          </s:if>
-        </s:iterator>
-
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-
-    </s:iterator>
-
-    </table>
-
-    <div class="control">
-        <input class="buttonBox" type="submit" value="<s:text name='generic.save'/>"/>
-    </div>
-
-</s:form>
+<div class="control">
+    <input class="buttonBox" type="button" value="<fmt:message key='generic.save'/>" ng-click="ctrl.updateProperties()"/>
+</div>

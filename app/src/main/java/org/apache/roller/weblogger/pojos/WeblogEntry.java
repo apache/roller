@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.pojos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
@@ -443,11 +442,11 @@ public class WeblogEntry {
     @JsonIgnore
     // Not serialized into JSON as necessary weblog object not always present.
     public boolean getCommentsStillAllowed() {
-        if (RuntimeConfigDefs.CommentOption.NONE.equals(RuntimeConfigDefs.CommentOption.valueOf(
-                WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty("users.comments.enabled")))) {
+        if (WebloggerProperties.GlobalCommentPolicy.NONE.equals(
+                WebloggerContext.getWebloggerProperties().getCommentPolicy())) {
             return false;
         }
-        if (RuntimeConfigDefs.CommentOption.NONE.equals(getWeblog().getAllowComments())) {
+        if (WebloggerProperties.GlobalCommentPolicy.NONE.equals(getWeblog().getAllowComments())) {
             return false;
         }
         if (getCommentDays() == 0) {

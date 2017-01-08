@@ -25,9 +25,6 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -60,20 +57,6 @@ public class PingController {
 
     public void setPingTargetManager(PingTargetManager pingTargetManager) {
         this.pingTargetManager = pingTargetManager;
-    }
-
-    @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -146,8 +129,7 @@ public class PingController {
     public ResponseEntity testPingTarget(@PathVariable String id, HttpServletResponse response) throws ServletException {
 
         PingTarget target = pingTargetManager.getPingTarget(id);
-        String handle = propertiesManager.getStringProperty("site.frontpage.weblog.handle");
-        Weblog frontPageWeblog = !StringUtils.isEmpty(handle) ? weblogManager.getWeblogByHandle(handle) : null;
+        Weblog frontPageWeblog = persistenceStrategy.getWebloggerProperties().getMainBlog();
 
         if (target != null && frontPageWeblog != null) {
             try {

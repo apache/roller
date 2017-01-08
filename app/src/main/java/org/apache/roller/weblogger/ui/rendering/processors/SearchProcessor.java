@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -60,13 +59,6 @@ public class SearchProcessor extends AbstractProcessor {
 
     public void setRendererManager(RendererManager rendererManager) {
         this.rendererManager = rendererManager;
-    }
-
-    @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     @Autowired

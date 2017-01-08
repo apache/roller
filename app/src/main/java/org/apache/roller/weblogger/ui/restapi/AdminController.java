@@ -20,16 +20,25 @@
  */
 package org.apache.roller.weblogger.ui.restapi;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
+import org.apache.roller.weblogger.util.Blacklist;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.CacheStats;
 import org.slf4j.Logger;
@@ -37,12 +46,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 /**
  * Controller for weblogger backend tasks, e.g., cache and system runtime configuration.
@@ -76,7 +87,21 @@ public class AdminController {
         this.indexManager = indexManager;
     }
 
+    @Autowired
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     public AdminController() {
+    }
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy = null;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
     }
 
     @RequestMapping(value = "/caches", method = RequestMethod.GET)
@@ -142,6 +167,90 @@ public class AdminController {
             log.error("Error doing index rebuild", ex);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
                     body(messages.getString("generic.error.check.logs"));
+        }
+    }
+
+    @RequestMapping(value = "/webloggerproperties", method = RequestMethod.GET)
+    public WebloggerProperties getWebloggerProperties(HttpServletResponse response) throws ServletException {
+        return persistenceStrategy.load(WebloggerProperties.class, "1");
+    }
+
+    @RequestMapping(value = "/webloggerproperties", method = RequestMethod.POST)
+    public ResponseEntity updateProperties(Principal p, @Valid @RequestBody WebloggerProperties properties) {
+        User user = userManager.getEnabledUserByUserName(p.getName());
+        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+        I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+        persistenceStrategy.merge(properties);
+        persistenceStrategy.flush();
+
+        weblogManager.setSiteBlacklist(new Blacklist(properties.getCommentSpamFilter(), null));
+
+        return ResponseEntity.ok(messages.getString("generic.changes.saved"));
+    }
+
+    @RequestMapping(value = "/globalconfigmetadata", method = RequestMethod.GET)
+    public GlobalConfigMetadata getGlobalConfigMetadata(Principal principal, HttpServletResponse response) {
+
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+        I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+        GlobalConfigMetadata gcm = new GlobalConfigMetadata();
+
+        List<Weblog> weblogs = weblogManager.getWeblogs(true, 0, -1);
+
+        gcm.weblogList = weblogs.stream()
+                        .sorted((w1, w2) -> w1.getHandle().compareTo(w2.getHandle()))
+                        .collect(Utilities.toLinkedHashMap(Weblog::getId, Weblog::getHandle));
+
+        gcm.registrationOptions = Arrays.stream(WebloggerProperties.RegistrationPolicy.values())
+                .collect(Utilities.toLinkedHashMap(WebloggerProperties.RegistrationPolicy::name,
+                         e -> messages.getString(e.getDescription())));
+
+        gcm.blogHtmlLevels = Arrays.stream(HTMLSanitizer.Level.values())
+                .filter(r -> (!r.equals(HTMLSanitizer.Level.NONE)))
+                .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
+                        e -> messages.getString(e.getDescription())));
+
+        gcm.commentHtmlLevels = Arrays.stream(HTMLSanitizer.Level.values())
+                .filter(r -> (!r.equals(HTMLSanitizer.Level.NONE)))
+                .filter(r -> (r.getSanitizingLevel() <= HTMLSanitizer.Level.BASIC_IMAGES.getSanitizingLevel()))
+                .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
+                        e -> messages.getString(e.getDescription())));
+
+        gcm.commentOptions = Arrays.stream(WebloggerProperties.GlobalCommentPolicy.values())
+                .collect(Utilities.toLinkedHashMap(WebloggerProperties.GlobalCommentPolicy::name,
+                        e -> messages.getString(e.getSiteDescription())));
+
+        return gcm;
+    }
+
+    public class GlobalConfigMetadata {
+        Map<String, String> weblogList;
+        Map<String, String> registrationOptions;
+        Map<String, String> blogHtmlLevels;
+        Map<String, String> commentOptions;
+        Map<String, String> commentHtmlLevels;
+
+        public Map<String, String> getWeblogList() {
+            return weblogList;
+        }
+
+        public Map<String, String> getRegistrationOptions() {
+            return registrationOptions;
+        }
+
+        public Map<String, String> getBlogHtmlLevels() {
+            return blogHtmlLevels;
+        }
+
+        public Map<String, String> getCommentOptions() {
+            return commentOptions;
+        }
+
+        public Map<String, String> getCommentHtmlLevels() {
+            return commentHtmlLevels;
         }
     }
 

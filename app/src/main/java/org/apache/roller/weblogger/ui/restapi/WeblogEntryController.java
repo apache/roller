@@ -18,8 +18,6 @@ package org.apache.roller.weblogger.ui.restapi;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MailManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -37,6 +35,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
@@ -106,13 +105,6 @@ public class WeblogEntryController {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     @Autowired
@@ -421,9 +413,9 @@ public class WeblogEntryController {
             }
 
             fields.author = userManager.checkWeblogRole(user, weblog, WeblogRole.POST);
-            fields.commentingEnabled = !RuntimeConfigDefs.CommentOption.NONE.equals(
-                    RuntimeConfigDefs.CommentOption.valueOf(propertiesManager.getStringProperty("users.comments.enabled"))) &&
-                    !RuntimeConfigDefs.CommentOption.NONE.equals(weblog.getAllowComments());
+            fields.commentingEnabled = !WebloggerProperties.GlobalCommentPolicy.NONE.equals(
+                    persistenceStrategy.getWebloggerProperties().getCommentPolicy()) &&
+                    !WebloggerProperties.GlobalCommentPolicy.NONE.equals(weblog.getAllowComments());
             fields.defaultCommentDays = weblog.getDefaultCommentDays();
             fields.defaultEditFormat = weblog.getEditFormat();
             fields.timezone = weblog.getTimeZone();

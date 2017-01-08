@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,12 +47,15 @@ public class FileContentManagerImpl implements FileContentManager {
 
     private static Logger log = LoggerFactory.getLogger(FileContentManagerImpl.class);
 
-    private PropertiesManager propertiesManager;
+    private WebloggerProperties webloggerProperties;
+
+    public void setWebloggerProperties(WebloggerProperties properties) {
+        this.webloggerProperties = properties;
+    }
 
     private String storageDir = null;
 
-    public FileContentManagerImpl(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
+    public FileContentManagerImpl() {
 
         String inStorageDir = WebloggerStaticConfig.getProperty("mediafiles.storage.dir");
         // Note: System property expansion is now handled by WebloggerStaticConfig.
@@ -132,7 +135,7 @@ public class FileContentManagerImpl implements FileContentManager {
                            Map<String, List<String>> messages) {
 
         // first check, is uploading enabled?
-        if (!propertiesManager.getBooleanProperty("uploads.enabled")) {
+        if (!webloggerProperties.isUsersUploadMediaFiles()) {
             if (messages != null) {
                 messages.put("error.upload.disabled", null);
             }
@@ -140,27 +143,28 @@ public class FileContentManagerImpl implements FileContentManager {
         }
 
         // second check, does upload exceed max size for file?
-        BigDecimal maxFileMB = new BigDecimal(
-                propertiesManager.getStringProperty("uploads.file.maxsize"));
-        int maxFileBytes = (int) (Utilities.ONE_MB_IN_BYTES * maxFileMB.doubleValue());
-        log.debug("max allowed file size = {}", maxFileBytes);
+        int maxFileMB = webloggerProperties.getMaxFileSizeMb();
+        log.debug("max allowed file size = {} MB", maxFileMB);
         log.debug("attempted save file size = {}", size);
-        if (size > maxFileBytes) {
+        if (size > maxFileMB * Utilities.ONE_MB_IN_BYTES) {
             if (messages != null) {
-                messages.put("error.upload.filemax", Arrays.asList(fileName, maxFileMB.toString()));
+                messages.put("error.upload.filemax", Arrays.asList(fileName, Integer.toString(maxFileMB)));
             }
             return false;
         }
 
         // third check, does file cause weblog to exceed quota?
-        BigDecimal maxDirMB = new BigDecimal(propertiesManager.getStringProperty("uploads.dir.maxsize"));
-        long maxDirBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxDirMB.doubleValue());
+        int maxDirMB = webloggerProperties.getMaxFileUploadsSizeMb();
+        long maxDirBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxDirMB);
+        log.debug("max allowed dir size = {}", maxDirBytes);
+        log.debug("attempted save file size = {}", size);
         try {
             File storageDirectory = this.getRealFile(weblog, null);
             long userDirSize = getDirSize(storageDirectory, true);
+            log.debug("max userDirSize = {}", userDirSize);
             if (userDirSize + size > maxDirBytes) {
                 if (messages != null) {
-                    messages.put("error.upload.dirmax", Collections.singletonList(maxDirMB.toString()));
+                    messages.put("error.upload.dirmax", Collections.singletonList(Integer.toString(maxDirMB)));
                 }
                 return false;
             }
@@ -172,8 +176,8 @@ public class FileContentManagerImpl implements FileContentManager {
         }
 
         // fourth check, is upload type allowed?
-        String allows = propertiesManager.getStringProperty("uploads.types.allowed");
-        String forbids = propertiesManager.getStringProperty("uploads.types.forbid");
+        String allows = webloggerProperties.getAllowedFileExtensions();
+        String forbids = webloggerProperties.getDisallowedFileExtensions();
         String[] allowFiles = StringUtils.split(
                 StringUtils.deleteWhitespace(allows), ",");
         String[] forbidFiles = StringUtils.split(

@@ -65,7 +65,6 @@ public class ParsedMenu {
         private GlobalRole requiredGlobalRole;
         private WeblogRole requiredWeblogRole;
         private String enabledProperty;
-        private String disabledProperty;
         private List<ParsedTabItem> tabItems = new ArrayList<>();
 
         public void addItem(ParsedTabItem item) {
@@ -115,15 +114,6 @@ public class ParsedMenu {
 
         public void setTabItems(List<ParsedTabItem> tabItems) {
             this.tabItems = tabItems;
-        }
-
-        @XmlAttribute
-        public String getDisabledProperty() {
-            return disabledProperty;
-        }
-
-        public void setDisabledProperty(String disabledProperty) {
-            this.disabledProperty = disabledProperty;
         }
 
     }
@@ -195,13 +185,5 @@ public class ParsedMenu {
             this.enabledProperty = enabledProperty;
         }
 
-        @XmlAttribute
-        public String getDisabledProperty() {
-            return disabledProperty;
-        }
-
-        public void setDisabledProperty(String disabledProperty) {
-            this.disabledProperty = disabledProperty;
-        }
     }
 }

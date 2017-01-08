@@ -12,7 +12,7 @@
         <Root level="error">
             <AppenderRef ref="TightBlogTestFileAppender"/>
         </Root>
-        <Logger name="org.apache.roller" level="info"/>
+        <Logger name="org.apache.roller" level="debug"/>
         <!--Logger name="org.apache.roller.weblogger.business" level="debug"/-->
         <Logger name="org.apache.struts2" level="warn"/>
         <Logger name="org.apache.tiles" level="error"/>

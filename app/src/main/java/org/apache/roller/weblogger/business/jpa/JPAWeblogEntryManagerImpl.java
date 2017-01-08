@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.PingTargetManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.AtomEnclosure;
@@ -34,7 +33,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.util.HTMLSanitizer;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.util.Utilities;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.node.Node;
@@ -74,12 +73,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     // cached mapping of entryAnchors -> entryIds
@@ -605,8 +598,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (ret != null) {
-            Whitelist whitelist = HTMLSanitizer.Level.valueOf(
-                    propertiesManager.getStringProperty("site.html.whitelist")).getWhitelist();
+            WebloggerProperties props = strategy.getWebloggerProperties();
+            Whitelist whitelist = props.getBlogHtmlPolicy().getWhitelist();
 
             if (whitelist != null) {
                 ret = Jsoup.clean(ret, whitelist);
@@ -658,4 +651,5 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         return resource;
     }
+
 }

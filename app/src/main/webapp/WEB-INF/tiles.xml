@@ -107,6 +107,7 @@
     <!-- global admin pages (and associates) -->
     <definition name=".GlobalConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
+        <put-attribute name="angularString" value="id='ngapp-div' ng-app='tightblogApp' ng-controller='GlobalConfigController as ctrl'"/>
     </definition>
 
     <definition name=".UserAdmin" extends=".tiles-tabbedpage" >

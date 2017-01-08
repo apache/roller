@@ -1,7 +1,6 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import org.apache.roller.weblogger.business.MailManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -68,13 +67,6 @@ public class CommentController {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     @Autowired
@@ -284,8 +276,7 @@ public class CommentController {
                     String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream()); // IOUtils.toString(request.getInputStream(), "UTF-8"); //
 
                     // Validate content
-                    HTMLSanitizer.Level sanitizerLevel = HTMLSanitizer.Level.valueOf(
-                            propertiesManager.getStringProperty("comments.html.whitelist"));
+                    HTMLSanitizer.Level sanitizerLevel = persistenceStrategy.getWebloggerProperties().getCommentHtmlPolicy();
                     Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
 
                     wec.setContent(Jsoup.clean(content, commentHTMLWhitelist));

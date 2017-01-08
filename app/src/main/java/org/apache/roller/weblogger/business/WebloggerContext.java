@@ -20,7 +20,9 @@
  */
 package org.apache.roller.weblogger.business;
 
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -45,6 +47,8 @@ public class WebloggerContext extends ContextLoaderListener {
 
     private static ServletContext servletContext = null;
 
+    private static JPAPersistenceStrategy strategy = null;
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         WebloggerContext.servletContext = sce.getServletContext();
@@ -55,7 +59,7 @@ public class WebloggerContext extends ContextLoaderListener {
      * True if bootstrap process has been completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return webloggerInstance != null;
+        return strategy != null;
     }
 
     /**
@@ -76,6 +80,13 @@ public class WebloggerContext extends ContextLoaderListener {
         return servletContext;
     }
 
+    public static WebloggerProperties getWebloggerProperties() {
+        if (!isBootstrapped()) {
+            throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
+        }
+        return strategy.getWebloggerProperties();
+    }
+
     /**
      * Bootstrap the Roller Weblogger business tier.
      * <p>
@@ -91,9 +102,8 @@ public class WebloggerContext extends ContextLoaderListener {
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }
-        // At this point, a populated database is available, so PropertiesManager can get its values from the DB
-        PropertiesManager propertiesManager = context.getBean("propertiesManager", PropertiesManager.class);
-        propertiesManager.initialize();
+
+        strategy = context.getBean("persistenceStrategy", JPAPersistenceStrategy.class);
 
         // IndexManager and PingTargetManager need runtime props provided by PropertiesManager, so delaying
         // their initialization to this point.

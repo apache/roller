@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,19 +69,19 @@ public class MailManagerImpl implements MailManager {
 
     private URLStrategy urlStrategy;
 
-    private PropertiesManager propertiesManager;
+    private WebloggerProperties webloggerProperties;
 
     private JavaMailSender mailSender;
 
     private SpringTemplateEngine mailTemplateEngine;
 
     public MailManagerImpl(UserManager umgr, WeblogManager wmgr, WeblogEntryManager wemgr,
-                           PropertiesManager pmgr, URLStrategy strategy, JavaMailSender sender,
+                           WebloggerProperties props, URLStrategy strategy, JavaMailSender sender,
                            SpringTemplateEngine mailTemplateEngine) {
         userManager = umgr;
         weblogManager = wmgr;
         weblogEntryManager = wemgr;
-        propertiesManager = pmgr;
+        webloggerProperties = props;
         urlStrategy = strategy;
         mailSender = sender;
         this.mailTemplateEngine = mailTemplateEngine;
@@ -322,9 +323,6 @@ public class MailManagerImpl implements MailManager {
         ResourceBundle resources = ResourceBundle.getBundle(
                 "ApplicationResources", Locale.forLanguageTag(user.getLocale()));
 
-        String from = propertiesManager.getStringProperty(
-                "user.account.activation.mail.from");
-
         String[] cc = new String[0];
         String[] bcc = new String[0];
         String[] to = new String[]{user.getEmailAddress()};
@@ -344,7 +342,7 @@ public class MailManagerImpl implements MailManager {
                 new Object[]{user.getScreenName(), user.getUserName(), activationURL}));
         content = sb.toString();
 
-        sendHTMLMessage(from, to, cc, bcc, subject, content);
+        sendHTMLMessage("", to, cc, bcc, subject, content);
     }
 
     @Override
@@ -382,7 +380,7 @@ public class MailManagerImpl implements MailManager {
             String[] bloggerEmailAddrs = bloggerList.stream()
                     .map(UserWeblogRole::getUser)
                     .map(User::getEmailAddress)
-                    .collect(Collectors.toList()).toArray(new String[0]);
+                    .collect(Collectors.toList()).toArray(new String[bloggerList.size()]);
 
             String from = user.getEmailAddress();
 
@@ -399,7 +397,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendNewCommentNotification(WeblogEntryComment comment) {
-        if (!isMailEnabled() || !propertiesManager.getBooleanProperty("users.comments.emailnotify") || !comment.getApproved()) {
+        if (!isMailEnabled() || !webloggerProperties.isUsersCommentNotifications() || !comment.getApproved()) {
             return;
         }
 
@@ -446,13 +444,13 @@ public class MailManagerImpl implements MailManager {
 
             if (weblog.getEmailComments() &&
                     // if must moderate on, blogger(s) already got pending email, good enough.
-                    !RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(weblog.getAllowComments())) {
+                    !WebloggerProperties.GlobalCommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
                 List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
 
                 String[] bloggerEmailAddrs = bloggerList.stream()
                         .map(UserWeblogRole::getUser)
                         .map(User::getEmailAddress)
-                        .collect(Collectors.toList()).toArray(new String[0]);
+                        .collect(Collectors.toList()).toArray(new String[bloggerList.size()]);
 
                 sendHTMLMessage(from, bloggerEmailAddrs, null, null, subject, msg);
             }

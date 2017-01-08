@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -111,13 +110,6 @@ public class PageProcessor extends AbstractProcessor {
 
     public void setRendererManager(RendererManager rendererManager) {
         this.rendererManager = rendererManager;
-    }
-
-    @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     @Autowired

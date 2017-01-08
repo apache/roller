@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 
@@ -163,22 +164,28 @@ public class UIAction extends ActionSupport implements Preparable {
     }
 
     public String getProp(String key) {
-        // first try static config
         String value = WebloggerStaticConfig.getProperty(key);
-        if (value == null) {
-            value = WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty(key);
-        }
         return (value == null) ? key : value;
     }
 
-    public boolean getBooleanProp(String key) {
-        // first try static config
-        String value = WebloggerStaticConfig.getProperty(key);
-        if (value == null) {
-            value = WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty(key);
-        }
+    public boolean isUsersOverrideAnalyticsCode() {
+        return WebloggerContext.getWebloggerProperties().isUsersOverrideAnalyticsCode();
+    }
 
-        return (value == null) ? false : Boolean.valueOf(value);
+    public boolean isUsersCommentNotifications() {
+        return WebloggerContext.getWebloggerProperties().isUsersCommentNotifications();
+    }
+
+    public boolean isUsersCustomizeThemes() {
+        return WebloggerContext.getWebloggerProperties().isUsersCustomizeThemes();
+    }
+
+    public WebloggerProperties.GlobalCommentPolicy getCommentPolicy() {
+        return WebloggerContext.getWebloggerProperties().getCommentPolicy();
+    }
+
+    public WebloggerProperties.RegistrationPolicy getRegistrationPolicy() {
+        return WebloggerContext.getWebloggerProperties().getRegistrationPolicy();
     }
 
     @Override
@@ -338,8 +345,8 @@ public class UIAction extends ActionSupport implements Preparable {
     }
 
     public Menu getMenu() {
-        return menuHelper.getMenu(getDesiredMenu(), getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(), getActionName()
-        );
+        return menuHelper.getMenu(getDesiredMenu(), getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(),
+                getActionName());
     }
 
     public String getShortDateFormat() {

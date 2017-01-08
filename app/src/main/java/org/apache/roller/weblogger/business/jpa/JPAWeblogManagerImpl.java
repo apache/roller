@@ -22,14 +22,12 @@ package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserStatus;
@@ -44,6 +42,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.LazyExpiringCache;
@@ -68,7 +67,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private static Logger log = LoggerFactory.getLogger(JPAWeblogManagerImpl.class);
 
     private UserManager userManager;
-    private PropertiesManager propertiesManager;
     private LazyExpiringCache weblogBlacklistCache = null;
     private WeblogEntryManager weblogEntryManager;
     private IndexManager indexManager;
@@ -76,6 +74,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final MediaFileManager mediaFileManager;
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
+    private Blacklist siteBlacklist = null;
 
     // Map of each weblog and its extra hit count that has had additional accesses since the
     // last scheduled updateHitCounters() call.
@@ -87,10 +86,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
@@ -203,6 +198,14 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove indexing
         indexManager.removeWeblogIndexOperation(weblog);
 
+        // check if main blog, disconnect if it is
+        WebloggerProperties props = strategy.getWebloggerProperties();
+        Weblog test = props.getMainBlog();
+        if (test != null && test.getId().equals(weblog.getId())) {
+            props.setMainBlog(null);
+            strategy.store(props);
+        }
+
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategory and Weblog
         this.strategy.flush();
@@ -245,9 +248,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         if (getWeblogCount() == 1) {
             // first weblog, let's make it the frontpage one.
-            RuntimeConfigProperty frontpageBlogProp = propertiesManager.getProperty("site.frontpage.weblog.handle");
-            frontpageBlogProp.setValue(newWeblog.getHandle());
-            propertiesManager.saveProperty(frontpageBlogProp);
+            WebloggerProperties props = strategy.getWebloggerProperties();
+            props.setMainBlog(newWeblog);
+            this.strategy.store(props);
         }
 
         // grant weblog creator OWNER permission
@@ -752,13 +755,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public Blacklist getWeblogBlacklist(Weblog weblog) {
         if (StringUtils.isEmpty(weblog.getBlacklist())) {
             // just rely on the global blacklist if no overrides
-            return propertiesManager.getSiteBlacklist();
+            return getSiteBlacklist();
         } else {
             Blacklist bl = (Blacklist) weblogBlacklistCache.get(weblog.getHandle(),
                     weblog.getLastModified().toEpochMilli());
 
             if (bl == null) {
-                bl = new Blacklist(weblog.getBlacklist(), propertiesManager.getSiteBlacklist());
+                bl = new Blacklist(weblog.getBlacklist(), getSiteBlacklist());
                 weblogBlacklistCache.put(weblog.getHandle(), bl);
             }
 
@@ -944,4 +947,17 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         resultsMap.put("unchanged", unchangedEntries);
         return resultsMap;
     }
+
+    public Blacklist getSiteBlacklist() {
+        if (siteBlacklist == null) {
+            WebloggerProperties props = strategy.getWebloggerProperties();
+            siteBlacklist = new Blacklist(props.getCommentSpamFilter(), null);
+        }
+        return siteBlacklist;
+    }
+
+    public void setSiteBlacklist(Blacklist siteBlacklist) {
+        this.siteBlacklist = siteBlacklist;
+    }
+
 }
