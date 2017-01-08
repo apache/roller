@@ -45,9 +45,6 @@ public class DatabaseInstaller {
     private final int targetVersion;
     private List<String> messages = new ArrayList<>();
 
-    // the name of the property in weblogger_properties table which holds the dbversion value
-    private static final String DBVERSION_PROP = "tightblog.database.version";
-
     public DatabaseInstaller(DataSource dataSource) {
         this.dataSource = dataSource;
         targetVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version");
@@ -188,14 +185,14 @@ public class DatabaseInstaller {
 
             // just check in the weblogger_properties table
             ResultSet rs = stmt.executeQuery(
-                    "select value from weblogger_properties where name = '" + DBVERSION_PROP + "'");
+                    "select database_version from weblogger_properties where id = 1");
 
             if (rs.next()) {
                 dbversion = Integer.parseInt(rs.getString(1));
             }
         } catch (Exception e) {
-            String msg = "Current TightBlog database version cannot be determined, check " + DBVERSION_PROP +
-                    " in weblogger_properties table";
+            String msg = "Current TightBlog database version cannot be determined, check database_version " +
+                    " property in weblogger_properties table";
             errorMessage(msg);
             throw new WebloggerException(msg, e);
         } finally {

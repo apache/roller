@@ -51,10 +51,14 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -88,6 +92,21 @@ public class Utilities {
         } else {
             return Jsoup.clean(str, HTMLSanitizer.Level.NONE.getWhitelist());
         }
+    }
+
+    /**
+     * Replacement for Collectors.toMap which returns a HashMap
+     * LinkedHashMap useful for keeping the Map in insertion order
+     * http://stackoverflow.com/a/29090335/1207540
+     */
+    public static <T, K, U> Collector<T, ?, Map<K,U>> toLinkedHashMap(
+            Function<? super T, ? extends K> keyMapper,
+            Function<? super T, ? extends U> valueMapper) {
+        return Collectors.toMap(keyMapper, valueMapper,
+                (u, v) -> {
+                    throw new IllegalStateException(String.format("Duplicate key %s", u));
+                },
+                LinkedHashMap::new);
     }
 
     public static String insertLineBreaksIfMissing(String text) {

@@ -20,10 +20,10 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
@@ -52,10 +52,10 @@ public class FeedModel implements Model {
         this.weblogEntryManager = weblogEntryManager;
     }
 
-    private PropertiesManager propertiesManager;
+    private WebloggerProperties properties;
 
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
+    public void setWebloggerProperties(WebloggerProperties properties) {
+        this.properties = properties;
     }
 
     /**
@@ -125,7 +125,7 @@ public class FeedModel implements Model {
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), feedRequest.getTag(),
                     feedRequest.getPage(),
-                    propertiesManager.getIntProperty("site.newsfeeds.maxEntries"),
+                    properties.getNewsfeedItemsPage(),
                     -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;
         }
@@ -146,7 +146,7 @@ public class FeedModel implements Model {
                     feedRequest.getType(), null, null),
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), -1, feedRequest.getPage(),
-                    propertiesManager.getIntProperty("site.newsfeeds.maxEntries"));
+                    properties.getNewsfeedItemsPage());
 
             this.feedRequest = feedRequest;
         }

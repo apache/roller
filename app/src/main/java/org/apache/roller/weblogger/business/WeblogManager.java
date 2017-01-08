@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
-import org.apache.roller.weblogger.ui.restapi.TagController;
 import org.apache.roller.weblogger.util.Blacklist;
 
 import java.util.List;
@@ -324,4 +323,10 @@ public interface WeblogManager {
      *         unchanged refers to entries having currentTag but already having newTag.
      */
     Map<String, Integer> addTag(Weblog weblog, String currentTag, String newTag);
+
+    /**
+     * Refresh the site-level (as opposed to blog-specific) blacklist, to be used
+     * when site-level blacklist rules have changed
+     */
+    void setSiteBlacklist(Blacklist siteBlacklist);
 }

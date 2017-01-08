@@ -23,8 +23,6 @@ package org.apache.roller.weblogger.ui.rendering.processors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.business.MailManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -35,6 +33,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.comment.CommentValidator;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogEntryRequest;
@@ -129,13 +128,6 @@ public class CommentProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
@@ -162,10 +154,11 @@ public class CommentProcessor extends AbstractProcessor {
     @RequestMapping(path = "/**", method = RequestMethod.POST)
     public void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        RuntimeConfigDefs.CommentOption commentOption =
-                RuntimeConfigDefs.CommentOption.valueOf(propertiesManager.getStringProperty("users.comments.enabled"));
+        WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
 
-        if (RuntimeConfigDefs.CommentOption.NONE.equals(commentOption)) {
+        WebloggerProperties.GlobalCommentPolicy commentOption = props.getCommentPolicy();
+
+        if (WebloggerProperties.GlobalCommentPolicy.NONE.equals(commentOption)) {
             log.info("Getting comment post even though commenting is disabled -- returning 403");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
@@ -212,8 +205,8 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        nonSpamCommentApprovalRequired = RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(commentOption) ||
-                RuntimeConfigDefs.CommentOption.MUSTMODERATE.equals(weblog.getAllowComments());
+        nonSpamCommentApprovalRequired = WebloggerProperties.GlobalCommentPolicy.MUSTMODERATE.equals(commentOption) ||
+                WebloggerProperties.GlobalCommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments());
 
         // we know what the weblog entry is, so setup our urls
         dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle();
@@ -250,8 +243,7 @@ public class CommentProcessor extends AbstractProcessor {
 
         // Validate content
         commentForm.setContent(StringUtils.left(request.getParameter("content"), 2000));
-        HTMLSanitizer.Level sanitizerLevel = HTMLSanitizer.Level.valueOf(
-                propertiesManager.getStringProperty("comments.html.whitelist"));
+        HTMLSanitizer.Level sanitizerLevel = props.getCommentHtmlPolicy();
         Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
 
         // Need to insert paragraphs breaks in case commenter didn't do so.
@@ -369,8 +361,7 @@ public class CommentProcessor extends AbstractProcessor {
             }
 
             // Akismet validator can be configured to return -1 for blatant spam, if so configured, don't save in queue.
-            if (validationScore >= 0 && (!ApprovalStatus.SPAM.equals(commentForm.getStatus()) ||
-                    !propertiesManager.getBooleanProperty("comments.ignoreSpam.enabled"))) {
+            if (validationScore >= 0 && (!ApprovalStatus.SPAM.equals(commentForm.getStatus()) || !props.isAutodeleteSpam())) {
 
                 boolean noModerationNeeded = ownComment ||
                         (!nonSpamCommentApprovalRequired && !ApprovalStatus.SPAM.equals(commentForm.getStatus()));

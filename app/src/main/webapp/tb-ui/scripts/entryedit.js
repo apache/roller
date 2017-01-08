@@ -207,7 +207,6 @@ tightblogApp.controller('EntryEditController', ['$http', '$interpolate', '$sce',
 
             $http.post(self.urlRoot + urlStem, JSON.stringify(self.entry)).then(
               function(response) {
-                self.errorObj = null;
                 entryId = response.data.entryId;
                 self.saveResponseMessage = response.data.message;
                 self.errorObj = {};

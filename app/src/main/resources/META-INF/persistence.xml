@@ -8,7 +8,6 @@
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
     <class>org.apache.roller.weblogger.pojos.MediaDirectory</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>
-    <class>org.apache.roller.weblogger.pojos.RuntimeConfigProperty</class>
     <class>org.apache.roller.weblogger.pojos.User</class>
     <class>org.apache.roller.weblogger.pojos.UserCredentials</class>
     <class>org.apache.roller.weblogger.pojos.Weblog</class>
@@ -21,6 +20,7 @@
     <class>org.apache.roller.weblogger.pojos.UserWeblogRole</class>
     <class>org.apache.roller.weblogger.pojos.WeblogTemplate</class>
     <class>org.apache.roller.weblogger.pojos.WeblogTemplateRendition</class>
+    <class>org.apache.roller.weblogger.pojos.WebloggerProperties</class>
     <class>org.apache.roller.weblogger.util.InstantConverter</class>
   </persistence-unit>
 </persistence>

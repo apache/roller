@@ -39,8 +39,6 @@
         <xs:attribute name="weblogRole" type="weblogRoleType" use="required"/>
         <!-- enabledProperty: if true, show this tab -->
         <xs:attribute name="enabledProperty" type="xs:string"/>
-        <!-- disable property: if true, don't show this tab -->
-        <xs:attribute name="disabledProperty" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="tabItemType">
@@ -53,8 +51,6 @@
         <xs:attribute name="weblogRole" type="weblogRoleType"/>
         <!-- enabledProperty: if true and tab visible, show this tab item -->
         <xs:attribute name="enabledProperty" type="xs:string"/>
-        <!-- disable property: if true and tab visible, don't show this tab item -->
-        <xs:attribute name="disabledProperty" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="subactionsType">

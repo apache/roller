@@ -22,8 +22,8 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
@@ -45,10 +45,10 @@ public class UtilitiesModel implements Model {
     private ZoneId zoneId;
     I18nMessages messages = null;
 
-    private PropertiesManager propertiesManager;
+    private WebloggerProperties webloggerProperties;
 
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
+    public void setWebloggerProperties(WebloggerProperties properties) {
+        this.webloggerProperties = properties;
     }
 
     /**
@@ -89,7 +89,7 @@ public class UtilitiesModel implements Model {
     }
 
     public boolean getCommentEmailNotify() {
-        return propertiesManager.getBooleanProperty("users.comments.emailnotify");
+        return webloggerProperties.isUsersCommentNotifications();
     }
 
     public String getSystemVersion() {

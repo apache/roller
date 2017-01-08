@@ -22,7 +22,6 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -36,6 +35,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.rendering.generators.BigWeblogCalendar;
 import org.apache.roller.weblogger.ui.rendering.generators.WeblogCalendar;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -88,10 +88,10 @@ public class PageModel implements Model {
         this.userManager = userManager;
     }
 
-    protected PropertiesManager propertiesManager;
+    private WebloggerProperties webloggerProperties;
 
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
+    public void setWebloggerProperties(WebloggerProperties properties) {
+        this.webloggerProperties = properties;
     }
 
     protected ThemeManager themeManager;
@@ -180,11 +180,11 @@ public class PageModel implements Model {
         if (preview) {
             return "";
         } else {
-            if (propertiesManager.getBooleanProperty("analytics.code.override.allowed") &&
+            if (webloggerProperties.isUsersOverrideAnalyticsCode() &&
                     !StringUtils.isBlank(pageRequest.getWeblog().getAnalyticsCode())) {
                 return pageRequest.getWeblog().getAnalyticsCode();
             } else {
-                return propertiesManager.getStringProperty("analytics.default.tracking.code");
+                return webloggerProperties.getDefaultAnalyticsCode();
             }
         }
     }

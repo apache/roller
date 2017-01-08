@@ -15,7 +15,6 @@
 */
 package org.apache.roller.weblogger;
 
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -29,6 +28,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.util.Utilities;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -74,13 +74,6 @@ abstract public class WebloggerTest {
 
     public void setJPAPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
-    }
-
-    @Resource
-    protected PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     @Resource
@@ -185,6 +178,10 @@ abstract public class WebloggerTest {
     }
 
     protected void teardownWeblog(String id) throws Exception {
+        WebloggerProperties props = strategy.getWebloggerProperties();
+        if (props.getMainBlog() != null && id.equals(props.getMainBlog().getId())) {
+            props.setMainBlog(null);
+        }
         Weblog weblog = weblogManager.getWeblog(id);
         weblogManager.removeWeblog(weblog);
         strategy.flush();

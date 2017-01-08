@@ -24,9 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.MailManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs.RegistrationOption;
+import org.apache.roller.weblogger.pojos.WebloggerProperties.RegistrationPolicy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -98,13 +96,6 @@ public class UserController {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
     }
 
     @Autowired
@@ -263,8 +254,8 @@ public class UserController {
         }
 
         long userCount = userManager.getUserCount();
-        RegistrationOption option = RuntimeConfigDefs.RegistrationOption.valueOf(propertiesManager.getStringProperty("user.registration.process"));
-        if (userCount == 0 || !RuntimeConfigDefs.RegistrationOption.DISABLED.equals(option)) {
+        RegistrationPolicy option = persistenceStrategy.getWebloggerProperties().getRegistrationPolicy();
+        if (userCount == 0 || !RegistrationPolicy.DISABLED.equals(option)) {
             boolean mustActivate = userCount > 0;
             if (mustActivate) {
                 newData.user.setActivationCode(UUID.randomUUID().toString());
@@ -413,7 +404,7 @@ public class UserController {
                         // first person in is always an admin
                         user.setGlobalRole(GlobalRole.ADMIN);
                     } else {
-                        user.setGlobalRole(propertiesManager.getBooleanProperty("user.blogcreate.defaultrole") ?
+                        user.setGlobalRole(persistenceStrategy.getWebloggerProperties().isUsersCreateBlogs() ?
                                 GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
                     }
                 } else {

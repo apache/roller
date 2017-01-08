@@ -20,11 +20,10 @@
  */
 package org.apache.roller.weblogger.ui.core.menu;
 
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTab;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTabItem;
 import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTab;
@@ -43,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * A helper class for dealing with UI menus.
@@ -53,16 +51,11 @@ public final class MenuHelper {
     private static Logger log = LoggerFactory.getLogger(MenuHelper.class);
 
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
-    private static Set<String> propertyDefNames = new TreeSet<>();
 
-    private static boolean hasPropertyDef(String propertyName) {
-        return propertyDefNames.contains(propertyName);
-    }
+    private WebloggerProperties webloggerProperties;
 
-    private PropertiesManager propertiesManager;
-
-    public void setPropertiesManager(PropertiesManager propertiesManager) {
-        this.propertiesManager = propertiesManager;
+    public void setWebloggerProperties(WebloggerProperties properties) {
+        this.webloggerProperties = properties;
     }
 
     private ExpiringCache menuCache;
@@ -106,16 +99,6 @@ public final class MenuHelper {
             log.error("Error parsing menu configs", ex);
         }
 
-        // Cache runtime configurable property names
-        propertyDefNames.clear();
-        RuntimeConfigDefs rcd = propertiesManager.getRuntimeConfigDefs();
-        if (rcd != null) {
-            for (RuntimeConfigDefs.ConfigGroup group : rcd.getConfigGroups()) {
-                for (RuntimeConfigDefs.PropertyDef def : group.getPropertyDefs()) {
-                    propertyDefNames.add(def.getName());
-                }
-            }
-        }
     }
 
     /**
@@ -162,8 +145,6 @@ public final class MenuHelper {
             boolean includeTab = true;
             if (configTab.getEnabledProperty() != null) {
                 includeTab = getBooleanProperty(configTab.getEnabledProperty());
-            } else if (configTab.getDisabledProperty() != null) {
-                includeTab = !getBooleanProperty(configTab.getDisabledProperty());
             }
 
             if (!includeTab || userGlobalRole.getWeight() < configTab.getRequiredGlobalRole().getWeight() ||
@@ -185,8 +166,6 @@ public final class MenuHelper {
 
                 if (tabItem.getEnabledProperty() != null) {
                     includeItem = getBooleanProperty(tabItem.getEnabledProperty());
-                } else if (tabItem.getDisabledProperty() != null) {
-                    includeItem = !getBooleanProperty(tabItem.getDisabledProperty());
                 }
 
                 // disabled and global role check
@@ -244,14 +223,14 @@ public final class MenuHelper {
     }
 
     /**
-     * Check enabled property, prefers runtime properties.
+     * Check enabled property
      *
      * @param propertyName the property name
      * @return the boolean property
      */
     private boolean getBooleanProperty(String propertyName) {
-        if (hasPropertyDef(propertyName)) {
-            return propertiesManager.getBooleanProperty(propertyName);
+        if ("themes.customtheme.allowed".equals(propertyName)) {
+            return webloggerProperties.isUsersCustomizeThemes();
         }
         return WebloggerStaticConfig.getBooleanProperty(propertyName);
     }

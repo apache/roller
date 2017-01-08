@@ -22,7 +22,7 @@
 package org.apache.roller.weblogger.ui.struts2;
 
 import org.apache.roller.weblogger.business.MailManager;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig.AuthMethod;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs.RegistrationOption;
+import org.apache.roller.weblogger.pojos.WebloggerProperties.RegistrationPolicy;
 
 import java.util.List;
 
@@ -121,8 +121,8 @@ public class Login extends UIAction {
                 User user = users.get(0);
                 // enable user account
                 user.setActivationCode(null);
-                RegistrationOption regProcess = RuntimeConfigDefs.RegistrationOption.valueOf(getProp("user.registration.process"));
-                if (RuntimeConfigDefs.RegistrationOption.APPROVAL_REQUIRED.equals(regProcess)) {
+                RegistrationPolicy regProcess = WebloggerContext.getWebloggerProperties().getRegistrationPolicy();
+                if (RegistrationPolicy.APPROVAL_REQUIRED.equals(regProcess)) {
                     user.setStatus(UserStatus.EMAILVERIFIED);
                     setActivationStatus("activePending");
                     mailManager.sendRegistrationApprovalRequest(user);

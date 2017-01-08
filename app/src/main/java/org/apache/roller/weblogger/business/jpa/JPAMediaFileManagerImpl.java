@@ -22,7 +22,6 @@ package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.pojos.MediaDirectory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -58,18 +57,15 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private final JPAPersistenceStrategy strategy;
     private final FileContentManager fileContentManager;
-    private final PropertiesManager propertiesManager;
 
     private static Logger log = LoggerFactory.getLogger(JPAMediaFileManagerImpl.class);
 
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
-    protected JPAMediaFileManagerImpl(FileContentManager fcm, JPAPersistenceStrategy persistenceStrategy,
-                                      PropertiesManager propManager) {
+    protected JPAMediaFileManagerImpl(FileContentManager fcm, JPAPersistenceStrategy persistenceStrategy) {
         this.fileContentManager = fcm;
         this.strategy = persistenceStrategy;
-        this.propertiesManager = propManager;
     }
 
     @Override
@@ -107,7 +103,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public MediaDirectory createMediaDirectory(Weblog weblog, String requestedName) {
         requestedName = requestedName.startsWith("/") ? requestedName.substring(1) : requestedName;
 
-        if (!propertiesManager.getBooleanProperty("uploads.enabled")) {
+        if (!strategy.getWebloggerProperties().isUsersUploadMediaFiles()) {
             throw new IllegalArgumentException("error.upload.disabled");
         }
 

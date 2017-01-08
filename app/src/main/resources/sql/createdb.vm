@@ -75,8 +75,8 @@ create table weblog_template (
     description     varchar(255),
     updatetime      $db.TIMESTAMP_SQL_TYPE not null
 );
-create index wp_name_idx on weblog_template(name);
-create index wp_link_idx on weblog_template(relative_path);
+create index wt_name_idx on weblog_template(name);
+create index wt_link_idx on weblog_template(relative_path);
 
 alter table weblog_template add constraint wt_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
@@ -150,7 +150,8 @@ create table weblog_entry (
     search_description varchar(255),
     enclosure_url   varchar(255),
     enclosure_type  varchar(48),
-    enclosure_length integer
+    enclosure_length integer,
+    blacklist       $db.TEXT_SQL_TYPE
 );
 
 alter table weblog_entry add constraint we_weblogid_fk
@@ -241,12 +242,33 @@ alter table ping_target add constraint pt_url_uq unique (pingurl);
 
 -- for server-wide properties that can be adjusted (in the Admin UI) during runtime
 create table weblogger_properties (
-    name     varchar(255) not null primary key,
-    value    $db.TEXT_SQL_TYPE
+    id                     varchar(48) not null primary key,
+    database_version       integer not null,
+    main_blog_id           varchar(48),
+    registration_policy    varchar(24) default 'DISABLED' not null,
+    users_create_blogs     $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    blog_html_policy       varchar(24) default 'RELAXED' not null,
+    users_customize_themes $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    newsfeed_items_page    integer default 30 not null,
+    default_analytics_code $db.TEXT_SQL_TYPE,
+    users_override_analytics_code $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    comment_policy         varchar(24) default 'MUSTMODERATE' not null,
+    comment_html_policy    varchar(24) default 'BASIC' not null,
+    autodelete_spam        $db.BOOLEAN_SQL_TYPE_FALSE not null,
+    users_comment_notifications $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    comment_spam_filter    $db.TEXT_SQL_TYPE,
+    users_upload_media_files $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    allowed_file_extensions varchar(255),
+    disallowed_file_extensions varchar(255) default 'exe',
+    max_file_size_mb       integer default 3 not null,
+    max_file_uploads_size_mb integer default 20 not null
 );
 
--- database version for this model
-insert into weblogger_properties(name, value) values ('tightblog.database.version', '100');
+alter table weblogger_properties add constraint wp_weblogid_fk
+    foreign key (main_blog_id) references weblog( id ) ;
+
+-- initial row, relying on per-column defaults.
+insert into weblogger_properties(id, database_version) values ('1', 200);
 
 
 -- MEDIA BLOGGING

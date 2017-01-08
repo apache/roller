@@ -21,6 +21,7 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -341,5 +342,9 @@ public class JPAPersistenceStrategy {
         if (emf != null) {
             emf.close();
         }
+    }
+
+    public WebloggerProperties getWebloggerProperties() {
+        return load(WebloggerProperties.class, "1");
     }
 }

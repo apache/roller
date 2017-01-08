@@ -148,9 +148,12 @@
     <!-- Weblogger Admin UI -->
     <package name="weblogger-admin" namespace="/tb-ui/admin" extends="weblogger">
 
-        <action name="globalConfig!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.GlobalConfig">
+        <action name="globalConfig" class="org.apache.roller.weblogger.ui.struts2.UIAction">
+            <param name="actionName">globalConfig</param>
+            <param name="desiredMenu">admin</param>
+            <param name="pageTitleReal">configForm.title</param>
+            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.GlobalConfig</result>
-            <allowed-methods>save</allowed-methods>
         </action>
 
         <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.UIAction">

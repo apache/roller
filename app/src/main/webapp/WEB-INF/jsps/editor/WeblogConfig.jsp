@@ -173,7 +173,7 @@ var msg= {
             <td class="description"><s:text name="weblogSettings.tip.timezone" /></td>
         </tr>
 
-        <s:if test="getBooleanProp('analytics.code.override.allowed')">
+        <s:if test="isUsersOverrideAnalyticsCode()">
             <tr>
                 <td class="label"><s:text name="weblogSettings.analyticsTrackingCode" /></td>
                 <td class="field"><textarea data-link="weblogData.analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"></textarea></td>
@@ -183,7 +183,7 @@ var msg= {
 
         <%-- ***** Comment settings ***** --%>
 
-        <s:if test="getProp('users.comments.enabled') != 'NONE'">
+        <s:if test="getCommentPolicy() != 'NONE'">
             <tr>
                 <td colspan="3"><h2><s:text name="weblogSettings.commentSettings" /></h2></td>
             </tr>
@@ -194,14 +194,14 @@ var msg= {
                   <select data-link="weblogData.allowComments">
                      <option value="NONE"><s:text name="generic.no"/></option>
                      <option value="MUSTMODERATE"><s:text name="weblogSettings.mustModerateComments"/></option>
-                     <s:if test="getProp('users.comments.enabled') != 'MUSTMODERATE'">
+                     <s:if test="getCommentPolicy() != 'MUSTMODERATE'">
                          <option value="YES"><s:text name="weblogSettings.commentsOK"/></option>
                      </s:if>
                   </select>
                 </td>
             </tr>
 
-            <s:if test="getBooleanProp('users.comments.emailnotify')">
+            <s:if test="isUsersCommentNotifications()">
                 <tr>
                     <td class="label"><s:text name="weblogSettings.emailComments" /></td>
                     <td class="field"><input type="checkbox" data-link="weblogData.emailComments"></td>

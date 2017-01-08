@@ -20,12 +20,11 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.business.RuntimeConfigDefs.CommentOption;
+import org.apache.roller.weblogger.pojos.WebloggerProperties.GlobalCommentPolicy;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
@@ -86,7 +85,7 @@ public class Weblog {
     private String tagline = null;
     private EditFormat editFormat = EditFormat.HTML;
     private String blacklist = null;
-    private CommentOption allowComments = CommentOption.MUSTMODERATE;
+    private GlobalCommentPolicy allowComments = GlobalCommentPolicy.MUSTMODERATE;
     private Boolean emailComments = Boolean.FALSE;
     @NotBlank(message = "{weblogSettings.error.themeNull}")
     private String theme = null;
@@ -238,11 +237,11 @@ public class Weblog {
 
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
-    public CommentOption getAllowComments() {
+    public GlobalCommentPolicy getAllowComments() {
         return this.allowComments;
     }
 
-    public void setAllowComments(CommentOption allowComments) {
+    public void setAllowComments(GlobalCommentPolicy allowComments) {
         this.allowComments = allowComments;
     }
 
