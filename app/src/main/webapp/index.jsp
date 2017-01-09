@@ -17,13 +17,14 @@
 --%><%@ page session="false" %><%
 
 // lets see if we have a frontpage blog
-String frontpageBlog =
-        org.apache.roller.weblogger.business.WebloggerContext.getWeblogger().getPropertiesManager().getStringProperty("site.frontpage.weblog.handle");
+org.apache.roller.weblogger.pojos.Weblog frontpageBlog =
+        org.apache.roller.weblogger.business.WebloggerContext.getWebloggerProperties().getMainBlog();
 
-if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
+if (frontpageBlog != null) {
     // dispatch to frontpage blog
     RequestDispatcher homepage =
-            request.getRequestDispatcher(org.apache.roller.weblogger.ui.rendering.processors.PageProcessor.PATH + '/' + frontpageBlog);
+            request.getRequestDispatcher(org.apache.roller.weblogger.ui.rendering.processors.PageProcessor.PATH + '/'
+            + frontpageBlog.getHandle());
     homepage.forward(request, response);
 } else {
     // new install?  Redirect to register or login page based on whether a user has already been created.

@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.Template;
@@ -86,12 +87,6 @@ public class PageModel implements Model {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    private WebloggerProperties webloggerProperties;
-
-    public void setWebloggerProperties(WebloggerProperties properties) {
-        this.webloggerProperties = properties;
     }
 
     protected ThemeManager themeManager;
@@ -180,11 +175,12 @@ public class PageModel implements Model {
         if (preview) {
             return "";
         } else {
-            if (webloggerProperties.isUsersOverrideAnalyticsCode() &&
+            WebloggerProperties props = WebloggerContext.getWebloggerProperties();
+            if (props.isUsersOverrideAnalyticsCode() &&
                     !StringUtils.isBlank(pageRequest.getWeblog().getAnalyticsCode())) {
                 return pageRequest.getWeblog().getAnalyticsCode();
             } else {
-                return webloggerProperties.getDefaultAnalyticsCode();
+                return props.getDefaultAnalyticsCode();
             }
         }
     }

@@ -69,19 +69,16 @@ public class MailManagerImpl implements MailManager {
 
     private URLStrategy urlStrategy;
 
-    private WebloggerProperties webloggerProperties;
-
     private JavaMailSender mailSender;
 
     private SpringTemplateEngine mailTemplateEngine;
 
     public MailManagerImpl(UserManager umgr, WeblogManager wmgr, WeblogEntryManager wemgr,
-                           WebloggerProperties props, URLStrategy strategy, JavaMailSender sender,
+                           URLStrategy strategy, JavaMailSender sender,
                            SpringTemplateEngine mailTemplateEngine) {
         userManager = umgr;
         weblogManager = wmgr;
         weblogEntryManager = wemgr;
-        webloggerProperties = props;
         urlStrategy = strategy;
         mailSender = sender;
         this.mailTemplateEngine = mailTemplateEngine;
@@ -397,7 +394,9 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendNewCommentNotification(WeblogEntryComment comment) {
-        if (!isMailEnabled() || !webloggerProperties.isUsersCommentNotifications() || !comment.getApproved()) {
+        if (!isMailEnabled() ||
+                !WebloggerContext.getWebloggerProperties().isUsersCommentNotifications() ||
+                !comment.getApproved()) {
             return;
         }
 

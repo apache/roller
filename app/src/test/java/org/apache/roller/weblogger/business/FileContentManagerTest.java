@@ -121,7 +121,6 @@ public class FileContentManagerTest extends WebloggerTest {
      * This should test all conditions where a save should fail.
      */
     @Test
-    @Ignore
     public void testCanSave() throws Exception {
         WebloggerProperties props = strategy.getWebloggerProperties();
         props.setMaxFileSizeMb(1);
@@ -131,19 +130,29 @@ public class FileContentManagerTest extends WebloggerTest {
         strategy.store(props);
         endSession(true);
 
+        // file too big
         boolean canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 2500000, null);
         assertFalse(canSave);
 
+        // file right size
+        canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 500000, null);
+        assertTrue(canSave);
+
         props.setDisallowedFileExtensions("gif");
-        strategy.store(props);
+        strategy.merge(props);
         endSession(true);
 
         // forbidden types check should fail
         canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, null);
         assertFalse(canSave);
 
+        // ok types should pass
+        canSave = fileContentManager.canSave(testWeblog, "test.png", "text/plain", 10, null);
+        assertTrue(canSave);
+
         props.setUsersUploadMediaFiles(false);
-        strategy.store(props);
+        props.setDisallowedFileExtensions("");
+        strategy.merge(props);
         endSession(true);
 
         // uploads disabled should fail
