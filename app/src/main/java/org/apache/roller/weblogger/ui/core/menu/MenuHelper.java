@@ -20,10 +20,10 @@
  */
 package org.apache.roller.weblogger.ui.core.menu;
 
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTab;
 import org.apache.roller.weblogger.ui.core.menu.Menu.MenuTabItem;
 import org.apache.roller.weblogger.ui.core.menu.ParsedMenu.ParsedTab;
@@ -51,12 +51,6 @@ public final class MenuHelper {
     private static Logger log = LoggerFactory.getLogger(MenuHelper.class);
 
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
-
-    private WebloggerProperties webloggerProperties;
-
-    public void setWebloggerProperties(WebloggerProperties properties) {
-        this.webloggerProperties = properties;
-    }
 
     private ExpiringCache menuCache;
 
@@ -230,7 +224,7 @@ public final class MenuHelper {
      */
     private boolean getBooleanProperty(String propertyName) {
         if ("themes.customtheme.allowed".equals(propertyName)) {
-            return webloggerProperties.isUsersCustomizeThemes();
+            return WebloggerContext.getWebloggerProperties().isUsersCustomizeThemes();
         }
         return WebloggerStaticConfig.getBooleanProperty(propertyName);
     }

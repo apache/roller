@@ -49,8 +49,9 @@
 <s:if test="actionName == 'entryEdit'">
     <s:set var="subtitleKey">weblogEdit.subtitle.editEntry</s:set>
     <s:set var="mainAction">entryEdit</s:set>
-    <input id="refreshURL" type="hidden" value="<s:url action='entryEdit'/>?weblogId=<s:property value=\
-        '%{#parameters.weblogId}'/>&entryId=<s:property value='%{#parameters.entryId}'/>"/>
+    <input id="refreshURL" type="hidden"
+        value="<s:url action='entryEdit'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"\
+            "&entryId=<s:property value='%{#parameters.entryId}'/>"/>
 </s:if>
 <s:else>
     <s:set var="subtitleKey">weblogEdit.subtitle.newEntry</s:set>

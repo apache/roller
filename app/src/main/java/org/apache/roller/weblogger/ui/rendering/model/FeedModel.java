@@ -22,8 +22,8 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
@@ -50,12 +50,6 @@ public class FeedModel implements Model {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    private WebloggerProperties properties;
-
-    public void setWebloggerProperties(WebloggerProperties properties) {
-        this.properties = properties;
     }
 
     /**
@@ -125,7 +119,7 @@ public class FeedModel implements Model {
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), feedRequest.getTag(),
                     feedRequest.getPage(),
-                    properties.getNewsfeedItemsPage(),
+                    WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage(),
                     -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;
         }
@@ -146,7 +140,7 @@ public class FeedModel implements Model {
                     feedRequest.getType(), null, null),
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), -1, feedRequest.getPage(),
-                    properties.getNewsfeedItemsPage());
+                    WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage());
 
             this.feedRequest = feedRequest;
         }

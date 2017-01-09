@@ -47,12 +47,6 @@ public class FileContentManagerImpl implements FileContentManager {
 
     private static Logger log = LoggerFactory.getLogger(FileContentManagerImpl.class);
 
-    private WebloggerProperties webloggerProperties;
-
-    public void setWebloggerProperties(WebloggerProperties properties) {
-        this.webloggerProperties = properties;
-    }
-
     private String storageDir = null;
 
     public FileContentManagerImpl() {
@@ -133,6 +127,8 @@ public class FileContentManagerImpl implements FileContentManager {
     @Override
     public boolean canSave(Weblog weblog, String fileName, String contentType, long size,
                            Map<String, List<String>> messages) {
+
+        WebloggerProperties webloggerProperties = WebloggerContext.getWebloggerProperties();
 
         // first check, is uploading enabled?
         if (!webloggerProperties.isUsersUploadMediaFiles()) {

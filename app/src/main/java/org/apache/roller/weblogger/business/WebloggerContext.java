@@ -105,7 +105,7 @@ public class WebloggerContext extends ContextLoaderListener {
 
         strategy = context.getBean("persistenceStrategy", JPAPersistenceStrategy.class);
 
-        // IndexManager and PingTargetManager need runtime props provided by PropertiesManager, so delaying
+        // IndexManager and PingTargetManager need a functioning database, so delaying
         // their initialization to this point.
         IndexManager indexManager = context.getBean("indexManager", IndexManager.class);
         indexManager.initialize();
