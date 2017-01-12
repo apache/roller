@@ -56,7 +56,7 @@ public class RomeFeedFetcherTest extends TestCase {
             Subscription sub = feedFetcher.fetchSubscription(feed_url);
             assertNotNull(sub);
             assertEquals(feed_url, sub.getFeedURL());
-            assertEquals("https://rollerweblogger.org/roller/", sub.getSiteURL());
+            assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
             assertEquals("Blogging Roller", sub.getTitle());
             assertNotNull(sub.getLastUpdated());
             assertTrue(sub.getEntries().size() > 0);
@@ -76,7 +76,7 @@ public class RomeFeedFetcherTest extends TestCase {
             Subscription sub = feedFetcher.fetchSubscription(feed_url);
             assertNotNull(sub);
             assertEquals(feed_url, sub.getFeedURL());
-            assertEquals("https://rollerweblogger.org/roller/", sub.getSiteURL());
+            assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
             assertEquals("Blogging Roller", sub.getTitle());
             assertNotNull(sub.getLastUpdated());
             assertTrue(sub.getEntries().size() > 0);
