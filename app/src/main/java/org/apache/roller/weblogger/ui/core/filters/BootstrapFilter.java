@@ -33,7 +33,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -45,13 +44,14 @@ public class BootstrapFilter implements Filter {
 
     private ServletContext context = null;
 
+    public void init(FilterConfig filterConfig) throws ServletException {
+        context = filterConfig.getServletContext();
+    }
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-
-        log.debug("Entered {}", request.getRequestURI());
 
         if (!WebloggerContext.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
             log.debug("Forwarding to install page");
@@ -59,23 +59,14 @@ public class BootstrapFilter implements Filter {
             RequestDispatcher rd = context.getRequestDispatcher("/tb-ui/install/install.rol");
             rd.forward(req, res);
         } else {
-            chain.doFilter(request, response);
+            chain.doFilter(request, res);
         }
-
-        log.debug("Exiting {}", request.getRequestURI());
     }
 
     private boolean isInstallUrl(String uri) {
         return (uri != null && (
-                uri.endsWith("bootstrap.rol") ||
-                        uri.endsWith("create.rol") ||
-                        uri.endsWith("upgrade.rol") ||
-                        uri.endsWith(".js") ||
-                        uri.endsWith(".css")));
-    }
-
-    public void init(FilterConfig filterConfig) throws ServletException {
-        context = filterConfig.getServletContext();
+                uri.endsWith("bootstrap.rol") || uri.endsWith("create.rol") ||
+                        uri.endsWith(".js") || uri.endsWith(".css")));
     }
 
     public void destroy() {

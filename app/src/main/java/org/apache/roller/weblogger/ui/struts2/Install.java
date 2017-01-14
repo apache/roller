@@ -23,15 +23,18 @@ package org.apache.roller.weblogger.ui.struts2;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.roller.weblogger.business.WebloggerContext;
-import org.apache.roller.weblogger.business.DatabaseInstaller;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.util.Utilities;
+import org.apache.roller.weblogger.util.SQLScriptRunner;
 import org.apache.roller.weblogger.util.WebloggerException;
 import org.apache.struts2.ServletActionContext;
 import org.slf4j.Logger;
@@ -49,33 +52,43 @@ public class Install extends UIAction {
 
     private static Logger log = LoggerFactory.getLogger(Install.class);
 
-    private static final String DATABASE_ERROR = "database_error";
-    private static final String CREATE_DATABASE = "create_database";
-    private static final String UPGRADE_DATABASE = "upgrade_database";
-    private static final String BOOTSTRAP = "bootstrap";
+    private static final String INSTALL = "install";
 
     private Throwable rootCauseException = null;
-    private boolean error = false;
-    private boolean success = false;
-    private List<String> messages = null;
+    private List<String> messages = new ArrayList<>();
 
-    private DatabaseInstaller databaseInstaller;
+    public enum StartupStatus {
+        databaseError(true),
+        tablesMissing(false),
+        databaseVersionError(true),
+        databaseCreateError(true),
+        needsBootstrapping(false),
+        bootstrapError(false);
+
+        boolean error;
+
+        public boolean isError() {
+            return error;
+        }
+
+        StartupStatus(boolean error) {
+            this.error = error;
+        }
+    }
+
+    private StartupStatus status = null;
+
+    private String databaseProductName = "";
 
     private DataSource tbDataSource;
 
     public void setTbDataSource(DataSource tbDataSource) {
         this.tbDataSource = tbDataSource;
-        databaseInstaller = new DatabaseInstaller(tbDataSource);
     }
 
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return GlobalRole.NOAUTHNEEDED;
-    }
-
-    @Override
-    public WeblogRole getRequiredWeblogRole() {
-        return WeblogRole.NOBLOGNEEDED;
+    public Install() {
+        requiredGlobalRole = GlobalRole.NOAUTHNEEDED;
+        requiredWeblogRole = WeblogRole.NOBLOGNEEDED;
     }
 
     public String execute() throws WebloggerException {
@@ -83,76 +96,119 @@ public class Install extends UIAction {
             return SUCCESS;
         }
 
+        // is database accessible?
         try {
-            Utilities.testDataSource(tbDataSource);
-        } catch (WebloggerException we) {
-            if (we.getRootCause() != null) {
-                rootCauseException = we.getRootCause();
-            } else {
-                rootCauseException = we;
-            }
-            messages = Collections.singletonList(we.getMessage());
-
-            log.debug("Forwarding to database error page");
-            setPageTitle("installer.error.connection.pageTitle");
-            return DATABASE_ERROR;
+            Connection testcon = tbDataSource.getConnection();
+            // used if DB creation needed
+            databaseProductName = testcon.getMetaData().getDatabaseProductName();
+            testcon.close();
+        } catch (Exception e) {
+            log.error(getText("installer.databaseConnectionError"));
+            status = StartupStatus.databaseError;
+            rootCauseException = e.getCause();
+            messages = Collections.singletonList(e.getMessage());
+            return INSTALL;
         }
 
-        if (databaseInstaller.isCreationRequired()) {
+        status = checkDatabase();
+
+        // is database schema present?
+        if (StartupStatus.tablesMissing.equals(status)) {
             log.info("TightBlog database needs creating, forwarding to creation page");
-            setPageTitle("installer.database.creation.pageTitle");
-            return CREATE_DATABASE;
+            return INSTALL;
+        } else if (StartupStatus.databaseVersionError.equals(status)) {
+            log.warn("TightBlog DB version incompatible with application version.");
+            return INSTALL;
         }
 
-        if (databaseInstaller.isUpgradeRequired()) {
-            log.info("TightBlog database needs upgrading, forwarding to upgrade page");
-            setPageTitle("installer.database.upgrade.pageTitle");
-            return UPGRADE_DATABASE;
-        }
-
-        bootstrap();
-        return SUCCESS;
+        // all good, TightBlog ready to bootstrap
+        return bootstrap();
     }
 
+    /**
+     * Determine if database schema needs to be created.
+     */
+    private StartupStatus checkDatabase() {
+        Connection con = null;
+        try {
+            con = tbDataSource.getConnection();
+
+            // does the schema already exist?  -- check a couple of tables to find out
+            if (!tableExists(con, "weblog") || !tableExists(con, "weblogger_user")) {
+                return StartupStatus.tablesMissing;
+            }
+
+            // OK, exists -- does the database schema match that used by the application?
+            int applicationVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version");
+            int dbversion = -1;
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                    "select database_version from weblogger_properties where id = 1");
+
+            if (rs.next()) {
+                dbversion = Integer.parseInt(rs.getString(1));
+            }
+
+            if (dbversion != applicationVersion) {
+                return StartupStatus.databaseVersionError;
+            }
+        } catch (Exception e) {
+            log.error("Error checking for tables", e);
+            return StartupStatus.databaseVersionError;
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Create database tables.
+     *
+     * @return List of messages created during processing
+     */
     public String create() {
         if (WebloggerContext.isBootstrapped()) {
             return SUCCESS;
         }
 
-        try {
-            messages = databaseInstaller.createDatabase();
-            success = true;
-        } catch (WebloggerException se) {
-            error = true;
-            messages = Collections.emptyList();
-        }
-
-        setPageTitle("installer.database.creation.pageTitle");
-        return CREATE_DATABASE;
-    }
-
-    public String upgrade() {
-        if (WebloggerContext.isBootstrapped()) {
-            return SUCCESS;
-        }
+        String script = "/createdb.sql";
+        Connection con = null;
+        SQLScriptRunner runner = null;
 
         try {
-            messages = databaseInstaller.upgradeDatabase();
-            success = true;
-        } catch (WebloggerException se) {
-            error = true;
-            messages = Collections.emptyList();
+            con = tbDataSource.getConnection();
+            String scriptPath = con.getMetaData().getDatabaseProductName().toLowerCase() + script;
+            messages.add("Running database script: " + scriptPath);
+            runner = new SQLScriptRunner(scriptPath, true);
+            runner.runScript(con, true);
+            messages.addAll(runner.getMessages());
+            status = StartupStatus.needsBootstrapping;
+        } catch (Exception ex) {
+            messages.add("ERROR processing database script " + script);
+            if (runner != null) {
+                messages.addAll(runner.getMessages());
+            }
+            status = StartupStatus.databaseCreateError;
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception ignored) {
+            }
         }
 
-        setPageTitle("installer.database.upgrade.pageTitle");
-        return UPGRADE_DATABASE;
+        return INSTALL;
     }
 
     public String bootstrap() {
-        log.info("ENTERING");
-
         if (WebloggerContext.isBootstrapped()) {
-            log.info("EXITING - already bootstrapped, forwarding to weblogger");
             return SUCCESS;
         }
 
@@ -169,62 +225,43 @@ public class Install extends UIAction {
             rootCauseException = e;
         }
 
-        log.info("EXITING - Bootstrap failed, forwarding to error page");
-        setPageTitle("installer.error.unknown.pageTitle");
-        return BOOTSTRAP;
+        status = StartupStatus.bootstrapError;
+        return INSTALL;
     }
 
     public String getDatabaseProductName() {
-        String name = "unknown";
-
-        Connection con = null;
-        try {
-            con = tbDataSource.getConnection();
-            name = con.getMetaData().getDatabaseProductName();
-        } catch (Exception intentionallyIgnored) {
-            // ignored
-        } finally {
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (Exception ignored) {
-                }
-            }
-        }
-
-        return name;
-    }
-
-    public String getProp(String key) {
-        // Static config only, we don't have database yet
-        String value = WebloggerStaticConfig.getProperty(key);
-        return (value == null) ? key : value;
-    }
-
-    public Throwable getRootCauseException() {
-        return rootCauseException;
+        return databaseProductName;
     }
 
     public String getRootCauseStackTrace() {
         String stackTrace = "";
-        if (getRootCauseException() != null) {
+        if (rootCauseException != null) {
             StringWriter sw = new StringWriter();
-            getRootCauseException().printStackTrace(new PrintWriter(sw));
+            rootCauseException.printStackTrace(new PrintWriter(sw));
             stackTrace = sw.toString().trim();
         }
         return stackTrace;
-    }
-
-    public boolean isError() {
-        return error;
     }
 
     public List<String> getMessages() {
         return messages;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public StartupStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Return true if named table exists in database.
+     */
+    private boolean tableExists(Connection con, String tableName) throws SQLException {
+        ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
+        while (rs.next()) {
+            if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME").toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
