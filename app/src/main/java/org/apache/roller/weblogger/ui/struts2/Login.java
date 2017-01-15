@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,6 +58,8 @@ public class Login extends UIAction {
 
     public Login() {
         this.pageTitle = "loginPage.title";
+        this.requiredGlobalRole = GlobalRole.NOAUTHNEEDED;
+        this.requiredWeblogRole = WeblogRole.NOBLOGNEEDED;
     }
 
     private String activationCode = null;
@@ -70,18 +72,8 @@ public class Login extends UIAction {
         mailManager = manager;
     }
 
-    @Override
-    public WeblogRole getRequiredWeblogRole() {
-        return WeblogRole.NOBLOGNEEDED;
-    }
-
     public String getAuthMethod() {
         return authMethod.name();
-    }
-
-    @Override
-    public GlobalRole getRequiredGlobalRole() {
-        return GlobalRole.NOAUTHNEEDED;
     }
 
     public String execute() {

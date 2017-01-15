@@ -15,26 +15,26 @@ import javax.persistence.Table;
 @Table(name = "weblogger_properties")
 public class WebloggerProperties {
 
-    String id;
-    int databaseVersion;
-    Weblog mainBlog;
-    RegistrationPolicy registrationPolicy;
-    boolean usersCreateBlogs;
-    HTMLSanitizer.Level blogHtmlPolicy;
-    boolean usersCustomizeThemes;
-    int newsfeedItemsPage;
-    String defaultAnalyticsCode;
-    boolean usersOverrideAnalyticsCode;
-    GlobalCommentPolicy commentPolicy;
-    HTMLSanitizer.Level commentHtmlPolicy;
-    boolean autodeleteSpam;
-    boolean usersCommentNotifications;
-    String commentSpamFilter;
-    boolean usersUploadMediaFiles;
-    String allowedFileExtensions;
-    String disallowedFileExtensions;
-    int maxFileSizeMb;
-    int maxFileUploadsSizeMb;
+    private String id;
+    private int databaseVersion;
+    private Weblog mainBlog;
+    private RegistrationPolicy registrationPolicy;
+    private boolean usersCreateBlogs;
+    private HTMLSanitizer.Level blogHtmlPolicy;
+    private boolean usersCustomizeThemes;
+    private int newsfeedItemsPage;
+    private String defaultAnalyticsCode;
+    private boolean usersOverrideAnalyticsCode;
+    private GlobalCommentPolicy commentPolicy;
+    private HTMLSanitizer.Level commentHtmlPolicy;
+    private boolean autodeleteSpam;
+    private boolean usersCommentNotifications;
+    private String commentSpamFilter;
+    private boolean usersUploadMediaFiles;
+    private String allowedFileExtensions;
+    private String disallowedFileExtensions;
+    private int maxFileSizeMb;
+    private int maxFileUploadsSizeMb;
 
     @Id
     public String getId() {

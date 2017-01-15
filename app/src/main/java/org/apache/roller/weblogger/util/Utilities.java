@@ -30,7 +30,6 @@ import org.springframework.mobile.device.site.SitePreferenceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -46,7 +45,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.sql.Connection;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -516,19 +514,6 @@ public class Utilities {
     public static DeviceType getDeviceType(HttpServletRequest request) {
         SitePreference sitePreference = SitePreferenceUtils.getCurrentSitePreference(request);
         return (sitePreference != null && sitePreference.isMobile()) ? DeviceType.MOBILE : DeviceType.NORMAL;
-    }
-
-    public static void testDataSource(DataSource mySource) throws WebloggerException {
-        try {
-            Connection testcon = mySource.getConnection();
-            testcon.close();
-        } catch (Exception e) {
-            String errorMsg =
-                    "ERROR: unable to obtain database connection. " +
-                            "Likely problem: bad connection parameters or database unavailable.";
-            log.error(errorMsg);
-            throw new WebloggerException(errorMsg, e);
-        }
     }
 
 }

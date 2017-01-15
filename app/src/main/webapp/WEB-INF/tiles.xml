@@ -78,31 +78,14 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
     </definition>
 
-    <definition name=".GenericError" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/GenericError.jsp" />
-    </definition>
-
     <definition name=".MainMenu" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/MainMenu.jsp" />
     </definition>
 
-    <!-- setup pages -->
-    <definition name=".CreateDatabase" extends=".tiles-installpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/CreateDatabase.jsp" />
+    <!-- setup page -->
+    <definition name=".Install" extends=".tiles-installpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Install.jsp" />
     </definition>
-
-    <definition name=".UpgradeDatabase" extends=".tiles-installpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/UpgradeDatabase.jsp" />
-    </definition>
-
-    <definition name=".DatabaseError" extends=".tiles-installpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/DatabaseError.jsp" />
-    </definition>
-
-    <definition name=".Bootstrap" extends=".tiles-installpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/UnknownError.jsp" />
-    </definition>
-
 
     <!-- global admin pages (and associates) -->
     <definition name=".GlobalConfig" extends=".tiles-tabbedpage" >
