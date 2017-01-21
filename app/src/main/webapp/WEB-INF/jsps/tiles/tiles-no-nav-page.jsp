@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <!doctype html>
 <html>
     <head>
@@ -28,31 +28,31 @@
     <body>
         
         <div id="banner">
-            <tiles:insertAttribute name="banner" />
+            <div class="bannerStatusBox">
+                <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="bannerLeft">
+                            <s:text name="<tiles:insertAttribute name='titleLeft'/>" />
+                        </td>
+                        <td class="bannerRight">
+                            <s:text name="<tiles:insertAttribute name='titleRight'/>" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
         
         <div id="content">
-            <div id="leftcontent_wrap">
-                <div id="leftcontent"> 
-                </div>
-            </div>
-            
-            <div id="centercontent_wrap">
-                <div id="centercontent">
+            <div id="nosidebar_maincontent_wrap">
+                <div id="maincontent">
                     <tiles:insertAttribute name="messages" />
-                    <tiles:insertAttribute name="content" />    
-                </div>
-            </div>
-            
-            <div id="rightcontent_wrap">
-                <div id="rightcontent"> 
+                    <tiles:insertAttribute name="content" />
                 </div>
             </div>
         </div>
-        
+
         <div id="footer">
             <tiles:insertAttribute name="footer" ignore="true" />
         </div>
-        
     </body>
 </html>

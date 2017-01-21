@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
 <%-- Success Messages --%>
 <s:if test="!actionMessages.isEmpty">

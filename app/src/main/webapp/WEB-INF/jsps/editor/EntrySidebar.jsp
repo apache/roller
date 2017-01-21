@@ -18,7 +18,7 @@
   Source file modified from the original ASF source; all changes made
   are also under Apache License.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
 <div class="sidebarFade">
     <div class="menu-tr">

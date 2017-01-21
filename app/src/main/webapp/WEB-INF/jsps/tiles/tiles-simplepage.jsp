@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <!doctype html>
 <html>
     <head>
@@ -23,11 +23,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico">
         <title>TightBlog: <s:property value="pageTitle" /></title>
-
         <tiles:insertAttribute name="head" />
-        <style>
-            <tiles:insertAttribute name="styles" />
-        </style>
     </head>
     <body>
         <div id="banner">
@@ -35,21 +31,11 @@
         </div>
         
         <div id="content">
-            <div id="leftcontent_wrap">
-                <div id="leftcontent"> 
-                </div>
-            </div>
-            
-            <div id="centercontent_wrap">
-                <div id="centercontent">   
+            <div id="nosidebar_maincontent_wrap">
+                <div id="maincontent">
                     <h1><s:property value="pageTitle" /></h1>
                     <tiles:insertAttribute name="messages" />
                     <tiles:insertAttribute name="content" />
-                </div>
-            </div>
-            
-            <div id="rightcontent_wrap">
-                <div id="rightcontent"> 
                 </div>
             </div>
         </div>

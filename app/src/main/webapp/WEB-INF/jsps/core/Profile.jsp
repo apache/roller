@@ -18,7 +18,7 @@
   Source file modified from the original ASF source; all changes made
   are also under Apache License.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
