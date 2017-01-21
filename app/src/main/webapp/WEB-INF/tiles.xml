@@ -27,7 +27,7 @@
     <definition name=".tiles-tabbedpage" template="/WEB-INF/jsps/tiles/tiles-tabbedpage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+        <put-attribute name="sidebarType"  value="nosidebar" />
         <put-attribute name="menu"         value="/WEB-INF/jsps/tiles/menu.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
@@ -38,23 +38,17 @@
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
 
-    <definition name=".tiles-installpage" template="/WEB-INF/jsps/tiles/tiles-installpage.jsp">
-        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    <definition name=".tiles-no-nav-page" template="/WEB-INF/jsps/tiles/tiles-no-nav-page.jsp">
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
-    </definition>
-
-    <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
-        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
-        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="titleLeft"    value="simpleBanner.titleLeft"/>
+        <put-attribute name="titleRight"   value="${titleRight}"/>
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
 
@@ -64,10 +58,10 @@
     </definition>
 
     <!-- error pages -->
-    <definition name=".denied" extends=".tiles-errorpage" >
+    <definition name=".denied" extends=".tiles-no-nav-page" >
         <put-attribute name="content" value="/tb-ui/errors/denied.jsp" />
+        <put-attribute name="titleRight" value="error.permissionDenied.title"/>
     </definition>
-
 
     <!-- core pages (and associates) -->
     <definition name=".Login" extends=".tiles-simplepage" >
@@ -83,8 +77,9 @@
     </definition>
 
     <!-- setup page -->
-    <definition name=".Install" extends=".tiles-installpage" >
+    <definition name=".Install" extends=".tiles-no-nav-page" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Install.jsp" />
+        <put-attribute name="titleRight" value="installer.bannerTitleRight"/>
     </definition>
 
     <!-- global admin pages (and associates) -->
@@ -122,7 +117,7 @@
     <definition name=".EntryEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+        <put-attribute name="sidebarType"  value="sidebar" />
         <put-attribute name="angularString" value="id='ngapp-div' ng-app='tightblogApp' ng-controller='EntryEditController as ctrl'"/>
     </definition>
 

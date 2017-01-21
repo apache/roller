@@ -59,17 +59,30 @@ layout.css: Base CSS layout for the web UI (position and sizing only)
     to do the float and set the width.  margin, padding, borders, etc
     should be applied directly to the XXXcontent div.
 */
-#centercontent_wrap {
+/* used in tiles main templates */
+#nosidebar_maincontent_wrap {
     float: left;
     display: inline;
+    width: 100%;
 }
-#centercontent {
-    margin: 10px;
-    padding-left: 0.5em;
-}
-#rightcontent_wrap {
+#nosidebar_rightcontent_wrap {
     float: right;
     display: inline;
+    width: 0%;
+}
+#sidebar_maincontent_wrap {
+    float: left;
+    display: inline;
+    width: 70%;
+}
+#sidebar_rightcontent_wrap {
+    float: right;
+    display: inline;
+    width: 29%;
+}
+#maincontent {
+    margin: 10px;
+    padding-left: 0.5em;
 }
 #rightcontent {
     margin: 10px;

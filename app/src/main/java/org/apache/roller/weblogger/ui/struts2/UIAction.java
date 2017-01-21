@@ -80,12 +80,6 @@ public class UIAction extends ActionSupport implements Preparable {
         Collections.sort(TIME_ZONES);
     }
 
-    // a result that sends the user to an access denied warning
-    public static final String DENIED = "access-denied";
-
-    // a common result name used to indicate the result should list some data
-    public static final String LIST = "list";
-
     // a result for a cancel.
     public static final String CANCEL = "cancel";
 

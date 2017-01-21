@@ -46,7 +46,17 @@
 
     <!-- Scan components in given packages marked @Component, @Controller, etc. and register them as beans -->
     <context:component-scan base-package="org.apache.roller.weblogger.ui.restapi,
-        org.apache.roller.weblogger.ui.struts2.editor, org.apache.roller.weblogger.ui.rendering.processors">
+        org.apache.roller.weblogger.ui.rendering.processors">
     </context:component-scan>
+
+    <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>
+
+    <beans:bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <beans:property name="definitions">
+            <beans:list>
+                <beans:value>/WEB-INF/tiles.xml</beans:value>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
 
 </beans:beans>
