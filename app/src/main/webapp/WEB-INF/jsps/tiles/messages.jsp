@@ -18,24 +18,26 @@
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
 <%-- Success Messages --%>
-<s:if test="!actionMessages.isEmpty">
+<c:if test="${!actionMessages.isEmpty()}">
     <div id="messages" class="messages">
-        <s:actionmessage />
+        <c:forEach var="actionMessage" items="${actionMessages}">
+            <c:out value="${actionMessage}"/>
+        </c:forEach>
     </div>
-</s:if>
+</c:if>
 
 <%-- Error Messages --%>
-<s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
+<c:if test="${!actionErrors.isEmpty() || !fieldErrors.isEmpty()}">
     <div id="errors" class="errors">
         <ul>
-            <s:iterator var="actionError" value="actionErrors">
-                <li><s:property value="#actionError"/></li>
-            </s:iterator>
-            <s:iterator var="fieldErrorName" value="fieldErrors.keySet()">
-                <s:iterator var="fieldErrorValue" value="fieldErrors[#fieldErrorName]">
-                    <li><s:property value="#fieldErrorValue"/></li>
-                </s:iterator>
-            </s:iterator>
+            <c:forEach var="actionError" items="${actionErrors}">
+                <li><c:out value="${actionError}"/></li>
+            </c:forEach>
+            <c:forEach var="fieldErrorName" items="${fieldErrors.keySet()}">
+                <c:forEach var="fieldErrorValue" items="${fieldErrors[fieldErrorName]}">
+                    <li><c:out value="${fieldErrorValue}"/></li>
+                </c:forEach>
+            </c:forEach>
         </ul>
     </div>
-</s:if>
+</c:if>

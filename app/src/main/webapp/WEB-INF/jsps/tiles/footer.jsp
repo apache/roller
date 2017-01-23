@@ -22,8 +22,7 @@
 <% request.setAttribute("revision",
       org.apache.roller.weblogger.business.WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown")); %>
 
-<s:text name="footer.productName" >
-    <s:param value="#request.version" />
-    <s:param value="#request.revision" />
-</s:text>
-      
+<fmt:message key="footer.productName" >
+    <fmt:param value="${request.version}" />
+    <fmt:param value="${request.revision}" />
+</fmt:message>

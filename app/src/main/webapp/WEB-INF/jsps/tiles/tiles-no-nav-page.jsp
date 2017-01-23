@@ -22,7 +22,7 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico">
-      <title><s:property value="pageTitle" /></title>
+      <title><c:out value="${pageTitle}"/></title>
       <tiles:insertAttribute name="head" />
     </head>
     <body>
@@ -32,10 +32,10 @@
                 <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
                     <tr>
                         <td class="bannerLeft">
-                            <s:text name="<tiles:insertAttribute name='titleLeft'/>" />
+                            <fmt:message key="<tiles:insertAttribute name='titleLeft'/>" />
                         </td>
                         <td class="bannerRight">
-                            <s:text name="<tiles:insertAttribute name='titleRight'/>" />
+                            <fmt:message key="<tiles:insertAttribute name='titleRight'/>" />
                         </td>
                     </tr>
                 </table>
