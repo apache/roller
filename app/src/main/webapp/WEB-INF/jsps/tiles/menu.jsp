@@ -17,44 +17,48 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
-<s:set var="tabMenu" value="menu"/>
-<s:if test="#tabMenu != null">
+<c:set var="tabMenu" value="${menu}"/>
 
-<table class="menuTabTable" cellspacing="0" >
+<c:if test="${tabMenu != null}">
+<table class="menuTabTable" cellspacing="0">
 <tr>
-<s:iterator var="tab" value="#tabMenu.tabs" >
-    <s:if test="#tab.selected">
-        <s:set var="selectedTab" value="#tab" />
-        <td class="menuTabSelected">
-    </s:if>
-    <s:else>
-        <td class="menuTabUnselected">
-    </s:else>
+<c:forEach var="tab" items="${tabMenu.tabs}">
+    <c:choose>
+        <c:when test="${tab.selected}">
+            <c:set var="selectedTab" value="${tab}"/>
+            <td class="menuTabSelected">
+        </c:when>
+        <c:otherwise>
+            <td class="menuTabUnselected">
+        </c:otherwise>
+    </c:choose>
     <div class="menu-tr">
         <div class="menu-tl">
-            &nbsp;&nbsp;<a href="<s:url action='%{#tab.action}'><s:param name='weblogId' value='actionWeblog.id'/></s:url>"><s:text name="%{#tab.key}" /></a>&nbsp;&nbsp;
+            &nbsp;&nbsp;<a href="<c:url value='${tab.action}.rol'><c:param name='weblogId' value='${actionWeblog.id}'/></c:url>"><fmt:message key="${tab.key}" /></a>&nbsp;&nbsp;
         </div>
     </div>
     </td>
     <td class="menuTabSeparator"></td>
-</s:iterator>
+</c:forEach>
 </tr>
 </table>
 
 <table class="menuItemTable" cellspacing="0" >
     <tr>
         <td class="padleft">
-            <s:iterator var="tabItem" value="#selectedTab.items" status="stat">
-                <s:if test="!#stat.first">|</s:if>
-                <s:if test="#tabItem.selected">
-                    <a class="menuItemSelected" href="<s:url action='%{#tabItem.action}'><s:param name='weblogId' value='actionWeblog.id'/></s:url>"><s:text name="%{#tabItem.key}" /></a>
-                </s:if>
-                <s:else>
-                    <a class="menuItemUnselected" href="<s:url action='%{#tabItem.action}'><s:param name='weblogId' value='actionWeblog.id'/></s:url>"><s:text name="%{#tabItem.key}" /></a>
-                </s:else>
-            </s:iterator>
+            <c:forEach var="tabItem" items="${selectedTab.items}" varStatus="stat">
+                <c:if test="{!$stat.first}">|</c:if>
+                <c:choose>
+                    <c:when test="#tabItem.selected">
+                        <a class="menuItemSelected" href="<c:url value='${tabItem.action}.rol'><c:param name='weblogId' value='${actionWeblog.id}'/></c:url>"><fmt:message key="${tabItem.key}" /></a>
+                    </c:when>
+                    <c:otherwise>
+                        <a class="menuItemUnselected" href="<c:url value='${tabItem.action}.rol'><c:param name='weblogId' value='${actionWeblog.id}'/></c:url>"><fmt:message key="${tabItem.key}" /></a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
         </td>
     </tr>
 </table>
 
-</s:if>
+</c:if>

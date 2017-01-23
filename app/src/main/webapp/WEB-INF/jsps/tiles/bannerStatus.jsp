@@ -23,43 +23,45 @@
         <tr>
             <td class="bannerLeft">
 
-                <s:if test="authenticatedUser != null">
-                    <s:text name="mainPage.loggedInAs" /> <s:property value="authenticatedUser.userName"/>
-                </s:if>
+                <c:if test="${authenticatedUser != null}">
+                    <fmt:message key="mainPage.loggedInAs" /> <c:out value="${authenticatedUser.userName}"/>
+                </c:if>
 
 
-                <s:if test="actionWeblog != null">
-                    - <s:text name="mainPage.currentWebsite" />
-                    <b><a href='<s:property value="actionWeblog.absoluteURL" />'>
-                            <s:property value="%{actionWeblog.handle}" />
+                <c:if test="${actionWeblog != null}">
+                    - <fmt:message key="mainPage.currentWebsite" />
+                    <b><a href='<c:out value="${actionWeblog.absoluteURL}" />'>
+                            <c:out value="${actionWeblog.handle}" />
                     </a></b>
-                </s:if>
+                </c:if>
 
             </td>
 
             <td class="bannerRight">
 
-                <s:if test="authenticatedUser == null">
-                   <a href="<s:url value='/'/>"><s:text name="navigationBar.homePage" /></a> |
-                </s:if>
+                <c:if test="${authenticatedUser == null}">
+                   <a href="<c:url value='/'/>"><fmt:message key="navigationBar.homePage" /></a> |
+                </c:if>
 
-                <s:if test="userIsAdmin">
-                    <a href="<s:url action='globalConfig' namespace='/tb-ui/admin' />"><s:text name="yourWebsites.globalAdmin" /></a> |
-                </s:if>
+                <c:if test="${userIsAdmin}">
+                    <a href="<c:url value='/tb-ui/admin/globalConfig.rol'/>"><fmt:message key="yourWebsites.globalAdmin" /></a> |
+                </c:if>
 
-                <s:if test="authenticatedUser != null">
-                   <a href="<s:url action='menu' namespace='/tb-ui' />"><s:text name="yourWebsites.title" /></a> |
-                   <a href="<s:url action='profile' namespace='/tb-ui' />"><s:text name="yourWebsites.editProfile" /></a> |
-                   <a href="<s:url action='logout' namespace='/tb-ui' />"><s:text name="navigationBar.logout"/></a>
-                </s:if>
+                <c:choose>
+                    <c:when test="${authenticatedUser != null}">
+                       <a href="<c:url value='/tb-ui/menu.rol'/>"><fmt:message key="yourWebsites.title" /></a> |
+                       <a href="<c:url value='/tb-ui/profile.rol'/>"><fmt:message key="yourWebsites.editProfile" /></a> |
+                       <a href="<c:url value='/tb-ui/logout.rol'/>"><fmt:message key="navigationBar.logout"/></a>
+                    </c:when>
 
-                <s:else>
-                    <a href="<s:url action='login-redirect' namespace='/tb-ui' />"><s:text name="navigationBar.login"/></a>
+                    <c:otherwise>
+                        <a href="<c:url value='/tb-ui/login-redirect.rol'/>"><fmt:message key="navigationBar.login"/></a>
 
-                    <s:if test="getRegistrationPolicy() != 'DISABLED' && getProp('authentication.method') != 'ldap'">
-                        | <a href="<s:url action='register' namespace='/tb-ui' />"><s:text name="navigationBar.register"/></a>
-                    </s:if>
-                </s:else>
+                        <c:if test="${action.getRegistrationPolicy() != 'DISABLED' && action.getProp('authentication.method') != 'ldap'}">
+                            | <a href="<c:url value='/tb-ui/register.rol'/>"><fmt:message key="navigationBar.register"/></a>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
 
             </td>
         </tr>

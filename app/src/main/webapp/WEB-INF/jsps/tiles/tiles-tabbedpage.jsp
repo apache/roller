@@ -22,7 +22,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico">
-        <title>TightBlog: <s:property value="pageTitle" /></title>
+        <title>TightBlog: <c:out value="${pageTitle}" /></title>
         <tiles:insertAttribute name="head" />
     </head>
     <body <tiles:insertAttribute name="angularString"/> >
@@ -31,7 +31,7 @@
         </div>
         
         <div id="menu">
-            <h1><s:property value="pageTitle" /></h1>
+            <h1><c:out value="${pageTitle}" /></h1>
             <tiles:insertAttribute name="menu" />
         </div>
         
