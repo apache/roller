@@ -23,11 +23,11 @@
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
-    confirmLabel: '<s:text name="generic.confirm"/>',
-    saveLabel: '<s:text name="generic.save"/>',
-    cancelLabel: '<s:text name="generic.cancel"/>',
-    editTitle: '<s:text name="generic.edit"/>',
-    addTitle: '<s:text name="pingTarget.addTarget"/>'
+    confirmLabel: '<fmt:message key="generic.confirm"/>',
+    saveLabel: '<fmt:message key="generic.save"/>',
+    cancelLabel: '<fmt:message key="generic.cancel"/>',
+    editTitle: '<fmt:message key="generic.edit"/>',
+    addTitle: '<fmt:message key="pingTarget.addTarget"/>'
 };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
@@ -42,22 +42,22 @@ var msg= {
 </div>
 
 <p class="subtitle">
-    <s:text name="pingTargets.subtitle" />
+    <fmt:message key="pingTargets.subtitle" />
 </p>
 
-<p/><s:text name="pingTargets.explanation"/><p/>
+<p/><fmt:message key="pingTargets.explanation"/><p/>
 
 <input type="hidden" id="refreshURL" value="<s:url action='pingTargets'/>"/>
 
 <table class="rollertable">
   <thead>
     <tr>
-        <th width="20%"><s:text name="generic.name" /></th>
-        <th width="50%"><s:text name="pingTarget.pingUrl" /></th>
-        <th width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
-        <th width="5%"><s:text name="generic.edit" /></th>
-        <th width="5%"><s:text name="pingTarget.test" /></th>
-        <th width="5%"><s:text name="pingTarget.remove" /></th>
+        <th width="20%"><fmt:message key="generic.name" /></th>
+        <th width="50%"><fmt:message key="pingTarget.pingUrl" /></th>
+        <th width="15%" colspan="2"><fmt:message key="pingTarget.autoEnabled" /></th>
+        <th width="5%"><fmt:message key="generic.edit" /></th>
+        <th width="5%"><fmt:message key="pingTarget.test" /></th>
+        <th width="5%"><fmt:message key="pingTarget.remove" /></th>
     </tr>
   </thead>
   <tbody id="tableBody">
@@ -68,34 +68,34 @@ var msg= {
         <td class="current-state-cell" align="center">
            <span style="font-weight: bold;">
            {{if enabled}}
-               <s:text name="pingTarget.enabled"/>
+               <fmt:message key="pingTarget.enabled"/>
            {{else}}
-               <s:text name="pingTarget.disabled"/>
+               <fmt:message key="pingTarget.disabled"/>
            {{/if}}
            </span>
         </td>
         <td class="change-state-cell" align="center">
            <a href="#" class="enable-toggle" data-enabled='{{:enabled}}'>
            {{if enabled}}
-               <s:text name="pingTarget.disable"/>
+               <fmt:message key="pingTarget.disable"/>
            {{else}}
-               <s:text name="pingTarget.enable"/>
+               <fmt:message key="pingTarget.enable"/>
            {{/if}}
            </a>
         </td>
         <td align="center">
             <a class="edit-link">
-                <img src='<s:url value="/images/page_white_edit.png"/>' alt="<s:text name="generic.edit" />" />
+                <img src='<s:url value="/images/page_white_edit.png"/>' alt="<fmt:message key="generic.edit" />" />
             </a>
         </td>
         <td align="center">
             <a href="#" class="test-link">
-                <s:text name="pingTarget.test" />
+                <fmt:message key="pingTarget.test" />
             </a>
         </td>
         <td align="center">
             <a class="delete-link">
-                <img src='<s:url value="/images/delete.png"/>' alt="<s:text name="pingTarget.remove" />" />
+                <img src='<s:url value="/images/delete.png"/>' alt="<fmt:message key="pingTarget.remove" />" />
             </a>
         </td>
       </tr>
@@ -104,22 +104,22 @@ var msg= {
 </table>
 
 <div class="control clearfix">
-    <input type="submit" id="add-link" value="<s:text name='pingTarget.addTarget'/>"/>
+    <input type="submit" id="add-link" value="<fmt:message key='pingTarget.addTarget'/>"/>
 </div>
 
-<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="pingTarget.confirmRemove"/></p>
+<div id="confirm-delete" title="<fmt:message key='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="pingTarget.confirmRemove"/></p>
 </div>
 
 <div id="pingtarget-edit" style="display:none">
-    <span id="pingtarget-edit-error" style="display:none"><s:text name='pingTarget.nameOrUrlNotUnique'/></span>
+    <span id="pingtarget-edit-error" style="display:none"><fmt:message key='pingTarget.nameOrUrlNotUnique'/></span>
     <table>
         <tr>
-            <td style="width:30%"><label for="pingtarget-edit-name"><s:text name='generic.name'/></label></td>
+            <td style="width:30%"><label for="pingtarget-edit-name"><fmt:message key='generic.name'/></label></td>
             <td><input id="pingtarget-edit-name" maxlength="40" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
         <tr>
-            <td><label for="pingtarget-edit-url"><s:text name='pingTarget.pingUrl'/></label></td>
+            <td><label for="pingtarget-edit-url"><fmt:message key='pingTarget.pingUrl'/></label></td>
             <td><input id="pingtarget-edit-url" maxlength="128" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
     </table>

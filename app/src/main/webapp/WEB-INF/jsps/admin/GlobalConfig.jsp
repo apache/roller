@@ -20,7 +20,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
-<p class="subtitle"><s:text name="configForm.subtitle" /></p>
+<p class="subtitle"><fmt:message key="configForm.subtitle" /></p>
 <script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 

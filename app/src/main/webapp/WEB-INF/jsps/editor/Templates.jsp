@@ -24,8 +24,8 @@
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
-    deleteLabel: '<s:text name="generic.delete"/>',
-    cancelLabel: '<s:text name="generic.cancel"/>'
+    deleteLabel: '<fmt:message key="generic.delete"/>',
+    cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
 </script>
 
@@ -35,12 +35,12 @@ var msg= {
 <div id="templates-list" ng-app="TemplatesApp" ng-controller="TemplatesController as ctrl">
 
     <p class="subtitle">
-       <s:text name="templates.subtitle" >
-           <s:param value="actionWeblog.handle" />
-       </s:text>
+       <fmt:message key="templates.subtitle" >
+           <fmt:param value="${actionWeblog.handle}"/>
+       </fmt:message>
     </p>
     <p class="pagetip">
-       <s:text name="templates.tip" />
+       <fmt:message key="templates.tip" />
     </p>
 
     <div id="errorMessageDiv" class="errors" style="display:none">
@@ -52,7 +52,7 @@ var msg= {
 
     <div id="successMessageDiv" class="messages" style="display:none">
       <s:if test="weblogId != null">
-        <p><s:text name="generic.changes.saved"/></p>
+        <p><fmt:message key="generic.changes.saved"/></p>
       </s:if>
     </div>
 
@@ -67,13 +67,13 @@ var msg= {
       <thead>
         <tr>
           <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"
-            title="<s:text name="templates.selectAllLabel"/>"/></th>
-          <th width="17%"><s:text name="generic.name"/></th>
-          <th width="20%"><s:text name="templates.path"/></th>
-          <th width="34%"><s:text name="templates.role"/></th>
-          <th width="8%"><s:text name="templates.source"/></th>
-          <th width="13%"><s:text name="generic.lastModified"/></th>
-          <th width="4%"><s:text name="generic.view"/></th>
+            title="<fmt:message key="templates.selectAllLabel"/>"/></th>
+          <th width="17%"><fmt:message key="generic.name"/></th>
+          <th width="20%"><fmt:message key="templates.path"/></th>
+          <th width="34%"><fmt:message key="templates.role"/></th>
+          <th width="8%"><fmt:message key="templates.source"/></th>
+          <th width="13%"><fmt:message key="generic.lastModified"/></th>
+          <th width="4%"><fmt:message key="generic.view"/></th>
         </tr>
       </thead>
       <tbody>
@@ -133,7 +133,7 @@ var msg= {
     </table>
 
     <div class="control">
-    	<input id="delete-link" type="button" value="<s:text name='templates.deleteselected'/>" />
+    	<input id="delete-link" type="button" value="<fmt:message key='templates.deleteselected'/>" />
 
       <span style="float:right">
           <s:form>
@@ -146,13 +146,13 @@ var msg= {
 
     <form name="myform">
       <table cellpadding="0" cellspacing="6">
-          <caption><s:text name="templates.addNewPage" /></caption>
+          <caption><fmt:message key="templates.addNewPage" /></caption>
           <tr>
-              <td><s:text name="generic.name"/></td>
+              <td><fmt:message key="generic.name"/></td>
               <td><input type="text" ng-model="ctrl.newTemplateName" maxlength="40" required/></td>
           </tr>
           <tr>
-              <td><s:text name="templates.role"/></td>
+              <td><fmt:message key="templates.role"/></td>
               <td>
                   <select ng-model="ctrl.selectedRole" size="1" required>
                     <option ng-repeat="option in ctrl.weblogTemplateData.availableTemplateRoles" value="{{option.name}}">{{option.readableName}}</option>
@@ -165,7 +165,7 @@ var msg= {
               </td>
           </tr>
           <tr>
-              <td><input ng-click="myform.$valid && ctrl.addTemplate()" type="button" value="<s:text name='templates.add'/>" required></td>
+              <td><input ng-click="myform.$valid && ctrl.addTemplate()" type="button" value="<fmt:message key='templates.add'/>" required></td>
           </tr>
       </table>
     </form>
@@ -175,12 +175,12 @@ var msg= {
 
 <br/>
 
-<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name="templateRemoves.youSure" />
+<div id="confirm-delete" title="<fmt:message key='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="templateRemoves.youSure" />
 	<br/>
 	<br/>
 	<span class="warning">
-		<s:text name="templateRemoves.youSureWarning" />
+		<fmt:message key="templateRemoves.youSureWarning" />
 	</span>
   </p>
 </div>

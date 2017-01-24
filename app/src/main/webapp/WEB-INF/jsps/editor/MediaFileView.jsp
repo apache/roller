@@ -28,9 +28,9 @@
     var weblogId = "<s:property value='actionWeblog.id'/>";
     var directoryId = "<s:property value='%{#parameters.directoryId}'/>";
     var msg = {
-        confirmLabel: '<s:text name="generic.confirm"/>',
-        deleteLabel: '<s:text name="generic.delete"/>',
-        cancelLabel: '<s:text name="generic.cancel"/>'
+        confirmLabel: '<fmt:message key="generic.confirm"/>',
+        deleteLabel: '<fmt:message key="generic.delete"/>',
+        cancelLabel: '<fmt:message key="generic.cancel"/>'
     };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
@@ -41,13 +41,13 @@
 <%-- Subtitle and folder path --%>
 
 <p class="subtitle">
-    <s:text name="mediaFileView.subtitle" >
-       <s:param value="actionWeblog.handle"/>
-    </s:text>
+    <fmt:message key="mediaFileView.subtitle" >
+       <fmt:param value="${actionWeblog.handle}"/>
+    </fmt:message>
 </p>
 
 <p class="pagetip">
-    <s:text name="mediaFileView.rootPageTip" />
+    <fmt:message key="mediaFileView.rootPageTip" />
 </p>
 
 <div id="ngapp-div" ng-app="mediaFileViewApp" ng-controller="MediaFileViewController as ctrl">
@@ -59,7 +59,7 @@
     <div class="control">
         <span style="padding-left:7px">
             <%-- Folder to View combo-box --%>
-            <s:text name="mediaFileView.viewFolder" />:
+            <fmt:message key="mediaFileView.viewFolder" />:
             <%-- ng-options: http://preview.tinyurl.com/z8okbq8 --%>
             <select ng-model="ctrl.directoryToView"
                     ng-change="ctrl.loadMediaFiles()"
@@ -75,7 +75,7 @@
     <div width="720px" height="500px">
         <ul id = "myMenu">
             <li ng-if="ctrl.mediaFiles.length == 0" style="text-align: center;list-style-type:none;">
-               <s:text name="mediaFileView.noFiles"/>
+               <fmt:message key="mediaFileView.noFiles"/>
             </li>
 
             <li class="align-images" ng-repeat="mediaFile in ctrl.mediaFiles" id="{{mediaFile.id}}">
@@ -114,16 +114,16 @@
         <span style="padding-left:7px" ng-show="ctrl.mediaFiles.length > 0">
 
             <input type="button" id="toggleButton"
-               value='<s:text name="generic.toggle" />'
+               value='<fmt:message key="generic.toggle" />'
                ng-click="ctrl.onToggle()"
                />
 
             <input type="button" class="delete-file-link"
-               value='<s:text name="mediaFileView.deleteSelected" />'
+               value='<fmt:message key="mediaFileView.deleteSelected" />'
                />
 
             <input type="button" class="move-file-link"
-               value='<s:text name="mediaFileView.moveSelected" />'
+               value='<fmt:message key="mediaFileView.moveSelected" />'
                ng-show="ctrl.mediaDirectories.length > 1">
 
             <select id="moveTargetMenu" size="1" required
@@ -134,7 +134,7 @@
 
         <span style="float:right">
             <input type="button"
-               value='<s:text name="mediaFileView.deleteFolder" />' class="delete-folder-link"
+               value='<fmt:message key="mediaFileView.deleteFolder" />' class="delete-folder-link"
                ng-show="ctrl.mediaDirectories.length > 1" />
         </span>
     </div>
@@ -143,7 +143,7 @@
         <div class="sidebarInner">
 
             <br>
-            <b><s:text name="mediaFileSidebar.actions" /></b>
+            <b><fmt:message key="mediaFileSidebar.actions" /></b>
             <br>
             <br>
 
@@ -152,18 +152,18 @@
                 <s:param name="weblogId" value="%{actionWeblog.id}" />
             </s:url>
             <s:a href='%{mediaFileAddURL}&directoryId={{ctrl.directoryToView}}' style='font-weight:bold;'>
-                <s:text name="mediaFileSidebar.add" />
+                <fmt:message key="mediaFileSidebar.add" />
             </s:a>
 
             <br><br>
             <div>
                 <img src='<s:url value="/images/folder_add.png"/>' border="0" alt="icon">
-                <s:text name="mediaFileView.addDirectory" /><br />
+                <fmt:message key="mediaFileView.addDirectory" /><br />
                 <div style="padding-left:2em; padding-top:1em">
-                    <s:text name="mediaFileView.directoryName" />
+                    <fmt:message key="mediaFileView.directoryName" />
                     <input type="text" id="newDirectoryNameField" ng-model="ctrl.newDirectoryName" size="10" maxlength="25"/>
                     <input type="button" id="newDirectoryButton"
-                        value='<s:text name="mediaFileView.create" />' ng-click="ctrl.createNewDirectory()"
+                        value='<fmt:message key="mediaFileView.create" />' ng-click="ctrl.createNewDirectory()"
                         ng-disabled="ctrl.newDirectoryName == ''" />
                 </div>
             </div>
@@ -173,16 +173,16 @@
     </div>
 </div>
 
-<div id="confirm-delete-file" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.delete.confirm' /></p>
+<div id="confirm-delete-file" title="<fmt:message key='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key='mediaFile.delete.confirm' /></p>
 </div>
 
-<div id="confirm-delete-folder" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.deleteFolder.confirm' /></p>
+<div id="confirm-delete-folder" title="<fmt:message key='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key='mediaFile.deleteFolder.confirm' /></p>
 </div>
 
-<div id="confirm-move-file" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='mediaFile.move.confirm' /></p>
+<div id="confirm-move-file" title="<fmt:message key='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key='mediaFile.move.confirm' /></p>
 </div>
 
 <br>

@@ -34,10 +34,10 @@ var contextPath = "${pageContext.request.contextPath}";
 
 <%-- Drop-down box to choose media directory --%>
 <select id="mediachooser-select-directory"></select>
-<input id="select-item" type="button" style="margin:4px" value='<s:text name="generic.view" />'/>
+<input id="select-item" type="button" style="margin:4px" value='<fmt:message key="generic.view" />'/>
 
 <p class="pagetip">
-    <s:text name="mediaFileChooser.pageTip" />
+    <fmt:message key="mediaFileChooser.pageTip" />
 </p>
 
 <%-- Media file contents for selected folder --%>

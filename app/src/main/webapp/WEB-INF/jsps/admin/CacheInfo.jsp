@@ -26,8 +26,8 @@
     });
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
-        confirmLabel: '<s:text name="generic.confirm"/>',
-        cancelLabel: '<s:text name="generic.cancel"/>',
+        confirmLabel: '<fmt:message key="generic.confirm"/>',
+        cancelLabel: '<fmt:message key="generic.cancel"/>',
     };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
@@ -41,8 +41,8 @@
     <span class="textSpan"></span>
 </div>
 
-<p class="subtitle"><s:text name="cacheInfo.subtitle" />
-<p><s:text name="cacheInfo.prompt" />
+<p class="subtitle"><fmt:message key="cacheInfo.subtitle" />
+<p><fmt:message key="cacheInfo.prompt" />
 
 <input type="hidden" id="refreshURL" value="<s:url action='cacheInfo'/>"/>
 
@@ -51,13 +51,13 @@
 <table class="rollertable">
 <thead>
    <tr>
-        <th style="width:20%"><s:text name="generic.name"/></th>
-        <th style="width:20%"><s:text name="cacheInfo.startTime"/></th>
-        <th style="width:10%"><s:text name="cacheInfo.puts"/></th>
-        <th style="width:10%"><s:text name="cacheInfo.removes"/></th>
-        <th style="width:10%"><s:text name="cacheInfo.hits"/></th>
-        <th style="width:10%"><s:text name="cacheInfo.misses"/></th>
-        <th style="width:10%"><s:text name="cacheInfo.efficiency"/></th>
+        <th style="width:20%"><fmt:message key="generic.name"/></th>
+        <th style="width:20%"><fmt:message key="cacheInfo.startTime"/></th>
+        <th style="width:10%"><fmt:message key="cacheInfo.puts"/></th>
+        <th style="width:10%"><fmt:message key="cacheInfo.removes"/></th>
+        <th style="width:10%"><fmt:message key="cacheInfo.hits"/></th>
+        <th style="width:10%"><fmt:message key="cacheInfo.misses"/></th>
+        <th style="width:10%"><fmt:message key="cacheInfo.efficiency"/></th>
         <th style="width:10%"></th>
     </tr>
 </thead>
@@ -73,7 +73,7 @@
         <td>{{:prop.misses}}</td>
         <td>{{:prop.efficiency}}</td>
         <td align="center">
-            <a href="#" class="reset-link"><s:text name="cacheInfo.clear"/></a>
+            <a href="#" class="reset-link"><fmt:message key="cacheInfo.clear"/></a>
         </td>
        </tr>
      {{/props}}
@@ -83,22 +83,22 @@
 </table>
 
 <div class="control clearfix">
-  <input id="refresh-cache-stats" type="button" value="<s:text name='generic.refresh'/>"/>
-  <input id="clear-all-caches" type="button" value="<s:text name='cacheInfo.clearAll'/>"/>
+  <input id="refresh-cache-stats" type="button" value="<fmt:message key='generic.refresh'/>"/>
+  <input id="clear-all-caches" type="button" value="<fmt:message key='cacheInfo.clearAll'/>"/>
 </div>
 
 <br><br>
-<s:text name="maintenance.prompt.reset"/>:
+<fmt:message key="maintenance.prompt.reset"/>:
 <br><br>
-<input id="reset-hit-counts" type="button" value="<s:text name='maintenance.button.reset'/>"/>
+<input id="reset-hit-counts" type="button" value="<fmt:message key='maintenance.button.reset'/>"/>
 
 <br><br>
-<s:text name="maintenance.prompt.index"/>:
+<fmt:message key="maintenance.prompt.index"/>:
 <br><br>
-<select id="weblog-to-reindex"/> <input id="index-weblog" type="button" value="<s:text name='maintenance.button.index'/>"/>
+<select id="weblog-to-reindex"/> <input id="index-weblog" type="button" value="<fmt:message key='maintenance.button.index'/>"/>
 <br><br>
 
-<div id="confirm-resetall" title="<s:text name='generic.confirm'/>" style="display:none">
+<div id="confirm-resetall" title="<fmt:message key='generic.confirm'/>" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-   <s:text name='cacheInfo.confirmResetAll'/></p>
+   <fmt:message key='cacheInfo.confirmResetAll'/></p>
 </div>

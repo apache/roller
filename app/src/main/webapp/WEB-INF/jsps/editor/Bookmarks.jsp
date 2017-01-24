@@ -26,23 +26,23 @@
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
-    confirmLabel: '<s:text name="generic.confirm"/>',
-    saveLabel: '<s:text name="generic.save"/>',
-    cancelLabel: '<s:text name="generic.cancel"/>',
-    editTitle: '<s:text name="generic.edit"/>',
-    addTitle: '<s:text name="bookmarkForm.add.title"/>'
+    confirmLabel: '<fmt:message key="generic.confirm"/>',
+    saveLabel: '<fmt:message key="generic.save"/>',
+    cancelLabel: '<fmt:message key="generic.cancel"/>',
+    editTitle: '<fmt:message key="generic.edit"/>',
+    addTitle: '<fmt:message key="bookmarkForm.add.title"/>'
 };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/bookmarks.js'/>"></script>
 
 <p class="subtitle">
-    <s:text name="bookmarksForm.subtitle" >
-        <s:param value="actionWeblog.handle"/>
-    </s:text>
+    <fmt:message key="bookmarksForm.subtitle" >
+        <fmt:param value="${actionWeblog.handle}"/>
+    </fmt:message>
 </p>
 <p class="pagetip">
-    <s:text name="bookmarksForm.rootPrompt" />
+    <fmt:message key="bookmarksForm.rootPrompt" />
 </p>
 
 <input id="refreshURL" type="hidden" value="<s:url action='bookmarks'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
@@ -55,12 +55,12 @@ var msg= {
         <thead>
           <tr>
               <th width="5%"><input name="control" type="checkbox" onclick="toggleFunction(this.checked,'selectedBookmarks');"
-                  title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
-              <th width="25%"><s:text name="generic.name" /></th>
-              <th width="25%"><s:text name="bookmarksForm.url" /></th>
-              <th width="35%"><s:text name="generic.description" /></th>
-              <th width="5%"><s:text name="generic.edit" /></th>
-              <th width="5%"><s:text name="bookmarksForm.visitLink" /></th>
+                  title="<fmt:message key="bookmarksForm.selectAllLabel"/>"/></th>
+              <th width="25%"><fmt:message key="generic.name" /></th>
+              <th width="25%"><fmt:message key="bookmarksForm.url" /></th>
+              <th width="35%"><fmt:message key="generic.description" /></th>
+              <th width="5%"><fmt:message key="generic.edit" /></th>
+              <th width="5%"><fmt:message key="bookmarksForm.visitLink" /></th>
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -73,11 +73,11 @@ var msg= {
             <td class="bookmark-description">{{bookmark.description}}</td>
             <td align="center">
                 <a href="#" class="edit-link"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
-                         title="<s:text name='bookmarksForm.edit.tip' />"/></a>
+                         title="<fmt:message key='bookmarksForm.edit.tip' />"/></a>
             </td>
             <td align="center">
                 <a href="{{bookmark.url}}" target="_blank">
-                    <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon" title="<s:text name='bookmarksForm.visitLink.tip' />" />
+                    <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon" title="<fmt:message key='bookmarksForm.visitLink.tip' />" />
                 </a>
             </td>
         </tr>
@@ -85,39 +85,39 @@ var msg= {
     </table>
 
     <div class="control clearfix">
-        <input id="add-link" type="button" value="<s:text name='bookmarksForm.addBookmark'/>">
+        <input id="add-link" type="button" value="<fmt:message key='bookmarksForm.addBookmark'/>">
 
         <span ng-if="ctrl.bookmarks.length > 0">
-            <input id="delete-link" type="button" value="<s:text name='bookmarksForm.delete'/>">
+            <input id="delete-link" type="button" value="<fmt:message key='bookmarksForm.delete'/>">
         </span>
     </div>
 
 </div>
 
-<div id="confirm-delete" title="<s:text name='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><s:text name='bookmarksForm.delete.confirm' /></p>
+<div id="confirm-delete" title="<fmt:message key='generic.confirm'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key='bookmarksForm.delete.confirm' /></p>
 </div>
 
 <div id="bookmark-edit" style="display:none">
-    <span id="bookmark-edit-error" style="display:none"><s:text name='bookmarkForm.error.duplicateName'/></span>
+    <span id="bookmark-edit-error" style="display:none"><fmt:message key='bookmarkForm.error.duplicateName'/></span>
     <p class="pagetip">
-        <s:text name="bookmarkForm.requiredFields">
-            <s:param><s:text name="generic.name"/></s:param>
-            <s:param><s:text name="bookmarkForm.url"/></s:param>
-        </s:text>
+        <fmt:message key="bookmarkForm.requiredFields">
+            <fmt:param><fmt:message key="generic.name"/></fmt:param>
+            <fmt:param><fmt:message key="bookmarkForm.url"/></fmt:param>
+        </fmt:message>
     </p>
     <form>
     <table>
         <tr>
-            <td style="width:30%"><label for="bookmark-edit-name"><s:text name='generic.name'/></label></td>
+            <td style="width:30%"><label for="bookmark-edit-name"><fmt:message key='generic.name'/></label></td>
             <td><input id="bookmark-edit-name" maxlength="80" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
         <tr>
-            <td><label for="bookmark-edit-url"><s:text name='bookmarkForm.url'/></label></td>
+            <td><label for="bookmark-edit-url"><fmt:message key='bookmarkForm.url'/></label></td>
             <td><input id="bookmark-edit-url" maxlength="128" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
         <tr>
-            <td><label for="bookmark-edit-description"><s:text name='generic.description'/></label></td>
+            <td><label for="bookmark-edit-description"><fmt:message key='generic.description'/></label></td>
             <td><input id="bookmark-edit-description" maxlength="128" size="50" onBlur="this.value=this.value.trim()"/></td>
         </tr>
     </table>

@@ -28,8 +28,8 @@
 var contextPath = "${pageContext.request.contextPath}";
 var weblogHandle = "<s:property value='actionWeblog.handle'/>";
 var msg= {
-  confirmLabel: '<s:text name="generic.confirm"/>',
-  cancelLabel: '<s:text name="generic.cancel"/>'
+  confirmLabel: '<fmt:message key="generic.confirm"/>',
+  cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
@@ -54,9 +54,9 @@ var msg= {
 </div>
 
 <p class="subtitle">
-   <s:text name="themeEditor.subtitle" >
-       <s:param value="actionWeblog.handle" />
-   </s:text>
+   <fmt:message key="themeEditor.subtitle" >
+       <fmt:param value="${actionWeblog.handle}"/>
+   </fmt:message>
 </p>
 
 <input type="hidden" id="recordId" value="<s:property value='%{#parameters.weblogId}'/>"/>
@@ -68,7 +68,7 @@ var msg= {
 
     <div class="optioner">
         <p>
-            <s:text name="themeEditor.yourCurrentTheme" />:
+            <fmt:message key="themeEditor.yourCurrentTheme" />:
             <b><s:property value="actionWeblog.theme"/></b>
         </p>
     </div>
@@ -84,11 +84,11 @@ var msg= {
             <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
         </p>
         <p>
-            <s:text name="themeEditor.previewDescription" />
+            <fmt:message key="themeEditor.previewDescription" />
         </p>
         <p>
           <span class="warning">
-              <s:text name="themeEditor.switchWarning" />
+              <fmt:message key="themeEditor.switchWarning" />
           </span>
         </p>
     </div>
@@ -96,21 +96,21 @@ var msg= {
     <div class="control">
         <span style="padding-left:7px">
             <input type="button" name="themePreview"
-                            value="<s:text name='themeEditor.preview' />"
+                            value="<fmt:message key='themeEditor.preview' />"
                             onclick="fullPreview($('#themeSelector').get(0))" />
 
-            <input type="button" id="update-button" value="<s:text name='themeEditor.save' />" />
+            <input type="button" id="update-button" value="<fmt:message key='themeEditor.save' />" />
         </span>
     </div>
 
 </s:form>
 
-<div id="confirm-switch" title="<s:text name='themeEditor.confirmTitle'/>" style="display:none">
-    <s:text name="themeEditor.youSure"/>
+<div id="confirm-switch" title="<fmt:message key='themeEditor.confirmTitle'/>" style="display:none">
+    <fmt:message key="themeEditor.youSure"/>
     <br>
     <br>
     <span class="warning">
-        <s:text name="themeEditor.switchWarning" />
+        <fmt:message key="themeEditor.switchWarning" />
     </span>
 </div>
 

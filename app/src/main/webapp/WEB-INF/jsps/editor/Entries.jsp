@@ -39,9 +39,9 @@
 <input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 
 <p class="subtitle">
-    <s:text name="weblogEntryQuery.subtitle" >
-        <s:param value="actionWeblog.handle" />
-    </s:text>
+    <fmt:message key="weblogEntryQuery.subtitle" >
+        <fmt:param value="${actionWeblog.handle}" />
+    </fmt:message>
 </p>
 
 <p class="pagetip">

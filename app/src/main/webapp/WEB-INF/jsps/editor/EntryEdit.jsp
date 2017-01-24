@@ -71,9 +71,9 @@
     </div>
 
 <p class="subtitle">
-    <s:text name="%{#subtitleKey}" >
-        <s:param value="actionWeblog.handle" />
-    </s:text>
+    <fmt:message key="${subtitleKey}">
+        <fmt:param value="${actionWeblog.handle}"/>
+    </fmt:message>
 </p>
 
 <div>

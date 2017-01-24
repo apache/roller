@@ -26,23 +26,23 @@
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
-        confirmLabel: '<s:text name="generic.confirm"/>',
-        saveLabel: '<s:text name="generic.save"/>',
-        cancelLabel: '<s:text name="generic.cancel"/>',
-        editTitle: '<s:text name="generic.edit"/>',
-        addTitle: '<s:text name="categoryForm.add.title"/>'
+        confirmLabel: '<fmt:message key="generic.confirm"/>',
+        saveLabel: '<fmt:message key="generic.save"/>',
+        cancelLabel: '<fmt:message key="generic.cancel"/>',
+        editTitle: '<fmt:message key="generic.edit"/>',
+        addTitle: '<fmt:message key="categoryForm.add.title"/>'
     };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/categories.js'/>"></script>
 
 <p class="subtitle">
-    <s:text name="categoriesForm.subtitle">
-        <s:param value="actionWeblog.handle"/>
-    </s:text>
+    <fmt:message key="categoriesForm.subtitle">
+        <fmt:param value="${actionWeblog.handle}"/>
+    </fmt:message>
 </p>
 <p class="pagetip">
-    <s:text name="categoriesForm.rootPrompt"/>
+    <fmt:message key="categoriesForm.rootPrompt"/>
 </p>
 
 <input id="refreshURL" type="hidden" value="<s:url action='categories'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
@@ -53,9 +53,9 @@
     <table class="rollertable">
         <thead>
         <tr>
-            <th width="25%"><s:text name="generic.name"/></th>
-            <th width="7%"><s:text name="generic.edit"/></th>
-            <th width="7%"><s:text name="categoriesForm.remove"/></th>
+            <th width="25%"><fmt:message key="generic.name"/></th>
+            <th width="7%"><fmt:message key="generic.edit"/></th>
+            <th width="7%"><fmt:message key="categoriesForm.remove"/></th>
         </tr>
       </thead>
       <tbody id="tableBody">
@@ -78,22 +78,22 @@
        </table>
 
       <div class="control clearfix">
-          <input type="button" value="<s:text name='categoriesForm.addCategory'/>" id="add-link">
+          <input type="button" value="<fmt:message key='categoriesForm.addCategory'/>" id="add-link">
       </div>
 
 </div>
 
     <div id="category-edit" style="display:none">
-      <span id="category-edit-error" style="display:none"><s:text name='categoryForm.error.duplicateName'/></span>
-      <label for="name"><s:text name='generic.name'/>:</label>
+      <span id="category-edit-error" style="display:none"><fmt:message key='categoryForm.error.duplicateName'/></span>
+      <label for="name"><fmt:message key='generic.name'/>:</label>
       <input type="text" id="category-edit-name" class="text ui-widget-content ui-corner-all">
     </div>
 
-    <div id="category-remove" title="<s:text name='categoryDeleteOK.removeCategory'/>" style="display:none">
+    <div id="category-remove" title="<fmt:message key='categoryDeleteOK.removeCategory'/>" style="display:none">
         <div id="category-remove-mustmove" style="display:none">
-            <s:text name='categoryDeleteOK.youMustMoveEntries'/>
+            <fmt:message key='categoryDeleteOK.youMustMoveEntries'/>
             <p>
-                <s:text name="categoryDeleteOK.moveToWhere"/>
+                <fmt:message key="categoryDeleteOK.moveToWhere"/>
                 <select id="category-remove-targetlist"/>
             </p>
         </div>
