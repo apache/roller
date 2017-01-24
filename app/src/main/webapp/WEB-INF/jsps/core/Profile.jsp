@@ -40,25 +40,25 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
 </div>
 
 <div id="errorMessageNoLDAPAuth" class="errors" style="display:none">
-  <span><s:text name="Register.error.ldap.notauthenticated"/></span>
+  <span><fmt:message key="Register.error.ldap.notauthenticated"/></span>
 </div>
 
 <div class="ldapok">
 
 <div id="successMessageDiv" class="messages" style="display:none">
   <s:if test="authenticatedUser != null">
-    <p><s:text name="generic.changes.saved"/></p>
+    <p><fmt:message key="generic.changes.saved"/></p>
   </s:if>
   <s:else>
-    <p><s:text name="welcome.accountCreated" /></p>
-    <p><a id="a_clickHere" href="<s:url action='login-redirect'/>" ><s:text name="welcome.clickHere" /></a>
-    <s:text name="welcome.toLoginAndPost" /></p>
+    <p><fmt:message key="welcome.accountCreated" /></p>
+    <p><a id="a_clickHere" href="<s:url action='login-redirect'/>" ><fmt:message key="welcome.clickHere" /></a>
+    <fmt:message key="welcome.toLoginAndPost" /></p>
   </s:else>
 </div>
 
 <div id="successMessageNeedActivation" class="messages" style="display:none">
-  <p><s:text name="welcome.accountCreated" /></p>
-  <p><s:text name="welcome.user.account.not.activated" /></p>
+  <p><fmt:message key="welcome.accountCreated" /></p>
+  <p><fmt:message key="welcome.user.account.not.activated" /></p>
 </div>
 
 <%-- Below populated for logged-in user profile edit only --%>
@@ -72,7 +72,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
     <input type="hidden" id="refreshURL" value="<s:url action='register'/>"/>
     <input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
     <div class="notregistered">
-      <p><s:text name="userRegister.prompt" /></p>
+      <p><fmt:message key="userRegister.prompt" /></p>
     </div>
 </s:if>
 <s:else>
@@ -82,7 +82,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
     <s:set var="saveButtonText">generic.save</s:set>
     <input type="hidden" id="refreshURL" value="<s:url action='profile'/>"/>
     <input type="hidden" id="cancelURL" value="<s:url action='menu'/>"/>
-    <p class="subtitle"><s:text name="yourProfile.subtitle" /></p>
+    <p class="subtitle"><fmt:message key="yourProfile.subtitle" /></p>
 </s:else>
 
 <s:form id="myForm">
@@ -91,7 +91,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
   <tbody id="formBody">
     <script id="formTemplate" type="text/x-jsrender">
       <tr id="recordId" data-id="{{:user.id}}">
-          <td class="label"><label for="userName"><s:text name="userSettings.username" /></label></td>
+          <td class="label"><label for="userName"><fmt:message key="userSettings.username" /></label></td>
           <td class="field">
             <s:if test="getProp('authentication.method') == 'ldap'">
                 <strong>{{:user.userName}}</strong>
@@ -105,32 +105,32 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
               </s:else>
             </s:else>
           </td>
-          <td class="description"><s:text name="%{#usernameTipKey}" /></td>
+          <td class="description"><fmt:message key="${usernameTipKey}" /></td>
       </tr>
 
       <tr>
-          <td class="label"><label for="screenName"><s:text name="userSettings.screenname" /></label></td>
+          <td class="label"><label for="screenName"><fmt:message key="userSettings.screenname" /></label></td>
           <td class="field"><input type="text" size="30" data-link="user.screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
-          <td class="description"><s:text name="userRegister.tip.screenName" /></td>
+          <td class="description"><fmt:message key="userRegister.tip.screenName" /></td>
       </tr>
 
       <tr>
-          <td class="label"><label for="emailAddress"><s:text name="userSettings.email" /></label></td>
+          <td class="label"><label for="emailAddress"><fmt:message key="userSettings.email" /></label></td>
           <td class="field"><input type="email" size="40" data-link="user.emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
-          <td class="description"><s:text name="userAdmin.tip.email" /></td>
+          <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
       </tr>
 
       <tr>
-          <td class="label"><label for="locale"><s:text name="userSettings.locale" /></label></td>
+          <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>
           <td class="field">
               <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="user.locale" required=""/>
           </td>
-          <td class="description"><s:text name="userRegister.tip.locale" /></td>
+          <td class="description"><fmt:message key="userRegister.tip.locale" /></td>
       </tr>
 
       <s:if test="getProp('authentication.method') == 'db'">
           <tr>
-              <td class="label"><label for="passwordText"><s:text name="userSettings.password" /></label></td>
+              <td class="label"><label for="passwordText"><fmt:message key="userSettings.password" /></label></td>
               <td class="field">
                   <s:if test="authenticatedUser == null">
                     <input required type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
@@ -139,10 +139,10 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
                     <input type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
                   </s:else>
               </td>
-              <td class="description"><s:text name="%{#passwordTipKey}" /></td>
+              <td class="description"><fmt:message key="${passwordTipKey}" /></td>
           </tr>
           <tr>
-              <td class="label"><label for="passwordConfirm"><s:text name="userSettings.passwordConfirm" /></label></td>
+              <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm" /></label></td>
               <td class="field">
                   <s:if test="authenticatedUser == null">
                     <input required type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
@@ -151,7 +151,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
                     <input type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
                   </s:else>
               </td>
-              <td class="description"><s:text name="%{#passwordConfirmTipKey}" /></td>
+              <td class="description"><fmt:message key="${passwordConfirmTipKey}" /></td>
           </tr>
       </s:if>
     </script>
@@ -162,7 +162,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
 
 <div class="notregistered">
 <s:submit id="save-link" value="%{getText(#saveButtonText)}" />
-<input id="cancel-link" type="button" value="<s:text name='generic.cancel'/>"/>
+<input id="cancel-link" type="button" value="<fmt:message key='generic.cancel'/>"/>
 </div>
 </s:form>
 </div>

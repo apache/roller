@@ -25,17 +25,17 @@
 
 <s:if test="activationStatus == 'active'">
     <div class="messages">
-        <p><s:text name="welcome.user.account.activated" /></p>
+        <p><fmt:message key="welcome.user.account.activated" /></p>
     </div>
 </s:if>
 
 <s:if test="activationStatus == 'activePending'">
     <div class="messages">
-        <p><s:text name="welcome.user.account.need.approval" /></p>
+        <p><fmt:message key="welcome.user.account.need.approval" /></p>
     </div>
 </s:if>
 
-<p><s:text name="loginPage.prompt" /></p>
+<p><fmt:message key="loginPage.prompt" /></p>
 
 <form method="post" id="loginForm"
       action="<s:url value='/roller_j_security_check'/>">
@@ -45,14 +45,14 @@
     <table width="80%">
 
         <tr>
-            <td width="20%" align="right"><s:text name="loginPage.userName" /></td>
+            <td width="20%" align="right"><fmt:message key="loginPage.userName" /></td>
             <td width="80%">
                 <input value="gmazza" type="text" name="username" id="j_username" size="25" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 
         <tr>
-            <td width="20%" align="right"><s:text name="loginPage.password" /></td>
+            <td width="20%" align="right"><fmt:message key="loginPage.password" /></td>
             <td width="80%">
                 <input value="1@Password" type="password" name="password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
             </td>
@@ -61,8 +61,8 @@
         <tr>
             <td width="20%"></td>
             <td width="80%">
-                <input type="submit" name="login" id="login" value="<s:text name='loginPage.login' />" />
-                <input type="reset" name="reset" id="reset" value="<s:text name='loginPage.reset' />"
+                <input type="submit" name="login" id="login" value="<fmt:message key='loginPage.login' />" />
+                <input type="reset" name="reset" id="reset" value="<fmt:message key='loginPage.reset' />"
                     onclick="document.getElementById('j_username').focus()" />
             </td>
         </tr>

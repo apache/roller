@@ -31,12 +31,12 @@ var weblogId = "<s:property value='actionWeblog.id'/>";
 <input id="refreshURL" type="hidden" value="<s:url action='members'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 
 <p class="subtitle">
-    <s:text name="memberPermissions.subtitle" >
-        <s:param value="actionWeblog.handle" />
-    </s:text>
+    <fmt:message key="memberPermissions.subtitle" >
+        <fmt:param value="${actionWeblog.handle}"/>
+    </fmt:message>
 </p>
 
-<p><s:text name="memberPermissions.description" /></p>
+<p><fmt:message key="memberPermissions.description" /></p>
 
 <div class="sidebarFade">
     <div class="menu-tr">
@@ -44,10 +44,10 @@ var weblogId = "<s:property value='actionWeblog.id'/>";
             <div class="sidebarBody">
             <div class="sidebarInner">
             <h3>
-                <s:text name="memberPermissions.permissionsHelpTitle" />
+                <fmt:message key="memberPermissions.permissionsHelpTitle" />
             </h3>
             <hr size="1" noshade="noshade" />
-            <s:text name="memberPermissions.permissionHelp" />
+            <fmt:message key="memberPermissions.permissionHelp" />
 		    <br />
 		    <br />
         </div>
@@ -63,23 +63,23 @@ var weblogId = "<s:property value='actionWeblog.id'/>";
 
   <div id="successMessageDiv" class="messages" style="display:none">
     <s:if test="weblogId != null">
-      <p><s:text name="generic.changes.saved"/></p>
+      <p><fmt:message key="generic.changes.saved"/></p>
     </s:if>
   </div>
 
     <div style="text-align: right; padding-bottom: 6px;">
         <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <s:text name="commentManagement.pending" />&nbsp;
+            <fmt:message key="commentManagement.pending" />&nbsp;
     </div>
 
     <table class="rollertable">
         <thead>
           <tr>
-             <th width="20%"><s:text name="memberPermissions.userName" /></th>
-             <th width="20%"><s:text name="memberPermissions.administrator" /></th>
-             <th width="20%"><s:text name="memberPermissions.author" /></th>
-             <th width="20%"><s:text name="memberPermissions.limited" /></th>
-             <th width="20%"><s:text name="memberPermissions.remove" /></th>
+             <th width="20%"><fmt:message key="memberPermissions.userName" /></th>
+             <th width="20%"><fmt:message key="memberPermissions.administrator" /></th>
+             <th width="20%"><fmt:message key="memberPermissions.author" /></th>
+             <th width="20%"><fmt:message key="memberPermissions.limited" /></th>
+             <th width="20%"><fmt:message key="memberPermissions.remove" /></th>
           </tr>
         </thead>
         <tbody>
@@ -106,30 +106,30 @@ var weblogId = "<s:property value='actionWeblog.id'/>";
     <br />
 
     <div class="control">
-       <input ng-click="ctrl.updateRoles()" type="button" value="<s:text name='generic.save'/>" />
+       <input ng-click="ctrl.updateRoles()" type="button" value="<fmt:message key='generic.save'/>" />
     </div>
 
 <br>
 <br>
 
-  <p><s:text name="inviteMember.prompt" /></p>
+  <p><fmt:message key="inviteMember.prompt" /></p>
   <div>
       <select ng-model="ctrl.userToInvite" size="1" required>
         <option ng-repeat="(key, value) in ctrl.potentialMembers" value="{{key}}">{{value}}</option>
       </select>
 
-      <label for="permissionString" class="formrow" /><s:text name="inviteMember.permissions" /></label>
+      <label for="permissionString" class="formrow" /><fmt:message key="inviteMember.permissions" /></label>
 
       <input type="radio" ng-model="ctrl.inviteeRole" value="OWNER"  />
-      <s:text name="inviteMember.administrator" />
+      <fmt:message key="inviteMember.administrator" />
 
       <input type="radio" ng-model="ctrl.inviteeRole" value="POST" />
-      <s:text name="inviteMember.author" />
+      <fmt:message key="inviteMember.author" />
 
       <input type="radio" ng-model="ctrl.inviteeRole" value="EDIT_DRAFT" checked />
-      <s:text name="inviteMember.limited" /><br><br>
+      <fmt:message key="inviteMember.limited" /><br><br>
 
-      <input ng-click="ctrl.inviteUser()" type="button" value="<s:text name='inviteMember.button.save'/>"/>
+      <input ng-click="ctrl.inviteUser()" type="button" value="<fmt:message key='inviteMember.button.save'/>"/>
   </div>
 
 </div>

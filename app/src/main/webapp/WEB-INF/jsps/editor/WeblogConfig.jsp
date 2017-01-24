@@ -26,8 +26,8 @@
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
-  deleteLabel: '<s:text name="generic.delete"/>',
-  cancelLabel: '<s:text name="generic.cancel"/>'
+  deleteLabel: '<fmt:message key="generic.delete"/>',
+  cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
@@ -46,7 +46,7 @@ var msg= {
 
 <div id="successMessageDiv" class="messages" style="display:none">
   <s:if test="weblogId != null">
-    <p><s:text name="generic.changes.saved"/></p>
+    <p><fmt:message key="generic.changes.saved"/></p>
   </s:if>
 </div>
 
@@ -55,21 +55,21 @@ var msg= {
 
 <%-- Create Weblog --%>
 <s:if test="weblogId == null">
-    <s:text var="saveButtonText" name="weblogSettings.create.button.save"/>
-    <s:text var="subtitlePrompt" name="weblogSettings.create.prompt"/>
+    <fmt:message key="weblogSettings.create.button.save" var="saveButtonText"/>
+    <fmt:message key="weblogSettings.create.prompt" var="subtitlePrompt"/>
     <input type="hidden" id="refreshURL" value="<s:url action='createWeblog'/>"/>
 </s:if>
 <%-- Update Weblog --%>
 <s:else>
-    <s:text var="saveButtonText" name="weblogSettings.button.update"/>
-    <s:text var="subtitlePrompt" name="weblogSettings.prompt">
-        <s:param value="actionWeblog.handle"/>
-    </s:text>
+    <fmt:message key="weblogSettings.button.update" var="saveButtonText"/>
+    <fmt:message key="weblogSettings.prompt" var="subtitlePrompt">
+        <fmt:param value="${actionWeblog.handle}"/>
+    </fmt:message>
     <input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
 </s:else>
 
 <p class="subtitle">
-  <s:text name="%{#subtitlePrompt}"/>
+  ${subtitlePrompt}
 </p>
 
 <s:form id="myForm">
@@ -79,22 +79,22 @@ var msg= {
         <%-- ***** General settings ***** --%>
 
         <tr id="recordId" data-id="{{:weblogData.id}}">
-            <td colspan="3"><h2><s:text name="weblogSettings.generalSettings" /></h2></td>
+            <td colspan="3"><h2><fmt:message key="weblogSettings.generalSettings" /></h2></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.websiteTitle"/>*</td>
+            <td class="label"><fmt:message key="weblogSettings.websiteTitle"/>*</td>
             <td class="field"><input type="text" data-link="weblogData.name" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.tagline" /></td>
+            <td class="label"><fmt:message key="weblogSettings.tagline" /></td>
             <td class="field"><input type="text" data-link="weblogData.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
-            <td class="description"><s:text name="weblogSettings.tip.tagline" /></td>
+            <td class="description"><fmt:message key="weblogSettings.tip.tagline" /></td>
         </tr>
 
         <tr>
-            <td class="label"><label for="handle"><s:text name="weblogSettings.handle" />*</label></td>
+            <td class="label"><label for="handle"><fmt:message key="weblogSettings.handle" />*</label></td>
             <td class="field">
                 <s:if test="weblogId == null">
                   <input type="text" data-link="weblogData.handle trigger=true" size="30" maxlength="30" onBlur="this.value=this.value.trim()" required><br />
@@ -104,22 +104,22 @@ var msg= {
                   <input type="text" data-link="weblogData.handle" size="30" maxlength="30" readonly><br />
                 </s:else>
                 <span style="text-size:70%">
-                    <s:text name="weblogSettings.weblogUrl" />:&nbsp;
+                    <fmt:message key="weblogSettings.weblogUrl" />:&nbsp;
                     <s:property value="absoluteSiteURL" />/<span style="color:red" data-link="weblogData.handle"></span>
                 </span>
             </td>
-            <td class="description"><s:text name="weblogSettings.tip.handle" /></td>
+            <td class="description"><fmt:message key="weblogSettings.tip.handle" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.about" /></td>
+            <td class="label"><fmt:message key="weblogSettings.about" /></td>
             <td class="field"><textarea data-link="weblogData.about" rows="3" cols="40" maxlength="255" onBlur="this.value=this.value.trim()"></textarea></td>
-            <td class="description"><s:text name="weblogSettings.tip.about" /></td>
+            <td class="description"><fmt:message key="weblogSettings.tip.about" /></td>
         </tr>
 
         <s:if test="weblogId == null">
           <tr>
-              <td class="label"><label for="theme"><s:text name="weblogSettings.theme" />*</label></td>
+              <td class="label"><label for="theme"><fmt:message key="weblogSettings.theme" />*</label></td>
               <td class="field">
                   <select id="themeSelector" data-link="weblogData.theme" size="1">
                        {{for themeList}}
@@ -130,54 +130,54 @@ var msg= {
                   <br />
                   <div id="themeDetails" style="height:400px"></div>
               </td>
-              <td class="description"><s:text name="weblogSettings.tip.theme" /></td>
+              <td class="description"><fmt:message key="weblogSettings.tip.theme" /></td>
           </tr>
         </s:if>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.editFormat" /></td>
+            <td class="label"><fmt:message key="weblogSettings.editFormat" /></td>
             <td class="field">
                 <select data-link="weblogData.editFormat trigger=true" size="1">
-                    <option value="HTML"><s:text name="weblogSettings.editFormat.html"/></option>
-                    <option value="COMMONMARK"><s:text name="weblogSettings.editFormat.commonMark"/></option>
-                    <option value="RICHTEXT"><s:text name="weblogSettings.editFormat.richText"/></option>
+                    <option value="HTML"><fmt:message key="weblogSettings.editFormat.html"/></option>
+                    <option value="COMMONMARK"><fmt:message key="weblogSettings.editFormat.commonMark"/></option>
+                    <option value="RICHTEXT"><fmt:message key="weblogSettings.editFormat.richText"/></option>
                 </select>
            </td>
-           <td class="description"><s:text name="weblogSettings.tip.editFormat" /></td>
+           <td class="description"><fmt:message key="weblogSettings.tip.editFormat" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.visible" /></td>
+            <td class="label"><fmt:message key="weblogSettings.visible" /></td>
             <td class="field"><input type="checkbox" data-link="weblogData.visible"></td>
-            <td class="description"><s:text name="weblogSettings.tip.visible" /></td>
+            <td class="description"><fmt:message key="weblogSettings.tip.visible" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.entriesPerPage" /></td>
+            <td class="label"><fmt:message key="weblogSettings.entriesPerPage" /></td>
             <td class="field"><input type="number" min="1" max="100" step="1" data-link="weblogData.entriesPerPage" size="3" onBlur="this.value=this.value.trim()"></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.locale"/>*</td>
+            <td class="label"><fmt:message key="weblogSettings.locale"/>*</td>
             <td class="field">
                 <s:select data-link="weblogData.locale" size="1" list="localesList" listValue="displayName" required="required" />
             </td>
-            <td class="description"><s:text name="weblogSettings.tip.locale" /></td>
+            <td class="description"><fmt:message key="weblogSettings.tip.locale" /></td>
         </tr>
 
         <tr>
-            <td class="label"><s:text name="weblogSettings.timeZone"/>*</td>
+            <td class="label"><fmt:message key="weblogSettings.timeZone"/>*</td>
             <td class="field">
                 <s:select data-link="weblogData.timeZone" size="1" list="timeZonesList" required="required"/>
             </td>
-            <td class="description"><s:text name="weblogSettings.tip.timezone" /></td>
+            <td class="description"><fmt:message key="weblogSettings.tip.timezone" /></td>
         </tr>
 
         <s:if test="isUsersOverrideAnalyticsCode()">
             <tr>
-                <td class="label"><s:text name="weblogSettings.analyticsTrackingCode" /></td>
+                <td class="label"><fmt:message key="weblogSettings.analyticsTrackingCode" /></td>
                 <td class="field"><textarea data-link="weblogData.analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"></textarea></td>
-                <td class="description"><s:text name="weblogSettings.tip.analyticsTrackingCode" /></td>
+                <td class="description"><fmt:message key="weblogSettings.tip.analyticsTrackingCode" /></td>
             </tr>
         </s:if>
 
@@ -185,17 +185,17 @@ var msg= {
 
         <s:if test="getCommentPolicy() != 'NONE'">
             <tr>
-                <td colspan="3"><h2><s:text name="weblogSettings.commentSettings" /></h2></td>
+                <td colspan="3"><h2><fmt:message key="weblogSettings.commentSettings" /></h2></td>
             </tr>
 
             <tr>
-                <td class="label"><s:text name="weblogSettings.allowComments" /></td>
+                <td class="label"><fmt:message key="weblogSettings.allowComments" /></td>
                 <td class="field">
                   <select data-link="weblogData.allowComments">
-                     <option value="NONE"><s:text name="generic.no"/></option>
-                     <option value="MUSTMODERATE"><s:text name="weblogSettings.mustModerateComments"/></option>
+                     <option value="NONE"><fmt:message key="generic.no"/></option>
+                     <option value="MUSTMODERATE"><fmt:message key="weblogSettings.mustModerateComments"/></option>
                      <s:if test="getCommentPolicy() != 'MUSTMODERATE'">
-                         <option value="YES"><s:text name="weblogSettings.commentsOK"/></option>
+                         <option value="YES"><fmt:message key="weblogSettings.commentsOK"/></option>
                      </s:if>
                   </select>
                 </td>
@@ -203,13 +203,13 @@ var msg= {
 
             <s:if test="isUsersCommentNotifications()">
                 <tr>
-                    <td class="label"><s:text name="weblogSettings.emailComments" /></td>
+                    <td class="label"><fmt:message key="weblogSettings.emailComments" /></td>
                     <td class="field"><input type="checkbox" data-link="weblogData.emailComments"></td>
                 </tr>
             </s:if>
 
             <tr>
-                <td class="label"><s:text name="weblogSettings.defaultCommentDays" /></td>
+                <td class="label"><fmt:message key="weblogSettings.defaultCommentDays" /></td>
                 <td class="field">
                     <s:select data-link="weblogData.defaultCommentDaysString" list="commentDaysList" size="1" listKey="left" listValue="right" />
                 </td>
@@ -217,15 +217,15 @@ var msg= {
 
             <s:if test="weblogId != null">
               <tr>
-                  <td class="label"><s:text name="weblogSettings.applyCommentDefaults" /></td>
+                  <td class="label"><fmt:message key="weblogSettings.applyCommentDefaults" /></td>
                   <td class="field"><input type="checkbox" data-link="weblogData.applyCommentDefaults"></td>
               </tr>
             </s:if>
 
             <tr>
-                <td class="label"><s:text name="weblogSettings.ignoreUrls" /></td>
+                <td class="label"><fmt:message key="weblogSettings.ignoreUrls" /></td>
                 <td class="field"><textarea data-link="weblogData.blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"></textarea></td>
-                <td class="description"><s:text name="weblogSettings.tip.ignoreUrls" /></td>
+                <td class="description"><fmt:message key="weblogSettings.tip.ignoreUrls" /></td>
             </tr>
 
         </s:if>
@@ -237,19 +237,19 @@ var msg= {
 <br>
 <div class="control">
     <s:submit value="%{getText(#saveButtonText)}"/>
-    <input type="button" value="<s:text name='generic.cancel'/>" onclick="window.location='<s:url action='menu'/>'" />
+    <input type="button" value="<fmt:message key='generic.cancel'/>" onclick="window.location='<s:url action='menu'/>'" />
 </div>
 
 <br>
 <br>
 
   <s:if test="weblogId != null">
-    <h2><s:text name="weblogSettings.removeWebsiteHeading" /></h2>
+    <h2><fmt:message key="weblogSettings.removeWebsiteHeading" /></h2>
 
     <p>
-        <s:text name="weblogSettings.removeWebsite" /><br><br>
+        <fmt:message key="weblogSettings.removeWebsite" /><br><br>
         <span class="warning">
-            <s:text name="weblogSettings.removeWebsiteWarning" />
+            <fmt:message key="weblogSettings.removeWebsiteWarning" />
         </span>
     </p>
     <br>
@@ -265,13 +265,13 @@ var msg= {
     <img id="themeImage" src="<s:property value='siteURL'/>{{:previewPath}}"></img>
 </script>
 
-<div id="confirm-delete" title="<s:text name='websiteRemove.title'/>" style="display:none">
-    <s:text name="websiteRemove.youSure">
-        <s:param value="actionWeblog.name" />
-    </s:text>
+<div id="confirm-delete" title="<fmt:message key='websiteRemove.title'/>" style="display:none">
+    <fmt:message key="websiteRemove.youSure">
+       <fmt:param value="${actionWeblog.name}"/>
+    </fmt:message>
     <br/>
     <br/>
     <span class="warning">
-        <s:text name="weblogSettings.removeWebsiteWarning" />
+        <fmt:message key="weblogSettings.removeWebsiteWarning" />
     </span>
 </div>

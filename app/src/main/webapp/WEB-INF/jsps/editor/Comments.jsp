@@ -56,9 +56,9 @@
         </span>
 
         <span ng-show="ctrl.entryTitleMsg == null || ctrl.entryTitleMsg.length() == 0">
-            <s:text name="commentManagement.website.subtitle">
-                <s:param value="%{actionWeblog.handle}"/>
-            </s:text>
+            <fmt:message key="commentManagement.website.subtitle">
+                <fmt:param value="${actionWeblog.handle}"/>
+            </fmt:message>
         </span>
     </p>
 

@@ -49,7 +49,7 @@
         <div ng-if="ctrl.mediaFileData.imageFile" class="mediaFileThumbnail">
             <a ng-href='{{ctrl.mediaFileData.permalink}}' target="_blank">
                 <img align="right" alt="thumbnail" ng-src='{{ctrl.mediaFileData.thumbnailURL}}'
-                     title='<s:text name="mediaFileEdit.clickToView" />' />
+                     title='<fmt:message key="mediaFileEdit.clickToView" />' />
             </a>
         </div>
     </s:if>
@@ -61,11 +61,11 @@
 
 
     <p class="subtitle">
-        <s:text name="%{#subtitleKey}"/>
+        <fmt:message key="${subtitleKey}"/>
     </p>
 
     <p class="pagetip">
-        <s:text name="%{#pageTip}"/>
+        <fmt:message key="${pageTip}"/>
     </p>
 
     <%-- ================================================================== --%>
@@ -75,7 +75,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="name"><s:text name="generic.name" /></label>
+                <label for="name"><fmt:message key="generic.name" /></label>
             </td>
             <td>
                 <input id="name" type="text" ng-model="ctrl.mediaFileData.name" size="50" maxlength="255" style="width:30%"/>
@@ -84,7 +84,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="altText"><s:text name="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
+                <label for="altText"><fmt:message key="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
             </td>
             <td>
                 <input id="altText" type="text" ng-model="ctrl.mediaFileData.altText" size="50" maxlength="255" style="width:30%"/>
@@ -93,7 +93,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="titleText"><s:text name="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
+                <label for="titleText"><fmt:message key="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
             </td>
             <td>
                 <input id="titleText" type="text" ng-model="ctrl.mediaFileData.titleText" size="50" maxlength="255" style="width:30%"/>
@@ -102,7 +102,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="anchor"><s:text name="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
+                <label for="anchor"><fmt:message key="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
             </td>
             <td>
                 <input id="anchor" type="text" ng-model="ctrl.mediaFileData.anchor" size="50" maxlength="255" style="width:30%"/>
@@ -111,7 +111,7 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="notes"><s:text name="generic.notes"/></label>
+                <label for="notes"><fmt:message key="generic.notes"/></label>
             </td>
             <td>
                 <input id="notes" type="text" ng-model="ctrl.mediaFileData.notes" size="50" maxlength="255" style="width:30%"/>
@@ -120,22 +120,22 @@
 <s:if test="actionName == 'mediaFileEdit'">
        <tr>
             <td class="entryEditFormLabel">
-                <s:text name="mediaFileEdit.fileInfo" />
+                <fmt:message key="mediaFileEdit.fileInfo" />
             </td>
             <td>
-                <b><s:text name="mediaFileEdit.fileType"/></b>: {{ctrl.mediaFileData.contentType}}
-                <b><s:text name="mediaFileEdit.fileSize"/></b>: {{ctrl.mediaFileData.length}}
-                <b><s:text name="mediaFileEdit.fileDimensions"/></b>: {{ctrl.mediaFileData.width}} x {{ctrl.mediaFileData.height}} pixels
+                <b><fmt:message key="mediaFileEdit.fileType"/></b>: {{ctrl.mediaFileData.contentType}}
+                <b><fmt:message key="mediaFileEdit.fileSize"/></b>: {{ctrl.mediaFileData.length}}
+                <b><fmt:message key="mediaFileEdit.fileDimensions"/></b>: {{ctrl.mediaFileData.width}} x {{ctrl.mediaFileData.height}} pixels
             </td>
        </tr>
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="permalink"><s:text name="mediaFileEdit.permalink" /></label>
+                <label for="permalink"><fmt:message key="mediaFileEdit.permalink" /></label>
             </td>
             <td>
                 <a href='{{ctrl.mediaFileData.permalink}}' target="_blank"
-                   title='<s:text name="mediaFileEdit.linkTitle" />'>
+                   title='<fmt:message key="mediaFileEdit.linkTitle" />'>
                    <s:url var="linkIconURL" value="/images/link.png"/>
                    <img border="0" src='<s:property value="%{linkIconURL}" />'
                        style="padding:2px 2px;" alt="link" />
@@ -146,7 +146,7 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="directoryId"><s:text name="mediaFileEdit.folder" /></label>
+                <label for="directoryId"><fmt:message key="mediaFileEdit.folder" /></label>
             </td>
             <td>
                 <input id="directoryId" type="text" size="30" style="width:30%" value='{{ctrl.mediaFileData.directory.name}}' readonly />
@@ -156,7 +156,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="fileControl"><s:text name="mediaFileEdit.fileLocation" /></label>
+                <label for="fileControl"><fmt:message key="mediaFileEdit.fileLocation" /></label>
             </td>
             <td>
                 <s:if test="actionName == 'mediaFileEdit'">
@@ -171,9 +171,9 @@
 
     <br />
     <div class="control">
-        <input type="button" value="<s:text name='generic.save'/>" ng-click="ctrl.saveMediaFile()"/>
+        <input type="button" value="<fmt:message key='generic.save'/>" ng-click="ctrl.saveMediaFile()"/>
         <a href="<s:property value='%{mediaFileViewUrl}'/>&amp;directoryId={{ctrl.mediaFileData.directory.id}}">
-            <input type="button" value="<s:text name='generic.cancel'/>"/>
+            <input type="button" value="<fmt:message key='generic.cancel'/>"/>
         </a>
     </div>
 </div>

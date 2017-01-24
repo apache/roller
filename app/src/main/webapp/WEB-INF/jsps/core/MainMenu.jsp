@@ -26,9 +26,9 @@
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
-    yesLabel: '<s:text name="generic.yes"/>',
-    noLabel: '<s:text name="generic.no"/>',
-    cancelLabel: '<s:text name="generic.cancel"/>',
+    yesLabel: '<fmt:message key="generic.yes"/>',
+    noLabel: '<fmt:message key="generic.no"/>',
+    cancelLabel: '<fmt:message key="generic.cancel"/>',
 };
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
@@ -39,15 +39,15 @@ var msg= {
 <div id="blog-list" ng-app="mainMenuApp" ng-controller="MainMenuController as ctrl">
 
     <span ng-if="ctrl.roles.length == 0">
-        <p><s:text name="yourWebsites.prompt.noBlog" /></p>
+        <p><fmt:message key="yourWebsites.prompt.noBlog" /></p>
     </span>
 
     <div id="allBlogs">
       <div ng-repeat="role in ctrl.roles | filter:{ pending: 'true' }">
          <span id="{{role.id}}">
-           <s:text name="yourWebsites.youAreInvited"/>: {{role.weblog.handle}}
-           <input class="accept-button" type="button" value="<s:text name="yourWebsites.accept" />">
-           <input class="decline-button" type="button" value="<s:text name="yourWebsites.decline" />">
+           <fmt:message key="yourWebsites.youAreInvited"/>: {{role.weblog.handle}}
+           <input class="accept-button" type="button" value="<fmt:message key="yourWebsites.accept" />">
+           <input class="decline-button" type="button" value="<fmt:message key="yourWebsites.decline" />">
          </span>
       </div>
       <div ng-repeat="role in ctrl.roles | filter:{ pending: 'false' }">
@@ -60,12 +60,12 @@ var msg= {
                <table cellpadding="0" cellspacing="0">
 
                    <tr>
-                       <td class="mm_subtable_label"><s:text name='yourWebsites.weblog'/></td>
+                       <td class="mm_subtable_label"><fmt:message key='yourWebsites.weblog'/></td>
                        <td><a href='{{role.weblog.absoluteURL}}'>{{role.weblog.absoluteURL}}</a></td>
                    </tr>
 
                    <tr>
-                       <td class="mm_subtable_label"><s:text name='generic.role'/></td>
+                       <td class="mm_subtable_label"><fmt:message key='generic.role'/></td>
                        <td ng-switch on="role.weblogRole">
                           <span ng-switch-when="OWNER">OWNER</span>
                           <span ng-switch-when="POST">PUBLISHER</span>
@@ -74,12 +74,12 @@ var msg= {
                    </tr>
 
                    <tr>
-                       <td class="mm_subtable_label"><s:text name='generic.description' /></td>
+                       <td class="mm_subtable_label"><fmt:message key='generic.description' /></td>
                        <td>{{role.weblog.about}}</td>
                    </tr>
 
                    <tr>
-                       <td class="mm_subtable_label"><s:text name='yourWebsites.todaysHits' /></td>
+                       <td class="mm_subtable_label"><fmt:message key='yourWebsites.todaysHits' /></td>
                        <td>{{role.weblog.hitsToday}}</td>
                    </tr>
 
@@ -91,7 +91,7 @@ var msg= {
 
                    <img src='<s:url value="/images/table_edit.png"/>' />
                    <a href="<s:url action='entryAdd' namespace='/tb-ui/authoring'/>?weblogId={{role.weblog.id}}">
-                     <s:text name="yourWebsites.newEntry" />
+                     <fmt:message key="yourWebsites.newEntry" />
                    </a>
                    <br />
 
@@ -99,12 +99,12 @@ var msg= {
                    <span ng-if="role.weblogRole != 'EDIT_DRAFT'">
                        <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring"/>
                        <img src='<s:url value="/images/table_multiple.png"/>' />
-                       <s:a href="%{editEntries}?weblogId={{role.weblog.id}}"><s:text name="yourWebsites.editEntries" /></s:a>
+                       <s:a href="%{editEntries}?weblogId={{role.weblog.id}}"><fmt:message key="yourWebsites.editEntries" /></s:a>
                        <br />
 
                        <s:url var="manageComments" action="comments" namespace="/tb-ui/authoring"/>
                        <img src='<s:url value="/images/page_white_edit.png"/>' />
-                       <s:a href="%{manageComments}?weblogId={{role.weblog.id}}"><s:text name="yourWebsites.manageComments" /></s:a>
+                       <s:a href="%{manageComments}?weblogId={{role.weblog.id}}"><fmt:message key="yourWebsites.manageComments" /></s:a>
                        <br />
                    </span>
 
@@ -115,14 +115,14 @@ var msg= {
                        <s:if test="isUsersCustomizeThemes()">
                            <img src='<s:url value="/images/layout.png"/>'>
                            <s:url var="weblogTheme" action="templates" namespace="/tb-ui/authoring"/>
-                           <s:a href='%{weblogTheme}?weblogId={{role.weblog.id}}'><s:text name="yourWebsites.theme" /></s:a>
+                           <s:a href='%{weblogTheme}?weblogId={{role.weblog.id}}'><fmt:message key="yourWebsites.theme" /></s:a>
                            <br />
                        </s:if>
 
                        <img src='<s:url value="/images/cog.png"/>' />
                        <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring"/>
                        <s:a href='%{manageWeblog}?weblogId={{role.weblog.id}}'>
-                           <s:text name="yourWebsites.manage" />
+                           <fmt:message key="yourWebsites.manage" />
                        </s:a>
                        <br />
                    </span>
@@ -131,7 +131,7 @@ var msg= {
                    <span ng-if='role.weblogRole != "OWNER"'>
                       <img src='<s:url value="/images/delete.png"/>' />
                       <a href="#" class="resign-link" data-weblog="{{role.weblog.handle}}">
-                          <s:text name='yourWebsites.resign'/>
+                          <fmt:message key='yourWebsites.resign'/>
                       </a>
                    </span>
            </td>
@@ -143,14 +143,14 @@ var msg= {
     <s:if test="authenticatedUser.hasEffectiveGlobalRole('BLOGCREATOR')">
         <form method="link" action="<s:url action='createWeblog'/>">
           <div class="control clearfix">
-             <input type="submit" value="<s:text name='yourWebsites.createWeblog'/>">
+             <input type="submit" value="<fmt:message key='yourWebsites.createWeblog'/>">
           </div>
         </form>
     </s:if>
 
     <div id="confirm-resign" style="display:none">
         <p>
-           <s:text name="yourWebsites.confirmResignation"/>
+           <fmt:message key="yourWebsites.confirmResignation"/>
         </p>
     </div>
 </div>

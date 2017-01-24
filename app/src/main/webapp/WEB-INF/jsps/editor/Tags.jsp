@@ -41,12 +41,12 @@
     </div>
 
     <p class="subtitle">
-        <s:text name="tagsForm.subtitle">
-            <s:param value="actionWeblog.handle"/>
-        </s:text>
+        <fmt:message key="tagsForm.subtitle">
+            <fmt:param value="${actionWeblog.handle}"/>
+        </fmt:message>
     </p>
     <p class="pagetip">
-        <s:text name="tagsForm.rootPrompt"/>
+        <fmt:message key="tagsForm.rootPrompt"/>
     </p>
 
     <div class="tablenav">
@@ -102,7 +102,7 @@
     </table>
 
     <div id="change-tag-dialog" style="display:none">
-      <label for="name"><s:text name='generic.name'/>:</label>
+      <label for="name"><fmt:message key='generic.name'/>:</label>
       <input type="text" id="new-tag" class="text ui-widget-content ui-corner-all">
     </div>
 

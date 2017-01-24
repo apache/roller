@@ -18,12 +18,12 @@
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
 <s:if test="status.error">
-<h2><s:text name="installer.startupProblemMessage" /></h2>
+<h2><fmt:message key="installer.startupProblemMessage" /></h2>
 
-<h3><s:text name="installer.whatHappened" /></h3>
+<h3><fmt:message key="installer.whatHappened" /></h3>
 </s:if>
 <s:if test="status.name() == 'databaseError'">
-    <p><s:text name="installer.databaseConnectionError" /></p>
+    <p><fmt:message key="installer.databaseConnectionError" /></p>
     <ul>
        <s:iterator value="messages">
           <li><s:property/></li>
@@ -31,17 +31,17 @@
     </ul>
 </s:if>
 <s:elseif test="status.name() == 'databaseVersionError'">
-    <p><s:text name="installer.databaseVersionError" /></p>
+    <p><fmt:message key="installer.databaseVersionError" /></p>
 </s:elseif>
 <s:elseif test="status.name() == 'tablesMissing'">
-    <h2><s:text name="installer.noDatabaseTablesFound" /></h2>
+    <h2><fmt:message key="installer.noDatabaseTablesFound" /></h2>
 
     <p>
-        <s:text name="installer.noDatabaseTablesExplanation">
-            <s:param value="databaseProductName" />
-        </s:text>
+        <fmt:message key="installer.noDatabaseTablesExplanation">
+            <fmt:param value="${databaseProductName}" />
+        </fmt:message>
     </p>
-    <p><s:text name="installer.createTables" /></p>
+    <p><fmt:message key="installer.createTables" /></p>
 
     <s:form action="install!create">
         <sec:csrfInput/>
@@ -49,31 +49,31 @@
     </s:form>
 </s:elseif>
 <s:elseif test="status.name() == 'databaseCreateError'">
-    <p><s:text name="installer.databaseCreateError" /></p>
+    <p><fmt:message key="installer.databaseCreateError" /></p>
     <pre>
         <s:iterator value="messages"><s:property/><br></s:iterator>
     </pre>
 </s:elseif>
 <s:elseif test="status.name() == 'needsBootstrapping'">
-    <h2><s:text name="installer.tablesCreated" /></h2>
+    <h2><fmt:message key="installer.tablesCreated" /></h2>
 
-    <p><s:text name="installer.tablesCreatedExplanation" /></p>
+    <p><fmt:message key="installer.tablesCreatedExplanation" /></p>
     <p>
-        <s:text name="installer.tryBootstrapping">
-            <s:param><s:url action="install!bootstrap"/></s:param>
-        </s:text>
+        <fmt:message key="installer.tryBootstrapping">
+            <fmt:param><s:url action="install!bootstrap"/></fmt:param>
+        </fmt:message>
     </p>
     <pre>
         <s:iterator value="messages"><s:property/><br /></s:iterator>
     </pre>
 </s:elseif>
 <s:elseif test="status.name() == 'bootstrapError'">
-    <p><s:text name="installer.bootstrappingError" /></p>
+    <p><fmt:message key="installer.bootstrappingError" /></p>
 </s:elseif>
 
 <s:if test="rootCauseStackTrace != null && rootCauseStackTrace != ''">
-    <h3><s:text name="installer.whyDidThatHappen" /></h3>
-    <p><s:text name="installer.heresTheStackTrace" /></p>
+    <h3><fmt:message key="installer.whyDidThatHappen" /></h3>
+    <p><fmt:message key="installer.heresTheStackTrace" /></p>
     <pre>
         [<s:property value="rootCauseStackTrace" />]
     </pre>
