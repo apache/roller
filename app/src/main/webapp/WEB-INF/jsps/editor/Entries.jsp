@@ -26,7 +26,7 @@
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var weblogId = "<c:out value='${actionWeblog.id}'/>";
     var msg = {
         deleteLabel: "<fmt:message key='generic.delete'/>",
         cancelLabel: "<fmt:message key='generic.cancel'/>"
@@ -36,7 +36,7 @@
 <script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/entries.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <p class="subtitle">
     <fmt:message key="weblogEntryQuery.subtitle" >
@@ -210,7 +210,7 @@
             </td>
 
             <td>
-                <a target="_blank" ng-href="<s:url action='entryEdit'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>&entryId={{entry.id}}">
+                <a target="_blank" ng-href="<s:url action='entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId={{entry.id}}">
                     <fmt:message key="generic.edit" />
                 </a>
             </td>

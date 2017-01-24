@@ -23,12 +23,12 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
-var weblogId = "<s:property value='actionWeblog.id'/>";
+var weblogId = "<c:out value='${actionWeblog.id}'/>";
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/members.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='members'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<s:url action='members'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <p class="subtitle">
     <fmt:message key="memberPermissions.subtitle" >

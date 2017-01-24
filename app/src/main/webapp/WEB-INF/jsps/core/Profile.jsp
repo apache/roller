@@ -23,7 +23,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
-var authMethod = '<s:property value="getProp('authentication.method')"/>';
+var authMethod = '<c:out value="${action.getProp('authentication.method')}"/>';
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/profile.js'/>"></script>
@@ -62,7 +62,7 @@ var authMethod = '<s:property value="getProp('authentication.method')"/>';
 </div>
 
 <%-- Below populated for logged-in user profile edit only --%>
-<input type="hidden" id="userId" value="<s:property value='authenticatedUser.id'/>"/>
+<input type="hidden" id="userId" value="<c:out value='${authenticatedUser.id}'/>"/>
 
 <s:if test="authenticatedUser == null">
     <s:set var="usernameTipKey">userRegister.tip.userName</s:set>

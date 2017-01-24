@@ -26,7 +26,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
-var weblogHandle = "<s:property value='actionWeblog.handle'/>";
+var weblogHandle = "<c:out value='${actionWeblog.handle}'/>";
 var msg= {
   confirmLabel: '<fmt:message key="generic.confirm"/>',
   cancelLabel: '<fmt:message key="generic.cancel"/>'
@@ -59,8 +59,8 @@ var msg= {
    </fmt:message>
 </p>
 
-<input type="hidden" id="recordId" value="<s:property value='%{#parameters.weblogId}'/>"/>
-<input type="hidden" id="refreshURL" value="<s:url action='themeEdit'/>?weblogId=%{#parameters.weblogId}"/>
+<input type="hidden" id="recordId" value="<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="refreshURL" value="<s:url action='themeEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <s:form id="themeForm" action="templates">
     <sec:csrfInput/>
@@ -69,7 +69,7 @@ var msg= {
     <div class="optioner">
         <p>
             <fmt:message key="themeEditor.yourCurrentTheme" />:
-            <b><s:property value="actionWeblog.theme"/></b>
+            <b><c:out value="${actionWeblog.theme}"/></b>
         </p>
     </div>
 
@@ -81,7 +81,7 @@ var msg= {
 
         <p>{{ selectedTheme.description }}</p>
         <p>
-            <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
+            <img ng-src="<c:out value='${siteURL}'/>{{ selectedTheme.previewPath }}"/>
         </p>
         <p>
             <fmt:message key="themeEditor.previewDescription" />
@@ -119,7 +119,7 @@ var msg= {
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
             var currentWeblog = $('#actionweblog').val();
-            var myUrl = '<s:url value="/tb-ui/authoring/rest/themes/"/><s:property value='actionWeblog.theme'/>'
+            var myUrl = "<s:url value='/tb-ui/authoring/rest/themes/'/><c:out value='${actionWeblog.theme}'/>"
             $.ajax({ url: myUrl, async:false,
                 success: function(data) { $scope.themes = data; }
             });

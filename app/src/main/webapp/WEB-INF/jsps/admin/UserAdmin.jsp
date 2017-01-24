@@ -164,7 +164,7 @@ var contextPath = "${pageContext.request.contextPath}";
                           <s:param name="weblogId" value="{{:weblog.id}}" />
                       </s:url>
                       <img src='<s:url value="/images/page_white_edit.png"/>' />
-                      <a href='<s:property value="editEntries" />?weblogId={{:weblog.id}}'>
+                      <a href='<c:out value="${editEntries}" />?weblogId={{:weblog.id}}'>
                       <fmt:message key="userAdmin.editEntries" /></a>
                   </td>
                   <td>
@@ -172,7 +172,7 @@ var contextPath = "${pageContext.request.contextPath}";
                           <s:param name="weblogId" value="{{:weblog.id}}" />
                       </s:url>
                       <img src='<s:url value="/images/page_white_edit.png"/>' />
-                      <a href='<s:property value="manageWeblog"/>?weblogId={{:weblog.id}}'>
+                      <a href='<c:out value="${manageWeblog}"/>?weblogId={{:weblog.id}}'>
                       <fmt:message key="userAdmin.manage" /></a>
                   </td>
               </tr>

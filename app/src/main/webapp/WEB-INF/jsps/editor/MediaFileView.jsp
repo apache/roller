@@ -25,8 +25,8 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var weblogId = "<s:property value='actionWeblog.id'/>";
-    var directoryId = "<s:property value='%{#parameters.directoryId}'/>";
+    var weblogId = "<c:out value='${actionWeblog.id}'/>";
+    var directoryId = "<c:out value='${param.directoryId}'/>";
     var msg = {
         confirmLabel: '<fmt:message key="generic.confirm"/>',
         deleteLabel: '<fmt:message key="generic.delete"/>',
@@ -36,7 +36,7 @@
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/mediafileview.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='mediaFileView'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<s:url action='mediaFileView'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <%-- Subtitle and folder path --%>
 
@@ -84,14 +84,14 @@
                         <s:param name="weblogId" value="%{actionWeblog.id}" />
                     </s:url>
 
-                    <a ng-href="<s:property value='%{editUrl}'/>&amp;mediaFileId={{mediaFile.id}}">
+                    <a ng-href="<c:out value='${editUrl}'/>&amp;mediaFileId={{mediaFile.id}}">
                         <img ng-if="mediaFile.imageFile"
                              ng-src='{{mediaFile.thumbnailURL}}'
                              alt='{{mediaFile.altText}}'
                              title='{{mediaFile.name}}'>
 
                         <s:url var="mediaFileURL" value="/images/page_white.png"/>
-                        <img ng-if="!mediaFile.imageFile" ng-src='<s:property value="%{mediaFileURL}" />'
+                        <img ng-if="!mediaFile.imageFile" ng-src='<c:out value="${mediaFileURL}" />'
                              alt='{{mediaFile.altText}}'
                              style="padding:40px 50px;">
                     </a>
