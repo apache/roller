@@ -28,10 +28,10 @@
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var weblogId = "<s:property value='actionWeblog.id'/>";
-    var mediaFileId = "<s:property value='%{#parameters.mediaFileId}'/>";
-    var directoryId = "<s:property value='%{#parameters.directoryId}'/>";
-    var mediaViewUrl = "<s:property value='%{mediaFileViewUrl}'/>";
+    var weblogId = "<c:out value='${actionWeblog.id}'/>";
+    var mediaFileId = "<c:out value='${param.mediaFileId}'/>";
+    var directoryId = "<c:out value='${param.directoryId}'/>";
+    var mediaViewUrl = "<c:out value='${mediaFileViewUrl}'/>";
 </script>
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/mediafileedit.js'/>"></script>
@@ -137,7 +137,7 @@
                 <a href='{{ctrl.mediaFileData.permalink}}' target="_blank"
                    title='<fmt:message key="mediaFileEdit.linkTitle" />'>
                    <s:url var="linkIconURL" value="/images/link.png"/>
-                   <img border="0" src='<s:property value="%{linkIconURL}" />'
+                   <img border="0" src='<c:out value="${linkIconURL}" />'
                        style="padding:2px 2px;" alt="link" />
                 </a>
                 <input id="permalink" type="text" size="50" style="width:90%" value='{{ctrl.mediaFileData.permalink}}' readonly />
@@ -172,7 +172,7 @@
     <br />
     <div class="control">
         <input type="button" value="<fmt:message key='generic.save'/>" ng-click="ctrl.saveMediaFile()"/>
-        <a href="<s:property value='%{mediaFileViewUrl}'/>&amp;directoryId={{ctrl.mediaFileData.directory.id}}">
+        <a href="<c:out value='${mediaFileViewUrl}'/>&amp;directoryId={{ctrl.mediaFileData.directory.id}}">
             <input type="button" value="<fmt:message key='generic.cancel'/>"/>
         </a>
     </div>

@@ -25,9 +25,9 @@
 <s:if test="status.name() == 'databaseError'">
     <p><fmt:message key="installer.databaseConnectionError" /></p>
     <ul>
-       <s:iterator value="messages">
-          <li><s:property/></li>
-       </s:iterator>
+       <c:forEach var="message" items="${messages}">
+           <c:out value="${message}"/>
+       </c:forEach>
     </ul>
 </s:if>
 <s:elseif test="status.name() == 'databaseVersionError'">
@@ -51,7 +51,9 @@
 <s:elseif test="status.name() == 'databaseCreateError'">
     <p><fmt:message key="installer.databaseCreateError" /></p>
     <pre>
-        <s:iterator value="messages"><s:property/><br></s:iterator>
+        <c:forEach var="message" items="${messages}">
+            <c:out value="${message}"/>
+        </c:forEach>
     </pre>
 </s:elseif>
 <s:elseif test="status.name() == 'needsBootstrapping'">
@@ -64,7 +66,9 @@
         </fmt:message>
     </p>
     <pre>
-        <s:iterator value="messages"><s:property/><br /></s:iterator>
+        <c:forEach var="message" items="${messages}">
+            <c:out value="${message}"/>
+        </c:forEach>
     </pre>
 </s:elseif>
 <s:elseif test="status.name() == 'bootstrapError'">
@@ -75,7 +79,7 @@
     <h3><fmt:message key="installer.whyDidThatHappen" /></h3>
     <p><fmt:message key="installer.heresTheStackTrace" /></p>
     <pre>
-        [<s:property value="rootCauseStackTrace" />]
+        [<c:out value="${rootCauseStackTrace}" />]
     </pre>
 </s:if>
 <br />

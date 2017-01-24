@@ -31,8 +31,8 @@
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var weblogId = "<s:property value='actionWeblog.id'/>";
-    var entryId = "<s:property value='%{#parameters.entryId}'/>";
+    var weblogId = "<c:out value='${actionWeblog.id}'/>";
+    var entryId = "<c:out value='${param.entryId}'/>";
     var newEntryUrl = "<s:url action='entryAdd'/>?weblogId=" + weblogId;
     var commentCountTmpl = "<fmt:message key='weblogEdit.hasComments'/>";
     var msg = {
@@ -50,8 +50,8 @@
     <s:set var="subtitleKey">weblogEdit.subtitle.editEntry</s:set>
     <s:set var="mainAction">entryEdit</s:set>
     <input id="refreshURL" type="hidden"
-        value="<s:url action='entryEdit'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"\
-            "&entryId=<s:property value='%{#parameters.entryId}'/>"/>
+        value="<s:url action='entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"\
+            "&entryId=<c:out value='${param.entryId}'/>"/>
 </s:if>
 <s:else>
     <s:set var="subtitleKey">weblogEdit.subtitle.newEntry</s:set>

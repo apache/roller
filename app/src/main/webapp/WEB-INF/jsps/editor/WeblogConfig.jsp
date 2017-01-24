@@ -51,7 +51,7 @@ var msg= {
 </div>
 
 <input type="hidden" id="menuURL" value="<s:url action='menu'/>"/>
-<input type="hidden" id="weblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
+<input type="hidden" id="weblogId" value="<c:out value='${param.weblogId}'/>"/>
 
 <%-- Create Weblog --%>
 <s:if test="weblogId == null">
@@ -65,7 +65,7 @@ var msg= {
     <fmt:message key="weblogSettings.prompt" var="subtitlePrompt">
         <fmt:param value="${actionWeblog.handle}"/>
     </fmt:message>
-    <input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+    <input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 </s:else>
 
 <p class="subtitle">
@@ -105,7 +105,7 @@ var msg= {
                 </s:else>
                 <span style="text-size:70%">
                     <fmt:message key="weblogSettings.weblogUrl" />:&nbsp;
-                    <s:property value="absoluteSiteURL" />/<span style="color:red" data-link="weblogData.handle"></span>
+                    <c:out value="${absoluteSiteURL}" />/<span style="color:red" data-link="weblogData.handle"></span>
                 </span>
             </td>
             <td class="description"><fmt:message key="weblogSettings.tip.handle" /></td>
@@ -262,7 +262,7 @@ var msg= {
 
 <script id="selectedThemeTemplate" type="text/x-jsrender">
     <p id="themeDescription">{{:description}}</p>
-    <img id="themeImage" src="<s:property value='siteURL'/>{{:previewPath}}"></img>
+    <img id="themeImage" src="<c:out value='${siteURL}'/>{{:previewPath}}"></img>
 </script>
 
 <div id="confirm-delete" title="<fmt:message key='websiteRemove.title'/>" style="display:none">

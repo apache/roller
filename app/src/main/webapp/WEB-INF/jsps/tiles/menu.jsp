@@ -47,7 +47,7 @@
     <tr>
         <td class="padleft">
             <c:forEach var="tabItem" items="${selectedTab.items}" varStatus="stat">
-                <c:if test="{!$stat.first}">|</c:if>
+                <c:if test="${!stat.first}">|</c:if>
                 <c:choose>
                     <c:when test="#tabItem.selected">
                         <a class="menuItemSelected" href="<c:url value='${tabItem.action}.rol'><c:param name='weblogId' value='${actionWeblog.id}'/></c:url>"><fmt:message key="${tabItem.key}" /></a>

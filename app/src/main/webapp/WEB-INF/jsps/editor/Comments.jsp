@@ -27,8 +27,8 @@
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var weblogId = "<s:property value='actionWeblog.id'/>";
-    var entryId = "<s:property value='%{#parameters.entryId}'/>";
+    var weblogId = "<c:out value='${actionWeblog.id}'/>";
+    var entryId = "<c:out value='${param.entryId}'/>";
     var nowShowingTmpl = "<fmt:message key='commentManagement.nowShowing'/>";
     var commentHeaderTmpl = "<fmt:message key='commentManagement.commentHeader'/>";
     var entryTitleTmpl = "<fmt:message key='commentManagement.entry.subtitle'/>";
@@ -38,10 +38,10 @@
 <script src="<s:url value='/tb-ui/scripts/comments.js'/>"></script>
 
 <s:if test="%{#parameters.entryId == null}">
-    <input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+    <input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 </s:if>
 <s:else>
-    <input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>&entryId=<s:property value='%{#parameters.entryId}'/>"/>
+    <input type="hidden" id="refreshURL" value="<s:url action='comments'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId=<c:out value='${param.entryId}'/>"/>
 </s:else>
 
 <div id="ngapp-div" ng-app="tightblogApp" ng-controller="CommentsController as ctrl">

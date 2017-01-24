@@ -45,8 +45,8 @@ var msg= {
     <fmt:message key="bookmarksForm.rootPrompt" />
 </p>
 
-<input id="refreshURL" type="hidden" value="<s:url action='bookmarks'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
-<input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<s:url action='bookmarks'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="actionWeblogId" value="<c:out value='${param.weblogId}'/>"/>
 
 <div id="bookmark-list" ng-app="BookmarkApp" ng-controller="BookmarkController as ctrl">
 

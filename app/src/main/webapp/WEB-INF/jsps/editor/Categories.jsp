@@ -45,8 +45,8 @@
     <fmt:message key="categoriesForm.rootPrompt"/>
 </p>
 
-<input id="refreshURL" type="hidden" value="<s:url action='categories'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
-<input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<s:url action='categories'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="actionWeblogId" value="<c:out value='${param.weblogId}'/>"/>
 
 <div id="category-list" ng-app="tightBlogApp" ng-controller="CategoryController as ctrl">
 

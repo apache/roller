@@ -56,8 +56,8 @@ var msg= {
       </s:if>
     </div>
 
-    <input id="refreshURL" type="hidden" value="<s:url action='templates'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
-    <input type="hidden" id="actionWeblogId" value="<s:property value='%{#parameters.weblogId}'/>"/>
+    <input id="refreshURL" type="hidden" value="<s:url action='templates'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+    <input type="hidden" id="actionWeblogId" value="<c:out value='${param.weblogId}'/>"/>
 
     <div>
 
@@ -123,7 +123,7 @@ var msg= {
 
             <td align="center" style="vertical-align:middle">
                 <span ng-if="tpl.role.accessibleViaUrl && tpl.relativePath != null && tpl.relativePath != ''">
-                    <a target="_blank" href="<s:property value='actionWeblog.absoluteURL'/>page/{{tpl.relativePath}}">
+                    <a target="_blank" href="<c:out value='${actionWeblog.absoluteURL}'/>page/{{tpl.relativePath}}">
                       <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"/>
                     </a>
                 </span>

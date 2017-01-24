@@ -21,7 +21,7 @@
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var weblogId = "<s:property value='actionWeblog.id'/>";
+    var weblogId = "<c:out value='${actionWeblog.id}'/>";
     var msg = {
         updateLabel: "<fmt:message key='generic.update'/>",
         deleteLabel: "<fmt:message key='generic.delete'/>",
@@ -32,7 +32,7 @@
 <script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/tags.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <div id="ngapp-div" ng-app="tightblogApp" ng-controller="TagsController as ctrl">
 

@@ -29,8 +29,8 @@ var contextPath = "${pageContext.request.contextPath}";
 <script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
 <script src="<s:url value='/tb-ui/scripts/mediafilechooser.js'/>"></script>
 
-<input type="hidden" id="recordId" value="<s:property value='%{#parameters.weblogId}'/>"/>
-<input type="hidden" id="refreshURL" value="<s:url action='mediaFileChooser'/>?weblogId=<s:property value='%{#parameters.weblogId}'/>"/>
+<input type="hidden" id="recordId" value="<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="refreshURL" value="<s:url action='mediaFileChooser'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <%-- Drop-down box to choose media directory --%>
 <select id="mediachooser-select-directory"></select>
