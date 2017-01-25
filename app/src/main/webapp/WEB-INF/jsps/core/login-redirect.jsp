@@ -40,7 +40,7 @@ if (user == null) {
             response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
                 + user.getLocale() + "&weblogId=" + weblog.getId());
         } else {
-            response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/menu.rol?request_locale="
+            response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale="
                 + user.getLocale());
         }
     } else {

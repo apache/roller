@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
@@ -30,8 +30,8 @@ var msg= {
     addTitle: '<fmt:message key="pingTarget.addTarget"/>'
 };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/pingtargets.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/pingtargets.js'/>"></script>
 
 <div id="errorMessageDiv" class="errors" style="display:none">
   <span>Error message here.</span>
@@ -47,7 +47,7 @@ var msg= {
 
 <p/><fmt:message key="pingTargets.explanation"/><p/>
 
-<input type="hidden" id="refreshURL" value="<s:url action='pingTargets'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/admin/pingTargets'/>"/>
 
 <table class="rollertable">
   <thead>
@@ -85,7 +85,7 @@ var msg= {
         </td>
         <td align="center">
             <a class="edit-link">
-                <img src='<s:url value="/images/page_white_edit.png"/>' alt="<fmt:message key="generic.edit" />" />
+                <img src='<c:url value="/images/page_white_edit.png"/>' alt="<fmt:message key="generic.edit" />" />
             </a>
         </td>
         <td align="center">
@@ -95,7 +95,7 @@ var msg= {
         </td>
         <td align="center">
             <a class="delete-link">
-                <img src='<s:url value="/images/delete.png"/>' alt="<fmt:message key="pingTarget.remove" />" />
+                <img src='<c:url value="/images/delete.png"/>' alt="<fmt:message key="pingTarget.remove" />" />
             </a>
         </td>
       </tr>

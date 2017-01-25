@@ -19,10 +19,10 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
@@ -30,8 +30,8 @@ var msg= {
   cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/weblogconfig.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/weblogconfig.js'/>"></script>
 
 <div id="errorMessageDiv" class="errors" style="display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
@@ -50,14 +50,14 @@ var msg= {
   </s:if>
 </div>
 
-<input type="hidden" id="menuURL" value="<s:url action='menu'/>"/>
+<input type="hidden" id="menuURL" value="<c:url value='/tb-ui/menu.rol'/>"/>
 <input type="hidden" id="weblogId" value="<c:out value='${param.weblogId}'/>"/>
 
 <%-- Create Weblog --%>
 <s:if test="weblogId == null">
     <fmt:message key="weblogSettings.create.button.save" var="saveButtonText"/>
     <fmt:message key="weblogSettings.create.prompt" var="subtitlePrompt"/>
-    <input type="hidden" id="refreshURL" value="<s:url action='createWeblog'/>"/>
+    <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/createWeblog.rol'/>"/>
 </s:if>
 <%-- Update Weblog --%>
 <s:else>
@@ -65,7 +65,7 @@ var msg= {
     <fmt:message key="weblogSettings.prompt" var="subtitlePrompt">
         <fmt:param value="${actionWeblog.handle}"/>
     </fmt:message>
-    <input type="hidden" id="refreshURL" value="<s:url action='weblogConfig'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+    <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/weblogConfig.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 </s:else>
 
 <p class="subtitle">
@@ -237,7 +237,7 @@ var msg= {
 <br>
 <div class="control">
     <s:submit value="%{getText(#saveButtonText)}"/>
-    <input type="button" value="<fmt:message key='generic.cancel'/>" onclick="window.location='<s:url action='menu'/>'" />
+    <input type="button" value="<fmt:message key='generic.cancel'/>" onclick="window.location='<c:url value='/tb-ui/menu.rol'/>'" />
 </div>
 
 <br>

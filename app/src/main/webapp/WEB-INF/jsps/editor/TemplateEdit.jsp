@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
 <script>
@@ -32,8 +32,8 @@
         cancelLabel: "<fmt:message key='generic.cancel'/>"
     };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/templateedit.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/templateedit.js'/>"></script>
 
 <p class="subtitle">
    <fmt:message key="templateEdit.subtitle"/>
@@ -117,7 +117,7 @@
             <td>
                 <input ng-click="ctrl.saveTemplate()" type="button" value="<fmt:message key='generic.save'/>">
                 <input type="button" value="<fmt:message key='generic.cancel'/>"
-                    onclick="window.location='<s:url action="templates"><s:param name="weblogId" value="%{weblogId}"/></s:url>'">
+                    onclick="window.location='<c:url value="/tb-ui/authoring/templates.rol"><c:param name="weblogId" value="%{weblogId}"/></c:url>'">
             </td>
         </tr>
     </table>

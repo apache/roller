@@ -19,10 +19,10 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-<script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
+<script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
@@ -33,8 +33,8 @@
         addTitle: '<fmt:message key="categoryForm.add.title"/>'
     };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/categories.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/categories.js'/>"></script>
 
 <p class="subtitle">
     <fmt:message key="categoriesForm.subtitle">
@@ -45,7 +45,7 @@
     <fmt:message key="categoriesForm.rootPrompt"/>
 </p>
 
-<input id="refreshURL" type="hidden" value="<s:url action='categories'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/categories.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 <input type="hidden" id="actionWeblogId" value="<c:out value='${param.weblogId}'/>"/>
 
 <div id="category-list" ng-app="tightBlogApp" ng-controller="CategoryController as ctrl">
@@ -63,13 +63,13 @@
           <td class="category-name">{{category.name}}</td>
           <td align="center">
               <a href="#" class="edit-link">
-                <img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/>
+                <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/>
               </a>
           </td>
           <td align="center">
               <span ng-if="ctrl.categories.length > 1">
                   <a href="#" class="delete-link">
-                      <img src='<s:url value="/images/delete.png"/>' border="0" alt="icon"/>
+                      <img src='<c:url value="/images/delete.png"/>' border="0" alt="icon"/>
                   </a>
               </span>
           </td>

@@ -19,9 +19,9 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script>
     var contextPath = "${pageContext.request.contextPath}";
@@ -33,10 +33,10 @@
         cancelLabel: '<fmt:message key="generic.cancel"/>'
     };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/mediafileview.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/mediafileview.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='mediaFileView'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/mediaFileView.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <%-- Subtitle and folder path --%>
 
@@ -80,9 +80,9 @@
 
             <li class="align-images" ng-repeat="mediaFile in ctrl.mediaFiles" id="{{mediaFile.id}}">
                 <div class="mediaObject">
-                    <s:url var="editUrl" action="mediaFileEdit">
-                        <s:param name="weblogId" value="%{actionWeblog.id}" />
-                    </s:url>
+                    <c:url var="editUrl" value="/tb-ui/authoring/mediaFileEdit.rol">
+                        <c:param name="weblogId" value="%{actionWeblog.id}" />
+                    </c:url>
 
                     <a ng-href="<c:out value='${editUrl}'/>&amp;mediaFileId={{mediaFile.id}}">
                         <img ng-if="mediaFile.imageFile"
@@ -90,7 +90,7 @@
                              alt='{{mediaFile.altText}}'
                              title='{{mediaFile.name}}'>
 
-                        <s:url var="mediaFileURL" value="/images/page_white.png"/>
+                        <c:url var="mediaFileURL" value="/images/page_white.png"/>
                         <img ng-if="!mediaFile.imageFile" ng-src='<c:out value="${mediaFileURL}" />'
                              alt='{{mediaFile.altText}}'
                              style="padding:40px 50px;">
@@ -147,17 +147,17 @@
             <br>
             <br>
 
-            <img src='<s:url value="/images/image_add.png"/>' border="0" alt="icon">
-            <s:url var="mediaFileAddURL" action="mediaFileAdd">
-                <s:param name="weblogId" value="%{actionWeblog.id}" />
-            </s:url>
+            <img src='<c:url value="/images/image_add.png"/>' border="0" alt="icon">
+            <c:url var="mediaFileAddURL" value="/tb-ui/authoring/mediaFileAdd">
+                <c:param name="weblogId" value="%{actionWeblog.id}" />
+            </c:url>
             <s:a href='%{mediaFileAddURL}&directoryId={{ctrl.directoryToView}}' style='font-weight:bold;'>
                 <fmt:message key="mediaFileSidebar.add" />
             </s:a>
 
             <br><br>
             <div>
-                <img src='<s:url value="/images/folder_add.png"/>' border="0" alt="icon">
+                <img src='<c:url value="/images/folder_add.png"/>' border="0" alt="icon">
                 <fmt:message key="mediaFileView.addDirectory" /><br />
                 <div style="padding-left:2em; padding-top:1em">
                     <fmt:message key="mediaFileView.directoryName" />

@@ -19,13 +19,13 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/useradmin.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/useradmin.js'/>"></script>
 
 <div id="errorMessageDiv" class="errors" style="display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
@@ -38,7 +38,7 @@ var contextPath = "${pageContext.request.contextPath}";
   </script>
 </div>
 
-<input type="hidden" id="refreshURL" value="<s:url action='userAdmin'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/admin/userAdmin'/>"/>
 
 <div id="pendingList">
   <script id="pendingTemplate" type="text/x-jsrender">
@@ -160,18 +160,18 @@ var contextPath = "${pageContext.request.contextPath}";
                       {{:weblogRole}}
                   </td>
                   <td>
-                      <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring">
-                          <s:param name="weblogId" value="{{:weblog.id}}" />
-                      </s:url>
-                      <img src='<s:url value="/images/page_white_edit.png"/>' />
+                      <c:url var="editEntries" value="/tb-ui/authoring/entries.rol">
+                          <c:param name="weblogId" value="{{:weblog.id}}" />
+                      </c:url>
+                      <img src='<c:url value="/images/page_white_edit.png"/>' />
                       <a href='<c:out value="${editEntries}" />?weblogId={{:weblog.id}}'>
                       <fmt:message key="userAdmin.editEntries" /></a>
                   </td>
                   <td>
-                      <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring">
-                          <s:param name="weblogId" value="{{:weblog.id}}" />
-                      </s:url>
-                      <img src='<s:url value="/images/page_white_edit.png"/>' />
+                      <c:url var="manageWeblog" value="/tb-ui/authoring/weblogConfig.rol">
+                          <c:param name="weblogId" value="{{:weblog.id}}" />
+                      </c:url>
+                      <img src='<c:url value="/images/page_white_edit.png"/>' />
                       <a href='<c:out value="${manageWeblog}"/>?weblogId={{:weblog.id}}'>
                       <fmt:message key="userAdmin.manage" /></a>
                   </td>

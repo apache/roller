@@ -38,7 +38,7 @@
 <p><fmt:message key="loginPage.prompt" /></p>
 
 <form method="post" id="loginForm"
-      action="<s:url value='/roller_j_security_check'/>">
+      action="<c:url value='/roller_j_security_check'/>">
 
     <sec:csrfInput/>
 

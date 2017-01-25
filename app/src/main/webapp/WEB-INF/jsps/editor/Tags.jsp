@@ -14,9 +14,9 @@
     limitations under the License.
 -->
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
 <script>
@@ -29,10 +29,10 @@
     };
 </script>
 
-<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/tags.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/tags.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entries.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <div id="ngapp-div" ng-app="tightblogApp" ng-controller="TagsController as ctrl">
 

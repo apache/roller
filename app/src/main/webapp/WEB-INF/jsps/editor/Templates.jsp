@@ -17,10 +17,10 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
@@ -29,8 +29,8 @@ var msg= {
 };
 </script>
 
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/templates.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/templates.js'/>"></script>
 
 <div id="templates-list" ng-app="TemplatesApp" ng-controller="TemplatesController as ctrl">
 
@@ -56,7 +56,7 @@ var msg= {
       </s:if>
     </div>
 
-    <input id="refreshURL" type="hidden" value="<s:url action='templates'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+    <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/templates.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
     <input type="hidden" id="actionWeblogId" value="<c:out value='${param.weblogId}'/>"/>
 
     <div>
@@ -85,9 +85,9 @@ var msg= {
             </td>
 
             <td style="vertical-align:middle">
-                <s:url var="edit" action="templateEdit">
-                    <s:param name="weblogId" value="%{actionWeblog.id}" />
-                </s:url>
+                <c:url var="edit" value="/tb-ui/authoring/templateEdit">
+                    <c:param name="weblogId" value="%{actionWeblog.id}" />
+                </c:url>
                 <span ng-if="tpl.derivation != 'Default'">
                     <s:a href="%{edit}&templateId={{tpl.id}}">{{tpl.name}}</s:a>
                 </span>
@@ -124,7 +124,7 @@ var msg= {
             <td align="center" style="vertical-align:middle">
                 <span ng-if="tpl.role.accessibleViaUrl && tpl.relativePath != null && tpl.relativePath != ''">
                     <a target="_blank" href="<c:out value='${actionWeblog.absoluteURL}'/>page/{{tpl.relativePath}}">
-                      <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon"/>
+                      <img src='<c:url value="/images/world_go.png"/>' border="0" alt="icon"/>
                     </a>
                 </span>
             </td>

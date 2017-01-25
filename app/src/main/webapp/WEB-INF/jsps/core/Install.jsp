@@ -62,7 +62,7 @@
     <p><fmt:message key="installer.tablesCreatedExplanation" /></p>
     <p>
         <fmt:message key="installer.tryBootstrapping">
-            <fmt:param><s:url action="install!bootstrap"/></fmt:param>
+            <fmt:param><c:url value="install.rol!bootstrap"/></fmt:param>
         </fmt:message>
     </p>
     <pre>

@@ -19,14 +19,14 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var authMethod = '<c:out value="${action.getProp('authentication.method')}"/>';
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/profile.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/profile.js'/>"></script>
 
 <div id="errorMessageDiv" class="errors" style="display:none">
   <script id="errorMessageTemplate" type="text/x-jsrender">
@@ -51,7 +51,7 @@ var authMethod = '<c:out value="${action.getProp('authentication.method')}"/>';
   </s:if>
   <s:else>
     <p><fmt:message key="welcome.accountCreated" /></p>
-    <p><a id="a_clickHere" href="<s:url action='login-redirect'/>" ><fmt:message key="welcome.clickHere" /></a>
+    <p><a id="a_clickHere" href="<c:url value='/tb-ui/login-redirect.rol'/>" ><fmt:message key="welcome.clickHere" /></a>
     <fmt:message key="welcome.toLoginAndPost" /></p>
   </s:else>
 </div>
@@ -69,7 +69,7 @@ var authMethod = '<c:out value="${action.getProp('authentication.method')}"/>';
     <s:set var="passwordTipKey">userRegister.tip.password</s:set>
     <s:set var="passwordConfirmTipKey">userRegister.tip.passwordConfirm</s:set>
     <s:set var="saveButtonText">userRegister.button.save</s:set>
-    <input type="hidden" id="refreshURL" value="<s:url action='register'/>"/>
+    <input type="hidden" id="refreshURL" value="<c:url value='/register.rol'/>"/>
     <input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
     <div class="notregistered">
       <p><fmt:message key="userRegister.prompt" /></p>
@@ -80,8 +80,8 @@ var authMethod = '<c:out value="${action.getProp('authentication.method')}"/>';
     <s:set var="passwordTipKey">userSettings.tip.password</s:set>
     <s:set var="passwordConfirmTipKey">userSettings.tip.passwordConfirm</s:set>
     <s:set var="saveButtonText">generic.save</s:set>
-    <input type="hidden" id="refreshURL" value="<s:url action='profile'/>"/>
-    <input type="hidden" id="cancelURL" value="<s:url action='menu'/>"/>
+    <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/profile.rol'/>"/>
+    <input type="hidden" id="cancelURL" value="<c:url value='/tb-ui/menu.rol'/>"/>
     <p class="subtitle"><fmt:message key="yourProfile.subtitle" /></p>
 </s:else>
 
