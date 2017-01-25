@@ -19,12 +19,12 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
+<script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
-<s:url var="mediaFileViewUrl" action="mediaFileView">
-    <s:param name="weblogId" value="%{actionWeblog.id}" />
-</s:url>
+<c:url var="mediaFileViewUrl" value="/tb-ui/authoring/mediaFileView.rol">
+    <c:param name="weblogId" value="%{actionWeblog.id}" />
+</c:url>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
@@ -33,8 +33,8 @@
     var directoryId = "<c:out value='${param.directoryId}'/>";
     var mediaViewUrl = "<c:out value='${mediaFileViewUrl}'/>";
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/mediafileedit.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/mediafileedit.js'/>"></script>
 
 <div ng-app="mediaFileEditApp" ng-controller="MediaFileEditController as ctrl">
 
@@ -136,7 +136,7 @@
             <td>
                 <a href='{{ctrl.mediaFileData.permalink}}' target="_blank"
                    title='<fmt:message key="mediaFileEdit.linkTitle" />'>
-                   <s:url var="linkIconURL" value="/images/link.png"/>
+                   <c:url var="linkIconURL" value="/images/link.png"/>
                    <img border="0" src='<c:out value="${linkIconURL}" />'
                        style="padding:2px 2px;" alt="link" />
                 </a>

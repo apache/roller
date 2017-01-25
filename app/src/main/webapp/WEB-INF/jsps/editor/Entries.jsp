@@ -19,9 +19,9 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
 <script>
@@ -33,10 +33,10 @@
     };
 </script>
 
-<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/entries.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/entries.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='entries'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entries.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <p class="subtitle">
     <fmt:message key="weblogEntryQuery.subtitle" >
@@ -210,7 +210,7 @@
             </td>
 
             <td>
-                <a target="_blank" ng-href="<s:url action='entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId={{entry.id}}">
+                <a target="_blank" ng-href="<c:url value='/tb-ui/authoring/entryEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId={{entry.id}}">
                     <fmt:message key="generic.edit" />
                 </a>
             </td>

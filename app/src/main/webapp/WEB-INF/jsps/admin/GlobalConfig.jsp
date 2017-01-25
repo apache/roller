@@ -21,17 +21,17 @@
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
 <p class="subtitle"><fmt:message key="configForm.subtitle" /></p>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
 </script>
 
-<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/globalconfig.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/globalconfig.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='globalConfig'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/admin/globalConfig.rol'/>"/>
 
 <p><fmt:message key="configForm.prompt" /></p>
 

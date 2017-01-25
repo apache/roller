@@ -19,16 +19,16 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var weblogId = "<c:out value='${actionWeblog.id}'/>";
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/members.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/members.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='members'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/members.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <p class="subtitle">
     <fmt:message key="memberPermissions.subtitle" >
@@ -85,7 +85,7 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
         <tbody>
             <tr ng-repeat="role in ctrl.roles" id="{{role.user.id}}" ng-class="{rollertable_pending: role.pending}">
                 <td>
-                  <img src='<s:url value="/images/user.png"/>' border="0" alt="icon" />
+                  <img src='<c:url value="/images/user.png"/>' border="0" alt="icon" />
                   {{role.user.userName}}
                 </td>
                 <td>

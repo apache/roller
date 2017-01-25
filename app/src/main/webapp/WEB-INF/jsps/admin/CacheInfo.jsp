@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
 <script>
     $.views.converters("todate", function(val) {
@@ -30,8 +30,8 @@
         cancelLabel: '<fmt:message key="generic.cancel"/>',
     };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/cacheInfo.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/cacheInfo.js'/>"></script>
 
 <div id="success-message" class="messages" style="display:none">
     <span class="textSpan"></span>
@@ -44,7 +44,7 @@
 <p class="subtitle"><fmt:message key="cacheInfo.subtitle" />
 <p><fmt:message key="cacheInfo.prompt" />
 
-<input type="hidden" id="refreshURL" value="<s:url action='cacheInfo'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/admin/cacheInfo.rol'/>"/>
 
 <br style="clear:left"/>
 

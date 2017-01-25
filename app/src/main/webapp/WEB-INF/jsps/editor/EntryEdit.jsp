@@ -19,12 +19,12 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css">
 
-<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
 <script src="//cdn.quilljs.com/0.20.1/quill.js"></script>
@@ -33,30 +33,30 @@
     var contextPath = "${pageContext.request.contextPath}";
     var weblogId = "<c:out value='${actionWeblog.id}'/>";
     var entryId = "<c:out value='${param.entryId}'/>";
-    var newEntryUrl = "<s:url action='entryAdd'/>?weblogId=" + weblogId;
+    var newEntryUrl = "<c:url value='/tb-ui/authoring/entryAdd.rol'/>?weblogId=" + weblogId;
     var commentCountTmpl = "<fmt:message key='weblogEdit.hasComments'/>";
     var msg = {
         deleteLabel: "<fmt:message key='generic.delete'/>",
         cancelLabel: "<fmt:message key='generic.cancel'/>",
     };
-    var mediaFileChooserUrl = "<s:url action='mediaFileChooser'/>?weblogId=" + weblogId;
+    var mediaFileChooserUrl = "<c:url value='/tb-ui/authoring/mediaFileChooser.rol'/>?weblogId=" + weblogId;
 </script>
 
-<script src="<s:url value='/tb-ui/scripts/commonangular.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/entryedit.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/entryedit.js'/>"></script>
 
 <%-- Titling, processing actions different between entry add and edit --%>
 <s:if test="actionName == 'entryEdit'">
     <s:set var="subtitleKey">weblogEdit.subtitle.editEntry</s:set>
     <s:set var="mainAction">entryEdit</s:set>
     <input id="refreshURL" type="hidden"
-        value="<s:url action='entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"\
+        value="<c:url value='/tb-ui/authoring/entryEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"\
             "&entryId=<c:out value='${param.entryId}'/>"/>
 </s:if>
 <s:else>
     <s:set var="subtitleKey">weblogEdit.subtitle.newEntry</s:set>
     <s:set var="mainAction">entryAdd</s:set>
-    <input id="refreshURL" type="hidden" value="<s:url action='entryAdd'/>"/>
+    <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entryAdd.rol'/>"/>
 </s:else>
 
     <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
@@ -124,7 +124,7 @@
             <td>
                 <span ng-show="ctrl.entry.status == 'PUBLISHED'">
                     <a id="permalink" ng-href='{{ctrl.entry.permalink}}'>{{ctrl.entry.permalink}}</a>
-                    <img src='<s:url value="/images/launch-link.png"/>' />
+                    <img src='<c:url value="/images/launch-link.png"/>' />
                 </span>
                 <span ng-show="ctrl.entry.status != 'PUBLISHED'">
                     {{ctrl.entry.permalink}}

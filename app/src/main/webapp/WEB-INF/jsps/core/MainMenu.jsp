@@ -19,10 +19,10 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src='<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-<script src='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
@@ -31,10 +31,10 @@ var msg= {
     cancelLabel: '<fmt:message key="generic.cancel"/>',
 };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/mainmenu.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/mainmenu.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<s:url action='menu'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/menu.rol'/>"/>
 
 <div id="blog-list" ng-app="mainMenuApp" ng-controller="MainMenuController as ctrl">
 
@@ -51,7 +51,7 @@ var msg= {
          </span>
       </div>
       <div ng-repeat="role in ctrl.roles | filter:{ pending: 'false' }">
-        <span class="mm_weblog_name"><img src='<s:url value="/images/folder.png"/>' />&nbsp;{{role.weblog.name}}</span>
+        <span class="mm_weblog_name"><img src='<c:url value="/images/folder.png"/>' />&nbsp;{{role.weblog.name}}</span>
 
         <table class="mm_table" width="100%" cellpadding="0" cellspacing="0">
            <tr id="{{role.id}}" data-name="{{role.weblog.name}}">
@@ -89,22 +89,22 @@ var msg= {
 
            <td class="mm_table_actions" width="20%" align="left" >
 
-                   <img src='<s:url value="/images/table_edit.png"/>' />
-                   <a href="<s:url action='entryAdd' namespace='/tb-ui/authoring'/>?weblogId={{role.weblog.id}}">
+                   <img src='<c:url value="/images/table_edit.png"/>' />
+                   <a href="<c:url value='/tb-ui/authoring/entryAdd.rol'/>?weblogId={{role.weblog.id}}">
                      <fmt:message key="yourWebsites.newEntry" />
                    </a>
                    <br />
 
                    <%-- Show Entries and Comments links for users above EDIT_DRAFT role --%>
                    <span ng-if="role.weblogRole != 'EDIT_DRAFT'">
-                       <s:url var="editEntries" action="entries" namespace="/tb-ui/authoring"/>
-                       <img src='<s:url value="/images/table_multiple.png"/>' />
-                       <s:a href="%{editEntries}?weblogId={{role.weblog.id}}"><fmt:message key="yourWebsites.editEntries" /></s:a>
+                       <c:url var="editEntries" value="/tb-ui/authoring/entries.rol"/>
+                       <img src='<c:url value="/images/table_multiple.png"/>' />
+                       <a href="${editEntries}?weblogId={{role.weblog.id}}"><fmt:message key="yourWebsites.editEntries" /></a>
                        <br />
 
-                       <s:url var="manageComments" action="comments" namespace="/tb-ui/authoring"/>
-                       <img src='<s:url value="/images/page_white_edit.png"/>' />
-                       <s:a href="%{manageComments}?weblogId={{role.weblog.id}}"><fmt:message key="yourWebsites.manageComments" /></s:a>
+                       <c:url var="manageComments" value="/tb-ui/authoring/comments.rol"/>
+                       <img src='<c:url value="/images/page_white_edit.png"/>' />
+                       <a href="${manageComments}?weblogId={{role.weblog.id}}"><fmt:message key="yourWebsites.manageComments" /></a>
                        <br />
                    </span>
 
@@ -113,14 +113,14 @@ var msg= {
 
                        <%-- And only show theme option if custom themes are enabled --%>
                        <s:if test="isUsersCustomizeThemes()">
-                           <img src='<s:url value="/images/layout.png"/>'>
-                           <s:url var="weblogTheme" action="templates" namespace="/tb-ui/authoring"/>
+                           <img src='<c:url value="/images/layout.png"/>'>
+                           <c:url var="weblogTheme" value="/tb-ui/authoring/templates.rol"/>
                            <s:a href='%{weblogTheme}?weblogId={{role.weblog.id}}'><fmt:message key="yourWebsites.theme" /></s:a>
                            <br />
                        </s:if>
 
-                       <img src='<s:url value="/images/cog.png"/>' />
-                       <s:url var="manageWeblog" action="weblogConfig" namespace="/tb-ui/authoring"/>
+                       <img src='<c:url value="/images/cog.png"/>' />
+                       <c:url var="manageWeblog" value="/tb-ui/authoring/weblogConfig.rol"/>
                        <s:a href='%{manageWeblog}?weblogId={{role.weblog.id}}'>
                            <fmt:message key="yourWebsites.manage" />
                        </s:a>
@@ -129,7 +129,7 @@ var msg= {
 
                    <%-- don't allow last admin to resign from blog --%>
                    <span ng-if='role.weblogRole != "OWNER"'>
-                      <img src='<s:url value="/images/delete.png"/>' />
+                      <img src='<c:url value="/images/delete.png"/>' />
                       <a href="#" class="resign-link" data-weblog="{{role.weblog.handle}}">
                           <fmt:message key='yourWebsites.resign'/>
                       </a>
@@ -141,7 +141,7 @@ var msg= {
     </div>
 
     <s:if test="authenticatedUser.hasEffectiveGlobalRole('BLOGCREATOR')">
-        <form method="link" action="<s:url action='createWeblog'/>">
+        <form method="link" action="<c:url value='/tb-ui/createWeblog.rol'/>">
           <div class="control clearfix">
              <input type="submit" value="<fmt:message key='yourWebsites.createWeblog'/>">
           </div>

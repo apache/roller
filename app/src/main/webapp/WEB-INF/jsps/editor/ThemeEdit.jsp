@@ -19,10 +19,10 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="<s:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
@@ -32,8 +32,8 @@ var msg= {
   cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/themeedit.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/themeedit.js'/>"></script>
 
 <div id="success-message" class="messages" style="display:none">
 	<ul>
@@ -60,7 +60,7 @@ var msg= {
 </p>
 
 <input type="hidden" id="recordId" value="<c:out value='${param.weblogId}'/>"/>
-<input type="hidden" id="refreshURL" value="<s:url action='themeEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/themeEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <s:form id="themeForm" action="templates">
     <sec:csrfInput/>
@@ -119,7 +119,7 @@ var msg= {
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
             var currentWeblog = $('#actionweblog').val();
-            var myUrl = "<s:url value='/tb-ui/authoring/rest/themes/'/><c:out value='${actionWeblog.theme}'/>"
+            var myUrl = "<c:url value='/tb-ui/authoring/rest/themes/'/><c:out value='${actionWeblog.theme}'/>"
             $.ajax({ url: myUrl, async:false,
                 success: function(data) { $scope.themes = data; }
             });

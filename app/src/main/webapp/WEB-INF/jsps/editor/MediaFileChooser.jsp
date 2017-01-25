@@ -20,17 +20,17 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
-<script src="<s:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
-<script src="<s:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 </script>
-<script src="<s:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
-<script src="<s:url value='/tb-ui/scripts/mediafilechooser.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/mediafilechooser.js'/>"></script>
 
 <input type="hidden" id="recordId" value="<c:out value='${param.weblogId}'/>"/>
-<input type="hidden" id="refreshURL" value="<s:url action='mediaFileChooser'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/mediaFileChooser.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <%-- Drop-down box to choose media directory --%>
 <select id="mediachooser-select-directory"></select>
