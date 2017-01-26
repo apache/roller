@@ -48,15 +48,15 @@
 <%-- Titling, processing actions different between entry add and edit --%>
 <c:choose>
     <c:when test="${actionName == 'entryEdit'}">
-        <s:set var="subtitleKey">weblogEdit.subtitle.editEntry</s:set>
-        <s:set var="mainAction">entryEdit</s:set>
+        <c:set var="subtitleKey">weblogEdit.subtitle.editEntry</c:set>
+        <c:set var="mainAction">entryEdit</c:set>
         <input id="refreshURL" type="hidden"
             value="<c:url value='/tb-ui/authoring/entryEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"\
                 "&entryId=<c:out value='${param.entryId}'/>"/>
     </c:when>
     <c:otherwise>
-        <s:set var="subtitleKey">weblogEdit.subtitle.newEntry</s:set>
-        <s:set var="mainAction">entryAdd</s:set>
+        <c:set var="subtitleKey">weblogEdit.subtitle.newEntry</c:set>
+        <c:set var="mainAction">entryAdd</c:set>
         <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entryAdd.rol'/>"/>
     </c:otherwise>
 </c:choose>

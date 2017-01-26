@@ -89,10 +89,10 @@ var msg= {
                     <c:param name="weblogId" value="%{actionWeblog.id}" />
                 </c:url>
                 <span ng-if="tpl.derivation != 'Default'">
-                    <s:a href="%{edit}&templateId={{tpl.id}}">{{tpl.name}}</s:a>
+                    <a href="${edit}&templateId={{tpl.id}}">{{tpl.name}}</a>
                 </span>
                 <span ng-if="tpl.derivation == 'Default'">
-                    <s:a href="%{edit}&templateName={{tpl.name}}">{{tpl.name}}</s:a>
+                    <a href="${edit}&templateName={{tpl.name}}">{{tpl.name}}</a>
                 </span>
             </td>
 

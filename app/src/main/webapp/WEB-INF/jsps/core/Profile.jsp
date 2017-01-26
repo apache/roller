@@ -70,10 +70,10 @@
 
     <c:choose>
         <c:when test="${authenticatedUser == null}">
-            <s:set var="usernameTipKey">userRegister.tip.userName</s:set>
-            <s:set var="passwordTipKey">userRegister.tip.password</s:set>
-            <s:set var="passwordConfirmTipKey">userRegister.tip.passwordConfirm</s:set>
-            <s:set var="saveButtonText">userRegister.button.save</s:set>
+            <c:set var="usernameTipKey">userRegister.tip.userName</c:set>
+            <c:set var="passwordTipKey">userRegister.tip.password</c:set>
+            <c:set var="passwordConfirmTipKey">userRegister.tip.passwordConfirm</c:set>
+            <c:set var="saveButtonText">userRegister.button.save</c:set>
             <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/register.rol'/>"/>
             <input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
             <div class="notregistered">
@@ -81,10 +81,10 @@
             </div>
         </c:when>
         <c:otherwise>
-            <s:set var="usernameTipKey">userSettings.tip.username</s:set>
-            <s:set var="passwordTipKey">userSettings.tip.password</s:set>
-            <s:set var="passwordConfirmTipKey">userSettings.tip.passwordConfirm</s:set>
-            <s:set var="saveButtonText">generic.save</s:set>
+            <c:set var="usernameTipKey">userSettings.tip.username</c:set>
+            <c:set var="passwordTipKey">userSettings.tip.password</c:set>
+            <c:set var="passwordConfirmTipKey">userSettings.tip.passwordConfirm</c:set>
+            <c:set var="saveButtonText">generic.save</c:set>
             <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/profile.rol'/>"/>
             <input type="hidden" id="cancelURL" value="<c:url value='/tb-ui/menu.rol'/>"/>
             <p class="subtitle"><fmt:message key="yourProfile.subtitle"/></p>

@@ -44,9 +44,9 @@
 
 <c:choose>
     <c:when test="${actionName == 'mediaFileEdit'}">
-        <s:set var="subtitleKey">mediaFileEdit.subtitle</s:set>
-        <s:set var="mainAction">mediaFileEdit</s:set>
-        <s:set var="pageTip">mediaFileEdit.pagetip</s:set>
+        <c:set var="subtitleKey">mediaFileEdit.subtitle</c:set>
+        <c:set var="mainAction">mediaFileEdit</c:set>
+        <c:set var="pageTip">mediaFileEdit.pagetip</c:set>
         <div ng-if="ctrl.mediaFileData.imageFile" class="mediaFileThumbnail">
             <a ng-href='{{ctrl.mediaFileData.permalink}}' target="_blank">
                 <img align="right" alt="thumbnail" ng-src='{{ctrl.mediaFileData.thumbnailURL}}'
@@ -55,9 +55,9 @@
         </div>
     </c:when>
     <c:otherwise>
-        <s:set var="subtitleKey">mediaFileAdd.title</s:set>
-        <s:set var="mainAction">mediaFileAdd</s:set>
-        <s:set var="pageTip">mediaFileAdd.pageTip</s:set>
+        <c:set var="subtitleKey">mediaFileAdd.title</c:set>
+        <c:set var="mainAction">mediaFileAdd</c:set>
+        <c:set var="pageTip">mediaFileAdd.pageTip</c:set>
     </c:otherwise>
 </c:choose>
 

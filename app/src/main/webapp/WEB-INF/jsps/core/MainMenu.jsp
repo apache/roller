@@ -115,15 +115,15 @@ var msg= {
                        <c:if test="${action.isUsersCustomizeThemes()}">
                            <img src='<c:url value="/images/layout.png"/>'>
                            <c:url var="weblogTheme" value="/tb-ui/authoring/templates.rol"/>
-                           <s:a href='%{weblogTheme}?weblogId={{role.weblog.id}}'><fmt:message key="yourWebsites.theme" /></s:a>
+                           <a href='${weblogTheme}?weblogId={{role.weblog.id}}'><fmt:message key="yourWebsites.theme" /></a>
                            <br />
                        </c:if>
 
                        <img src='<c:url value="/images/cog.png"/>' />
                        <c:url var="manageWeblog" value="/tb-ui/authoring/weblogConfig.rol"/>
-                       <s:a href='%{manageWeblog}?weblogId={{role.weblog.id}}'>
+                       <a href='${manageWeblog}?weblogId={{role.weblog.id}}'>
                            <fmt:message key="yourWebsites.manage" />
-                       </s:a>
+                       </s>
                        <br />
                    </span>
 
