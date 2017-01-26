@@ -23,17 +23,17 @@
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<s:if test="activationStatus == 'active'">
+<c:if test="${activationStatus == 'active'}">
     <div class="messages">
         <p><fmt:message key="welcome.user.account.activated" /></p>
     </div>
-</s:if>
+</c:if>
 
-<s:if test="activationStatus == 'activePending'">
+<c:if test="${activationStatus == 'activePending'}">
     <div class="messages">
         <p><fmt:message key="welcome.user.account.need.approval" /></p>
     </div>
-</s:if>
+</c:if>
 
 <p><fmt:message key="loginPage.prompt" /></p>
 

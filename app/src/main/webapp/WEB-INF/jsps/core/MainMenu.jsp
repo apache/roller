@@ -112,12 +112,12 @@ var msg= {
                    <span ng-if="role.weblogRole == 'OWNER'">
 
                        <%-- And only show theme option if custom themes are enabled --%>
-                       <s:if test="isUsersCustomizeThemes()">
+                       <c:if test="${action.isUsersCustomizeThemes()}">
                            <img src='<c:url value="/images/layout.png"/>'>
                            <c:url var="weblogTheme" value="/tb-ui/authoring/templates.rol"/>
                            <s:a href='%{weblogTheme}?weblogId={{role.weblog.id}}'><fmt:message key="yourWebsites.theme" /></s:a>
                            <br />
-                       </s:if>
+                       </c:if>
 
                        <img src='<c:url value="/images/cog.png"/>' />
                        <c:url var="manageWeblog" value="/tb-ui/authoring/weblogConfig.rol"/>
@@ -140,13 +140,13 @@ var msg= {
       </div>
     </div>
 
-    <s:if test="authenticatedUser.hasEffectiveGlobalRole('BLOGCREATOR')">
+    <c:if test="${authenticatedUser.hasEffectiveGlobalRole('BLOGCREATOR')}">
         <form method="link" action="<c:url value='/tb-ui/createWeblog.rol'/>">
           <div class="control clearfix">
              <input type="submit" value="<fmt:message key='yourWebsites.createWeblog'/>">
           </div>
         </form>
-    </s:if>
+    </c:if>
 
     <div id="confirm-resign" style="display:none">
         <p>

@@ -51,9 +51,9 @@ var msg= {
     </div>
 
     <div id="successMessageDiv" class="messages" style="display:none">
-      <s:if test="weblogId != null">
+      <c:if test="${weblogId != null}">
         <p><fmt:message key="generic.changes.saved"/></p>
-      </s:if>
+      </c:if>
     </div>
 
     <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/templates.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>

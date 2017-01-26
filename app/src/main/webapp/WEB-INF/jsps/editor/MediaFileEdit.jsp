@@ -42,7 +42,8 @@
        <b>{{ctrl.errorMsg}}</b>
     </div>
 
-    <s:if test="actionName == 'mediaFileEdit'">
+<c:choose>
+    <c:when test="${actionName == 'mediaFileEdit'}">
         <s:set var="subtitleKey">mediaFileEdit.subtitle</s:set>
         <s:set var="mainAction">mediaFileEdit</s:set>
         <s:set var="pageTip">mediaFileEdit.pagetip</s:set>
@@ -52,13 +53,13 @@
                      title='<fmt:message key="mediaFileEdit.clickToView" />' />
             </a>
         </div>
-    </s:if>
-    <s:else>
+    </c:when>
+    <c:otherwise>
         <s:set var="subtitleKey">mediaFileAdd.title</s:set>
         <s:set var="mainAction">mediaFileAdd</s:set>
         <s:set var="pageTip">mediaFileAdd.pageTip</s:set>
-    </s:else>
-
+    </c:otherwise>
+</c:choose>
 
     <p class="subtitle">
         <fmt:message key="${subtitleKey}"/>
@@ -117,7 +118,7 @@
                 <input id="notes" type="text" ng-model="ctrl.mediaFileData.notes" size="50" maxlength="255" style="width:30%"/>
             </td>
        </tr>
-<s:if test="actionName == 'mediaFileEdit'">
+<c:if test="${actionName == 'mediaFileEdit'}">
        <tr>
             <td class="entryEditFormLabel">
                 <fmt:message key="mediaFileEdit.fileInfo" />
@@ -152,19 +153,21 @@
                 <input id="directoryId" type="text" size="30" style="width:30%" value='{{ctrl.mediaFileData.directory.name}}' readonly />
             </td>
        </tr>
-</s:if>
+</c:if>
 
         <tr>
             <td class="entryEditFormLabel">
                 <label for="fileControl"><fmt:message key="mediaFileEdit.fileLocation" /></label>
             </td>
             <td>
-                <s:if test="actionName == 'mediaFileEdit'">
-                    <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value=""/>
-                </s:if>
-                <s:else>
-                    <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value="" required/>
-                </s:else>
+                <c:choose>
+                    <c:when test="${actionName == 'mediaFileEdit'}">
+                        <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value=""/>
+                    </c:when>
+                    <c:otherwise>
+                        <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value="" required/>
+                    </c:otherwise>
+                </c:choose>
             </td>
         </tr>
     </table>

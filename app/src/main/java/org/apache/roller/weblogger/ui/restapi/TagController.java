@@ -111,7 +111,6 @@ public class TagController {
         }
     }
 
-
     @RequestMapping(value = "/weblog/{weblogId}/tagname/{tagName}", method = RequestMethod.DELETE)
     public void deleteTag(@PathVariable String weblogId, @PathVariable String tagName, Principal p,
                           HttpServletResponse response) throws ServletException {

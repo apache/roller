@@ -509,8 +509,8 @@ public class WeblogEntryController {
 
             Weblog weblog = (entry == null) ? weblogManager.getWeblog(weblogId) : entry.getWeblog();
 
-            WeblogRole necessaryRole = (PubStatus.PENDING.equals(entryData.getStatus())
-                    || PubStatus.DRAFT.equals(entryData.getStatus())) ? WeblogRole.EDIT_DRAFT : WeblogRole.POST;
+            WeblogRole necessaryRole = (PubStatus.PENDING.equals(entryData.getStatus()) ||
+                    PubStatus.DRAFT.equals(entryData.getStatus())) ? WeblogRole.EDIT_DRAFT : WeblogRole.POST;
             if (weblog != null && userManager.checkWeblogRole(user, weblog, necessaryRole)) {
 
                 // create new?
@@ -627,7 +627,6 @@ public class WeblogEntryController {
             return message;
         }
     }
-
 
     private Instant calculatePubTime(WeblogEntry entry) {
         Instant pubtime = null;

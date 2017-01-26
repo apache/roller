@@ -62,9 +62,9 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
   </div>
 
   <div id="successMessageDiv" class="messages" style="display:none">
-    <s:if test="weblogId != null">
+    <c:if test="${weblogId != null}">
       <p><fmt:message key="generic.changes.saved"/></p>
-    </s:if>
+    </c:if>
   </div>
 
     <div style="text-align: right; padding-bottom: 6px;">
