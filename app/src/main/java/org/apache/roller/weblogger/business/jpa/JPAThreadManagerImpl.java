@@ -111,11 +111,12 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                 Query q = strategy.getNamedUpdate(
                         "TaskLock.updateClient&Timeacquired&Timeleased&LastRunByName&Timeacquired");
                 q.setParameter(1, task.getClientId());
-                q.setParameter(2, task.getLeaseTime());
-                q.setParameter(3, new Timestamp(runTime.getTime()));
-                q.setParameter(4, task.getName());
-                q.setParameter(5, taskLock.getTimeAcquired());
-                q.setParameter(6, new Timestamp(leaseExpiration.getTime()));
+                q.setParameter(2, new Timestamp(currentTime.getTime()));
+                q.setParameter(3, task.getLeaseTime());
+                q.setParameter(4, new Timestamp(runTime.getTime()));
+                q.setParameter(5, task.getName());
+                q.setParameter(6, taskLock.getTimeAcquired());
+                q.setParameter(7, new Timestamp(leaseExpiration.getTime()));
                 int result = q.executeUpdate();
 
                 if(result == 1) {

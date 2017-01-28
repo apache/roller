@@ -8,9 +8,9 @@
  PostgreSQL respects original not null attribute.
  **#
 #macro(expandTimestamp $tableName $columnName)
-#if($db.DBTYPE == "MYSQL")
+#if($db.DBTYPE == "MYSQL" || $db.DBTYPE == "MSSQL")
 #alterColumnType($tableName $columnName 'datetime(3)')
-#elseif ($db.DBTYPE == "ORACLE")
+#elseif ($db.DBTYPE == "ORACLE" || $db.DBTYPE == "DB2" || $db.DBTYPE == "HSQLDB")
 #alterColumnType($tableName $columnName 'timestamp(3)')
 #elseif ($db.DBTYPE == "POSTGRESQL")
 #alterColumnType($tableName $columnName 'timestamp(3) with time zone')
@@ -18,17 +18,17 @@
 #end
 
 #macro(expandTimestampNotNull $tableName $columnName)
-#if($db.DBTYPE == "MYSQL")
+#if($db.DBTYPE == "MYSQL" || $db.DBTYPE == "MSSQL")
 #alterColumnType($tableName $columnName 'datetime(3) not null')
-#elseif ($db.DBTYPE == "ORACLE")
+#elseif ($db.DBTYPE == "ORACLE" || $db.DBTYPE == "DB2" || $db.DBTYPE == "HSQLDB")
 #alterColumnType($tableName $columnName 'timestamp(3) not null')
 #elseif ($db.DBTYPE == "POSTGRESQL")
 #alterColumnType($tableName $columnName 'timestamp(3) with time zone')
 #end
 #end
 
--- Expanding datetime or timestamp columns
--- Affects only for MySQL, Oracle, PostgreSQL
+-- Adjusting precision of datetime or timestamp columns
+-- Not affects for Derby
 
 #expandTimestampNotNull('pingqueueentry' 'entrytime')
 #expandTimestamp('pingtarget' 'lastsuccess')

@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+<script src="<s:url value='/webjars/angular/1.2.29/angular.min.js' />"></script>
 
 
 <p class="subtitle"><s:text name="createWebsite.prompt"/></p>

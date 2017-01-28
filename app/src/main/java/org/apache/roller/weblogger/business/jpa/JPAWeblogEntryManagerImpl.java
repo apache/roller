@@ -68,7 +68,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
-    private Map<String, String> entryAnchorToIdMap = new HashMap<String, String>();
+    private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<String, String>());
     
     private static final Comparator<TagStat> TAG_STAT_NAME_COMPARATOR = new TagStatComparator();
     

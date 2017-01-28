@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <version>4.0</version>
         </dependency>
 
         <dependency>
@@ -323,6 +323,20 @@
             <version>1.10</version>
         </dependency>
 
+        <!-- WebJars deps -->
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-servlet-2.x</artifactId>
+            <version>1.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>angular</artifactId>
+            <version>1.2.29</version>
+        </dependency>
+
         <!-- test deps -->
 
         <dependency>
@@ -526,6 +540,19 @@
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.7</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ant</groupId>
+                                <artifactId>ant</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
 
                 <executions>
                     <execution>
@@ -536,6 +563,16 @@
                         </goals>
                         <configuration>
                             <target>
+                                <!-- Workaround for git distribution that doesn't keep empty directories.
+                                     For detail check [ROL-2086] -->
+                                <taskdef resource="net/sf/antcontrib/antlib.xml" />
+                                <property file="${basedir}/src/main/resources/sql/dbscripts.properties" />
+                                <for list="${databases}" param="database" delimiter=" ">
+                                    <sequential>
+                                        <mkdir dir="${basedir}/target/dbscripts/@{database}" />
+                                    </sequential>
+                                </for>
+
                                 <taskdef name="texen"
                                          classname="org.apache.velocity.texen.ant.TexenTask"
                                          classpathref="maven.compile.classpath"/>

@@ -313,10 +313,10 @@ public class MailUtil {
         // Determine with mime type to use for e-mail
         StringBuilder msg = new StringBuilder();
         StringBuilder ownermsg = new StringBuilder();
-        boolean escapeHtml = !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
+        boolean isPlainText = !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
         
         // first the common stub message for the owner and commenters (if applicable)
-        if (!escapeHtml) {
+        if (!isPlainText) {
             msg.append("<html><body style=\"background: white; ");
             msg.append(" color: black; font-size: 12px\">");
         }
@@ -328,21 +328,22 @@ public class MailUtil {
             msg.append(resources.getString("email.comment.anonymous")+": ");
         }
         
-        msg.append((escapeHtml) ? "\n\n" : "<br /><br />");
-        
-        msg.append((escapeHtml) ? Utilities.escapeHTML(commentObject.getContent())
+        msg.append((isPlainText) ? "\n\n" : "<br /><br />");
+
+        // Don't escape the content if email will be sent as plain text
+        msg.append((isPlainText) ? commentObject.getContent()
         : Utilities.transformToHTMLSubset(Utilities.escapeHTML(commentObject.getContent())));
         
-        msg.append((escapeHtml) ? "\n\n----\n"
+        msg.append((isPlainText) ? "\n\n----\n"
                 : "<br /><br /><hr /><span style=\"font-size: 11px\">");
         msg.append(resources.getString("email.comment.respond") + ": ");
-        msg.append((escapeHtml) ? "\n" : "<br />");
+        msg.append((isPlainText) ? "\n" : "<br />");
         
         // Build link back to comment
         String commentURL = WebloggerFactory.getWeblogger()
             .getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
         
-        if (escapeHtml) {
+        if (isPlainText) {
             msg.append(commentURL);
         } else {
             msg.append("<a href=\""+commentURL+"\">"+commentURL+"</a></span>");
@@ -353,60 +354,60 @@ public class MailUtil {
         if (commentObject.getPending() || weblog.getEmailComments()) {
             // First, list any messages from the system that were passed in:
             if (messages.getMessageCount() > 0) {
-                ownermsg.append((escapeHtml) ? "" : "<p>");
+                ownermsg.append((isPlainText) ? "" : "<p>");
                 ownermsg.append(resources.getString("commentServlet.email.thereAreSystemMessages"));
-                ownermsg.append((escapeHtml) ? "\n\n" : "</p>");
-                ownermsg.append((escapeHtml) ? "" : "<ul>");
+                ownermsg.append((isPlainText) ? "\n\n" : "</p>");
+                ownermsg.append((isPlainText) ? "" : "<ul>");
             }
             for (Iterator it = messages.getMessages(); it.hasNext();) {
                 RollerMessage rollerMessage = (RollerMessage)it.next();
-                ownermsg.append((escapeHtml) ? "" : "<li>");
+                ownermsg.append((isPlainText) ? "" : "<li>");
                 ownermsg.append(MessageFormat.format(resources.getString(
                     rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
-                ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
+                ownermsg.append((isPlainText) ? "\n\n" : "</li>");
             }
             if (messages.getMessageCount() > 0) {
-                ownermsg.append((escapeHtml) ? "\n\n" : "</ul>");
+                ownermsg.append((isPlainText) ? "\n\n" : "</ul>");
             }
 
             // Next, list any validation error messages that were passed in:
             if (messages.getErrorCount() > 0) {
-                ownermsg.append((escapeHtml) ? "" : "<p>");
+                ownermsg.append((isPlainText) ? "" : "<p>");
                 ownermsg.append(resources.getString("commentServlet.email.thereAreErrorMessages"));
-                ownermsg.append((escapeHtml) ? "\n\n" : "</p>");
-                ownermsg.append((escapeHtml) ? "" : "<ul>");
+                ownermsg.append((isPlainText) ? "\n\n" : "</p>");
+                ownermsg.append((isPlainText) ? "" : "<ul>");
             }
             for (Iterator it = messages.getErrors(); it.hasNext();) {
                 RollerMessage rollerMessage = (RollerMessage)it.next();
-                ownermsg.append((escapeHtml) ? "" : "<li>");
+                ownermsg.append((isPlainText) ? "" : "<li>");
                 ownermsg.append(MessageFormat.format(resources.getString(
                     rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
-                ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
+                ownermsg.append((isPlainText) ? "\n\n" : "</li>");
             }
             if (messages.getErrorCount() > 0) {
-                ownermsg.append((escapeHtml) ? "\n\n" : "</ul>");
+                ownermsg.append((isPlainText) ? "\n\n" : "</ul>");
             }
 
             ownermsg.append(msg);
 
-            ownermsg.append((escapeHtml) ? "\n\n----\n" :
+            ownermsg.append((isPlainText) ? "\n\n----\n" :
                 "<br /><br /><hr /><span style=\"font-size: 11px\">");
 
             // commenter email address: allow blog owner to reply via email instead of blog comment
             if (!StringUtils.isBlank(commentObject.getEmail())) {
                 ownermsg.append(resources.getString("email.comment.commenter.email") + ": " + commentObject.getEmail());
-                ownermsg.append((escapeHtml) ? "\n\n" : "<br/><br/>");
+                ownermsg.append((isPlainText) ? "\n\n" : "<br/><br/>");
             }
             // add link to weblog edit page so user can login to manage comments
             ownermsg.append(resources.getString("email.comment.management.link") + ": ");
-            ownermsg.append((escapeHtml) ? "\n" : "<br/>");
+            ownermsg.append((isPlainText) ? "\n" : "<br/>");
 
             Map<String, String> parameters = new HashMap<String, String>();
             parameters.put("bean.entryId", entry.getId());
             String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
                     "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
 
-            if (escapeHtml) {
+            if (isPlainText) {
                 ownermsg.append(deleteURL);
             } else {
                 ownermsg.append(
@@ -438,7 +439,7 @@ public class MailUtil {
                 from = user.getEmailAddress();
             }
 
-            boolean isHtml = !escapeHtml;
+            boolean isHtml = !isPlainText;
             
             if (commentObject.getPending() || weblog.getEmailComments()) {
                 if(isHtml) {
