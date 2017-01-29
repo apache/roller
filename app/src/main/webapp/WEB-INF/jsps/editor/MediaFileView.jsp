@@ -151,9 +151,9 @@
             <c:url var="mediaFileAddURL" value="/tb-ui/authoring/mediaFileAdd">
                 <c:param name="weblogId" value="%{actionWeblog.id}" />
             </c:url>
-            <s:a href='%{mediaFileAddURL}&directoryId={{ctrl.directoryToView}}' style='font-weight:bold;'>
+            <a href='${mediaFileAddURL}&directoryId={{ctrl.directoryToView}}' style='font-weight:bold;'>
                 <fmt:message key="mediaFileSidebar.add" />
-            </s:a>
+            </a>
 
             <br><br>
             <div>

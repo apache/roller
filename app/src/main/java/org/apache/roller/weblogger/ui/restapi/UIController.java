@@ -11,7 +11,7 @@ import java.util.Map;
 @RequestMapping(path = "/tb-ui/app")
 public class UIController {
 
-    @RequestMapping(value="/mytest")
+    @RequestMapping(value = "/mytest")
     public ModelAndView globalConfig() {
         ActionItem myItem = new ActionItem();
         myItem.name = "Sam";

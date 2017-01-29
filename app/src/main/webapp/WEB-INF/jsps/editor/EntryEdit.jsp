@@ -46,18 +46,20 @@
 <script src="<c:url value='/tb-ui/scripts/entryedit.js'/>"></script>
 
 <%-- Titling, processing actions different between entry add and edit --%>
-<s:if test="actionName == 'entryEdit'">
-    <s:set var="subtitleKey">weblogEdit.subtitle.editEntry</s:set>
-    <s:set var="mainAction">entryEdit</s:set>
-    <input id="refreshURL" type="hidden"
-        value="<c:url value='/tb-ui/authoring/entryEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"\
-            "&entryId=<c:out value='${param.entryId}'/>"/>
-</s:if>
-<s:else>
-    <s:set var="subtitleKey">weblogEdit.subtitle.newEntry</s:set>
-    <s:set var="mainAction">entryAdd</s:set>
-    <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entryAdd.rol'/>"/>
-</s:else>
+<c:choose>
+    <c:when test="${actionName == 'entryEdit'}">
+        <c:set var="subtitleKey">weblogEdit.subtitle.editEntry</c:set>
+        <c:set var="mainAction">entryEdit</c:set>
+        <input id="refreshURL" type="hidden"
+            value="<c:url value='/tb-ui/authoring/entryEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"\
+                "&entryId=<c:out value='${param.entryId}'/>"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="subtitleKey">weblogEdit.subtitle.newEntry</c:set>
+        <c:set var="mainAction">entryAdd</c:set>
+        <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entryAdd.rol'/>"/>
+    </c:otherwise>
+</c:choose>
 
     <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
       <b>{{ctrl.errorObj.errorMessage}}</b>

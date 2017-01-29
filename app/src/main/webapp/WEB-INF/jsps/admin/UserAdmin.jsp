@@ -19,6 +19,7 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
+<%@ taglib uri="/struts-tags" prefix="s" %>
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script>
@@ -89,7 +90,7 @@ var contextPath = "${pageContext.request.contextPath}";
               <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
           </tr>
 
-          <s:if test="getProp('authentication.method') == 'db'">
+          <c:if test="${action.getProp('authentication.method') == 'db'}">
               <tr>
                   <td class="label"><label for="passwordText"><fmt:message key="userSettings.password" /></label></td>
                   <td class="field">
@@ -102,7 +103,7 @@ var contextPath = "${pageContext.request.contextPath}";
                   <input type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20"></td>
                   <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
               </tr>
-          </s:if>
+          </c:if>
 
           <tr>
               <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>

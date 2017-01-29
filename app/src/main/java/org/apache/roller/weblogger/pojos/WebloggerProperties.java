@@ -65,7 +65,7 @@ public class WebloggerProperties {
         this.mainBlog = mainBlog;
     }
 
-    @Column(name="registration_policy", nullable=false)
+    @Column(name = "registration_policy", nullable = false)
     @Enumerated(EnumType.STRING)
     public RegistrationPolicy getRegistrationPolicy() {
         return registrationPolicy;
@@ -84,7 +84,7 @@ public class WebloggerProperties {
         this.usersCreateBlogs = usersCreateBlogs;
     }
 
-    @Column(name="blog_html_policy", nullable=false)
+    @Column(name = "blog_html_policy", nullable = false)
     @Enumerated(EnumType.STRING)
     public HTMLSanitizer.Level getBlogHtmlPolicy() {
         return blogHtmlPolicy;
@@ -130,7 +130,7 @@ public class WebloggerProperties {
         this.usersOverrideAnalyticsCode = usersOverrideAnalyticsCode;
     }
 
-    @Column(name="comment_policy", nullable=false)
+    @Column(name = "comment_policy", nullable = false)
     @Enumerated(EnumType.STRING)
     public GlobalCommentPolicy getCommentPolicy() {
         return commentPolicy;
@@ -140,7 +140,7 @@ public class WebloggerProperties {
         this.commentPolicy = commentPolicy;
     }
 
-    @Column(name="comment_html_policy", nullable=false)
+    @Column(name = "comment_html_policy", nullable = false)
     @Enumerated(EnumType.STRING)
     public HTMLSanitizer.Level getCommentHtmlPolicy() {
         return commentHtmlPolicy;

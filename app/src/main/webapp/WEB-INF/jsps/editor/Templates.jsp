@@ -16,7 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
+<%@ taglib uri="/struts-tags" prefix="s" %>
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
@@ -51,9 +51,9 @@ var msg= {
     </div>
 
     <div id="successMessageDiv" class="messages" style="display:none">
-      <s:if test="weblogId != null">
+      <c:if test="${weblogId != null}">
         <p><fmt:message key="generic.changes.saved"/></p>
-      </s:if>
+      </c:if>
     </div>
 
     <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/templates.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
@@ -89,10 +89,10 @@ var msg= {
                     <c:param name="weblogId" value="%{actionWeblog.id}" />
                 </c:url>
                 <span ng-if="tpl.derivation != 'Default'">
-                    <s:a href="%{edit}&templateId={{tpl.id}}">{{tpl.name}}</s:a>
+                    <a href="${edit}&templateId={{tpl.id}}">{{tpl.name}}</a>
                 </span>
                 <span ng-if="tpl.derivation == 'Default'">
-                    <s:a href="%{edit}&templateName={{tpl.name}}">{{tpl.name}}</s:a>
+                    <a href="${edit}&templateName={{tpl.name}}">{{tpl.name}}</a>
                 </span>
             </td>
 
@@ -138,7 +138,7 @@ var msg= {
       <span style="float:right">
           <s:form>
             <sec:csrfInput/>
-            <s:hidden name="weblogId" value="%{actionWeblog.id}" />
+            <input type="hidden" name="weblogId" value="<c:out value='${actionWeblog.id}'/>"/>
             <s:submit id="switch-theme-button" action="themeEdit" namespace="/tb-ui/authoring" value="%{getText('templates.switchTheme')}" />
           </s:form>
       </span>

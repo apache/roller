@@ -16,71 +16,74 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
+<%@ taglib uri="/struts-tags" prefix="s" %>
 
-<s:if test="status.error">
-<h2><fmt:message key="installer.startupProblemMessage" /></h2>
+<c:if test="${status.error}">
+    <h2><fmt:message key="installer.startupProblemMessage"/></h2>
 
-<h3><fmt:message key="installer.whatHappened" /></h3>
-</s:if>
-<s:if test="status.name() == 'databaseError'">
-    <p><fmt:message key="installer.databaseConnectionError" /></p>
-    <ul>
-       <c:forEach var="message" items="${messages}">
-           <c:out value="${message}"/>
-       </c:forEach>
-    </ul>
-</s:if>
-<s:elseif test="status.name() == 'databaseVersionError'">
-    <p><fmt:message key="installer.databaseVersionError" /></p>
-</s:elseif>
-<s:elseif test="status.name() == 'tablesMissing'">
-    <h2><fmt:message key="installer.noDatabaseTablesFound" /></h2>
+    <h3><fmt:message key="installer.whatHappened"/></h3>
+</c:if>
+<c:choose>
+    <c:when test="${status.name() == 'databaseError'}">
+        <p><fmt:message key="installer.databaseConnectionError"/></p>
+        <ul>
+            <c:forEach var="message" items="${messages}">
+                <c:out value="${message}"/>
+            </c:forEach>
+        </ul>
+    </c:when>
+    <c:when test="${status.name() == 'databaseVersionError'}">
+        <p><fmt:message key="installer.databaseVersionError"/></p>
+    </c:when>
+    <c:when test="${status.name() == 'tablesMissing'}">
+        <h2><fmt:message key="installer.noDatabaseTablesFound"/></h2>
 
-    <p>
-        <fmt:message key="installer.noDatabaseTablesExplanation">
-            <fmt:param value="${databaseProductName}" />
-        </fmt:message>
-    </p>
-    <p><fmt:message key="installer.createTables" /></p>
+        <p>
+            <fmt:message key="installer.noDatabaseTablesExplanation">
+                <fmt:param value="${databaseProductName}"/>
+            </fmt:message>
+        </p>
+        <p><fmt:message key="installer.createTables"/></p>
 
-    <s:form action="install!create">
-        <sec:csrfInput/>
-        <s:submit value="%{getText('installer.yesCreateTables')}" />
-    </s:form>
-</s:elseif>
-<s:elseif test="status.name() == 'databaseCreateError'">
-    <p><fmt:message key="installer.databaseCreateError" /></p>
+        <s:form action="install!create">
+            <sec:csrfInput/>
+            <s:submit value="%{getText('installer.yesCreateTables')}"/>
+        </s:form>
+    </c:when>
+    <c:when test="${status.name() == 'databaseCreateError'}">
+        <p><fmt:message key="installer.databaseCreateError"/></p>
+        <pre>
+            <c:forEach var="message" items="${messages}">
+                <c:out value="${message}"/>
+            </c:forEach>
+        </pre>
+    </c:when>
+    <c:when test="${status.name() == 'needsBootstrapping'}">
+        <h2><fmt:message key="installer.tablesCreated"/></h2>
+
+        <p><fmt:message key="installer.tablesCreatedExplanation"/></p>
+        <p>
+            <fmt:message key="installer.tryBootstrapping">
+                <fmt:param><c:url value="/tb-ui/install.rol!bootstrap"/></fmt:param>
+            </fmt:message>
+        </p>
+        <pre>
+            <c:forEach var="message" items="${messages}">
+                <c:out value="${message}"/>
+            </c:forEach>
+        </pre>
+    </c:when>
+    <c:when test="${status.name() == 'bootstrapError'}">
+        <p><fmt:message key="installer.bootstrappingError"/></p>
+    </c:when>
+</c:choose>
+
+<c:if test="${rootCauseStackTrace != null && rootCauseStackTrace != ''}">
+    <h3><fmt:message key="installer.whyDidThatHappen"/></h3>
+    <p><fmt:message key="installer.heresTheStackTrace"/></p>
     <pre>
-        <c:forEach var="message" items="${messages}">
-            <c:out value="${message}"/>
-        </c:forEach>
+        [<c:out value="${rootCauseStackTrace}"/>]
     </pre>
-</s:elseif>
-<s:elseif test="status.name() == 'needsBootstrapping'">
-    <h2><fmt:message key="installer.tablesCreated" /></h2>
-
-    <p><fmt:message key="installer.tablesCreatedExplanation" /></p>
-    <p>
-        <fmt:message key="installer.tryBootstrapping">
-            <fmt:param><c:url value="install.rol!bootstrap"/></fmt:param>
-        </fmt:message>
-    </p>
-    <pre>
-        <c:forEach var="message" items="${messages}">
-            <c:out value="${message}"/>
-        </c:forEach>
-    </pre>
-</s:elseif>
-<s:elseif test="status.name() == 'bootstrapError'">
-    <p><fmt:message key="installer.bootstrappingError" /></p>
-</s:elseif>
-
-<s:if test="rootCauseStackTrace != null && rootCauseStackTrace != ''">
-    <h3><fmt:message key="installer.whyDidThatHappen" /></h3>
-    <p><fmt:message key="installer.heresTheStackTrace" /></p>
-    <pre>
-        [<c:out value="${rootCauseStackTrace}" />]
-    </pre>
-</s:if>
-<br />
-<br />
+</c:if>
+<br/>
+<br/>

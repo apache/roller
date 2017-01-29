@@ -37,12 +37,14 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/comments.js'/>"></script>
 
-<s:if test="%{#parameters.entryId == null}">
-    <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/comments.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
-</s:if>
-<s:else>
-    <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/comments.rol'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId=<c:out value='${param.entryId}'/>"/>
-</s:else>
+<c:choose>
+    <c:when test="${param.entryId == null}">
+        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/comments.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+    </c:when>
+    <c:otherwise>
+        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/comments.rol'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId=<c:out value='${param.entryId}'/>"/>
+    </c:otherwise>
+</c:choose>
 
 <div id="ngapp-div" ng-app="tightblogApp" ng-controller="CommentsController as ctrl">
 
