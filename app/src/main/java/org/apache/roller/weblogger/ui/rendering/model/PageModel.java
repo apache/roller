@@ -180,7 +180,7 @@ public class PageModel implements Model {
                     !StringUtils.isBlank(pageRequest.getWeblog().getAnalyticsCode())) {
                 return pageRequest.getWeblog().getAnalyticsCode();
             } else {
-                return props.getDefaultAnalyticsCode();
+                return StringUtils.defaultIfEmpty(props.getDefaultAnalyticsCode(), "");
             }
         }
     }

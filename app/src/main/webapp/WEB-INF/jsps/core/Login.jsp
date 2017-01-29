@@ -21,7 +21,6 @@
 
 <%-- Body of the login page, invoked from login.jsp --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:if test="${activationStatus == 'active'}">
     <div class="messages">

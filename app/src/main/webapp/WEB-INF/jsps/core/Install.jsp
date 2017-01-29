@@ -16,6 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
+<%@ taglib uri="/struts-tags" prefix="s" %>
 
 <c:if test="${status.error}">
     <h2><fmt:message key="installer.startupProblemMessage"/></h2>
