@@ -200,13 +200,13 @@
             <tr>
             <td class="label"><fmt:message key="weblogSettings.allowComments"/></td>
             <td class="field">
-            <select data-link="weblogData.allowComments">
-            <option value="NONE"><fmt:message key="generic.no"/></option>
-            <option value="MUSTMODERATE"><fmt:message key="weblogSettings.mustModerateComments"/></option>
-            <c:if test="${getCommentPolicy() != 'MUSTMODERATE'}">
-                <option value="YES"><fmt:message key="weblogSettings.commentsOK"/></option>
-            </c:if>
-            </select>
+                <select data-link="weblogData.allowComments">
+                    <option value="NONE"><fmt:message key="generic.no"/></option>
+                    <option value="MUSTMODERATE"><fmt:message key="weblogSettings.mustModerateComments"/></option>
+                    <c:if test="${action.getCommentPolicy() != 'MUSTMODERATE'}">
+                        <option value="YES"><fmt:message key="weblogSettings.commentsOK"/></option>
+                    </c:if>
+                </select>
             </td>
             </tr>
 

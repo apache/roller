@@ -332,7 +332,7 @@ public class MailManagerImpl implements MailManager {
         StringBuilder sb = new StringBuilder();
 
         // activationURL=
-        String activationURL = rootURL + "/tb-ui/emailResponse!activate.rol?activationCode=" +
+        String activationURL = rootURL + "/tb-ui/app/login?activationCode=" +
                 user.getActivationCode();
         sb.append(MessageFormat.format(
                 resources.getString("user.account.activation.mail.content"),

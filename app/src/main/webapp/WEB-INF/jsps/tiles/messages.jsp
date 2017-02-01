@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
 <%-- Success Messages --%>
-<c:if test="${!actionMessages.isEmpty()}">
+<c:if test="${actionMessages != null && !actionMessages.isEmpty()}">
     <div id="messages" class="messages">
         <c:forEach var="actionMessage" items="${actionMessages}">
             <c:out value="${actionMessage}"/>
@@ -27,16 +27,11 @@
 </c:if>
 
 <%-- Error Messages --%>
-<c:if test="${!actionErrors.isEmpty() || !fieldErrors.isEmpty()}">
+<c:if test="${actionErrors != null && !actionErrors.isEmpty()}">
     <div id="errors" class="errors">
         <ul>
             <c:forEach var="actionError" items="${actionErrors}">
                 <li><c:out value="${actionError}"/></li>
-            </c:forEach>
-            <c:forEach var="fieldErrorName" items="${fieldErrors.keySet()}">
-                <c:forEach var="fieldErrorValue" items="${fieldErrors[fieldErrorName]}">
-                    <li><c:out value="${fieldErrorValue}"/></li>
-                </c:forEach>
             </c:forEach>
         </ul>
     </div>

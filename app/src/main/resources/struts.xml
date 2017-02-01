@@ -89,20 +89,11 @@
             <result>/WEB-INF/jsps/core/logout-redirect.jsp</result>
         </action>
 
-        <action name="login" class="org.apache.roller.weblogger.ui.struts2.Login">
-            <result type="tiles">.Login</result>
-        </action>
-
         <action name="register" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="pageTitleReal">newUser.addNewUser</param>
             <param name="requiredGlobalRole">NOAUTHNEEDED</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.Profile</result>
-        </action>
-
-        <action name="emailResponse!*" method="{1}" class="org.apache.roller.weblogger.ui.struts2.Login">
-            <result name="successActivate" type="tiles">.Login</result>
-            <allowed-methods>activate</allowed-methods>
         </action>
 
         <action name="profile" class="org.apache.roller.weblogger.ui.struts2.UIAction">
