@@ -216,7 +216,7 @@
         <web-resource-collection>
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/roller_j_security_check</url-pattern>
-            <url-pattern>/tb-ui/login.rol</url-pattern>
+            <url-pattern>/tb-ui/app/login</url-pattern>
             <url-pattern>/tb-ui/register.rol</url-pattern>
             <url-pattern>/tb-ui/register!save.rol</url-pattern>
             <url-pattern>/tb-ui/profile.rol</url-pattern>

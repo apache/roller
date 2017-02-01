@@ -54,8 +54,8 @@
             <frame-options policy="SAMEORIGIN"/>
         </headers>
 
-        <form-login login-page="/tb-ui/login.rol"
-                    authentication-failure-url="/tb-ui/login.rol?error=true"
+        <form-login login-page="/tb-ui/app/login"
+                    authentication-failure-url="/tb-ui/app/login?error=true"
                     login-processing-url="/roller_j_security_check"
                     authentication-success-handler-ref="authenticationSuccessHandler" />
 
