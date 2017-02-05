@@ -44,7 +44,6 @@ public class Menu {
 
     public static class MenuTab {
         private String key = null;
-        private String action = null;
         private boolean selected = false;
         private List<MenuTabItem> items = new ArrayList<>();
 
@@ -58,14 +57,6 @@ public class Menu {
 
         public void setKey(String key) {
             this.key = key;
-        }
-
-        public String getAction() {
-            return action;
-        }
-
-        public void setAction(String url) {
-            this.action = url;
         }
 
         public boolean isSelected() {
@@ -89,6 +80,7 @@ public class Menu {
         private String key = null;
         private String action = null;
         private boolean selected = false;
+        private boolean hasWeblogId = false;
 
         public String getKey() {
             return key;
@@ -113,5 +105,14 @@ public class Menu {
         public void setSelected(boolean selected) {
             this.selected = selected;
         }
+
+        public boolean getHasWeblogId() {
+            return hasWeblogId;
+        }
+
+        public void setHasWeblogId(boolean hasWeblogId) {
+            this.hasWeblogId = hasWeblogId;
+        }
+
     }
 }

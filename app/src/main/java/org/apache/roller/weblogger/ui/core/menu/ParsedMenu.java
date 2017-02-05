@@ -128,7 +128,6 @@ public class ParsedMenu {
         private GlobalRole requiredGlobalRole;
         private WeblogRole requiredWeblogRole;
         private String enabledProperty = null;
-        private String disabledProperty = null;
 
         @XmlAttribute
         public String getTitleKey() {

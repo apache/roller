@@ -105,7 +105,10 @@ public final class MenuHelper {
      * @param currentAction  the current action being invoked. Null to ignore.
      * @return Menu object
      */
-    public Menu getMenu(String menuId, GlobalRole userGlobalRole, WeblogRole userWeblogRole, String currentAction) {
+    public Menu getMenu(String menuId, GlobalRole userGlobalRole, WeblogRole userWeblogRole, String currentAction, boolean useStruts) {
+        if (useStruts) {
+            currentAction += ".rol";
+        }
         String cacheKey = generateMenuCacheKey(menuId, userGlobalRole.name(),
                 userWeblogRole == null ? null : userWeblogRole.name(), currentAction);
         Menu menu = (Menu) menuCache.get(cacheKey);
@@ -151,7 +154,6 @@ public final class MenuHelper {
             tab.setKey(configTab.getTitleKey());
 
             // setup tab items
-            boolean firstItem = true;
             boolean selectable = true;
 
             // now check if each tab item should be included
@@ -185,12 +187,6 @@ public final class MenuHelper {
                     newTabItem.setSelected(true);
                     tab.setSelected(true);
                     selectable = false;
-                }
-
-                // the url for the tab is the url of the first tab item
-                if (firstItem) {
-                    tab.setAction(newTabItem.getAction());
-                    firstItem = false;
                 }
 
                 // add the item

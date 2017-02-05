@@ -36,8 +36,6 @@ import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -233,46 +231,8 @@ public class UIAction extends ActionSupport implements Preparable {
         return super.getText(cleanTextKey(key), cleanTextKey(defaultValue), cleanedArgs);
     }
 
-    public void addError(String errorKey) {
-        addActionError(getText(errorKey));
-    }
-
-    public void addError(String errorKey, String param) {
-        addActionError(getText(errorKey, errorKey, param));
-    }
-
-    public void addError(String errorKey, List args) {
-        addActionError(getText(errorKey, args));
-    }
-
-    /**
-     * This simply returns the result of hasActionErrors() but we need it
-     * because without it you can't easily check if there were errors since
-     * you can't call a hasXXX() method via OGNL.
-     */
-    public boolean errorsExist() {
-        return hasActionErrors();
-    }
-
-    public void addMessage(String msgKey) {
-        addActionMessage(getText(msgKey));
-    }
-
     public void addMessage(String msgKey, String param) {
         addActionMessage(getText(msgKey, msgKey, param));
-    }
-
-    public void addMessage(String msgKey, List args) {
-        addActionMessage(getText(msgKey, args));
-    }
-
-    /**
-     * This simply returns the result of hasActionMessages() but we need it
-     * because without it you can't easily check if there were messages since
-     * you can't call a hasXXX() method via OGNL.
-     */
-    public boolean messagesExist() {
-        return hasActionMessages();
     }
 
     public User getAuthenticatedUser() {
@@ -340,25 +300,7 @@ public class UIAction extends ActionSupport implements Preparable {
 
     public Menu getMenu() {
         return menuHelper.getMenu(getDesiredMenu(), getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(),
-                getActionName());
-    }
-
-    public String getShortDateFormat() {
-        DateFormat sdf = DateFormat.getDateInstance(
-                DateFormat.SHORT, getLocale());
-        if (sdf instanceof SimpleDateFormat) {
-            return ((SimpleDateFormat) sdf).toPattern();
-        }
-        return "yyyy/MM/dd";
-    }
-
-    public String getMediumDateFormat() {
-        DateFormat sdf = DateFormat.getDateInstance(
-                DateFormat.MEDIUM, getLocale());
-        if (sdf instanceof SimpleDateFormat) {
-            return ((SimpleDateFormat) sdf).toPattern();
-        }
-        return "MMM dd, yyyy";
+                getActionName(), true);
     }
 
     public List<Locale> getLocalesList() {

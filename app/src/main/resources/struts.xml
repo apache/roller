@@ -135,7 +135,7 @@
 
 
     <!-- Weblogger Admin UI -->
-    <package name="weblogger-admin" namespace="/tb-ui/admin" extends="weblogger">
+    <package name="weblogger-admin" namespace="/tb-ui/app/admin" extends="weblogger">
 
         <action name="globalConfig" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">globalConfig</param>
@@ -159,14 +159,6 @@
             <param name="desiredMenu">admin</param>
             <param name="requiredWeblogRole">NOBLOGNEEDED</param>
             <result name="success" type="tiles">.PingTargets</result>
-        </action>
-
-        <action name="cacheInfo" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">cacheInfo</param>
-            <param name="pageTitleReal">cacheInfo.title</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.CacheInfo</result>
         </action>
 
     </package>
