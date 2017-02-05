@@ -57,38 +57,39 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 /**
  * Initialize the Roller web application/context.
  */
-public class RollerContext extends ContextLoaderListener  
-        implements ServletContextListener { 
-    
+public class RollerContext extends ContextLoaderListener
+        implements ServletContextListener {
+
     private static Log log = LogFactory.getLog(RollerContext.class);
-    
+
     private static ServletContext servletContext = null;
 
-    
+
     public RollerContext() {
         super();
     }
-    
-    
+
+
     /**
-     * Access to the plugin manager for the UI layer. TODO: we may want 
-     * something similar to the Roller interface for the UI layer if we dont 
+     * Access to the plugin manager for the UI layer. TODO: we may want
+     * something similar to the Roller interface for the UI layer if we dont
      * want methods like this here in RollerContext.
      */
     public static UIPluginManager getUIPluginManager() {
         return UIPluginManagerImpl.getInstance();
     }
-    
-    
+
+
     /**
      * Get the ServletContext.
+     *
      * @return ServletContext
      */
     public static ServletContext getServletContext() {
         return servletContext;
-    } 
-    
-    
+    }
+
+
     /**
      * Responds to app-init event and triggers startup procedures.
      */
@@ -98,12 +99,12 @@ public class RollerContext extends ContextLoaderListener
 
         // Keep a reference to ServletContext object
         RollerContext.servletContext = sce.getServletContext();
-        
+
         // Call Spring's context ContextLoaderListener to initialize all the
         // context files specified in web.xml. This is necessary because
         // listeners don't initialize in the order specified in 2.3 containers
         super.contextInitialized(sce);
-        
+
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
         if (ctxPath == null) {
@@ -115,7 +116,7 @@ public class RollerContext extends ContextLoaderListener
         } else {
             ctxPath += "resources";
         }
-        
+
         // try setting the uploads path to <context>/resources
         // NOTE: this should go away at some point
         // we leave it here for now to allow users to keep writing
@@ -125,7 +126,7 @@ public class RollerContext extends ContextLoaderListener
         // enough to disregard this call unless the uploads.path
         // is set to ${webapp.context}
         WebloggerConfig.setUploadsDir(ctxPath);
-        
+
         // try setting the themes path to <context>/themes
         // NOTE: this should go away at some point
         // we leave it here for now to allow users to keep using
@@ -134,9 +135,9 @@ public class RollerContext extends ContextLoaderListener
         // also, the WebloggerConfig.setThemesDir() method is smart
         // enough to disregard this call unless the themes.dir
         // is set to ${webapp.context}
-        WebloggerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
-        
-        
+        WebloggerConfig.setThemesDir(servletContext.getRealPath("/") + File.separator + "themes");
+
+
         // Now prepare the core services of the app so we can bootstrap
         try {
             WebloggerStartup.prepare();
@@ -144,8 +145,8 @@ public class RollerContext extends ContextLoaderListener
             log.fatal("Roller Weblogger startup failed during app preparation", ex);
             return;
         }
-        
-        
+
+
         // if preparation failed or is incomplete then we are done,
         // otherwise try to bootstrap the business tier
         if (!WebloggerStartup.isPrepared()) {
@@ -160,11 +161,11 @@ public class RollerContext extends ContextLoaderListener
             try {
                 // trigger bootstrapping process
                 WebloggerFactory.bootstrap();
-                
+
                 // trigger initialization process
                 weblogger = WebloggerFactory.getWeblogger();
                 weblogger.initialize();
-                
+
             } catch (BootstrapException ex) {
                 log.fatal("Roller Weblogger bootstrap failed", ex);
             } catch (WebloggerException ex) {
@@ -174,61 +175,61 @@ public class RollerContext extends ContextLoaderListener
                     weblogger.release();
                 }
             }
-		}
-            
+        }
+
         // do a small amount of work to initialize the web tier
         try {
             // Initialize Spring Security based on Roller configuration
             initializeSecurityFeatures(servletContext);
-            
+
             // Setup Velocity template engine
             setupVelocity();
         } catch (WebloggerException ex) {
             log.fatal("Error initializing Roller Weblogger web tier", ex);
         }
-        
+
     }
-    
-    
-    /** 
+
+
+    /**
      * Responds to app-destroy event and triggers shutdown sequence.
      */
-    public void contextDestroyed(ServletContextEvent sce) {        
-        WebloggerFactory.getWeblogger().shutdown();        
+    public void contextDestroyed(ServletContextEvent sce) {
+        WebloggerFactory.getWeblogger().shutdown();
         // do we need a more generic mechanism for presentation layer shutdown?
         CacheManager.shutdown();
     }
-    
-    
+
+
     /**
      * Initialize the Velocity rendering engine.
      */
-    private void setupVelocity() throws WebloggerException {        
+    private void setupVelocity() throws WebloggerException {
         log.info("Initializing Velocity");
-        
+
         // initialize the Velocity engine
         Properties velocityProps = new Properties();
-        
+
         try {
             InputStream instream = servletContext.getResourceAsStream("/WEB-INF/velocity.properties");
-            
+
             velocityProps.load(instream);
-            
-            log.debug("Velocity props = "+velocityProps);
-            
+
+            log.debug("Velocity props = " + velocityProps);
+
             // init velocity
             RuntimeSingleton.init(velocityProps);
-            
+
         } catch (Exception e) {
             throw new WebloggerException(e);
         }
-        
+
     }
-         
+
     /**
      * Setup Spring Security security features.
      */
-    protected void initializeSecurityFeatures(ServletContext context) { 
+    protected void initializeSecurityFeatures(ServletContext context) {
 
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
@@ -236,14 +237,14 @@ public class RollerContext extends ContextLoaderListener
         /*String[] beanNames = ctx.getBeanDefinitionNames();
         for (String name : beanNames)
             System.out.println(name);*/
-        
+
         String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
         boolean rememberMeEnabled = Boolean.valueOf(rememberMe);
-        
+
         log.info("Remember Me enabled: " + rememberMeEnabled);
-        
+
         context.setAttribute("rememberMeEnabled", rememberMe);
-        
+
         if (!rememberMeEnabled) {
             ProviderManager provider = (ProviderManager) ctx.getBean("_authenticationManager");
             for (AuthenticationProvider authProvider : provider.getProviders()) {
@@ -252,10 +253,10 @@ public class RollerContext extends ContextLoaderListener
                 }
             }
         }
-        
+
         String encryptPasswords = WebloggerConfig.getProperty("passwds.encryption.enabled");
         boolean doEncrypt = Boolean.valueOf(encryptPasswords);
-        
+
         String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
 
         // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) may be provided in security.xml.
@@ -278,7 +279,7 @@ public class RollerContext extends ContextLoaderListener
 
         if (WebloggerConfig.getBooleanProperty("securelogin.enabled")) {
             LoginUrlAuthenticationEntryPoint entryPoint =
-                (LoginUrlAuthenticationEntryPoint) ctx.getBean("_formLoginEntryPoint");
+                    (LoginUrlAuthenticationEntryPoint) ctx.getBean("_formLoginEntryPoint");
             entryPoint.setForceHttps(true);
         }
    
@@ -307,36 +308,37 @@ public class RollerContext extends ContextLoaderListener
         }
         */
     }
-    
-    
+
+
     /**
      * Flush user from any caches maintained by security system.
      */
-    public static void flushAuthenticationUserCache(String userName) {                                
-        ApplicationContext ctx = 
-            WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-		try {
-			UserCache userCache = (UserCache) ctx.getBean("userCache");
-			if (userCache != null) {
-				userCache.removeUserFromCache(userName);
-			}
-		} catch (NoSuchBeanDefinitionException exc) {
-			log.debug("No userCache bean in context", exc);
-		}
+    public static void flushAuthenticationUserCache(String userName) {
+        ApplicationContext ctx =
+                WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+        try {
+            UserCache userCache = (UserCache) ctx.getBean("userCache");
+            if (userCache != null) {
+                userCache.removeUserFromCache(userName);
+            }
+        } catch (NoSuchBeanDefinitionException exc) {
+            log.debug("No userCache bean in context", exc);
+        }
     }
- 
-    
+
+
     /**
      * Get an instance of AutoProvision, if available in roller.properties
+     *
      * @return AutoProvision
      */
-    public static AutoProvision getAutoProvision() {        
+    public static AutoProvision getAutoProvision() {
         String clazzName = WebloggerConfig.getProperty("users.ldap.autoProvision.className");
-        
+
         if (null == clazzName) {
             return null;
         }
-        
+
         Class clazz;
         try {
             clazz = Class.forName(clazzName);
@@ -344,7 +346,7 @@ public class RollerContext extends ContextLoaderListener
             log.warn("Unable to found specified Auto Provision class.", e);
             return null;
         }
-        
+
         Class[] interfaces = clazz.getInterfaces();
         for (Class clazz2 : interfaces) {
             if (clazz2.equals(AutoProvision.class)) {
@@ -356,7 +358,7 @@ public class RollerContext extends ContextLoaderListener
                     log.warn("IllegalAccessException while creating: " + clazzName, e);
                 }
             }
-        }        
-        return null;        
-    }   
+        }
+        return null;
+    }
 }
