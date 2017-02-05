@@ -4,75 +4,74 @@ Defines the menus provided with Weblogger
 <menus>
     <menu id="admin">
         <tab titleKey="tabbedmenu.admin" globalRole="ADMIN" weblogRole="NOBLOGNEEDED">
-            <tabItem action="globalConfig"
+            <tabItem action="globalConfig.rol"
                      titleKey="tabbedmenu.admin.config"/>
-            <tabItem action="userAdmin"
+            <tabItem action="userAdmin.rol"
                      titleKey="tabbedmenu.admin.userAdmin">
             </tabItem>
-            <tabItem action="pingTargets"
+            <tabItem action="pingTargets.rol"
                      titleKey="tabbedmenu.admin.pingTargets">
             </tabItem>
-            <tabItem action="cacheInfo"
+            <tabItem action="/tb-ui/app/admin/cacheInfo"
                      titleKey="tabbedmenu.admin.cacheInfo"/>
         </tab>
     </menu>
     <menu id="editor">
         <tab titleKey="tabbedmenu.weblog" globalRole="BLOGGER" weblogRole="EDIT_DRAFT" >
-            <tabItem action="entryAdd"
+            <tabItem action="entryAdd.rol"
                      titleKey="tabbedmenu.weblog.newEntry"
                      weblogRole="EDIT_DRAFT">
                 <subactions>
-                    <subaction>entryEdit</subaction>
+                    <subaction>entryEdit.rol</subaction>
                 </subactions>
             </tabItem>
 
-            <tabItem action="entries"
+            <tabItem action="entries.rol"
                      titleKey="tabbedmenu.weblog.archives"
                      weblogRole="POST">
             </tabItem>
 
-            <tabItem action="comments"
+            <tabItem action="comments.rol"
                      titleKey="tabbedmenu.weblog.commentManagement"
                      weblogRole="POST"/>
 
-            <tabItem action="categories"
+            <tabItem action="categories.rol"
                      titleKey="tabbedmenu.weblog.categories"
                      weblogRole="POST">
             </tabItem>
 
-            <tabItem action="tags"
+            <tabItem action="tags.rol"
                      titleKey="tabbedmenu.weblog.tags"
                      weblogRole="POST">
             </tabItem>
 
-            <tabItem action="bookmarks"
+            <tabItem action="bookmarks.rol"
                      titleKey="tabbedmenu.bookmarks.allFolders"
                      weblogRole="OWNER">
             </tabItem>
-            <tabItem action="mediaFileView"
+            <tabItem action="mediaFileView.rol"
                      titleKey="tabbedmenu.weblog.mediaFiles"
                      weblogRole="POST">
                 <subactions>
-                    <subaction>mediaFileAdd</subaction>
-                    <subaction>mediaFileEdit</subaction>
+                    <subaction>mediaFileAdd.rol</subaction>
+                    <subaction>mediaFileEdit.rol</subaction>
                 </subactions>
             </tabItem>
         </tab>
         <tab titleKey="tabbedmenu.website" globalRole="BLOGGER" weblogRole="OWNER">
-            <tabItem action="weblogConfig"
+            <tabItem action="weblogConfig.rol"
                      titleKey="tabbedmenu.website.settings">
             </tabItem>
-            <tabItem action="templates"
+            <tabItem action="templates.rol"
                      titleKey="tabbedmenu.design"
                      enabledProperty="themes.customtheme.allowed">
                 <subactions>
-                    <subaction>templateAdd</subaction>
-                    <subaction>templateEdit</subaction>
-                    <subaction>templatesRemove</subaction>
-                    <subaction>themeEdit</subaction>
+                    <subaction>templateAdd.rol</subaction>
+                    <subaction>templateEdit.rol</subaction>
+                    <subaction>themeEdit.rol</subaction>
                 </subactions>
             </tabItem>
-            <tabItem action="members"
+            <tabItem action="members.rol"
                      titleKey="tabbedmenu.website.members">
             </tabItem>
         </tab>

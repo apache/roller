@@ -19,32 +19,26 @@
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.75/jsrender.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
 <script>
-    $.views.converters("todate", function(val) {
-      return new Date(val).toISOString();
-    });
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
         confirmLabel: '<fmt:message key="generic.confirm"/>',
         cancelLabel: '<fmt:message key="generic.cancel"/>',
     };
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/cacheInfo.js'/>"></script>
 
-<div id="success-message" class="messages" style="display:none">
-    <span class="textSpan"></span>
-</div>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/cacheInfo'/>"/>
 
-<div id="failure-message" class="errors" style="display:none">
-    <span class="textSpan"></span>
+<div id="successMessageDiv" class="messages" ng-show="ctrl.resultsMessage" ng-cloak>
+    <p>{{ctrl.resultsMessage}}</p>
 </div>
 
 <p class="subtitle"><fmt:message key="cacheInfo.subtitle" />
 <p><fmt:message key="cacheInfo.prompt" />
-
-<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/admin/cacheInfo.rol'/>"/>
 
 <br style="clear:left"/>
 
@@ -62,43 +56,41 @@
     </tr>
 </thead>
 <tbody id="tableBody">
-  <script id="tableTemplate" type="text/x-jsrender">
-    {{props}}
-      <tr id="{{:key}}">
-        <td class="title-cell">{{:key}}</td>
-        <td>{{todate:prop.startTime}}</td>
-        <td>{{:prop.puts}}</td>
-        <td>{{:prop.removes}}</td>
-        <td>{{:prop.hits}}</td>
-        <td>{{:prop.misses}}</td>
-        <td>{{:prop.efficiency}}</td>
+      <tr ng-repeat="(key,item) in ctrl.cacheData" ng-class-even="'altrow'">
+        <td>{{key}}</td>
+        <td>{{item.startTime | date:'short'}}</td>
+        <td>{{item.puts}}</td>
+        <td>{{item.removes}}</td>
+        <td>{{item.hits}}</td>
+        <td>{{item.misses}}</td>
+        <td>{{item.efficiency}}</td>
         <td align="center">
-            <a href="#" class="reset-link"><fmt:message key="cacheInfo.clear"/></a>
+            <input type="button" value="<fmt:message key='cacheInfo.clear'/>" ng-click="ctrl.clearCache(key)"/>
         </td>
        </tr>
-     {{/props}}
-  </script>
-
 </tbody>
 </table>
 
 <div class="control clearfix">
-  <input id="refresh-cache-stats" type="button" value="<fmt:message key='generic.refresh'/>"/>
-  <input id="clear-all-caches" type="button" value="<fmt:message key='cacheInfo.clearAll'/>"/>
+  <input ng-click="ctrl.loadItems()" type="button" value="<fmt:message key='generic.refresh'/>"/>
+  <input confirm-clear-all-dialog="confirm-clearall" type="button" value="<fmt:message key='cacheInfo.clearAll'/>"/>
 </div>
 
 <br><br>
 <fmt:message key="maintenance.prompt.reset"/>:
 <br><br>
-<input id="reset-hit-counts" type="button" value="<fmt:message key='maintenance.button.reset'/>"/>
+<input ng-click="ctrl.resetHitCounts()" type="button" value="<fmt:message key='maintenance.button.reset'/>"/>
 
 <br><br>
 <fmt:message key="maintenance.prompt.index"/>:
 <br><br>
-<select id="weblog-to-reindex"/> <input id="index-weblog" type="button" value="<fmt:message key='maintenance.button.index'/>"/>
+<select ng-model="ctrl.weblogToReindex" size="1" required>
+    <option ng-repeat="(key, value) in ctrl.metadata.weblogList" value="{{value}}">{{value}}</option>
+</select>
+<input ng-click="ctrl.reindexWeblog()" type="button" value="<fmt:message key='maintenance.button.index'/>"/>
 <br><br>
 
-<div id="confirm-resetall" title="<fmt:message key='generic.confirm'/>" style="display:none">
+<div id="confirm-clearall" title="<fmt:message key='generic.confirm'/>" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
    <fmt:message key='cacheInfo.confirmResetAll'/></p>
 </div>

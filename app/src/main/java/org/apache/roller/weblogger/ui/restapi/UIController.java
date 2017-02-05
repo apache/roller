@@ -21,7 +21,10 @@ import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserStatus;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WebloggerProperties;
+import org.apache.roller.weblogger.ui.core.menu.Menu;
+import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +55,13 @@ public class UIController {
 
     public void setMailManager(MailManager manager) {
         mailManager = manager;
+    }
+
+    @Autowired
+    private MenuHelper menuHelper;
+
+    public void setMenuHelper(MenuHelper menuHelper) {
+        this.menuHelper = menuHelper;
     }
 
     @RequestMapping(value = "/login")
@@ -93,6 +104,24 @@ public class UIController {
 
         }
         return new ModelAndView(".Login", myMap);
+    }
+
+    @RequestMapping(value = "/admin/cacheInfo")
+    public ModelAndView cacheInfo(Principal principal) {
+
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
+        I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("pageTitle", messages.getString("cacheInfo.title"));
+        myMap.put("menu", getMenu(user, "/tb-ui/app/admin/cacheInfo", "admin", WeblogRole.NOBLOGNEEDED));
+
+        return new ModelAndView(".CacheInfo", myMap);
+    }
+
+    private Menu getMenu(User user, String actionName, String desiredMenu, WeblogRole requiredRole) {
+        return menuHelper.getMenu(desiredMenu, user.getGlobalRole(), requiredRole, actionName, false);
     }
 
 }

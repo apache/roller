@@ -98,6 +98,7 @@
 
     <definition name=".CacheInfo" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
+        <put-attribute name="angularString" value="id='ngapp-div' ng-app='tightblogApp' ng-controller='AppController as ctrl'"/>
     </definition>
 
     <!-- weblog editor pages (and associates) -->
