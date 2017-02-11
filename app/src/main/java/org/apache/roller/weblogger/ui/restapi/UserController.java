@@ -359,8 +359,6 @@ public class UserController {
         Weblog weblog = weblogManager.getWeblog(weblogId);
         User user = userManager.getEnabledUserByUserName(p.getName());
         if (user != null && weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-            Locale userLocale = Locale.forLanguageTag(user.getLocale());
-            I18nMessages messages = I18nMessages.getMessages(userLocale);
 
             // must remain at least one admin
             List<UserWeblogRole> owners = roles.stream()
@@ -368,7 +366,7 @@ public class UserController {
                     .filter(r -> !r.isPending())
                     .collect(Collectors.toList());
             if (owners.size() < 1) {
-                return ResponseEntity.badRequest().body(messages.getString("memberPermissions.oneAdminRequired"));
+                return ResponseEntity.badRequest().body(user.getI18NMessages().getString("memberPermissions.oneAdminRequired"));
             }
 
             // one iteration for each line (user) in the members table
@@ -381,7 +379,7 @@ public class UserController {
                 }
             }
             persistenceStrategy.flush();
-            String msg = messages.getString("memberPermissions.membersChanged");
+            String msg = user.getI18NMessages().getString("memberPermissions.membersChanged");
             return ResponseEntity.ok(msg);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -538,8 +536,8 @@ public class UserController {
 
         if (weblog != null && invitee != null && invitor != null &&
                 userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-            Locale userLocale = Locale.forLanguageTag(invitor.getLocale());
-            I18nMessages messages = I18nMessages.getMessages(userLocale);
+
+            I18nMessages messages = invitor.getI18NMessages();
             UserWeblogRole roleChk = userManager.getWeblogRoleIncludingPending(invitee, weblog);
             if (roleChk != null) {
                 return ResponseEntity.badRequest().body(messages.getString("inviteMember.error." +

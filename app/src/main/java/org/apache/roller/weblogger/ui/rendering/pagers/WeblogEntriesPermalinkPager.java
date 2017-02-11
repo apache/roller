@@ -44,24 +44,24 @@ import java.util.stream.Collectors;
 public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
     // message utils for doing i18n messages
-    I18nMessages messageUtils = null;
+    private I18nMessages messageUtils = null;
 
     // url strategy for building urls
-    URLStrategy urlStrategy = null;
+    private URLStrategy urlStrategy = null;
 
     protected WeblogEntryManager weblogEntryManager;
 
-    Weblog weblog = null;
-    String pageLink = null;
-    String entryAnchor = null;
-    Boolean canShowDraftEntries = false;
+    private Weblog weblog = null;
+    private String pageLink = null;
+    private String entryAnchor = null;
+    private Boolean canShowDraftEntries = false;
 
-    WeblogEntry currEntry = null;
-    WeblogEntry nextEntry = null;
-    WeblogEntry prevEntry = null;
+    private WeblogEntry currEntry = null;
+    private WeblogEntry nextEntry = null;
+    private WeblogEntry prevEntry = null;
 
     // collection for the pager
-    Map<LocalDate, List<WeblogEntry>> entries = null;
+    private Map<LocalDate, List<WeblogEntry>> entries = null;
 
     public WeblogEntriesPermalinkPager(
             WeblogEntryManager weblogEntryManager,

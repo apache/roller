@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.roller.weblogger.util.I18nMessages;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -35,8 +36,10 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import java.time.Instant;
+import java.util.Locale;
 
 @Entity
 @Table(name = "weblogger_user")
@@ -74,6 +77,8 @@ public class User {
     private String locale;
     private String activationCode;
     private Instant lastLogin;
+
+    private I18nMessages i18NMessages;
 
     public User() {
     }
@@ -169,6 +174,15 @@ public class User {
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
+    }
+
+    @Transient
+    public I18nMessages getI18NMessages() {
+        if (i18NMessages == null) {
+            Locale userLocale = (getLocale() == null) ? Locale.getDefault() : Locale.forLanguageTag(getLocale());
+            i18NMessages = I18nMessages.getMessages(userLocale);
+        }
+        return i18NMessages;
     }
 
     //------------------------------------------------------- Good citizenship

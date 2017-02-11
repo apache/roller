@@ -9,7 +9,7 @@ Defines the menus provided with Weblogger
             <tabItem action="userAdmin.rol"
                      titleKey="tabbedmenu.admin.userAdmin">
             </tabItem>
-            <tabItem action="pingTargets.rol"
+            <tabItem action="/tb-ui/app/admin/pingTargets"
                      titleKey="tabbedmenu.admin.pingTargets">
             </tabItem>
             <tabItem action="/tb-ui/app/admin/cacheInfo"
