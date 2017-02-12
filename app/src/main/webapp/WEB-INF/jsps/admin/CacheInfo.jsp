@@ -1,6 +1,6 @@
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  The ASF licenses this file to You
+  contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
@@ -28,17 +31,25 @@
         cancelLabel: '<fmt:message key="generic.cancel"/>',
     };
 </script>
+
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/cacheInfo.js'/>"></script>
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/cacheInfo'/>"/>
 
-<div id="successMessageDiv" class="messages" ng-show="ctrl.resultsMessage" ng-cloak>
-    <p>{{ctrl.resultsMessage}}</p>
+<div id="successMessageDiv" class="messages" ng-show="ctrl.successMessage" ng-cloak>
+    <p>{{ctrl.successMessage}}</p>
 </div>
 
-<p class="subtitle"><fmt:message key="cacheInfo.subtitle" />
-<p><fmt:message key="cacheInfo.prompt" />
+<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMessage" ng-cloak>
+    <p>{{ctrl.errorMessage}}</p>
+</div>
+
+<p class="subtitle">
+    <fmt:message key="cacheInfo.subtitle" />
+<p>
+
+<p><fmt:message key="cacheInfo.explanation"/></p>
 
 <br style="clear:left"/>
 

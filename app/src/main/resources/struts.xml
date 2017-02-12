@@ -153,14 +153,6 @@
             <result name="success" type="tiles">.UserAdmin</result>
         </action>
 
-        <action name="pingTargets" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">pingTargets</param>
-            <param name="pageTitleReal">pingTargets.pingTargets</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.PingTargets</result>
-        </action>
-
     </package>
 
 

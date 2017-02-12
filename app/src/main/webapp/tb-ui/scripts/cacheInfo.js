@@ -23,12 +23,13 @@ $(function() {
    });
 });
 
-tightblogApp.controller('AppController', ['$http', function AppController($http) {
+tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
     this.urlRoot = contextPath + '/tb-ui/admin/rest/server/';
     this.metadata = {};
     this.weblogToReindex = null;
-    this.resultsMessage = null;
+    this.successMessage = null;
+    this.errorMessage = null;
 
     this.loadMetadata = function() {
         $http.get(this.urlRoot + 'webloglist').then(
@@ -52,6 +53,7 @@ tightblogApp.controller('AppController', ['$http', function AppController($http)
     };
 
     this.clearCache = function(cacheItem) {
+        this.messageClear();
         $http.post(this.urlRoot + 'cache/' + cacheItem + '/clear').then(
           function(response) {
              self.loadItems();
@@ -61,6 +63,7 @@ tightblogApp.controller('AppController', ['$http', function AppController($http)
     }
 
     this.clearAllCaches = function() {
+        this.messageClear();
         $http.post(this.urlRoot + 'caches/clear').then(
           function(response) {
              self.loadItems();
@@ -70,19 +73,21 @@ tightblogApp.controller('AppController', ['$http', function AppController($http)
     }
 
     this.resetHitCounts = function() {
+        this.messageClear();
         $http.post(this.urlRoot + 'resethitcount').then(
           function(response) {
-             self.resultsMessage = response.data;
+             self.successMessage = response.data;
           },
           self.commonErrorResponse
         )
     }
 
     this.reindexWeblog = function() {
+        this.messageClear();
         if (self.weblogToReindex) {
             $http.post(this.urlRoot + 'weblog/' + self.weblogToReindex + '/rebuildindex').then(
               function(response) {
-                 self.resultsMessage = response.data;
+                 self.successMessage = response.data;
               },
               self.commonErrorResponse
             )
@@ -93,8 +98,13 @@ tightblogApp.controller('AppController', ['$http', function AppController($http)
         if (response.status == 408)
            window.location.replace($('#refreshURL').attr('value'));
         if (response.status == 400) {
-           self.resultsMessage = response.data;
+           self.errorMessage = response.data;
         }
+    }
+
+    this.messageClear = function() {
+        this.successMessage = null;
+        this.errorMessage = null;
     }
 
     this.loadMetadata();

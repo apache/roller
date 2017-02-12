@@ -77,8 +77,7 @@ public class ThemeController {
         Weblog weblog = weblogManager.getWeblog(weblogId);
         SharedTheme newTheme = themeManager.getSharedTheme(newThemeId);
         User user = userManager.getEnabledUserByUserName(p.getName());
-        Locale userLocale = Locale.forLanguageTag(user.getLocale());
-        I18nMessages messages = I18nMessages.getMessages(userLocale);
+        I18nMessages messages = user.getI18NMessages();
 
         if (weblog != null && newTheme != null) {
             if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {

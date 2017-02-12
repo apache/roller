@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.ui.restapi;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +65,7 @@ public class AdminController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogController.class);
 
-    I18nMessages messages = I18nMessages.getMessages(Locale.getDefault());
+    private I18nMessages messages = I18nMessages.getMessages(Locale.getDefault());
 
     @Autowired
     private CacheManager cacheManager;
@@ -178,8 +179,7 @@ public class AdminController {
     @RequestMapping(value = "/webloggerproperties", method = RequestMethod.POST)
     public ResponseEntity updateProperties(Principal p, @Valid @RequestBody WebloggerProperties properties) {
         User user = userManager.getEnabledUserByUserName(p.getName());
-        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
-        I18nMessages messages = I18nMessages.getMessages(userLocale);
+        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         persistenceStrategy.merge(properties);
         persistenceStrategy.flush();
@@ -193,15 +193,14 @@ public class AdminController {
     public GlobalConfigMetadata getGlobalConfigMetadata(Principal principal, HttpServletResponse response) {
 
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
-        I18nMessages messages = I18nMessages.getMessages(userLocale);
+        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         GlobalConfigMetadata gcm = new GlobalConfigMetadata();
 
         List<Weblog> weblogs = weblogManager.getWeblogs(true, 0, -1);
 
         gcm.weblogList = weblogs.stream()
-                        .sorted((w1, w2) -> w1.getHandle().compareTo(w2.getHandle()))
+                        .sorted(Comparator.comparing(Weblog::getHandle))
                         .collect(Utilities.toLinkedHashMap(Weblog::getId, Weblog::getHandle));
 
         gcm.registrationOptions = Arrays.stream(WebloggerProperties.RegistrationPolicy.values())

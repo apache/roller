@@ -249,8 +249,7 @@ public class TemplateController {
 
             // Check user permissions
             User user = userManager.getEnabledUserByUserName(p.getName());
-            Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
-            I18nMessages messages = I18nMessages.getMessages(userLocale);
+            I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
             Weblog weblog = (templateToSave == null) ? weblogManager.getWeblog(weblogId) : templateToSave.getWeblog();
 

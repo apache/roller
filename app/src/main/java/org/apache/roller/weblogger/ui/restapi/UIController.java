@@ -108,16 +108,22 @@ public class UIController {
 
     @RequestMapping(value = "/admin/cacheInfo")
     public ModelAndView cacheInfo(Principal principal) {
+        return getAdminPage(principal, "cacheInfo");
+    }
 
+    @RequestMapping(value = "/admin/pingTargets")
+    public ModelAndView pingTargets(Principal principal) {
+        return getAdminPage(principal, "pingTargets");
+    }
+
+    private ModelAndView getAdminPage(Principal principal, String actionName) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
-        I18nMessages messages = I18nMessages.getMessages(userLocale);
 
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("pageTitle", messages.getString("cacheInfo.title"));
-        myMap.put("menu", getMenu(user, "/tb-ui/app/admin/cacheInfo", "admin", WeblogRole.NOBLOGNEEDED));
+        myMap.put("pageTitle", user.getI18NMessages().getString(actionName + ".title"));
+        myMap.put("menu", getMenu(user, "/tb-ui/app/admin/" + actionName, "admin", WeblogRole.NOBLOGNEEDED));
 
-        return new ModelAndView(".CacheInfo", myMap);
+        return new ModelAndView("." + actionName, myMap);
     }
 
     private Menu getMenu(User user, String actionName, String desiredMenu, WeblogRole requiredRole) {

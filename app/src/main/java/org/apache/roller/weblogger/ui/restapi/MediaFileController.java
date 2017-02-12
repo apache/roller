@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -79,7 +80,7 @@ public class MediaFileController {
                                 md.setMediaFiles(null);
                                 md.setWeblog(null);
                             })
-                            .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+                            .sorted(Comparator.comparing(MediaDirectory::getName))
                             .collect(Collectors.toList());
             return temp;
         } else {
@@ -96,7 +97,7 @@ public class MediaFileController {
             return md.getMediaFiles()
                     .stream()
                     .peek(mf -> mf.setCreator(null))
-                    .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+                    .sorted(Comparator.comparing(MediaFile::getName))
                     .collect(Collectors.toList());
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -126,8 +127,7 @@ public class MediaFileController {
 
         // Check user permissions
         User user = userManager.getEnabledUserByUserName(p.getName());
-        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
-        I18nMessages messages = I18nMessages.getMessages(userLocale);
+        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         MediaFile mf;
         if (newMediaFile) {
@@ -200,8 +200,7 @@ public class MediaFileController {
                                     Principal p, HttpServletResponse response) throws ServletException {
         try {
             User user = userManager.getEnabledUserByUserName(p.getName());
-            Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
-            I18nMessages messages = I18nMessages.getMessages(userLocale);
+            I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
             Weblog weblog = weblogManager.getWeblog(weblogId);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {

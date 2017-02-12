@@ -58,19 +58,19 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     private static Logger log = LoggerFactory.getLogger(WeblogEntriesTimePager.class);
 
     // url strategy for building urls
-    URLStrategy urlStrategy = null;
+    private URLStrategy urlStrategy = null;
 
     // message utils for doing i18n messages
-    I18nMessages messageUtils = null;
+    private I18nMessages messageUtils = null;
 
-    Weblog weblog = null;
-    String dateString = null;
-    String catName = null;
-    String tag = null;
-    int offset = 0;
-    int page = 0;
-    int maxEntries = 0;
-    Locale viewLocale = null;
+    private Weblog weblog = null;
+    private String dateString = null;
+    private String catName = null;
+    private String tag = null;
+    private int offset = 0;
+    private int page = 0;
+    private int maxEntries = 0;
+    private Locale viewLocale = null;
 
     private WeblogEntryManager weblogEntryManager;
 

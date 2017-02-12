@@ -1,5 +1,5 @@
-tightblogApp.controller('GlobalConfigController', ['$http',
-    function GlobalConfigController($http) {
+tightblogApp.controller('PageController', ['$http',
+    function PageController($http) {
         var self = this;
         this.urlRoot = contextPath + '/tb-ui/admin/rest/server/';
         this.webloggerProps = {};

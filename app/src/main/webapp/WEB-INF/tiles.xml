@@ -32,7 +32,7 @@
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
-        <put-attribute name="angularString" value="" />
+        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
@@ -85,20 +85,21 @@
     <!-- global admin pages (and associates) -->
     <definition name=".GlobalConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
-        <put-attribute name="angularString" value="id='ngapp-div' ng-app='tightblogApp' ng-controller='GlobalConfigController as ctrl'"/>
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".UserAdmin" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
     </definition>
 
-    <definition name=".PingTargets" extends=".tiles-tabbedpage" >
+    <definition name=".pingTargets" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargets.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".CacheInfo" extends=".tiles-tabbedpage" >
+    <definition name=".cacheInfo" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
-        <put-attribute name="angularString" value="id='ngapp-div' ng-app='tightblogApp' ng-controller='AppController as ctrl'"/>
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <!-- weblog editor pages (and associates) -->
@@ -119,7 +120,7 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="sidebarType"  value="sidebar" />
-        <put-attribute name="angularString" value="id='ngapp-div' ng-app='tightblogApp' ng-controller='EntryEditController as ctrl'"/>
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".Entries" extends=".tiles-tabbedpage" >

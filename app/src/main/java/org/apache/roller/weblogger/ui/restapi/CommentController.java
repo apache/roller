@@ -155,8 +155,7 @@ public class CommentController {
 
         // Get user permissions and locale
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        Locale userLocale = (user == null) ? Locale.getDefault() : Locale.forLanguageTag(user.getLocale());
-        I18nMessages messages = I18nMessages.getMessages(userLocale);
+        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
 

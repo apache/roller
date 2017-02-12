@@ -121,8 +121,8 @@ $(function() {
 
 tightblogApp.requires.push('ngSanitize');
 
-tightblogApp.controller('EntryEditController', ['$http', '$interpolate', '$sce',
-    function EntryEditController($http, $interpolate, $sce) {
+tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
+    function PageController($http, $interpolate, $sce) {
         var self = this;
         this.recentEntries = {};
         this.urlRoot = contextPath + '/tb-ui/authoring/rest/weblogentries/';
