@@ -83,7 +83,7 @@
     </definition>
 
     <!-- global admin pages (and associates) -->
-    <definition name=".GlobalConfig" extends=".tiles-tabbedpage" >
+    <definition name=".globalConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
         <put-attribute name="useAngularHeader" value="true"/>
     </definition>

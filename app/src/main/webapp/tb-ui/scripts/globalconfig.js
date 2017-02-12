@@ -5,7 +5,7 @@ tightblogApp.controller('PageController', ['$http',
         this.webloggerProps = {};
 
         this.loadMetadata = function() {
-            $http.get(this.urlRoot + 'globalconfigmetadata'  ).then(
+            $http.get(this.urlRoot + 'globalconfigmetadata').then(
             function(response) {
                 self.metadata = response.data;
               },
