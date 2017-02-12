@@ -116,6 +116,11 @@ public class UIController {
         return getAdminPage(principal, "pingTargets");
     }
 
+    @RequestMapping(value = "/admin/globalConfig")
+    public ModelAndView globalConfig(Principal principal) {
+        return getAdminPage(principal, "globalConfig");
+    }
+
     private ModelAndView getAdminPage(Principal principal, String actionName) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
 

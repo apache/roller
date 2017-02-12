@@ -223,9 +223,9 @@ public class WebloggerProperties {
     }
 
     public enum RegistrationPolicy {
-        EMAIL("configForm.registration.email"),
-        APPROVAL_REQUIRED("configForm.registration.approvalRequired"),
-        DISABLED("configFrom.registration.disabled");
+        EMAIL("globalConfig.registration.email"),
+        APPROVAL_REQUIRED("globalConfig.registration.approvalRequired"),
+        DISABLED("globalConfig.registration.disabled");
 
         private String description;
 
@@ -240,8 +240,8 @@ public class WebloggerProperties {
 
     public enum GlobalCommentPolicy {
         NONE(0, "generic.no", "generic.no"),
-        MUSTMODERATE(1, "configForm.mustModerateComments", "weblogSettings.mustModerateComments"),
-        YES(2, "configForm.commentsOK", "weblogSettings.commentsOK");
+        MUSTMODERATE(1, "globalConfig.mustModerateComments", "weblogSettings.mustModerateComments"),
+        YES(2, "globalConfig.commentsOK", "weblogSettings.commentsOK");
 
         private String siteDescription;
 

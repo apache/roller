@@ -137,14 +137,6 @@
     <!-- Weblogger Admin UI -->
     <package name="weblogger-admin" namespace="/tb-ui/app/admin" extends="weblogger">
 
-        <action name="globalConfig" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">globalConfig</param>
-            <param name="desiredMenu">admin</param>
-            <param name="pageTitleReal">configForm.title</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.GlobalConfig</result>
-        </action>
-
         <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">userAdmin</param>
             <param name="pageTitleReal">userAdmin.title.userAdministration</param>
@@ -154,7 +146,6 @@
         </action>
 
     </package>
-
 
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">

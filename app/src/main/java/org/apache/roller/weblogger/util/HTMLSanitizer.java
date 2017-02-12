@@ -35,13 +35,13 @@ public final class HTMLSanitizer {
             .addProtocols("iframe", "src", "http", "https");
 
     public enum Level {
-        NONE(0, "configForm.htmlsanitizer.none", NONE_WHITELIST),
-        LIMITED(1, "configForm.htmlsanitizer.limited", LIMITED_WHITELIST),
-        BASIC(2, "configForm.htmlsanitizer.basic", BASIC_WHITELIST),
-        BASIC_IMAGES(3, "configForm.htmlsanitizer.basicimages", BASIC_IMAGES_WHITELIST),
-        RELAXED(4, "configForm.htmlsanitizer.relaxed", RELAXED_WHITELIST),
-        RELAXED_IFRAMES(5, "configForm.htmlsanitizer.relaxediframes", RELAXED_IFRAMES_WHITELIST),
-        OFF(6, "configForm.htmlsanitizer.off", null);
+        NONE(0, "globalConfig.htmlsanitizer.none", NONE_WHITELIST),
+        LIMITED(1, "globalConfig.htmlsanitizer.limited", LIMITED_WHITELIST),
+        BASIC(2, "globalConfig.htmlsanitizer.basic", BASIC_WHITELIST),
+        BASIC_IMAGES(3, "globalConfig.htmlsanitizer.basicimages", BASIC_IMAGES_WHITELIST),
+        RELAXED(4, "globalConfig.htmlsanitizer.relaxed", RELAXED_WHITELIST),
+        RELAXED_IFRAMES(5, "globalConfig.htmlsanitizer.relaxediframes", RELAXED_IFRAMES_WHITELIST),
+        OFF(6, "globalConfig.htmlsanitizer.off", null);
 
         private String description;
 
