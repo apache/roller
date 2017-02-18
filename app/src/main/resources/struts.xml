@@ -119,7 +119,6 @@
 
     </package>
 
-
     <!-- Weblogger install/bootstrap actions -->
     <package name="weblogger-install" namespace="/tb-ui/install" extends="weblogger">
 
@@ -129,20 +128,6 @@
             <result name="bootstrap" type="tiles">.Bootstrap</result>
             <result name="success" type="chain">home</result>
             <allowed-methods>bootstrap,create</allowed-methods>
-        </action>
-
-    </package>
-
-
-    <!-- Weblogger Admin UI -->
-    <package name="weblogger-admin" namespace="/tb-ui/app/admin" extends="weblogger">
-
-        <action name="userAdmin" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">userAdmin</param>
-            <param name="pageTitleReal">userAdmin.title.userAdministration</param>
-            <param name="desiredMenu">admin</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.UserAdmin</result>
         </action>
 
     </package>

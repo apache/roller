@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -177,6 +178,7 @@ public class User {
     }
 
     @Transient
+    @JsonIgnore
     public I18nMessages getI18NMessages() {
         if (i18NMessages == null) {
             Locale userLocale = (getLocale() == null) ? Locale.getDefault() : Locale.forLanguageTag(getLocale());

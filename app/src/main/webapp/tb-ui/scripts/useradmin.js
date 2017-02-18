@@ -1,139 +1,127 @@
-$(function() {
-  var data = {
-    "user" : {},
-    "credentials" : {}
-  };
-  function formatDateFunction(dateValue) {
-    return (dateValue == null) ? null : new Date(dateValue).toLocaleString();
-  }
-  var myHelpers = { formatDate : formatDateFunction };
-  $.templates({
-    formTemplate: { markup: '#formTemplate', helpers: myHelpers },
-    pendingTemplate: '#pendingTemplate',
-    tableTemplate: '#tableTemplate',
-    errorMessageTemplate: '#errorMessageTemplate'
-  });
-  function updateEditForm(data) {
-    $.link.formTemplate("#formBody", data);
+tightblogApp.controller('PageController', ['$http',
+    function PageController($http) {
 
-    $.ajax({
-       type: "GET",
-       url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + data.user.id + '/weblogs',
-       success: function(blogListing, textStatus, xhr) {
-         var html = $.render.tableTemplate(blogListing);
-         $('#tableBody').html(html);
-       }
-    });
-  }
-  function refreshUserList(id) {
-    checkLoggedIn(function() {
-      $.ajax({
-         type: "GET",
-         url: contextPath + '/tb-ui/admin/rest/useradmin/userlist',
-         success: function(data, textStatus, xhr) {
-           $('#useradmin-select-user').empty();
-           for (var key in data) {
-             $('#useradmin-select-user').append('<option value="' + key + '">' + data[key] + '</option>');
-           }
-           if (id) {
-             $('#useradmin-select-user').val(id);
-           }
-         }
-      });
-    });
-  }
-  function getPendingRegistrations() {
-    checkLoggedIn(function() {
-      $.ajax({
-         type: "GET",
-         url: contextPath + '/tb-ui/admin/rest/useradmin/registrationapproval',
-         success: function(data, textStatus, xhr) {
-           var html = $.render.pendingTemplate(data);
-           $('#pendingList').html(html);
-         }
-      });
-    });
-  }
-  $(function() {
-    getPendingRegistrations();
-    refreshUserList();
-  });
-  $("#pendingList").on('click', '.approve-button', function(e) {
-     e.preventDefault();
-     var span = $(this).closest('span');
-     var userId = span.attr('id');
-     processRegistration(userId, 'approve');
-  });
+        var self = this;
+        this.urlRoot = contextPath + '/tb-ui/admin/rest/useradmin/';
+        this.pendingList = {};
+        this.userList = {};
+        this.userToEdit = null;
+        this.userBeingEdited = null;
+        this.userCredentials = {};
+        this.userBlogList = {};
+        this.errorObj = {};
 
-  $("#pendingList").on('click', '.decline-button', function(e) {
-     e.preventDefault();
-     var span = $(this).closest('span');
-     var userId = span.attr('id');
-     processRegistration(userId, 'reject');
-  });
+        this.loadMetadata = function() {
+            $http.get(this.urlRoot + 'useradminmetadata').then(
+            function(response) {
+                self.metadata = response.data;
+              },
+              self.commonErrorResponse
+            )
+        };
 
-  function processRegistration(userId, command) {
-    checkLoggedIn(function() {
-       $.ajax({
-          type: "POST",
-          url: contextPath + '/tb-ui/admin/rest/useradmin/registrationapproval/' + userId + '/' + command,
-          success: function(data, textStatus, xhr) {
-             getPendingRegistrations();
-             refreshUserList();
-          }
-       });
-    });
-  }
+        this.loadUserList = function() {
+            $http.get(this.urlRoot + 'userlist').then(
+            function(response) {
+                self.userList = response.data;
+                if (!self.userToEdit && Object.keys(self.userList).length > 0) {
+                  for (first in self.userList) {
+                     self.userToEdit = first;
+                     break;
+                  }
+                }
+              },
+              self.commonErrorResponse
+            )
+        };
 
-  $("#select-user").click(function(e) {
-     e.preventDefault();
-     $('#errorMessageDiv').hide();
-     var selectedId = $('#useradmin-select-user').val();
-     checkLoggedIn(function() {
-       $.ajax({
-          type: "GET",
-          url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + selectedId,
-          success: function(userData, textStatus, xhr) {
-            data.user = userData;
-            data.credentials = {};
-            updateEditForm(data);
-            $('div .showinguser').show();
-          }
-       });
-     });
-  });
-  $("#cancel-link").click(function (e) {
-    e.preventDefault();
-    $('div .showinguser').hide();
-    window.location.replace($('#refreshURL').attr('value'));
-  });
-  $("#myForm").submit(function(e) {
-    e.preventDefault();
-    $('#errorMessageDiv').hide();
-    var view = $.view("#recordId");
-    checkLoggedIn(function() {
-      $.ajax({
-         type: "PUT",
-         url: contextPath + '/tb-ui/admin/rest/useradmin/user/' + view.data.user.id,
-         data: JSON.stringify(view.data),
-         contentType: "application/json",
-         success: function(dbData, textStatus, xhr) {
-           $('div .showinguser').show();
-           data.user = dbData;
-           data.credentials = {};
-           updateEditForm(data);
-           $('#userEdit').show();
-           refreshUserList(data.user.id);
-         },
-         error: function(xhr, status, errorThrown) {
-            if (xhr.status == 400) {
-              $('div .showinguser').hide();
-              var html = $.render.errorMessageTemplate(xhr.responseJSON);
-              $('#errorMessageDiv').html(html);
-              $('#errorMessageDiv').show();
+        this.getPendingRegistrations = function() {
+            $http.get(this.urlRoot + 'registrationapproval').then(
+              function(response) {
+                 self.pendingList = response.data;
+              }
+            )
+        }
+
+        this.approveUser = function(userId) {
+            this.processRegistration(userId, 'approve');
+        }
+
+        this.declineUser = function(userId) {
+            this.processRegistration(userId, 'reject');
+        }
+
+        this.processRegistration = function(userId, command) {
+            this.messageClear();
+            $http.post(this.urlRoot + 'registrationapproval/' + userId + '/' + command).then(
+                function(response) {
+                       self.getPendingRegistrations();
+                       self.loadUserList();
+                },
+                self.commonErrorResponse
+            )
+        }
+
+        this.loadUser = function() {
+            this.messageClear();
+            $http.get(this.urlRoot + 'user/' + this.userToEdit).then(
+              function(response) {
+                 self.userBeingEdited = response.data;
+                 self.userCredentials = {};
+              }
+            )
+
+            $http.get(this.urlRoot + 'user/' + this.userToEdit + '/weblogs').then(
+              function(response) {
+                 self.userBlogList = response.data;
+              }
+            )
+        }
+
+        this.updateUser = function() {
+            this.messageClear();
+            var userData = {};
+            userData.user = this.userBeingEdited;
+            userData.credentials = this.userCredentials;
+
+            $http.put(self.urlRoot + 'user/' + this.userBeingEdited.id, JSON.stringify(userData)).then(
+              function(response) {
+                  self.userBeingEdited = response.data;
+                  self.userCredentials = {};
+                  self.loadUserList();
+                  self.getPendingRegistrations();
+                  self.successMessage = "User [" + self.userBeingEdited.screenName + "] updated."
+              },
+              function(response) {
+                if (response.status == 400) {
+                   self.errorObj = response.data;
+                } else {
+                   self.commonErrorResponse;
+                }
+              })
+        }
+
+        this.cancelChanges = function() {
+            this.messageClear();
+            this.userBeingEdited = null;
+            this.credentials = {};
+        }
+
+        this.commonErrorResponse = function(response) {
+            if (response.status == 408)
+               window.location.replace($('#refreshURL').attr('value'));
+            if (response.status == 400) {
+               self.errorMessage = response.data;
             }
-         }
-      });
-    });
-  });
-});
+        }
+
+        this.messageClear = function() {
+            this.successMessage = null;
+            this.errorObj = {};
+        }
+
+        this.loadMetadata();
+        this.getPendingRegistrations();
+        this.loadUserList();
+    }]
+);

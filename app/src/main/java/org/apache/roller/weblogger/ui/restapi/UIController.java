@@ -121,6 +121,11 @@ public class UIController {
         return getAdminPage(principal, "globalConfig");
     }
 
+    @RequestMapping(value = "/admin/userAdmin")
+    public ModelAndView userAdmin(Principal principal) {
+        return getAdminPage(principal, "userAdmin");
+    }
+
     private ModelAndView getAdminPage(Principal principal, String actionName) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
 
