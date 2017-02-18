@@ -90,13 +90,9 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     </s:if>
 
-    <s:if test="!allFolders.isEmpty">
-
-        <%-- allow user to select the bookmark folder to view --%>
-        <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name"
-                 label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" />
-
-    </s:if>
+    <%-- allow user to select the bookmark folder to view --%>
+    <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name"
+        label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" onmouseup="viewChanged()"/>
 
     <table class="rollertable table table-striped">
 
@@ -799,7 +795,11 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 feedbackAreaEdit.html('<s:text name="generic.success" />');
                 $('#category-edit-modal').modal("hide");
 
-                location.reload(true);
+                // cause page to be reloaded so that edit appears
+                // and make sure we end up on the right folder
+                bookmarksForm = $("#bookmarks")[0];
+                bookmarksForm.viewFolderId.value = bookmarksForm.folderId.value;
+                viewChanged();
             }
 
         }).error(function (data) {

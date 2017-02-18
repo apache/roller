@@ -67,7 +67,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                     if (log.isDebugEnabled()) {
                         log.debug("DENIED: required user not found");
                     }
-                    return "access-denied";
+                    return UIAction.DENIED;
                 }
 
                 // are we also enforcing global permissions?
@@ -78,10 +78,9 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                             theAction.requiredGlobalPermissionActions());
                     if (!umgr.checkPermission(perm, authenticatedUser)) {
                         if (log.isDebugEnabled()) {
-                            log.debug("DENIED: user does not have permission = "
-                                    + perm.toString());
+                            log.debug("DENIED: user does not have permission = " + perm.toString());
                         }
-                        return "access-denied";
+                        return UIAction.DENIED;
                     }
                 }
 
@@ -96,7 +95,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                                     " unable to process action \"" + ((UIAction) theAction).getActionName() +
                                     "\" because no weblog was defined (Check JSP form provides weblog value.)");
                         }
-                        return "access-denied";
+                        return UIAction.DENIED;
                     }
 
                     // are we also enforcing a specific weblog permission?
@@ -112,7 +111,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                                 log.debug("DENIED: user does not have required weblog permissions = "
                                         + required);
                             }
-                            return "access-denied";
+                            return UIAction.DENIED;
                         }
                     }
                 }
