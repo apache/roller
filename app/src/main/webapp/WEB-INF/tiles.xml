@@ -88,8 +88,9 @@
         <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".UserAdmin" extends=".tiles-tabbedpage" >
+    <definition name=".userAdmin" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".pingTargets" extends=".tiles-tabbedpage" >

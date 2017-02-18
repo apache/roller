@@ -6,7 +6,7 @@ Defines the menus provided with Weblogger
         <tab titleKey="tabbedmenu.admin" globalRole="ADMIN" weblogRole="NOBLOGNEEDED">
             <tabItem action="/tb-ui/app/admin/globalConfig"
                      titleKey="tabbedmenu.admin.config"/>
-            <tabItem action="userAdmin.rol"
+            <tabItem action="/tb-ui/app/admin/userAdmin"
                      titleKey="tabbedmenu.admin.userAdmin"/>
             <tabItem action="/tb-ui/app/admin/pingTargets"
                      titleKey="tabbedmenu.admin.pingTargets"/>

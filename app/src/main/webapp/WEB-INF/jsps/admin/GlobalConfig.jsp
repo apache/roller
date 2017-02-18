@@ -31,7 +31,7 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/globalconfig.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/admin/globalConfig.rol'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/admin/globalConfig'/>"/>
 
 <p><fmt:message key="globalConfig.prompt" /></p>
 
@@ -47,7 +47,7 @@
     <tr>
         <td class="label"><fmt:message key="globalConfig.frontpageWeblogHandle" /></td>
         <td class="field">
-            <select ng-model="ctrl.webloggerProps.mainBlog.id" size="1" required>
+            <select ng-model="ctrl.webloggerProps.mainBlog.id" size="1">
                 <option ng-repeat="(key, value) in ctrl.metadata.weblogList" value="{{key}}">{{value}}</option>
                 <option value=""><fmt:message key="globalConfig.none" /></option>
             </select>

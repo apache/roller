@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WebloggerProperties;
@@ -43,7 +42,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -311,23 +309,6 @@ public class UIAction extends ActionSupport implements Preparable {
         return TIME_ZONES;
     }
 
-    public List<Pair<String, String>> getAssignableGlobalRolesList() {
-        List<Pair<String, String>> opts;
-        opts = Arrays.stream(GlobalRole.values())
-                .filter(r -> r != GlobalRole.NOAUTHNEEDED)
-                .map(r -> Pair.of(r.name(), r.name()))
-                .collect(Collectors.toList());
-        return opts;
-    }
-
-    public List<Pair<String, String>> getUserStatusList() {
-        List<Pair<String, String>> opts;
-        opts = Arrays.stream(UserStatus.values())
-                .map(r -> Pair.of(r.name(), r.name()))
-                .collect(Collectors.toList());
-        return opts;
-    }
-
     public List<Pair<Integer, String>> getCommentDaysList() {
         List<Pair<Integer, String>> opts = new ArrayList<>();
         opts.add(Pair.of(-1, getText("weblogEdit.unlimitedCommentDays")));
@@ -345,7 +326,7 @@ public class UIAction extends ActionSupport implements Preparable {
         return (s == null || s.contains("${") || s.contains("%{")) ? "" : s;
     }
 
-    public static String cleanTextKey(String s) {
+    static String cleanTextKey(String s) {
         if (s == null || s.isEmpty()) {
             return s;
         }
@@ -353,7 +334,7 @@ public class UIAction extends ActionSupport implements Preparable {
         return StringEscapeUtils.escapeHtml4(cleanExpressions(s));
     }
 
-    public static String cleanTextArg(String s) {
+    static String cleanTextArg(String s) {
         if (s == null || s.isEmpty()) {
             return s;
         }

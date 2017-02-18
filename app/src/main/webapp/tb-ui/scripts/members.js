@@ -59,8 +59,10 @@ membersApp.controller('MembersController', ['$http', function MembersController(
       $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/potentialmembers').then(function(response) {
         self.potentialMembers = response.data;
         if (Object.keys(self.potentialMembers).length > 0) {
-          for (first in self.potentialMembers) break;
-          self.userToInvite = first;
+          for (first in self.potentialMembers) {
+             self.userToInvite = first;
+             break;
+          }
         }
       });
     };

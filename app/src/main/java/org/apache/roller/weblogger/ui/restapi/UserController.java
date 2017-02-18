@@ -62,6 +62,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -576,4 +578,43 @@ public class UserController {
         }
         persistenceStrategy.flush();
     }
+
+    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/useradminmetadata", method = RequestMethod.GET)
+    public UserAdminMetadata getUserAdminMetadata() {
+        UserAdminMetadata metadata = new UserAdminMetadata();
+
+        List<Locale> locales = Arrays.asList(Locale.getAvailableLocales());
+
+        metadata.locales = locales.stream()
+                .sorted(Comparator.comparing(Locale::getDisplayName))
+                .collect(Utilities.toLinkedHashMap(Locale::toString, Locale::getDisplayName));
+
+        metadata.userStatuses = Arrays.stream(UserStatus.values())
+                .collect(Utilities.toLinkedHashMap(UserStatus::name, UserStatus::name));
+
+        metadata.globalRoles = Arrays.stream(GlobalRole.values())
+                .filter(r -> r != GlobalRole.NOAUTHNEEDED)
+                .collect(Utilities.toLinkedHashMap(GlobalRole::name, GlobalRole::name));
+
+        return metadata;
+    }
+
+    public class UserAdminMetadata {
+        Map<String, String> locales;
+        Map<String, String> userStatuses;
+        Map<String, String> globalRoles;
+
+        public Map<String, String> getLocales() {
+            return locales;
+        }
+
+        public Map<String, String> getUserStatuses() {
+            return userStatuses;
+        }
+
+        public Map<String, String> getGlobalRoles() {
+            return globalRoles;
+        }
+    }
+
 }

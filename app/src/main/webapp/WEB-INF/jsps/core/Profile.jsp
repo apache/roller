@@ -103,7 +103,7 @@
                 <c:when test="${action.getProp('authentication.method') == 'ldap'}">
                     <strong>{{:user.userName}}</strong>
                 </c:when>
-                <c:when test="authenticatedUser == null">
+                <c:when test="${authenticatedUser == null}">
                     <input type="text" size="30" minlength="5" maxlength="25" data-link="user.userName" onBlur="this.value=this.value.trim()" required>
                 </c:when>
                 <c:otherwise>
