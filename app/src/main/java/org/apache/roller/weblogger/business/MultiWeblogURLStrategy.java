@@ -49,12 +49,12 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     @Override
     public String getLoginURL(boolean absolute) {
-        return getRootURL(absolute) + "/tb-ui/login-redirect.rol";
+        return getRootURL(absolute) + "/tb-ui/app/login-redirect";
     }
 
     @Override
     public String getLogoutURL(boolean absolute) {
-        return getRootURL(absolute) + "/tb-ui/logout.rol";
+        return getRootURL(absolute) + "/tb-ui/app/logout";
     }
 
     @Override

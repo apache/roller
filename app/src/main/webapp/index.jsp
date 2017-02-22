@@ -33,7 +33,7 @@ if (frontpageBlog != null) {
     if (userCount == 0) {
         setuppage = request.getRequestDispatcher("/tb-ui/register.rol");
     } else {
-        setuppage = request.getRequestDispatcher("/tb-ui/login-redirect.rol");
+        setuppage = request.getRequestDispatcher("/tb-ui/app/login-redirect");
     }
     setuppage.forward(request, response);
 }

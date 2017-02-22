@@ -3,8 +3,6 @@
         "http://struts.apache.org/dtds/struts-2.5.dtd">
 <struts>
 
-    <constant name="struts.multipart.parser" value="spring"/>
-
     <!-- Weblogger default package -->
     <package name="weblogger" namespace="/tb-ui" extends="struts-default">
 
@@ -69,7 +67,6 @@
         <!-- use our own interceptor stack which extends the default stack -->
         <default-interceptor-ref name="rollerStack"/>
 
-
         <!-- results made available to all actions -->
         <global-results>
             <result name="access-denied" type="tiles">.denied</result>
@@ -79,14 +76,6 @@
              the old struts 1 config.  this is the only way to do it in struts 2 -->
         <action name="home">
             <result type="redirect">/</result>
-        </action>
-
-        <action name="login-redirect">
-            <result>/WEB-INF/jsps/core/login-redirect.jsp</result>
-        </action>
-
-        <action name="logout">
-            <result>/WEB-INF/jsps/core/logout-redirect.jsp</result>
         </action>
 
         <action name="register" class="org.apache.roller.weblogger.ui.struts2.UIAction">
