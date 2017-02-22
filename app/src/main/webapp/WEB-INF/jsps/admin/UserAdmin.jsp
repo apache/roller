@@ -91,7 +91,7 @@
       <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
   </tr>
 
-  <span ng-show="ctrl.metadata.AuthMethod == 'db'" ng-cloak>
+  <c:if test="${authenticationMethod == 'DB'}">
       <tr>
           <td class="label"><label for="passwordText"><fmt:message key="userSettings.password" /></label></td>
           <td class="field">
@@ -104,7 +104,7 @@
           <input type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20"></td>
           <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
       </tr>
-  </span>
+  </c:if>
 
   <tr>
       <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>

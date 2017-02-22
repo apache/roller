@@ -136,6 +136,10 @@ public class UIAction extends ActionSupport implements Preparable {
         return getAuthenticatedUser() != null && GlobalRole.ADMIN.equals(getAuthenticatedUser().getGlobalRole());
     }
 
+    public WebloggerStaticConfig.AuthMethod getAuthenticationMethod() {
+        return WebloggerStaticConfig.getAuthMethod();
+    }
+
     /**
      * Cancel.
      *

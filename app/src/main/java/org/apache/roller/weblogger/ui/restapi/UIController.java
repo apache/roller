@@ -18,9 +18,12 @@ package org.apache.roller.weblogger.ui.restapi;
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
+import org.apache.roller.weblogger.business.WebloggerStaticConfig;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserSearchCriteria;
 import org.apache.roller.weblogger.pojos.UserStatus;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
@@ -71,7 +74,7 @@ public class UIController {
         I18nMessages messages = I18nMessages.getMessages(Locale.getDefault());
 
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("pageTitle", messages.getString("loginPage.title"));
+        myMap.put("pageTitle", messages.getString("login.title"));
 
         if (Boolean.TRUE.equals(error)) {
             List<String> actionErrors = new ArrayList<>();
@@ -103,7 +106,7 @@ public class UIController {
             }
 
         }
-        return new ModelAndView(".Login", myMap);
+        return tightblogModelAndView("login", myMap, null, null);
     }
 
     @RequestMapping(value = "/admin/cacheInfo")
@@ -132,8 +135,16 @@ public class UIController {
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("pageTitle", user.getI18NMessages().getString(actionName + ".title"));
         myMap.put("menu", getMenu(user, "/tb-ui/app/admin/" + actionName, "admin", WeblogRole.NOBLOGNEEDED));
+        return tightblogModelAndView(actionName, myMap, user, null);
+    }
 
-        return new ModelAndView("." + actionName, myMap);
+    private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, User user, Weblog weblog) {
+        map.put("authenticatedUser", user);
+        map.put("actionWeblog", weblog);
+        map.put("userIsAdmin", user != null && GlobalRole.ADMIN.equals(user.getGlobalRole()));
+        map.put("authenticationMethod", WebloggerStaticConfig.getAuthMethod());
+        map.put("registrationPolicy", WebloggerContext.getWebloggerProperties().getRegistrationPolicy());
+        return new ModelAndView("." + actionName, map);
     }
 
     private Menu getMenu(User user, String actionName, String desiredMenu, WeblogRole requiredRole) {
