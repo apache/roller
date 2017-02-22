@@ -57,7 +57,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
             }
         }
 
-        // Normal login sets the users locale in login-redirect.jsp, below is for the case where the
+        // Normal login sets the users locale via /tb-ui/app/login-redirect, below is for the case where the
         // user's session has expired (and login-redirect is usually not triggered).
         //
         // The Locale.getAvailableLocales() used to populate the locale list uses underscore separators (en_US)

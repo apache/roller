@@ -23,6 +23,6 @@
       org.apache.roller.weblogger.business.WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown")); %>
 
 <fmt:message key="footer.productName" >
-    <fmt:param value="${request.version}" />
-    <fmt:param value="${request.revision}" />
+    <fmt:param value="${version}" />
+    <fmt:param value="${revision}" />
 </fmt:message>

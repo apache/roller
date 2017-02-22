@@ -54,7 +54,7 @@
             </c:when>
             <c:otherwise>
                 <p><fmt:message key="welcome.accountCreated"/></p>
-                <p><a id="a_clickHere" href="<c:url value='/tb-ui/login-redirect.rol'/>"><fmt:message
+                <p><a id="a_clickHere" href="<c:url value='/tb-ui/app/login-redirect'/>"><fmt:message
                         key="welcome.clickHere"/></a>
                     <fmt:message key="welcome.toLoginAndPost"/></p>
             </c:otherwise>

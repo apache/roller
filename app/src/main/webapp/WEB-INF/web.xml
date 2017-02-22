@@ -222,7 +222,7 @@
             <url-pattern>/tb-ui/profile.rol</url-pattern>
             <url-pattern>/tb-ui/profile!save.rol</url-pattern>
             <url-pattern>/tb-ui/admin/*</url-pattern>
-            <url-pattern>/tb-ui/login-redirect.rol</url-pattern>
+            <url-pattern>/tb-ui/app/login-redirect</url-pattern>
             <url-pattern>/tb-ui/authoring/userdata</url-pattern>
             <url-pattern>/tb-ui/authoring/membersInvite.rol</url-pattern>
             <url-pattern>/tb-ui/authoring/membersInvite!save.rol</url-pattern>
