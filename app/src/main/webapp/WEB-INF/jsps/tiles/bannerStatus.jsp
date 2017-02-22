@@ -57,7 +57,7 @@
                     <c:otherwise>
                         <a href="<c:url value='/tb-ui/login-redirect.rol'/>"><fmt:message key="navigationBar.login"/></a>
 
-                        <c:if test="${action.getRegistrationPolicy() != 'DISABLED' && action.getProp('authentication.method') != 'ldap'}">
+                        <c:if test="${registrationPolicy != 'DISABLED' && authenticationMethod != 'LDAP'}">
                             | <a href="<c:url value='/tb-ui/register.rol'/>"><fmt:message key="navigationBar.register"/></a>
                         </c:if>
                     </c:otherwise>

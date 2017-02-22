@@ -34,7 +34,7 @@
     </div>
 </c:if>
 
-<p><fmt:message key="loginPage.prompt" /></p>
+<p><fmt:message key="login.prompt" /></p>
 
 <form method="post" id="loginForm"
       action="<c:url value='/roller_j_security_check'/>">
@@ -44,14 +44,14 @@
     <table width="80%">
 
         <tr>
-            <td width="20%" align="right"><fmt:message key="loginPage.userName" /></td>
+            <td width="20%" align="right"><fmt:message key="login.userName" /></td>
             <td width="80%">
                 <input value="gmazza" type="text" name="username" id="j_username" size="25" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 
         <tr>
-            <td width="20%" align="right"><fmt:message key="loginPage.password" /></td>
+            <td width="20%" align="right"><fmt:message key="login.password" /></td>
             <td width="80%">
                 <input value="1@Password" type="password" name="password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
             </td>
@@ -60,8 +60,8 @@
         <tr>
             <td width="20%"></td>
             <td width="80%">
-                <input type="submit" name="login" id="login" value="<fmt:message key='loginPage.login' />" />
-                <input type="reset" name="reset" id="reset" value="<fmt:message key='loginPage.reset' />"
+                <input type="submit" name="login" id="login" value="<fmt:message key='login.login' />" />
+                <input type="reset" name="reset" id="reset" value="<fmt:message key='login.reset' />"
                     onclick="document.getElementById('j_username').focus()" />
             </td>
         </tr>
