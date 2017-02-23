@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
+import org.apache.roller.weblogger.ui.rendering.processors.PageProcessor;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -122,32 +125,60 @@ public class UIController {
     @RequestMapping(value = "/login-redirect")
     public void loginRedirect(Principal principal, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        User user = userManager.getEnabledUserByUserName(principal.getName());
-
-        if (user == null) {
-            /* If authentication successful but no user, authentication must have been via LDAP without
-               the user having registered yet.  So forward to the registration page... */
-            response.sendRedirect(request.getContextPath() + "/tb-ui/register.rol");
+        if (principal == null) {
+            // trigger call to login page
+            response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol");
         } else {
-            List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+            User user = userManager.getEnabledUserByUserName(principal.getName());
 
-            if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
-                if (roles.size() == 1) {
-                    Weblog weblog = roles.get(0).getWeblog();
-                    response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
-                            + user.getLocale() + "&weblogId=" + weblog.getId());
-                } else {
-                    response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
-                }
+            if (user == null) {
+                /* If authentication successful but no user, authentication must have been via LDAP without
+                   the user having registered yet.  So forward to the registration page... */
+                response.sendRedirect(request.getContextPath() + "/tb-ui/register.rol");
             } else {
-                if (roles.size() > 0) {
-                    response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
+                List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+
+                if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
+                    if (roles.size() == 1) {
+                        Weblog weblog = roles.get(0).getWeblog();
+                        response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
+                                + user.getLocale() + "&weblogId=" + weblog.getId());
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
+                    }
                 } else {
-                    // admin has no blog yet, possibly initial setup.
-                    response.sendRedirect(request.getContextPath() + "/tb-ui/admin/globalConfig");
+                    if (roles.size() > 0) {
+                        response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
+                    } else {
+                        // admin has no blog yet, possibly initial setup.
+                        response.sendRedirect(request.getContextPath() + "/tb-ui/admin/globalConfig");
+                    }
                 }
             }
         }
+    }
+
+    @RequestMapping(value = "/get-default-blog")
+    public void getDefaultBlog(Principal principal, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+
+        Weblog defaultBlog = WebloggerContext.getWebloggerProperties().getMainBlog();
+        String path;
+
+        if (defaultBlog != null) {
+            path = PageProcessor.PATH + '/' + defaultBlog.getHandle();
+        } else {
+            // new install?  Redirect to register or login page based on whether a user has already been created.
+            long userCount = userManager.getUserCount();
+            if (userCount == 0) {
+                path = "/tb-ui/register.rol";
+            } else {
+                path = "/tb-ui/app/login-redirect";
+            }
+        }
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher(path);
+        dispatcher.forward(request, response);
     }
 
     @RequestMapping(value = "/admin/cacheInfo")

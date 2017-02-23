@@ -30,7 +30,6 @@ public class Weblogger {
 
     // managers
     private final ThemeManager themeManager;
-    private final UserManager userManager;
     private final WeblogManager weblogManager;
     private final WeblogEntryManager weblogEntryManager;
 
@@ -42,13 +41,11 @@ public class Weblogger {
      */
     protected Weblogger(
             ThemeManager themeManager,
-            UserManager userManager,
             WeblogManager weblogManager,
             WeblogEntryManager weblogEntryManager,
             URLStrategy urlStrategy) {
 
         this.themeManager = themeManager;
-        this.userManager = userManager;
         this.weblogManager = weblogManager;
         this.weblogEntryManager = weblogEntryManager;
         this.urlStrategy = urlStrategy;
@@ -56,10 +53,6 @@ public class Weblogger {
 
     public ThemeManager getThemeManager() {
         return themeManager;
-    }
-
-    public UserManager getUserManager() {
-        return userManager;
     }
 
     public WeblogEntryManager getWeblogEntryManager() {
