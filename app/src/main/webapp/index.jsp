@@ -14,28 +14,12 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
---%><%@ page session="false" %><%
 
-// lets see if we have a frontpage blog
-org.apache.roller.weblogger.pojos.Weblog frontpageBlog =
-        org.apache.roller.weblogger.business.WebloggerContext.getWebloggerProperties().getMainBlog();
-
-if (frontpageBlog != null) {
-    // dispatch to frontpage blog
-    RequestDispatcher homepage =
-            request.getRequestDispatcher(org.apache.roller.weblogger.ui.rendering.processors.PageProcessor.PATH + '/'
-            + frontpageBlog.getHandle());
-    homepage.forward(request, response);
-} else {
-    // new install?  Redirect to register or login page based on whether a user has already been created.
-    RequestDispatcher setuppage = null;
-    long userCount = org.apache.roller.weblogger.business.WebloggerContext.getWeblogger().getUserManager().getUserCount();
-    if (userCount == 0) {
-        setuppage = request.getRequestDispatcher("/tb-ui/register.rol");
-    } else {
-        setuppage = request.getRequestDispatcher("/tb-ui/app/login-redirect");
-    }
-    setuppage.forward(request, response);
-}
-
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
+--%>
+<%@ page session="false" %>
+<%
+RequestDispatcher defaultpage = request.getRequestDispatcher("/tb-ui/app/get-default-blog");
+defaultpage.forward(request, response);
 %>

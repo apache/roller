@@ -47,7 +47,6 @@
 
     <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.Weblogger">
         <beans:constructor-arg ref="themeManager"/>
-        <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
