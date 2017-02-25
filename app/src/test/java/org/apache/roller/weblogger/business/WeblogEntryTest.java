@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.roller.weblogger.WebloggerTest;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -887,14 +888,27 @@ public class WeblogEntryTest extends WebloggerTest {
         try {
             blog1 = weblogManager.getWeblog(blog1.getId());
             blog2 = weblogManager.getWeblog(blog2.getId());
-            
-            assertEquals(2L, weblogEntryManager.getEntryCount(blog1));
-            assertEquals(3L, weblogEntryManager.getEntryCount(blog2));
-            assertEquals(5L, weblogEntryManager.getEntryCount());
 
-            assertEquals(2L, weblogEntryManager.getCommentCount(blog1));
-            assertEquals(3L, weblogEntryManager.getCommentCount(blog2));
-            assertEquals(5L, weblogEntryManager.getCommentCount());
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(blog1);
+            assertEquals(2L, weblogEntryManager.getEntryCount(wesc));
+
+            wesc.setWeblog(blog2);
+            assertEquals(3L, weblogEntryManager.getEntryCount(wesc));
+
+            wesc.setWeblog(null);
+            assertEquals(5L, weblogEntryManager.getEntryCount(wesc));
+
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
+            csc.setWeblog(blog1);
+            assertEquals(2L, weblogEntryManager.getCommentCount(csc));
+
+            csc.setWeblog(blog2);
+            assertEquals(3L, weblogEntryManager.getCommentCount(csc));
+
+            csc.setWeblog(null);
+            assertEquals(5L, weblogEntryManager.getCommentCount(csc));
 
             assertEquals(4L, weblogManager.getWeblogCount());
             assertEquals(existingUserCount + 2L, userManager.getUserCount());

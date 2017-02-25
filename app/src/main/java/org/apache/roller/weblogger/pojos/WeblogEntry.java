@@ -66,10 +66,6 @@ import java.util.Set;
                 query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2"),
         @NamedQuery(name = "WeblogEntry.getByWeblog",
                 query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1"),
-        @NamedQuery(name = "WeblogEntry.getCountDistinctByStatus",
-                query = "SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1"),
-        @NamedQuery(name = "WeblogEntry.getCountDistinctByStatus&Weblog",
-                query = "SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1 AND e.weblog = ?2"),
         @NamedQuery(name = "WeblogEntry.updateCommentDaysByWeblog",
                 query = "UPDATE WeblogEntry e SET e.commentDays = ?1 WHERE e.weblog = ?2")
 })
@@ -475,8 +471,9 @@ public class WeblogEntry {
     }
 
     @Transient
-    public int getCommentCount() {
-        return getComments().size();
+    public long getCommentCount() {
+        WeblogEntryManager wmgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
+        return wmgr.getCommentCount(CommentSearchCriteria.approvedComments(this, true));
     }
 
     /**
