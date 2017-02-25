@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.util.Utilities;
@@ -155,7 +154,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());
     }
 
-    private List<WeblogEntry> getNextPrevEntries(WeblogEntry current, String catName, int maxEntries, boolean next) {
+    private List<WeblogEntry> getNextPrevEntries(WeblogEntry current, String catName, boolean next) {
 
         if (current == null || current.getPubTime() == null) {
             return Collections.emptyList();
@@ -200,92 +199,101 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));
         }
-        query.setMaxResults(maxEntries);
+        query.setMaxResults(1);
 
         return query.getResultList();
     }
 
-    @Override
-    public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria criteria) {
-        List<Object> params = new ArrayList<>();
+    private QueryData createEntryQueryString(WeblogEntrySearchCriteria criteria, boolean countOnly) {
+        QueryData qd = new QueryData();
         int size = 0;
-        StringBuilder queryString = new StringBuilder();
+
+        qd.queryString = "SELECT ".concat(countOnly ? "count(e)" : "e").concat(" FROM WeblogEntry e");
 
         if (criteria.getTags() == null || criteria.getTags().size() == 0) {
-            queryString.append("SELECT e FROM WeblogEntry e WHERE 1=1 ");
+            qd.queryString += " WHERE 1=1 ";
         } else {
             // subquery to avoid this problem with Derby: http://stackoverflow.com/a/480536
-            queryString.append("SELECT e FROM WeblogEntry e WHERE EXISTS ( Select 1 from WeblogEntryTag t " +
-                    "where t.weblogEntry.id = e.id AND ");
-            queryString.append("(");
+            qd.queryString += " WHERE EXISTS ( Select 1 from WeblogEntryTag t " +
+                    "where t.weblogEntry.id = e.id AND (";
+
             boolean isFirst = true;
             for (String tagName : criteria.getTags()) {
                 if (!isFirst) {
-                    queryString.append(" OR ");
+                    qd.queryString += " OR ";
                 }
-                params.add(size++, tagName);
-                queryString.append(" t.name = ?").append(size);
+                qd.params.add(size++, tagName);
+                qd.queryString += " t.name = ?" + size;
                 isFirst = false;
             }
-            queryString.append(")) ");
+            qd.queryString += ")) ";
         }
 
         if (criteria.getWeblog() != null) {
-            params.add(size++, criteria.getWeblog().getId());
-            queryString.append("AND e.weblog.id = ?").append(size);
+            qd.params.add(size++, criteria.getWeblog().getId());
+            qd.queryString += "AND e.weblog.id = ?" + size;
         }
 
-        params.add(size++, Boolean.TRUE);
-        queryString.append(" AND e.weblog.visible = ?").append(size);
+        qd.params.add(size++, Boolean.TRUE);
+        qd.queryString += " AND e.weblog.visible = ?" + size;
 
         if (criteria.getUser() != null) {
-            params.add(size++, criteria.getUser().getUserName());
-            queryString.append(" AND e.creatorUserName = ?").append(size);
+            qd.params.add(size++, criteria.getUser().getUserName());
+            qd.queryString += " AND e.creatorUserName = ?" + size;
         }
 
         if (criteria.getStartDate() != null) {
-            params.add(size++, criteria.getStartDate());
-            queryString.append(" AND e.pubTime >= ?").append(size);
+            qd.params.add(size++, criteria.getStartDate());
+            qd.queryString += " AND e.pubTime >= ?" + size;
         }
 
         if (criteria.getEndDate() != null) {
-            params.add(size++, criteria.getEndDate());
-            queryString.append(" AND e.pubTime <= ?").append(size);
+            qd.params.add(size++, criteria.getEndDate());
+            qd.queryString += " AND e.pubTime <= ?" + size;
         }
 
         if (!StringUtils.isEmpty(criteria.getCategoryName())) {
-            params.add(size++, criteria.getCategoryName());
-            queryString.append(" AND e.category.name = ?").append(size);
+            qd.params.add(size++, criteria.getCategoryName());
+            qd.queryString += " AND e.category.name = ?" + size;
         }
 
         if (criteria.getStatus() != null) {
-            params.add(size++, criteria.getStatus());
-            queryString.append(" AND e.status = ?").append(size);
+            qd.params.add(size++, criteria.getStatus());
+            qd.queryString += " AND e.status = ?" + size;
         }
 
         if (StringUtils.isNotEmpty(criteria.getText())) {
-            params.add(size++, '%' + criteria.getText() + '%');
-            queryString.append(" AND ( e.text LIKE ?").append(size);
-            queryString.append("    OR e.summary LIKE ?").append(size);
-            queryString.append("    OR e.title LIKE ?").append(size);
-            queryString.append(") ");
+            qd.params.add(size++, '%' + criteria.getText() + '%');
+            qd.queryString += " AND ( e.text LIKE ?" + size;
+            qd.queryString += "    OR e.summary LIKE ?" + size;
+            qd.queryString += "    OR e.title LIKE ?" + size;
+            qd.queryString += ") ";
         }
 
-        if (criteria.getSortBy() != null && criteria.getSortBy().equals(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME)) {
-            queryString.append(" ORDER BY e.updateTime ");
-        } else {
-            queryString.append(" ORDER BY e.pubTime ");
+        if (!countOnly) {
+            if (criteria.getSortBy() != null && criteria.getSortBy().equals(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME)) {
+                qd.queryString += " ORDER BY e.updateTime ";
+            } else {
+                qd.queryString += " ORDER BY e.pubTime ";
+            }
+
+            if (criteria.getSortOrder() != null && criteria.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
+                qd.queryString += "ASC ";
+            } else {
+                qd.queryString += "DESC ";
+            }
         }
 
-        if (criteria.getSortOrder() != null && criteria.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
-            queryString.append("ASC ");
-        } else {
-            queryString.append("DESC ");
-        }
+        return qd;
+    }
 
-        TypedQuery<WeblogEntry> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntry.class);
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
+    @Override
+    public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria criteria) {
+        QueryData qd = createEntryQueryString(criteria, false);
+
+        TypedQuery<WeblogEntry> query = strategy.getDynamicQuery(qd.queryString, WeblogEntry.class);
+        for (int i = 0; i < qd.params.size(); i++) {
+            query.setParameter(i + 1, qd.params.get(i));
         }
 
         if (criteria.getOffset() != 0) {
@@ -297,6 +305,20 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
         return query.getResultList();
     }
+
+    @Override
+    public long getEntryCount(WeblogEntrySearchCriteria wesc) {
+        QueryData cqd = createEntryQueryString(wesc, true);
+
+        TypedQuery<Long> query = strategy.getDynamicQuery(cqd.queryString, Long.class);
+
+        for (int i = 0; i < cqd.params.size(); i++) {
+            query.setParameter(i + 1, cqd.params.get(i));
+        }
+
+        return query.getResultList().get(0);
+    }
+
 
     @Override
     public WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor) {
@@ -400,70 +422,96 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return base;
     }
 
-    @Override
-    public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) {
-
-        List<Object> params = new ArrayList<>();
+    private QueryData createCommentQueryString(CommentSearchCriteria csc, boolean countOnly) {
+        QueryData cqd = new QueryData();
         int size = 0;
-        StringBuilder queryString = new StringBuilder();
-        queryString.append("SELECT c FROM WeblogEntryComment c");
+
+        cqd.queryString = "SELECT ".concat(countOnly ? "count(c)" : "c").concat(" FROM WeblogEntryComment c");
 
         StringBuilder whereClause = new StringBuilder();
         if (csc.getEntry() != null) {
-            params.add(size++, csc.getEntry());
+            cqd.params.add(size++, csc.getEntry());
             appendConjuctionToWhereclause(whereClause, "c.weblogEntry = ?").append(size);
         } else {
             if (csc.getWeblog() != null) {
-                params.add(size++, csc.getWeblog());
+                cqd.params.add(size++, csc.getWeblog());
                 appendConjuctionToWhereclause(whereClause, "c.weblogEntry.weblog = ?").append(size);
             }
             if (csc.getCategoryName() != null) {
-                params.add(size++, csc.getCategoryName());
+                cqd.params.add(size++, csc.getCategoryName());
                 appendConjuctionToWhereclause(whereClause, "c.weblogEntry.category.name = ?").append(size);
             }
         }
 
         if (csc.getSearchText() != null) {
-            params.add(size++, "%" + csc.getSearchText().toUpperCase() + "%");
+            cqd.params.add(size++, "%" + csc.getSearchText().toUpperCase() + "%");
             appendConjuctionToWhereclause(whereClause, "upper(c.content) LIKE ?").append(size);
         }
 
         if (csc.getStartDate() != null) {
-            params.add(size++, csc.getStartDate());
+            cqd.params.add(size++, csc.getStartDate());
             appendConjuctionToWhereclause(whereClause, "c.postTime >= ?").append(size);
         }
 
         if (csc.getEndDate() != null) {
-            params.add(size++, csc.getEndDate());
+            cqd.params.add(size++, csc.getEndDate());
             appendConjuctionToWhereclause(whereClause, "c.postTime <= ?").append(size);
         }
 
         if (csc.getStatus() != null) {
-            params.add(size++, csc.getStatus());
+            cqd.params.add(size++, csc.getStatus());
             appendConjuctionToWhereclause(whereClause, "c.status = ?").append(size);
         }
 
         if (whereClause.length() != 0) {
-            queryString.append(" WHERE ").append(whereClause);
-        }
-        if (csc.isReverseChrono()) {
-            queryString.append(" ORDER BY c.postTime DESC");
-        } else {
-            queryString.append(" ORDER BY c.postTime ASC");
+            cqd.queryString += " WHERE " + whereClause.toString();
         }
 
-        TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntryComment.class);
+        if (!countOnly) {
+            if (csc.isReverseChrono()) {
+                cqd.queryString += " ORDER BY c.postTime DESC";
+            } else {
+                cqd.queryString += " ORDER BY c.postTime ASC";
+            }
+        }
+
+        return cqd;
+    }
+
+    private class QueryData {
+        String queryString;
+        List<Object> params = new ArrayList<>();
+    }
+
+
+    @Override
+    public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) {
+        QueryData cqd = createCommentQueryString(csc, false);
+
+        TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(cqd.queryString, WeblogEntryComment.class);
         if (csc.getOffset() != 0) {
             query.setFirstResult(csc.getOffset());
         }
         if (csc.getMaxResults() != -1) {
             query.setMaxResults(csc.getMaxResults());
         }
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
+        for (int i = 0; i < cqd.params.size(); i++) {
+            query.setParameter(i + 1, cqd.params.get(i));
         }
         return query.getResultList();
+    }
 
+    @Override
+    public long getCommentCount(CommentSearchCriteria csc) {
+        QueryData cqd = createCommentQueryString(csc, true);
+
+        TypedQuery<Long> query = strategy.getDynamicQuery(cqd.queryString, Long.class);
+
+        for (int i = 0; i < cqd.params.size(); i++) {
+            query.setParameter(i + 1, cqd.params.get(i));
+        }
+
+        return query.getResultList().get(0);
     }
 
     @Override
@@ -485,11 +533,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         for (WeblogEntry entry : entries) {
             LocalDate tmp = entry.getPubTime() == null ? LocalDate.now() :
                     entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
-            List<WeblogEntry> dayEntries = map.get(tmp);
-            if (dayEntries == null) {
-                dayEntries = new ArrayList<>();
-                map.put(tmp, dayEntries);
-            }
+            List<WeblogEntry> dayEntries = map.computeIfAbsent(tmp, k -> new ArrayList<>());
             dayEntries.add(entry);
         }
         return map;
@@ -505,9 +549,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
         for (WeblogEntry entry : entries) {
             LocalDate maybeDate = entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
-            if (map.get(maybeDate) == null) {
-                map.put(maybeDate, formatter.format(maybeDate));
-            }
+            map.putIfAbsent(maybeDate, formatter.format(maybeDate));
         }
         return map;
     }
@@ -515,7 +557,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public WeblogEntry getNextEntry(WeblogEntry current, String catName) {
         WeblogEntry entry = null;
-        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, 1, true);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, true);
         if (entryList != null && entryList.size() > 0) {
             entry = entryList.get(0);
         }
@@ -525,7 +567,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public WeblogEntry getPreviousEntry(WeblogEntry current, String catName) {
         WeblogEntry entry = null;
-        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, 1, false);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, false);
         if (entryList != null && entryList.size() > 0) {
             entry = entryList.get(0);
         }
@@ -538,36 +580,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         q.setParameter(1, weblog.getDefaultCommentDays());
         q.setParameter(2, weblog);
         q.executeUpdate();
-    }
-
-    @Override
-    public long getCommentCount() {
-        TypedQuery<Long> q = strategy.getNamedQuery("WeblogEntryComment.getCountAllDistinctByStatus", Long.class);
-        q.setParameter(1, ApprovalStatus.APPROVED);
-        return q.getResultList().get(0);
-    }
-
-    @Override
-    public long getCommentCount(Weblog weblog) {
-        TypedQuery<Long> q = strategy.getNamedQuery("WeblogEntryComment.getCountDistinctByWeblog&Status", Long.class);
-        q.setParameter(1, weblog);
-        q.setParameter(2, ApprovalStatus.APPROVED);
-        return q.getResultList().get(0);
-    }
-
-    @Override
-    public long getEntryCount() {
-        TypedQuery<Long> q = strategy.getNamedQuery("WeblogEntry.getCountDistinctByStatus", Long.class);
-        q.setParameter(1, PubStatus.PUBLISHED);
-        return q.getResultList().get(0);
-    }
-
-    @Override
-    public long getEntryCount(Weblog website) {
-        TypedQuery<Long> q = strategy.getNamedQuery("WeblogEntry.getCountDistinctByStatus&Weblog", Long.class);
-        q.setParameter(1, PubStatus.PUBLISHED);
-        q.setParameter(2, website);
-        return q.getResultList().get(0);
     }
 
     /**

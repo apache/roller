@@ -52,6 +52,11 @@ public interface WeblogEntryManager {
     WeblogEntry getWeblogEntry(String id, boolean bypassCache);
 
     /**
+     * Get entry count based on specified WeblogEntrySearchCriteria
+     */
+    long getEntryCount(WeblogEntrySearchCriteria wesc);
+
+    /**
      * Get weblog entry by anchor.
      */
     WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor);
@@ -139,24 +144,9 @@ public interface WeblogEntryManager {
     void applyCommentDefaultsToEntries(Weblog website);
 
     /**
-     * Get site-wide comment count
+     * Get comment count based on specified CommentSearchCriteria
      */
-    long getCommentCount();
-
-    /**
-     * Get weblog comment count
-     */
-    long getCommentCount(Weblog websiteData);
-
-    /**
-     * Get site-wide entry count
-     */
-    long getEntryCount();
-
-    /**
-     * Get weblog entry count
-     */
-    long getEntryCount(Weblog websiteData);
+    long getCommentCount(CommentSearchCriteria csc);
 
     /**
      * Process the blog text based on whether Commonmark and/or JSoup tag

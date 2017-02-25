@@ -32,20 +32,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.Instant;
 
 @Entity
 @Table(name = "weblog_entry_comment")
-@NamedQueries({
-        @NamedQuery(name = "WeblogEntryComment.getCountAllDistinctByStatus",
-                query = "SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1"),
-        @NamedQuery(name = "WeblogEntryComment.getCountDistinctByWeblog&Status",
-                query = "SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2"),
-})
 public class WeblogEntryComment {
 
     // approval status states
