@@ -12,7 +12,7 @@ tightblogApp.controller('PageController', ['$http',
         this.errorObj = {};
 
         this.loadMetadata = function() {
-            $http.get(this.urlRoot + 'useradminmetadata').then(
+            $http.get(contextPath + '/tb-ui/register/rest/useradminmetadata').then(
             function(response) {
                 self.metadata = response.data;
               },
@@ -55,8 +55,8 @@ tightblogApp.controller('PageController', ['$http',
             this.messageClear();
             $http.post(this.urlRoot + 'registrationapproval/' + userId + '/' + command).then(
                 function(response) {
-                       self.getPendingRegistrations();
-                       self.loadUserList();
+                   self.getPendingRegistrations();
+                   self.loadUserList();
                 },
                 self.commonErrorResponse
             )
@@ -111,7 +111,7 @@ tightblogApp.controller('PageController', ['$http',
             if (response.status == 408)
                window.location.replace($('#refreshURL').attr('value'));
             if (response.status == 400) {
-               self.errorMessage = response.data;
+               self.errorObj.errorMessage = response.data;
             }
         }
 

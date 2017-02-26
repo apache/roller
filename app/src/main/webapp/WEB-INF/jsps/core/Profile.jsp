@@ -19,55 +19,48 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var authMethod = '<c:out value="${action.getProp('authentication.method')}"/>';
+    var authMethod = "<c:out value='${authenticationMethod}'/>";
+    var ldapMissing = "<fmt:message key='Register.error.ldap.notauthenticated'/>";
+    // Below populated for logged-in user profile edit only
+    var userId = "<c:out value='${authenticatedUser.id}'/>";
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/profile.js'/>"></script>
 
-<div id="errorMessageDiv" class="errors" style="display:none">
-    <script id="errorMessageTemplate" type="text/x-jsrender">
-  <b>{{:errorMessage}}</b>
-  <ul>
-     {{for errors}}
-     <li>{{>#data}}</li>
-     {{/for}}
-  </ul>
-
-    </script>
-</div>
-
-<div id="errorMessageNoLDAPAuth" class="errors" style="display:none">
-    <span><fmt:message key="Register.error.ldap.notauthenticated"/></span>
-</div>
-
-<div class="ldapok">
-
-    <div id="successMessageDiv" class="messages" style="display:none">
-        <c:choose>
-            <c:when test="${authenticatedUser != null}">
-                <p><fmt:message key="generic.changes.saved"/></p>
-            </c:when>
-            <c:otherwise>
+<div id="successMessageDiv" class="messages" ng-show="ctrl.showSuccessMessage" ng-cloak>
+    <c:choose>
+        <c:when test="${authenticatedUser != null}">
+            <p><fmt:message key="generic.changes.saved"/></p>
+        </c:when>
+        <c:otherwise>
+            <div ng-show="ctrl.userBeingEdited.status == 'ENABLED'">
                 <p><fmt:message key="welcome.accountCreated"/></p>
-                <p><a id="a_clickHere" href="<c:url value='/tb-ui/app/login-redirect'/>"><fmt:message
-                        key="welcome.clickHere"/></a>
+                <p><a href="<c:url value='/tb-ui/app/login-redirect'/>">
+                    <fmt:message key="welcome.clickHere"/></a>
                     <fmt:message key="welcome.toLoginAndPost"/></p>
-            </c:otherwise>
-        </c:choose>
-    </div>
+            </div>
+            <div ng-show="ctrl.userBeingEdited.status == 'REGISTERED'">
+                <p><fmt:message key="welcome.accountCreated"/></p>
+                <p><fmt:message key="welcome.user.account.not.activated"/></p>
+            </div>
+        </c:otherwise>
+    </c:choose>
+</div>
 
-    <div id="successMessageNeedActivation" class="messages" style="display:none">
-        <p><fmt:message key="welcome.accountCreated"/></p>
-        <p><fmt:message key="welcome.user.account.not.activated"/></p>
-    </div>
+<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
+    <p>{{ctrl.errorObj.errorMessage}}</p>
+    <ul>
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
+    </ul>
+</div>
 
-    <%-- Below populated for logged-in user profile edit only --%>
-    <input type="hidden" id="userId" value="<c:out value='${authenticatedUser.id}'/>"/>
+<div ng-hide="ctrl.ldapInvalid" ng-cloak>
 
     <c:choose>
         <c:when test="${authenticatedUser == null}">
@@ -75,9 +68,9 @@
             <c:set var="passwordTipKey">userRegister.tip.password</c:set>
             <c:set var="passwordConfirmTipKey">userRegister.tip.passwordConfirm</c:set>
             <c:set var="saveButtonText">userRegister.button.save</c:set>
-            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/register.rol'/>"/>
+            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/register'/>"/>
             <input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
-            <div class="notregistered">
+            <div ng-hide="ctrl.profileUserId">
                 <p><fmt:message key="userRegister.prompt"/></p>
             </div>
         </c:when>
@@ -86,28 +79,25 @@
             <c:set var="passwordTipKey">userSettings.tip.password</c:set>
             <c:set var="passwordConfirmTipKey">userSettings.tip.passwordConfirm</c:set>
             <c:set var="saveButtonText">generic.save</c:set>
-            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/profile.rol'/>"/>
+            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/profile'/>"/>
             <input type="hidden" id="cancelURL" value="<c:url value='/tb-ui/menu.rol'/>"/>
-            <p class="subtitle"><fmt:message key="yourProfile.subtitle"/></p>
+            <p class="subtitle"><fmt:message key="profile.subtitle"/></p>
         </c:otherwise>
     </c:choose>
-    <s:form id="myForm">
 
-        <table class="formtable">
-            <tbody id="formBody">
-            <script id="formTemplate" type="text/x-jsrender">
-      <tr id="recordId" data-id="{{:user.id}}">
+    <table class="formtable">
+      <tr>
           <td class="label"><label for="userName"><fmt:message key="userSettings.username"/></label></td>
           <td class="field">
             <c:choose>
-                <c:when test="${action.getProp('authentication.method') == 'ldap'}">
-                    <strong>{{:user.userName}}</strong>
+                <c:when test="${authenticationMethod == 'LDAP'}">
+                    <strong>{{ctrl.userBeingEdited.userName}}</strong>
                 </c:when>
                 <c:when test="${authenticatedUser == null}">
-                    <input type="text" size="30" minlength="5" maxlength="25" data-link="user.userName" onBlur="this.value=this.value.trim()" required>
+                    <input type="text" size="30" ng-model="ctrl.userBeingEdited.userName" minlength="5" maxlength="25">
                 </c:when>
                 <c:otherwise>
-                    <input type="text" size="30" data-link="user.userName" readonly="true">
+                    <input type="text" size="30" ng-model="ctrl.userBeingEdited.userName" readonly>
                 </c:otherwise>
             </c:choose>
           </td>
@@ -116,65 +106,49 @@
 
       <tr>
           <td class="label"><label for="screenName"><fmt:message key="userSettings.screenname"/></label></td>
-          <td class="field"><input type="text" size="30" data-link="user.screenName" onBlur="this.value=this.value.trim()" minlength="3" maxlength="30" required></td>
+          <td class="field"><input type="text" size="30" ng-model="ctrl.userBeingEdited.screenName" minlength="3" maxlength="30"></td>
           <td class="description"><fmt:message key="userRegister.tip.screenName"/></td>
       </tr>
 
       <tr>
-          <td class="label"><label for="emailAddress"><fmt:message key="userSettings.email"/></label></td>
-          <td class="field"><input type="email" size="40" data-link="user.emailAddress" onBlur="this.value=this.value.trim()" maxlength="40" required></td>
-          <td class="description"><fmt:message key="userAdmin.tip.email"/></td>
+          <td class="label"><label for="emailAddress"><fmt:message key="userSettings.email" /></label></td>
+          <td class="field"><input type="email" size="40" ng-model="ctrl.userBeingEdited.emailAddress" maxlength="40"></td>
+          <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
       </tr>
 
       <tr>
-          <td class="label"><label for="locale"><fmt:message key="userSettings.locale"/></label></td>
+          <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>
           <td class="field">
-              <s:select name="locale" size="1" list="localesList" listValue="displayName" data-link="user.locale"
-                        required=""/>
+              <select ng-model="ctrl.userBeingEdited.locale" size="1">
+                  <option ng-repeat="(key, value) in ctrl.metadata.locales" value="{{key}}">{{value}}</option>
+              </select>
           </td>
           <td class="description"><fmt:message key="userRegister.tip.locale"/></td>
       </tr>
 
-      <c:if test="${action.getProp('authentication.method') == 'db'}">
-                <tr>
+      <c:if test="${authenticationMethod == 'DB'}">
+            <tr>
                 <td class="label"><label for="passwordText"><fmt:message key="userSettings.password"/></label></td>
                 <td class="field">
-                <c:choose>
-                    <c:when test="${authenticatedUser == null}">
-                        <input required type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
-                    </c:when>
-                    <c:otherwise>
-                        <input type="password" size="20" data-link="credentials.passwordText" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
-                    </c:otherwise>
-                </c:choose>
+                    <input type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20">
                 </td>
                 <td class="description"><fmt:message key="${passwordTipKey}"/></td>
-                </tr>
-                <tr>
+            </tr>
+            <tr>
                 <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm"/></label></td>
                 <td class="field">
-                <c:choose>
-                    <c:when test="${authenticatedUser == null}">
-                        <input required type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
-                    </c:when>
-                    <c:otherwise>
-                        <input type="password" size="20" data-link="credentials.passwordConfirm" onBlur="this.value=this.value.trim()" minlength="8" maxlength="20">
-                    </c:otherwise>
-                </c:choose>
+                    <input type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20">
                 </td>
                 <td class="description"><fmt:message key="${passwordConfirmTipKey}"/></td>
-                </tr>
-            </c:if>
+            </tr>
+      </c:if>
+    </table>
 
-            </script>
-            </tbody>
-        </table>
+    <br/>
 
-        <br/>
+    <div class="control" ng-hide="ctrl.hideButtons">
+        <input class="buttonBox" type="button" value="<fmt:message key='${saveButtonText}'/>" ng-click="ctrl.updateUser()"/>
+        <input class="buttonBox" type="button" value="<fmt:message key='generic.cancel'/>" ng-click="ctrl.cancelChanges()"/>
+    </div>
 
-        <div class="notregistered">
-            <s:submit id="save-link" value="%{getText(#saveButtonText)}"/>
-            <input id="cancel-link" type="button" value="<fmt:message key='generic.cancel'/>"/>
-        </div>
-    </s:form>
 </div>

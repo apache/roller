@@ -41,6 +41,7 @@
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <definition name=".tiles-no-nav-page" template="/WEB-INF/jsps/tiles/tiles-no-nav-page.jsp">
@@ -68,8 +69,14 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
     </definition>
 
-    <definition name=".Profile" extends=".tiles-simplepage" >
+    <definition name=".profile" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
+    </definition>
+
+    <definition name=".register" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".MainMenu" extends=".tiles-simplepage" >

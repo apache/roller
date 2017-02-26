@@ -217,10 +217,10 @@
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/roller_j_security_check</url-pattern>
             <url-pattern>/tb-ui/app/login</url-pattern>
-            <url-pattern>/tb-ui/register.rol</url-pattern>
-            <url-pattern>/tb-ui/register!save.rol</url-pattern>
-            <url-pattern>/tb-ui/profile.rol</url-pattern>
-            <url-pattern>/tb-ui/profile!save.rol</url-pattern>
+            <url-pattern>/tb-ui/register</url-pattern>
+            <url-pattern>/tb-ui/register!save</url-pattern>
+            <url-pattern>/tb-ui/profile</url-pattern>
+            <url-pattern>/tb-ui/profile!save</url-pattern>
             <url-pattern>/tb-ui/admin/*</url-pattern>
             <url-pattern>/tb-ui/app/login-redirect</url-pattern>
             <url-pattern>/tb-ui/authoring/userdata</url-pattern>

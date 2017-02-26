@@ -316,7 +316,9 @@ public class UserController {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     static class UserData {
+        @Valid
         User user;
+
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         UserCredentials credentials;
 
@@ -438,6 +440,20 @@ public class UserController {
     private ValidationError advancedValidate(User currentUser, UserData data, boolean isAdd) {
         BindException be = new BindException(data, "new data object");
 
+        UserSearchCriteria usc1 = new UserSearchCriteria();
+        usc1.setUserName(data.user.getUserName());
+        List<User> users = userManager.getUsers(usc1);
+        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
+            be.addError(new ObjectError("User object", bundle.getString("error.add.user.userNameInUse")));
+        }
+
+        UserSearchCriteria usc2 = new UserSearchCriteria();
+        usc2.setScreenName(data.user.getScreenName());
+        users = userManager.getUsers(usc2);
+        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
+            be.addError(new ObjectError("User object", bundle.getString("error.add.user.screenNameInUse")));
+        }
+
         if (currentUser != null) {
             UserStatus currentStatus = currentUser.getStatus();
             if (currentStatus != data.getUser().getStatus()) {
@@ -483,20 +499,6 @@ public class UserController {
                 WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB &&
                 StringUtils.isEmpty(data.credentials.getPasswordText())) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
-        }
-
-        UserSearchCriteria usc1 = new UserSearchCriteria();
-        usc1.setUserName(data.user.getUserName());
-        List<User> users = userManager.getUsers(usc1);
-        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.userNameInUse")));
-        }
-
-        UserSearchCriteria usc2 = new UserSearchCriteria();
-        usc2.setScreenName(data.user.getScreenName());
-        users = userManager.getUsers(usc2);
-        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.screenNameInUse")));
         }
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
@@ -579,7 +581,7 @@ public class UserController {
         persistenceStrategy.flush();
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/useradminmetadata", method = RequestMethod.GET)
+    @RequestMapping(value = "/tb-ui/register/rest/useradminmetadata", method = RequestMethod.GET)
     public UserAdminMetadata getUserAdminMetadata() {
         UserAdminMetadata metadata = new UserAdminMetadata();
 
