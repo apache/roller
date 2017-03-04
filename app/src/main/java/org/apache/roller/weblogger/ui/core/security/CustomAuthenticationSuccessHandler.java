@@ -51,7 +51,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         if (authPrincipal instanceof LdapUserDetails) {
             if (user == null) {
                 String redirectUrl = UrlUtils.buildFullRequestUrl(request.getScheme(), request.getServerName(),
-                        new PortResolverImpl().getServerPort(request), "/tightblog/tb-ui/register.rol", null);
+                        new PortResolverImpl().getServerPort(request), "/tightblog/tb-ui/register", null);
                 getRedirectStrategy().sendRedirect(request, response, redirectUrl);
                 return;
             }

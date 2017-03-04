@@ -57,7 +57,7 @@
 </span>
 
 <table class="formtable" ng-show="ctrl.userBeingEdited">
-  <tr id="recordId">
+  <tr>
       <td class="label"><label for="userName"><fmt:message key="userSettings.username" /></label></td>
       <td class="field">
         <input type="text" size="30" maxlength="30" ng-model="ctrl.userBeingEdited.userName" readonly cssStyle="background: #e5e5e5">

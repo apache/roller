@@ -74,18 +74,18 @@ public class UIController {
         this.menuHelper = menuHelper;
     }
 
+    private I18nMessages defaultMessages = I18nMessages.getMessages(Locale.getDefault());
+
     @RequestMapping(value = "/login")
     public ModelAndView login(@RequestParam(required = false) String activationCode,
                               @RequestParam(required = false) Boolean error) {
 
-        I18nMessages messages = I18nMessages.getMessages(Locale.getDefault());
-
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("pageTitle", messages.getString("login.title"));
+        myMap.put("pageTitle", defaultMessages.getString("login.title"));
 
         if (Boolean.TRUE.equals(error)) {
             List<String> actionErrors = new ArrayList<>();
-            actionErrors.add(messages.getString("error.password.mismatch"));
+            actionErrors.add(defaultMessages.getString("error.password.mismatch"));
             myMap.put("actionErrors", actionErrors);
         }
 
@@ -109,7 +109,7 @@ public class UIController {
                 }
                 userManager.saveUser(user);
             } else {
-                myMap.put("actionErrors", messages.getString("error.activate.user.invalidActivationCode"));
+                myMap.put("actionErrors", defaultMessages.getString("error.activate.user.invalidActivationCode"));
             }
 
         }
@@ -134,7 +134,7 @@ public class UIController {
             if (user == null) {
                 /* If authentication successful but no user, authentication must have been via LDAP without
                    the user having registered yet.  So forward to the registration page... */
-                response.sendRedirect(request.getContextPath() + "/tb-ui/register.rol");
+                response.sendRedirect(request.getContextPath() + "/tb-ui/register");
             } else {
                 List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
 
@@ -160,8 +160,6 @@ public class UIController {
 
     @RequestMapping(value = "/get-default-blog")
     public void getDefaultBlog(Principal principal, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-
         Weblog defaultBlog = WebloggerContext.getWebloggerProperties().getMainBlog();
         String path;
 
@@ -171,7 +169,7 @@ public class UIController {
             // new install?  Redirect to register or login page based on whether a user has already been created.
             long userCount = userManager.getUserCount();
             if (userCount == 0) {
-                path = "/tb-ui/register.rol";
+                path = "/tb-ui/register";
             } else {
                 path = "/tb-ui/app/login-redirect";
             }
@@ -201,19 +199,36 @@ public class UIController {
         return getAdminPage(principal, "userAdmin");
     }
 
+    @RequestMapping(value = "/profile")
+    public ModelAndView profile(Principal principal) {
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+        return tightblogModelAndView("profile", null, user, null);
+    }
+
+    @RequestMapping(value = "/register")
+    public ModelAndView register() {
+        return tightblogModelAndView("register", null, null, null);
+    }
+
     private ModelAndView getAdminPage(Principal principal, String actionName) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
-
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("pageTitle", user.getI18NMessages().getString(actionName + ".title"));
         myMap.put("menu", getMenu(user, "/tb-ui/app/admin/" + actionName, "admin", WeblogRole.NOBLOGNEEDED));
         return tightblogModelAndView(actionName, myMap, user, null);
     }
 
     private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, User user, Weblog weblog) {
+        if (map == null) {
+            map = new HashMap<>();
+        }
         map.put("authenticatedUser", user);
         map.put("actionWeblog", weblog);
         map.put("userIsAdmin", user != null && GlobalRole.ADMIN.equals(user.getGlobalRole()));
+        if (user != null) {
+            map.putIfAbsent("pageTitle", user.getI18NMessages().getString(actionName + ".title"));
+        } else {
+            map.putIfAbsent("pageTitle", defaultMessages.getString(actionName + ".title"));
+        }
         map.put("authenticationMethod", WebloggerStaticConfig.getAuthMethod());
         map.put("registrationPolicy", WebloggerContext.getWebloggerProperties().getRegistrationPolicy());
         return new ModelAndView("." + actionName, map);

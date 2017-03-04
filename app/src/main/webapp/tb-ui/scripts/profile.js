@@ -1,85 +1,102 @@
-$(function() {
-  var data = {
-    "user" : {
-      "locale" : "en"
-    },
-    "credentials" : {
-    }
-  };
-  $.templates({
-    formTemplate: '#formTemplate',
-    errorMessageTemplate: '#errorMessageTemplate'
-  });
-  function updateEditForm(data) {
-    $.link.formTemplate("#formBody", data);
-  }
-  $(function() {
-    var recordId = $('#userId').val();
-    if (recordId == '') {
-      if (authMethod == "ldap") {
-        $.ajax({
-           type: "GET",
-           url: contextPath + '/tb-ui/register/rest/ldapdata',
-           success: function(ldapData, textStatus, xhr) {
-             data.user = ldapData;
-             data.credentials = {};
-             updateEditForm(data);
-           },
-           error: function(xhr, status, errorThrown) {
-              if (xhr.status == 404) {
-                $('div .ldapok').hide();
-                $('#errorMessageNoLDAPAuth').show();
+tightblogApp.controller('PageController', ['$http',
+    function PageController($http) {
+        var self = this;
+        this.userBeingEdited = {
+           "locale" : "en"
+        };
+        this.userCredentials = {};
+        this.ldapInvalid = false;
+        this.errorObj = {};
+        this.hideButtons = false;
+
+        this.loadMetadata = function() {
+            $http.get(contextPath + '/tb-ui/register/rest/useradminmetadata').then(
+            function(response) {
+                self.metadata = response.data;
+              },
+              self.commonErrorResponse
+            )
+        };
+
+        this.loadUser = function() {
+            $http.get(contextPath + '/tb-ui/authoring/rest/userprofile/' + userId).then(
+              function(response) {
+                 self.userBeingEdited = response.data;
+                 self.userCredentials = {};
               }
-           }
-        });
-      } else {
-        updateEditForm(data);
-      }
-    } else {
-      $.ajax({
-         type: "GET",
-         url: contextPath + '/tb-ui/authoring/rest/userprofile/' + recordId,
-         success: function(dbData, textStatus, xhr) {
-           data.user = dbData;
-           data.credentials = {};
-           updateEditForm(data);
-         }
-      });
-    }
-  });
-  $("#myForm").submit(function(e) {
-    e.preventDefault();
-    $('#errorMessageDiv').hide();
-    $('#successMessageDiv').hide();
-    var view = $.view("#recordId");
-    var isUpdate = view.data.user.hasOwnProperty('id');
-    var urlToUse = contextPath + (isUpdate ? '/tb-ui/authoring/rest/userprofile/' + view.data.user.id
-      : '/tb-ui/register/rest/registeruser');
-    $.ajax({
-       type: "POST",
-       url: urlToUse,
-       data: JSON.stringify(view.data),
-       contentType: "application/json",
-       success: function(dbData, textStatus, xhr) {
-         if (!isUpdate) {
-           $('div .notregistered').hide();
-         }
-         if (dbData.status == 'ENABLED') {
-           $('#successMessageDiv').show();
-         } else {
-           $('#successMessageNeedActivation').show();
-         }
-         data.user = dbData;
-         data.credentials = {};
-         updateEditForm(data);
-       },
-       error: function(xhr, status, errorThrown) {
-          if (xhr.status == 400) {
-            var html = $.render.errorMessageTemplate(xhr.responseJSON);
-            $('#errorMessageDiv').html(html);
-            $('#errorMessageDiv').show();
-          }
-       }
-    });
-  });
-});
+            )
+        }
+
+        this.loadLDAPData = function() {
+            $http.get(contextPath + '/tb-ui/register/rest/ldapdata').then(
+              function(response) {
+                 self.userBeingEdited = response.data;
+                 self.userCredentials = {};
+              },
+              function(response, status) {
+                 if (status = 404) {
+                    self.ldapInvalid = true;
+                    self.errorObj.errorMessage = ldapMissing;
+                 } else {
+                    commonErrorResponse(response);
+                 }
+              }
+            )
+        }
+
+        this.updateUser = function() {
+            this.messageClear();
+            var userData = {};
+            userData.user = this.userBeingEdited;
+            userData.credentials = this.userCredentials;
+            var urlToUse = contextPath + (userId ? '/tb-ui/authoring/rest/userprofile/' + userId
+              : '/tb-ui/register/rest/registeruser');
+
+            $http.post(urlToUse, JSON.stringify(userData)).then(
+              function(response) {
+                  self.userBeingEdited = response.data;
+                  if (!userId) {
+                     self.hideButtons = true;
+                     userId = self.userBeingEdited.id;
+                  }
+                  self.userCredentials = {};
+                  self.showSuccessMessage = true;
+              },
+              function(response) {
+                if (response.status == 400) {
+                   self.errorObj = response.data;
+                } else {
+                   self.commonErrorResponse;
+                }
+              })
+        }
+
+        this.cancelChanges = function() {
+            this.messageClear();
+            this.userBeingEdited = null;
+            this.credentials = {};
+        }
+
+        this.commonErrorResponse = function(response) {
+            if (response.status == 408)
+               window.location.replace($('#refreshURL').attr('value'));
+            if (response.status == 400) {
+               self.errorMessage = response.data;
+            }
+        }
+
+        this.messageClear = function() {
+            this.errorObj = {};
+            this.ldapInvalid = false;
+            this.showSuccessMessage = false;
+        }
+
+        this.messageClear();
+        this.loadMetadata();
+        if (userId) {
+            this.loadUser();
+        } else if (authMethod == "ldap") {
+            this.loadLDAPData();
+        }
+    }]
+);

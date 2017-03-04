@@ -50,7 +50,7 @@
                 <c:choose>
                     <c:when test="${authenticatedUser != null}">
                        <a href="<c:url value='/tb-ui/menu.rol'/>"><fmt:message key="yourWebsites.title" /></a> |
-                       <a href="<c:url value='/tb-ui/profile.rol'/>"><fmt:message key="yourWebsites.editProfile" /></a> |
+                       <a href="<c:url value='/tb-ui/app/profile'/>"><fmt:message key="yourWebsites.editProfile" /></a> |
                        <a href="<c:url value='/tb-ui/app/logout'/>"><fmt:message key="navigationBar.logout"/></a>
                     </c:when>
 
@@ -58,7 +58,7 @@
                         <a href="<c:url value='/tb-ui/app/login-redirect'/>"><fmt:message key="navigationBar.login"/></a>
 
                         <c:if test="${registrationPolicy != 'DISABLED' && authenticationMethod != 'LDAP'}">
-                            | <a href="<c:url value='/tb-ui/register.rol'/>"><fmt:message key="navigationBar.register"/></a>
+                            | <a href="<c:url value='/tb-ui/app/register'/>"><fmt:message key="navigationBar.register"/></a>
                         </c:if>
                     </c:otherwise>
                 </c:choose>

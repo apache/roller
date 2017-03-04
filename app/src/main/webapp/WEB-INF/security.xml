@@ -38,7 +38,7 @@
         <intercept-url pattern="/tb-ui/app/authoring/**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
         <intercept-url pattern="/tb-ui/createWeblog**" access="ADMIN,BLOGCREATOR"/>
         <intercept-url pattern="/tb-ui/app/login-redirect" access="ADMIN,BLOGCREATOR,BLOGGER"/>
-        <intercept-url pattern="/tb-ui/profile**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/profile" access="ADMIN,BLOGCREATOR,BLOGGER"/>
         <intercept-url pattern="/tb-ui/menu**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
 
         <!-- Detect login redirects occurring as a result of Ajax GET calls and send a 408 (timeout) response
