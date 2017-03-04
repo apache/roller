@@ -44,8 +44,8 @@
 
 <div id="pendingList">
    <span ng-repeat="item in ctrl.pendingList" style='color:red'>New registration request: {{item.screenName}} ({{item.emailAddress}}):
-   <input ng-click="ctrl.approveUser(item.id)" type="button" value="<fmt:message key='yourWebsites.accept' />">
-   <input ng-click="ctrl.declineUser(item.id)" type="button" value="<fmt:message key='yourWebsites.decline' />"><br></span>
+   <input ng-click="ctrl.approveUser(item.id)" type="button" value="<fmt:message key='mainMenu.accept' />">
+   <input ng-click="ctrl.declineUser(item.id)" type="button" value="<fmt:message key='mainMenu.decline' />"><br></span>
 </div>
 
 <p class="subtitle"><fmt:message key="userAdmin.subtitle" /></p>

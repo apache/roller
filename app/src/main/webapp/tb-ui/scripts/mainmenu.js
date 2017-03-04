@@ -8,8 +8,8 @@ $(function() {
       {
         text: msg.yesLabel,
         click: function() {
-          var roleId = $(this).data('roleId');
-          updateRole(roleId, 'detach');
+          angular.element('#ngapp-div').scope().ctrl.updateRole(encodeURIComponent($(this).data('roleId')), 'detach');
+          angular.element('#ngapp-div').scope().$apply();
           $(this).dialog("close");
         },
       },
@@ -21,53 +21,47 @@ $(function() {
       }
     ]
   });
-
-  $("#allBlogs").on('click', '.resign-link', function(e) {
-    e.preventDefault();
-    var idHaver = $(this).closest('tr');
-    var roleId = idHaver.attr('id');
-    var itemName = idHaver.attr('data-name');
-    $('#confirm-resign')
-      .dialog('option', 'title', itemName)
-      .data('roleId', roleId).dialog('open');
-  });
-
-  $("#allBlogs").on('click', '.accept-button', function(e) {
-     e.preventDefault();
-     var span = $(this).closest('span');
-     var roleId = span.attr('id');
-     updateRole(roleId, 'attach');
-  });
-
-  $("#allBlogs").on('click', '.decline-button', function(e) {
-     e.preventDefault();
-     var span = $(this).closest('span');
-     var roleId = span.attr('id');
-     updateRole(roleId, 'detach');
-  });
-
-  function updateRole(roleId, command) {
-    checkLoggedIn(function() {
-       $.ajax({
-          type: "POST",
-          url: contextPath + '/tb-ui/authoring/rest/weblogrole/' + roleId + '/' + command,
-          success: function(data, textStatus, xhr) {
-             angular.element('#blog-list').scope().ctrl.loadItems();
-             angular.element('#blog-list').scope().$apply();
-          }
-       });
-    });
-  }
 });
 
-var mainMenuApp = angular.module('mainMenuApp', []);
-
-mainMenuApp.controller('MainMenuController', ['$http', function MainMenuController($http) {
+tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
+
+    this.acceptBlog = function(role) {
+        this.updateRole(role.id, 'attach');
+    }
+
+    this.declineBlog = function(role) {
+        this.updateRole(role.id, 'detach');
+    }
+
+    this.updateRole = function(roleId, command) {
+        $http.post(contextPath + '/tb-ui/authoring/rest/weblogrole/' + roleId + '/' + command).then(
+          function(response) {
+             self.loadItems();
+          },
+          self.commonErrorResponse
+        )
+    }
+
     this.loadItems = function() {
       $http.get(contextPath + '/tb-ui/authoring/rest/loggedinuser/weblogs').then(function(response) {
         self.roles = response.data;
       });
     };
+
     this.loadItems();
   }]);
+
+tightblogApp.directive('confirmResignDialog', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attr, ctrl) {
+            var dialogId = '#' + attr.confirmResignDialog;
+            elem.bind('click', function(e) {
+                $(dialogId).data('roleId',  attr.roleId)
+                    .dialog("option", {"title" : attr.weblogName})
+                    .dialog('open');
+            });
+        }
+    };
+});

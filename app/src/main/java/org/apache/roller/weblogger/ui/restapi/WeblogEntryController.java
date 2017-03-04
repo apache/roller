@@ -598,7 +598,7 @@ public class WeblogEntryController {
                                         .format(entry.getPubTime()));
                         break;
                     case PENDING:
-                        ssr.message = "weblogEdit.submittedForReview";
+                        ssr.message = messages.getString("weblogEdit.submittedForReview");
                         break;
                     default:
                 }

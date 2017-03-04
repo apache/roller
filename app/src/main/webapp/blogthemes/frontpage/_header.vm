@@ -19,7 +19,7 @@
                 <td class="bannerLeft"></td>
                 <td class="bannerRight">
                    <a href="$url.absoluteSite">$utils.msg("navigationBar.homePage")</a> |
-                   <a href="$url.absoluteSite/tb-ui/menu.rol">Main Menu</a> |
+                   <a href="$url.absoluteSite/tb-ui/app/home">Main Menu</a> |
                    #if(!$model.isUserAuthenticated())
                       <a href="$url.login">Login</a> |
                      <a href="$url.register">Register</a>

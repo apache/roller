@@ -85,13 +85,6 @@
             <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 
-        <action name="menu" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="pageTitleReal">yourWebsites.title</param>
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.MainMenu</result>
-        </action>
-
     </package>
 
     <!-- Weblogger install/bootstrap actions -->

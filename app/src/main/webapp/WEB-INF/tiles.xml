@@ -79,8 +79,9 @@
         <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".MainMenu" extends=".tiles-simplepage" >
+    <definition name=".mainMenu" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/MainMenu.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <!-- setup page -->

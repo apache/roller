@@ -79,8 +79,8 @@
             <c:set var="passwordTipKey">userSettings.tip.password</c:set>
             <c:set var="passwordConfirmTipKey">userSettings.tip.passwordConfirm</c:set>
             <c:set var="saveButtonText">generic.save</c:set>
-            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/profile'/>"/>
-            <input type="hidden" id="cancelURL" value="<c:url value='/tb-ui/menu.rol'/>"/>
+            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/profile'/>"/>
+            <input type="hidden" id="cancelURL" value="<c:url value='/tb-ui/app/home'/>"/>
             <p class="subtitle"><fmt:message key="profile.subtitle"/></p>
         </c:otherwise>
     </c:choose>
