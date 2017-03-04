@@ -53,7 +53,7 @@
     </c:if>
 </div>
 
-<input type="hidden" id="menuURL" value="<c:url value='/tb-ui/menu.rol'/>"/>
+<input type="hidden" id="menuURL" value="<c:url value='/tb-ui/app/home'/>"/>
 <input type="hidden" id="weblogId" value="<c:out value='${param.weblogId}'/>"/>
 
 <%-- Create Weblog --%>
@@ -250,7 +250,7 @@
     <div class="control">
         <s:submit value="%{getText(#saveButtonText)}"/>
         <input type="button" value="<fmt:message key='generic.cancel'/>"
-               onclick="window.location='<c:url value='/tb-ui/menu.rol'/>'"/>
+               onclick="window.location='<c:url value='/tb-ui/app/home'/>'"/>
     </div>
 
     <br>

@@ -113,7 +113,7 @@ public class UIController {
             }
 
         }
-        return tightblogModelAndView("login", myMap, null, null);
+        return tightblogModelAndView("login", myMap, (User) null, null);
     }
 
     @RequestMapping(value = "/logout")
@@ -127,7 +127,7 @@ public class UIController {
 
         if (principal == null) {
             // trigger call to login page
-            response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol");
+            response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
         } else {
             User user = userManager.getEnabledUserByUserName(principal.getName());
 
@@ -136,19 +136,13 @@ public class UIController {
                    the user having registered yet.  So forward to the registration page... */
                 response.sendRedirect(request.getContextPath() + "/tb-ui/register");
             } else {
-                List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
-
                 if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
-                    if (roles.size() == 1) {
-                        Weblog weblog = roles.get(0).getWeblog();
-                        response.sendRedirect(request.getContextPath() + "/tb-ui/authoring/entryAdd.rol?request_locale="
-                                + user.getLocale() + "&weblogId=" + weblog.getId());
-                    } else {
-                        response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
-                    }
+                    response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
                 } else {
+                    List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+
                     if (roles.size() > 0) {
-                        response.sendRedirect(request.getContextPath() + "/tb-ui/menu.rol?request_locale=" + user.getLocale());
+                        response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
                     } else {
                         // admin has no blog yet, possibly initial setup.
                         response.sendRedirect(request.getContextPath() + "/tb-ui/admin/globalConfig");
@@ -201,13 +195,17 @@ public class UIController {
 
     @RequestMapping(value = "/profile")
     public ModelAndView profile(Principal principal) {
-        User user = userManager.getEnabledUserByUserName(principal.getName());
-        return tightblogModelAndView("profile", null, user, null);
+        return tightblogModelAndView("profile", null, principal, null);
     }
 
     @RequestMapping(value = "/register")
     public ModelAndView register() {
-        return tightblogModelAndView("register", null, null, null);
+        return tightblogModelAndView("register", null, (User) null, null);
+    }
+
+    @RequestMapping(value = "/home")
+    public ModelAndView home(Principal principal) {
+        return tightblogModelAndView("mainMenu", null, principal, null);
     }
 
     private ModelAndView getAdminPage(Principal principal, String actionName) {
@@ -215,6 +213,11 @@ public class UIController {
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("menu", getMenu(user, "/tb-ui/app/admin/" + actionName, "admin", WeblogRole.NOBLOGNEEDED));
         return tightblogModelAndView(actionName, myMap, user, null);
+    }
+
+    private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, Principal principal, Weblog weblog) {
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+        return tightblogModelAndView(actionName, map, user, weblog);
     }
 
     private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, User user, Weblog weblog) {

@@ -44,13 +44,13 @@
                 </c:if>
 
                 <c:if test="${userIsAdmin}">
-                    <a href="<c:url value='/tb-ui/app/admin/globalConfig'/>"><fmt:message key="yourWebsites.globalAdmin" /></a> |
+                    <a href="<c:url value='/tb-ui/app/admin/globalConfig'/>"><fmt:message key="mainMenu.globalAdmin" /></a> |
                 </c:if>
 
                 <c:choose>
                     <c:when test="${authenticatedUser != null}">
-                       <a href="<c:url value='/tb-ui/menu.rol'/>"><fmt:message key="yourWebsites.title" /></a> |
-                       <a href="<c:url value='/tb-ui/app/profile'/>"><fmt:message key="yourWebsites.editProfile" /></a> |
+                       <a href="<c:url value='/tb-ui/app/home'/>"><fmt:message key="mainMenu.title" /></a> |
+                       <a href="<c:url value='/tb-ui/app/profile'/>"><fmt:message key="mainMenu.editProfile" /></a> |
                        <a href="<c:url value='/tb-ui/app/logout'/>"><fmt:message key="navigationBar.logout"/></a>
                     </c:when>
 

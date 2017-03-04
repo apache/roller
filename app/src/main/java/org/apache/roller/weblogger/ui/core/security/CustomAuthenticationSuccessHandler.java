@@ -80,10 +80,10 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         String targetUrl = request.getHeader("Referer");
         if (targetUrl != null) {
             if (targetUrl.endsWith("/login")) {
-                return targetUrl.substring(0, targetUrl.lastIndexOf("/login")) + "/menu.rol";
+                return targetUrl.substring(0, targetUrl.lastIndexOf("/login")) + "/home";
             } else if (targetUrl.contains("/login?activationCode=")) {
                 // here, login page via email activation of account.
-                return targetUrl.substring(0, targetUrl.lastIndexOf("/login?activationCode=")) + "/menu.rol";
+                return targetUrl.substring(0, targetUrl.lastIndexOf("/login?activationCode=")) + "/home";
             }
         }
 

@@ -281,7 +281,7 @@ public class MailManagerImpl implements MailManager {
 
         // Figure URL to entry edit page
         String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
-        String url = rootURL + "/tb-ui/menu.rol";
+        String url = rootURL + "/tb-ui/app/home";
 
         ResourceBundle resources = ResourceBundle.getBundle(
                 "ApplicationResources",
