@@ -91,6 +91,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     </s:if>
 
     <%-- allow user to select the bookmark folder to view --%>
+
     <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name"
         label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" onmouseup="viewChanged()"/>
 
@@ -245,8 +246,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         // add the "New Blogroll" option to blogroll selectors
         viewSelector.append(
                 new Option('<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll" ));
-        moveToSelector.append(
-                new Option( '<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll" ));
+        //moveToSelector.append(
+                //new Option( '<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll" ));
     });
 
 
@@ -349,7 +350,9 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     }
 
     function onMoveToFolder() {
-        $('#move-links-modal').modal({show: true});
+        var bookmarksForm = $("#bookmarks")[0];
+        bookmarksForm.action = "bookmarks!move.rol";
+        bookmarksForm.submit();
     }
 
     function viewChanged() {
@@ -358,20 +361,28 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         var folderEditForm = $("#folderEditForm")[0];
 
         if ( "new_blogroll" == bookmarksForm.viewFolderId.value ) {
-
-            // user selected New Blogroll option, show the add/edit blogroll modal
-            $('#blogroll-edit-title').html('<s:text name="bookmarksForm.addBlogroll.title" />');
-
-            folderEditForm.action = "folderAdd!save.rol";
-            folderEditForm.actionName.value = "folderAdd";
-
-            $('#addedit-bookmarkfolder-modal').modal({show: true});
+            newBlogroll();
 
         } else {
             // user changed the blogroll/folder, post to "view" action to get new page
             bookmarksForm.action = "bookmarks!view.rol";
             bookmarksForm.submit();
         }
+    }
+
+    function newBlogroll() {
+
+      // user selected New Blogroll option, show the add/edit blogroll modal
+      $('#blogroll-edit-title').html('<s:text name="bookmarksForm.addBlogroll.title" />');
+
+      folderEditForm.action = "folderAdd!save.rol";
+      folderEditForm.actionName.value = "folderAdd";
+
+      // disable save button until valid name is entered
+
+      $('#addedit-bookmarkfolder-modal').modal({show: true});
+
+      onBlogrollFormChanged();
     }
 
 </script>
@@ -392,7 +403,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             </div>
 
             <div class="modal-body">
-                <s:form action="#" id="folderEditForm" theme="bootstrap" cssClass="form-horizontal">
+                <s:form action="blogroll" id="folderEditForm" theme="bootstrap" cssClass="form-horizontal">
                     <s:hidden name="salt" />
                     <s:hidden name="actionName" />
                     <s:hidden name="weblog" />
@@ -401,13 +412,16 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                     <%-- action needed here because we are using AJAX to post this form --%>
                     <s:hidden name="action:folderEdit!save" value="save"/>
 
-                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"/>
+                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"
+                        onchange="onBlogrollFormChanged()"
+                        onkeyup ="onBlogrollFormChanged()"
+                    />
                 </s:form>
             </div> <!-- modal-body-->
 
             <div class="modal-footer">
                 <p id="feedback-area-blogroll-edit"></p>
-                <button onclick="submitEditedBlogroll()" class="btn btn-primary">
+                <button id="save_blogroll" onclick="submitEditedBlogroll()" class="btn btn-primary">
                     <s:text name="generic.save"/>
                 </button>
                 <button type="button" class="btn" data-dismiss="modal">
@@ -424,6 +438,24 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 <script>
 
     <%-- JavaScript for add/edit blogroll modal --%>
+
+    function onBlogrollFormChanged() {
+
+      var saveBlogrollButton = $('#save_blogroll:first');
+
+      var name = $('#folderEditForm_bean_name:first').val().trim();
+
+      if (name.length > 0) {
+        saveBlogrollButton.attr("disabled", false);
+        console.log("Button enabled!");
+
+      } else {
+        saveBlogrollButton.attr("disabled", true);
+        console.log("Button disabled!");
+      }
+
+    }
+
 
     function submitEditedBlogroll() {
 
@@ -590,40 +622,40 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <div class="modal-body">
 
                     <s:form action="bookmark" theme="bootstrap" cssClass="form-horizontal">
-                    <s:hidden name="salt" />
-                    <s:hidden name="weblog" />
-                        <%--
-                            Edit action uses folderId for redirection back to proper bookmarks folder on cancel
-                            (as configured in struts.xml); add action also, plus to know which folder to put new
-                            bookmark in.
-                        --%>
-                    <s:hidden name="folderId" />
-                    <s:hidden name="bean.id" />
+                        <s:hidden name="salt" />
+                        <s:hidden name="weblog" />
+                            <%--
+                                Edit action uses folderId for redirection back to proper bookmarks folder on cancel
+                                (as configured in struts.xml); add action also, plus to know which folder to put new
+                                bookmark in.
+                            --%>
+                        <s:hidden name="folderId" />
+                        <s:hidden name="bean.id" />
 
-                    <s:textfield name="bean.name" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup ="onBookmarkFormChanged()"
-                                 label="%{getText('generic.name')}" />
+                        <s:textfield name="bean.name" maxlength="255"
+                                     onchange="onBookmarkFormChanged()"
+                                     onkeyup ="onBookmarkFormChanged()"
+                                     label="%{getText('generic.name')}" />
 
-                    <s:textfield name="bean.url" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup ="onBookmarkFormChanged()"
-                                 label="%{getText('bookmarkForm.url')}" />
+                        <s:textfield name="bean.url" maxlength="255"
+                                     onchange="onBookmarkFormChanged()"
+                                     onkeyup ="onBookmarkFormChanged()"
+                                     label="%{getText('bookmarkForm.url')}" />
 
-                    <s:textfield name="bean.feedUrl" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup ="onBookmarkFormChanged()"
-                                 label="%{getText('bookmarkForm.rssUrl')}" />
+                        <s:textfield name="bean.feedUrl" maxlength="255"
+                                     onchange="onBookmarkFormChanged()"
+                                     onkeyup ="onBookmarkFormChanged()"
+                                     label="%{getText('bookmarkForm.rssUrl')}" />
 
-                    <s:textfield name="bean.description" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup ="onBookmarkFormChanged()"
-                                 label="%{getText('generic.description')}" />
+                        <s:textfield name="bean.description" maxlength="255"
+                                     onchange="onBookmarkFormChanged()"
+                                     onkeyup ="onBookmarkFormChanged()"
+                                     label="%{getText('generic.description')}" />
 
-                    <s:textfield name="bean.image" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup ="onBookmarkFormChanged()"
-                                 label="%{getText('bookmarkForm.image')}" />
+                        <s:textfield name="bean.image" maxlength="255"
+                                     onchange="onBookmarkFormChanged()"
+                                     onkeyup ="onBookmarkFormChanged()"
+                                     label="%{getText('bookmarkForm.image')}" />
                     </s:form>
 
                 </div>

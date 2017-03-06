@@ -20,29 +20,13 @@
 <h3><s:text name="mainPage.actions"/></h3>
 <hr size="1" noshade="noshade"/>
 
-<%-- Add Bookmark link
 <p>
-    <s:url var="addBookmark" action="bookmarkAdd">
-        <s:param name="weblog" value="%{actionWeblog.handle}"/>
-        <s:param name="folderId" value="%{folder.id}"/>
-    </s:url>
-    <s:a href="%{addBookmark}">
-        <span class="glyphicon glyphicon-plus"></span>
-        <s:text name="bookmarksForm.addBookmark"/>
-    </s:a>
-</p>
---%>
+    <%-- Add Blogroll --%>
 
-<p>
-    <%-- Add Folder link --%>
-    <s:url var="addFolder" action="folderAdd">
-        <s:param name="weblog" value="%{actionWeblog.handle}"/>
-        <s:param name="folderId" value="%{folder.id}"/>
-    </s:url>
-    <s:a href="%{addFolder}">
+    <a href="#" onclick="newBlogroll()">
         <span class="glyphicon glyphicon-plus"></span>
         <s:text name="bookmarksForm.addFolder"/>
-    </s:a>
+    <a>
 </p>
 
 <%-- Import bookmarks

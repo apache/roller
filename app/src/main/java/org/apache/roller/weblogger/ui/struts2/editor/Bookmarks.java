@@ -214,17 +214,16 @@ public class Bookmarks extends UIAction {
     public String move() {
 
         try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger()
-                    .getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
 
             if (log.isDebugEnabled()) {
-                log.debug("Moving bookmarks to folder - "
-                        + getTargetFolderId());
+                log.debug("Moving bookmarks to folder - " + getTargetFolderId());
             }
 
             // Move bookmarks to new parent folder.
             WeblogBookmarkFolder newFolder = bmgr.getFolder(getTargetFolderId());
             String bookmarks[] = getSelectedBookmarks();
+
             if (null != bookmarks && bookmarks.length > 0) {
                 for (int j = 0; j < bookmarks.length; j++) {
                     WeblogBookmark bd = bmgr.getBookmark(bookmarks[j]);
