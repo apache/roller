@@ -21,19 +21,33 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.pojos.WebloggerProperties.CommentPolicy;
 import org.apache.roller.weblogger.util.Blacklist;
+import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +89,13 @@ public class WeblogController {
     }
 
     @Autowired
+    private ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
+    @Autowired
     private JPAPersistenceStrategy persistenceStrategy = null;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
@@ -113,7 +134,7 @@ public class WeblogController {
         User user = userManager.getEnabledUserByUserName(p.getName());
 
         if (!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
-            return ResponseEntity.status(403).body(bundle.getString("weblogSettings.createNotAuthorized"));
+            return ResponseEntity.status(403).body(bundle.getString("weblogConfig.createNotAuthorized"));
         }
 
         ValidationError maybeError = advancedValidate(newData, true);
@@ -232,7 +253,7 @@ public class WeblogController {
         // make sure handle isn't already taken
         if (isAdd) {
             if (weblogManager.getWeblogByHandle(data.getHandle()) != null) {
-                be.addError(new ObjectError("Weblog object", bundle.getString("weblogSettings.error.handleExists")));
+                be.addError(new ObjectError("Weblog object", bundle.getString("weblogConfig.error.handleExists")));
             }
         }
 
@@ -242,7 +263,7 @@ public class WeblogController {
             Blacklist testBlacklist = new Blacklist(data.getBlacklist(), null);
         } catch (Exception e) {
             be.addError(new ObjectError("Weblog object",
-                    bundle.getString("weblogSettings.error.processingBlacklist")));
+                    bundle.getString("weblogConfig.error.processingBlacklist")));
             be.addError(new ObjectError("Weblog object", e.getMessage()));
         }
 
@@ -259,6 +280,100 @@ public class WeblogController {
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata", method = RequestMethod.GET)
+    public WeblogConfigMetadata getWeblogConfigMetadata(Principal principal) {
+        // Get user permissions and locale
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
+
+        WeblogConfigMetadata metadata = new WeblogConfigMetadata();
+
+        metadata.absoluteSiteURL = WebloggerStaticConfig.getAbsoluteContextURL();
+
+        metadata.relativeSiteURL = WebloggerStaticConfig.getRelativeContextURL();
+
+        metadata.usersOverrideAnalyticsCode =
+                WebloggerContext.getWebloggerProperties().isUsersOverrideAnalyticsCode();
+
+        metadata.usersCommentNotifications =
+                WebloggerContext.getWebloggerProperties().isUsersCommentNotifications();
+
+        metadata.sharedThemeMap = themeManager.getEnabledSharedThemesList().stream()
+                .collect(Utilities.toLinkedHashMap(SharedTheme::getId, st -> st));
+
+        metadata.editFormats = Arrays.stream(Weblog.EditFormat.values())
+                .collect(Utilities.toLinkedHashMap(Weblog.EditFormat::name,
+                        eF -> messages.getString(eF.getDescriptionKey())));
+
+        metadata.locales = Arrays.stream(Locale.getAvailableLocales())
+                .sorted(Comparator.comparing(Locale::getDisplayName))
+                .collect(Utilities.toLinkedHashMap(Locale::toString, Locale::getDisplayName));
+
+        metadata.timezones = Arrays.stream(TimeZone.getAvailableIDs())
+                .sorted(Comparator.comparing(tz -> tz))
+                .collect(Utilities.toLinkedHashMap(tz -> tz, tz -> tz));
+
+        CommentPolicy globalCommentPolicy =
+                WebloggerContext.getWebloggerProperties().getCommentPolicy();
+
+        metadata.commentOptions = Arrays.stream(CommentPolicy.values())
+                .filter(co -> co.getLevel() <= globalCommentPolicy.getLevel())
+                .collect(Utilities.toLinkedHashMap(CommentPolicy::name,
+                        co -> messages.getString(co.getWeblogDescription())));
+
+        metadata.commentDayOptions = Arrays.stream(WeblogEntry.CommentDayOption.values())
+                .collect(Utilities.toLinkedHashMap(cdo -> Integer.toString(cdo.getDays()),
+                        cdo -> messages.getString(cdo.getDescriptionKey())));
+
+        return metadata;
+    }
+
+    public class WeblogConfigMetadata {
+        Map<String, SharedTheme> sharedThemeMap;
+        Map<String, String> editFormats;
+        Map<String, String> locales;
+        Map<String, String> timezones;
+        Map<String, String> commentOptions;
+        Map<String, String> commentDayOptions;
+
+        String relativeSiteURL;
+        String absoluteSiteURL;
+        boolean usersOverrideAnalyticsCode = false;
+        boolean usersCommentNotifications = false;
+
+        public Map<String, String> getEditFormats() {
+            return editFormats;
+        }
+
+        public Map<String, String> getLocales() {
+            return locales;
+        }
+
+        public Map<String, String> getTimezones() {
+            return timezones;
+        }
+
+        public Map<String, String> getCommentOptions() {
+            return commentOptions;
+        }
+
+        public Map<String, String> getCommentDayOptions() {
+            return commentDayOptions;
+        }
+
+        public String getRelativeSiteURL() {
+            return relativeSiteURL;
+        }
+
+        public String getAbsoluteSiteURL() {
+            return absoluteSiteURL;
+        }
+
+        public Map<String, SharedTheme> getSharedThemeMap() {
+            return sharedThemeMap;
         }
     }
 

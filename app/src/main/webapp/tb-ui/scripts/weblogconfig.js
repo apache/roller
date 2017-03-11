@@ -1,85 +1,4 @@
 $(function() {
-  var data = {
-    weblogData : {"theme":"basic", "tagline":"", "editFormat" : "HTML",
-    "allowComments" : "MUSTMODERATE", "emailComments" : false, "visible" : true,
-    "entriesPerPage" : 12, "defaultCommentDaysString" : "-1"},
-    themeList : []
-  };
-  $.templates({
-    formTemplate: '#formTemplate',
-    errorMessageTemplate: '#errorMessageTemplate',
-    selectedThemeTemplate: '#selectedThemeTemplate'
-  });
-  function getThemes() {
-    checkLoggedIn(function() {
-      $.ajax({
-        url: contextPath + "/tb-ui/authoring/rest/themes/null",
-        contentType: "application/json",
-        success: function(themes) {
-          data.themeList = themes;
-          $.link.formTemplate("#formBody", data);
-          $('#themeSelector option[value=basic]').prop('selected', 'selected').trigger('change');
-        }
-      });
-    });
-  }
-  function updateEditForm(data) {
-    $.link.formTemplate("#formBody", data);
-  }
-  $(function() {
-    var recordId = $('#weblogId').val();
-    if (recordId != '') {
-      checkLoggedIn(function() {
-        $.ajax({
-           type: "GET",
-           url: contextPath + '/tb-ui/authoring/rest/weblog/' + recordId,
-           success: function(weblogData, textStatus, xhr) {
-             data.weblogData = weblogData;
-             updateEditForm(data);
-           }
-        });
-      });
-    } else {
-      getThemes();
-    }
-  });
-  $("#formBody").on('change', '#themeSelector', function(e) {
-    var selInx = $(this).prop('selectedIndex');
-    var html = $.render.selectedThemeTemplate(data.themeList[selInx]);
-    $('#themeDetails').html(html);
-  });
-  $("#myForm").submit(function(e) {
-    e.preventDefault();
-    $('#errorMessageDiv').hide();
-    $('#successMessageDiv').hide();
-    var view = $.view("#recordId");
-    var update = view.data.weblogData.hasOwnProperty('id');
-    var urlToUse = contextPath + (update ?
-      '/tb-ui/authoring/rest/weblog/' + view.data.weblogData.id : '/tb-ui/authoring/rest/weblogs');
-    checkLoggedIn(function() {
-      $.ajax({
-         type: "POST",
-         url: urlToUse,
-         data: JSON.stringify(view.data.weblogData),
-         contentType: "application/json",
-         success: function(data, textStatus, xhr) {
-           if (update) {
-             $('#successMessageDiv').show();
-             updateEditForm(data);
-           } else {
-             window.location.replace($('#menuURL').attr('value'));
-           }
-         },
-         error: function(xhr, status, errorThrown) {
-           if (xhr.status == 400) {
-              var html = $.render.errorMessageTemplate(xhr.responseJSON);
-              $('#errorMessageDiv').html(html);
-              $('#errorMessageDiv').show();
-           }
-         }
-      });
-    });
-  });
   $("#confirm-delete").dialog({
     autoOpen: false,
     resizable: true,
@@ -89,17 +8,9 @@ $(function() {
        {
           text: msg.deleteLabel,
           click: function() {
-            var idToRemove = $('#recordId').attr('data-id');
-            checkLoggedIn(function() {
-              $.ajax({
-               type: "DELETE",
-               url: contextPath + '/tb-ui/authoring/rest/weblog/' + idToRemove,
-               success: function(data, textStatus, xhr) {
-                 window.location.replace($('#menuURL').attr('value'));
-               }
-              });
-            });
-            $(this).dialog("close");
+             angular.element('#ngapp-div').scope().ctrl.deleteWeblog();
+             angular.element('#ngapp-div').scope().$apply();
+             $( this ).dialog( "close" );
           }
        },
        {
@@ -110,8 +21,116 @@ $(function() {
        }
     ]
   });
-  $("#delete-link").click(function(e) {
-    e.preventDefault();
-    $('#confirm-delete').dialog('open');
-  });
+});
+
+tightblogApp.requires.push('ngSanitize');
+
+tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$filter',
+    function PageController($http, $interpolate, $sce, $filter) {
+        var self = this;
+        this.weblog = {
+           "theme" : "basic",
+           "locale" : "en",
+           "timeZone" : "America/New_York",
+           "editFormat" : "HTML",
+           "allowComments" : "NONE",
+           "emailComments" : false,
+           "visible" : true,
+           "entriesPerPage" : 12,
+           "defaultCommentDays" : "-1"
+        };
+        this.errorObj = {};
+
+        this.loadMetadata = function() {
+            $http.get(contextPath + '/tb-ui/authoring/rest/weblogconfig/metadata').then(
+            function(response) {
+                self.metadata = response.data;
+              },
+              self.commonErrorResponse
+            )
+        };
+
+        this.loadWeblog = function() {
+            $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId).then(
+              function(response) {
+                 self.weblog = response.data;
+                 self.deleteWeblogConfirmation =
+                    $sce.trustAsHtml($interpolate(msg.deleteWeblogTmpl)({weblogHandle:self.weblog.handle}));
+              }
+            )
+        }
+
+        this.updateWeblog = function() {
+            this.messageClear();
+            var urlToUse = contextPath + (weblogId ? '/tb-ui/authoring/rest/weblog/' + weblogId
+              : '/tb-ui/authoring/rest/weblogs');
+
+            $http.post(urlToUse, JSON.stringify(this.weblog)).then(
+              function(response) {
+                  self.weblog = response.data;
+                  if (!weblogId) {
+                     window.location.replace(homeUrl);
+                  }
+                  self.showSuccessMessage = true;
+              },
+              function(response) {
+                if (response.status == 400) {
+                   self.errorObj = response.data;
+                } else {
+                   self.commonErrorResponse;
+                }
+              })
+        }
+
+        this.deleteWeblog = function() {
+            $http.delete(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId).then(
+              function(response) {
+                 window.location.replace(homeUrl);
+              },
+              self.commonErrorResponse
+            )
+        }
+
+        this.commonErrorResponse = function(response) {
+            if (response.status == 408)
+               window.location.replace($('#refreshURL').attr('value'));
+            if (response.status == 400) {
+               self.errorMessage = response.data;
+            }
+        }
+
+        this.cancelChanges = function() {
+            this.messageClear();
+            if (weblogId) {
+                this.loadWeblog();
+            } else {
+               window.location.replace(homeUrl);
+            }
+            this.userBeingEdited = null;
+            this.credentials = {};
+        }
+
+        this.messageClear = function() {
+            this.errorObj = {};
+            this.showSuccessMessage = false;
+        }
+
+        this.messageClear();
+        this.loadMetadata();
+        if (weblogId) {
+            this.loadWeblog();
+        }
+    }]
+);
+
+tightblogApp.directive('confirmDeleteDialog', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attr, ctrl) {
+            var dialogId = '#' + attr.confirmDeleteDialog;
+            elem.bind('click', function(e) {
+                $(dialogId).dialog('open');
+            });
+        }
+    };
 });

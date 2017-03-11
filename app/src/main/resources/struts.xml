@@ -23,15 +23,9 @@
                  default stack -->
             <interceptor-stack name="rollerStack">
                 <interceptor-ref name="exception"/>
-                <!-- <interceptor-ref name="alias"/> -->
                 <interceptor-ref name="servletConfig"/>
-                <!-- <interceptor-ref name="prepare"/> -->
                 <interceptor-ref name="i18n"/>
                 <interceptor-ref name="chain"/>
-                <!-- <interceptor-ref name="debugging"/> -->
-                <!-- <interceptor-ref name="profiling"/> -->
-                <!-- <interceptor-ref name="scopedModelDriven"/> -->
-                <!-- <interceptor-ref name="modelDriven"/> -->
                 <interceptor-ref name="fileUpload"/>
                 <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="multiselect"/>
@@ -43,22 +37,18 @@
                 <interceptor-ref name="conversionError"/>
 
                 <!-- custom Roller interceptors -->
-                <interceptor-ref name="UIActionInterceptor">
-                    <param name="excludeMethods">cancel</param>
-                </interceptor-ref>
+                <interceptor-ref name="UIActionInterceptor"/>
 
                 <!-- prepare interceptor placed later in the stack so weblog and userid can
                      be populated by the UIActionInterceptor. -->
-                <interceptor-ref name="prepare">
-                    <param name="excludeMethods">cancel</param>
-                </interceptor-ref>
+                <interceptor-ref name="prepare"/>
 
                 <!-- validation interceptors, MUST come after our custom interceptors -->
                 <interceptor-ref name="validation">
-                    <param name="excludeMethods">input,back,cancel,browse</param>
+                    <param name="excludeMethods">input,back,browse</param>
                 </interceptor-ref>
                 <interceptor-ref name="workflow">
-                    <param name="excludeMethods">input,back,cancel,browse</param>
+                    <param name="excludeMethods">input,back,browse</param>
                 </interceptor-ref>
 
             </interceptor-stack>
@@ -76,13 +66,6 @@
              the old struts 1 config.  this is the only way to do it in struts 2 -->
         <action name="home">
             <result type="redirect">/</result>
-        </action>
-
-        <action name="createWeblog" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="pageTitleReal">weblogSettings.create.title</param>
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">NOBLOGNEEDED</param>
-            <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 
     </package>
@@ -200,14 +183,6 @@
             <param name="actionName">bookmarks</param>
             <param name="pageTitleReal">bookmarksForm.rootTitle</param>
             <result name="success" type="tiles">.Bookmarks</result>
-        </action>
-
-        <action name="weblogConfig" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="actionName">weblogConfig</param>
-            <param name="desiredMenu">editor</param>
-            <param name="pageTitleReal">weblogSettings.title</param>
-            <result name="success" type="tiles">.WeblogConfig</result>
         </action>
 
         <action name="themeEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">

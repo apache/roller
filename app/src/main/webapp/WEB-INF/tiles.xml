@@ -152,8 +152,14 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
     </definition>
 
-    <definition name=".WeblogConfig" extends=".tiles-tabbedpage" >
+    <definition name=".createWeblog" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogConfig.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
+    </definition>
+
+    <definition name=".weblogConfig" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogConfig.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".ThemeEdit" extends=".tiles-tabbedpage" >

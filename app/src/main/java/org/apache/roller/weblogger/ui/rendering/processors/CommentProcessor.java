@@ -156,9 +156,9 @@ public class CommentProcessor extends AbstractProcessor {
 
         WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
 
-        WebloggerProperties.GlobalCommentPolicy commentOption = props.getCommentPolicy();
+        WebloggerProperties.CommentPolicy commentOption = props.getCommentPolicy();
 
-        if (WebloggerProperties.GlobalCommentPolicy.NONE.equals(commentOption)) {
+        if (WebloggerProperties.CommentPolicy.NONE.equals(commentOption)) {
             log.info("Getting comment post even though commenting is disabled -- returning 403");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
@@ -205,8 +205,8 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        nonSpamCommentApprovalRequired = WebloggerProperties.GlobalCommentPolicy.MUSTMODERATE.equals(commentOption) ||
-                WebloggerProperties.GlobalCommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments());
+        nonSpamCommentApprovalRequired = WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(commentOption) ||
+                WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments());
 
         // we know what the weblog entry is, so setup our urls
         dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle();

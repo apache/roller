@@ -75,6 +75,34 @@ public class WeblogEntry {
 
     public enum PubStatus { DRAFT, PUBLISHED, PENDING, SCHEDULED }
 
+    public enum CommentDayOption {
+        UNLIMITED(-1, "weblogEdit.unlimitedCommentDays"),
+        ZERO(0, "weblogEdit.days0"),
+        THREE(3, "weblogEdit.days3"),
+        SEVEN(7, "weblogEdit.days7"),
+        FOURTEEN(14, "weblogEdit.days14"),
+        THIRTY(30, "weblogEdit.days30"),
+        SIXTY(60, "weblogEdit.days60"),
+        NINETY(90, "weblogEdit.days90");
+
+        int days;
+
+        String descriptionKey;
+
+        CommentDayOption(int days, String descriptionKey) {
+            this.days = days;
+            this.descriptionKey = descriptionKey;
+        }
+
+        public int getDays() {
+            return days;
+        }
+
+        public String getDescriptionKey() {
+            return descriptionKey;
+        }
+    }
+
     // Simple properties
     private String id;
     @NotBlank(message = "{Entry.error.titleNull}")
@@ -90,7 +118,7 @@ public class WeblogEntry {
     private String anchor;
     private Instant pubTime;
     private Instant updateTime;
-    private Integer commentDays = 7;
+    private Integer commentDays = CommentDayOption.SEVEN.getDays();
     private PubStatus status;
     private User creator = null;
     private String searchDescription;
@@ -438,11 +466,11 @@ public class WeblogEntry {
     @JsonIgnore
     // Not serialized into JSON as necessary weblog object not always present.
     public boolean getCommentsStillAllowed() {
-        if (WebloggerProperties.GlobalCommentPolicy.NONE.equals(
+        if (WebloggerProperties.CommentPolicy.NONE.equals(
                 WebloggerContext.getWebloggerProperties().getCommentPolicy())) {
             return false;
         }
-        if (WebloggerProperties.GlobalCommentPolicy.NONE.equals(getWeblog().getAllowComments())) {
+        if (WebloggerProperties.CommentPolicy.NONE.equals(getWeblog().getAllowComments())) {
             return false;
         }
         if (getCommentDays() == 0) {

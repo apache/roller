@@ -57,7 +57,7 @@ Defines the menus provided with Weblogger
             </tabItem>
         </tab>
         <tab titleKey="tabbedmenu.website" globalRole="BLOGGER" weblogRole="OWNER">
-            <tabItem action="weblogConfig.rol"
+            <tabItem action="/tb-ui/app/authoring/weblogConfig"
                      titleKey="tabbedmenu.website.settings">
             </tabItem>
             <tabItem action="templates.rol"

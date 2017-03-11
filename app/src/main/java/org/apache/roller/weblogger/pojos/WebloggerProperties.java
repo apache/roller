@@ -25,7 +25,7 @@ public class WebloggerProperties {
     private int newsfeedItemsPage;
     private String defaultAnalyticsCode;
     private boolean usersOverrideAnalyticsCode;
-    private GlobalCommentPolicy commentPolicy;
+    private CommentPolicy commentPolicy;
     private HTMLSanitizer.Level commentHtmlPolicy;
     private boolean autodeleteSpam;
     private boolean usersCommentNotifications;
@@ -132,11 +132,11 @@ public class WebloggerProperties {
 
     @Column(name = "comment_policy", nullable = false)
     @Enumerated(EnumType.STRING)
-    public GlobalCommentPolicy getCommentPolicy() {
+    public CommentPolicy getCommentPolicy() {
         return commentPolicy;
     }
 
-    public void setCommentPolicy(GlobalCommentPolicy commentPolicy) {
+    public void setCommentPolicy(CommentPolicy commentPolicy) {
         this.commentPolicy = commentPolicy;
     }
 
@@ -238,10 +238,10 @@ public class WebloggerProperties {
         }
     }
 
-    public enum GlobalCommentPolicy {
+    public enum CommentPolicy {
         NONE(0, "generic.no", "generic.no"),
-        MUSTMODERATE(1, "globalConfig.mustModerateComments", "weblogSettings.mustModerateComments"),
-        YES(2, "globalConfig.commentsOK", "weblogSettings.commentsOK");
+        MUSTMODERATE(1, "globalConfig.mustModerateComments", "weblogConfig.mustModerateComments"),
+        YES(2, "globalConfig.commentsOK", "weblogConfig.commentsOK");
 
         private String siteDescription;
 
@@ -249,7 +249,7 @@ public class WebloggerProperties {
 
         private int level;
 
-        GlobalCommentPolicy(int level, String siteDescription, String weblogDescription) {
+        CommentPolicy(int level, String siteDescription, String weblogDescription) {
             this.level = level;
             this.siteDescription = siteDescription;
             this.weblogDescription = weblogDescription;

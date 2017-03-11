@@ -19,58 +19,53 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
 <script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.min.js"></script>
+
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
         deleteLabel: '<fmt:message key="generic.delete"/>',
-        cancelLabel: '<fmt:message key="generic.cancel"/>'
+        cancelLabel: '<fmt:message key="generic.cancel"/>',
+        deleteWeblogTmpl: '<fmt:message key="weblogConfig.deleteConfirm"/>'
     };
+    // Below populated for weblog update only
+    var weblogId = "<c:out value='${weblogId}'/>";
+    var homeUrl = "<c:url value='/tb-ui/app/home'/>";
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/weblogconfig.js'/>"></script>
 
-<div id="errorMessageDiv" class="errors" style="display:none">
-    <script id="errorMessageTemplate" type="text/x-jsrender">
-  <b>{{:errorMessage}}</b>
-  <ul>
-     {{for errors}}
-     <li>{{>#data}}</li>
-     {{/for}}
-  </ul>
-
-
-    </script>
+<div id="successMessageDiv" class="messages" ng-show="ctrl.showSuccessMessage" ng-cloak>
+    <p><fmt:message key="weblogConfig.savedChanges"/></p>
 </div>
 
-<div id="successMessageDiv" class="messages" style="display:none">
-    <c:if test="${weblogId != null}">
-        <p><fmt:message key="generic.changes.saved"/></p>
-    </c:if>
+<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
+    <p>{{ctrl.errorObj.errorMessage}}</p>
+    <ul>
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
+    </ul>
 </div>
 
-<input type="hidden" id="menuURL" value="<c:url value='/tb-ui/app/home'/>"/>
-<input type="hidden" id="weblogId" value="<c:out value='${param.weblogId}'/>"/>
-
-<%-- Create Weblog --%>
 <c:choose>
+    <%-- Create Weblog --%>
     <c:when test="${weblogId == null}">
-        <fmt:message key="weblogSettings.create.button.save" var="saveButtonText"/>
-        <fmt:message key="weblogSettings.create.prompt" var="subtitlePrompt"/>
-        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/createWeblog.rol'/>"/>
+        <fmt:message var="saveButtonText" key="weblogConfig.create.button.save"/>
+        <fmt:message var="subtitlePrompt" key="weblogConfig.create.prompt"/>
+        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/createWeblog'/>"/>
     </c:when>
     <%-- Update Weblog --%>
     <c:otherwise>
-        <fmt:message key="weblogSettings.button.update" var="saveButtonText"/>
-        <fmt:message key="weblogSettings.prompt" var="subtitlePrompt">
+        <fmt:message var="saveButtonText" key="weblogConfig.button.update"/>
+        <fmt:message var="subtitlePrompt" key="weblogConfig.prompt">
             <fmt:param value="${actionWeblog.handle}"/>
         </fmt:message>
         <input type="hidden" id="refreshURL"
-               value="<c:url value='/tb-ui/authoring/weblogConfig.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+               value="<c:url value='/tb-ui/authoring/weblogConfig'/>?weblogId=<c:out value='${weblogId}'/>"/>
     </c:otherwise>
 </c:choose>
 
@@ -78,215 +73,179 @@
     ${subtitlePrompt}
 </p>
 
-<s:form id="myForm">
-    <table class="formtable">
-        <tbody id="formBody">
-        <script id="formTemplate" type="text/x-jsrender">
-        <%-- ***** General settings ***** --%>
+<table class="formtable">
 
-        <tr id="recordId" data-id="{{:weblogData.id}}">
-            <td colspan="3"><h2><fmt:message key="weblogSettings.generalSettings"/></h2></td>
-        </tr>
+    <tr>
+        <td colspan="3"><h2><fmt:message key="weblogConfig.generalSettings"/></h2></td>
+    </tr>
 
-        <tr>
-            <td class="label"><fmt:message key="weblogSettings.websiteTitle"/>*</td>
-            <td class="field"><input type="text" data-link="weblogData.name" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
-        </tr>
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.websiteTitle"/>*</td>
+        <td class="field"><input type="text" ng-model="ctrl.weblog.name" size="40" maxlength="255"></td>
+    </tr>
 
-        <tr>
-            <td class="label"><fmt:message key="weblogSettings.tagline"/></td>
-            <td class="field"><input type="text" data-link="weblogData.tagline" size="40" maxlength="255" onBlur="this.value=this.value.trim()"></td>
-            <td class="description"><fmt:message key="weblogSettings.tip.tagline"/></td>
-        </tr>
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.tagline"/></td>
+        <td class="field"><input type="text" ng-model="ctrl.weblog.tagline" size="40" maxlength="255"></td>
+        <td class="description"><fmt:message key="weblogConfig.tip.tagline"/></td>
+    </tr>
 
-        <tr>
-            <td class="label"><label for="handle"><fmt:message key="weblogSettings.handle"/>*</label></td>
-            <td class="field">
+    <tr>
+        <td class="label"><label for="handle"><fmt:message key="weblogConfig.handle"/>*</label></td>
+        <td class="field">
+        <input type="text" ng-model="ctrl.weblog.handle" size="30" maxlength="30"
         <c:choose>
-            <c:when test="${weblogId == null}">
-                <input type="text" data-link="weblogData.handle trigger=true" size="30" maxlength="30" onBlur="this.value=this.value.trim()" required><br />
-            </c:when>
-            <c:otherwise>
-                <%-- handle not changeable --%>
-                <input type="text" data-link="weblogData.handle" size="30" maxlength="30" readonly><br />
-            </c:otherwise>
+            <c:when test="${weblogId == null}">required></c:when>
+            <c:otherwise>readonly></c:otherwise>
         </c:choose>
-                <span style="text-size:70%">
-                    <fmt:message key="weblogSettings.weblogUrl"/>:&nbsp;
-                    <c:out value="${absoluteSiteURL}"/>/<span style="color:red" data-link="weblogData.handle"></span>
-                </span>
-            </td>
-            <td class="description"><fmt:message key="weblogSettings.tip.handle"/></td>
-        </tr>
+            <br>
+            <span style="text-size:70%">
+                <fmt:message key="weblogConfig.weblogUrl"/>:&nbsp;
+                {{ctrl.metadata.absoluteSiteURL}}/<span style="color:red">{{ctrl.weblog.handle}}</span>
+            </span>
+        </td>
+        <td class="description"><fmt:message key="weblogConfig.tip.handle"/></td>
+    </tr>
 
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.about"/></td>
+        <td class="field"><textarea ng-model="ctrl.weblog.about" rows="3" cols="40" maxlength="255"></textarea></td>
+        <td class="description"><fmt:message key="weblogConfig.tip.about"/></td>
+    </tr>
+
+    <c:if test="${weblogId == null}">
         <tr>
-            <td class="label"><fmt:message key="weblogSettings.about"/></td>
-            <td class="field"><textarea data-link="weblogData.about" rows="3" cols="40" maxlength="255" onBlur="this.value=this.value.trim()"></textarea></td>
-            <td class="description"><fmt:message key="weblogSettings.tip.about"/></td>
+        <td class="label"><label for="theme"><fmt:message key="weblogConfig.theme"/>*</label></td>
+        <td class="field">
+        <select ng-model="ctrl.weblog.theme" ng-model="ctrl.weblog.defaultCommentDays" size="1">
+            <option ng-repeat="(key, theme) in ctrl.metadata.sharedThemeMap" value="{{key}}">{{theme.name}}</option>
+        </select>
+        <div style="height:400px">
+            <p>{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].description}}</p>
+            <img ng-src="{{ctrl.metadata.relativeSiteURL}}/{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].previewPath}}"></img>
+        </div>
+        </td>
+        <td class="description"><fmt:message key="weblogConfig.tip.theme"/></td>
         </tr>
-
-        <c:if test="${weblogId == null}">
-            <tr>
-            <td class="label"><label for="theme"><fmt:message key="weblogSettings.theme"/>*</label></td>
-            <td class="field">
-            <select id="themeSelector" data-link="weblogData.theme" size="1">
-            {{for themeList}}
-            <option value="{{:id}}">{{:name}}</option>
-            {{/for}}
-            </select>
-            <br />
-            <br />
-            <div id="themeDetails" style="height:400px"></div>
-            </td>
-            <td class="description"><fmt:message key="weblogSettings.tip.theme"/></td>
-            </tr>
-        </c:if>
-
-        <tr>
-            <td class="label"><fmt:message key="weblogSettings.editFormat"/></td>
-            <td class="field">
-                <select data-link="weblogData.editFormat trigger=true" size="1">
-                    <option value="HTML"><fmt:message key="weblogSettings.editFormat.html"/></option>
-                    <option value="COMMONMARK"><fmt:message key="weblogSettings.editFormat.commonMark"/></option>
-                    <option value="RICHTEXT"><fmt:message key="weblogSettings.editFormat.richText"/></option>
-                </select>
-           </td>
-           <td class="description"><fmt:message key="weblogSettings.tip.editFormat"/></td>
-        </tr>
-
-        <tr>
-            <td class="label"><fmt:message key="weblogSettings.visible"/></td>
-            <td class="field"><input type="checkbox" data-link="weblogData.visible"></td>
-            <td class="description"><fmt:message key="weblogSettings.tip.visible"/></td>
-        </tr>
-
-        <tr>
-            <td class="label"><fmt:message key="weblogSettings.entriesPerPage"/></td>
-            <td class="field"><input type="number" min="1" max="100" step="1" data-link="weblogData.entriesPerPage" size="3" onBlur="this.value=this.value.trim()"></td>
-        </tr>
-
-        <tr>
-            <td class="label"><fmt:message key="weblogSettings.locale"/>*</td>
-            <td class="field">
-                <s:select data-link="weblogData.locale" size="1" list="localesList" listValue="displayName"
-                          required="required"/>
-            </td>
-            <td class="description"><fmt:message key="weblogSettings.tip.locale"/></td>
-        </tr>
-
-        <tr>
-            <td class="label"><fmt:message key="weblogSettings.timeZone"/>*</td>
-            <td class="field">
-                <s:select data-link="weblogData.timeZone" size="1" list="timeZonesList" required="required"/>
-            </td>
-            <td class="description"><fmt:message key="weblogSettings.tip.timezone"/></td>
-        </tr>
-
-        <c:if test="${action.isUsersOverrideAnalyticsCode()}">
-            <tr>
-            <td class="label"><fmt:message key="weblogSettings.analyticsTrackingCode"/></td>
-            <td class="field"><textarea data-link="weblogData.analyticsCode" rows="10" cols="70" maxlength="1200" onBlur="this.value=this.value.trim()"></textarea></td>
-            <td class="description"><fmt:message key="weblogSettings.tip.analyticsTrackingCode"/></td>
-            </tr>
-        </c:if>
-
-        <%-- ***** Comment settings ***** --%>
-
-        <c:if test="${action.getCommentPolicy() != 'NONE'}">
-            <tr>
-            <td colspan="3"><h2><fmt:message key="weblogSettings.commentSettings"/></h2></td>
-            </tr>
-
-            <tr>
-            <td class="label"><fmt:message key="weblogSettings.allowComments"/></td>
-            <td class="field">
-                <select data-link="weblogData.allowComments">
-                    <option value="NONE"><fmt:message key="generic.no"/></option>
-                    <option value="MUSTMODERATE"><fmt:message key="weblogSettings.mustModerateComments"/></option>
-                    <c:if test="${action.getCommentPolicy() != 'MUSTMODERATE'}">
-                        <option value="YES"><fmt:message key="weblogSettings.commentsOK"/></option>
-                    </c:if>
-                </select>
-            </td>
-            </tr>
-
-            <c:if test="${action.isUsersCommentNotifications()}">
-                <tr>
-                <td class="label"><fmt:message key="weblogSettings.emailComments"/></td>
-                <td class="field"><input type="checkbox" data-link="weblogData.emailComments"></td>
-                </tr>
-            </c:if>
-
-            <tr>
-            <td class="label"><fmt:message key="weblogSettings.defaultCommentDays"/></td>
-            <td class="field">
-            <s:select data-link="weblogData.defaultCommentDaysString" list="commentDaysList" size="1" listKey="left"
-                      listValue="right"/>
-            </td>
-            </tr>
-
-            <c:if test="${weblogId != null}">
-                <tr>
-                <td class="label"><fmt:message key="weblogSettings.applyCommentDefaults"/></td>
-                <td class="field"><input type="checkbox" data-link="weblogData.applyCommentDefaults"></td>
-                </tr>
-            </c:if>
-
-            <tr>
-            <td class="label"><fmt:message key="weblogSettings.ignoreUrls"/></td>
-            <td class="field"><textarea data-link="weblogData.blacklist" rows="7" cols="40" onBlur="this.value=this.value.trim()"></textarea></td>
-            <td class="description"><fmt:message key="weblogSettings.tip.ignoreUrls"/></td>
-            </tr>
-
-        </c:if>
-
-
-
-        </script>
-        </tbody>
-    </table>
-
-    <br>
-    <div class="control">
-        <s:submit value="%{getText(#saveButtonText)}"/>
-        <input type="button" value="<fmt:message key='generic.cancel'/>"
-               onclick="window.location='<c:url value='/tb-ui/app/home'/>'"/>
-    </div>
-
-    <br>
-    <br>
-
-    <c:if test="${weblogId != null}">
-        <h2><fmt:message key="weblogSettings.removeWebsiteHeading"/></h2>
-
-        <p>
-            <fmt:message key="weblogSettings.removeWebsite"/><br><br>
-            <span class="warning">
-            <fmt:message key="weblogSettings.removeWebsiteWarning"/>
-        </span>
-        </p>
-        <br>
-        <s:submit id="delete-link" value="%{getText('weblogSettings.button.remove')}"/>
-        <br>
-        <br>
-        <br>
     </c:if>
-</s:form>
 
-<script id="selectedThemeTemplate" type="text/x-jsrender">
-    <p id="themeDescription">{{:description}}</p>
-    <img id="themeImage" src="<c:out value='${siteURL}'/>{{:previewPath}}"></img>
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.editFormat"/></td>
+        <td class="field">
+            <select ng-model="ctrl.weblog.editFormat" size="1" required>
+                <option ng-repeat="(key, value) in ctrl.metadata.editFormats" value="{{key}}">{{value}}</option>
+            </select>
+       </td>
+       <td class="description"><fmt:message key="weblogConfig.tip.editFormat"/></td>
+    </tr>
 
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.visible"/></td>
+        <td class="field"><input type="checkbox" ng-model="ctrl.weblog.visible"></td>
+        <td class="description"><fmt:message key="weblogConfig.tip.visible"/></td>
+    </tr>
 
-</script>
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.entriesPerPage"/></td>
+        <td class="field"><input type="number" min="1" max="100" step="1" ng-model="ctrl.weblog.entriesPerPage" size="3"></td>
+    </tr>
 
-<div id="confirm-delete" title="<fmt:message key='websiteRemove.title'/>" style="display:none">
-    <fmt:message key="websiteRemove.youSure">
-        <fmt:param value="${actionWeblog.name}"/>
-    </fmt:message>
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.locale"/>*</td>
+        <td class="field">
+            <select ng-model="ctrl.weblog.locale" size="1">
+                <option ng-repeat="(key, value) in ctrl.metadata.locales" value="{{key}}">{{value}}</option>
+            </select>
+        </td>
+        <td class="description"><fmt:message key="weblogConfig.tip.locale"/></td>
+    </tr>
+
+    <tr>
+        <td class="label"><fmt:message key="weblogConfig.timeZone"/>*</td>
+        <td class="field">
+            <select ng-model="ctrl.weblog.timeZone" size="1">
+                <option ng-repeat="(key, value) in ctrl.metadata.timezones" value="{{key}}">{{value}}</option>
+            </select>
+        </td>
+        <td class="description"><fmt:message key="weblogConfig.tip.timezone"/></td>
+    </tr>
+
+    <tr ng-if="ctrl.metadata.usersOverrideAnalyticsCode">
+        <td class="label"><fmt:message key="weblogConfig.analyticsTrackingCode"/></td>
+        <td class="field"><textarea ng-model="ctrl.weblog.analyticsCode" rows="10" cols="70" maxlength="1200"></textarea></td>
+        <td class="description"><fmt:message key="weblogConfig.tip.analyticsTrackingCode"/></td>
+    </tr>
+
+<c:if test="${globalCommentPolicy != 'NONE'}">
+
+    <tr>
+    <td colspan="3"><h2><fmt:message key="weblogConfig.commentSettings"/></h2></td>
+    </tr>
+
+    <tr>
+    <td class="label"><fmt:message key="weblogConfig.allowComments"/></td>
+    <td class="field">
+        <select ng-model="ctrl.weblog.allowComments" size="1">
+            <option ng-repeat="(key, value) in ctrl.metadata.commentOptions" value="{{key}}">{{value}}</option>
+        </select>
+    </td>
+    </tr>
+
+    <tr ng-if="ctrl.metadata.usersCommentNotifications">
+        <td class="label"><fmt:message key="weblogConfig.emailComments"/></td>
+        <td class="field"><input type="checkbox" ng-model="ctrl.weblog.emailComments"></td>
+    </tr>
+
+    <tr>
+    <td class="label"><fmt:message key="weblogConfig.defaultCommentDays"/></td>
+    <td class="field">
+        <select ng-model="ctrl.weblog.defaultCommentDays" size="1">
+            <option ng-repeat="(key, value) in ctrl.metadata.commentDayOptions" ng-value="{{key-0}}">{{value}}</option>
+        </select>
+    </td>
+    </tr>
+
+    <tr ng-if="ctrl.weblog.id != null">
+        <td class="label"><fmt:message key="weblogConfig.applyCommentDefaults"/></td>
+        <td class="field"><input type="checkbox" ng-model="ctrl.weblog.applyCommentDefaults"></td>
+    </tr>
+
+    <tr>
+        <td class="label"><fmt:message key="globalConfig.ignoreUrls"/></td>
+        <td class="field"><textarea ng-model="ctrl.weblog.blacklist" rows="7" cols="40"></textarea></td>
+        <td class="description"><fmt:message key="globalConfig.tip.ignoreUrls"/></td>
+    </tr>
+
+</c:if>
+
+</table>
+
+<br>
+
+<div class="control">
+    <input class="buttonBox" type="button" value="${saveButtonText}" ng-click="ctrl.updateWeblog()"/>
+    <input class="buttonBox" type="button" value="<fmt:message key='generic.cancel'/>" ng-click="ctrl.cancelChanges()"/>
+</div>
+
+<br><br>
+
+<div ng-if="ctrl.weblog.id != null">
+    <h2><fmt:message key="weblogConfig.removeWebsiteHeading"/></h2>
+    <p>
+        <span class="warning">
+            <fmt:message key="weblogConfig.removeWebsiteWarning"/>
+        </span>
+    </p>
+    <br>
+    <button confirm-delete-dialog="confirm-delete"><fmt:message key="weblogConfig.button.remove"/></button>
+    <br><br><br>
+</div>
+
+<div id="confirm-delete" title="<fmt:message key='weblogConfig.deleteTitle'/>" style="display:none">
+    {{ctrl.deleteWeblogConfirmation}}
     <br/>
     <br/>
     <span class="warning">
-        <fmt:message key="weblogSettings.removeWebsiteWarning"/>
+        <fmt:message key="weblogConfig.removeWebsiteWarning"/>
     </span>
 </div>
