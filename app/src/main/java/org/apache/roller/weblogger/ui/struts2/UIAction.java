@@ -69,9 +69,6 @@ public class UIAction extends ActionSupport implements Preparable {
     // action name (used by tabbed menu utility)
     private String actionName = null;
 
-    // the name of the menu this action wants to show, or null for no menu
-    private String desiredMenu = null;
-
     // page title, called by some Tiles JSPs (e.g., tiles-simplepage.jsp)
     private String pageTitle = null;
 
@@ -227,17 +224,9 @@ public class UIAction extends ActionSupport implements Preparable {
         this.actionName = actionName;
     }
 
-    public String getDesiredMenu() {
-        return desiredMenu;
-    }
-
-    public void setDesiredMenu(String desiredMenu) {
-        this.desiredMenu = desiredMenu;
-    }
-
     public Menu getMenu() {
-        return menuHelper.getMenu(getDesiredMenu(), getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(),
-                getActionName(), true);
+        return menuHelper.getMenu(getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(), getActionName(),
+                true);
     }
 
     private static String cleanExpressions(String s) {

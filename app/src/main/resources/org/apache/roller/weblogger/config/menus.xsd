@@ -46,6 +46,7 @@
             <xs:element name="subactions" type="subactionsType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="action" type="xs:string" use="required"/>
+        <xs:attribute name="actionPath" type="xs:string" use="required"/>
         <xs:attribute name="titleKey" type="xs:string" use="required"/>
         <xs:attribute name="globalRole" type="globalRoleType"/>
         <xs:attribute name="weblogRole" type="weblogRoleType"/>

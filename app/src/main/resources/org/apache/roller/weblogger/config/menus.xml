@@ -4,19 +4,24 @@ Defines the menus provided with Weblogger
 <menus>
     <menu id="admin">
         <tab titleKey="tabbedmenu.admin" globalRole="ADMIN" weblogRole="NOBLOGNEEDED">
-            <tabItem action="/tb-ui/app/admin/globalConfig"
+            <tabItem action="globalConfig"
+                     actionPath="/tb-ui/app/admin/"
                      titleKey="tabbedmenu.admin.config"/>
-            <tabItem action="/tb-ui/app/admin/userAdmin"
+            <tabItem action="userAdmin"
+                     actionPath="/tb-ui/app/admin/"
                      titleKey="tabbedmenu.admin.userAdmin"/>
-            <tabItem action="/tb-ui/app/admin/pingTargets"
+            <tabItem action="pingTargets"
+                     actionPath="/tb-ui/app/admin/"
                      titleKey="tabbedmenu.admin.pingTargets"/>
-            <tabItem action="/tb-ui/app/admin/cacheInfo"
+            <tabItem action="cacheInfo"
+                     actionPath="/tb-ui/app/admin/"
                      titleKey="tabbedmenu.admin.cacheInfo"/>
         </tab>
     </menu>
     <menu id="editor">
         <tab titleKey="tabbedmenu.weblog" globalRole="BLOGGER" weblogRole="EDIT_DRAFT" >
             <tabItem action="entryAdd.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.weblog.newEntry"
                      weblogRole="EDIT_DRAFT">
                 <subactions>
@@ -25,29 +30,35 @@ Defines the menus provided with Weblogger
             </tabItem>
 
             <tabItem action="entries.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.weblog.archives"
                      weblogRole="POST">
             </tabItem>
 
             <tabItem action="comments.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.weblog.commentManagement"
                      weblogRole="POST"/>
 
             <tabItem action="categories.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.weblog.categories"
                      weblogRole="POST">
             </tabItem>
 
             <tabItem action="tags.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.weblog.tags"
                      weblogRole="POST">
             </tabItem>
 
             <tabItem action="bookmarks.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.bookmarks.allFolders"
                      weblogRole="OWNER">
             </tabItem>
             <tabItem action="mediaFileView.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.weblog.mediaFiles"
                      weblogRole="POST">
                 <subactions>
@@ -57,10 +68,12 @@ Defines the menus provided with Weblogger
             </tabItem>
         </tab>
         <tab titleKey="tabbedmenu.website" globalRole="BLOGGER" weblogRole="OWNER">
-            <tabItem action="/tb-ui/app/authoring/weblogConfig"
+            <tabItem action="weblogConfig"
+                     actionPath="/tb-ui/app/authoring/"
                      titleKey="tabbedmenu.website.settings">
             </tabItem>
             <tabItem action="templates.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.design"
                      enabledProperty="themes.customtheme.allowed">
                 <subactions>
@@ -70,6 +83,7 @@ Defines the menus provided with Weblogger
                 </subactions>
             </tabItem>
             <tabItem action="members.rol"
+                     actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.website.members">
             </tabItem>
         </tab>

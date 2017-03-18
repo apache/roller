@@ -32,9 +32,9 @@
     </c:choose>
     <div class="menu-tr">
         <c:set var="actionUrl">
-            <c:url value='${tab.items.get(0).action}'>
-                <c:if test="${weblogId != null}">
-                    <c:param name='weblogId' value='${weblogId}'/>
+            <c:url value='${tab.items.get(0).actionPath}${tab.items.get(0).action}'>
+                <c:if test="${actionWeblog != null}">
+                    <c:param name='weblogId' value='${actionWeblog.id}'/>
                 </c:if>
             </c:url>
         </c:set>
@@ -54,20 +54,22 @@
             <c:forEach var="tabItem" items="${selectedTab.items}" varStatus="stat">
                 <c:if test="${!stat.first}">|</c:if>
                 <c:set var="actionUrl">
-                    <c:url value='${tabItem.action}'>
-                        <c:if test="${weblogId != null}">
-                            <c:param name='weblogId' value='${weblogId}'/>
+                    <c:url value='${tabItem.actionPath}${tabItem.action}'>
+                        <c:if test="${actionWeblog != null}">
+                            <c:param name='weblogId' value='${actionWeblog.id}'/>
                         </c:if>
                     </c:url>
                 </c:set>
-                <c:choose>
-                    <c:when test="${tabItem.selected}">
-                        <a class="menuItemSelected" href="${actionUrl}"><fmt:message key="${tabItem.key}" /></a>
-                    </c:when>
-                    <c:otherwise>
-                        <a class="menuItemUnselected" href="${actionUrl}"><fmt:message key="${tabItem.key}" /></a>
-                    </c:otherwise>
-                </c:choose>
+                <a href="${actionUrl}"
+                    <c:choose>
+                        <c:when test="${tabItem.selected}">
+                            class="menuItemSelected"
+                        </c:when>
+                        <c:otherwise>
+                            class="menuItemUnselected"
+                        </c:otherwise>
+                    </c:choose>
+                ><fmt:message key="${tabItem.key}"/></a>
             </c:forEach>
         </td>
     </tr>
