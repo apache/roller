@@ -79,6 +79,7 @@ public class Menu {
     public static class MenuTabItem {
         private String key = null;
         private String action = null;
+        private String actionPath = null;
         private boolean selected = false;
         private boolean hasWeblogId = false;
 
@@ -96,6 +97,14 @@ public class Menu {
 
         public void setAction(String url) {
             this.action = url;
+        }
+
+        public String getActionPath() {
+            return actionPath;
+        }
+
+        public void setActionPath(String actionPath) {
+            this.actionPath = actionPath;
         }
 
         public boolean isSelected() {

@@ -89,7 +89,6 @@
         <action name="mediaFileAdd" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileAdd</param>
             <param name="pageTitle">mediaFileAdd.title</param>
-            <param name="desiredMenu">editor</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
             <result name="success" type="tiles">.MediaFileEdit</result>
@@ -98,7 +97,6 @@
         <action name="mediaFileEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileEdit</param>
             <param name="pageTitle">mediaFile.edit.title</param>
-            <param name="desiredMenu">editor</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
             <result name="success" type="tiles">.MediaFileEdit</result>
@@ -107,7 +105,6 @@
         <action name="mediaFileView" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileView</param>
             <param name="pageTitleReal">mediaFileView.title</param>
-            <param name="desiredMenu">editor</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
             <result name="success" type="tiles">.MediaFileView</result>
@@ -116,7 +113,6 @@
         <action name="mediaFileChooser" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">mediaFileChooser</param>
             <param name="pageTitleReal">mediaFileImageChooser.title</param>
-            <param name="desiredMenu">editor</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">EDIT_DRAFT</param>
             <result name="success" type="tiles">.MediaFileChooser</result>
@@ -127,7 +123,6 @@
             <param name="pageTitleReal">weblogEdit.title.newEntry</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">EDIT_DRAFT</param>
-            <param name="desiredMenu">editor</param>
             <result name="success" type="tiles">.EntryEdit</result>
         </action>
 
@@ -136,7 +131,6 @@
             <param name="pageTitleReal">weblogEdit.title.editEntry</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">EDIT_DRAFT</param>
-            <param name="desiredMenu">editor</param>
             <result name="success" type="tiles">.EntryEdit</result>
         </action>
 
@@ -145,7 +139,6 @@
             <param name="pageTitleReal">weblogEntryQuery.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
-            <param name="desiredMenu">editor</param>
             <result name="success" type="tiles">.Entries</result>
         </action>
 
@@ -154,14 +147,12 @@
             <param name="pageTitleReal">commentManagement.title</param>
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
-            <param name="desiredMenu">editor</param>
             <result name="success" type="tiles">.Comments</result>
         </action>
 
         <action name="categories" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
-            <param name="desiredMenu">editor</param>
             <param name="actionName">categories</param>
             <param name="pageTitleReal">categoriesForm.rootTitle</param>
             <result name="success" type="tiles">.Categories</result>
@@ -170,7 +161,6 @@
         <action name="tags" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>
-            <param name="desiredMenu">editor</param>
             <param name="actionName">tags</param>
             <param name="pageTitleReal">tagsForm.rootTitle</param>
             <result name="success" type="tiles">.Tags</result>
@@ -179,7 +169,6 @@
         <action name="bookmarks"  class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">OWNER</param>
-            <param name="desiredMenu">editor</param>
             <param name="actionName">bookmarks</param>
             <param name="pageTitleReal">bookmarksForm.rootTitle</param>
             <result name="success" type="tiles">.Bookmarks</result>
@@ -188,7 +177,6 @@
         <action name="themeEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">themeEdit</param>
-            <param name="desiredMenu">editor</param>
             <param name="pageTitleReal">themeEditor.title</param>
             <result name="success" type="tiles">.ThemeEdit</result>
         </action>
@@ -196,7 +184,6 @@
         <action name="templates" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">templates</param>
-            <param name="desiredMenu">editor</param>
             <param name="pageTitleReal">templates.title</param>
             <result name="success" type="tiles">.Templates</result>
         </action>
@@ -204,7 +191,6 @@
         <action name="templateEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">templateEdit</param>
-            <param name="desiredMenu">editor</param>
             <param name="pageTitleReal">templates.title</param>
             <result name="success" type="tiles">.TemplateEdit</result>
         </action>
@@ -212,7 +198,6 @@
         <action name="members" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">members</param>
-            <param name="desiredMenu">editor</param>
             <param name="pageTitleReal">memberPermissions.title</param>
             <result name="success" type="tiles">.Members</result>
         </action>

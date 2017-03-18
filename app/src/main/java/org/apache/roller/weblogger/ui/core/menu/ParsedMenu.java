@@ -124,6 +124,7 @@ public class ParsedMenu {
     protected static class ParsedTabItem {
         private String titleKey = null;
         private String action = null;
+        private String actionPath = null;
         private Set<String> subActions = null;
         private GlobalRole requiredGlobalRole;
         private WeblogRole requiredWeblogRole;
@@ -145,6 +146,15 @@ public class ParsedMenu {
 
         public void setAction(String action) {
             this.action = action;
+        }
+
+        @XmlAttribute
+        public String getActionPath() {
+            return actionPath;
+        }
+
+        public void setActionPath(String actionPath) {
+            this.actionPath = actionPath;
         }
 
         @XmlElementWrapper(name = "subactions")

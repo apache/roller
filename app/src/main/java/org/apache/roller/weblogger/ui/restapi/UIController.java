@@ -230,7 +230,7 @@ public class UIController {
         Weblog weblog = weblogManager.getWeblog(weblogId);
 
         if (userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
-            map.put("menu", getMenu(user, "/tb-ui/app/authoring/weblogConfig", "editor", WeblogRole.OWNER));
+            map.put("menu", getMenu(user, "weblogConfig", WeblogRole.OWNER));
             map.put("weblogId", weblogId);
             return tightblogModelAndView("weblogConfig", map, user, weblog);
         } else {
@@ -248,7 +248,7 @@ public class UIController {
     private ModelAndView getAdminPage(Principal principal, String actionName) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("menu", getMenu(user, "/tb-ui/app/admin/" + actionName, "admin", WeblogRole.NOBLOGNEEDED));
+        myMap.put("menu", getMenu(user, actionName, WeblogRole.NOBLOGNEEDED));
         return tightblogModelAndView(actionName, myMap, user, null);
     }
 
@@ -274,8 +274,8 @@ public class UIController {
         return new ModelAndView("." + actionName, map);
     }
 
-    private Menu getMenu(User user, String actionName, String desiredMenu, WeblogRole requiredRole) {
-        return menuHelper.getMenu(desiredMenu, user.getGlobalRole(), requiredRole, actionName, false);
+    private Menu getMenu(User user, String actionName, WeblogRole requiredRole) {
+        return menuHelper.getMenu(user.getGlobalRole(), requiredRole, actionName, false);
     }
 
 }

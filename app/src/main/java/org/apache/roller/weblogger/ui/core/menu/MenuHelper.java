@@ -51,6 +51,7 @@ public final class MenuHelper {
     private static Logger log = LoggerFactory.getLogger(MenuHelper.class);
 
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
+    private static Map<String, String> actionToMenuIdMap = new HashMap<>(25);
 
     private ExpiringCache menuCache;
 
@@ -87,6 +88,18 @@ public final class MenuHelper {
 
             for (ParsedMenu menu : menus.getMenuList()) {
                 menuMap.put(menu.getId(), menu);
+
+                for (ParsedTab tab : menu.getTabs()) {
+                    for (ParsedTabItem item : tab.getTabItems()) {
+                        actionToMenuIdMap.put(item.getAction(), menu.getId());
+                        if (item.getSubActions() != null) {
+                            for (String subAction : item.getSubActions()) {
+                                actionToMenuIdMap.put(subAction, menu.getId());
+                            }
+                        }
+                    }
+                }
+
             }
 
         } catch (Exception ex) {
@@ -99,24 +112,29 @@ public final class MenuHelper {
      * Creates and returns a Menu object with tabs and tab items removed and active tab and item
      * highlighted as appropriate for the User, Weblog, and Action being performed.
      *
-     * @param menuId         unique identifier for the menu (e.g., "editor", "admin")
      * @param userGlobalRole - user's global role
      * @param userWeblogRole - user's role within the weblog being displayed
      * @param currentAction  the current action being invoked. Null to ignore.
      * @return Menu object
      */
-    public Menu getMenu(String menuId, GlobalRole userGlobalRole, WeblogRole userWeblogRole, String currentAction, boolean useStruts) {
+    public Menu getMenu(GlobalRole userGlobalRole, WeblogRole userWeblogRole, String currentAction, boolean useStruts) {
+        Menu menu = null;
+
         if (useStruts) {
             currentAction += ".rol";
         }
-        String cacheKey = generateMenuCacheKey(menuId, userGlobalRole.name(),
-                userWeblogRole == null ? null : userWeblogRole.name(), currentAction);
-        Menu menu = (Menu) menuCache.get(cacheKey);
-        if (menu == null) {
-            ParsedMenu menuConfig = menuMap.get(menuId);
-            if (menuConfig != null) {
-                menu = buildMenu(menuConfig, userGlobalRole, userWeblogRole, currentAction);
-                menuCache.put(cacheKey, menu);
+        String menuId = actionToMenuIdMap.get(currentAction);
+
+        if (menuId != null) {
+            String cacheKey = generateMenuCacheKey(menuId, userGlobalRole.name(),
+                    userWeblogRole == null ? null : userWeblogRole.name(), currentAction);
+            menu = (Menu) menuCache.get(cacheKey);
+            if (menu == null) {
+                ParsedMenu menuConfig = menuMap.get(menuId);
+                if (menuConfig != null) {
+                    menu = buildMenu(menuConfig, userGlobalRole, userWeblogRole, currentAction);
+                    menuCache.put(cacheKey, menu);
+                }
             }
         }
         return menu;
@@ -181,6 +199,7 @@ public final class MenuHelper {
                 MenuTabItem newTabItem = new MenuTabItem();
                 newTabItem.setKey(tabItem.getTitleKey());
                 newTabItem.setAction(tabItem.getAction());
+                newTabItem.setActionPath(tabItem.getActionPath());
 
                 // is this the selected item? Only one can be selected so skip the rest
                 if (selectable && currentAction != null && isSelected(currentAction, tabItem)) {
