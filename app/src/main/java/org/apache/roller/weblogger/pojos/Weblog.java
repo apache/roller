@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.pojos.WebloggerProperties.GlobalCommentPolicy;
+import org.apache.roller.weblogger.pojos.WebloggerProperties.CommentPolicy;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
@@ -77,24 +77,24 @@ import java.util.TimeZone;
 public class Weblog {
 
     private String id = Utilities.generateUUID();
-    @NotBlank(message = "{weblogSettings.error.handleNull}")
-    @Pattern(regexp = "[a-z0-9\\-]*", message = "{weblogSettings.error.invalidHandle}")
+    @NotBlank(message = "{weblogConfig.error.handleNull}")
+    @Pattern(regexp = "[a-z0-9\\-]*", message = "{weblogConfig.error.invalidHandle}")
     private String handle = null;
-    @NotBlank(message = "{weblogSettings.error.nameNull}")
+    @NotBlank(message = "{weblogConfig.error.nameNull}")
     private String name = null;
     private String tagline = null;
     private EditFormat editFormat = EditFormat.HTML;
     private String blacklist = null;
-    private GlobalCommentPolicy allowComments = GlobalCommentPolicy.MUSTMODERATE;
+    private CommentPolicy allowComments = CommentPolicy.MUSTMODERATE;
     private Boolean emailComments = Boolean.FALSE;
-    @NotBlank(message = "{weblogSettings.error.themeNull}")
+    @NotBlank(message = "{weblogConfig.error.themeNull}")
     private String theme = null;
     private String locale = null;
     private String timeZone = null;
     private Boolean visible = Boolean.TRUE;
     private Instant dateCreated = Instant.now();
     private int defaultCommentDays = -1;
-    private int entriesPerPage = 15;
+    private int entriesPerPage = 12;
     private Instant lastModified = Instant.now();
     private String about = null;
     private User creator = null;
@@ -106,21 +106,21 @@ public class Weblog {
     private boolean tempPreviewWeblog = false;
 
     public enum EditFormat {
-        HTML("weblogSettings.editFormat.html", true),
-        COMMONMARK("weblogSettings.editFormat.commonMark", true),
-        RICHTEXT("weblogSettings.editFormat.richText", false);
+        HTML("weblogConfig.editFormat.html", true),
+        COMMONMARK("weblogConfig.editFormat.commonMark", true),
+        RICHTEXT("weblogConfig.editFormat.richText", false);
 
-        private String description;
+        private String descriptionKey;
 
         private boolean usesPlainEditor;
 
-        EditFormat(String description, boolean usesPlainEditor) {
-            this.description = description;
+        EditFormat(String descriptionKey, boolean usesPlainEditor) {
+            this.descriptionKey = descriptionKey;
             this.usesPlainEditor = usesPlainEditor;
         }
 
-        public String getDescription() {
-            return description;
+        public String getDescriptionKey() {
+            return descriptionKey;
         }
     }
 
@@ -237,11 +237,11 @@ public class Weblog {
 
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
-    public GlobalCommentPolicy getAllowComments() {
+    public CommentPolicy getAllowComments() {
         return this.allowComments;
     }
 
-    public void setAllowComments(GlobalCommentPolicy allowComments) {
+    public void setAllowComments(CommentPolicy allowComments) {
         this.allowComments = allowComments;
     }
 
@@ -545,15 +545,6 @@ public class Weblog {
     }
 
     // convenience methods for populating fields from forms
-
-    @Transient
-    public String getDefaultCommentDaysString() {
-        return "" + defaultCommentDays;
-    }
-
-    public void setDefaultCommentDaysString(String dcd) {
-        defaultCommentDays = Integer.parseInt(dcd);
-    }
 
     @Transient
     public boolean isApplyCommentDefaults() {

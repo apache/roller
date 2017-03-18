@@ -98,8 +98,8 @@ var msg= {
     <div class="control">
         <span style="padding-left:7px">
             <input type="button" name="themePreview"
-                            value="<fmt:message key='themeEditor.preview' />"
-                            onclick="fullPreview($('#themeSelector').get(0))" />
+                value="<fmt:message key='themeEditor.preview' />"
+                onclick="fullPreview($('#themeSelector').get(0))" />
 
             <input type="button" id="update-button" value="<fmt:message key='themeEditor.save' />" />
         </span>

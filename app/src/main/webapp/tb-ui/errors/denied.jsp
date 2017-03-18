@@ -21,12 +21,12 @@
 
 <fmt:setBundle basename="ApplicationResources" />
 
-<h2><fmt:message key="error.permissionDenied.title" /></h2>
+<h2><fmt:message key="denied.title" /></h2>
 
-<fmt:message key="error.permissionDenied.prompt" />
+<fmt:message key="denied.prompt" />
 
 <ul>
-    <li><fmt:message key="error.permissionDenied.reason0" /></li>
-    <li><fmt:message key="error.permissionDenied.reason1" /></li>
-    <li><fmt:message key="error.permissionDenied.reason2" /></li>
+    <li><fmt:message key="denied.reason0"/></li>
+    <li><fmt:message key="denied.reason1"/></li>
+    <li><fmt:message key="denied.reason2"/></li>
 </ul>

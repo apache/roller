@@ -114,7 +114,7 @@ var msg= {
                    <span ng-if="role.weblogRole == 'OWNER'">
 
                        <%-- And only show theme option if custom themes are enabled --%>
-                       <c:if test="${action.isUsersCustomizeThemes()}">
+                       <c:if test="${usersCustomizeThemes}">
                            <img src='<c:url value="/images/layout.png"/>'>
                            <c:url var="weblogTheme" value="/tb-ui/authoring/templates.rol"/>
                            <a href='${weblogTheme}?weblogId={{role.weblog.id}}'><fmt:message key="mainMenu.theme" /></a>
@@ -122,7 +122,7 @@ var msg= {
                        </c:if>
 
                        <img src='<c:url value="/images/cog.png"/>' />
-                       <c:url var="manageWeblog" value="/tb-ui/authoring/weblogConfig.rol"/>
+                       <c:url var="manageWeblog" value="/tb-ui/app/authoring/weblogConfig"/>
                        <a href='${manageWeblog}?weblogId={{role.weblog.id}}'><fmt:message key="mainMenu.manage" /></a>
                        <br>
                    </span>
@@ -142,7 +142,7 @@ var msg= {
     </div>
 
     <c:if test="${authenticatedUser.hasEffectiveGlobalRole('BLOGCREATOR')}">
-        <form method="link" action="<c:url value='/tb-ui/createWeblog.rol'/>">
+        <form method="link" action="<c:url value='/tb-ui/app/createWeblog'/>">
           <div class="control clearfix">
              <input type="submit" value="<fmt:message key='mainMenu.createWeblog'/>">
           </div>

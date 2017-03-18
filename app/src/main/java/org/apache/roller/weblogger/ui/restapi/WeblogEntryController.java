@@ -411,27 +411,22 @@ public class WeblogEntryController {
             }
 
             fields.author = userManager.checkWeblogRole(user, weblog, WeblogRole.POST);
-            fields.commentingEnabled = !WebloggerProperties.GlobalCommentPolicy.NONE.equals(
+            fields.commentingEnabled = !WebloggerProperties.CommentPolicy.NONE.equals(
                     persistenceStrategy.getWebloggerProperties().getCommentPolicy()) &&
-                    !WebloggerProperties.GlobalCommentPolicy.NONE.equals(weblog.getAllowComments());
+                    !WebloggerProperties.CommentPolicy.NONE.equals(weblog.getAllowComments());
             fields.defaultCommentDays = weblog.getDefaultCommentDays();
             fields.defaultEditFormat = weblog.getEditFormat();
             fields.timezone = weblog.getTimeZone();
 
             for (Weblog.EditFormat format : Weblog.EditFormat.values()) {
-                fields.editFormatDescriptions.put(format, messages.getString(format.getDescription()));
+                fields.editFormatDescriptions.put(format, messages.getString(format.getDescriptionKey()));
             }
 
             // comment day options
-            fields.commentDayOptions = new LinkedHashMap<>();
-            fields.commentDayOptions.put("-1", messages.getString("weblogEdit.unlimitedCommentDays"));
-            fields.commentDayOptions.put("0", messages.getString("weblogEdit.days0"));
-            fields.commentDayOptions.put("3", messages.getString("weblogEdit.days3"));
-            fields.commentDayOptions.put("7", messages.getString("weblogEdit.days7"));
-            fields.commentDayOptions.put("14", messages.getString("weblogEdit.days14"));
-            fields.commentDayOptions.put("30", messages.getString("weblogEdit.days30"));
-            fields.commentDayOptions.put("60", messages.getString("weblogEdit.days60"));
-            fields.commentDayOptions.put("90", messages.getString("weblogEdit.days90"));
+            fields.commentDayOptions = Arrays.stream(WeblogEntry.CommentDayOption.values())
+                    .collect(Utilities.toLinkedHashMap(cdo -> Integer.toString(cdo.getDays()),
+                            cdo -> messages.getString(cdo.getDescriptionKey())));
+
             return fields;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

@@ -218,8 +218,8 @@ public class AdminController {
                 .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
                         e -> messages.getString(e.getDescription())));
 
-        gcm.commentOptions = Arrays.stream(WebloggerProperties.GlobalCommentPolicy.values())
-                .collect(Utilities.toLinkedHashMap(WebloggerProperties.GlobalCommentPolicy::name,
+        gcm.commentOptions = Arrays.stream(WebloggerProperties.CommentPolicy.values())
+                .collect(Utilities.toLinkedHashMap(WebloggerProperties.CommentPolicy::name,
                         e -> messages.getString(e.getSiteDescription())));
 
         return gcm;

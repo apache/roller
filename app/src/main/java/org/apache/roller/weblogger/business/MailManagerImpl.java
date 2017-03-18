@@ -443,7 +443,7 @@ public class MailManagerImpl implements MailManager {
 
             if (weblog.getEmailComments() &&
                     // if must moderate on, blogger(s) already got pending email, good enough.
-                    !WebloggerProperties.GlobalCommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
+                    !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
                 List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
 
                 String[] bloggerEmailAddrs = bloggerList.stream()

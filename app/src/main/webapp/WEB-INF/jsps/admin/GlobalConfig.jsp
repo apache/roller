@@ -138,9 +138,9 @@
             <td class="description"></td>
         </tr>
         <tr>
-            <td class="label"><fmt:message key="weblogSettings.ignoreUrls" /></td>
+            <td class="label"><fmt:message key="globalConfig.ignoreUrls" /></td>
             <td class="field"><textarea rows="7" cols="80" ng-model="ctrl.webloggerProps.commentSpamFilter"></textarea></td>
-            <td class="description"><fmt:message key="weblogSettings.tip.ignoreUrls"/></td>
+            <td class="description"><fmt:message key="globalConfig.tip.ignoreUrls"/></td>
         </tr>
     <tr>
         <td colspan="2">&nbsp;</td>

@@ -17,6 +17,7 @@ package org.apache.roller.weblogger.ui.restapi;
 
 import org.apache.roller.weblogger.business.MailManager;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -58,6 +59,13 @@ public class UIController {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -203,9 +211,38 @@ public class UIController {
         return tightblogModelAndView("register", null, (User) null, null);
     }
 
+    @RequestMapping(value = "/createWeblog")
+    public ModelAndView createWeblog(Principal principal) {
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("globalCommentPolicy", WebloggerContext.getWebloggerProperties().getCommentPolicy());
+        return tightblogModelAndView("createWeblog", myMap, principal, null);
+    }
+
+    @RequestMapping(value = "/authoring/weblogConfig")
+    public ModelAndView weblogConfig(Principal principal, @RequestParam String weblogId) {
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("globalCommentPolicy", WebloggerContext.getWebloggerProperties().getCommentPolicy());
+        return getBlogOwnerPage(principal, myMap, weblogId, "weblogConfig");
+    }
+
+    private ModelAndView getBlogOwnerPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+        Weblog weblog = weblogManager.getWeblog(weblogId);
+
+        if (userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+            map.put("menu", getMenu(user, "/tb-ui/app/authoring/weblogConfig", "editor", WeblogRole.OWNER));
+            map.put("weblogId", weblogId);
+            return tightblogModelAndView("weblogConfig", map, user, weblog);
+        } else {
+            return tightblogModelAndView("denied", null, (User) null, null);
+        }
+    }
+
     @RequestMapping(value = "/home")
     public ModelAndView home(Principal principal) {
-        return tightblogModelAndView("mainMenu", null, principal, null);
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("usersCustomizeThemes", WebloggerContext.getWebloggerProperties().isUsersCustomizeThemes());
+        return tightblogModelAndView("mainMenu", myMap, principal, null);
     }
 
     private ModelAndView getAdminPage(Principal principal, String actionName) {
