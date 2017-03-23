@@ -40,8 +40,7 @@
         <div id="content"> 
             <div id="<tiles:insertAttribute name='sidebarType'/>_maincontent_wrap">
                 <div id="maincontent">
-                    <tiles:insertAttribute name="messages" /> 
-                    <tiles:insertAttribute name="content" />    
+                    <tiles:insertAttribute name="content" />
                 </div>
             </div>
             

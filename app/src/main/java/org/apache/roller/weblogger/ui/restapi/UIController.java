@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -92,12 +91,8 @@ public class UIController {
         myMap.put("pageTitle", defaultMessages.getString("login.title"));
 
         if (Boolean.TRUE.equals(error)) {
-            List<String> actionErrors = new ArrayList<>();
-            actionErrors.add(defaultMessages.getString("error.password.mismatch"));
-            myMap.put("actionErrors", actionErrors);
-        }
-
-        if (activationCode != null) {
+            myMap.put("actionError", defaultMessages.getString("error.password.mismatch"));
+        } else if (activationCode != null) {
             UserSearchCriteria usc = new UserSearchCriteria();
             usc.setActivationCode(activationCode);
             List<User> users = userManager.getUsers(usc);
@@ -106,18 +101,19 @@ public class UIController {
                 User user = users.get(0);
                 // enable user account
                 user.setActivationCode(null);
-                WebloggerProperties.RegistrationPolicy regProcess = WebloggerContext.getWebloggerProperties().getRegistrationPolicy();
+                WebloggerProperties.RegistrationPolicy regProcess =
+                        WebloggerContext.getWebloggerProperties().getRegistrationPolicy();
                 if (WebloggerProperties.RegistrationPolicy.APPROVAL_REQUIRED.equals(regProcess)) {
                     user.setStatus(UserStatus.EMAILVERIFIED);
-                    myMap.put("activationStatus", "activePending");
+                    myMap.put("actionMessage", defaultMessages.getString("welcome.user.account.need.approval"));
                     mailManager.sendRegistrationApprovalRequest(user);
                 } else {
                     user.setStatus(UserStatus.ENABLED);
-                    myMap.put("activationStatus", "active");
+                    myMap.put("actionMessage", defaultMessages.getString("welcome.user.account.activated"));
                 }
                 userManager.saveUser(user);
             } else {
-                myMap.put("actionErrors", defaultMessages.getString("error.activate.user.invalidActivationCode"));
+                myMap.put("actionError", defaultMessages.getString("error.activate.user.invalidActivationCode"));
             }
 
         }

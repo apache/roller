@@ -30,7 +30,6 @@
         <div id="content">
             <div id="nosidebar_maincontent_wrap">
                 <div id="maincontent">
-                    <tiles:insertAttribute name="messages" />
                     <tiles:insertAttribute name="content" />
                 </div>
             </div>

@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.ui.struts2;
 
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.ui.struts2.UIAction;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -31,8 +30,6 @@ public class UIActionTest extends WebloggerTest {
     public void testCleanTextEmpty() {
         assertEquals(null, UIAction.cleanTextKey(null));
         assertEquals("",UIAction.cleanTextKey(""));
-        assertEquals(null,UIAction.cleanTextArg(null));
-        assertEquals("",UIAction.cleanTextArg(""));
     }
 
     @Test
@@ -52,12 +49,6 @@ public class UIActionTest extends WebloggerTest {
         assertEquals("", UIAction.cleanTextKey("something ${foo} more"));
         assertEquals("", UIAction.cleanTextKey("something %{foo} more"));
         assertEquals("", UIAction.cleanTextKey("something %{foo} more"));
-    }
-
-    @Test
-    public void testCleanTextArg() {
-        assertEquals("&lt;i&gt;some text&lt;/i&gt;",UIAction.cleanTextArg("<i>some text</i>"));
-        assertEquals("&lt;i&gt;some ${text}&lt;/i&gt;",UIAction.cleanTextArg("<i>some ${text}</i>"));
     }
 
 }
