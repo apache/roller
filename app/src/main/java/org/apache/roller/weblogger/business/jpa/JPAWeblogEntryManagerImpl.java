@@ -599,10 +599,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public String processBlogText(WeblogEntry entry, String str) {
+    public String processBlogText(Weblog.EditFormat format, String str) {
         String ret = str;
 
-        if (ret != null) {
+        if (Weblog.EditFormat.COMMONMARK.equals(format) && ret != null) {
             Parser parser = Parser.builder().build();
             Node document = parser.parse(ret);
             HtmlRenderer renderer = HtmlRenderer.builder().build();

@@ -524,31 +524,6 @@ public class WeblogEntry {
         return PubStatus.PUBLISHED.equals(getStatus());
     }
 
-    /**
-     * Get entry text, transformed by plugins enabled for entry.
-     */
-    @Transient
-    public String getTransformedText() {
-        return render(getText());
-    }
-
-    /**
-     * Get entry summary, transformed by plugins enabled for entry.
-     */
-    @Transient
-    public String getTransformedSummary() {
-        return render(getSummary());
-    }
-
-    /**
-     * Transform string based on plugins enabled for this weblog entry.
-     */
-    private String render(String str) {
-        log.debug("Applying page plugins to string");
-        WeblogEntryManager mgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
-        return mgr.processBlogText(this, str);
-    }
-
     @Transient
     public int getHours() {
         return hours;

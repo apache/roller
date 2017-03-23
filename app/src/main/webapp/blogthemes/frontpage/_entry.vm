@@ -11,6 +11,6 @@
         <br/> 
     </p>
     <p class="entryDescription">                    
-        $utils.truncateText($entry.getTransformedText()), 240, 260, "...")
+        $utils.truncateText($model.getTransformedText($entry)), 240, 260, "...")
     </p>
 </div>

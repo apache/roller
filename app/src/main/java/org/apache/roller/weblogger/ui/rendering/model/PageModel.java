@@ -109,9 +109,6 @@ public class PageModel implements Model {
     }
 
     /**
-     * Template context name to be used for model.
-     */
-    /**
      * Template context name to be used for model
      */
     @Override
@@ -183,6 +180,27 @@ public class PageModel implements Model {
                 return StringUtils.defaultIfEmpty(props.getDefaultAnalyticsCode(), "");
             }
         }
+    }
+
+    /**
+     * Get entry text, transformed by plugins enabled for entry.
+     */
+    public String getTransformedText(WeblogEntry entry) {
+        return render(entry.getEditFormat(), entry.getText());
+    }
+
+    /**
+     * Get entry summary, transformed by plugins enabled for entry.
+     */
+    public String getTransformedSummary(WeblogEntry entry) {
+        return render(entry.getEditFormat(), entry.getSummary());
+    }
+
+    /**
+     * Transform string based on plugins enabled for this weblog entry.
+     */
+    private String render(Weblog.EditFormat format, String str) {
+        return weblogEntryManager.processBlogText(format, str);
     }
 
     /**
