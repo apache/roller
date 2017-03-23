@@ -29,7 +29,6 @@
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="sidebarType"  value="nosidebar" />
         <put-attribute name="menu"         value="/WEB-INF/jsps/tiles/menu.jsp" />
-        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
         <put-attribute name="useAngularHeader" value="false" />
@@ -38,7 +37,6 @@
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
         <put-attribute name="useAngularHeader" value="false" />
@@ -46,7 +44,6 @@
 
     <definition name=".tiles-no-nav-page" template="/WEB-INF/jsps/tiles/tiles-no-nav-page.jsp">
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="titleLeft"    value="simpleBanner.titleLeft"/>
         <put-attribute name="titleRight"   value="${titleRight}"/>
@@ -118,7 +115,6 @@
 
     <definition name=".MediaFileChooser" extends=".tiles-popuppage" >
         <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileChooser.jsp" />
-        <put-attribute name="messages" value="/WEB-INF/jsps/tiles/messages.jsp" />
     </definition>
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >

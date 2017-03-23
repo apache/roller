@@ -34,9 +34,6 @@ import org.apache.roller.weblogger.pojos.WebloggerProperties;
 import org.apache.roller.weblogger.ui.core.menu.Menu;
 import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
  * error and status success.  Other actions extending this one only need to
@@ -119,52 +116,6 @@ public class UIAction extends ActionSupport implements Preparable {
         return super.getText(cleanTextKey(aTextName));
     }
 
-    @Override
-    public String getText(String aTextName, String defaultValue) {
-        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue));
-    }
-
-    @Override
-    public String getText(String aTextName, String defaultValue, String obj) {
-        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue), cleanTextArg(obj));
-    }
-
-    @Override
-    public String getText(String aTextName, List<?> args) {
-        List<Object> cleanedArgs = new ArrayList<Object>(args.size());
-        for (Object el : args) {
-            cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
-        }
-        return super.getText(cleanTextKey(aTextName), cleanedArgs);
-    }
-
-    @Override
-    public String getText(String key, String[] args) {
-        String[] cleanedArgs = new String[args.length];
-        for (int i = 0; i < args.length; ++i) {
-            cleanedArgs[i] = cleanTextArg(args[i]);
-        }
-        return super.getText(cleanTextKey(key), cleanedArgs);
-    }
-
-    @Override
-    public String getText(String aTextName, String defaultValue, List<?> args) {
-        List<Object> cleanedArgs = new ArrayList<Object>(args.size());
-        for (Object el : args) {
-            cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
-        }
-        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue), cleanedArgs);
-    }
-
-    @Override
-    public String getText(String key, String defaultValue, String[] args) {
-        String[] cleanedArgs = new String[args.length];
-        for (int i = 0; i < args.length; ++i) {
-            cleanedArgs[i] = cleanTextArg(args[i]);
-        }
-        return super.getText(cleanTextKey(key), cleanTextKey(defaultValue), cleanedArgs);
-    }
-
     private void addMessage(String msgKey, String param) {
         addActionMessage(getText(msgKey, msgKey, param));
     }
@@ -239,13 +190,6 @@ public class UIAction extends ActionSupport implements Preparable {
         }
         // escape HTML
         return StringEscapeUtils.escapeHtml4(cleanExpressions(s));
-    }
-
-    static String cleanTextArg(String s) {
-        if (s == null || s.isEmpty()) {
-            return s;
-        }
-        return StringEscapeUtils.escapeHtml4(s);
     }
 
     public String newTheme() {

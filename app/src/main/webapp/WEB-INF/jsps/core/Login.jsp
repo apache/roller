@@ -22,15 +22,17 @@
 <%-- Body of the login page, invoked from login.jsp --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
-<c:if test="${activationStatus == 'active'}">
+<%-- Success Message --%>
+<c:if test='${actionMessage != null && !"".equals(actionMessage)}'>
     <div class="messages">
-        <p><fmt:message key="welcome.user.account.activated" /></p>
+        <c:out value="${actionMessage}"/>
     </div>
 </c:if>
 
-<c:if test="${activationStatus == 'activePending'}">
-    <div class="messages">
-        <p><fmt:message key="welcome.user.account.need.approval" /></p>
+<%-- Error Message --%>
+<c:if test='${actionError != null && !"".equals(actionError)}'>
+    <div class="errors">
+        <c:out value="${actionError}"/>
     </div>
 </c:if>
 

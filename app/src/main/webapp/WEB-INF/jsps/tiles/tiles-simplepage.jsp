@@ -36,7 +36,6 @@
             <div id="nosidebar_maincontent_wrap">
                 <div id="maincontent">
                     <h1><c:out value="${pageTitle}"/></h1>
-                    <tiles:insertAttribute name="messages" />
                     <tiles:insertAttribute name="content" />
                 </div>
             </div>
