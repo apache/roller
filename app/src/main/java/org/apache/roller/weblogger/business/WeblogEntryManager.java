@@ -154,11 +154,11 @@ public interface WeblogEntryManager {
      * the original entry object, to allow the blogger to return to his original
      * text for additional editing as desired.
      *
-     * @param entry Original weblog entry
+     * @param format Weblog.EditFormat indicating input format of string
      * @param str   String to which to apply processing.
      * @return the transformed text
      */
-    String processBlogText(WeblogEntry entry, String str);
+    String processBlogText(Weblog.EditFormat format, String str);
 
     /**
      * Create an Atom enclosure element for the resource (usually podcast or other

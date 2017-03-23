@@ -53,16 +53,16 @@ import java.util.stream.Collectors;
 /**
  * Extends normal page renderer model to represent search results.
  * <p>
- * Also adds some new methods which are specific only to search results.
+ * Also adds some methods which are specific only to search results.
  */
 public class SearchResultsModel extends PageModel {
 
     private static Logger log = LoggerFactory.getLogger(SearchResultsModel.class);
 
-    public static final int RESULTS_PER_PAGE = 10;
+    private static final int RESULTS_PER_PAGE = 10;
 
     // the original search request
-    WeblogSearchRequest searchRequest = null;
+    private WeblogSearchRequest searchRequest = null;
 
     // the actual search results mapped by Day -> Set of entries
     private Map<LocalDate, TreeSet<WeblogEntry>> results = new TreeMap<>(Collections.reverseOrder());
@@ -209,14 +209,9 @@ public class SearchResultsModel extends PageModel {
         LocalDate pubDate = entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
 
         // ensure we do not get duplicates from Lucene by using a set collection.
-        TreeSet<WeblogEntry> set = this.results.get(pubDate);
-        if (set == null) {
-            // date is not mapped yet, so we need a new Set
-            set = new TreeSet<>(Comparator.comparing(WeblogEntry::getPubTime)
-                    .thenComparing(WeblogEntry::getTitle));
-            this.results.put(pubDate, set);
-        }
-        set.add(entry);
+        this.results.putIfAbsent(pubDate, new TreeSet<>(Comparator.comparing(WeblogEntry::getPubTime)
+                .thenComparing(WeblogEntry::getTitle)));
+        this.results.get(pubDate).add(entry);
     }
 
     public String getTerm() {

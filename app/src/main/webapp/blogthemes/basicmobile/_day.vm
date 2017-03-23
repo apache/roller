@@ -13,9 +13,9 @@
         <p class="entryTitle">$entry.title</p>
         <p class="entryContent">
             #if($model.permalink || $utils.isEmpty($entry.summary))
-                $entry.getTransformedText()
+                $model.getTransformedText($entry)
             #else
-                $entry.getTransformedSummary() $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
+                $model.getTransformedSummary($entry) $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
             #end
         </p>
         <p class="entryInfo">
