@@ -139,7 +139,7 @@ var msg= {
           <s:form>
             <sec:csrfInput/>
             <input type="hidden" name="weblogId" value="<c:out value='${actionWeblog.id}'/>"/>
-            <s:submit id="switch-theme-button" action="themeEdit" namespace="/tb-ui/authoring" value="%{getText('templates.switchTheme')}" />
+            <s:submit id="switch-theme-button" action="themeEdit" namespace="/tb-ui/authoring" value="<fmt:message key='templates.switchTheme'/>" />
           </s:form>
       </span>
     </div>

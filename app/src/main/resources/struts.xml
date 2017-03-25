@@ -70,19 +70,6 @@
 
     </package>
 
-    <!-- Weblogger install/bootstrap actions -->
-    <package name="weblogger-install" namespace="/tb-ui/install" extends="weblogger">
-
-        <action name="install" class="org.apache.roller.weblogger.ui.struts2.Install">
-            <param name="actionName">install</param>
-            <result name="install" type="tiles">.Install</result>
-            <result name="bootstrap" type="tiles">.Bootstrap</result>
-            <result name="success" type="chain">home</result>
-            <allowed-methods>bootstrap,create</allowed-methods>
-        </action>
-
-    </package>
-
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">
 

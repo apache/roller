@@ -149,7 +149,7 @@ public class UIController {
                         response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
                     } else {
                         // admin has no blog yet, possibly initial setup.
-                        response.sendRedirect(request.getContextPath() + "/tb-ui/admin/globalConfig");
+                        response.sendRedirect(request.getContextPath() + "/tb-ui/app/admin/globalConfig");
                     }
                 }
             }
@@ -167,7 +167,7 @@ public class UIController {
             // new install?  Redirect to register or login page based on whether a user has already been created.
             long userCount = userManager.getUserCount();
             if (userCount == 0) {
-                path = "/tb-ui/register";
+                path = "/tb-ui/app/register";
             } else {
                 path = "/tb-ui/app/login-redirect";
             }

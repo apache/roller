@@ -32,10 +32,10 @@
                 <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
                     <tr>
                         <td class="bannerLeft">
-                            <fmt:message key="<tiles:insertAttribute name='titleLeft'/>" />
+                            <fmt:message><tiles:insertAttribute name='titleLeft'/></fmt:message>
                         </td>
                         <td class="bannerRight">
-                            <fmt:message key="<tiles:insertAttribute name='titleRight'/>" />
+                            <fmt:message><tiles:insertAttribute name='titleRight'/></fmt:message>
                         </td>
                     </tr>
                 </table>

@@ -107,7 +107,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     @Override
     public String getWeblogConfigURL(String weblogHandle, boolean absolute) {
-        String url = getRootURL(absolute) + "/tb-ui/authoring/weblogConfig";
+        String url = getRootURL(absolute) + "/tb-ui/app/authoring/weblogConfig";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogHandle);
         return url + Utilities.getQueryString(params);

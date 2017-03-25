@@ -16,74 +16,57 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
 
-<c:if test="${status.error}">
-    <h2><fmt:message key="installer.startupProblemMessage"/></h2>
-
-    <h3><fmt:message key="installer.whatHappened"/></h3>
-</c:if>
 <c:choose>
-    <c:when test="${status.name() == 'databaseError'}">
-        <p><fmt:message key="installer.databaseConnectionError"/></p>
+    <c:when test="${status.error}">
+        <h2><fmt:message key="installer.startupProblemMessage"/></h2>
+
+        <h3><fmt:message key="installer.whatHappened"/></h3>
+        <p><fmt:message key="${status.descriptionKey}"/></p>
         <ul>
             <c:forEach var="message" items="${messages}">
-                <c:out value="${message}"/>
+                <li><c:out value="${message}"/></li>
             </c:forEach>
         </ul>
-    </c:when>
-    <c:when test="${status.name() == 'databaseVersionError'}">
-        <p><fmt:message key="installer.databaseVersionError"/></p>
-    </c:when>
-    <c:when test="${status.name() == 'tablesMissing'}">
-        <h2><fmt:message key="installer.noDatabaseTablesFound"/></h2>
 
-        <p>
-            <fmt:message key="installer.noDatabaseTablesExplanation">
-                <fmt:param value="${databaseProductName}"/>
-            </fmt:message>
-        </p>
-        <p><fmt:message key="installer.createTables"/></p>
+        <c:if test="${rootCauseStackTrace != null && rootCauseStackTrace != ''}">
+            <h3><fmt:message key="installer.whyDidThatHappen"/></h3>
+            <p><fmt:message key="installer.heresTheStackTrace"/></p>
+            <pre>
+                [<c:out value="${rootCauseStackTrace}"/>]
+            </pre>
+        </c:if>
+    </c:when>
+    <c:otherwise>
+        <h2><fmt:message key="${status.descriptionKey}"/></h2>
+        <c:if test="${status.name() == 'needsBootstrapping'}">
+            <p><fmt:message key="installer.tablesCreatedExplanation"/></p>
+            <p>
+                <fmt:message key="installer.tryBootstrapping">
+                    <fmt:param><c:url value="/tb-ui/install/bootstrap"/></fmt:param>
+                </fmt:message>
+            </p>
+            <pre>
+                <c:forEach var="message" items="${messages}">
+                    <c:out value="${message}"/>
+                </c:forEach>
+            </pre>
+        </c:if>
+        <c:if test="${status.name() == 'tablesMissing'}">
+            <p>
+                <fmt:message key="installer.noDatabaseTablesExplanation">
+                    <fmt:param value="${databaseProductName}"/>
+                </fmt:message>
+            </p>
+            <p><fmt:message key="installer.createTables"/></p>
 
-        <s:form action="install!create">
-            <sec:csrfInput/>
-            <s:submit value="%{getText('installer.yesCreateTables')}"/>
-        </s:form>
-    </c:when>
-    <c:when test="${status.name() == 'databaseCreateError'}">
-        <p><fmt:message key="installer.databaseCreateError"/></p>
-        <pre>
-            <c:forEach var="message" items="${messages}">
-                <c:out value="${message}"/>
-            </c:forEach>
-        </pre>
-    </c:when>
-    <c:when test="${status.name() == 'needsBootstrapping'}">
-        <h2><fmt:message key="installer.tablesCreated"/></h2>
-
-        <p><fmt:message key="installer.tablesCreatedExplanation"/></p>
-        <p>
-            <fmt:message key="installer.tryBootstrapping">
-                <fmt:param><c:url value="/tb-ui/install.rol!bootstrap"/></fmt:param>
-            </fmt:message>
-        </p>
-        <pre>
-            <c:forEach var="message" items="${messages}">
-                <c:out value="${message}"/>
-            </c:forEach>
-        </pre>
-    </c:when>
-    <c:when test="${status.name() == 'bootstrapError'}">
-        <p><fmt:message key="installer.bootstrappingError"/></p>
-    </c:when>
+            <form method="link" action="<c:url value='/tb-ui/install/create'/>">
+                <sec:csrfInput/>
+                <input type="submit" value="<fmt:message key='installer.yesCreateTables'/>">
+            </form>
+        </c:if>
+    </c:otherwise>
 </c:choose>
 
-<c:if test="${rootCauseStackTrace != null && rootCauseStackTrace != ''}">
-    <h3><fmt:message key="installer.whyDidThatHappen"/></h3>
-    <p><fmt:message key="installer.heresTheStackTrace"/></p>
-    <pre>
-        [<c:out value="${rootCauseStackTrace}"/>]
-    </pre>
-</c:if>
 <br/>
 <br/>

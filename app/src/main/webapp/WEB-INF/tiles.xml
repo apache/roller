@@ -82,7 +82,7 @@
     </definition>
 
     <!-- setup page -->
-    <definition name=".Install" extends=".tiles-no-nav-page" >
+    <definition name=".install" extends=".tiles-no-nav-page" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Install.jsp" />
         <put-attribute name="titleRight" value="installer.bannerTitleRight"/>
     </definition>

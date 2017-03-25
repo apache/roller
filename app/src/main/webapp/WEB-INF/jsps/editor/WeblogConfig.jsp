@@ -65,7 +65,7 @@
             <fmt:param value="${actionWeblog.handle}"/>
         </fmt:message>
         <input type="hidden" id="refreshURL"
-               value="<c:url value='/tb-ui/authoring/weblogConfig'/>?weblogId=<c:out value='${weblogId}'/>"/>
+               value="<c:url value='/tb-ui/app/authoring/weblogConfig'/>?weblogId=<c:out value='${weblogId}'/>"/>
     </c:otherwise>
 </c:choose>
 
@@ -122,7 +122,7 @@
         </select>
         <div style="height:400px">
             <p>{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].description}}</p>
-            <img ng-src="{{ctrl.metadata.relativeSiteURL}}/{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].previewPath}}"></img>
+            <img ng-src="{{ctrl.metadata.relativeSiteURL}}{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].previewPath}}"></img>
         </div>
         </td>
         <td class="description"><fmt:message key="weblogConfig.tip.theme"/></td>
@@ -249,4 +249,3 @@
         <fmt:message key="weblogConfig.removeWebsiteWarning"/>
     </span>
 </div>
-0
