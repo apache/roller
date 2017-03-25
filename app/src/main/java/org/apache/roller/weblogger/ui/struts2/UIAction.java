@@ -22,7 +22,6 @@
 package org.apache.roller.weblogger.ui.struts2;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -43,7 +42,7 @@ import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
  * which point to a success in a resource bundle, so we automatically call
  * getText(key) on the param passed into setError() and setSuccess().
  */
-public class UIAction extends ActionSupport implements Preparable {
+public class UIAction extends ActionSupport {
 
     private MenuHelper menuHelper;
 
@@ -70,14 +69,10 @@ public class UIAction extends ActionSupport implements Preparable {
     private String pageTitle = null;
 
     // the required minimum global role the user must have for the action to be allowed
-    GlobalRole requiredGlobalRole = GlobalRole.ADMIN;
+    private GlobalRole requiredGlobalRole = GlobalRole.ADMIN;
 
     // the required minimum weblog role
-    WeblogRole requiredWeblogRole = WeblogRole.OWNER;
-
-    public void prepare() {
-        // no-op
-    }
+    private WeblogRole requiredWeblogRole = WeblogRole.OWNER;
 
     public GlobalRole getRequiredGlobalRole() {
         return requiredGlobalRole;
@@ -109,11 +104,6 @@ public class UIAction extends ActionSupport implements Preparable {
 
     public WebloggerProperties.RegistrationPolicy getRegistrationPolicy() {
         return WebloggerContext.getWebloggerProperties().getRegistrationPolicy();
-    }
-
-    @Override
-    public String getText(String aTextName) {
-        return super.getText(cleanTextKey(aTextName));
     }
 
     private void addMessage(String msgKey, String param) {

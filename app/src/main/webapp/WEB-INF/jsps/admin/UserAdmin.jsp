@@ -172,7 +172,7 @@
               </td>
               <td>
                   <img src='<c:url value="/images/page_white_edit.png"/>' />
-                  <a target="_blank" ng-href="<c:url value='/tb-ui/authoring/weblogConfig'/>?weblogId={{weblogRole.weblog.id}}">
+                  <a target="_blank" ng-href="<c:url value='/tb-ui/app/authoring/weblogConfig'/>?weblogId={{weblogRole.weblog.id}}">
                       <fmt:message key="userAdmin.manage" /></a>
                   </a>
               </td>

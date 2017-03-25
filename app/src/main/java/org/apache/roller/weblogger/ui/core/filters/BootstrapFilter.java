@@ -56,7 +56,7 @@ public class BootstrapFilter implements Filter {
         if (!WebloggerContext.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
             log.debug("Forwarding to install page");
             // install page will check database connectivity & schema status and bootstrap if all OK.
-            RequestDispatcher rd = context.getRequestDispatcher("/tb-ui/install/install.rol");
+            RequestDispatcher rd = context.getRequestDispatcher("/tb-ui/install/install");
             rd.forward(req, res);
         } else {
             chain.doFilter(request, res);
@@ -65,7 +65,7 @@ public class BootstrapFilter implements Filter {
 
     private boolean isInstallUrl(String uri) {
         return (uri != null && (
-                uri.endsWith("bootstrap.rol") || uri.endsWith("create.rol") ||
+                uri.endsWith("/install/bootstrap") || uri.endsWith("/install/create") ||
                         uri.endsWith(".js") || uri.endsWith(".css")));
     }
 
