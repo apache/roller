@@ -228,3 +228,27 @@ body {
     padding: 1.5em;
     text-align: center;
 }
+
+/* media files */
+
+.align-images {
+    display:inline;
+    float:left;
+    margin:5px;
+    list-style-type:none;
+    width:140px;
+    height:140px;
+    border: 1px solid #ccc;
+}
+
+#sortByMenu {
+    width: 15em;
+}
+
+#viewDirectoryMenu {
+    width: 15em;
+}
+
+#moveTargetMenu {
+    width: 15em;
+}

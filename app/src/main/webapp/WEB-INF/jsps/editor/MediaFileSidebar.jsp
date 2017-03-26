@@ -27,13 +27,13 @@
                 <br />
                 <br />
 
-                <img src='<s:url value="/images/image_add.png"/>' border="0"alt="icon" />
+                <span class="glyphicon glyphicon-folder-open"></span>
                 <s:url var="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                     <s:param name="directoryName" value="%{directoryName}" />
                 </s:url>
                 <a href='<s:property escape="false" value="%{mediaFileAddURL}" />'
-                    <s:if test="actionName.equals('mediaFileAdd')">style='font-weight:bold;'</s:if> >
+                    <s:if test="actionName.equals('mediaFileAdd')"> style='font-weight:bold;'</s:if> >
                     <s:text name="mediaFileSidebar.add" />
                 </a>
 
@@ -42,12 +42,12 @@
                 <%-- Only show Create New Directory control when NOT showing search results --%>
                 <br /><br />
                 <div>
-                    <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
+                    <span class="glyphicon glyphicon-picture"></span>
                     <s:text name="mediaFileView.addDirectory" /><br />
                     <div style="padding-left:2em; padding-top:1em">
                         <s:text name="mediaFileView.directoryName" />
                         <input type="text" id="newDirectoryName" name="newDirectoryName" size="10" maxlength="25" />
-                        <input type="button" id="newDirectoryButton"
+                        <input type="button" id="newDirectoryButton" class="btn"
                             value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                 <br />
 
                 <s:form id="mediaFileSearchForm" name="mediaFileSearchForm"
-                        action="mediaFileView!search">
+                        action="mediaFileView!search" theme="bootstrap" cssClass="form-horizontal">
 					<s:hidden name="salt" />
                     <s:hidden name="weblog" />
 
@@ -114,12 +114,13 @@
 
                         <tr>
                             <td>
-                                <s:submit id="searchButton" value="%{getText('mediaFileView.search')}" cssStyle="margin:5px 0px;"/>
+                                <s:submit id="searchButton" cssClass="btn"
+                                    value="%{getText('mediaFileView.search')}" cssStyle="margin:5px 0px;"/>
                             </td>
                             <td>
                                 <s:if test="pager">
-                                    <input id="resetButton" style="margin:5px 0px;" type="button"
-                                           name="reset" value='<s:text name="mediaFileView.reset" />' />
+                                    <input id="resetButton" style="margin:5px 0px;" type="button" cssClass="btn"
+                                        name="reset" value='<s:text name="mediaFileView.reset" />' />
                                 </s:if>
                                 &nbsp;
                             </td>

@@ -122,7 +122,6 @@
     });
 </script>
 
-
 <s:form id="createPostForm" action='entryAddWithMediaFile'>
 	<s:hidden name="salt" />
     <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
@@ -220,29 +219,34 @@
 
 <s:if test="childFiles || (pager && pager.items.size() > 0)">
 
-  <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
+  <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView" theme="bootstrap" >
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="directoryId" />
     <s:hidden name="newDirectoryName" />
     <input type="hidden" name="mediaFileId" value="" />
 
-    <div class="control">
-        <span style="padding-left:7px">
-            <s:text name="mediaFileView.sortBy" />:
-            <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key"
-                  listValue="value"
-                  onchange="document.mediaFileViewForm.submit();" />
-        </span>
-
-        <span style="float:right">
-            <s:if test="!allDirectories.isEmpty">
-                <%-- Folder to View combo-box --%>
-                <s:text name="mediaFileView.viewFolder" />:
-                <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="name" onchange="onView()" />
-            </s:if>
-        </span>
-    </div>
+      <table width="100%">
+          <tr>
+              <td>
+                  <div width="40%">
+                      <s:text name="mediaFileView.sortBy"/>:
+                      <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key" listValue="value"
+                                onchange="document.mediaFileViewForm.submit();"/>
+                  </div>
+              </td>
+              <td>
+                  <div style="float:right" width="40%">
+                      <s:if test="!allDirectories.isEmpty">
+                          <%-- Folder to View combo-box --%>
+                          <s:text name="mediaFileView.viewFolder"/>:
+                          <s:select id="viewDirectoryMenu" name="viewDirectoryId"
+                                    list="allDirectories" listKey="id" listValue="name" onchange="onView()"/>
+                      </s:if>
+                  </div>
+              </td>
+          </tr>
+      </table>
 
     <%-- ***************************************************************** --%>
 
@@ -258,7 +262,7 @@
         }
     </script>
 
-    <div  width="720px" height="500px">
+    <div  width="720px" height="500px" style="clear:right">
         <ul id = "myMenu">
 
             <s:if test="!pager">
@@ -382,22 +386,24 @@
 
             <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
                 <span style="padding-left:7px;margin-top: 20px">
-                    <input id="toggleButton" type="button"
+                    <input id="toggleButton" type="button" class="btn"
                        value='<s:text name="generic.toggle" />' onclick="onToggle()" />
 
-                    <input id="deleteButton" type="button"
+                    <input id="deleteButton" type="button"  class="btn"
                        value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
 
-                    <input id="moveButton" type="button"
+                    <input id="moveButton" type="button" class="btn"
                        value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
 
-                    <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
+                    <s:select id="moveTargetMenu" name="selectedDirectory"
+                              list="allDirectories" listKey="id" listValue="name" />
                 </span>
             </s:if>
 
             <s:if test="currentDirectory.name != 'default' && !pager">
                 <span style="float:right;">
-                    <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
+                    <s:submit value="%{getText('mediaFileView.deleteFolder')}"
+                              action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
                 </span>
             </s:if>
         </div>
