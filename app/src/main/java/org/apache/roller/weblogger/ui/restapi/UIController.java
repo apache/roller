@@ -221,14 +221,22 @@ public class UIController {
         return getBlogOwnerPage(principal, myMap, weblogId, "weblogConfig");
     }
 
+    @RequestMapping(value = "/authoring/themeEdit")
+    public ModelAndView themeEdit(Principal principal, @RequestParam String weblogId) {
+        return getBlogOwnerPage(principal, null, weblogId, "themeEdit");
+    }
+
     private ModelAndView getBlogOwnerPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
         Weblog weblog = weblogManager.getWeblog(weblogId);
 
         if (userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
-            map.put("menu", getMenu(user, "weblogConfig", WeblogRole.OWNER));
+            if (map == null) {
+                map = new HashMap<>();
+            }
+            map.put("menu", getMenu(user, actionName, WeblogRole.OWNER));
             map.put("weblogId", weblogId);
-            return tightblogModelAndView("weblogConfig", map, user, weblog);
+            return tightblogModelAndView(actionName, map, user, weblog);
         } else {
             return tightblogModelAndView("denied", null, (User) null, null);
         }

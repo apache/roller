@@ -161,13 +161,6 @@
             <result name="success" type="tiles">.Bookmarks</result>
         </action>
 
-        <action name="themeEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="actionName">themeEdit</param>
-            <param name="pageTitleReal">themeEditor.title</param>
-            <result name="success" type="tiles">.ThemeEdit</result>
-        </action>
-
         <action name="templates" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="actionName">templates</param>

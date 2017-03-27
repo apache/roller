@@ -117,7 +117,7 @@
         <tr>
         <td class="label"><label for="theme"><fmt:message key="weblogConfig.theme"/>*</label></td>
         <td class="field">
-        <select ng-model="ctrl.weblog.theme" ng-model="ctrl.weblog.defaultCommentDays" size="1">
+        <select ng-model="ctrl.weblog.theme" size="1">
             <option ng-repeat="(key, theme) in ctrl.metadata.sharedThemeMap" value="{{key}}">{{theme.name}}</option>
         </select>
         <div style="height:400px">

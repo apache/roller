@@ -77,9 +77,8 @@ Defines the menus provided with Weblogger
                      titleKey="tabbedmenu.design"
                      enabledProperty="themes.customtheme.allowed">
                 <subactions>
-                    <subaction>templateAdd.rol</subaction>
                     <subaction>templateEdit.rol</subaction>
-                    <subaction>themeEdit.rol</subaction>
+                    <subaction>themeEdit</subaction>
                 </subactions>
             </tabItem>
             <tabItem action="members.rol"

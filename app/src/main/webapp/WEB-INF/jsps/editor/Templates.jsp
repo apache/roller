@@ -16,7 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
+
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
@@ -135,12 +135,16 @@ var msg= {
     <div class="control">
     	<input id="delete-link" type="button" value="<fmt:message key='templates.deleteselected'/>" />
 
+      <c:url var="templateEditUrl" value="/tb-ui/app/authoring/themeEdit">
+          <c:param name="weblogId" value="${weblogId}" />
+      </c:url>
+
       <span style="float:right">
-          <s:form>
+          <form action="${templateEditUrl}">
             <sec:csrfInput/>
             <input type="hidden" name="weblogId" value="<c:out value='${actionWeblog.id}'/>"/>
-            <s:submit id="switch-theme-button" action="themeEdit" namespace="/tb-ui/authoring" value="<fmt:message key='templates.switchTheme'/>" />
-          </s:form>
+            <input type="submit" value="<fmt:message key='templates.switchTheme'/>">
+          </form>
       </span>
     </div>
 
