@@ -139,18 +139,12 @@ public class Weblog {
             String handle,
             User creator,
             String name,
-            String desc,
-            String theme,
-            String locale,
-            String timeZone) {
+            String theme) {
 
         this.handle = handle;
         this.creator = creator;
         this.name = name;
-        this.tagline = desc;
         this.theme = theme;
-        this.locale = locale;
-        this.timeZone = timeZone;
     }
 
     @Id

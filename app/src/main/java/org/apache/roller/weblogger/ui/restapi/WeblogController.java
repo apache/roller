@@ -146,10 +146,7 @@ public class WeblogController {
                 newData.getHandle().trim(),
                 user,
                 newData.getName().trim(),
-                StringUtils.trim(newData.getTagline()),
-                newData.getTheme(),
-                newData.getLocale(),
-                newData.getTimeZone());
+                newData.getTheme());
 
         return saveWeblog(weblog, newData, response, true);
     }
@@ -178,7 +175,7 @@ public class WeblogController {
                 }
 
                 weblog.setName(newData.getName());
-                weblog.setTagline(newData.getTagline());
+                weblog.setTagline(StringUtils.trimToEmpty(newData.getTagline()));
                 weblog.setEditFormat(newData.getEditFormat());
                 weblog.setVisible(newData.getVisible());
                 weblog.setEntriesPerPage(newData.getEntriesPerPage());
