@@ -19,112 +19,86 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
-<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
+<script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
+<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var weblogHandle = "<c:out value='${actionWeblog.handle}'/>";
+var currentTheme = "<c:out value='${actionWeblog.theme}'/>";
+var weblogId = "<c:out value='${weblogId}'/>";
 var msg= {
   confirmLabel: '<fmt:message key="generic.confirm"/>',
   cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
+var templatePageUrl = "<c:url value='/tb-ui/authoring/templates.rol'/>?weblogId=" + weblogId;
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/themeedit.js'/>"></script>
 
-<div id="success-message" class="messages" style="display:none">
-	<ul>
-        <li><span class="textSpan"></span></li>
-	</ul>
-</div>
-
-<div id="failure-message" class="errors" style="display:none">
-  <script id="errorMessageTemplate" type="text/x-jsrender">
-  <b>{{:errorMessage}}</b>
-  <ul>
-     {{for errors}}
-     <li>{{>#data}}</li>
-     {{/for}}
-  </ul>
-  </script>
-  <span class="textSpan"></span>
+<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
+    <p>{{ctrl.errorObj.errorMessage}}</p>
+    <ul>
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
+    </ul>
 </div>
 
 <p class="subtitle">
-   <fmt:message key="themeEditor.subtitle" >
+   <fmt:message key="themeEdit.subtitle" >
        <fmt:param value="${actionWeblog.handle}"/>
    </fmt:message>
 </p>
 
-<input type="hidden" id="recordId" value="<c:out value='${param.weblogId}'/>"/>
-<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/themeEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="weblogId" value="<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/authoring/themeEdit'/>?weblogId=<c:out value='${weblogId}'/>"/>
 
-<s:form id="themeForm" action="templates">
-    <sec:csrfInput/>
-
-    <input type="hidden" name="weblogId" value="<c:out value='${actionWeblog.id}'/>"/>
+<div class="formtable">
 
     <div class="optioner">
         <p>
-            <fmt:message key="themeEditor.yourCurrentTheme" />:
+            <fmt:message key="themeEdit.yourCurrentTheme" />:
             <b><c:out value="${actionWeblog.theme}"/></b>
         </p>
     </div>
 
-    <div class="optioner" ng-app="themeSelectModule" ng-controller="themeController">
+    <div class="optioner">
         <p>
-            <select id="themeSelector" name="selectedThemeId" size="1"
-            ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
+            <select ng-model="ctrl.selectedTheme" size="1">
+                <option ng-repeat="(key, theme) in ctrl.metadata.sharedThemeMap" value="{{key}}">{{theme.name}}</option>
+            </select>
         </p>
 
-        <p>{{ selectedTheme.description }}</p>
+        <p>{{ctrl.metadata.sharedThemeMap[ctrl.selectedTheme].description}}</p>
         <p>
-            <img ng-src="<c:out value='${siteURL}'/>{{ selectedTheme.previewPath }}"/>
+            <img ng-src="{{ctrl.metadata.relativeSiteURL}}{{ctrl.metadata.sharedThemeMap[ctrl.selectedTheme].previewPath}}"/>
         </p>
         <p>
-            <fmt:message key="themeEditor.previewDescription" />
+            <fmt:message key="themeEdit.previewDescription" />
         </p>
         <p>
           <span class="warning">
-              <fmt:message key="themeEditor.switchWarning" />
+              <fmt:message key="themeEdit.switchWarning" />
           </span>
         </p>
     </div>
 
     <div class="control">
         <span style="padding-left:7px">
-            <input type="button" name="themePreview"
-                value="<fmt:message key='themeEditor.preview' />"
-                onclick="fullPreview($('#themeSelector').get(0))" />
-
-            <input type="button" id="update-button" value="<fmt:message key='themeEditor.save' />" />
+            <button ng-click="ctrl.previewTheme()"><fmt:message key='themeEdit.preview' /></button>
+            <button confirm-switch-dialog="confirm-switch"><fmt:message key='themeEdit.save' /></button>
         </span>
     </div>
 
-</s:form>
+</div>
 
-<div id="confirm-switch" title="<fmt:message key='themeEditor.confirmTitle'/>" style="display:none">
-    <fmt:message key="themeEditor.youSure"/>
+<div id="confirm-switch" title="<fmt:message key='themeEdit.confirmTitle'/>" style="display:none">
+    <fmt:message key="themeEdit.youSure"/>
     <br>
     <br>
     <span class="warning">
-        <fmt:message key="themeEditor.switchWarning" />
+        <fmt:message key="themeEdit.switchWarning" />
     </span>
 </div>
-
-<%-- initializes the chooser/optioner/themeImport display at page load time --%>
-<script>
-    angular.module('themeSelectModule', [])
-        .controller('themeController', ['$scope', function($scope) {
-            var currentWeblog = $('#actionweblog').val();
-            var myUrl = "<c:url value='/tb-ui/authoring/rest/themes/'/><c:out value='${actionWeblog.theme}'/>"
-            $.ajax({ url: myUrl, async:false,
-                success: function(data) { $scope.themes = data; }
-            });
-            $scope.selectedTheme = $scope.themes[0];
-    }]);
-</script>

@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 @RestController
 public class ThemeController {
@@ -61,14 +59,6 @@ public class ThemeController {
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
-    }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/themes/{currentTheme}", method = RequestMethod.GET)
-    public List<SharedTheme> getSharedThemes(@PathVariable String currentTheme) {
-        List<SharedTheme> list = themeManager.getEnabledSharedThemesList().stream()
-                .filter(t -> !t.getId().equals(currentTheme))
-                .collect(Collectors.toList());
-        return list;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}", method = RequestMethod.POST)
@@ -105,7 +95,7 @@ public class ThemeController {
                 persistenceStrategy.flush();
 
                 // Theme set to..
-                String msg = messages.getString("themeEditor.setTheme.success", newTheme.getName());
+                String msg = messages.getString("themeEdit.setTheme.success", newTheme.getName());
 
                 return ResponseEntity.ok(msg);
             } else {
@@ -125,15 +115,15 @@ public class ThemeController {
         oldTheme.getTemplates().stream().filter(
                 old -> old.getDerivation() == Template.TemplateDerivation.SPECIFICBLOG).forEach(old -> {
             if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
-                be.addError(new ObjectError("Weblog object", messages.getString("themeEditor.conflicting.singleton.role",
+                be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.singleton.role",
                         old.getRole().getReadableName())));
             } else if (newTheme.getTemplateByName(old.getName()) != null) {
-                be.addError(new ObjectError("Weblog object", messages.getString("themeEditor.conflicting.name",
+                be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.name",
                         old.getName())));
             } else {
                 String maybePath = old.getRelativePath();
                 if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
-                    be.addError(new ObjectError("Weblog object", messages.getString("themeEditor.conflicting.link",
+                    be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.link",
                             old.getRelativePath())));
                 }
             }

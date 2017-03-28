@@ -183,7 +183,7 @@ public class UIAction extends ActionSupport {
     }
 
     public String newTheme() {
-        addMessage("themeEditor.setTheme.success", getActionWeblog().getTheme());
+        addMessage("themeEdit.setTheme.success", getActionWeblog().getTheme());
         return SUCCESS;
     }
 
