@@ -214,25 +214,13 @@
 						<tr>
 						  <td><img src="$url.themeResource('gaurav', 'icons/delicious.gif')"
 						         alt="del.icio.us" height="16" width="16" />
-						      <a href="http://del.icio.us/post?url=$url.absoluteSite$model.weblogEntry.permalink"
+						      <a href="http://del.icio.us/post?url=$url.entry($model.weblogEntry.anchor)"
 						         title="bookmark it in del.icio.us">Bookmark it</a></td>
 
 						  <td><img src="$url.themeResource('gaurav', 'icons/digman.gif')"
 						          alt="submit to dig digg.com" height="14" width="16" />
-						      <a href="http://www.digg.com/submit?url=$url.absoluteSite$model.weblogEntry.permalink&amp;phase=2" title="submit it to digg">
+						      <a href="http://www.digg.com/submit?url=$url.entry($model.weblogEntry.anchor)&amp;phase=2" title="submit it to digg">
 						          Digg it</a></td>
-						</tr>
-						<tr>
-						  <td><img src="$url.themeResource('gaurav', 'icons/slashdot-13x13.png')"
-						          alt="slashdot" border="0" />
-						      <a href="http://slashdot.org/bookmark.pl?url=$url.absoluteSite$model.weblogEntry.permalink" title="submit it to slashdot">
-						          Slashdot it</a></td>
-
-						  <td><img src="$url.themeResource('gaurav', 'icons/technorati-16x15.png')" title="See who links to it"
-						          border="0" alt="technorati" height="15" width="16" />
-						      <a href='http://technorati.com/search/$utils.encode("$url.absoluteSite$model.weblogEntry.permalink")'>
-						          See who links to it</a>
-						  </td>
 						</tr>
 					</tbody></table>
 				</div>
@@ -245,7 +233,7 @@
 					<h3>Related entries</h3>
 					#set($recentInCat = $model.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
 					<ul>#foreach($recentEntry in $recentInCat)
-						  <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
+						  <li class="entryLink"><a href="$url.entry($recentEntry.anchor)">$recentEntry.title</a></li>
 					#end</ul>
 				</div>
 			</div> <!-- close sidebar_content -->
