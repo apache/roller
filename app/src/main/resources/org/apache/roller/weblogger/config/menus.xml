@@ -72,8 +72,8 @@ Defines the menus provided with Weblogger
                      actionPath="/tb-ui/app/authoring/"
                      titleKey="tabbedmenu.website.settings">
             </tabItem>
-            <tabItem action="templates.rol"
-                     actionPath="/tb-ui/authoring/"
+            <tabItem action="templates"
+                     actionPath="/tb-ui/app/authoring/"
                      titleKey="tabbedmenu.design"
                      enabledProperty="themes.customtheme.allowed">
                 <subactions>

@@ -116,7 +116,7 @@ var msg= {
                        <%-- And only show theme option if custom themes are enabled --%>
                        <c:if test="${usersCustomizeThemes}">
                            <img src='<c:url value="/images/layout.png"/>'>
-                           <c:url var="weblogTheme" value="/tb-ui/authoring/templates.rol"/>
+                           <c:url var="weblogTheme" value="/tb-ui/app/authoring/templates"/>
                            <a href='${weblogTheme}?weblogId={{role.weblog.id}}'><fmt:message key="mainMenu.theme" /></a>
                            <br>
                        </c:if>

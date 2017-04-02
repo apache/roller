@@ -1,6 +1,6 @@
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  The ASF licenses this file to You
+  contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -19,29 +19,22 @@
 
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
     deleteLabel: '<fmt:message key="generic.delete"/>',
     cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
+var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 </script>
 
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/templates.js'/>"></script>
 
-<div id="templates-list" ng-app="TemplatesApp" ng-controller="TemplatesController as ctrl">
-
-    <p class="subtitle">
-       <fmt:message key="templates.subtitle" >
-           <fmt:param value="${actionWeblog.handle}"/>
-       </fmt:message>
-    </p>
-    <p class="pagetip">
-       <fmt:message key="templates.tip" />
-    </p>
+<div>
 
     <div id="errorMessageDiv" class="errors" style="display:none">
       <b>{{ctrl.errorObj.errorMessage}}</b>
@@ -56,8 +49,22 @@ var msg= {
       </c:if>
     </div>
 
-    <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/templates.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
-    <input type="hidden" id="actionWeblogId" value="<c:out value='${param.weblogId}'/>"/>
+    <p class="subtitle">
+       <fmt:message key="templates.subtitle" >
+           <fmt:param value="${actionWeblog.handle}"/>
+       </fmt:message>
+    </p>
+
+    <p class="pagetip">
+       <fmt:message key="templates.tip" />
+    </p>
+
+    <p>
+        <fmt:message key="themeEdit.yourCurrentTheme" />:
+        <b><c:out value="${actionWeblog.theme}"/></b>
+    </p>
+
+    <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/templates'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
     <div>
 
@@ -85,14 +92,14 @@ var msg= {
             </td>
 
             <td style="vertical-align:middle">
-                <c:url var="edit" value="/tb-ui/authoring/templateEdit">
-                    <c:param name="weblogId" value="%{actionWeblog.id}" />
+                <c:url var="edit" value="/tb-ui/authoring/templateEdit.rol">
+                    <c:param name="weblogId" value="${actionWeblog.id}" />
                 </c:url>
                 <span ng-if="tpl.derivation != 'Default'">
-                    <a href="${edit}&templateId={{tpl.id}}">{{tpl.name}}</a>
+                    <a ng-href="${edit}&templateId={{tpl.id}}">{{tpl.name}}</a>
                 </span>
                 <span ng-if="tpl.derivation == 'Default'">
-                    <a href="${edit}&templateName={{tpl.name}}">{{tpl.name}}</a>
+                    <a ng-href="${edit}&templateName={{tpl.name}}">{{tpl.name}}</a>
                 </span>
             </td>
 
@@ -133,7 +140,7 @@ var msg= {
     </table>
 
     <div class="control">
-    	<input id="delete-link" type="button" value="<fmt:message key='templates.deleteselected'/>" />
+    	<input confirm-delete-dialog="confirm-delete" type="button" value="<fmt:message key='templates.deleteselected'/>" />
 
       <c:url var="templateEditUrl" value="/tb-ui/app/authoring/themeEdit">
           <c:param name="weblogId" value="${weblogId}" />
@@ -150,7 +157,7 @@ var msg= {
 
     <form name="myform">
       <table cellpadding="0" cellspacing="6">
-          <caption><fmt:message key="templates.addNewPage" /></caption>
+          <caption style="text-align:left"><fmt:message key="templates.addNewPage" /></caption>
           <tr>
               <td><fmt:message key="generic.name"/></td>
               <td><input type="text" ng-model="ctrl.newTemplateName" maxlength="40" required/></td>
@@ -159,13 +166,13 @@ var msg= {
               <td><fmt:message key="templates.role"/></td>
               <td>
                   <select ng-model="ctrl.selectedRole" size="1" required>
-                    <option ng-repeat="option in ctrl.weblogTemplateData.availableTemplateRoles" value="{{option.name}}">{{option.readableName}}</option>
+                    <option ng-repeat="(key, value) in ctrl.weblogTemplateData.availableTemplateRoles" value="{{key}}">{{value}}</option>
                   </select>
               </td>
           </tr>
           <tr>
               <td colspan="2" class="field">
-                  <p>{{ description }}</p>
+                  <p>{{ctrl.weblogTemplateData.templateRoleDescriptions[ctrl.selectedRole]}}</p>
               </td>
           </tr>
           <tr>
