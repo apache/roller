@@ -15,7 +15,7 @@ $(function() {
         $(this).dialog("close");
         if (idsToRemove.length > 0) {
           for (i = 0; i < idsToRemove.length; i++) {
-            angular.element('#templates-list').scope().ctrl.deleteTemplate(idsToRemove[i]);
+            angular.element('#ngapp-div').scope().ctrl.deleteTemplate(idsToRemove[i]);
           }
         }
       }
@@ -28,35 +28,16 @@ $(function() {
       }
     ]
   });
-  $("#delete-link").click(function(e) {
-    e.preventDefault();
-    if ($('input[name="idSelections"]:checked').size() > 0) {
-      $('#confirm-delete').dialog('open');
-    }
-  });
 });
 
-var templatesApp = angular.module('TemplatesApp', []);
-
-templatesApp.config(['$httpProvider', function($httpProvider) {
-    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-    var header = $("meta[name='_csrf_header']").attr("content");
-    var token = $("meta[name='_csrf']").attr("content");
-    $httpProvider.defaults.headers.delete = {};
-    $httpProvider.defaults.headers.delete[header] = token;
-    $httpProvider.defaults.headers.post[header] = token;
-    $httpProvider.defaults.headers.put[header] = token;
-}]);
-
-templatesApp.controller('TemplatesController', ['$http', function TemplatesController($http) {
+tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
     this.selectedRole = 'CUSTOM_EXTERNAL';
     this.newTemplateName = '';
-
     this.errorObj = {};
 
     this.loadTemplateData = function() {
-      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates').then(function(response) {
+      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/templates').then(function(response) {
         self.weblogTemplateData = response.data;
       });
     };
@@ -78,7 +59,7 @@ templatesApp.controller('TemplatesController', ['$http', function TemplatesContr
         "role" : this.selectedRole,
         "contentsStandard" : ""
       };
-      $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + $("#actionWeblogId").val() + '/templates', JSON.stringify(newData)).then(
+      $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/templates', JSON.stringify(newData)).then(
         function(response) {
           $('#successMessageDiv').show();
           self.loadTemplateData();
@@ -93,3 +74,17 @@ templatesApp.controller('TemplatesController', ['$http', function TemplatesContr
       })
     }
   }]);
+
+tightblogApp.directive('confirmDeleteDialog', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attr, ctrl) {
+            var dialogId = '#' + attr.confirmDeleteDialog;
+            elem.bind('click', function(e) {
+                if ($('input[name="idSelections"]:checked').size() > 0) {
+                    $(dialogId).dialog('open');
+                }
+            });
+        }
+    };
+});

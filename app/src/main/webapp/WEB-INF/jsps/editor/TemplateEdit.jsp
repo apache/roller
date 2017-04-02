@@ -117,7 +117,7 @@
             <td>
                 <input ng-click="ctrl.saveTemplate()" type="button" value="<fmt:message key='generic.save'/>">
                 <input type="button" value="<fmt:message key='generic.cancel'/>"
-                    onclick="window.location='<c:url value="/tb-ui/authoring/templates.rol"><c:param name="weblogId" value="%{weblogId}"/></c:url>'">
+                    onclick="window.location="<c:url value='/tb-ui/app/authoring/templates'/>?weblogId="<c:out value='${param.weblogId}'/>">
             </td>
         </tr>
     </table>

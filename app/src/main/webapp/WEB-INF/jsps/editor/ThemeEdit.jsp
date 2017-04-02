@@ -33,7 +33,7 @@ var msg= {
   confirmLabel: '<fmt:message key="generic.confirm"/>',
   cancelLabel: '<fmt:message key="generic.cancel"/>'
 };
-var templatePageUrl = "<c:url value='/tb-ui/authoring/templates.rol'/>?weblogId=" + weblogId;
+var templatePageUrl = "<c:url value='/tb-ui/app/authoring/templates'/>?weblogId=" + weblogId;
 </script>
 
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>

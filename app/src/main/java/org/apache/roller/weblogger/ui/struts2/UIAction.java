@@ -18,11 +18,9 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2;
 
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -38,9 +36,6 @@ import org.apache.roller.weblogger.ui.core.menu.MenuHelper;
  * error and status success.  Other actions extending this one only need to
  * call setError() and setSuccess() accordingly.
  * <p>
- * NOTE: as a small convenience, all errors and messages are assumed to be keys
- * which point to a success in a resource bundle, so we automatically call
- * getText(key) on the param passed into setError() and setSuccess().
  */
 public class UIAction extends ActionSupport {
 
@@ -106,10 +101,6 @@ public class UIAction extends ActionSupport {
         return WebloggerContext.getWebloggerProperties().getRegistrationPolicy();
     }
 
-    private void addMessage(String msgKey, String param) {
-        addActionMessage(getText(msgKey, msgKey, param));
-    }
-
     public User getAuthenticatedUser() {
         return authenticatedUser;
     }
@@ -150,7 +141,6 @@ public class UIAction extends ActionSupport {
         // disabled by default as it causes page titles not
         // to update on chain actions defined in struts.xml
         // use setPageTitleReal where you want this to occur.
-        // this.pageTitle = pageTitle;
     }
 
     public void setPageTitleReal(String pageTitle) {
@@ -169,22 +159,4 @@ public class UIAction extends ActionSupport {
         return menuHelper.getMenu(getAuthenticatedUser().getGlobalRole(), getActionWeblogRole(), getActionName(),
                 true);
     }
-
-    private static String cleanExpressions(String s) {
-        return (s == null || s.contains("${") || s.contains("%{")) ? "" : s;
-    }
-
-    static String cleanTextKey(String s) {
-        if (s == null || s.isEmpty()) {
-            return s;
-        }
-        // escape HTML
-        return StringEscapeUtils.escapeHtml4(cleanExpressions(s));
-    }
-
-    public String newTheme() {
-        addMessage("themeEdit.setTheme.success", getActionWeblog().getTheme());
-        return SUCCESS;
-    }
-
 }

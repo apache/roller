@@ -60,8 +60,10 @@ import java.security.Principal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 @RestController
@@ -111,7 +113,10 @@ public class TemplateController {
                                                  HttpServletResponse response) {
 
         Weblog weblog = weblogManager.getWeblog(id);
-        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+        User user = userManager.getEnabledUserByUserName(principal.getName());
+
+        if (weblog != null && user != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+            I18nMessages messages = user.getI18NMessages();
 
             WeblogTemplateData wtd = new WeblogTemplateData();
 
@@ -130,7 +135,8 @@ public class TemplateController {
             pages.stream().filter(p -> p.getRole().isSingleton()).forEach(p ->
                     availableRoles.removeIf(r -> r.name().equals(p.getRole().name())));
 
-            wtd.availableTemplateRoles = availableRoles;
+            availableRoles.forEach(role -> wtd.availableTemplateRoles.put(role.getName(), role.getReadableName()));
+            availableRoles.forEach(role -> wtd.templateRoleDescriptions.put(role.getName(), messages.getString(role.getDescriptionProperty())));
             return wtd;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -141,7 +147,8 @@ public class TemplateController {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public class WeblogTemplateData {
         List<Template> templates;
-        List<ComponentType> availableTemplateRoles;
+        Map<String, String> availableTemplateRoles = new HashMap<>();
+        Map<String, String> templateRoleDescriptions = new HashMap<>();
 
         public List<Template> getTemplates() {
             return templates;
@@ -151,12 +158,12 @@ public class TemplateController {
             this.templates = templates;
         }
 
-        public List<ComponentType> getAvailableTemplateRoles() {
+        public Map<String, String> getAvailableTemplateRoles() {
             return availableTemplateRoles;
         }
 
-        public void setAvailableTemplateRoles(List<ComponentType> availableTemplateRoles) {
-            this.availableTemplateRoles = availableTemplateRoles;
+        public Map<String, String> getTemplateRoleDescriptions() {
+            return templateRoleDescriptions;
         }
     }
 
