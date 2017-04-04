@@ -23,7 +23,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
 <c:url var="mediaFileViewUrl" value="/tb-ui/authoring/mediaFileView.rol">
-    <c:param name="weblogId" value="%{actionWeblog.id}" />
+    <c:param name="weblogId" value="${actionWeblog.id}" />
 </c:url>
 
 <script>

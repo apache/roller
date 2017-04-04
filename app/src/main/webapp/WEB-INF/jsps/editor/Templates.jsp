@@ -92,7 +92,7 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
             </td>
 
             <td style="vertical-align:middle">
-                <c:url var="edit" value="/tb-ui/authoring/templateEdit.rol">
+                <c:url var="edit" value="/tb-ui/app/authoring/templateEdit">
                     <c:param name="weblogId" value="${actionWeblog.id}" />
                 </c:url>
                 <span ng-if="tpl.derivation != 'Default'">
@@ -110,11 +110,9 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
             </td>
 
             <td style="vertical-align:middle">
-              <span ng-if="tpl.role.singleton == true || tpl.description == null || tpl.description == ''">
-                {{tpl.role.readableName}}
-              </span>
+                {{ctrl.weblogTemplateData.availableTemplateRoles[tpl.role]}}
               <span ng-if="tpl.role.singleton != true && tpl.description != null && tpl.description != ''">
-                {{tpl.role.readableName}}: {{tpl.description}}
+                : {{tpl.description}}
               </span>
             </td>
 

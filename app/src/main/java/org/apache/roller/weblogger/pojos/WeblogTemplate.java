@@ -85,6 +85,9 @@ public class WeblogTemplate implements Template {
     @JsonIgnore
     private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
+    // temporary non-persisted fields used for form entry
+    private String roleReadableName = null;
+
     public WeblogTemplate() {
     }
 
@@ -214,6 +217,15 @@ public class WeblogTemplate implements Template {
 
     public void setDerivation(TemplateDerivation derivation) {
         this.derivation = derivation;
+    }
+
+    @Transient
+    public String getRoleReadableName() {
+        return roleReadableName;
+    }
+
+    public void setRoleReadableName(String roleReadableName) {
+        this.roleReadableName = roleReadableName;
     }
 
     //------------------------------------------------------- Good citizenship

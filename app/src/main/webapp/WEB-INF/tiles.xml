@@ -168,8 +168,9 @@
         <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".TemplateEdit" extends=".tiles-tabbedpage"  >
+    <definition name=".templateEdit" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateEdit.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".Members" extends=".tiles-tabbedpage" >
