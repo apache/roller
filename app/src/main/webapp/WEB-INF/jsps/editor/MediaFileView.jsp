@@ -81,7 +81,7 @@
             <li class="align-images" ng-repeat="mediaFile in ctrl.mediaFiles" id="{{mediaFile.id}}">
                 <div class="mediaObject">
                     <c:url var="editUrl" value="/tb-ui/authoring/mediaFileEdit.rol">
-                        <c:param name="weblogId" value="%{actionWeblog.id}" />
+                        <c:param name="weblogId" value="${actionWeblog.id}" />
                     </c:url>
 
                     <a ng-href="<c:out value='${editUrl}'/>&amp;mediaFileId={{mediaFile.id}}">
@@ -148,8 +148,8 @@
             <br>
 
             <img src='<c:url value="/images/image_add.png"/>' border="0" alt="icon">
-            <c:url var="mediaFileAddURL" value="/tb-ui/authoring/mediaFileAdd">
-                <c:param name="weblogId" value="%{actionWeblog.id}" />
+            <c:url var="mediaFileAddURL" value="/tb-ui/authoring/mediaFileAdd.rol">
+                <c:param name="weblogId" value="${actionWeblog.id}" />
             </c:url>
             <a href='${mediaFileAddURL}&directoryId={{ctrl.directoryToView}}' style='font-weight:bold;'>
                 <fmt:message key="mediaFileSidebar.add" />

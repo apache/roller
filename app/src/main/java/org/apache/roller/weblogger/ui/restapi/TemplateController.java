@@ -202,6 +202,7 @@ public class TemplateController {
                 template.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
             }
             attachRenditions(template);
+            template.setRoleReadableName(template.getRole().getReadableName());
             return template;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -225,6 +226,7 @@ public class TemplateController {
         if (permitted) {
             WeblogTemplate template = themeManager.createWeblogTemplate(weblog, sharedTemplate);
             attachRenditions(template);
+            template.setRoleReadableName(template.getRole().getReadableName());
             return template;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

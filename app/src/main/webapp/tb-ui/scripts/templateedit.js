@@ -1,4 +1,4 @@
-tightblogApp.controller('TemplateEditController', ['$http', function TemplateEditController($http) {
+tightblogApp.controller('PageController', ['$http', function PageController($http) {
       var self = this;
       var templateData = {};
       var lastSavedRelativePath = null;

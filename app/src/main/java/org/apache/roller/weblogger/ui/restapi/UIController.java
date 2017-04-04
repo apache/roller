@@ -231,6 +231,11 @@ public class UIController {
         return getBlogOwnerPage(principal, null, weblogId, "templates");
     }
 
+    @RequestMapping(value = "/authoring/templateEdit")
+    public ModelAndView templateEdit(Principal principal, @RequestParam String weblogId) {
+        return getBlogOwnerPage(principal, null, weblogId, "templateEdit");
+    }
+
     private ModelAndView getBlogOwnerPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
         Weblog weblog = weblogManager.getWeblog(weblogId);
