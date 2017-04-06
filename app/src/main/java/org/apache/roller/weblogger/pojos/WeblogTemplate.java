@@ -86,7 +86,7 @@ public class WeblogTemplate implements Template {
     private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
     // temporary non-persisted fields used for form entry
-    private String roleReadableName = null;
+    private String roleName = null;
 
     public WeblogTemplate() {
     }
@@ -220,12 +220,12 @@ public class WeblogTemplate implements Template {
     }
 
     @Transient
-    public String getRoleReadableName() {
-        return roleReadableName;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRoleReadableName(String roleReadableName) {
-        this.roleReadableName = roleReadableName;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     //------------------------------------------------------- Good citizenship
