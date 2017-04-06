@@ -110,7 +110,7 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
             </td>
 
             <td style="vertical-align:middle">
-                {{ctrl.weblogTemplateData.availableTemplateRoles[tpl.role]}}
+                {{tpl.role.readableName}}
               <span ng-if="tpl.role.singleton != true && tpl.description != null && tpl.description != ''">
                 : {{tpl.description}}
               </span>

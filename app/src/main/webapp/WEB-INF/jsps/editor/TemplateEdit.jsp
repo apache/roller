@@ -67,7 +67,7 @@
     <tr>
         <td class="label"><fmt:message key="templateEdit.role" />&nbsp;</td>
         <td class="field">
-             <span>{{ctrl.templateData.roleReadableName}}</span>
+             <span>{{ctrl.templateData.role.readableName}}</span>
         </td>
     </tr>
 
