@@ -36,25 +36,22 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/templateedit.js'/>"></script>
 
-<p class="subtitle">
-   <fmt:message key="templateEdit.subtitle"/>
-</p>
+<div id="successMessageDiv" class="messages" ng-show="ctrl.showSuccessMessage" ng-cloak>
+    <p><fmt:message key="generic.changes.saved"/> ({{ctrl.templateData.lastModified | date:'short'}})</p>
+</div>
 
-<c:choose>
-    <c:when test="template.required">
-        <p class="pagetip"><fmt:message key="templateEdit.tip.required" /></p>
-    </c:when>
-    <c:otherwise>
-        <p class="pagetip"><fmt:message key="templateEdit.tip" /></p>
-    </c:otherwise>
-</c:choose>
-                
 <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj">
   <b>{{ctrl.errorObj.errorMessage}}</b>
   <ul>
      <li ng-repeat="em in ctrl.errorObj.errors">{{em}}</li>
   </ul>
 </div>
+
+<p class="subtitle">
+   <fmt:message key="templateEdit.subtitle"/>
+</p>
+
+<p class="pagetip"><fmt:message key="templateEdit.tip" /></p>
 
 <table cellspacing="5">
     <tr>
