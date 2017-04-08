@@ -3,6 +3,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       var templateData = {};
       var lastSavedRelativePath = null;
       var errorObj = null;
+      var showSuccessMessage = false;
 
       this.launchPage = function() {
           window.open(weblogUrl + 'page/' + self.lastSavedRelativePath, '_blank');
@@ -23,14 +24,15 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       };
 
       this.saveTemplate = function() {
+          this.messageClear();
           var urlStem = '/tb-ui/authoring/rest/weblog/' + weblogId + '/templates';
           var templateToSend = JSON.parse(JSON.stringify(self.templateData));
 
           $http.post(contextPath + urlStem, JSON.stringify(templateToSend)).then(
            function(response) {
-              self.errorObj = null;
               templateId = response.data;
               self.loadTemplate();
+              self.showSuccessMessage = true;
            },
            function(response) {
              if (response.status == 408)
@@ -40,6 +42,11 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
              }
           })
       };
+
+      this.messageClear = function() {
+          this.showSuccessMessage = false;
+          this.errorObj = null;
+      }
 
       this.loadTemplate();
 
