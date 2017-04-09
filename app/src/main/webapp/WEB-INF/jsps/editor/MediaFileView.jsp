@@ -22,31 +22,6 @@
 <script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
 
-<style>
-    .mediaObject {
-         width:120px;
-         height:120px;
-    }
-    .mediaObjectInfo {
-        clear:left;
-        width:130px;
-        margin-left:5px;
-        margin-top:3px;
-        font-size:11px;
-    }
-    .highlight {
-        border: 1px solid #aaa;
-    }
-    #myMenu {
-        margin-left: 0;
-    }
-    span.button {
-        height:15px;
-        width:15px;
-        float:right;
-    }
-</style>
-
 
 <script>
     toggleState = 'Off'
@@ -226,27 +201,21 @@
     <s:hidden name="newDirectoryName" />
     <input type="hidden" name="mediaFileId" value="" />
 
-      <table width="100%">
-          <tr>
-              <td>
-                  <div width="40%">
-                      <s:text name="mediaFileView.sortBy"/>:
-                      <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key" listValue="value"
-                                onchange="document.mediaFileViewForm.submit();"/>
-                  </div>
-              </td>
-              <td>
-                  <div style="float:right" width="40%">
-                      <s:if test="!allDirectories.isEmpty">
-                          <%-- Folder to View combo-box --%>
-                          <s:text name="mediaFileView.viewFolder"/>:
-                          <s:select id="viewDirectoryMenu" name="viewDirectoryId"
-                                    list="allDirectories" listKey="id" listValue="name" onchange="onView()"/>
-                      </s:if>
-                  </div>
-              </td>
-          </tr>
-      </table>
+      <div class="top-controls">
+          <s:if test="!allDirectories.isEmpty">
+              <%-- Folder to View combo-box --%>
+              <span><s:text name="mediaFileView.viewFolder"/>:</span>
+              <s:select id="viewDirectoryMenu" name="viewDirectoryId"
+                        list="allDirectories" listKey="id" listValue="name" onchange="onView()"/>
+          </s:if>
+      </div>
+
+      <div class="top-controls">
+          <span><s:text name="mediaFileView.sortBy"/>:</span>
+          <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key" listValue="value"
+                    onchange="document.mediaFileViewForm.submit();"/>
+      </div>
+
 
     <%-- ***************************************************************** --%>
 
@@ -262,8 +231,9 @@
         }
     </script>
 
-    <div  width="720px" height="500px" style="clear:right">
-        <ul id = "myMenu">
+    <div id="imageGrid">
+
+        <ul>
 
             <s:if test="!pager">
 
@@ -272,7 +242,7 @@
                 <%-- NOT SEARCH RESULTS --%>
 
                 <s:if test="childFiles.size() ==0">
-                    <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
+                    <s:text name="mediaFileView.noFiles"/>
                 </s:if>
 
                 <%-- List media files --%>
@@ -377,41 +347,36 @@
             </s:else>
 
         </ul>
+
     </div>
 
     <div style="clear:left;"></div>
 
       <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
 
-      <table width="100%">
-          <tr>
-              <td>
+        <div class="bottom-controls">
 
-                <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
-                    <input id="toggleButton" type="button" class="btn"
-                           value='<s:text name="generic.toggle" />' onclick="onToggle()" />
+            <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
+                <input id="toggleButton" type="button" class="btn" style="display: inline"
+                       value='<s:text name="generic.toggle" />' onclick="onToggle()" />
 
-                    <input id="deleteButton" type="button"  class="btn"
-                           value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
+                <input id="deleteButton" type="button"  class="btn" style="display: inline"
+                       value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
 
-                    <input id="moveButton" type="button" class="btn"
-                           value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
+                <input id="moveButton" type="button" class="btn" style="display: inline"
+                       value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
 
-                </s:if>
+            </s:if>
 
-                <s:select id="moveTargetMenu" name="selectedDirectory"
-                    list="allDirectories" listKey="id" listValue="name" />
+            <s:select id="moveTargetMenu" name="selectedDirectory" cssStyle="display: inline; width: 15em"
+                list="allDirectories" listKey="id" listValue="name" />
 
-                <s:if test="currentDirectory.name != 'default' && !pager">
-                <span style="float:right;">
-                    <s:submit value="%{getText('mediaFileView.deleteFolder')}"
-                              action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
-                </span>
-                </s:if>
+            <s:if test="currentDirectory.name != 'default' && !pager">
+                <s:submit value="%{getText('mediaFileView.deleteFolder')}" cssClass="btn"
+                          action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
+            </s:if>
 
-              </td>
-          </tr>
-      </table>
+        </div>
 
       </s:if>
 
@@ -437,7 +402,8 @@
         <s:url var="mediaFileEditURL" action="mediaFileEdit">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
+        $("#mediaFileEditor").attr('src',
+          '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
         $(function() {
             $("#mediafile_edit_lightbox").dialog({
                 modal  : true,

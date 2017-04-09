@@ -252,3 +252,40 @@ body {
 #moveTargetMenu {
     width: 15em;
 }
+
+.mediaObject {
+    width:120px;
+    height:120px;
+}
+
+.mediaObjectInfo {
+    clear:left;
+    width:130px;
+    margin-left:5px;
+    margin-top:3px;
+    font-size:11px;
+}
+
+.highlight {
+    border: 1px solid #aaa;
+}
+span.button {
+    height:15px;
+    width:15px;
+    float:right;
+}
+
+.sortByMenu, .viewDirectoryMenu {
+    display: inline;
+}
+
+#imageGrid {
+    display: block;
+    overflow: auto;
+    margin: 1em 0 1em 0;
+}
+
+div.bottom-controls div,
+div.top-controls, div.top-controls div, div.top-controls span, div.top-controls select {
+    display: inline;
+}
