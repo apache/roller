@@ -148,9 +148,9 @@ tightblogApp.controller('CommentsController', ['$http', '$interpolate', '$sce', 
     };
 
     this.commonErrorResponse = function(response) {
-        if (response.status == 408)
+        if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
-        if (response.status == 400) {
+        } else if (response.status == 400) {
            self.errorMsg = response.data;
         }
     }

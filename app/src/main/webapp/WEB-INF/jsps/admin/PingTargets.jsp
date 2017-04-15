@@ -40,11 +40,11 @@ var msg= {
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/pingTargets'/>"/>
 
-<div id="successMessageDiv" class="messages" ng-show="ctrl.successMessage" ng-cloak>
+<div class="messages" ng-show="ctrl.successMessage" ng-cloak>
     <p>{{ctrl.successMessage}}</p>
 </div>
 
-<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMessage" ng-cloak>
+<div class="errors" ng-show="ctrl.errorMessage" ng-cloak>
     <p>{{ctrl.errorMessage}}</p>
 </div>
 
@@ -84,7 +84,7 @@ var msg= {
               ng-value="item.enabled ? '<fmt:message key="pingTarget.disable"/>' : '<fmt:message key="pingTarget.enable"/>'"/>
         </td>
         <td align="center">
-            <a update-dialog="pingtarget-edit-dialog" ng-click="ctrl.editPingTarget(item)">
+            <a update-dialog="edit-dialog" ng-click="ctrl.editPingTarget(item)">
                 <img src='<c:url value="/images/page_white_edit.png"/>' alt="<fmt:message key='generic.edit'/>" />
             </a>
         </td>
@@ -101,24 +101,24 @@ var msg= {
 </table>
 
 <div class="control clearfix">
-    <input type="button" update-dialog="pingtarget-edit-dialog" value="<fmt:message key='pingTarget.addTarget'/>"/>
+    <input type="button" update-dialog="edit-dialog" value="<fmt:message key='pingTarget.addTarget'/>"/>
 </div>
 
 <div id="confirm-delete-dialog" style="display:none">
    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="pingTarget.confirmRemove"/></p>
 </div>
 
-<div id="pingtarget-edit-dialog" style="display:none">
-    <span id="pingtarget-edit-error" style="display:none"><fmt:message key='pingTarget.nameOrUrlNotUnique'/></span>
+<div id="edit-dialog" style="display:none">
+    <span ng-show="ctrl.showUpdateErrorMessage"><fmt:message key='pingTarget.nameOrUrlNotUnique'/></span>
     <table>
         <input id="pingtarget-edit-id" type="hidden" ng-model="ctrl.pingTargetToEdit.id"/>
         <tr>
-            <td style="width:30%"><label for="pingtarget-edit-name"><fmt:message key='generic.name'/></label></td>
-            <td><input id="pingtarget-edit-name" ng-model="ctrl.pingTargetToEdit.name" minlength="1" maxlength="40" size="50"/></td>
+            <td style="width:30%"><label for="name"><fmt:message key='generic.name'/></label></td>
+            <td><input id="name" ng-model="ctrl.pingTargetToEdit.name" minlength="1" maxlength="40" size="50"/></td>
         </tr>
         <tr>
-            <td><label for="pingtarget-edit-url"><fmt:message key='pingTarget.pingUrl'/></label></td>
-            <td><input id="pingtarget-edit-url" ng-model="ctrl.pingTargetToEdit.pingUrl" minlength="1" maxlength="128" size="50"/></td>
+            <td><label for="url"><fmt:message key='pingTarget.pingUrl'/></label></td>
+            <td><input id="url" ng-model="ctrl.pingTargetToEdit.pingUrl" minlength="1" maxlength="128" size="50"/></td>
         </tr>
     </table>
 </div>

@@ -44,9 +44,7 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
     </div>
 
     <div id="successMessageDiv" class="messages" style="display:none">
-      <c:if test="${weblogId != null}">
         <p><fmt:message key="generic.changes.saved"/></p>
-      </c:if>
     </div>
 
     <p class="subtitle">
