@@ -1,16 +1,5 @@
-var membersApp = angular.module('membersApp', []);
+tightblogApp.controller('PageController', ['$http', function PageController($http) {
 
-membersApp.config(['$httpProvider', function($httpProvider) {
-    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-    var header = $("meta[name='_csrf_header']").attr("content");
-    var token = $("meta[name='_csrf']").attr("content");
-    $httpProvider.defaults.headers.delete = {};
-    $httpProvider.defaults.headers.delete[header] = token;
-    $httpProvider.defaults.headers.post[header] = token;
-    $httpProvider.defaults.headers.put[header] = token;
-}]);
-
-membersApp.controller('MembersController', ['$http', function MembersController($http) {
     var self = this;
 
     this.updateRoles = function() {
@@ -56,6 +45,7 @@ membersApp.controller('MembersController', ['$http', function MembersController(
     }
 
     this.loadPotentialMembers = function() {
+      self.userToInvite = null;
       $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/potentialmembers').then(function(response) {
         self.potentialMembers = response.data;
         if (Object.keys(self.potentialMembers).length > 0) {

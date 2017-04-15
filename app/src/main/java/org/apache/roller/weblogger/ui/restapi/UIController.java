@@ -231,6 +231,11 @@ public class UIController {
         return getBlogOwnerPage(principal, null, weblogId, "templates");
     }
 
+    @RequestMapping(value = "/authoring/members")
+    public ModelAndView memberAdmin(Principal principal, @RequestParam String weblogId) {
+        return getBlogOwnerPage(principal, null, weblogId, "members");
+    }
+
     @RequestMapping(value = "/authoring/templateEdit")
     public ModelAndView templateEdit(Principal principal, @RequestParam String weblogId) {
         return getBlogOwnerPage(principal, null, weblogId, "templateEdit");
