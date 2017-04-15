@@ -153,14 +153,6 @@
             <result name="success" type="tiles">.Tags</result>
         </action>
 
-        <action name="bookmarks"  class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">OWNER</param>
-            <param name="actionName">bookmarks</param>
-            <param name="pageTitleReal">bookmarksForm.rootTitle</param>
-            <result name="success" type="tiles">.Bookmarks</result>
-        </action>
-
     </package>
 
 </struts>

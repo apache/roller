@@ -21,7 +21,7 @@ $(function() {
         }
      ]
   });
-  $("#pingtarget-edit-dialog").dialog({
+  $("#edit-dialog").dialog({
      autoOpen: false,
      height: 210,
      width: 570,
@@ -34,7 +34,6 @@ $(function() {
               if (test.name && test.pingUrl && test.name.length > 0 && test.pingUrl.length > 0) {
                   angular.element('#ngapp-div').scope().ctrl.updatePingTarget();
                   angular.element('#ngapp-div').scope().$apply();
-                  $( this ).dialog( "close" );
               }
            }
         },
@@ -57,6 +56,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.pingTargetToToggle = null;
     this.successMessage = null;
     this.errorMessage = null;
+    this.showUpdateErrorMessage = false;
     this.pingTargetToEdit = {};
 
     this.loadItems = function() {
@@ -72,7 +72,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         this.messageClear();
         $http.post(this.urlRoot + 'pingtargets/test/' + pingTarget.id).then(
           function(response) {
-             self.successMessage = 'Result: error? ' + response.data.error + '; message: ' + response.data.message;
+             self.successMessage = 'Result from ' + pingTarget.name + ': error? ' + response.data.error + '; message: ' + response.data.message;
           },
           self.commonErrorResponse
         )
@@ -104,10 +104,17 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         $http.put(this.urlRoot + (this.pingTargetToEdit.id ? 'pingtarget/' + this.pingTargetToEdit.id : 'pingtargets'),
             JSON.stringify(this.pingTargetToEdit)).then(
           function(response) {
+             $("#edit-dialog").dialog("close");
              self.pingTargetToEdit = {};
              self.loadItems();
           },
-          self.commonErrorResponse
+          function(response) {
+            if (response.status == 408) {
+               window.location.replace($('#refreshURL').attr('value'));
+            } else if (response.status == 409) {
+               self.showUpdateErrorMessage = true;
+            }
+          }
         )
     }
 
@@ -116,9 +123,9 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     }
 
     this.commonErrorResponse = function(response) {
-        if (response.status == 408)
+        if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
-        if (response.status == 400) {
+        } else if (response.status == 400) {
            self.errorMessage = response.data;
         }
     }
@@ -126,6 +133,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.messageClear = function() {
         this.successMessage = null;
         this.errorMessage = null;
+        this.showUpdateErrorMessage = false;
     }
 
     this.loadItems();
@@ -150,7 +158,7 @@ tightblogApp.directive('confirmDeleteDialog', function(){
         link: function(scope, elem, attr, ctrl) {
             var dialogId = '#' + attr.confirmDeleteDialog;
             elem.bind('click', function(e) {
-                $(dialogId).data('pingTargetId',  attr.idToDelete)
+                $(dialogId).data('pingTargetId', attr.idToDelete)
                     .data('pingTargetName',  attr.nameToDelete)
                     .dialog("option", {"title" : attr.nameToDelete})
                     .dialog('open');

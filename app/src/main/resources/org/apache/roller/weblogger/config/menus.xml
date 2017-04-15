@@ -6,16 +6,16 @@ Defines the menus provided with Weblogger
         <tab titleKey="tabbedmenu.admin" globalRole="ADMIN" weblogRole="NOBLOGNEEDED">
             <tabItem action="globalConfig"
                      actionPath="/tb-ui/app/admin/"
-                     titleKey="tabbedmenu.admin.config"/>
+                     titleKey="globalConfig.title"/>
             <tabItem action="userAdmin"
                      actionPath="/tb-ui/app/admin/"
-                     titleKey="tabbedmenu.admin.userAdmin"/>
+                     titleKey="userAdmin.title"/>
             <tabItem action="pingTargets"
                      actionPath="/tb-ui/app/admin/"
-                     titleKey="tabbedmenu.admin.pingTargets"/>
+                     titleKey="pingTargets.title"/>
             <tabItem action="cacheInfo"
                      actionPath="/tb-ui/app/admin/"
-                     titleKey="tabbedmenu.admin.cacheInfo"/>
+                     titleKey="cacheInfo.title"/>
         </tab>
     </menu>
     <menu id="editor">
@@ -52,11 +52,6 @@ Defines the menus provided with Weblogger
                      weblogRole="POST">
             </tabItem>
 
-            <tabItem action="bookmarks.rol"
-                     actionPath="/tb-ui/authoring/"
-                     titleKey="tabbedmenu.bookmarks.allFolders"
-                     weblogRole="OWNER">
-            </tabItem>
             <tabItem action="mediaFileView.rol"
                      actionPath="/tb-ui/authoring/"
                      titleKey="tabbedmenu.weblog.mediaFiles"
@@ -70,11 +65,15 @@ Defines the menus provided with Weblogger
         <tab titleKey="tabbedmenu.website" globalRole="BLOGGER" weblogRole="OWNER">
             <tabItem action="weblogConfig"
                      actionPath="/tb-ui/app/authoring/"
-                     titleKey="tabbedmenu.website.settings">
+                     titleKey="weblogConfig.title">
+            </tabItem>
+            <tabItem action="bookmarks"
+                     actionPath="/tb-ui/app/authoring/"
+                     titleKey="bookmarks.title">
             </tabItem>
             <tabItem action="templates"
                      actionPath="/tb-ui/app/authoring/"
-                     titleKey="tabbedmenu.design"
+                     titleKey="templates.title"
                      enabledProperty="themes.customtheme.allowed">
                 <subactions>
                     <subaction>templateEdit</subaction>
@@ -83,7 +82,7 @@ Defines the menus provided with Weblogger
             </tabItem>
             <tabItem action="members"
                      actionPath="/tb-ui/app/authoring/"
-                     titleKey="tabbedmenu.website.members">
+                     titleKey="members.title">
             </tabItem>
         </tab>
     </menu>
