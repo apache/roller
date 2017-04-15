@@ -81,8 +81,8 @@ Defines the menus provided with Weblogger
                     <subaction>themeEdit</subaction>
                 </subactions>
             </tabItem>
-            <tabItem action="members.rol"
-                     actionPath="/tb-ui/authoring/"
+            <tabItem action="members"
+                     actionPath="/tb-ui/app/authoring/"
                      titleKey="tabbedmenu.website.members">
             </tabItem>
         </tab>

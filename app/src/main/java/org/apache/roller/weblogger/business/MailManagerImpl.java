@@ -288,7 +288,7 @@ public class MailManagerImpl implements MailManager {
                 weblog.getLocaleInstance());
         StringBuilder sb = new StringBuilder();
         sb.append(MessageFormat.format(
-                resources.getString("inviteMember.notificationSubject"),
+                resources.getString("members.inviteMemberEmailSubject"),
                 new Object[]{
                         weblog.getName(),
                         weblog.getHandle()})
@@ -296,7 +296,7 @@ public class MailManagerImpl implements MailManager {
         subject = sb.toString();
         sb = new StringBuilder();
         sb.append(MessageFormat.format(
-                resources.getString("inviteMember.notificationContent"),
+                resources.getString("members.inviteMemberEmailContent"),
                 new Object[]{
                         weblog.getName(),
                         weblog.getHandle(),

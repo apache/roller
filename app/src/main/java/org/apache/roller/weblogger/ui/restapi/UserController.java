@@ -370,7 +370,7 @@ public class UserController {
                     .filter(r -> !r.isPending())
                     .collect(Collectors.toList());
             if (owners.size() < 1) {
-                return ResponseEntity.badRequest().body(user.getI18NMessages().getString("memberPermissions.oneAdminRequired"));
+                return ResponseEntity.badRequest().body(user.getI18NMessages().getString("members.oneAdminRequired"));
             }
 
             // one iteration for each line (user) in the members table
@@ -383,7 +383,7 @@ public class UserController {
                 }
             }
             persistenceStrategy.flush();
-            String msg = user.getI18NMessages().getString("memberPermissions.membersChanged");
+            String msg = user.getI18NMessages().getString("members.membersChanged");
             return ResponseEntity.ok(msg);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -544,13 +544,13 @@ public class UserController {
             I18nMessages messages = invitor.getI18NMessages();
             UserWeblogRole roleChk = userManager.getWeblogRoleIncludingPending(invitee, weblog);
             if (roleChk != null) {
-                return ResponseEntity.badRequest().body(messages.getString("inviteMember.error." +
-                        (roleChk.isPending() ? "userAlreadyInvited" : "userAlreadyMember")));
+                return ResponseEntity.badRequest().body(messages.getString(roleChk.isPending() ?
+                        "members.userAlreadyInvited" : "members.userAlreadyMember"));
             }
             userManager.grantWeblogRole(invitee, weblog, role, true);
             persistenceStrategy.flush();
             mailManager.sendWeblogInvitation(invitee, weblog);
-            return ResponseEntity.ok(messages.getString("inviteMember.userInvited"));
+            return ResponseEntity.ok(messages.getString("members.userInvited"));
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();
         }

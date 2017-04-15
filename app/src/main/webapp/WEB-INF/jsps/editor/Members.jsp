@@ -20,23 +20,25 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var weblogId = "<c:out value='${actionWeblog.id}'/>";
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/members.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/members.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/members'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <p class="subtitle">
-    <fmt:message key="memberPermissions.subtitle" >
+    <fmt:message key="members.subtitle" >
         <fmt:param value="${actionWeblog.handle}"/>
     </fmt:message>
 </p>
 
-<p><fmt:message key="memberPermissions.description" /></p>
+<p><fmt:message key="members.description" /></p>
 
 <div class="sidebarFade">
     <div class="menu-tr">
@@ -44,10 +46,10 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
             <div class="sidebarBody">
             <div class="sidebarInner">
             <h3>
-                <fmt:message key="memberPermissions.permissionsHelpTitle" />
+                <fmt:message key="members.permissionsHelpTitle" />
             </h3>
             <hr size="1" noshade="noshade" />
-            <fmt:message key="memberPermissions.permissionHelp" />
+            <fmt:message key="members.permissionHelp" />
 		    <br />
 		    <br />
         </div>
@@ -56,7 +58,6 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
     </div>
 </div>
 
-<div ng-app="membersApp" ng-controller="MembersController as ctrl">
   <div id="errorMessageDiv" class="errors" style="display:none">
     <b>{{ctrl.errorObj}}</b>
   </div>
@@ -75,11 +76,11 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
     <table class="rollertable">
         <thead>
           <tr>
-             <th width="20%"><fmt:message key="memberPermissions.userName" /></th>
-             <th width="20%"><fmt:message key="memberPermissions.administrator" /></th>
-             <th width="20%"><fmt:message key="memberPermissions.author" /></th>
-             <th width="20%"><fmt:message key="memberPermissions.limited" /></th>
-             <th width="20%"><fmt:message key="memberPermissions.remove" /></th>
+             <th width="20%"><fmt:message key="members.userName" /></th>
+             <th width="20%"><fmt:message key="members.owner" /></th>
+             <th width="20%"><fmt:message key="members.publisher" /></th>
+             <th width="20%"><fmt:message key="members.contributor" /></th>
+             <th width="20%"><fmt:message key="members.remove" /></th>
           </tr>
         </thead>
         <tbody>
@@ -112,24 +113,28 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
 <br>
 <br>
 
-  <p><fmt:message key="inviteMember.prompt" /></p>
-  <div>
+  <div ng-hide="ctrl.userToInvite" ng-cloak>
+       <fmt:message key="members.nobodyToInvite" />
+  </div>
+
+  <div ng-show="ctrl.userToInvite" ng-cloak>
+
+      <p><fmt:message key="members.inviteMemberPrompt" /></p>
+
       <select ng-model="ctrl.userToInvite" size="1" required>
         <option ng-repeat="(key, value) in ctrl.potentialMembers" value="{{key}}">{{value}}</option>
       </select>
 
-      <label for="permissionString" class="formrow" /><fmt:message key="inviteMember.permissions" /></label>
+      <fmt:message key="members.permissions" />:
 
       <input type="radio" ng-model="ctrl.inviteeRole" value="OWNER"  />
-      <fmt:message key="inviteMember.administrator" />
+      <fmt:message key="members.owner" />
 
       <input type="radio" ng-model="ctrl.inviteeRole" value="POST" />
-      <fmt:message key="inviteMember.author" />
+      <fmt:message key="members.publisher" />
 
       <input type="radio" ng-model="ctrl.inviteeRole" value="EDIT_DRAFT" checked />
-      <fmt:message key="inviteMember.limited" /><br><br>
+      <fmt:message key="members.contributor" /><br><br>
 
-      <input ng-click="ctrl.inviteUser()" type="button" value="<fmt:message key='inviteMember.button.save'/>"/>
+      <input ng-click="ctrl.inviteUser()" type="button" value="<fmt:message key='members.inviteMember'/>"/>
   </div>
-
-</div>
