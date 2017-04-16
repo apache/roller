@@ -137,14 +137,6 @@
             <result name="success" type="tiles">.Comments</result>
         </action>
 
-        <action name="categories" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">POST</param>
-            <param name="actionName">categories</param>
-            <param name="pageTitleReal">categoriesForm.rootTitle</param>
-            <result name="success" type="tiles">.Categories</result>
-        </action>
-
         <action name="tags" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="requiredGlobalRole">BLOGGER</param>
             <param name="requiredWeblogRole">POST</param>

@@ -25,15 +25,15 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
 <script>
-var contextPath = "${pageContext.request.contextPath}";
-var msg= {
-    confirmLabel: '<fmt:message key="generic.confirm"/>',
-    saveLabel: '<fmt:message key="generic.save"/>',
-    cancelLabel: '<fmt:message key="generic.cancel"/>',
-    editTitle: '<fmt:message key="generic.edit"/>',
-    addTitle: '<fmt:message key="bookmarks.add.title"/>'
-};
-var actionWeblogId = "<c:out value='${param.weblogId}'/>";
+    var contextPath = "${pageContext.request.contextPath}";
+    var msg= {
+        confirmLabel: '<fmt:message key="generic.confirm"/>',
+        saveLabel: '<fmt:message key="generic.save"/>',
+        cancelLabel: '<fmt:message key="generic.cancel"/>',
+        editTitle: '<fmt:message key="generic.edit"/>',
+        addTitle: '<fmt:message key="bookmarks.add.title"/>'
+    };
+    var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 </script>
 
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>

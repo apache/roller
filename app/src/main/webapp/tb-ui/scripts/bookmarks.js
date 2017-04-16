@@ -56,16 +56,20 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.showUpdateErrorMessage = false;
 
     this.loadItems = function() {
-      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/bookmarks').then(function(response) {
-        self.items = response.data;
-      });
+      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/bookmarks').then(
+         function(response) {
+            self.items = response.data;
+         },
+         self.commonErrorResponse
+      );
     };
 
     this.deleteItem = function(itemId) {
       $http.delete(contextPath + '/tb-ui/authoring/rest/bookmark/' + itemId).then(
          function(response) {
            self.loadItems();
-         }
+         },
+         self.commonErrorResponse
       );
     }
 
@@ -88,13 +92,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
                  self.itemToEdit = {};
                  self.loadItems();
               },
-              function(response) {
-                if (response.status == 408) {
-                   window.location.replace($('#refreshURL').attr('value'));
-                } else if (response.status == 409) {
-                   self.showUpdateErrorMessage = true;
-                }
-              }
+              self.commonErrorResponse
             )
         }
     }
@@ -102,8 +100,8 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.commonErrorResponse = function(response) {
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
-        } else if (response.status == 400) {
-           self.showErrorMessage = true;
+        } else if (response.status == 409) {
+           self.showUpdateErrorMessage = true;
         }
     }
 
