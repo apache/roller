@@ -19,10 +19,11 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
+<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 <script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
@@ -30,71 +31,72 @@
         saveLabel: '<fmt:message key="generic.save"/>',
         cancelLabel: '<fmt:message key="generic.cancel"/>',
         editTitle: '<fmt:message key="generic.edit"/>',
-        addTitle: '<fmt:message key="categoryForm.add.title"/>'
+        addTitle: '<fmt:message key="categories.add.title"/>'
     };
+    var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/categories.js'/>"></script>
 
 <p class="subtitle">
-    <fmt:message key="categoriesForm.subtitle">
+    <fmt:message key="categories.subtitle">
         <fmt:param value="${actionWeblog.handle}"/>
     </fmt:message>
 </p>
+
 <p class="pagetip">
-    <fmt:message key="categoriesForm.rootPrompt"/>
+    <fmt:message key="categories.rootPrompt"/>
 </p>
 
-<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/categories.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
-<input type="hidden" id="actionWeblogId" value="<c:out value='${param.weblogId}'/>"/>
-
-<div id="category-list" ng-app="tightBlogApp" ng-controller="CategoryController as ctrl">
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/categories'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
     <table class="rollertable">
         <thead>
         <tr>
             <th width="25%"><fmt:message key="generic.name"/></th>
             <th width="7%"><fmt:message key="generic.edit"/></th>
-            <th width="7%"><fmt:message key="categoriesForm.remove"/></th>
+            <th width="7%"><fmt:message key="categories.remove"/></th>
         </tr>
       </thead>
-      <tbody id="tableBody">
-        <tr id="{{category.id}}" ng-repeat="category in ctrl.categories | orderBy:'position'" ng-class-even="'altrow'">
-          <td class="category-name">{{category.name}}</td>
-          <td align="center">
-              <a href="#" class="edit-link">
-                <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon"/>
-              </a>
-          </td>
-          <td align="center">
-              <span ng-if="ctrl.categories.length > 1">
-                  <a href="#" class="delete-link">
-                      <img src='<c:url value="/images/delete.png"/>' border="0" alt="icon"/>
-                  </a>
-              </span>
-          </td>
-        </tr>
+      <tbody>
+          <tr ng-repeat="item in ctrl.items | orderBy:'position'" ng-class-even="'altrow'">
+              <td>{{item.name}}</td>
+              <td align="center">
+                <a edit-dialog="edit-dialog" ng-click="ctrl.setEditItem(item)">
+                    <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
+                         title="<fmt:message key='generic.edit'/>"/>
+                </a>
+              </td>
+              <td align="center">
+                  <span ng-if="ctrl.items.length > 1">
+                      <a confirm-delete-dialog="delete-dialog" name-to-delete="{{item.name}}" ng-click="ctrl.setDeleteItem(item)">
+                          <img src="<c:url value='/images/delete.png'/>" border="0" alt="icon"
+                              title="<fmt:message key='generic.delete'/>"/>
+                      </a>
+                  </span>
+              </td>
+          </tr>
       </tbody>
        </table>
 
-      <div class="control clearfix">
-          <input type="button" value="<fmt:message key='categoriesForm.addCategory'/>" id="add-link">
-      </div>
-
-</div>
-
-    <div id="category-edit" style="display:none">
-      <span id="category-edit-error" style="display:none"><fmt:message key='categoryForm.error.duplicateName'/></span>
-      <label for="name"><fmt:message key='generic.name'/>:</label>
-      <input type="text" id="category-edit-name" class="text ui-widget-content ui-corner-all">
+    <div class="control clearfix">
+        <input type="button" add-dialog="edit-dialog" ng-click="ctrl.addItem()" value="<fmt:message key='categories.addCategory'/>">
     </div>
 
-    <div id="category-remove" title="<fmt:message key='categoryDeleteOK.removeCategory'/>" style="display:none">
-        <div id="category-remove-mustmove" style="display:none">
-            <fmt:message key='categoryDeleteOK.youMustMoveEntries'/>
-            <p>
-                <fmt:message key="categoryDeleteOK.moveToWhere"/>
-                <select id="category-remove-targetlist"/>
-            </p>
-        </div>
+    <div id="edit-dialog" style="display:none">
+        <span ng-show="ctrl.showUpdateErrorMessage">
+            <fmt:message key='categories.error.duplicateName'/><br>
+        </span>
+        <label for="name"><fmt:message key='generic.name'/>:</label>
+        <input id="name" ng-model="ctrl.itemToEdit.name" maxlength="80" size="50"/>
+    </div>
+
+    <div id="delete-dialog" title="<fmt:message key='categories.deleteRemoveCategory'/>" style="display:none">
+        <p>
+            <fmt:message key="categories.deleteMoveToWhere"/>
+            <select ng-model="ctrl.targetCategoryId" size="1" required>
+               <option ng-repeat="item in ctrl.items | filter: { id: '!' + ctrl.itemToDelete.id }" value="{{item.id}}">{{item.name}}</option>
+            </select>
+        </p>
     </div>

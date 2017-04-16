@@ -136,8 +136,9 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
     </definition>
 
-    <definition name=".Categories" extends=".tiles-tabbedpage" >
+    <definition name=".categories" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".Tags" extends=".tiles-tabbedpage" >

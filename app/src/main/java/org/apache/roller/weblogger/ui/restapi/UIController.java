@@ -241,20 +241,37 @@ public class UIController {
         return getBlogOwnerPage(principal, null, weblogId, "bookmarks");
     }
 
+    @RequestMapping(value = "/authoring/categories")
+    public ModelAndView categories(Principal principal, @RequestParam String weblogId) {
+        return getBlogPublisherPage(principal, null, weblogId, "categories");
+    }
+
     @RequestMapping(value = "/authoring/templateEdit")
     public ModelAndView templateEdit(Principal principal, @RequestParam String weblogId) {
         return getBlogOwnerPage(principal, null, weblogId, "templateEdit");
     }
 
     private ModelAndView getBlogOwnerPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
+        return getBlogPage(principal, map, weblogId, actionName, WeblogRole.OWNER);
+    }
+
+    private ModelAndView getBlogPublisherPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
+        return getBlogPage(principal, map, weblogId, actionName, WeblogRole.POST);
+    }
+
+    private ModelAndView getBlogPage(Principal principal, Map<String, Object> map, String weblogId, String actionName, WeblogRole requiredRole) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
         Weblog weblog = weblogManager.getWeblog(weblogId);
 
-        if (userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+        boolean isAdmin = user.hasEffectiveGlobalRole(GlobalRole.ADMIN);
+        UserWeblogRole weblogRole = userManager.getWeblogRole(user, weblog);
+        if (isAdmin || (weblogRole != null && weblogRole.hasEffectiveWeblogRole(requiredRole))) {
             if (map == null) {
                 map = new HashMap<>();
             }
-            map.put("menu", getMenu(user, actionName, WeblogRole.OWNER));
+
+            WeblogRole menuRole = isAdmin ? WeblogRole.OWNER : weblogRole.getWeblogRole();
+            map.put("menu", getMenu(user, actionName, menuRole));
             map.put("weblogId", weblogId);
             return tightblogModelAndView(actionName, map, user, weblog);
         } else {

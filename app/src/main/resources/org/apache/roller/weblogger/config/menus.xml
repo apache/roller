@@ -40,9 +40,9 @@ Defines the menus provided with Weblogger
                      titleKey="tabbedmenu.weblog.commentManagement"
                      weblogRole="POST"/>
 
-            <tabItem action="categories.rol"
-                     actionPath="/tb-ui/authoring/"
-                     titleKey="tabbedmenu.weblog.categories"
+            <tabItem action="categories"
+                     actionPath="/tb-ui/app/authoring/"
+                     titleKey="categories.title"
                      weblogRole="POST">
             </tabItem>
 

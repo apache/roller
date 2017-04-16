@@ -82,15 +82,15 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.PUT)
-    public void updateCategory(@PathVariable String id, @RequestBody TextNode newName, Principal p,
+    public void updateCategory(@PathVariable String id, @RequestBody WeblogCategory updatedCategory, Principal p,
                                HttpServletResponse response) throws ServletException {
         try {
             WeblogCategory c = weblogManager.getWeblogCategory(id);
             if (c != null) {
                 Weblog weblog = c.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                    if (!c.getName().equals(newName.asText())) {
-                        c.setName(newName.asText());
+                    if (!c.getName().equals(updatedCategory.getName())) {
+                        c.setName(updatedCategory.getName());
                         try {
                             weblogManager.saveWeblogCategory(c);
                             persistenceStrategy.flush();
@@ -112,12 +112,12 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.PUT)
-    public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody TextNode categoryName, Principal p,
+    public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogCategory newCategory, Principal p,
                             HttpServletResponse response) throws ServletException {
         try {
             Weblog weblog = weblogManager.getWeblog(weblogId);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                WeblogCategory wc = new WeblogCategory(weblog, categoryName.asText());
+                WeblogCategory wc = new WeblogCategory(weblog, newCategory.getName());
                 try {
                     weblogManager.saveWeblogCategory(wc);
                     weblog.addCategory(wc);
@@ -143,12 +143,6 @@ public class CategoryController {
                 .filter(cat -> !cat.getId().equals(skipCategoryId))
                 .peek(cat -> cat.setWeblog(null))
                 .collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "/tb-ui/authoring/rest/categories/inuse", method = RequestMethod.GET)
-    public boolean isCategoryInUse(@RequestParam String categoryId) {
-        WeblogCategory category = weblogManager.getWeblogCategory(categoryId);
-        return category != null && weblogManager.isWeblogCategoryInUse(category);
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.DELETE)
