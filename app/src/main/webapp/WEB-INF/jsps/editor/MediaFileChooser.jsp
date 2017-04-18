@@ -20,21 +20,25 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
-<script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
 <script>
-var contextPath = "${pageContext.request.contextPath}";
+    var contextPath = "${pageContext.request.contextPath}";
+    var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/mediafilechooser.js'/>"></script>
 
-<input type="hidden" id="recordId" value="<c:out value='${param.weblogId}'/>"/>
-<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/mediaFileChooser.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/authoring/mediaFileChooser'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <%-- Drop-down box to choose media directory --%>
-<select id="mediachooser-select-directory"></select>
-<input id="select-item" type="button" style="margin:4px" value='<fmt:message key="generic.view" />'/>
+<select ng-model="ctrl.selectedDirectory" size="1" required>
+   <option ng-repeat="item in ctrl.directories" value="{{item.id}}">{{item.name}}</option>
+</select>
+
+<input type="button" ng-click="ctrl.loadImages()" style="margin:4px" value='<fmt:message key="generic.view" />'/>
 
 <p class="pagetip">
     <fmt:message key="mediaFileChooser.pageTip" />
@@ -42,20 +46,16 @@ var contextPath = "${pageContext.request.contextPath}";
 
 <%-- Media file contents for selected folder --%>
 <div width="720px" height="500px">
-    <ul id="formBody">
-        <script id="formTemplate" type="text/x-jsrender">
-            <li class="align-images" onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
-                <div class="mediaObject" onclick=
-                "window.parent.onSelectMediaFile('{{:name}}', '{{:permalink}}', '{{:altText}}', '{{:titleText}}', '{{:anchor}}', {{:imageFile}})">
-                    {{if imageFile}}
-                        <img border="0" src='{{:thumbnailURL}}' />
-                    {{/if}}
-                </div>
+    <ul>
+        <li ng-repeat="item in ctrl.images" class="align-images"
+                ng-class="{mediaFileHighlight : hovering}" ng-mouseenter="hovering=true" ng-mouseleave="hovering=false">
+            <div class="mediaObject" ng-click="ctrl.chooseFile(item)">
+                <img ng-if="item.imageFile" border="0" ng-src='{{item.thumbnailURL}}' />
+            </div>
 
-                <div class="mediaObjectInfo">
-                    <label>{{:name}}</label>
-                </div>
-            </li>
-        </script>
+            <div class="mediaObjectInfo">
+                <label>{{item.name}}</label>
+            </div>
+        </li>
     </ul>
 </div>

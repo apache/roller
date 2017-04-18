@@ -17,6 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <!doctype html>
+<c:set var="useAngular"><tiles:getAsString name="useAngularHeader"/></c:set>
 <html>
     <head>
         <meta charset="utf-8">
@@ -25,7 +26,8 @@
         <tiles:insertAttribute name="head" />
     </head>
 
-    <body>
+    <body <c:if test="${useAngular == 'true'}">
+                    id='ngapp-div' ng-app='tightblogApp' ng-controller='PageController as ctrl' </c:if>>
 
         <div id="content">
             <div id="nosidebar_maincontent_wrap">

@@ -39,7 +39,7 @@
         deleteLabel: "<fmt:message key='generic.delete'/>",
         cancelLabel: "<fmt:message key='generic.cancel'/>",
     };
-    var mediaFileChooserUrl = "<c:url value='/tb-ui/authoring/mediaFileChooser.rol'/>?weblogId=" + weblogId;
+    var mediaFileChooserUrl = "<c:url value='/tb-ui/app/authoring/mediaFileChooser'/>?weblogId=" + weblogId;
 </script>
 
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
