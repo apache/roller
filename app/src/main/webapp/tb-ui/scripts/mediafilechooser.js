@@ -1,47 +1,36 @@
-$(function() {
-  var data = {};
-  $.templates({
-    formTemplate: '#formTemplate'
-  });
-  function updateFileList(data) {
-    $.link.formTemplate("#formBody", data);
-  }
-  function refreshDirectoryList() {
-    var recordId = $('#recordId').attr('value');
-    checkLoggedIn(function() {
-      $.ajax({
-         type: "GET",
-         url: contextPath + '/tb-ui/authoring/rest/weblog/' + recordId + '/mediadirectories',
-         success: function(data, textStatus, xhr) {
-           $('#mediachooser-select-directory').empty();
-           $.each(data, function(i, d) {
-              $('#mediachooser-select-directory').append('<option value="' + d.id + '">' + d.name + '</option>');
-           });
-         }
-      });
-    });
-  }
-  $("#select-item").click(function(e) {
-     e.preventDefault();
-     var selectedId = $('#mediachooser-select-directory').val();
-     checkLoggedIn(function() {
-       $.ajax({
-          type: "GET",
-          url: contextPath + '/tb-ui/authoring/rest/mediadirectories/' + selectedId + '/files',
-          success: function(data, textStatus, xhr) {
-            updateFileList(data);
-          }
-       });
-     });
-  });
-  $(function() {
-    refreshDirectoryList();
-  });
-});
-function highlight(el, flag) {
-    if (flag) {
-        $(el).addClass("mediaFileHighlight");
-    } else {
-        $(el).removeClass("mediaFileHighlight");
+tightblogApp.controller('PageController', ['$http', '$window', function PageController($http, $window) {
+    var self = this;
+
+    this.loadDirectories = function() {
+      $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/mediadirectories').then(
+         function(response) {
+            self.directories = response.data;
+         },
+         self.commonErrorResponse
+      );
+    };
+
+    this.loadImages = function() {
+      if (this.selectedDirectory) {
+          $http.get(contextPath + '/tb-ui/authoring/rest/mediadirectories/' + this.selectedDirectory + '/files').then(
+             function(response) {
+                self.images = response.data;
+             },
+             self.commonErrorResponse
+          );
+      }
+    };
+
+    this.commonErrorResponse = function(response) {
+        if (response.status == 408) {
+           window.location.replace($('#refreshURL').attr('value'));
+        }
     }
-}
+
+    this.chooseFile = function(item) {
+        $window.parent.onSelectMediaFile(item.name, item.permalink, item.altText, item.titleText, item.anchor, item.imageFile);
+    }
+
+    this.loadDirectories();
+
+}]);

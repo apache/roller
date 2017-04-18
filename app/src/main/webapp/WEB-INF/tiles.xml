@@ -113,8 +113,9 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
     </definition>
 
-    <definition name=".MediaFileChooser" extends=".tiles-popuppage" >
+    <definition name=".mediaFileChooser" extends=".tiles-popuppage" >
         <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileChooser.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >

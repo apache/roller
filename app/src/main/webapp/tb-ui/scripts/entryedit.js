@@ -172,7 +172,11 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                 self.entry.text = html + anchorTag;
                 $("#ql-editor-1").html(self.entry.text);
             } else {
-                self.entry.text += anchorTag;
+                if (self.entry.text) {
+                    self.entry.text += anchorTag;
+                } else {
+                    self.entry.text = anchorTag;
+                }
             }
         }
 

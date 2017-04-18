@@ -251,12 +251,21 @@ public class UIController {
         return getBlogOwnerPage(principal, null, weblogId, "templateEdit");
     }
 
+    @RequestMapping(value = "/authoring/mediaFileChooser")
+    public ModelAndView mediaFileChooser(Principal principal, @RequestParam String weblogId) {
+        return getBlogContributorPage(principal, null, weblogId, "mediaFileChooser");
+    }
+
     private ModelAndView getBlogOwnerPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
         return getBlogPage(principal, map, weblogId, actionName, WeblogRole.OWNER);
     }
 
     private ModelAndView getBlogPublisherPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
         return getBlogPage(principal, map, weblogId, actionName, WeblogRole.POST);
+    }
+
+    private ModelAndView getBlogContributorPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
+        return getBlogPage(principal, map, weblogId, actionName, WeblogRole.EDIT_DRAFT);
     }
 
     private ModelAndView getBlogPage(Principal principal, Map<String, Object> map, String weblogId, String actionName, WeblogRole requiredRole) {
