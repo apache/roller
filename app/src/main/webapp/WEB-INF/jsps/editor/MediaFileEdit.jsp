@@ -19,8 +19,8 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
 <c:url var="mediaFileViewUrl" value="/tb-ui/authoring/mediaFileView.rol">
     <c:param name="weblogId" value="${actionWeblog.id}" />
@@ -33,20 +33,25 @@
     var directoryId = "<c:out value='${param.directoryId}'/>";
     var mediaViewUrl = "<c:out value='${mediaFileViewUrl}'/>";
 </script>
-<script src="<c:url value='/tb-ui/scripts/commonjquery.js'/>"></script>
+
+<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/mediafileedit.js'/>"></script>
 
-<div ng-app="mediaFileEditApp" ng-controller="MediaFileEditController as ctrl">
-
-    <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMsg">
-       <b>{{ctrl.errorMsg}}</b>
-    </div>
+<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj">
+  <b>{{ctrl.errorObj.errorMessage}}</b>
+  <ul>
+     <li ng-repeat="em in ctrl.errorObj.errors">{{em}}</li>
+  </ul>
+</div>
 
 <c:choose>
-    <c:when test="${actionName == 'mediaFileEdit'}">
+    <c:when test="${param.mediaFileId != null}">
         <c:set var="subtitleKey">mediaFileEdit.subtitle</c:set>
         <c:set var="mainAction">mediaFileEdit</c:set>
         <c:set var="pageTip">mediaFileEdit.pagetip</c:set>
+        <input id="refreshURL" type="hidden"
+            value="<c:url value='/tb-ui/app/authoring/mediaFileEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"\
+                "&directoryId=<c:out value='${param.directoryId}'/>&mediaFileId=<c:out value='${param.mediaFileId}'/>"/>
         <div ng-if="ctrl.mediaFileData.imageFile" class="mediaFileThumbnail">
             <a ng-href='{{ctrl.mediaFileData.permalink}}' target="_blank">
                 <img align="right" alt="thumbnail" ng-src='{{ctrl.mediaFileData.thumbnailURL}}'
@@ -58,6 +63,9 @@
         <c:set var="subtitleKey">mediaFileAdd.title</c:set>
         <c:set var="mainAction">mediaFileAdd</c:set>
         <c:set var="pageTip">mediaFileAdd.pageTip</c:set>
+        <input id="refreshURL" type="hidden"
+            value="<c:url value='/tb-ui/app/authoring/mediaFileAdd'/>?weblogId=<c:out value='${param.weblogId}'/>"\
+                "&directoryId=<c:out value='${param.directoryId}'/>"/>
     </c:otherwise>
 </c:choose>
 
@@ -85,7 +93,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="altText"><fmt:message key="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
+                <label for="altText"><fmt:message key="mediaFileEdit.altText"/><tags:help key="mediaFileEdit.altText.tooltip"/></label>
             </td>
             <td>
                 <input id="altText" type="text" ng-model="ctrl.mediaFileData.altText" size="50" maxlength="255" style="width:30%"/>
@@ -94,7 +102,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="titleText"><fmt:message key="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
+                <label for="titleText"><fmt:message key="mediaFileEdit.titleText"/><tags:help key="mediaFileEdit.titleText.tooltip"/></label>
             </td>
             <td>
                 <input id="titleText" type="text" ng-model="ctrl.mediaFileData.titleText" size="50" maxlength="255" style="width:30%"/>
@@ -103,7 +111,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="anchor"><fmt:message key="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
+                <label for="anchor"><fmt:message key="mediaFileEdit.anchor"/><tags:help key="mediaFileEdit.anchor.tooltip"/></label>
             </td>
             <td>
                 <input id="anchor" type="text" ng-model="ctrl.mediaFileData.anchor" size="50" maxlength="255" style="width:30%"/>
@@ -118,7 +126,7 @@
                 <input id="notes" type="text" ng-model="ctrl.mediaFileData.notes" size="50" maxlength="255" style="width:30%"/>
             </td>
        </tr>
-<c:if test="${actionName == 'mediaFileEdit'}">
+    <c:if test="${param.mediaFileId != null}">
        <tr>
             <td class="entryEditFormLabel">
                 <fmt:message key="mediaFileEdit.fileInfo" />
@@ -135,13 +143,7 @@
                 <label for="permalink"><fmt:message key="mediaFileEdit.permalink" /></label>
             </td>
             <td>
-                <a href='{{ctrl.mediaFileData.permalink}}' target="_blank"
-                   title='<fmt:message key="mediaFileEdit.linkTitle" />'>
-                   <c:url var="linkIconURL" value="/images/link.png"/>
-                   <img border="0" src='<c:out value="${linkIconURL}" />'
-                       style="padding:2px 2px;" alt="link" />
-                </a>
-                <input id="permalink" type="text" size="50" style="width:90%" value='{{ctrl.mediaFileData.permalink}}' readonly />
+                <input id="permalink" type="text" size="50" style="width:50%" value='{{ctrl.mediaFileData.permalink}}' readonly />
             </td>
        </tr>
 
@@ -150,10 +152,10 @@
                 <label for="directoryId"><fmt:message key="mediaFileEdit.folder" /></label>
             </td>
             <td>
-                <input id="directoryId" type="text" size="30" style="width:30%" value='{{ctrl.mediaFileData.directory.name}}' readonly />
+                <input id="directoryId" type="text" size="50" value='{{ctrl.mediaFileData.directory.name}}' readonly />
             </td>
        </tr>
-</c:if>
+    </c:if>
 
         <tr>
             <td class="entryEditFormLabel">
@@ -161,7 +163,7 @@
             </td>
             <td>
                 <c:choose>
-                    <c:when test="${actionName == 'mediaFileEdit'}">
+                    <c:when test="${param.mediaFileId != null}">
                         <input id="fileControl" type="file" file-model="ctrl.myMediaFile" size="30" value=""/>
                     </c:when>
                     <c:otherwise>
@@ -172,11 +174,10 @@
         </tr>
     </table>
 
-    <br />
-    <div class="control">
-        <input type="button" value="<fmt:message key='generic.save'/>" ng-click="ctrl.saveMediaFile()"/>
-        <a href="<c:out value='${mediaFileViewUrl}'/>&amp;directoryId={{ctrl.mediaFileData.directory.id}}">
-            <input type="button" value="<fmt:message key='generic.cancel'/>"/>
-        </a>
-    </div>
+<br />
+<div class="control">
+    <input type="button" value="<fmt:message key='generic.save'/>" ng-click="ctrl.saveMediaFile()"/>
+    <a href="<c:out value='${mediaFileViewUrl}'/>&amp;directoryId={{ctrl.mediaFileData.directory.id}}">
+        <input type="button" value="<fmt:message key='generic.cancel'/>"/>
+    </a>
 </div>
