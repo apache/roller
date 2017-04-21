@@ -57,8 +57,8 @@ Defines the menus provided with Weblogger
                      titleKey="tabbedmenu.weblog.mediaFiles"
                      weblogRole="POST">
                 <subactions>
-                    <subaction>mediaFileAdd.rol</subaction>
-                    <subaction>mediaFileEdit.rol</subaction>
+                    <subaction>mediaFileAdd</subaction>
+                    <subaction>mediaFileEdit</subaction>
                 </subactions>
             </tabItem>
         </tab>

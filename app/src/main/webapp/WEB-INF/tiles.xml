@@ -109,8 +109,14 @@
     </definition>
 
     <!-- weblog editor pages (and associates) -->
-    <definition name=".MediaFileEdit" extends=".tiles-tabbedpage" >
+    <definition name=".mediaFileEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
+    </definition>
+
+    <definition name=".mediaFileAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".mediaFileChooser" extends=".tiles-popuppage" >
