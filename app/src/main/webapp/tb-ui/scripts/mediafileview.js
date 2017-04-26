@@ -1,18 +1,5 @@
 $(function() {
-    $(".delete-file-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete-file').dialog('open');
-    });
-    $(".delete-folder-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-delete-folder').dialog('open');
-    });
-    $(".move-file-link").click(function(e) {
-      e.preventDefault();
-      $('#confirm-move-file').dialog('open');
-    });
-
-    $("#confirm-delete-file").dialog({
+    $("#confirm-delete-files").dialog({
       autoOpen: false,
       resizable: true,
       height:200,
@@ -34,6 +21,7 @@ $(function() {
         }
       ]
     });
+
     $("#confirm-delete-folder").dialog({
       autoOpen: false,
       resizable: true,
@@ -56,6 +44,7 @@ $(function() {
         }
        ]
      });
+
     $("#confirm-move-file").dialog({
       autoOpen: false,
       resizable: true,
@@ -80,20 +69,10 @@ $(function() {
      });
 });
 
-var mediaFileViewApp = angular.module('mediaFileViewApp', []);
-
-mediaFileViewApp.config(['$httpProvider', function($httpProvider) {
-    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-    var header = $("meta[name='_csrf_header']").attr("content");
-    var token = $("meta[name='_csrf']").attr("content");
-    $httpProvider.defaults.headers.delete = {};
-    $httpProvider.defaults.headers.delete[header] = token;
-    $httpProvider.defaults.headers.post[header] = token;
-    $httpProvider.defaults.headers.put[header] = token;
-}]);
-
-mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaFileViewController($http) {
+tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
+    this.successMessage = null;
+    this.errorMessage = null;
 
     this.loadMediaDirectories = function() {
       $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/mediadirectories').then(function(response) {
@@ -138,10 +117,10 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       if (!self.newDirectoryName) {
         return;
       }
+      this.messageClear();
       $http.put(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/mediadirectories',
          JSON.stringify(self.newDirectoryName)).then(
         function(response) {
-          self.errorMsg = null;
           self.loadMediaDirectories();
           self.directoryToView = response.data;
           self.newDirectoryName = '';
@@ -151,9 +130,10 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
     }
 
     this.deleteFolder = function() {
+      this.messageClear();
       $http.delete(contextPath + '/tb-ui/authoring/rest/mediadirectory/' + self.directoryToView).then(
         function(response) {
-          self.errorMsg = null;
+          self.successMessage = msg.folderDeleteSuccess;
           self.loadMediaDirectories();
         },
         self.commonErrorResponse
@@ -161,6 +141,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
     }
 
     this.deleteFiles = function() {
+      this.messageClear();
       var selectedFiles = [];
       angular.forEach(this.mediaFiles, function(mediaFile) {
           if (!!mediaFile.selected) selectedFiles.push(mediaFile.id);
@@ -169,7 +150,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       $http.post(contextPath + '/tb-ui/authoring/rest/mediafiles/weblog/' + weblogId,
       JSON.stringify(selectedFiles)).then(
         function(response) {
-          self.errorMsg = null;
+          self.successMessage = msg.fileDeleteSuccess;
           self.loadMediaFiles();
         },
         self.commonErrorResponse
@@ -177,6 +158,7 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
     }
 
     this.moveFiles = function() {
+      this.messageClear();
       var selectedFiles = [];
       angular.forEach(this.mediaFiles, function(mediaFile) {
           if (!!mediaFile.selected) selectedFiles.push(mediaFile.id);
@@ -186,19 +168,46 @@ mediaFileViewApp.controller('MediaFileViewController', ['$http', function MediaF
       "/todirectory/" + self.directoryToMoveTo,
       JSON.stringify(selectedFiles)).then(
         function(response) {
-          self.errorMsg = null;
+          self.successMessage = msg.fileMoveSuccess;
           self.loadMediaFiles();
         },
-        self.commonErrorResponse
-      )
+        function(response) {
+         if (response.status == 408) {
+           window.location.replace($('#refreshURL').attr('value'));  // return;
+         } else {
+           self.errorMessage = msg.fileMoveError;
+         }
+        })
     }
 
     this.commonErrorResponse = function(response) {
          if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));  // return;
          } else if (response.status == 400) {
-           self.errorMsg = response.data;
+           self.errorMessage = response.data;
          }
     }
 
+    this.messageClear = function() {
+        this.successMessage = null;
+        this.errorMessage = null;
+    }
+
 }]);
+
+function showDialog(dialogId) {
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attr, ctrl) {
+            elem.bind('click', function(e) {
+                $(dialogId).dialog('open');
+            });
+        }
+    };
+}
+
+tightblogApp.directive('moveFilesDialog', function(){return showDialog('#confirm-move-file')});
+
+tightblogApp.directive('deleteFilesDialog', function(){return showDialog('#confirm-delete-files')});
+
+tightblogApp.directive('deleteFolderDialog', function(){return showDialog('#confirm-delete-folder')});

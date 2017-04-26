@@ -109,7 +109,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         MediaDirectory newDirectory;
         if (weblog.hasMediaDirectory(requestedName)) {
-            throw new IllegalArgumentException("mediaFile.directoryCreate.error.exists");
+            throw new IllegalArgumentException("mediaFileView.directoryCreate.error.exists");
         } else {
             newDirectory = new MediaDirectory(weblog, requestedName);
 

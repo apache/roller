@@ -52,8 +52,14 @@ Defines the menus provided with Weblogger
                      weblogRole="POST">
             </tabItem>
 
-            <tabItem action="mediaFileView.rol"
-                     actionPath="/tb-ui/authoring/"
+            <tabItem action="bookmarks"
+                     actionPath="/tb-ui/app/authoring/"
+                     titleKey="bookmarks.title"
+                     weblogRole="OWNER">
+            </tabItem>
+
+            <tabItem action="mediaFileView"
+                     actionPath="/tb-ui/app/authoring/"
                      titleKey="tabbedmenu.weblog.mediaFiles"
                      weblogRole="POST">
                 <subactions>
@@ -66,10 +72,6 @@ Defines the menus provided with Weblogger
             <tabItem action="weblogConfig"
                      actionPath="/tb-ui/app/authoring/"
                      titleKey="weblogConfig.title">
-            </tabItem>
-            <tabItem action="bookmarks"
-                     actionPath="/tb-ui/app/authoring/"
-                     titleKey="bookmarks.title">
             </tabItem>
             <tabItem action="templates"
                      actionPath="/tb-ui/app/authoring/"

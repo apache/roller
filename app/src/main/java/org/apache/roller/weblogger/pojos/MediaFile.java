@@ -52,7 +52,7 @@ public class MediaFile {
 
     private String id;
 
-    @NotBlank(message = "{MediaFile.error.nameNull}")
+    @NotBlank(message = "{mediaFile.error.nameNull}")
     private String name;
     private String altText;
     private String titleText;
