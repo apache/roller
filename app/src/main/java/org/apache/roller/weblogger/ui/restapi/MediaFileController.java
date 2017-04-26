@@ -160,7 +160,7 @@ public class MediaFileController {
 
         MediaFile fileWithSameName = mf.getDirectory().getMediaFile(mediaFileData.getName());
         if (fileWithSameName != null && !fileWithSameName.getId().equals(mediaFileData.getId())) {
-            return ResponseEntity.badRequest().body(messages.getString("MediaFile.error.duplicateName"));
+            return ResponseEntity.badRequest().body(messages.getString("mediaFile.error.duplicateName"));
         }
 
         // update media file with new metadata
@@ -223,7 +223,6 @@ public class MediaFileController {
     public void deleteMediaDirectory(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
-        // addMessage("mediaFile.deleteFolder.success");
         try {
             MediaDirectory itemToRemove = mediaFileManager.getMediaDirectory(id);
             if (itemToRemove != null) {
@@ -248,7 +247,7 @@ public class MediaFileController {
     public void deleteMediaFiles(@PathVariable String weblogId, @RequestBody List<String> fileIdsToDelete,
                                  Principal p, HttpServletResponse response)
             throws ServletException {
-        // addMessage("mediaFile.delete.success");
+
         try {
             if (fileIdsToDelete != null && fileIdsToDelete.size() > 0) {
                 Weblog weblog = weblogManager.getWeblog(weblogId);
@@ -283,8 +282,7 @@ public class MediaFileController {
                                @RequestBody List<String> fileIdsToMove,
                                Principal p, HttpServletResponse response)
             throws ServletException {
-        // addMessage("mediaFile.move.success");
-        // addError("mediaFile.move.errors");
+
         try {
             if (fileIdsToMove != null && fileIdsToMove.size() > 0) {
                 Weblog weblog = weblogManager.getWeblog(weblogId);

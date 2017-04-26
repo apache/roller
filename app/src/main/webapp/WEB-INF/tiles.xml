@@ -124,8 +124,9 @@
         <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
+    <definition name=".mediaFileView" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".EntryEdit" extends=".tiles-tabbedpage" >

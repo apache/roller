@@ -73,14 +73,6 @@
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">
 
-        <action name="mediaFileView" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">mediaFileView</param>
-            <param name="pageTitleReal">mediaFileView.title</param>
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">POST</param>
-            <result name="success" type="tiles">.MediaFileView</result>
-        </action>
-
         <action name="entryAdd" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">entryAdd</param>
             <param name="pageTitleReal">weblogEdit.title.newEntry</param>

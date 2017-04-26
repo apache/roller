@@ -22,7 +22,7 @@
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
-<c:url var="mediaFileViewUrl" value="/tb-ui/authoring/mediaFileView.rol">
+<c:url var="mediaFileViewUrl" value="/tb-ui/app/authoring/mediaFileView">
     <c:param name="weblogId" value="${actionWeblog.id}" />
 </c:url>
 
