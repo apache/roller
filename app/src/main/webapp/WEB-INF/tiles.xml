@@ -129,7 +129,14 @@
         <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".EntryEdit" extends=".tiles-tabbedpage" >
+    <definition name=".entryEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
+        <put-attribute name="sidebarType"  value="sidebar" />
+        <put-attribute name="useAngularHeader" value="true"/>
+    </definition>
+
+    <definition name=".entryAdd" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="sidebarType"  value="sidebar" />

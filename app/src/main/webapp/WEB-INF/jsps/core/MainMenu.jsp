@@ -92,7 +92,7 @@ var msg= {
            <td class="mm_table_actions" width="20%" align="left" >
 
                    <img src='<c:url value="/images/table_edit.png"/>' />
-                   <a href="<c:url value='/tb-ui/authoring/entryAdd.rol'/>?weblogId={{role.weblog.id}}">
+                   <a href="<c:url value='/tb-ui/app/authoring/entryAdd'/>?weblogId={{role.weblog.id}}">
                      <fmt:message key="mainMenu.newEntry" />
                    </a>
                    <br>
