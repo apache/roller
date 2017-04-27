@@ -73,22 +73,6 @@
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">
 
-        <action name="entryAdd" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">entryAdd</param>
-            <param name="pageTitleReal">weblogEdit.title.newEntry</param>
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">EDIT_DRAFT</param>
-            <result name="success" type="tiles">.EntryEdit</result>
-        </action>
-
-        <action name="entryEdit" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">entryEdit</param>
-            <param name="pageTitleReal">weblogEdit.title.editEntry</param>
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">EDIT_DRAFT</param>
-            <result name="success" type="tiles">.EntryEdit</result>
-        </action>
-
         <action name="entries" class="org.apache.roller.weblogger.ui.struts2.UIAction">
             <param name="actionName">entries</param>
             <param name="pageTitleReal">weblogEntryQuery.title</param>

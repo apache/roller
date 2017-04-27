@@ -33,8 +33,8 @@
     var contextPath = "${pageContext.request.contextPath}";
     var weblogId = "<c:out value='${actionWeblog.id}'/>";
     var entryId = "<c:out value='${param.entryId}'/>";
-    var newEntryUrl = "<c:url value='/tb-ui/authoring/entryAdd.rol'/>?weblogId=" + weblogId;
-    var commentCountTmpl = "<fmt:message key='weblogEdit.hasComments'/>";
+    var newEntryUrl = "<c:url value='/tb-ui/app/authoring/entryAdd'/>?weblogId=" + weblogId;
+    var commentCountTmpl = "<fmt:message key='entryEdit.hasComments'/>";
     var msg = {
         deleteLabel: "<fmt:message key='generic.delete'/>",
         cancelLabel: "<fmt:message key='generic.cancel'/>",
@@ -48,16 +48,16 @@
 <%-- Titling, processing actions different between entry add and edit --%>
 <c:choose>
     <c:when test="${actionName == 'entryEdit'}">
-        <c:set var="subtitleKey">weblogEdit.subtitle.editEntry</c:set>
+        <c:set var="subtitleKey">entryEdit.subtitle.editEntry</c:set>
         <c:set var="mainAction">entryEdit</c:set>
         <input id="refreshURL" type="hidden"
-            value="<c:url value='/tb-ui/authoring/entryEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"\
+            value="<c:url value='/tb-ui/app/authoring/entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"\
                 "&entryId=<c:out value='${param.entryId}'/>"/>
     </c:when>
     <c:otherwise>
-        <c:set var="subtitleKey">weblogEdit.subtitle.newEntry</c:set>
+        <c:set var="subtitleKey">entryEdit.subtitle.newEntry</c:set>
         <c:set var="mainAction">entryAdd</c:set>
-        <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entryAdd.rol'/>"/>
+        <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/entryAdd'/>"/>
     </c:otherwise>
 </c:choose>
 
@@ -84,7 +84,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="title"><fmt:message key="weblogEdit.title" /></label>
+                <label for="title"><fmt:message key="entryEdit.entryTitle" /></label>
             </td>
             <td>
                 <input id="title" type="text" ng-model="ctrl.entry.title" maxlength="255" tabindex="1" style="width:60%">
@@ -93,35 +93,35 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><fmt:message key="weblogEdit.status" /></label>
+                <label for="status"><fmt:message key="entryEdit.status" /></label>
             </td>
             <td ng-cloak>
                 <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
                 <span ng-show="ctrl.entry.status == 'PUBLISHED'" style="color:green; font-weight:bold">
-                    <fmt:message key="weblogEdit.published" />
-                    (<fmt:message key="weblogEdit.updateTime" /> {{ctrl.entry.updateTime | date:'short'}})
+                    <fmt:message key="entryEdit.published" />
+                    (<fmt:message key="entryEdit.updateTime" /> {{ctrl.entry.updateTime | date:'short'}})
                 </span>
                 <span ng-show="ctrl.entry.status == 'DRAFT'" style="color:orange; font-weight:bold">
-                    <fmt:message key="weblogEdit.draft" />
-                    (<fmt:message key="weblogEdit.updateTime" /> {{ctrl.entry.updateTime | date:'short'}})
+                    <fmt:message key="entryEdit.draft" />
+                    (<fmt:message key="entryEdit.updateTime" /> {{ctrl.entry.updateTime | date:'short'}})
                 </span>
                 <span ng-show="ctrl.entry.status == 'PENDING'" style="color:orange; font-weight:bold">
-                    <fmt:message key="weblogEdit.pending" />
-                    (<fmt:message key="weblogEdit.updateTime" /> {{ctrl.entry.updateTime | date:'short'}})
+                    <fmt:message key="entryEdit.pending" />
+                    (<fmt:message key="entryEdit.updateTime" /> {{ctrl.entry.updateTime | date:'short'}})
                 </span>
                 <span ng-show="ctrl.entry.status == 'SCHEDULED'" style="color:orange; font-weight:bold">
-                    <fmt:message key="weblogEdit.scheduled" />
-                    (<fmt:message key="weblogEdit.updateTime"/> {{ctrl.entry.updateTime | date:'short'}})
+                    <fmt:message key="entryEdit.scheduled" />
+                    (<fmt:message key="entryEdit.updateTime"/> {{ctrl.entry.updateTime | date:'short'}})
                 </span>
                 <span ng-show="!ctrl.entry.status" style="color:red; font-weight:bold">
-                    <fmt:message key="weblogEdit.unsaved" />
+                    <fmt:message key="entryEdit.unsaved" />
                 </span>
             </td>
         </tr>
 
         <tr ng-show="ctrl.entry.id" ng-cloak>
             <td class="entryEditFormLabel">
-                <label for="permalink"><fmt:message key="weblogEdit.permalink" /></label>
+                <label for="permalink"><fmt:message key="entryEdit.permalink" /></label>
             </td>
             <td>
                 <span ng-show="ctrl.entry.status == 'PUBLISHED'">
@@ -136,7 +136,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
+                <label for="categoryId"><fmt:message key="entryEdit.category" /></label>
             </td>
             <td ng-cloak>
                 <select id="categoryId" ng-model="ctrl.entry.category.id" size="1" required>
@@ -147,7 +147,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="tags"><fmt:message key="weblogEdit.tags" /></label>
+                <label for="tags"><fmt:message key="entryEdit.tags" /></label>
             </td>
             <td>
                 <input id="tags" type="text" cssClass="entryEditTags" ng-model="ctrl.entry.tagsAsString"
@@ -157,7 +157,7 @@
 
         <tr ng-cloak>
             <td class="entryEditFormLabel">
-                <label for="title"><fmt:message key="weblogEdit.editFormat" /></label>
+                <label for="title"><fmt:message key="entryEdit.editFormat" /></label>
             </td>
             <td>
                 <span style="font-weight:bold">{{ctrl.metadata.editFormatDescriptions[ctrl.entry.editFormat]}}</span>
@@ -173,9 +173,9 @@
 
     <div id="accordion">
         <h3>
-            <fmt:message key="weblogEdit.content" />
+            <fmt:message key="entryEdit.content" />
             <span style="font-weight:normal;float:right;">
-                <a href="#" onClick="onClickAddImage();"><fmt:message key="weblogEdit.insertMediaFile" /></a>
+                <a href="#" onClick="onClickAddImage();"><fmt:message key="entryEdit.insertMediaFile" /></a>
             </span>
         </h3>
         <div>
@@ -226,11 +226,11 @@
                 <textarea id="edit_content" cols="75" rows="25" style="width:100%" ng-model="ctrl.entry.text" tabindex="5"></textarea>
             </span>
         </div>
-        <h3><fmt:message key="weblogEdit.summary"/><tags:help key="weblogEdit.summary.tooltip"/></h3>
+        <h3><fmt:message key="entryEdit.summary"/><tags:help key="entryEdit.summary.tooltip"/></h3>
         <div>
             <textarea id="edit_summary" cols="75" rows="10" style="width:100%" ng-model="ctrl.entry.summary" tabindex="6"></textarea>
         </div>
-        <h3><fmt:message key="weblogEdit.notes"/><tags:help key="weblogEdit.notes.tooltip"/></h3>
+        <h3><fmt:message key="entryEdit.notes"/><tags:help key="entryEdit.notes.tooltip"/></h3>
         <div>
             <textarea id="edit_notes" cols="75" rows="10" style="width:100%" ng-model="ctrl.entry.notes" tabindex="7"></textarea>
         </div>
@@ -240,7 +240,7 @@
     <%-- ********************************************************************* --%>
     <%-- Lightbox for popping up image chooser --%>
 
-    <div id="mediafile_edit_lightbox" title="<fmt:message key='weblogEdit.insertMediaFile'/>" style="display:none">
+    <div id="mediafile_edit_lightbox" title="<fmt:message key='entryEdit.insertMediaFile'/>" style="display:none">
         <iframe id="mediaFileChooser"
                 style="visibility:inherit"
                 height="100%"
@@ -254,10 +254,10 @@
     <%-- advanced settings  --%>
 
     <div class="controlToggle">
-        <fmt:message key="weblogEdit.miscSettings" />
+        <fmt:message key="entryEdit.miscSettings" />
     </div>
 
-    <label for="link"><fmt:message key="weblogEdit.specifyPubTime" />:</label>
+    <label for="link"><fmt:message key="entryEdit.specifyPubTime" />:</label>
     <div>
         <input type="number" min="0" max="23" step="1" ng-model="ctrl.entry.hours"/>
         :
@@ -269,8 +269,8 @@
     <br />
 
     <span ng-show="ctrl.metadata.commentingEnabled">
-        <fmt:message key="weblogEdit.allowComments" />
-        <fmt:message key="weblogEdit.commentDays" />
+        <fmt:message key="entryEdit.allowComments" />
+        <fmt:message key="entryEdit.commentDays" />
         <select id="commentDaysId" ng-model="ctrl.entry.commentDays" size="1" required>
            <option ng-repeat="(key, value) in ctrl.metadata.commentDayOptions" value="{{key}}">{{value}}</option>
         </select>
@@ -281,21 +281,21 @@
 
     <table>
         <tr>
-            <td><fmt:message key="weblogEdit.searchDescription" />:<tags:help key="weblogEdit.searchDescription.tooltip"/></td>
+            <td><fmt:message key="entryEdit.searchDescription" />:<tags:help key="entryEdit.searchDescription.tooltip"/></td>
             <td style="width:75%"><input type="text" style="width:100%" maxlength="255" ng-model="ctrl.entry.searchDescription"></td>
         </tr>
         <tr>
-            <td><fmt:message key="weblogEdit.enclosureURL" />:<tags:help key="weblogEdit.enclosureURL.tooltip"/></td>
+            <td><fmt:message key="entryEdit.enclosureURL" />:<tags:help key="entryEdit.enclosureURL.tooltip"/></td>
             <td><input type="text" style="width:100%" maxlength="255" ng-model="ctrl.entry.enclosureUrl"></td>
         </tr>
         <tr ng-show="entryId">
             <td></td>
             <td>
                 <span ng-show="ctrl.entry.enclosureType">
-                    <fmt:message key="weblogEdit.enclosureType" />: {{ctrl.entry.enclosureType}}
+                    <fmt:message key="entryEdit.enclosureType" />: {{ctrl.entry.enclosureType}}
                 </span>
                 <span ng-show="ctrl.entry.enclosureLength">
-                    <fmt:message key="weblogEdit.enclosureLength" />: {{ctrl.entry.enclosureLength}}
+                    <fmt:message key="entryEdit.enclosureLength" />: {{ctrl.entry.enclosureLength}}
                 </span>
             </td>
         </tr>
@@ -307,24 +307,24 @@
     <br>
     <div class="control">
         <span style="padding-left:7px">
-            <input type="button" value="<fmt:message key='weblogEdit.save'/>" ng-click="ctrl.saveEntry('DRAFT')"/>
+            <input type="button" value="<fmt:message key='entryEdit.save'/>" ng-click="ctrl.saveEntry('DRAFT')"/>
             <span ng-show="ctrl.entry.id">
-                <input type="button" value="<fmt:message key='weblogEdit.fullPreviewMode' />" ng-click="ctrl.previewEntry()" />
+                <input type="button" value="<fmt:message key='entryEdit.fullPreviewMode' />" ng-click="ctrl.previewEntry()" />
             </span>
             <span ng-show="ctrl.metadata.author">
-                <input type="button" value="<fmt:message key='weblogEdit.post'/>" ng-click="ctrl.saveEntry('PUBLISHED')"/>
+                <input type="button" value="<fmt:message key='entryEdit.post'/>" ng-click="ctrl.saveEntry('PUBLISHED')"/>
             </span>
             <span ng-show="!ctrl.metadata.author">
-                <input type="button" value="<fmt:message key='weblogEdit.submitForReview'/>" ng-click="ctrl.saveEntry('PENDING')"/>
+                <input type="button" value="<fmt:message key='entryEdit.submitForReview'/>" ng-click="ctrl.saveEntry('PENDING')"/>
             </span>
         </span>
 
         <span style="float:right" ng-show="ctrl.entry.id">
-            <input type="button" value="<fmt:message key='weblogEdit.deleteEntry'/>" id="delete-link"/>
+            <input type="button" value="<fmt:message key='entryEdit.deleteEntry'/>" delete-entry-dialog="confirm-delete"/>
         </span>
     </div>
 </div>
 
-<div id="confirm-delete" title="<fmt:message key='weblogEdit.deleteEntry'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="weblogEntryRemove.areYouSure"/></p>
+<div id="confirm-delete" title="<fmt:message key='entryEdit.deleteEntry'/>" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="entryEdit.confirmDelete"/></p>
 </div>

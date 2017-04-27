@@ -81,7 +81,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     @Override
     public String getEntryAddURL(String weblogId, boolean absolute) {
-        String url = getRootURL(absolute) + "/tb-ui/authoring/entryAdd.rol";
+        String url = getRootURL(absolute) + "/tb-ui/app/authoring/entryAdd";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
         return url + Utilities.getQueryString(params);
@@ -89,7 +89,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     @Override
     public String getEntryEditURL(String weblogId, String entryId, boolean absolute) {
-        String url = getRootURL(absolute) + "/tb-ui/authoring/entryEdit.rol";
+        String url = getRootURL(absolute) + "/tb-ui/app/authoring/entryEdit";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
         params.put("entryId", entryId);

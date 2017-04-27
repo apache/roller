@@ -76,14 +76,14 @@ public class WeblogEntry {
     public enum PubStatus { DRAFT, PUBLISHED, PENDING, SCHEDULED }
 
     public enum CommentDayOption {
-        UNLIMITED(-1, "weblogEdit.unlimitedCommentDays"),
-        ZERO(0, "weblogEdit.days0"),
-        THREE(3, "weblogEdit.days3"),
-        SEVEN(7, "weblogEdit.days7"),
-        FOURTEEN(14, "weblogEdit.days14"),
-        THIRTY(30, "weblogEdit.days30"),
-        SIXTY(60, "weblogEdit.days60"),
-        NINETY(90, "weblogEdit.days90");
+        UNLIMITED(-1, "entryEdit.unlimitedCommentDays"),
+        ZERO(0, "entryEdit.days0"),
+        THREE(3, "entryEdit.days3"),
+        SEVEN(7, "entryEdit.days7"),
+        FOURTEEN(14, "entryEdit.days14"),
+        THIRTY(30, "entryEdit.days30"),
+        SIXTY(60, "entryEdit.days60"),
+        NINETY(90, "entryEdit.days90");
 
         int days;
 

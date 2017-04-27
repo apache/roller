@@ -20,12 +20,12 @@ Defines the menus provided with Weblogger
     </menu>
     <menu id="editor">
         <tab titleKey="tabbedmenu.weblog" globalRole="BLOGGER" weblogRole="EDIT_DRAFT" >
-            <tabItem action="entryAdd.rol"
-                     actionPath="/tb-ui/authoring/"
-                     titleKey="tabbedmenu.weblog.newEntry"
+            <tabItem action="entryAdd"
+                     actionPath="/tb-ui/app/authoring/"
+                     titleKey="entryAdd.title"
                      weblogRole="EDIT_DRAFT">
                 <subactions>
-                    <subaction>entryEdit.rol</subaction>
+                    <subaction>entryEdit</subaction>
                 </subactions>
             </tabItem>
 
@@ -60,7 +60,7 @@ Defines the menus provided with Weblogger
 
             <tabItem action="mediaFileView"
                      actionPath="/tb-ui/app/authoring/"
-                     titleKey="tabbedmenu.weblog.mediaFiles"
+                     titleKey="mediaFileView.title"
                      weblogRole="POST">
                 <subactions>
                     <subaction>mediaFileAdd</subaction>

@@ -582,18 +582,18 @@ public class WeblogEntryController {
 
                 switch (entry.getStatus()) {
                     case DRAFT:
-                        ssr.message = messages.getString("weblogEdit.draftSaved");
+                        ssr.message = messages.getString("entryEdit.draftSaved");
                         break;
                     case PUBLISHED:
-                        ssr.message = messages.getString("weblogEdit.publishedEntry");
+                        ssr.message = messages.getString("entryEdit.publishedEntry");
                         break;
                     case SCHEDULED:
-                        ssr.message = messages.getString("weblogEdit.scheduledEntry",
+                        ssr.message = messages.getString("entryEdit.scheduledEntry",
                                 DateTimeFormatter.ISO_DATE_TIME.withZone(entry.getWeblog().getZoneId())
                                         .format(entry.getPubTime()));
                         break;
                     case PENDING:
-                        ssr.message = messages.getString("weblogEdit.submittedForReview");
+                        ssr.message = messages.getString("entryEdit.submittedForReview");
                         break;
                     default:
                 }

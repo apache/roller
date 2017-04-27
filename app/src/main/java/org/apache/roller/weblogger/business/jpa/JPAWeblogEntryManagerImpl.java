@@ -637,7 +637,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             if (response != 200) {
                 // Bad Response
                 log.debug("Mediacast error {}:{} from url {}", response, message, url);
-                throw new IllegalArgumentException("weblogEdit.mediaCastResponseError");
+                throw new IllegalArgumentException("entryEdit.mediaCastResponseError");
             } else {
                 String contentType = con.getContentType();
                 long length = con.getContentLength();
@@ -645,7 +645,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 if (contentType == null || length == -1) {
                     // Incomplete
                     log.debug("Response valid, but contentType or length is invalid");
-                    throw new IllegalArgumentException("weblogEdit.mediaCastLacksContentTypeOrLength");
+                    throw new IllegalArgumentException("entryEdit.mediaCastLacksContentTypeOrLength");
                 }
 
                 resource = new AtomEnclosure(url, contentType, length);
@@ -655,11 +655,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         } catch (MalformedURLException mfue) {
             // Bad URL
             log.debug("Malformed MediaCast url: {}", url);
-            throw new IllegalArgumentException("weblogEdit.mediaCastUrlMalformed", mfue);
+            throw new IllegalArgumentException("entryEdit.mediaCastUrlMalformed", mfue);
         } catch (Exception e) {
             // Check Failed
             log.error("ERROR while checking MediaCast URL: {}: {}", url, e.getMessage());
-            throw new IllegalArgumentException("weblogEdit.mediaCastFailedFetchingInfo", e);
+            throw new IllegalArgumentException("entryEdit.mediaCastFailedFetchingInfo", e);
         }
         return resource;
     }

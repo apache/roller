@@ -26,7 +26,7 @@
             
             <div class="sidebarInner">
                 
-                <h3><fmt:message key="weblogEdit.comments" /></h3>
+                <h3><fmt:message key="entryEdit.comments" /></h3>
 
                 <div ng-show="ctrl.entry.commentCount > 0">
                     <a ng-href="{{ctrl.entry.commentsUrl}}" ng-bind-html="ctrl.commentCountMsg"></a>
@@ -37,7 +37,7 @@
                 
                 <div ng-show="ctrl.recentEntries.PENDING.length > 0">
                     <hr size="1" noshade="noshade" />
-                    <h3><fmt:message key="weblogEdit.pendingEntries" /></h3>
+                    <h3><fmt:message key="entryEdit.pendingEntries" /></h3>
 
                     <span ng-repeat="post in ctrl.recentEntries.PENDING">
                         <span class="entryEditSidebarLink">
@@ -51,7 +51,7 @@
 
                 <div ng-show="ctrl.recentEntries.DRAFT.length > 0">
                     <hr size="1" noshade="noshade" />
-                    <h3><fmt:message key="weblogEdit.draftEntries" /></h3>
+                    <h3><fmt:message key="entryEdit.draftEntries" /></h3>
 
                     <span ng-repeat="post in ctrl.recentEntries.DRAFT">
                         <span class="entryEditSidebarLink">
@@ -65,7 +65,7 @@
 
                 <div ng-show="ctrl.recentEntries.PUBLISHED.length > 0">
                     <hr size="1" noshade="noshade" />
-                    <h3><fmt:message key="weblogEdit.publishedEntries" /></h3>
+                    <h3><fmt:message key="entryEdit.publishedEntries" /></h3>
 
                     <span ng-repeat="post in ctrl.recentEntries.PUBLISHED">
                         <span class="entryEditSidebarLink">
@@ -79,7 +79,7 @@
 
                 <div ng-show="ctrl.recentEntries.SCHEDULED.length > 0">
                     <hr size="1" noshade="noshade" />
-                    <h3><fmt:message key="weblogEdit.scheduledEntries" /></h3>
+                    <h3><fmt:message key="entryEdit.scheduledEntries" /></h3>
 
                     <span ng-repeat="post in ctrl.recentEntries.SCHEDULED">
                         <span class="entryEditSidebarLink">

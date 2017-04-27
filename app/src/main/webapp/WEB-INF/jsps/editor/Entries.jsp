@@ -210,7 +210,7 @@
             </td>
 
             <td>
-                <a target="_blank" ng-href="<c:url value='/tb-ui/authoring/entryEdit.rol'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId={{entry.id}}">
+                <a target="_blank" ng-href="<c:url value='/tb-ui/app/authoring/entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId={{entry.id}}">
                     <fmt:message key="generic.edit" />
                 </a>
             </td>
@@ -222,8 +222,8 @@
             </tr>
     </table>
 
-    <div id="confirm-delete" title="<fmt:message key='weblogEdit.deleteEntry'/>" style="display:none">
-       <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="weblogEntryRemove.areYouSure"/></p>
+    <div id="confirm-delete" title="<fmt:message key='entryEdit.deleteEntry'/>" style="display:none">
+       <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="entryEdit.confirmDelete"/></p>
     </div>
 
     <span ng-if="ctrl.entriesData.entries.length == 0">
