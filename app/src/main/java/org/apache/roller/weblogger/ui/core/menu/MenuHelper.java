@@ -117,12 +117,9 @@ public final class MenuHelper {
      * @param currentAction  the current action being invoked. Null to ignore.
      * @return Menu object
      */
-    public Menu getMenu(GlobalRole userGlobalRole, WeblogRole userWeblogRole, String currentAction, boolean useStruts) {
+    public Menu getMenu(GlobalRole userGlobalRole, WeblogRole userWeblogRole, String currentAction) {
         Menu menu = null;
 
-        if (useStruts) {
-            currentAction += ".rol";
-        }
         String menuId = actionToMenuIdMap.get(currentAction);
 
         if (menuId != null) {

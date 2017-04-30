@@ -19,7 +19,6 @@
         <lucene.version>6.2.1</lucene.version>
         <spring.version>4.3.3.RELEASE</spring.version>
         <spring.security.version>4.1.3.RELEASE</spring.security.version>
-        <struts2.version>2.5.2</struts2.version>
         <jackson.version>2.8.4</jackson.version>
         <log4j2.version>2.7</log4j2.version>
         <thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
@@ -46,9 +45,6 @@
              Important: set hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
              in your tightblog-custom.properties if using Hibernate with Tomcat
 
-             org.javassist:javassist:3.15.0 cannot replace differently named javassist:javassist:3.11.0
-             always provided by struts2-spring-plugin so filtering it out; already provided by JBoss anyway
-
              Note: Apache cannot distribute Hibernate due to it being LGPL, so these dependencies must be
              commented out in trunk.  We have this dependency declaration to help with testing on JBoss
              which uses Hibernate.
@@ -57,12 +53,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.2.3.Final</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -180,9 +170,21 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-jsp</artifactId>
+            <version>3.0.7</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3.2</version>
         </dependency>
 
         <!-- spring deps -->
@@ -291,18 +293,6 @@
                     <artifactId>spring-jdbc</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-spring-plugin</artifactId>
-            <version>${struts2.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-tiles-plugin</artifactId>
-            <version>${struts2.version}</version>
         </dependency>
 
         <!-- Java EE deps -->

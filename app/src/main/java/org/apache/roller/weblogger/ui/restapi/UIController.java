@@ -365,7 +365,7 @@ public class UIController {
     }
 
     private Menu getMenu(User user, String actionName, WeblogRole requiredRole) {
-        return menuHelper.getMenu(user.getGlobalRole(), requiredRole, actionName, false);
+        return menuHelper.getMenu(user.getGlobalRole(), requiredRole, actionName);
     }
 
 }

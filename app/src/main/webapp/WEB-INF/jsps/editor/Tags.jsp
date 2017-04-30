@@ -32,7 +32,7 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/tags.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/tags.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/tags'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <div id="successMessageDiv" class="messages" ng-show="ctrl.resultsMessage" ng-cloak>
     <p>{{ctrl.resultsMessage}}</p>

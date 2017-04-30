@@ -17,11 +17,6 @@
     </context-param>
 
     <filter>
-        <filter-name>struts2</filter-name>
-        <filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>securityFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
         <init-param>
@@ -118,23 +113,11 @@
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
-    <!-- Struts2 -->
-    <filter-mapping>
-        <filter-name>struts2</filter-name>
-        <url-pattern>*.rol</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
     <!-- Context Listeners -->
     <listener>
         <listener-class>org.apache.roller.weblogger.business.WebloggerContext</listener-class>
     </listener>
     
-    <listener>
-        <listener-class>org.apache.struts2.tiles.StrutsTilesListener</listener-class>
-    </listener>
-
     <servlet>
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -218,15 +201,12 @@
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/roller_j_security_check</url-pattern>
             <url-pattern>/tb-ui/app/login</url-pattern>
-            <url-pattern>/tb-ui/register</url-pattern>
-            <url-pattern>/tb-ui/register!save</url-pattern>
-            <url-pattern>/tb-ui/profile</url-pattern>
-            <url-pattern>/tb-ui/profile!save</url-pattern>
-            <url-pattern>/tb-ui/admin/*</url-pattern>
+            <url-pattern>/tb-ui/app/register</url-pattern>
+            <url-pattern>/tb-ui/app/profile</url-pattern>
+            <url-pattern>/tb-ui/app/admin/*</url-pattern>
             <url-pattern>/tb-ui/app/login-redirect</url-pattern>
-            <url-pattern>/tb-ui/authoring/userdata</url-pattern>
-            <url-pattern>/tb-ui/authoring/membersInvite.rol</url-pattern>
-            <url-pattern>/tb-ui/authoring/membersInvite!save.rol</url-pattern>
+            <url-pattern>/tb-ui/app/authoring/userdata</url-pattern>
+            <url-pattern>/tb-ui/app/authoring/members</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

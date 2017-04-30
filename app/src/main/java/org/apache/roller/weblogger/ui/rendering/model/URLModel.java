@@ -115,11 +115,11 @@ public class URLModel implements Model {
      */
     public String action(String action, String namespace) {
         if (namespace != null) {
-            if ("/tb-ui".equals(namespace)) {
+            if ("/tb-ui/app".equals(namespace)) {
                 return urlStrategy.getActionURL(action, namespace, null, null, true);
-            } else if ("/tb-ui/authoring".equals(namespace)) {
+            } else if ("/tb-ui/app/authoring".equals(namespace)) {
                 return urlStrategy.getActionURL(action, namespace, weblog, null, true);
-            } else if ("/tb-ui/admin".equals(namespace)) {
+            } else if ("/tb-ui/app/admin".equals(namespace)) {
                 return urlStrategy.getActionURL(action, namespace, null, null, true);
             }
         }

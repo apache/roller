@@ -14,13 +14,10 @@
         </Root>
         <Logger name="org.apache.roller" level="debug"/>
         <!--Logger name="org.apache.roller.weblogger.business" level="debug"/-->
-        <Logger name="org.apache.struts2" level="warn"/>
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="com.opensymphony.xwork2" level="error"/>
         <Logger name="org.springframework" level="warn"/>
         <Logger name="org.hibernate" level="error"/>
-        <!-- the struts2 file upload stuff has some overly verbose messaging -->
-        <Logger name="org.apache.struts2.interceptor.FileUploadInterceptor" level="error"/>
         <!-- Velocity talks *way* too much, so set it to log only FATAL problems -->
         <Logger name="org.apache.velocity" level="fatal"/>
     </Loggers>
