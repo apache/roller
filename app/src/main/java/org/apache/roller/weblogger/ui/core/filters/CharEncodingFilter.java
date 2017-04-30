@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.core.filters;
 
 import org.slf4j.Logger;
@@ -33,7 +35,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Entry point filter for all requests. This filter ensures that the request
  * encoding is set to UTF-8 before any other processing forces request parsing
- * using a default encoding.  It also syncs up the Struts and JSTL locales.
+ * using a default encoding.
  * This filter should normally be first in the chain.
  */
 public class CharEncodingFilter implements Filter {
@@ -46,10 +48,6 @@ public class CharEncodingFilter implements Filter {
     public void destroy() {
     }
 
-    /**
-     * Set the character encoding and sync up Struts and JSTL locales.  This filter should normally be first (and last)
-     * in the chain.
-     */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         log.debug("Processing CharEncodingFilter");

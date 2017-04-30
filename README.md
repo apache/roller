@@ -8,7 +8,7 @@ This more realistic goal--along with adopting the Spring framework, REST, and ot
 The 1.0.0 release of TightBlog uses 17 database tables compared to Roller V5.1.2's 33, 187 Java source files to 493 in Roller, and 55 JSPs vs. Roller's 96.  Only increase,
 a nice one, is about 15 more JavaScript files have been added, due to TightBlog's increased emphasis on browser-side processing.
 
-TightBlog 2.0 is underway.  Simplifications continuing, as of 22 March 2017 the application is at 14 database tables, 158 Java source files and 37 JSPs.
+TightBlog 2.0 is underway.  Simplifications continuing, as of 29 April 2017 the application is at 14 database tables, 156 Java source files and 37 JSPs.
 
 Check <a href="https://web-gmazza.rhcloud.com/blog/category/Blogs+%26+Wikis">my blog</a> for recent status updates.
 

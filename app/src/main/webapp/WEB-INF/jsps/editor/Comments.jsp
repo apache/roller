@@ -39,10 +39,10 @@
 
 <c:choose>
     <c:when test="${param.entryId == null}">
-        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/comments.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/authoring/comments'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
     </c:when>
     <c:otherwise>
-        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/authoring/comments.rol'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId=<c:out value='${param.entryId}'/>"/>
+        <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/authoring/comments'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId=<c:out value='${param.entryId}'/>"/>
     </c:otherwise>
 </c:choose>
 

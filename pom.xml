@@ -15,7 +15,7 @@
     <name>TightBlog</name>
     <description>
         TightBlog is an open source blog server built with open source Java
-        libraries including Struts2, Velocity, ROME and EclipseLink.
+        libraries including Spring MVC, Velocity, ROME and EclipseLink.
     </description>
     <url>https://github.com/gmazza/tightblog</url>
 
