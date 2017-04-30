@@ -166,7 +166,7 @@
               </td>
               <td>
                   <img src='<c:url value="/images/page_white_edit.png"/>' />
-                  <a target="_blank" ng-href="<c:url value='/tb-ui/authoring/entries.rol'/>?weblogId={{weblogRole.weblog.id}}">
+                  <a target="_blank" ng-href="<c:url value='/tb-ui/app/authoring/entries'/>?weblogId={{weblogRole.weblog.id}}">
                       <fmt:message key="userAdmin.editEntries" />
                   </a>
               </td>

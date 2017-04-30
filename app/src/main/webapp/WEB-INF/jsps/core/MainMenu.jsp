@@ -99,7 +99,7 @@ var msg= {
 
                    <%-- Show Entries and Comments links for users above EDIT_DRAFT role --%>
                    <span ng-if="role.weblogRole != 'EDIT_DRAFT'">
-                       <c:url var="editEntries" value="/tb-ui/authoring/entries.rol"/>
+                       <c:url var="editEntries" value="/tb-ui/app/authoring/entries"/>
                        <img src='<c:url value="/images/table_multiple.png"/>' />
                        <a href="${editEntries}?weblogId={{role.weblog.id}}"><fmt:message key="mainMenu.editEntries" /></a>
                        <br>
