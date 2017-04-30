@@ -29,9 +29,9 @@ Defines the menus provided with Weblogger
                 </subactions>
             </tabItem>
 
-            <tabItem action="entries.rol"
-                     actionPath="/tb-ui/authoring/"
-                     titleKey="tabbedmenu.weblog.archives"
+            <tabItem action="entries"
+                     actionPath="/tb-ui/app/authoring/"
+                     titleKey="entries.title"
                      weblogRole="POST">
             </tabItem>
 

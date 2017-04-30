@@ -31,7 +31,7 @@
         <put-attribute name="menu"         value="/WEB-INF/jsps/tiles/menu.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
-        <put-attribute name="useAngularHeader" value="false" />
+        <put-attribute name="useAngularHeader" value="true" />
     </definition>
 
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
@@ -39,7 +39,7 @@
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
-        <put-attribute name="useAngularHeader" value="false" />
+        <put-attribute name="useAngularHeader" value="true" />
     </definition>
 
     <definition name=".tiles-no-nav-page" template="/WEB-INF/jsps/tiles/tiles-no-nav-page.jsp">
@@ -64,135 +64,119 @@
     <!-- core pages (and associates) -->
     <definition name=".login" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
+        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <definition name=".profile" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".register" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".mainMenu" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/MainMenu.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <!-- setup page -->
     <definition name=".install" extends=".tiles-no-nav-page" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Install.jsp" />
         <put-attribute name="titleRight" value="installer.bannerTitleRight"/>
+        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <!-- global admin pages (and associates) -->
     <definition name=".globalConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".userAdmin" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".pingTargets" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargets.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".cacheInfo" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <!-- weblog editor pages (and associates) -->
     <definition name=".mediaFileEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".mediaFileAdd" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".mediaFileChooser" extends=".tiles-popuppage" >
         <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileChooser.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".mediaFileView" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".entryEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="sidebarType"  value="sidebar" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".entryAdd" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="sidebarType"  value="sidebar" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".Entries" extends=".tiles-tabbedpage" >
+    <definition name=".entries" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Entries.jsp" />
+        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".Comments" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
+        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <definition name=".categories" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".Tags" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Tags.jsp" />
+        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <definition name=".bookmarks" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".createWeblog" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogConfig.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".weblogConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogConfig.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".themeEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/ThemeEdit.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".templates" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Templates.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".templateEdit" extends=".tiles-tabbedpage"  >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateEdit.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
     <definition name=".members" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Members.jsp" />
-        <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
 </tiles-definitions>

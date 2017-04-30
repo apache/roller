@@ -32,7 +32,7 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/tags.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/entries.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/tags.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <div id="ngapp-div" ng-app="tightblogApp" ng-controller="TagsController as ctrl">
 

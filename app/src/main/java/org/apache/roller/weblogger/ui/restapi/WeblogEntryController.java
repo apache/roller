@@ -209,16 +209,16 @@ public class WeblogEntryController {
 
             // sort by options
             fields.sortByOptions = new LinkedHashMap<>();
-            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(), messages.getString("weblogEntryQuery.label.pubTime"));
-            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(), messages.getString("weblogEntryQuery.label.updateTime"));
+            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(), messages.getString("entries.label.pubTime"));
+            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(), messages.getString("entries.label.updateTime"));
 
             // status options
             fields.statusOptions = new LinkedHashMap<>();
-            fields.statusOptions.put("", messages.getString("weblogEntryQuery.label.allEntries"));
-            fields.statusOptions.put("DRAFT", messages.getString("weblogEntryQuery.label.draftOnly"));
-            fields.statusOptions.put("PUBLISHED", messages.getString("weblogEntryQuery.label.publishedOnly"));
-            fields.statusOptions.put("PENDING", messages.getString("weblogEntryQuery.label.pendingOnly"));
-            fields.statusOptions.put("SCHEDULED", messages.getString("weblogEntryQuery.label.scheduledOnly"));
+            fields.statusOptions.put("", messages.getString("entries.label.allEntries"));
+            fields.statusOptions.put("DRAFT", messages.getString("entries.label.draftOnly"));
+            fields.statusOptions.put("PUBLISHED", messages.getString("entries.label.publishedOnly"));
+            fields.statusOptions.put("PENDING", messages.getString("entries.label.pendingOnly"));
+            fields.statusOptions.put("SCHEDULED", messages.getString("entries.label.scheduledOnly"));
 
             return fields;
         } else {
