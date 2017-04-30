@@ -1,6 +1,7 @@
 package org.apache.roller.weblogger.ui.restapi;
 
 import org.apache.roller.weblogger.business.MailManager;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -38,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/tb-ui/authoring/rest/comments")
@@ -91,6 +93,13 @@ public class CommentController {
     }
 
     @Autowired
+    private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
+    @Autowired
     private MailManager mailManager;
 
     public void setMailManager(MailManager manager) {
@@ -117,7 +126,10 @@ public class CommentController {
 
             List<WeblogEntryComment> rawComments = weblogEntryManager.getComments(criteria);
             data.comments = new ArrayList<>();
-            data.comments.addAll(rawComments);
+            data.comments.addAll(rawComments.stream()
+                    .peek(c -> c.getWeblogEntry().setPermalink(
+                            urlStrategy.getWeblogEntryURL(weblog, c.getWeblogEntry().getAnchor(), true)))
+                    .collect(Collectors.toList()));
 
             if (rawComments.size() > ITEMS_PER_PAGE) {
                 data.comments.remove(data.comments.size() - 1);
@@ -165,10 +177,10 @@ public class CommentController {
             // status options
             fields.statusOptions = new LinkedHashMap<>();
             fields.statusOptions.put("", messages.getString("generic.all"));
-            fields.statusOptions.put("PENDING", messages.getString("commentManagement.onlyPending"));
-            fields.statusOptions.put("APPROVED", messages.getString("commentManagement.onlyApproved"));
-            fields.statusOptions.put("DISAPPROVED", messages.getString("commentManagement.onlyDisapproved"));
-            fields.statusOptions.put("SPAM", messages.getString("commentManagement.onlySpam"));
+            fields.statusOptions.put("PENDING", messages.getString("comments.onlyPending"));
+            fields.statusOptions.put("APPROVED", messages.getString("comments.onlyApproved"));
+            fields.statusOptions.put("DISAPPROVED", messages.getString("comments.onlyDisapproved"));
+            fields.statusOptions.put("SPAM", messages.getString("comments.onlySpam"));
 
             return fields;
         } else {

@@ -73,22 +73,6 @@
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/tb-ui/authoring" extends="weblogger">
 
-        <action name="comments" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="actionName">comments</param>
-            <param name="pageTitleReal">commentManagement.title</param>
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">POST</param>
-            <result name="success" type="tiles">.Comments</result>
-        </action>
-
-        <action name="tags" class="org.apache.roller.weblogger.ui.struts2.UIAction">
-            <param name="requiredGlobalRole">BLOGGER</param>
-            <param name="requiredWeblogRole">POST</param>
-            <param name="actionName">tags</param>
-            <param name="pageTitleReal">tagsForm.rootTitle</param>
-            <result name="success" type="tiles">.Tags</result>
-        </action>
-
     </package>
 
 </struts>

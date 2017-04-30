@@ -35,9 +35,9 @@ Defines the menus provided with Weblogger
                      weblogRole="POST">
             </tabItem>
 
-            <tabItem action="comments.rol"
-                     actionPath="/tb-ui/authoring/"
-                     titleKey="tabbedmenu.weblog.commentManagement"
+            <tabItem action="comments"
+                     actionPath="/tb-ui/app/authoring/"
+                     titleKey="comments.title"
                      weblogRole="POST"/>
 
             <tabItem action="categories"
@@ -46,9 +46,9 @@ Defines the menus provided with Weblogger
                      weblogRole="POST">
             </tabItem>
 
-            <tabItem action="tags.rol"
-                     actionPath="/tb-ui/authoring/"
-                     titleKey="tabbedmenu.weblog.tags"
+            <tabItem action="tags"
+                     actionPath="/tb-ui/app/authoring/"
+                     titleKey="tags.title"
                      weblogRole="POST">
             </tabItem>
 
