@@ -55,7 +55,7 @@
 
 });
 
-tightblogApp.controller('TagsController', ['$http', function TagsController($http) {
+tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
     this.tagData = {};
     this.errorObj = null;
@@ -132,35 +132,23 @@ tightblogApp.controller('TagsController', ['$http', function TagsController($htt
 
   }]);
 
-tightblogApp.directive('addTagDialog', function(){
+function showTagDialog(action, titleStub) {
     return {
         restrict: 'A',
         link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.addTagDialog;
             elem.bind('click', function(e) {
-                $(dialogId).data('currentTag',  attr.currentTag)
-                           .data('action',  'add')
-                           .dialog("option", {"title" : 'Add to ' + attr.currentTag})
+                $('#change-tag-dialog').data('currentTag',  attr.currentTag)
+                           .data('action',  action)
+                           .dialog("option", {"title" : titleStub + attr.currentTag})
                            .dialog('open');
             });
         }
     };
-});
+}
 
-tightblogApp.directive('renameTagDialog', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.renameTagDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).data('currentTag',  attr.currentTag)
-                           .data('action',  'rename')
-                           .dialog("option", {"title" : 'Rename ' + attr.currentTag})
-                           .dialog('open');
-            });
-        }
-    };
-});
+tightblogApp.directive('addTagDialog', function(){return showTagDialog('add', 'Add to ')});
+
+tightblogApp.directive('renameTagDialog', function(){return showTagDialog('rename', 'Rename ')});
 
 tightblogApp.directive('confirmDeleteDialog', function(){
     return {
@@ -175,4 +163,3 @@ tightblogApp.directive('confirmDeleteDialog', function(){
         }
     };
 });
-

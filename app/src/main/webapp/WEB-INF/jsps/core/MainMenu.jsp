@@ -104,7 +104,7 @@ var msg= {
                        <a href="${editEntries}?weblogId={{role.weblog.id}}"><fmt:message key="mainMenu.editEntries" /></a>
                        <br>
 
-                       <c:url var="manageComments" value="/tb-ui/authoring/comments.rol"/>
+                       <c:url var="manageComments" value="/tb-ui/app/authoring/comments"/>
                        <img src='<c:url value="/images/page_white_edit.png"/>' />
                        <a href="${manageComments}?weblogId={{role.weblog.id}}"><fmt:message key="mainMenu.manageComments" /></a>
                        <br>

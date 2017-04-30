@@ -286,6 +286,16 @@ public class UIController {
         return getBlogPublisherPage(principal, null, weblogId, "entries");
     }
 
+    @RequestMapping(value = "/authoring/comments")
+    public ModelAndView comments(Principal principal, @RequestParam String weblogId) {
+        return getBlogPublisherPage(principal, null, weblogId, "comments");
+    }
+
+    @RequestMapping(value = "/authoring/tags")
+    public ModelAndView tags(Principal principal, @RequestParam String weblogId) {
+        return getBlogPublisherPage(principal, null, weblogId, "tags");
+    }
+
     private ModelAndView getBlogOwnerPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
         return getBlogPage(principal, map, weblogId, actionName, WeblogRole.OWNER);
     }

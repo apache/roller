@@ -34,85 +34,81 @@
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/authoring/tags.rol'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
-<div id="ngapp-div" ng-app="tightblogApp" ng-controller="TagsController as ctrl">
+<div id="successMessageDiv" class="messages" ng-show="ctrl.resultsMessage" ng-cloak>
+    <p>{{ctrl.resultsMessage}}</p>
+</div>
 
-    <div id="successMessageDiv" class="messages" ng-show="ctrl.resultsMessage" ng-cloak>
-        <p>{{ctrl.resultsMessage}}</p>
-    </div>
+<p class="subtitle">
+    <fmt:message key="tags.subtitle">
+        <fmt:param value="${actionWeblog.handle}"/>
+    </fmt:message>
+</p>
+<p class="pagetip">
+    <fmt:message key="tags.prompt"/>
+</p>
 
-    <p class="subtitle">
-        <fmt:message key="tagsForm.subtitle">
-            <fmt:param value="${actionWeblog.handle}"/>
-        </fmt:message>
-    </p>
-    <p class="pagetip">
-        <fmt:message key="tagsForm.rootPrompt"/>
-    </p>
+<div class="tablenav">
 
-    <div class="tablenav">
-
-        <span ng-if="ctrl.pageNum > 0 || ctrl.tagsData.hasMore">
-            <center>
-                &laquo;
-                <input type="button" value="<fmt:message key='weblogEntryQuery.prev'/>"
-                    ng-disabled="ctrl.pageNum <= 0" ng-click="ctrl.previousPage()">
-                |
-                <input type="button" value="<fmt:message key='weblogEntryQuery.next'/>"
-                    ng-disabled="!ctrl.tagsData.hasMore" ng-click="ctrl.nextPage()">
-                &raquo;
-            </center>
-        </span>
-
-        <br>
-    </div>
-
-    <table class="rollertable" width="100%">
-
-        <tr>
-            <th width="20%"><fmt:message key="tagsForm.column.tag" /></th>
-            <th width="10%"><fmt:message key="tagsForm.column.count" /></th>
-            <th width="16%"></th>
-            <th width="16%"></th>
-            <th width="16%"></th>
-            <th width="16%"></th>
-        </tr>
-
-        <tr ng-repeat="tag in ctrl.tagData.tags" ng-class-even="'altrow'">
-
-            <td>{{tag.name}}</td>
-            <td>{{tag.total}}</td>
-
-            <td>
-                <a ng-href='{{tag.viewUrl}}' target="_blank"><fmt:message key="tagsForm.column.view" /></a>
-            </td>
-
-            <td>
-                <button rename-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.rename" /></button>
-            </td>
-
-            <td>
-                <button add-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.add" /></button>
-            </td>
-
-            <td>
-                <button confirm-delete-dialog="confirm-delete-dialog" name-to-delete="{{tag.name}}"><fmt:message key="generic.delete" /></button>
-            </td>
-
-        </tr>
-    </table>
-
-    <div id="change-tag-dialog" style="display:none">
-      <label for="name"><fmt:message key='generic.name'/>:</label>
-      <input type="text" id="new-tag" class="text ui-widget-content ui-corner-all">
-    </div>
-
-    <div id="confirm-delete-dialog" style="display:none">
-       <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="tagsForm.confirm.delete"/></p>
-    </div>
-
-    <span ng-if="ctrl.tagsData.tags.length == 0">
-        <fmt:message key="tagsForm.noneFound" />
-        <br><br><br><br><br><br><br><br><br><br><br><br>
+    <span ng-if="ctrl.pageNum > 0 || ctrl.tagsData.hasMore">
+        <center>
+            &laquo;
+            <input type="button" value="<fmt:message key='weblogEntryQuery.prev'/>"
+                ng-disabled="ctrl.pageNum <= 0" ng-click="ctrl.previousPage()">
+            |
+            <input type="button" value="<fmt:message key='weblogEntryQuery.next'/>"
+                ng-disabled="!ctrl.tagsData.hasMore" ng-click="ctrl.nextPage()">
+            &raquo;
+        </center>
     </span>
 
+    <br>
 </div>
+
+<table class="rollertable" width="100%">
+
+    <tr>
+        <th width="20%"><fmt:message key="tags.column.tag" /></th>
+        <th width="10%"><fmt:message key="tags.column.count" /></th>
+        <th width="16%"></th>
+        <th width="16%"></th>
+        <th width="16%"></th>
+        <th width="16%"></th>
+    </tr>
+
+    <tr ng-repeat="tag in ctrl.tagData.tags" ng-class-even="'altrow'">
+
+        <td>{{tag.name}}</td>
+        <td>{{tag.total}}</td>
+
+        <td>
+            <a ng-href='{{tag.viewUrl}}' target="_blank"><fmt:message key="tags.column.view" /></a>
+        </td>
+
+        <td>
+            <button rename-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.rename" /></button>
+        </td>
+
+        <td>
+            <button add-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.add" /></button>
+        </td>
+
+        <td>
+            <button confirm-delete-dialog="confirm-delete-dialog" name-to-delete="{{tag.name}}"><fmt:message key="generic.delete" /></button>
+        </td>
+
+    </tr>
+</table>
+
+<div id="change-tag-dialog" style="display:none">
+  <label for="name"><fmt:message key='generic.name'/>:</label>
+  <input type="text" id="new-tag" class="text ui-widget-content ui-corner-all">
+</div>
+
+<div id="confirm-delete-dialog" style="display:none">
+   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="tags.confirm.delete"/></p>
+</div>
+
+<span ng-if="ctrl.tagsData.tags.length == 0">
+    <fmt:message key="tags.noneFound" />
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+</span>

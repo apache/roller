@@ -137,18 +137,16 @@
         <put-attribute name="useAngularHeader" value="true"/>
     </definition>
 
-    <definition name=".Comments" extends=".tiles-tabbedpage" >
+    <definition name=".comments" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
-        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <definition name=".categories" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
     </definition>
 
-    <definition name=".Tags" extends=".tiles-tabbedpage" >
+    <definition name=".tags" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Tags.jsp" />
-        <put-attribute name="useAngularHeader" value="false" />
     </definition>
 
     <definition name=".bookmarks" extends=".tiles-tabbedpage" >
