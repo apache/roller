@@ -41,10 +41,10 @@
         <category term="$utils.escapeXML($tag.name)" scheme="http://roller.apache.org/ns/tags/" />
 #end        
 #if( $utils.isNotEmpty($entry.summary))
-        <summary type="html">$utils.escapeXML($entry.transformedSummary)</summary>
+        <summary type="html">$utils.escapeXML($model.getTransformedSummary($entry))</summary>
 #end
 #if( $utils.isNotEmpty($entry.text) )
-        <content type="html">$utils.escapeXML($entry.transformedText)</content>
+        <content type="html">$utils.escapeXML($model.getTransformedText($entry))</content>
 #end
 #set( $mc_url = $entry.enclosureUrl )
 #set( $mc_type = $entry.enclosureType )
