@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesTimePager;
@@ -108,6 +109,21 @@ public class FeedModel implements Model {
      */
     public String getTag() {
         return feedRequest.getTag();
+    }
+
+    public String getTransformedText(WeblogEntry entry) {
+        return render(entry.getEditFormat(), entry.getText());
+    }
+
+    public String getTransformedSummary(WeblogEntry entry) {
+        return render(entry.getEditFormat(), entry.getSummary());
+    }
+
+    /**
+     * Transform string based on Edit Format and HTML policy
+     */
+    private String render(Weblog.EditFormat format, String str) {
+        return weblogEntryManager.processBlogText(format, str);
     }
 
     public class FeedEntriesPager extends WeblogEntriesTimePager {

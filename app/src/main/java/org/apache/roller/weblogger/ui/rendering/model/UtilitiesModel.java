@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.util.Utilities;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.List;
@@ -130,8 +129,8 @@ public class UtilitiesModel implements Model {
      * see https://tools.ietf.org/html/rfc4287#section-3.3
      * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
      */
-    public String formatIsoOffsetDateTime(LocalDateTime date) {
-        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.of(date, zoneId));
+    public String formatIsoOffsetDateTime(Temporal dt) {
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(zoneId).format(dt);
     }
 
     //------------------------------------------------------------ String utils

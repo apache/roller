@@ -182,22 +182,16 @@ public class PageModel implements Model {
         }
     }
 
-    /**
-     * Get entry text, transformed by plugins enabled for entry.
-     */
     public String getTransformedText(WeblogEntry entry) {
         return render(entry.getEditFormat(), entry.getText());
     }
 
-    /**
-     * Get entry summary, transformed by plugins enabled for entry.
-     */
     public String getTransformedSummary(WeblogEntry entry) {
         return render(entry.getEditFormat(), entry.getSummary());
     }
 
     /**
-     * Transform string based on plugins enabled for this weblog entry.
+     * Transform string based on Edit Format and HTML policy
      */
     private String render(Weblog.EditFormat format, String str) {
         return weblogEntryManager.processBlogText(format, str);
