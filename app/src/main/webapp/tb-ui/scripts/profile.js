@@ -95,7 +95,7 @@ tightblogApp.controller('PageController', ['$http',
         this.loadMetadata();
         if (userId) {
             this.loadUser();
-        } else if (authMethod == "ldap") {
+        } else if (authMethod == "LDAP") {
             this.loadLDAPData();
         }
     }]

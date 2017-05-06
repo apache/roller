@@ -59,7 +59,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     @Override
     public String getRegisterURL(boolean absolute) {
-        return getRootURL(absolute) + "/tb-ui/register";
+        return getRootURL(absolute) + "/tb-ui/app/register";
     }
 
     @Override

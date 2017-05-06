@@ -68,7 +68,7 @@
             <c:set var="passwordTipKey">userRegister.tip.password</c:set>
             <c:set var="passwordConfirmTipKey">userRegister.tip.passwordConfirm</c:set>
             <c:set var="saveButtonText">userRegister.button.save</c:set>
-            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/register'/>"/>
+            <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/register'/>"/>
             <input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
             <div ng-hide="ctrl.profileUserId">
                 <p><fmt:message key="userRegister.prompt"/></p>

@@ -136,9 +136,9 @@ public class UIController {
             User user = userManager.getEnabledUserByUserName(principal.getName());
 
             if (user == null) {
-                /* If authentication successful but no user, authentication must have been via LDAP without
+                /* If authentication successful but no user in DB, authentication must have been via LDAP without
                    the user having registered yet.  So forward to the registration page... */
-                response.sendRedirect(request.getContextPath() + "/tb-ui/register");
+                response.sendRedirect(request.getContextPath() + "/tb-ui/app/register");
             } else {
                 if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
                     response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
@@ -157,7 +157,7 @@ public class UIController {
     }
 
     @RequestMapping(value = "/get-default-blog")
-    public void getDefaultBlog(Principal principal, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void getDefaultBlog(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Weblog defaultBlog = WebloggerContext.getWebloggerProperties().getMainBlog();
         String path;
 

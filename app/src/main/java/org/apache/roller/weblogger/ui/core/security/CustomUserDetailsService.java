@@ -20,11 +20,12 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerContext;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig.AuthMethod;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.UserCredentials;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,14 +37,23 @@ import java.util.List;
 
 /**
  * Spring Security UserDetailsService implemented using Weblogger API.
- * Configured in security.xml to be used by both DB and LDAP authentication, however
- * LDAP uses this class just to obtain authorities.
+ * Configured in security.xml to be used by both DB and LDAP authentication.
+ * DB auth uses this class to obtain correct DB-stored credentials to compare against
+ * user input to determine if login successful.
+ * For LDAP, auth against directory already successful if this class entered, only
+ * purpose of this class is to report Global Role of user.
  */
 public class CustomUserDetailsService implements UserDetailsService {
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
     }
 
     /**
@@ -59,17 +69,31 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         boolean usingDBAuth = (WebloggerStaticConfig.getAuthMethod() == AuthMethod.DB);
-        UserCredentials creds;
+        UserCredentials creds = userManager.getCredentialsByUserName(userName);
+        GlobalRole targetGlobalRole;
+        String targetPassword;
 
-        // for DB auth, password is required to be in the DB; LDAP has no DB-stored password.
-        creds = userManager.getCredentialsByUserName(userName);
-        if (creds == null || (usingDBAuth && StringUtils.isBlank(creds.getPassword()))) {
-            throw new UsernameNotFoundException("ERROR no user: " + userName);
+        if (usingDBAuth) {
+            if (creds == null) {
+                throw new UsernameNotFoundException("ERROR no user: " + userName);
+            }
+            targetPassword = creds.getPassword();
+            targetGlobalRole = creds.getGlobalRole();
+        } else {
+            // for LDAP, password unused, auth already occurred
+            targetPassword = "";
+            if (userManager.getUserCount() == 0) {
+                targetGlobalRole = GlobalRole.ADMIN;
+            } else {
+                targetGlobalRole = (creds != null) ? creds.getGlobalRole() :
+                        persistenceStrategy.getWebloggerProperties().isUsersCreateBlogs() ?
+                                GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER;
+            }
         }
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>(1);
-        authorities.add(new SimpleGrantedAuthority(creds.getGlobalRole().name()));
-        return new org.springframework.security.core.userdetails.User(creds.getUserName(), creds.getPassword(),
+        authorities.add(new SimpleGrantedAuthority(targetGlobalRole.name()));
+        return new org.springframework.security.core.userdetails.User(userName, targetPassword,
                 true, true, true, true, authorities);
     }
 }

@@ -249,7 +249,7 @@ public final class WebloggerStaticConfig {
      *                                  file is missing or not the property name of any AuthMethod enum object.
      */
     public static AuthMethod getAuthMethod() {
-        return AuthMethod.valueOf(getProperty("authentication.method", "DB").toUpperCase());
+        return AuthMethod.valueOf(getProperty("authentication.method", "DB"));
     }
 
 }
