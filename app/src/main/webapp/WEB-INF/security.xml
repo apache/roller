@@ -32,12 +32,13 @@
     <http pattern="/styles/**" security="none"/>
 
     <http use-expressions="false" auto-config="false" access-decision-manager-ref="accessDecisionManager">
+        <intercept-url pattern="/tb-ui/admin/**" access="ADMIN"/>
         <intercept-url pattern="/tb-ui/app/admin/**" access="ADMIN"/>
         <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
         <intercept-url pattern="/tb-ui/app/authoring/**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
         <intercept-url pattern="/tb-ui/app/createWeblog" access="ADMIN,BLOGCREATOR"/>
         <intercept-url pattern="/tb-ui/app/login-redirect" access="ADMIN,BLOGCREATOR,BLOGGER"/>
-        <intercept-url pattern="/tb-ui/profile" access="ADMIN,BLOGCREATOR,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/app/profile" access="ADMIN,BLOGCREATOR,BLOGGER"/>
         <intercept-url pattern="/tb-ui/app/home" access="ADMIN,BLOGCREATOR,BLOGGER"/>
 
         <!-- Detect login redirects occurring as a result of Ajax GET calls and send a 408 (timeout) response
@@ -109,6 +110,7 @@
 
     <beans:bean id="userDetailsService" class="org.apache.roller.weblogger.ui.core.security.CustomUserDetailsService">
         <beans:property name="userManager" ref="userManager"/>
+        <beans:property name="persistenceStrategy" ref="persistenceStrategy"/>
     </beans:bean>
 
     <!-- Uncomment & customize below beans if using LDAP

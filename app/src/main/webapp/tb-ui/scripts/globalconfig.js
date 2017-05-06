@@ -23,7 +23,7 @@ tightblogApp.controller('PageController', ['$http',
 
         this.updateProperties = function(saveType) {
             // if no main blog chosen, set it to null
-            if (!self.webloggerProps.mainBlog.id) {
+            if (self.webloggerProps.mainBlog && !self.webloggerProps.mainBlog.id) {
                 self.webloggerProps.mainBlog = null;
             }
 
