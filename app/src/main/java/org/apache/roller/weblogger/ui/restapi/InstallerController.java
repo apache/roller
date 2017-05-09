@@ -191,7 +191,7 @@ public class InstallerController {
 
             WebloggerContext.bootstrap(ac);
             log.info("EXITING - Bootstrap successful, forwarding to weblogger");
-            response.sendRedirect(request.getContextPath()+"/tb-ui/app/register");
+            response.sendRedirect(request.getContextPath());
             return null;
         } catch (Exception e) {
             log.error("Exception", e);
