@@ -31,7 +31,7 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/globalconfig.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/admin/globalConfig'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/globalConfig'/>"/>
 
 <p><fmt:message key="globalConfig.prompt" /></p>
 
