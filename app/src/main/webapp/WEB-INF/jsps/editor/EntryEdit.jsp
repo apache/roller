@@ -50,16 +50,21 @@
     <c:when test="${actionName == 'entryEdit'}">
         <c:set var="subtitleKey">entryEdit.subtitle.editEntry</c:set>
         <c:set var="mainAction">entryEdit</c:set>
-        <input id="refreshURL" type="hidden"
-            value="<c:url value='/tb-ui/app/authoring/entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"\
-                "&entryId=<c:out value='${param.entryId}'/>"/>
+        <c:url var="refreshUrl" value="/tb-ui/app/authoring/entryEdit">
+            <c:param name="weblogId" value="${param.weblogId}"/>
+            <c:param name="entryId" value="${param.entryId}"/>
+        </c:url>
     </c:when>
     <c:otherwise>
         <c:set var="subtitleKey">entryEdit.subtitle.newEntry</c:set>
         <c:set var="mainAction">entryAdd</c:set>
-        <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/entryAdd'/>"/>
+        <c:url var="refreshUrl" value="/tb-ui/app/authoring/entryAdd">
+            <c:param name="weblogId" value="${param.weblogId}"/>
+        </c:url>
     </c:otherwise>
 </c:choose>
+
+    <input id="refreshURL" type="hidden" value="${refreshURL}"/>
 
     <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
       <b>{{ctrl.errorObj.errorMessage}}</b>

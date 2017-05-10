@@ -77,7 +77,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
                 if (response.status == 400) {
                    self.errorObj = response.data;
                 } else {
-                   self.commonErrorResponse;
+                   self.commonErrorResponse(response);
                 }
               })
         }

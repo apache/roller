@@ -36,6 +36,13 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/templateedit.js'/>"></script>
 
+<c:url var="refreshUrl" value="/tb-ui/app/authoring/templateedit">
+    <c:param name="weblogId" value="${param.weblogId}"/>
+    <c:param name="templateId" value="${param.templateId}"/>
+    <c:param name="templateName" value="${param.templateName}"/>
+</c:url>
+<input id="refreshURL" type="hidden" value="${refreshURL}"/>
+
 <div id="successMessageDiv" class="messages" ng-show="ctrl.showSuccessMessage" ng-cloak>
     <p><fmt:message key="generic.changes.saved"/> ({{ctrl.templateData.lastModified | date:'short'}})</p>
 </div>

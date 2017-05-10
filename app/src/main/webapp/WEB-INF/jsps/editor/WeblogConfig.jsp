@@ -57,6 +57,7 @@
         <fmt:message var="saveButtonText" key="weblogConfig.create.button.save"/>
         <fmt:message var="subtitlePrompt" key="weblogConfig.create.prompt"/>
         <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/createWeblog'/>"/>
+        <c:url var="refreshUrl" value="/tb-ui/app/createWeblog"/>
     </c:when>
     <%-- Update Weblog --%>
     <c:otherwise>
@@ -64,10 +65,13 @@
         <fmt:message var="subtitlePrompt" key="weblogConfig.prompt">
             <fmt:param value="${actionWeblog.handle}"/>
         </fmt:message>
-        <input type="hidden" id="refreshURL"
-               value="<c:url value='/tb-ui/app/authoring/weblogConfig'/>?weblogId=<c:out value='${weblogId}'/>"/>
+        <c:url var="refreshUrl" value="/tb-ui/app/weblogConfig">
+            <c:param name="weblogId" value="${param.weblogId}"/>
+        </c:url>
     </c:otherwise>
 </c:choose>
+
+<input id="refreshURL" type="hidden" value="${refreshURL}"/>
 
 <p class="subtitle">
     ${subtitlePrompt}
