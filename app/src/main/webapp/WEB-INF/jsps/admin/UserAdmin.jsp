@@ -29,7 +29,7 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/useradmin.js'/>"></script>
 
-<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/admin/userAdmin'/>"/>
+<input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/admin/userAdmin'/>"/>
 
 <div id="successMessageDiv" class="messages" ng-show="ctrl.successMessage" ng-cloak>
     <p>{{ctrl.successMessage}}</p>

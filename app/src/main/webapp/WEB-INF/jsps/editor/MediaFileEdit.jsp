@@ -49,9 +49,11 @@
         <c:set var="subtitleKey">mediaFileEdit.subtitle</c:set>
         <c:set var="mainAction">mediaFileEdit</c:set>
         <c:set var="pageTip">mediaFileEdit.pagetip</c:set>
-        <input id="refreshURL" type="hidden"
-            value="<c:url value='/tb-ui/app/authoring/mediaFileEdit'/>?weblogId=<c:out value='${param.weblogId}'/>"\
-                "&directoryId=<c:out value='${param.directoryId}'/>&mediaFileId=<c:out value='${param.mediaFileId}'/>"/>
+        <c:url var="refreshUrl" value="/tb-ui/app/authoring/mediaFileEdit">
+            <c:param name="weblogId" value="${param.weblogId}"/>
+            <c:param name="directoryId" value="${param.directoryId}"/>
+            <c:param name="mediaFileId" value="${param.mediaFileId}"/>
+        </c:url>
         <div ng-if="ctrl.mediaFileData.imageFile" class="mediaFileThumbnail">
             <a ng-href='{{ctrl.mediaFileData.permalink}}' target="_blank">
                 <img align="right" alt="thumbnail" ng-src='{{ctrl.mediaFileData.thumbnailURL}}'
@@ -63,11 +65,14 @@
         <c:set var="subtitleKey">mediaFileAdd.title</c:set>
         <c:set var="mainAction">mediaFileAdd</c:set>
         <c:set var="pageTip">mediaFileAdd.pageTip</c:set>
-        <input id="refreshURL" type="hidden"
-            value="<c:url value='/tb-ui/app/authoring/mediaFileAdd'/>?weblogId=<c:out value='${param.weblogId}'/>"\
-                "&directoryId=<c:out value='${param.directoryId}'/>"/>
+        <c:url var="refreshUrl" value="/tb-ui/app/authoring/mediaFileAdd">
+            <c:param name="weblogId" value="${param.weblogId}"/>
+            <c:param name="directoryId" value="${param.directoryId}"/>
+        </c:url>
     </c:otherwise>
 </c:choose>
+
+    <input id="refreshURL" type="hidden" value="${refreshURL}"/>
 
     <p class="subtitle">
         <fmt:message key="${subtitleKey}"/>

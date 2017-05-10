@@ -96,7 +96,7 @@ tightblogApp.controller('PageController', ['$http',
                 if (response.status == 400) {
                    self.errorObj = response.data;
                 } else {
-                   self.commonErrorResponse;
+                   self.commonErrorResponse(response);
                 }
               })
         }
