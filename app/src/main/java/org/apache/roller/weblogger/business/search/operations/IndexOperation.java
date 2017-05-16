@@ -143,15 +143,15 @@ public abstract class IndexOperation implements Runnable {
         }
 
         // index Comments, unstored
-        doc.add(new TextField(FieldConstants.C_CONTENT, commentContent,
+        doc.add(new TextField(FieldConstants.COMMENT_CONTENT, commentContent,
                 Field.Store.NO));
 
         // keyword
-        doc.add(new StringField(FieldConstants.C_EMAIL, commentEmail,
+        doc.add(new StringField(FieldConstants.COMMENT_EMAIL, commentEmail,
                 Field.Store.YES));
 
         // keyword
-        doc.add(new StringField(FieldConstants.C_NAME, commentName,
+        doc.add(new StringField(FieldConstants.COMMENT_NAME, commentName,
                 Field.Store.YES));
 
         return doc;

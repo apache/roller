@@ -50,9 +50,10 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     private static Logger log = LoggerFactory.getLogger(SearchOperation.class);
 
+    // Fields that a user may search on (even if more fields are indexed)
     private static String[] searchFields = new String[]{
             FieldConstants.CONTENT, FieldConstants.TITLE,
-            FieldConstants.C_CONTENT};
+            FieldConstants.COMMENT_CONTENT};
 
     private static Sort sorter = new Sort(new SortField(
             FieldConstants.PUBLISHED, SortField.Type.STRING, true));
@@ -66,7 +67,6 @@ public class SearchOperation extends ReadFromIndexOperation {
     private String term;
     private String websiteHandle;
     private String category;
-    private String locale;
 
     // ~ Constructors
     // ===========================================================
@@ -121,16 +121,6 @@ public class SearchOperation extends ReadFromIndexOperation {
                 query = new BooleanQuery.Builder()
                         .add(query, BooleanClause.Occur.MUST)
                         .add(new TermQuery(tCategory), BooleanClause.Occur.MUST)
-                        .build();
-            }
-
-            Term tLocale = IndexOperation.getTerm(FieldConstants.LOCALE,
-                    locale);
-
-            if (tLocale != null) {
-                query = new BooleanQuery.Builder()
-                        .add(query, BooleanClause.Occur.MUST)
-                        .add(new TermQuery(tLocale), BooleanClause.Occur.MUST)
                         .build();
             }
 
@@ -191,15 +181,6 @@ public class SearchOperation extends ReadFromIndexOperation {
      */
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    /**
-     * Sets the locale.
-     *
-     * @param locale the new locale
-     */
-    public void setLocale(String locale) {
-        this.locale = locale;
     }
 
 }
