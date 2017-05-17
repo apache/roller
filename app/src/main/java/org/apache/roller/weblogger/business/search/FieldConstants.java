@@ -35,7 +35,7 @@ public final class FieldConstants {
     public static final String COMMENT_EMAIL = "email";
     public static final String COMMENT_NAME = "name";
     public static final String CONSTANT = "constant";
-    // CONSTANT_V must be lowercase or match transform rules of analyzer
-    public static final String CONSTANT_V = "v";
     public static final String WEBSITE_HANDLE = "handle";
+    // CONSTANT_V used to recall all documents; must be lowercase
+    public static final String CONSTANT_V = "v";
 }

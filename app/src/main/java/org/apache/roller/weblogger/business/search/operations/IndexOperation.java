@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,20 +53,14 @@ public abstract class IndexOperation implements Runnable {
 
     private static Logger log = LoggerFactory.getLogger(IndexOperation.class);
 
-    // ~ Instance fields
-    // ========================================================
     protected IndexManager manager;
     private IndexWriter writer;
 
-    // ~ Constructors
-    // ===========================================================
-    public IndexOperation(IndexManager manager) {
+    IndexOperation(IndexManager manager) {
         this.manager = manager;
     }
 
-    // ~ Methods
-    // ================================================================
-    protected Document getDocument(WeblogEntry data) {
+    Document getDocument(WeblogEntry data) {
 
         String commentContent = "";
         String commentEmail = "";
@@ -162,7 +156,7 @@ public abstract class IndexOperation implements Runnable {
      *
      * @return the index writer
      */
-    protected IndexWriter beginWriting() {
+    IndexWriter beginWriting() {
         try {
 
             // Limit to 1000 tokens.
@@ -183,7 +177,7 @@ public abstract class IndexOperation implements Runnable {
     /**
      * End writing.
      */
-    protected void endWriting() {
+    void endWriting() {
         if (writer != null) {
             try {
                 writer.close();
@@ -209,7 +203,7 @@ public abstract class IndexOperation implements Runnable {
      * @param input The input you wish to convert into a term
      * @return Lucene search term
      */
-    public static Term getTerm(String field, String input) {
+    static Term getTerm(String field, String input) {
         if (input == null || field == null) {
             return null;
         }

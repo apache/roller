@@ -21,7 +21,9 @@
 package org.apache.roller.weblogger.business.search.operations;
 
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.slf4j.Logger;
@@ -31,45 +33,47 @@ import java.io.IOException;
 
 /**
  * An operation that adds a new log entry into the index.
+ *
+ * @author Mindaugas Idzelis (min@idzelis.com)
  */
-public class AddEntryOperation extends WriteToIndexOperation {
+public class UpdateEntryIndexOperation extends WriteToIndexOperation {
 
-    //~ Static fields/initializers =============================================
-
-    private static Logger log = LoggerFactory.getLogger(AddEntryOperation.class);
-
-    //~ Instance fields ========================================================
-
-    private WeblogEntry data;
+    private static Logger log = LoggerFactory.getLogger(UpdateEntryIndexOperation.class);
+    private WeblogEntry weblogEntry;
     private WeblogEntryManager weblogEntryManager;
-
-    //~ Constructors ===========================================================
+    private boolean deleteOnly;
 
     /**
      * Adds a web log entry into the index.
      */
-    public AddEntryOperation(WeblogEntryManager wem, IndexManager mgr, WeblogEntry data) {
+    public UpdateEntryIndexOperation(WeblogEntryManager wem, IndexManager mgr,
+                                     WeblogEntry weblogEntry, boolean deleteOnly) {
         super(mgr);
         this.weblogEntryManager = wem;
-        this.data = data;
+        this.weblogEntry = weblogEntry;
+        this.deleteOnly = deleteOnly;
     }
 
-    //~ Methods ================================================================
-
     public void doRun() {
-        IndexWriter writer = beginWriting();
-
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
-        this.data = weblogEntryManager.getWeblogEntry(this.data.getId(), false);
+        this.weblogEntry = weblogEntryManager.getWeblogEntry(this.weblogEntry.getId(), false);
 
+        IndexWriter writer = beginWriting();
         try {
             if (writer != null) {
-                writer.addDocument(getDocument(data));
+                // Delete Doc
+                Term term = new Term(FieldConstants.ID, weblogEntry.getId());
+                writer.deleteDocuments(term);
+
+                if (!deleteOnly) {
+                    // Add Doc
+                    writer.addDocument(getDocument(weblogEntry));
+                }
             }
         } catch (IOException e) {
-            log.error("Problems adding doc to index", e);
+            log.error("Problems adding/deleting doc to index", e);
         } finally {
             endWriting();
         }

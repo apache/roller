@@ -31,12 +31,9 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
-import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.RebuildWeblogIndexOperation;
-import org.apache.roller.weblogger.business.search.operations.RemoveEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.RemoveWeblogIndexOperation;
+import org.apache.roller.weblogger.business.search.operations.UpdateEntryIndexOperation;
+import org.apache.roller.weblogger.business.search.operations.UpdateWeblogIndexOperation;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.slf4j.Logger;
@@ -154,35 +151,27 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     public void rebuildWeblogIndex() {
-        scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager, null));
+        scheduleIndexOperation(new UpdateWeblogIndexOperation(this, weblogEntryManager, null, false));
     }
 
     @Override
     public void rebuildWeblogIndex(Weblog weblog) {
-        scheduleIndexOperation(new RebuildWeblogIndexOperation(this, weblogEntryManager, weblog));
+        scheduleIndexOperation(new UpdateWeblogIndexOperation(this, weblogEntryManager, weblog, false));
     }
 
     @Override
     public void removeWeblogIndexOperation(Weblog weblog) {
-        scheduleIndexOperation(new RemoveWeblogIndexOperation(this, weblog.getHandle()));
-    }
-
-    @Override
-    public void addEntryIndexOperation(WeblogEntry entry) {
-        AddEntryOperation addEntry = new AddEntryOperation(weblogEntryManager, this, entry);
-        scheduleIndexOperation(addEntry);
+        scheduleIndexOperation(new UpdateWeblogIndexOperation(this, weblogEntryManager, weblog, true));
     }
 
     @Override
     public void addEntryReIndexOperation(WeblogEntry entry) {
-        ReIndexEntryOperation reindex = new ReIndexEntryOperation(weblogEntryManager, this, entry);
-        scheduleIndexOperation(reindex);
+        scheduleIndexOperation(new UpdateEntryIndexOperation(weblogEntryManager, this, entry, false));
     }
 
     @Override
     public void removeEntryIndexOperation(WeblogEntry entry) {
-        RemoveEntryOperation removeOp = new RemoveEntryOperation(this, entry.getId());
-        executeIndexOperationNow(removeOp);
+        executeIndexOperationNow(new UpdateEntryIndexOperation(weblogEntryManager, this, entry, true));
     }
 
     @Override

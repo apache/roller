@@ -24,7 +24,7 @@ import java.time.Instant;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
+import org.apache.roller.weblogger.business.search.operations.UpdateEntryIndexOperation;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -100,7 +100,7 @@ public class IndexManagerTest extends WebloggerTest {
         wd1 = getManagedWeblogEntry(wd1);
 
         indexManager.executeIndexOperationNow(
-                new AddEntryOperation(weblogEntryManager, indexManager, wd1));
+                new UpdateEntryIndexOperation(weblogEntryManager, indexManager, wd1, false));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setId(Utilities.generateUUID());
@@ -124,7 +124,7 @@ public class IndexManagerTest extends WebloggerTest {
         wd2 = getManagedWeblogEntry(wd2);
 
         indexManager.executeIndexOperationNow(
-            new AddEntryOperation(weblogEntryManager, indexManager, wd2));
+            new UpdateEntryIndexOperation(weblogEntryManager, indexManager, wd2, false));
 
         Thread.sleep(DateUtils.MILLIS_PER_SECOND);
 
