@@ -377,12 +377,9 @@ public class CommentProcessor extends AbstractProcessor {
                 // only re-index/invalidate the cache if comment isn't moderated
                 if (!nonSpamCommentApprovalRequired) {
 
-                    // remove entry before (re)adding it, or in case it isn't Published
-                    indexManager.removeEntryIndexOperation(entry);
-
                     // if published, index the entry
-                    if (entry.isPublished()) {
-                        indexManager.addEntryIndexOperation(entry);
+                    if (entry.isPublished() && indexManager.isIndexComments()) {
+                        indexManager.addEntryReIndexOperation(entry);
                     }
 
                     // Clear all caches associated with comment

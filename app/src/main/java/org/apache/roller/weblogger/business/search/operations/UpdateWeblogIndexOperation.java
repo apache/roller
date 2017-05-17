@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,22 +37,14 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * An index operation that rebuilds a given users index (or all indexes).
- *
- * @author Mindaugas Idzelis (min@idzelis.com)
+ * An index operation that rebuilds a given weblog index (or all indexes).
  */
-public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
+public class UpdateWeblogIndexOperation extends WriteToIndexOperation {
 
-    // ~ Static fields/initializers
-    // =============================================
-
-    private static Logger log = LoggerFactory.getLogger(RebuildWeblogIndexOperation.class);
-
-    // ~ Instance fields
-    // ========================================================
-
+    private static Logger log = LoggerFactory.getLogger(UpdateWeblogIndexOperation.class);
     private Weblog website;
     private WeblogEntryManager weblogEntryManager;
+    private boolean deleteOnly;
 
     // ~ Constructors
     // ===========================================================
@@ -62,11 +54,12 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
      *
      * @param website The website to rebuild the index for, or null for all users.
      */
-    public RebuildWeblogIndexOperation(IndexManagerImpl mgr, WeblogEntryManager wem,
-                                       Weblog website) {
+    public UpdateWeblogIndexOperation(IndexManagerImpl mgr, WeblogEntryManager wem,
+                                      Weblog website, boolean deleteOnly) {
         super(mgr);
         this.weblogEntryManager = wem;
         this.website = website;
+        this.deleteOnly = deleteOnly;
     }
 
     // ~ Methods
@@ -87,30 +80,30 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
             if (writer != null) {
 
                 // Delete Doc
-                Term tWebsite = null;
                 if (website != null) {
-                    tWebsite = IndexOperation.getTerm(FieldConstants.WEBSITE_HANDLE,
-                            website.getHandle());
-                }
-                if (tWebsite != null) {
-                    writer.deleteDocuments(tWebsite);
+                    Term tWebsite = IndexOperation.getTerm(FieldConstants.WEBSITE_HANDLE, website.getHandle());
+
+                    if (tWebsite != null) {
+                        writer.deleteDocuments(tWebsite);
+                    }
                 } else {
-                    Term all = IndexOperation.getTerm(FieldConstants.CONSTANT,
-                            FieldConstants.CONSTANT_V);
+                    Term all = IndexOperation.getTerm(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V);
                     writer.deleteDocuments(all);
                 }
 
-                // Add Doc
-                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-                wesc.setWeblog(website);
-                wesc.setStatus(PubStatus.PUBLISHED);
-                List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
+                if (!deleteOnly) {
+                    // Re-Add Doc
+                    WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                    wesc.setWeblog(website);
+                    wesc.setStatus(PubStatus.PUBLISHED);
+                    List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
 
-                log.debug("Entries to index: {}", entries.size());
+                    log.debug("Entries to index: {}", entries.size());
 
-                for (WeblogEntry entry : entries) {
-                    writer.addDocument(getDocument(entry));
-                    log.debug("Indexed entry {0}: {1}", entry.getPubTime(), entry.getAnchor());
+                    for (WeblogEntry entry : entries) {
+                        writer.addDocument(getDocument(entry));
+                        log.debug("Indexed entry {0}: {1}", entry.getPubTime(), entry.getAnchor());
+                    }
                 }
             }
         } catch (Exception e) {
@@ -123,9 +116,9 @@ public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
         double length = (end.toEpochMilli() - start.toEpochMilli()) / (double) DateUtils.MILLIS_PER_SECOND;
 
         if (website == null) {
-            log.info("Completed rebuilding index for all users in {} secs", length);
+            log.info("Completed updating index for all users in {} secs", length);
         } else {
-            log.info("Completed rebuilding index for weblog: '{}' in {} seconds", website.getHandle(), length);
+            log.info("Completed updating index for weblog: '{}' in {} seconds", website.getHandle(), length);
         }
     }
 }
