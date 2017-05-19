@@ -35,11 +35,6 @@ public interface IndexManager {
     ReadWriteLock getReadWriteLock();
 
     /**
-     * Does index need to be rebuilt
-     */
-    boolean isInconsistentAtStartup();
-
-    /**
      * Remove weblog from index, returns immediately and operates in background
      */
     void removeWeblogIndexOperation(Weblog weblog);
@@ -58,8 +53,6 @@ public interface IndexManager {
      * Execute operation immediately
      */
     void executeIndexOperationNow(final IndexOperation op);
-
-    void resetSharedReader();
 
     IndexReader getSharedIndexReader();
 

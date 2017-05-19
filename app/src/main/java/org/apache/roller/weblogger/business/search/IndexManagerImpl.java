@@ -56,7 +56,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private static Logger log = LoggerFactory.getLogger(IndexManagerImpl.class);
 
-    private IndexReader reader;
+    private DirectoryReader reader;
     private WeblogEntryManager weblogEntryManager;
     private ExecutorService serviceScheduler;
 
@@ -134,17 +134,24 @@ public class IndexManagerImpl implements IndexManager {
                 }
             }
 
-            if (!indexExists()) {
-                log.debug("Creating index");
-                inconsistentAtStartup = true;
-                createIndex(getFSDirectory(true));
-            }
+            try {
+                if (!DirectoryReader.indexExists(getIndexDirectory())) {
+                    log.debug("Creating index");
+                    inconsistentAtStartup = true;
+                    createIndex(getFSDirectory(true));
+                }
 
-            if (isInconsistentAtStartup()) {
-                log.info("Index was inconsistent. Rebuilding index in the background...");
-                rebuildWeblogIndex();
-            } else {
-                log.info("Index initialized and ready for use.");
+                reader = DirectoryReader.open(getIndexDirectory());
+
+                if (inconsistentAtStartup) {
+                    log.info("Index was inconsistent. Rebuilding index in the background...");
+                    rebuildWeblogIndex();
+                } else {
+                    log.info("Index initialized and ready for use.");
+                }
+            } catch (IOException e) {
+                log.error("Searching will be deactivated, could not create index: {}", e.getMessage());
+                searchEnabled = false;
             }
         }
 
@@ -179,11 +186,6 @@ public class IndexManagerImpl implements IndexManager {
         return rwl;
     }
 
-    @Override
-    public boolean isInconsistentAtStartup() {
-        return inconsistentAtStartup;
-    }
-
     /**
      * This is the analyzer that will be used to tokenize comment text.
      *
@@ -208,18 +210,24 @@ public class IndexManagerImpl implements IndexManager {
         }
     }
 
-    @Override
-    public synchronized void resetSharedReader() {
-        reader = null;
+    private synchronized void closeReader(DirectoryReader reader) {
+        try {
+            if (reader != null) {
+                reader.close();
+            }
+        } catch (IOException ignored) {
+        }
     }
 
     @Override
     public synchronized IndexReader getSharedIndexReader() {
-        if (reader == null) {
-            try {
-                reader = DirectoryReader.open(getIndexDirectory());
-            } catch (IOException ignored) {
+        try {
+            DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
+            if (newReader != null) {
+                closeReader(reader);
+                reader = newReader;
             }
+        } catch (IOException ignored) {
         }
         return reader;
     }
@@ -235,16 +243,7 @@ public class IndexManagerImpl implements IndexManager {
         return getFSDirectory(false);
     }
 
-    private boolean indexExists() {
-        try {
-            return DirectoryReader.indexExists(getIndexDirectory());
-        } catch (IOException e) {
-            log.error("Problem accessing index directory", e);
-        }
-        return false;
-    }
-
-    private FSDirectory getFSDirectory(boolean delete) {
+    private Directory getFSDirectory(boolean delete) {
         FSDirectory directory = null;
 
         try {
@@ -301,13 +300,7 @@ public class IndexManagerImpl implements IndexManager {
             }
 
             indexConsistencyMarker.delete();
-
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException ignored) {
-            }
+            closeReader(reader);
         }
     }
 

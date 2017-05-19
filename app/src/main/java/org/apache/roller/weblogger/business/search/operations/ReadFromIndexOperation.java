@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
  * @author aim4min
  */
 public abstract class ReadFromIndexOperation extends IndexOperation {
-    public ReadFromIndexOperation(IndexManagerImpl mgr) {
+
+    ReadFromIndexOperation(IndexManagerImpl mgr) {
         super(mgr);
     }
 
@@ -35,7 +36,6 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
         try {
             manager.getReadWriteLock().readLock().lock();
             doRun();
-
         } catch (Exception e) {
             log.info("Error acquiring read lock on index", e);
         } finally {
