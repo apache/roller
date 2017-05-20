@@ -55,9 +55,9 @@ public abstract class AbstractIndexTask extends AbstractTask {
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();
-            log.debug("Starting index search");
+            log.debug("Starting index task");
             doRun();
-            log.debug("Index search complete");
+            log.debug("Index task complete");
         } catch (Exception e) {
             log.error("Error acquiring write lock on index", e);
         } finally {
@@ -95,36 +95,6 @@ public abstract class AbstractIndexTask extends AbstractTask {
     }
 
     Document getDocument(WeblogEntry data) {
-
-        String commentContent = "";
-        String commentEmail = "";
-        String commentName = "";
-        if (manager.isIndexComments()) {
-            List<WeblogEntryComment> comments = data.getComments();
-            if (comments != null) {
-                StringBuilder commentEmailBld = new StringBuilder();
-                StringBuilder commentContentBld = new StringBuilder();
-                StringBuilder commentNameBld = new StringBuilder();
-                for (WeblogEntryComment comment : comments) {
-                    if (comment.getContent() != null) {
-                        commentContentBld.append(comment.getContent());
-                        commentContentBld.append(",");
-                    }
-                    if (comment.getEmail() != null) {
-                        commentEmailBld.append(comment.getEmail());
-                        commentEmailBld.append(",");
-                    }
-                    if (comment.getName() != null) {
-                        commentNameBld.append(comment.getName());
-                        commentNameBld.append(",");
-                    }
-                }
-                commentEmail = commentEmailBld.toString();
-                commentContent = commentContentBld.toString();
-                commentName = commentNameBld.toString();
-            }
-        }
-
         Document doc = new Document();
 
         // keyword
@@ -164,6 +134,36 @@ public abstract class AbstractIndexTask extends AbstractTask {
         if (categorydata != null) {
             doc.add(new StringField(FieldConstants.CATEGORY, categorydata
                     .getName().toLowerCase(), Field.Store.YES));
+        }
+
+        String commentName = "";
+        String commentEmail = "";
+        String commentContent = "";
+
+        if (manager.isIndexComments()) {
+            List<WeblogEntryComment> comments = data.getComments();
+            if (comments != null) {
+                StringBuilder commentNameBld = new StringBuilder();
+                StringBuilder commentEmailBld = new StringBuilder();
+                StringBuilder commentContentBld = new StringBuilder();
+                for (WeblogEntryComment comment : comments) {
+                    if (comment.getName() != null) {
+                        commentNameBld.append(comment.getName());
+                        commentNameBld.append(",");
+                    }
+                    if (comment.getEmail() != null) {
+                        commentEmailBld.append(comment.getEmail());
+                        commentEmailBld.append(",");
+                    }
+                    if (comment.getContent() != null) {
+                        commentContentBld.append(comment.getContent());
+                        commentContentBld.append(",");
+                    }
+                }
+                commentName = commentNameBld.toString();
+                commentEmail = commentEmailBld.toString();
+                commentContent = commentContentBld.toString();
+            }
         }
 
         // index Comments, unstored

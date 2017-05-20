@@ -92,8 +92,7 @@ public class SearchTask extends AbstractTask {
             IndexReader reader = manager.getDirectoryReader();
             searcher = new IndexSearcher(reader);
 
-            MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
-                    searchFields,
+            MultiFieldQueryParser multiParser = new MultiFieldQueryParser(searchFields,
                     IndexManagerImpl.getAnalyzer());
 
             // Make it an AND by default. Comment this out for an or (default)
@@ -102,8 +101,7 @@ public class SearchTask extends AbstractTask {
             // Create a query object out of our term
             Query query = multiParser.parse(term);
 
-            Term tUsername = AbstractTask.getTerm(FieldConstants.WEBSITE_HANDLE,
-                    websiteHandle);
+            Term tUsername = AbstractTask.getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
 
             if (tUsername != null) {
                 query = new BooleanQuery.Builder()

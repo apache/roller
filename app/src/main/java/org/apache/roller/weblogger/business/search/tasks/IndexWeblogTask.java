@@ -67,10 +67,8 @@ public class IndexWeblogTask extends AbstractIndexTask {
 
         Instant start = Instant.now();
 
-        if (this.weblog != null) {
-            log.debug("Reindexining weblog {}", weblog.getHandle());
-        } else {
-            log.debug("Reindexining entire site");
+        if (weblog == null) {
+            log.info("Starting reindex of all weblogs...");
         }
 
         IndexWriter writer = beginWriting();
@@ -115,7 +113,7 @@ public class IndexWeblogTask extends AbstractIndexTask {
         double length = (end.toEpochMilli() - start.toEpochMilli()) / (double) DateUtils.MILLIS_PER_SECOND;
 
         if (weblog == null) {
-            log.info("Completed updating index for all users in {} secs", length);
+            log.info("Completed updating index for all weblogs in {} secs", length);
         } else {
             log.info("Completed updating index for weblog: '{}' in {} seconds", weblog.getHandle(), length);
         }
