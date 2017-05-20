@@ -196,7 +196,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
 
         // remove indexing
-        indexManager.removeWeblogIndexOperation(weblog);
+        indexManager.updateIndex(weblog, true);
 
         // check if main blog, disconnect if it is
         WebloggerProperties props = strategy.getWebloggerProperties();
@@ -613,7 +613,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 // trigger a cache invalidation
                 cacheManager.invalidate(entry);
                 // trigger search index on entry
-                indexManager.addEntryReIndexOperation(entry);
+                indexManager.updateIndex(entry, false);
             }
 
         } catch (Exception e) {

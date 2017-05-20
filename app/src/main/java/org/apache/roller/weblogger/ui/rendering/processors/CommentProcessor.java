@@ -379,7 +379,7 @@ public class CommentProcessor extends AbstractProcessor {
 
                     // if published, index the entry
                     if (entry.isPublished() && indexManager.isIndexComments()) {
-                        indexManager.addEntryReIndexOperation(entry);
+                        indexManager.updateIndex(entry, false);
                     }
 
                     // Clear all caches associated with comment

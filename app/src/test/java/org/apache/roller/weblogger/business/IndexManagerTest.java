@@ -24,8 +24,8 @@ import java.time.Instant;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.roller.weblogger.WebloggerTest;
-import org.apache.roller.weblogger.business.search.operations.UpdateEntryIndexOperation;
-import org.apache.roller.weblogger.business.search.operations.SearchOperation;
+import org.apache.roller.weblogger.business.search.tasks.IndexEntryTask;
+import org.apache.roller.weblogger.business.search.tasks.SearchTask;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -100,7 +100,7 @@ public class IndexManagerTest extends WebloggerTest {
         wd1 = getManagedWeblogEntry(wd1);
 
         indexManager.executeIndexOperationNow(
-                new UpdateEntryIndexOperation(weblogEntryManager, indexManager, wd1, false));
+                new IndexEntryTask(weblogEntryManager, indexManager, wd1, false));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setId(Utilities.generateUUID());
@@ -124,25 +124,27 @@ public class IndexManagerTest extends WebloggerTest {
         wd2 = getManagedWeblogEntry(wd2);
 
         indexManager.executeIndexOperationNow(
-            new UpdateEntryIndexOperation(weblogEntryManager, indexManager, wd2, false));
+            new IndexEntryTask(weblogEntryManager, indexManager, wd2, false));
 
         Thread.sleep(DateUtils.MILLIS_PER_SECOND);
 
-        SearchOperation search = new SearchOperation(indexManager);
+        SearchTask search = new SearchTask(indexManager);
         search.setTerm("Enterprise");
         indexManager.executeIndexOperationNow(search);
         assertEquals(2, search.getResultsCount());
 
-        SearchOperation search2 = new SearchOperation(indexManager);
+        SearchTask search2 = new SearchTask(indexManager);
         search2.setTerm("Tholian");
         indexManager.executeIndexOperationNow(search2);
         assertEquals(1, search2.getResultsCount());
 
         // Clean up
-        indexManager.removeEntryIndexOperation(wd1);
-        indexManager.removeEntryIndexOperation(wd2);
+        IndexEntryTask t1 = new IndexEntryTask(weblogEntryManager, indexManager, wd1, true);
+        indexManager.executeIndexOperationNow(t1);
+        IndexEntryTask t2 = new IndexEntryTask(weblogEntryManager, indexManager, wd2, true);
+        indexManager.executeIndexOperationNow(t2);
 
-        SearchOperation search3 = new SearchOperation(indexManager);
+        SearchTask search3 = new SearchTask(indexManager);
         search3.setTerm("Enterprise");
         indexManager.executeIndexOperationNow(search3);
         assertEquals(0, search3.getResultsCount());

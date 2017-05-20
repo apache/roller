@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.business.search;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
-import org.apache.roller.weblogger.business.search.operations.IndexOperation;
+import org.apache.roller.weblogger.business.search.tasks.AbstractTask;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
@@ -32,37 +32,55 @@ import java.util.concurrent.locks.ReadWriteLock;
  * Interface to a blog search facility.
  */
 public interface IndexManager {
+
+    /**
+     * Update all weblog indexes
+     */
+    void rebuildWeblogIndex();
+
+    /**
+     * Update a single weblog index
+     * @param weblog Weblog to update.
+     * @param remove If true, remove the weblog from the index.  If false, adds/updates weblog.
+     */
+    void updateIndex(Weblog weblog, boolean remove);
+
+    /**
+     * Update a single weblog entry
+     * @param entry Weblog entry to update.
+     * @param remove If true, remove the weblog entry from the index.  If false, adds/updates weblog entry.
+     */
+    void updateIndex(WeblogEntry entry, boolean remove);
+
+    /**
+     * Execute task immediately
+     */
+    void executeIndexOperationNow(final AbstractTask op);
+
+    /**
+     * Retrieve common ReadWriteLock for indexing and searching
+     */
     ReadWriteLock getReadWriteLock();
 
     /**
-     * Remove weblog from index, returns immediately and operates in background
+     * Retrieve Lucene Directory reader to perform searches
      */
-    void removeWeblogIndexOperation(Weblog weblog);
-
-    /**
-     * Remove entry from index, returns immediately and operates in background
-     */
-    void removeEntryIndexOperation(WeblogEntry entry);
-
-    /**
-     * Reindex entry, returns immediately and operates in background
-     */
-    void addEntryReIndexOperation(WeblogEntry entry);
-
-    /**
-     * Execute operation immediately
-     */
-    void executeIndexOperationNow(final IndexOperation op);
-
-    IndexReader getSharedIndexReader();
+    IndexReader getDirectoryReader();
 
     /**
      * Return directory used by Lucene index
      */
     Directory getIndexDirectory();
 
+    /**
+     * Is the Tightblog indexing being used?  For better performance, should be
+     * deactivated if using third-party (e.g., Google) or no blog search functionality.
+     */
     boolean isSearchEnabled();
 
+    /**
+     * Are comments to be indexed and used for search results?
+     */
     boolean isIndexComments();
 
     /**
@@ -71,12 +89,8 @@ public interface IndexManager {
     void initialize();
 
     /**
-     * Shutdown to be called on application shutdown
+     * Method to call on application shutdown
      */
     void shutdown();
-
-    void rebuildWeblogIndex(Weblog weblog);
-
-    void rebuildWeblogIndex();
 
 }

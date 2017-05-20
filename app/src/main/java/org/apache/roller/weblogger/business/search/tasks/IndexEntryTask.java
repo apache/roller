@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.tasks;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -32,22 +32,22 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * An operation that adds a new log entry into the index.
- *
- * @author Mindaugas Idzelis (min@idzelis.com)
+ * Task for updating indexing information for a weblog entry.
  */
-public class UpdateEntryIndexOperation extends WriteToIndexOperation {
+public class IndexEntryTask extends AbstractIndexTask {
 
-    private static Logger log = LoggerFactory.getLogger(UpdateEntryIndexOperation.class);
+    private static Logger log = LoggerFactory.getLogger(IndexEntryTask.class);
     private WeblogEntry weblogEntry;
     private WeblogEntryManager weblogEntryManager;
     private boolean deleteOnly;
 
     /**
-     * Adds a web log entry into the index.
+     * Updates the indexing information for a weblog entry.
+     * @param weblogEntry entry to index
+     * @param deleteOnly If true, don't reindex but just remove the weblog entry from the index.
      */
-    public UpdateEntryIndexOperation(WeblogEntryManager wem, IndexManager mgr,
-                                     WeblogEntry weblogEntry, boolean deleteOnly) {
+    public IndexEntryTask(WeblogEntryManager wem, IndexManager mgr,
+                          WeblogEntry weblogEntry, boolean deleteOnly) {
         super(mgr);
         this.weblogEntryManager = wem;
         this.weblogEntry = weblogEntry;
@@ -55,7 +55,7 @@ public class UpdateEntryIndexOperation extends WriteToIndexOperation {
     }
 
     public void doRun() {
-        // since this operation can be run on a separate thread we must treat
+        // since this task is normally run on a separate thread we must treat
         // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
         this.weblogEntry = weblogEntryManager.getWeblogEntry(this.weblogEntry.getId(), false);
@@ -75,7 +75,7 @@ public class UpdateEntryIndexOperation extends WriteToIndexOperation {
         } catch (IOException e) {
             log.error("Problems adding/deleting doc to index", e);
         } finally {
-            endWriting();
+            endWriting(writer);
         }
     }
 }

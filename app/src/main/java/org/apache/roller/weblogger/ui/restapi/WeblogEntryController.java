@@ -258,7 +258,7 @@ public class WeblogEntryController {
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
                     // remove from search index
                     if (itemToRemove.isPublished()) {
-                        indexManager.removeEntryIndexOperation(itemToRemove);
+                        indexManager.updateIndex(itemToRemove, true);
                     }
 
                     // flush caches
@@ -565,9 +565,9 @@ public class WeblogEntryController {
 
                 // notify search of the new entry
                 if (entry.isPublished()) {
-                    indexManager.addEntryReIndexOperation(entry);
+                    indexManager.updateIndex(entry, false);
                 } else if (!createNew) {
-                    indexManager.removeEntryIndexOperation(entry);
+                    indexManager.updateIndex(entry, true);
                 }
 
                 // notify caches

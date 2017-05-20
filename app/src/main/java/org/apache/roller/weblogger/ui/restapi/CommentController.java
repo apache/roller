@@ -209,7 +209,7 @@ public class CommentController {
                 Weblog weblog = itemToRemove.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
                     weblogEntryManager.removeComment(itemToRemove);
-                    indexManager.addEntryReIndexOperation(itemToRemove.getWeblogEntry());
+                    indexManager.updateIndex(itemToRemove.getWeblogEntry(), false);
                     cacheManager.invalidate(itemToRemove.getWeblogEntry());
                     persistenceStrategy.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -257,7 +257,7 @@ public class CommentController {
                     }
                     weblogEntryManager.saveComment(comment, true);
                     persistenceStrategy.flush();
-                    indexManager.addEntryReIndexOperation(comment.getWeblogEntry());
+                    indexManager.updateIndex(comment.getWeblogEntry(), false);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

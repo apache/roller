@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.tasks;
 
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.document.Document;
@@ -42,24 +42,22 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * An operation that writes to index.
+ * Tasks that update an index.
  */
-public abstract class WriteToIndexOperation extends IndexOperation {
+public abstract class AbstractIndexTask extends AbstractTask {
 
-    WriteToIndexOperation(IndexManager mgr) {
+    AbstractIndexTask(IndexManager mgr) {
         super(mgr);
     }
 
-    private static Logger log = LoggerFactory.getLogger(WriteToIndexOperation.class);
-
-    private IndexWriter writer;
+    private static Logger log = LoggerFactory.getLogger(AbstractIndexTask.class);
 
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();
-            log.debug("Starting search index operation");
+            log.debug("Starting index search");
             doRun();
-            log.debug("Search index operation complete");
+            log.debug("Index search complete");
         } catch (Exception e) {
             log.error("Error acquiring write lock on index", e);
         } finally {
@@ -68,8 +66,9 @@ public abstract class WriteToIndexOperation extends IndexOperation {
     }
 
     IndexWriter beginWriting() {
-        try {
+        IndexWriter writer = null;
 
+        try {
             // Limit to 1000 tokens.
             LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(
                     IndexManagerImpl.getAnalyzer(), 1000);
@@ -85,7 +84,7 @@ public abstract class WriteToIndexOperation extends IndexOperation {
         return writer;
     }
 
-    void endWriting() {
+    void endWriting(IndexWriter writer) {
         if (writer != null) {
             try {
                 writer.close();
@@ -153,10 +152,9 @@ public abstract class WriteToIndexOperation extends IndexOperation {
 
         // keyword
         if (data.getPubTime() != null) {
-            doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
-                    .toString(), Field.Store.YES));
-            // below effectively required Lucene 5.0+, as SearchOperation
-            // sorts on this field
+            doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime().toString(), Field.Store.YES));
+
+            // below included as search task sorts on this field
             doc.add(new SortedDocValuesField(FieldConstants.PUBLISHED,
                     new BytesRef(data.getPubTime().toString())));
         }
