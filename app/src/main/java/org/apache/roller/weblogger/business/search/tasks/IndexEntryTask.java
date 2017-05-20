@@ -44,7 +44,7 @@ public class IndexEntryTask extends AbstractIndexTask {
     /**
      * Updates the indexing information for a weblog entry.
      * @param weblogEntry entry to index
-     * @param deleteOnly If true, don't reindex but just remove the weblog entry from the index.
+     * @param deleteOnly If true just remove the weblog entry from the index.
      */
     public IndexEntryTask(WeblogEntryManager wem, IndexManager mgr,
                           WeblogEntry weblogEntry, boolean deleteOnly) {

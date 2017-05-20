@@ -61,7 +61,7 @@ public class IndexManagerImpl implements IndexManager {
     private ExecutorService serviceScheduler;
 
     private boolean searchEnabled = true;
-    private boolean indexComments = true;
+    private boolean indexComments = false;
     private File indexConsistencyMarker;
     private String indexDir = null;
     private boolean inconsistentAtStartup = false;
@@ -75,10 +75,16 @@ public class IndexManagerImpl implements IndexManager {
     protected IndexManagerImpl(WeblogEntryManager weManager) {
         weblogEntryManager = weManager;
         searchEnabled = WebloggerStaticConfig.getBooleanProperty("search.enabled");
-        indexComments = WebloggerStaticConfig.getBooleanProperty("search.include.comments");
+        if (searchEnabled) {
+            indexComments = WebloggerStaticConfig.getBooleanProperty("search.include.comments");
+        }
 
-        log.info("search enabled: {}", searchEnabled);
-        log.info("search comments enabled: {}", indexComments);
+        log.info("Lucene search enabled: {} {}", searchEnabled,
+                searchEnabled ? "(If not using internal search capability, can increase performance by disabling in" +
+                        " TightBlog properties file)" : "(Can be activated in TightBlog properties file)");
+        if (searchEnabled) {
+            log.info("Include comment text as part of blog search? {}", indexComments);
+        }
 
         if (searchEnabled) {
             serviceScheduler = Executors.newCachedThreadPool();
@@ -117,37 +123,42 @@ public class IndexManagerImpl implements IndexManager {
             try {
                 // If inconsistency marker exists, delete index
                 if (indexConsistencyMarker.exists()) {
-                    log.info("Index inconsistent and will be rebuilt: marker indicating incomplete shutdown exists");
+                    log.info("Index was not closed properly with last shutdown; will be rebuilt");
                     inconsistentAtStartup = true;
                 } else {
                     File makeIndexDir = new File(indexDir);
                     if (!makeIndexDir.exists()) {
                         if (makeIndexDir.mkdirs()) {
                             inconsistentAtStartup = true;
-                            log.info("Index folder path {} created", makeIndexDir.toString());
+                            log.info("Index folder path {} created", makeIndexDir.getAbsolutePath());
                         } else {
-                            throw new IOException("Folder path " + makeIndexDir.toString() + " could not be created");
+                            throw new IOException("Folder path " + makeIndexDir.getAbsolutePath() + " could not be " +
+                                    "created (file permission rights?)");
                         }
                     }
                 }
 
                 if (!inconsistentAtStartup && !DirectoryReader.indexExists(getIndexDirectory())) {
-                    log.info("Index not found, will create");
+                    log.info("Lucene index not detected, will create");
                     inconsistentAtStartup = true;
                 }
 
                 if (inconsistentAtStartup) {
-                    log.info("Creating index in the background...");
+                    log.info("Generating Lucene index in the background...");
                     createIndex(getFSDirectory(true));
                     rebuildWeblogIndex();
                 } else {
-                    log.info("Index initialized and ready for use.");
+                    log.info("Lucene search index already available and ready for use.");
+                    if (!indexConsistencyMarker.createNewFile()) {
+                        throw new IOException("Could not create index consistency marker "
+                                + indexConsistencyMarker.getAbsolutePath() + " (file permission rights?)");
+                    }
                 }
 
                 reader = DirectoryReader.open(getIndexDirectory());
 
             } catch (IOException e) {
-                log.error("Searching will be deactivated, could not create index: {}", e.getMessage());
+                log.error("Searching is deactivated, could not create index", e);
                 searchEnabled = false;
             }
         }
@@ -287,9 +298,11 @@ public class IndexManagerImpl implements IndexManager {
                 log.debug("Exception: ", e);
             }
 
-            indexConsistencyMarker.delete();
+            if (!indexConsistencyMarker.delete()) {
+                log.warn("Expected index consistency marker {} not present or otherwise could not be deleted",
+                        indexConsistencyMarker.getAbsolutePath());
+            }
             closeReader(reader);
         }
     }
-
 }
