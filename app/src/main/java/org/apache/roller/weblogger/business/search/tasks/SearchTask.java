@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.tasks;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
@@ -41,14 +41,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * An operation that searches the index.
+ * Task for searching the index to retrieve blog entries.
  */
-public class SearchOperation extends ReadFromIndexOperation {
+public class SearchTask extends AbstractTask {
 
-    // ~ Static fields/initializers
-    // =============================================
-
-    private static Logger log = LoggerFactory.getLogger(SearchOperation.class);
+    private static Logger log = LoggerFactory.getLogger(SearchTask.class);
 
     // Fields that a user may search on (even if more fields are indexed)
     private static String[] searchFields = new String[]{
@@ -58,9 +55,6 @@ public class SearchOperation extends ReadFromIndexOperation {
     private static Sort sorter = new Sort(new SortField(
             FieldConstants.PUBLISHED, SortField.Type.STRING, true));
 
-    // ~ Instance fields
-    // ========================================================
-
     private IndexSearcher searcher;
     private TopFieldDocs searchresults;
 
@@ -68,32 +62,34 @@ public class SearchOperation extends ReadFromIndexOperation {
     private String websiteHandle;
     private String category;
 
-    // ~ Constructors
-    // ===========================================================
-
-    /**
-     * Create a new operation that searches the index.
-     */
-    public SearchOperation(IndexManager mgr) {
-        // TODO: finish moving IndexManager to backend, so this cast is not
-        // needed
-        super((IndexManagerImpl) mgr);
+    public SearchTask(IndexManager mgr) {
+        super(mgr);
     }
-
-    // ~ Methods
-    // ================================================================
 
     public void setTerm(String term) {
         this.term = term;
     }
 
+    @Override
+    public void run() {
+        try {
+            manager.getReadWriteLock().readLock().lock();
+            doRun();
+        } catch (Exception e) {
+            log.info("Error acquiring read lock on index", e);
+        } finally {
+            manager.getReadWriteLock().readLock().unlock();
+        }
+    }
+
+    @Override
     public void doRun() {
         final int docLimit = 500;
         searchresults = null;
         searcher = null;
 
         try {
-            IndexReader reader = manager.getSharedIndexReader();
+            IndexReader reader = manager.getDirectoryReader();
             searcher = new IndexSearcher(reader);
 
             MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
@@ -106,7 +102,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             // Create a query object out of our term
             Query query = multiParser.parse(term);
 
-            Term tUsername = IndexOperation.getTerm(FieldConstants.WEBSITE_HANDLE,
+            Term tUsername = AbstractTask.getTerm(FieldConstants.WEBSITE_HANDLE,
                     websiteHandle);
 
             if (tUsername != null) {

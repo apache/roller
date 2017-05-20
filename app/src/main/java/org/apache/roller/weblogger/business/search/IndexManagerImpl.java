@@ -31,9 +31,9 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
-import org.apache.roller.weblogger.business.search.operations.IndexOperation;
-import org.apache.roller.weblogger.business.search.operations.UpdateEntryIndexOperation;
-import org.apache.roller.weblogger.business.search.operations.UpdateWeblogIndexOperation;
+import org.apache.roller.weblogger.business.search.tasks.AbstractTask;
+import org.apache.roller.weblogger.business.search.tasks.IndexEntryTask;
+import org.apache.roller.weblogger.business.search.tasks.IndexWeblogTask;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.slf4j.Logger;
@@ -114,41 +114,38 @@ public class IndexManagerImpl implements IndexManager {
 
         // only initialize the index if search is enabled
         if (this.searchEnabled) {
-
-            // If inconsistency marker exists, delete index
-            if (indexConsistencyMarker.exists()) {
-                getFSDirectory(true);
-                inconsistentAtStartup = true;
-                log.debug("Index inconsistent: marker exists");
-            } else {
-                try {
+            try {
+                // If inconsistency marker exists, delete index
+                if (indexConsistencyMarker.exists()) {
+                    log.info("Index inconsistent and will be rebuilt: marker indicating incomplete shutdown exists");
+                    inconsistentAtStartup = true;
+                } else {
                     File makeIndexDir = new File(indexDir);
                     if (!makeIndexDir.exists()) {
-                        makeIndexDir.mkdirs();
-                        inconsistentAtStartup = true;
-                        log.debug("Index inconsistent: new");
+                        if (makeIndexDir.mkdirs()) {
+                            inconsistentAtStartup = true;
+                            log.info("Index folder path {} created", makeIndexDir.toString());
+                        } else {
+                            throw new IOException("Folder path " + makeIndexDir.toString() + " could not be created");
+                        }
                     }
-                    indexConsistencyMarker.createNewFile();
-                } catch (IOException e) {
-                    log.error("exception", e);
                 }
-            }
 
-            try {
-                if (!DirectoryReader.indexExists(getIndexDirectory())) {
-                    log.debug("Creating index");
+                if (!inconsistentAtStartup && !DirectoryReader.indexExists(getIndexDirectory())) {
+                    log.info("Index not found, will create");
                     inconsistentAtStartup = true;
-                    createIndex(getFSDirectory(true));
                 }
-
-                reader = DirectoryReader.open(getIndexDirectory());
 
                 if (inconsistentAtStartup) {
-                    log.info("Index was inconsistent. Rebuilding index in the background...");
+                    log.info("Creating index in the background...");
+                    createIndex(getFSDirectory(true));
                     rebuildWeblogIndex();
                 } else {
                     log.info("Index initialized and ready for use.");
                 }
+
+                reader = DirectoryReader.open(getIndexDirectory());
+
             } catch (IOException e) {
                 log.error("Searching will be deactivated, could not create index: {}", e.getMessage());
                 searchEnabled = false;
@@ -157,28 +154,19 @@ public class IndexManagerImpl implements IndexManager {
 
     }
 
+    @Override
     public void rebuildWeblogIndex() {
-        scheduleIndexOperation(new UpdateWeblogIndexOperation(this, weblogEntryManager, null, false));
+        scheduleIndexOperation(new IndexWeblogTask(this, weblogEntryManager, null, false));
     }
 
     @Override
-    public void rebuildWeblogIndex(Weblog weblog) {
-        scheduleIndexOperation(new UpdateWeblogIndexOperation(this, weblogEntryManager, weblog, false));
+    public void updateIndex(Weblog weblog, boolean remove) {
+        scheduleIndexOperation(new IndexWeblogTask(this, weblogEntryManager, weblog, remove));
     }
 
     @Override
-    public void removeWeblogIndexOperation(Weblog weblog) {
-        scheduleIndexOperation(new UpdateWeblogIndexOperation(this, weblogEntryManager, weblog, true));
-    }
-
-    @Override
-    public void addEntryReIndexOperation(WeblogEntry entry) {
-        scheduleIndexOperation(new UpdateEntryIndexOperation(weblogEntryManager, this, entry, false));
-    }
-
-    @Override
-    public void removeEntryIndexOperation(WeblogEntry entry) {
-        executeIndexOperationNow(new UpdateEntryIndexOperation(weblogEntryManager, this, entry, true));
+    public void updateIndex(WeblogEntry entry, boolean remove) {
+        scheduleIndexOperation(new IndexEntryTask(weblogEntryManager, this, entry, remove));
     }
 
     @Override
@@ -195,17 +183,17 @@ public class IndexManagerImpl implements IndexManager {
         return new StandardAnalyzer();
     }
 
-    private void scheduleIndexOperation(final IndexOperation op) {
+    private void scheduleIndexOperation(final AbstractTask op) {
         if (this.searchEnabled) {
-            log.debug("Starting scheduled index operation: {}", op.getClass().getName());
+            log.debug("Starting scheduled index task: {}", op.getClass().getName());
             serviceScheduler.submit(op);
         }
     }
 
     @Override
-    public void executeIndexOperationNow(final IndexOperation op) {
+    public void executeIndexOperationNow(final AbstractTask op) {
         if (this.searchEnabled) {
-            log.debug("Executing index operation now: {}", op.getClass().getName());
+            log.debug("Executing index task now: {}", op.getClass().getName());
             op.run();
         }
     }
@@ -220,7 +208,7 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     @Override
-    public synchronized IndexReader getSharedIndexReader() {
+    public synchronized IndexReader getDirectoryReader() {
         try {
             DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
             if (newReader != null) {

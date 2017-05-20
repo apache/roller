@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.tasks;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -31,19 +31,17 @@ import java.io.IOException;
 import java.io.StringReader;
 
 /**
- * This is the base class for all index operations.
+ * This is the base class for all indexing tasks, reading and writing.
  */
-public abstract class IndexOperation implements Runnable {
+public abstract class AbstractTask implements Runnable {
 
     protected IndexManager manager;
 
-    IndexOperation(IndexManager manager) {
+    AbstractTask(IndexManager manager) {
         this.manager = manager;
     }
 
-    /**
-     * @see java.lang.Runnable#run()
-     */
+    @Override
     public void run() {
         doRun();
     }

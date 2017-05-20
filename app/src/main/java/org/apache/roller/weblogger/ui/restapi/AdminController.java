@@ -158,7 +158,7 @@ public class AdminController {
         try {
             Weblog weblog = weblogManager.getWeblogByHandle(handle);
             if (weblog != null) {
-                indexManager.rebuildWeblogIndex(weblog);
+                indexManager.updateIndex(weblog, false);
                 return ResponseEntity.ok(messages.getString("maintenance.message.indexed", handle));
             } else {
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).

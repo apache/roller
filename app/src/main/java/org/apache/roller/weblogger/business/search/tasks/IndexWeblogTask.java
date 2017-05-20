@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.tasks;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.lucene.index.IndexWriter;
@@ -37,39 +37,38 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * An index operation that rebuilds a given weblog index (or all indexes).
+ * Task for updating indexing information for weblogs.
  */
-public class UpdateWeblogIndexOperation extends WriteToIndexOperation {
+public class IndexWeblogTask extends AbstractIndexTask {
 
-    private static Logger log = LoggerFactory.getLogger(UpdateWeblogIndexOperation.class);
-    private Weblog website;
+    private static Logger log = LoggerFactory.getLogger(IndexWeblogTask.class);
+    private Weblog weblog;
     private WeblogEntryManager weblogEntryManager;
     private boolean deleteOnly;
 
-    // ~ Constructors
-    // ===========================================================
-
     /**
-     * Create a new operation that will recreate an index.
-     *
-     * @param website The website to rebuild the index for, or null for all users.
+     * Create a new task to update an index for a weblog
+     * @param weblog The weblog to rebuild the index for, or null for all weblogs.
+     * @param deleteOnly Remove the weblog(s) from the index.
      */
-    public UpdateWeblogIndexOperation(IndexManagerImpl mgr, WeblogEntryManager wem,
-                                      Weblog website, boolean deleteOnly) {
+    public IndexWeblogTask(IndexManagerImpl mgr, WeblogEntryManager wem,
+                           Weblog weblog, boolean deleteOnly) {
         super(mgr);
         this.weblogEntryManager = wem;
-        this.website = website;
+        this.weblog = weblog;
         this.deleteOnly = deleteOnly;
     }
 
-    // ~ Methods
-    // ================================================================
-
     public void doRun() {
+        if (weblog == null && deleteOnly) {
+            log.error("Weblog must be provided for delete task, skipping indexing");
+            return;
+        }
+
         Instant start = Instant.now();
 
-        if (this.website != null) {
-            log.debug("Reindexining weblog {}", website.getHandle());
+        if (this.weblog != null) {
+            log.debug("Reindexining weblog {}", weblog.getHandle());
         } else {
             log.debug("Reindexining entire site");
         }
@@ -80,21 +79,21 @@ public class UpdateWeblogIndexOperation extends WriteToIndexOperation {
             if (writer != null) {
 
                 // Delete Doc
-                if (website != null) {
-                    Term tWebsite = IndexOperation.getTerm(FieldConstants.WEBSITE_HANDLE, website.getHandle());
+                if (weblog != null) {
+                    Term tWebsite = AbstractTask.getTerm(FieldConstants.WEBSITE_HANDLE, weblog.getHandle());
 
                     if (tWebsite != null) {
                         writer.deleteDocuments(tWebsite);
                     }
                 } else {
-                    Term all = IndexOperation.getTerm(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V);
+                    Term all = AbstractTask.getTerm(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V);
                     writer.deleteDocuments(all);
                 }
 
                 if (!deleteOnly) {
                     // Re-Add Doc
                     WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-                    wesc.setWeblog(website);
+                    wesc.setWeblog(weblog);
                     wesc.setStatus(PubStatus.PUBLISHED);
                     List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
 
@@ -109,16 +108,16 @@ public class UpdateWeblogIndexOperation extends WriteToIndexOperation {
         } catch (Exception e) {
             log.error("ERROR adding/deleting doc to index", e);
         } finally {
-            endWriting();
+            endWriting(writer);
         }
 
         Instant end = Instant.now();
         double length = (end.toEpochMilli() - start.toEpochMilli()) / (double) DateUtils.MILLIS_PER_SECOND;
 
-        if (website == null) {
+        if (weblog == null) {
             log.info("Completed updating index for all users in {} secs", length);
         } else {
-            log.info("Completed updating index for weblog: '{}' in {} seconds", website.getHandle(), length);
+            log.info("Completed updating index for weblog: '{}' in {} seconds", weblog.getHandle(), length);
         }
     }
 }

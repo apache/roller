@@ -27,7 +27,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.operations.SearchOperation;
+import org.apache.roller.weblogger.business.search.tasks.SearchTask;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesSearchPager;
@@ -102,7 +102,7 @@ public class SearchResultsModel extends PageModel {
         }
 
         // setup the search
-        SearchOperation search = new SearchOperation(indexManager);
+        SearchTask search = new SearchTask(indexManager);
         search.setTerm(searchRequest.getQuery());
 
         if (themeManager.getSharedTheme(searchRequest.getWeblog().getTheme()).isSiteWide()) {
@@ -156,7 +156,7 @@ public class SearchResultsModel extends PageModel {
     /**
      * Create weblog entries for each result found.
      */
-    private void convertHitsToEntries(ScoreDoc[] hits, SearchOperation search) {
+    private void convertHitsToEntries(ScoreDoc[] hits, SearchTask search) {
 
         // determine offset
         this.offset = searchRequest.getPageNum() * RESULTS_PER_PAGE;
