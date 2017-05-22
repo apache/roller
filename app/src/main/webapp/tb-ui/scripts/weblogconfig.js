@@ -72,10 +72,12 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
                      window.location.replace(homeUrl);
                   }
                   self.showSuccessMessage = true;
+                  window.scrollTo(0, 0);
               },
               function(response) {
                 if (response.status == 400) {
                    self.errorObj = response.data;
+                   window.scrollTo(0, 0);
                 } else {
                    self.commonErrorResponse(response);
                 }
@@ -96,6 +98,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
                window.location.replace($('#refreshURL').attr('value'));
             } else if (response.status == 400) {
                self.errorMessage = response.data;
+               window.scrollTo(0, 0);
             }
         }
 
@@ -103,6 +106,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
             this.messageClear();
             if (weblogId) {
                 this.loadWeblog();
+                window.scrollTo(0, 0);
             } else {
                window.location.replace(homeUrl);
             }

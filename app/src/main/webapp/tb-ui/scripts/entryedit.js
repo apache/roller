@@ -123,6 +123,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         this.urlRoot = contextPath + '/tb-ui/authoring/rest/weblogentries/';
         this.entry = { commentCount : 0, category : {} };
         this.quillEditor = null;
+        this.errorObj = {};
 
         this.getRecentEntries = function(entryType) {
             $http.get(this.urlRoot + weblogId + '/recententries/' + entryType).then(
@@ -143,7 +144,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         }
 
         this.loadMetadata = function() {
-            $http.get(this.urlRoot + weblogId + '/entryeditmetadata'  ).then(
+            $http.get(this.urlRoot + weblogId + '/entryeditmetadata').then(
             function(response) {
                 self.metadata = response.data;
                 if (!entryId) {
@@ -194,6 +195,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         };
 
         this.saveEntry = function(saveType) {
+            this.messageClear();
             var urlStem = weblogId + '/entries';
 
             self.entry.status = saveType;
@@ -207,16 +209,18 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
             $http.post(self.urlRoot + urlStem, JSON.stringify(self.entry)).then(
               function(response) {
                 entryId = response.data.entryId;
-                self.saveResponseMessage = response.data.message;
+                self.successMessage = response.data.message;
                 self.errorObj = {};
                 self.loadRecentEntries();
                 self.getEntry();
+                window.scrollTo(0, 0);
               },
              function(response) {
                if (response.status == 408)
                  window.location.replace($('#refreshURL').attr('value'));
                if (response.status == 400) {
                  self.errorObj = response.data;
+                 window.scrollTo(0, 0);
                }
             })
         };
@@ -238,6 +242,11 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
             this.getRecentEntries('PUBLISHED');
             this.getRecentEntries('SCHEDULED');
             this.getRecentEntries('PENDING');
+        }
+
+        this.messageClear = function() {
+            this.successMessage = null;
+            this.errorObj = {};
         }
 
         this.loadMetadata();
