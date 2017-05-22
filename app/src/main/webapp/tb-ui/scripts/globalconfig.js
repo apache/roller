@@ -32,12 +32,14 @@ tightblogApp.controller('PageController', ['$http',
                 self.errorObj = {};
                 self.saveResponseMessage = response.data;
                 self.loadWebloggerProperties();
+                window.scrollTo(0, 0);
               },
              function(response) {
                if (response.status == 408)
                  window.location.replace($('#refreshURL').attr('value'));
                if (response.status == 400) {
                  self.errorObj = response.data;
+                 window.scrollTo(0, 0);
                }
             })
         };

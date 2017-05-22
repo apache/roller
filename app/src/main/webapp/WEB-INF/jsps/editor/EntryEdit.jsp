@@ -73,8 +73,8 @@
       </ul>
     </div>
 
-    <div id="successMessageDiv" class="messages" ng-show="ctrl.saveResponseMessage" ng-cloak>
-        <p>{{ctrl.saveResponseMessage}}</p>
+    <div id="successMessageDiv" class="messages" ng-show="ctrl.successMessage" ng-cloak>
+        <p>{{ctrl.successMessage}}</p>
     </div>
 
 <p class="subtitle">
