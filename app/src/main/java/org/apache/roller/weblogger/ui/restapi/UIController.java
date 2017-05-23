@@ -162,7 +162,7 @@ public class UIController {
         String path;
 
         if (defaultBlog != null) {
-            path = PageProcessor.PATH + '/' + defaultBlog.getHandle();
+            path = '/' + defaultBlog.getHandle();
         } else {
             // new install?  Redirect to register or login page based on whether a user has already been created.
             long userCount = userManager.getUserCount();
@@ -173,8 +173,7 @@ public class UIController {
             }
         }
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher(path);
-        dispatcher.forward(request, response);
+        response.sendRedirect(request.getContextPath() + path);
     }
 
     @RequestMapping(value = "/admin/cacheInfo")
