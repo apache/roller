@@ -151,17 +151,16 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     @Override
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                          int pageNum, boolean absolute) {
-        StringBuilder pathinfo = new StringBuilder();
-        pathinfo.append(getWeblogURL(weblog, absolute));
 
+        String pathinfo = getWeblogURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
 
         if (category != null && dateString == null) {
-            pathinfo.append("category/").append(Utilities.encodePath(category));
+            pathinfo += "category/" + Utilities.encodePath(category);
         } else if (dateString != null && category == null) {
-            pathinfo.append("date/").append(dateString);
+            pathinfo += "date/" + dateString;
         } else if (tag != null) {
-            pathinfo.append("tags/").append(Utilities.encodePath(tag));
+            pathinfo += "tags/" + Utilities.encodePath(tag);
         } else {
             if (dateString != null) {
                 params.put("date", dateString);
@@ -175,7 +174,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
             params.put("page", Integer.toString(pageNum));
         }
 
-        return pathinfo.toString() + Utilities.getQueryString(params);
+        return pathinfo + Utilities.getQueryString(params);
     }
 
     @Override
