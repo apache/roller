@@ -180,7 +180,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
             $http.get(this.urlRoot + entryId).then(
               function(response) {
                  self.entry = response.data;
-                 self.commentCountMsg = $sce.trustAsHtml($interpolate(commentCountTmpl)({commentCount:self.entry.commentCount}));
+                 self.commentCountMsg = $sce.trustAsHtml($interpolate(msg.commentCountTmpl)({commentCount:self.entry.commentCount}));
                  self.entry.commentDays = "" + self.entry.commentDays;
 
                  // move into RTE.
@@ -216,9 +216,10 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                 window.scrollTo(0, 0);
               },
              function(response) {
-               if (response.status == 408)
-                 window.location.replace($('#refreshURL').attr('value'));
-               if (response.status == 400) {
+               if (response.status == 408) {
+                 self.errorObj.errorMessage = $sce.trustAsHtml($interpolate(msg.sessionTimeoutTmpl)({loginUrl}));
+                 window.scrollTo(0, 0);
+               } else if (response.status == 400) {
                  self.errorObj = response.data;
                  window.scrollTo(0, 0);
                }

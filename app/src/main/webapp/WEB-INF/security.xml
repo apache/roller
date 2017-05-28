@@ -49,7 +49,7 @@
         -->
         <custom-filter ref="ajaxInvalidSessionRedirectFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
 
-        <csrf request-matcher-ref="csrfRequestMatcher"/>
+        <csrf request-matcher-ref="csrfRequestMatcher" token-repository-ref="tokenRepository"/>
 
         <!-- Needed to allow for popups -->
         <headers>
@@ -64,6 +64,12 @@
         <access-denied-handler ref="accessDeniedHandler"/>
 
     </http>
+
+    <!-- Using cookie instead of default session header for CSRF tokens as former appear easier to refresh for all app tabs -->
+    <beans:bean id="tokenRepository"
+                class="org.springframework.security.web.csrf.CookieCsrfTokenRepository">
+        <beans:property name="cookieHttpOnly" value="false"/>
+    </beans:bean>
 
     <beans:bean id="ajaxInvalidSessionRedirectFilter"
                 class="org.apache.roller.weblogger.ui.core.filters.AjaxInvalidSessionRedirectFilter"/>

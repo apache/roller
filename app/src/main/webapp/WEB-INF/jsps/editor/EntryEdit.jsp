@@ -34,10 +34,12 @@
     var weblogId = "<c:out value='${actionWeblog.id}'/>";
     var entryId = "<c:out value='${param.entryId}'/>";
     var newEntryUrl = "<c:url value='/tb-ui/app/authoring/entryAdd'/>?weblogId=" + weblogId;
-    var commentCountTmpl = "<fmt:message key='entryEdit.hasComments'/>";
+    var loginUrl = "<c:url value='/tb-ui/app/login-redirect'/>";
     var msg = {
         deleteLabel: "<fmt:message key='generic.delete'/>",
         cancelLabel: "<fmt:message key='generic.cancel'/>",
+        commentCountTmpl: "<fmt:message key='entryEdit.hasComments'/>",
+        sessionTimeoutTmpl: "<fmt:message key='entryEdit.sessionTimedOut'/>"
     };
     var mediaFileChooserUrl = "<c:url value='/tb-ui/app/authoring/mediaFileChooser'/>?weblogId=" + weblogId;
 </script>
@@ -50,24 +52,15 @@
     <c:when test="${actionName == 'entryEdit'}">
         <c:set var="subtitleKey">entryEdit.subtitle.editEntry</c:set>
         <c:set var="mainAction">entryEdit</c:set>
-        <c:url var="refreshUrl" value="/tb-ui/app/authoring/entryEdit">
-            <c:param name="weblogId" value="${param.weblogId}"/>
-            <c:param name="entryId" value="${param.entryId}"/>
-        </c:url>
     </c:when>
     <c:otherwise>
         <c:set var="subtitleKey">entryEdit.subtitle.newEntry</c:set>
         <c:set var="mainAction">entryAdd</c:set>
-        <c:url var="refreshUrl" value="/tb-ui/app/authoring/entryAdd">
-            <c:param name="weblogId" value="${param.weblogId}"/>
-        </c:url>
     </c:otherwise>
 </c:choose>
 
-    <input id="refreshURL" type="hidden" value="${refreshURL}"/>
-
     <div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
-      <b>{{ctrl.errorObj.errorMessage}}</b>
+      <b ng-bind-html="ctrl.errorObj.errorMessage"></b>
       <ul>
          <li ng-repeat="em in ctrl.errorObj.errors">{{em}}</li>
       </ul>

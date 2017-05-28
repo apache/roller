@@ -80,17 +80,19 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     /**
      * Get url for a collection of entries on a given weblog.
      */
-    public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, List tags,
+    @Override
+    public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                          int pageNum, boolean absolute) {
 
         String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
+
         if (category != null && dateString == null) {
             pathinfo += "category/" + Utilities.encodePath(category);
         } else if (dateString != null && category == null) {
             pathinfo += "date/" + dateString;
-        } else if (tags != null && tags.size() > 0) {
-            pathinfo += "tags/" + Utilities.getEncodedTagsString(tags);
+        } else if (tag != null) {
+            pathinfo += "tags/" + Utilities.encodePath(tag);
         } else {
             if (dateString != null) {
                 params.put("date", dateString);
