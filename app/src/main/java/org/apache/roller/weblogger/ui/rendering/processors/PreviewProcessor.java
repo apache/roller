@@ -20,11 +20,14 @@
  */
 package org.apache.roller.weblogger.ui.rendering.processors;
 
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Template.ComponentType;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.requests.WeblogPageRequest;
@@ -41,15 +44,24 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Responsible for rendering weblog page previews.
- * <p>
- * This servlet is used as part of the authoring interface to provide previews
- * of what a weblog will look like with a given theme.  It is not available
- * outside of the authoring interface.
+ * Responsible for rendering weblog page previews, for either of two purposes:
+ *
+ * - Preview of what a weblog will look like with a given shared theme, used
+ *   when blogger is evaluating switching themes.  Here, a URL parameter with
+ *   the shared theme name will be provided.  (Although a preview is normally
+ *   given just for the home page, any preview URL with the theme name parameter
+ *   will provide a preview of that URL--preview by category, date, blog entry, etc.)
+ *
+ * - Preview of a blog entry prior to publishing, with the user's current theme.
+ *   No URL parameter for the theme provided.
+ *
+ * Previews are obtainable only through the authoring interface by a logged-in user
+ * having at least EDIT_DRAFT rights on the blog being previewed.
  */
 @RestController
 @RequestMapping(path = "/tb-ui/authoring/preview/**")
@@ -71,13 +83,20 @@ public class PreviewProcessor extends AbstractProcessor {
         this.themeManager = themeManager;
     }
 
+    @Autowired
+    protected UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     @PostConstruct
     public void init() {
         log.info("Initializing PreviewProcessor...");
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void getPreviewPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getPreviewPage(HttpServletRequest request, HttpServletResponse response, Principal p) throws IOException {
         log.debug("Entering");
 
         Weblog weblog;
@@ -85,11 +104,19 @@ public class PreviewProcessor extends AbstractProcessor {
 
         previewRequest = new WeblogPageRequest(request);
 
+        User user = userManager.getEnabledUserByUserName(p.getName());
+
         // lookup weblog specified by preview request
         weblog = previewRequest.getWeblog();
         if (weblog == null) {
             log.debug("error creating preview request: {}", previewRequest);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        } else if (!userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
+            // user must have access rights on blog being previewed
+            log.warn("User {} attempting to preview blog {} without access rights, blocking", user != null ? user.getUserName() : "(missing)",
+                    weblog.getHandle());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 

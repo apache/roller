@@ -22,6 +22,7 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.business.URLStrategyImpl;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -132,6 +133,10 @@ public class PageModel implements Model {
 
         // custom request parameters
         this.requestParameters = (Map) initData.get("requestParameters");
+
+        if (preview) {
+            this.urlStrategy = new URLStrategyImpl(pageRequest.getWeblog().getTheme());
+        }
     }
 
     /**

@@ -364,8 +364,7 @@ public class WeblogEntryController {
                     entry.setTagsAsString(tagsAsString);
                     entry.setCommentsUrl(urlStrategy.getCommentManagementURL(weblog.getId(), entry.getId(), true));
                     entry.setPermalink(urlStrategy.getWeblogEntryURL(weblog, entry.getAnchor(), true));
-                    entry.setPreviewUrl(urlStrategy.getPreviewURLStrategy(null).getWeblogEntryURL(weblog,
-                            entry.getAnchor(), true));
+                    entry.setPreviewUrl(urlStrategy.getWeblogEntryPreviewURL(entry));
 
                     if (entry.getPubTime() != null) {
                         log.debug("entry pubtime is {}", entry.getPubTime());

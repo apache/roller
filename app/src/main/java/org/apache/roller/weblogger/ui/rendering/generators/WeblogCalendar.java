@@ -34,6 +34,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -216,7 +217,7 @@ public class WeblogCalendar {
 
     private Calendar newCalendarInstance() {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(weblog.getZoneId()), weblog.getLocaleInstance());
-        cal.setTime(new Timestamp(dayInMonth.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
+        cal.setTime(new Timestamp(dayInMonth.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC).toEpochMilli()));
         return cal;
     }
 

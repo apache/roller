@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import org.apache.roller.weblogger.business.URLStrategyImpl;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerStaticConfig;
@@ -46,6 +47,8 @@ public class URLModel implements Model {
 
     protected URLStrategy urlStrategy;
 
+    private boolean preview = false;
+
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
@@ -55,6 +58,10 @@ public class URLModel implements Model {
     }
 
     public URLModel() {
+    }
+
+    public void setPreview(boolean preview) {
+        this.preview = preview;
     }
 
     @Override
@@ -73,6 +80,11 @@ public class URLModel implements Model {
         }
 
         this.weblog = weblogRequest.getWeblog();
+
+        if (preview) {
+            this.urlStrategy = new URLStrategyImpl(weblog.getTheme());
+        }
+
     }
 
     /**

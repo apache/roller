@@ -21,25 +21,30 @@
 package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.Utilities;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A Weblogger URLStrategy which builds urls for a multi-weblog environment.
+ * Standard implementation of the URLStrategy interface.
  */
-public class MultiWeblogURLStrategy implements URLStrategy {
+public class URLStrategyImpl implements URLStrategy {
 
-    public MultiWeblogURLStrategy() {
+    private final String previewTheme;
+
+    private static final String PREVIEW_URL_SEGMENT = "/tb-ui/authoring/preview/";
+
+    public URLStrategyImpl() {
+        previewTheme = null;
     }
 
-    @Override
-    public URLStrategy getPreviewURLStrategy(String previewTheme) {
-        return new PreviewURLStrategy(previewTheme);
+    public URLStrategyImpl(String previewTheme) {
+        this.previewTheme = previewTheme;
     }
 
-    protected String getRootURL(boolean absolute) {
+    private String getRootURL(boolean absolute) {
         if (absolute) {
             return WebloggerStaticConfig.getAbsoluteContextURL();
         } else {
@@ -115,12 +120,40 @@ public class MultiWeblogURLStrategy implements URLStrategy {
 
     @Override
     public String getWeblogURL(Weblog weblog, boolean absolute) {
-        return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
+        String url = getRootWeblogURL(weblog, absolute);
+        Map<String, String> params = new HashMap<>();
+        addPreviewParams(params);
+        return url + Utilities.getQueryString(params);
+    }
+
+    /* Weblog URL before any params added */
+    private String getRootWeblogURL(Weblog weblog, boolean absolute) {
+        if (previewTheme == null) {
+            return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
+        } else {
+            return getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
+        }
+    }
+
+    private void addPreviewParams(Map<String, String> params) {
+        if (previewTheme != null) {
+            params.put("theme", Utilities.encode(previewTheme));
+        }
     }
 
     @Override
     public String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute) {
-        return getWeblogURL(weblog, absolute) + "entry/" + Utilities.encode(entryAnchor);
+        String url = getRootWeblogURL(weblog, absolute) + "entry/" + Utilities.encode(entryAnchor);
+        Map<String, String> params = new HashMap<>();
+        addPreviewParams(params);
+        return url + Utilities.getQueryString(params);
+    }
+
+    @Override
+    public String getWeblogEntryPreviewURL(WeblogEntry entry) {
+        String url = getRootURL(true) + PREVIEW_URL_SEGMENT + entry.getWeblog().getHandle() + "/";
+        url += "entry/" + Utilities.encode(entry.getAnchor());
+        return url;
     }
 
     @Override
@@ -152,7 +185,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                          int pageNum, boolean absolute) {
 
-        String pathinfo = getWeblogURL(weblog, absolute);
+        String pathinfo = getRootWeblogURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
 
         if (category != null && dateString == null) {
@@ -174,6 +207,8 @@ public class MultiWeblogURLStrategy implements URLStrategy {
             params.put("page", Integer.toString(pageNum));
         }
 
+        addPreviewParams(params);
+
         return pathinfo + Utilities.getQueryString(params);
     }
 
@@ -181,13 +216,17 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     public String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
                                    String dateString, String tag, int pageNum, boolean absolute) {
 
-        StringBuilder pathinfo = new StringBuilder();
+        String pathinfo = getRootWeblogURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
 
-        pathinfo.append(getWeblogURL(weblog, absolute));
+        if (theme != null) {
+            params.put("theme", Utilities.encode(theme));
+        } else {
+            addPreviewParams(params);
+        }
 
         if (pageLink != null) {
-            pathinfo.append("page/").append(pageLink);
+            pathinfo += "page/" + pageLink;
 
             // for custom pages we only allow query params
             if (dateString != null) {
@@ -207,7 +246,7 @@ public class MultiWeblogURLStrategy implements URLStrategy {
             return getWeblogCollectionURL(weblog, category, dateString, tag, pageNum, absolute);
         }
 
-        return pathinfo.toString() + Utilities.getQueryString(params);
+        return pathinfo + Utilities.getQueryString(params);
     }
 
     @Override
