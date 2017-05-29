@@ -22,6 +22,7 @@
 package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 import java.util.Map;
 
@@ -32,12 +33,6 @@ import java.util.Map;
  * all of the public urls used by the system.
  */
 public interface URLStrategy {
-
-    /**
-     * Get a version of this url strategy meant for use in previewing and set
-     * it to preview a given theme.
-     */
-    URLStrategy getPreviewURLStrategy(String previewTheme);
 
     /**
      * Url to login page.
@@ -89,6 +84,11 @@ public interface URLStrategy {
      * Get url for a single weblog entry on a given weblog.
      */
     String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute);
+
+    /**
+     * Get the url for previewing a given blog entry.
+     */
+    String getWeblogEntryPreviewURL(WeblogEntry entry);
 
     /**
      * Get the POST url for a weblog entry comment.

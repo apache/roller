@@ -219,7 +219,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
             timePeriod = parseDate(dateString);
 
-            ZonedDateTime weblogInitialDate = weblog.getDateCreated().atZone(weblog.getZoneId());
+            ZonedDateTime weblogInitialDate = weblog.getDateCreated().atZone(weblog.getZoneId()).minusDays(1);
 
             if (interval == PagingInterval.DAY) {
                 startTime = timePeriod.atStartOfDay();
@@ -251,7 +251,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
                 // don't allow for paging into months before the blog's create date
                 prevTimePeriod = timePeriod.minusMonths(1);
-                if (YearMonth.from(prevTimePeriod).isBefore(YearMonth.from(weblogInitialDate))) {
+                if (YearMonth.from(prevTimePeriod).isBefore(YearMonth.from(weblogInitialDate).minusMonths(1))) {
                     prevTimePeriod = null;
                 }
             }

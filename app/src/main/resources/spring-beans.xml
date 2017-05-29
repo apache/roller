@@ -100,7 +100,7 @@
         <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
-    <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
+    <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.URLStrategyImpl"/>
 
     <beans:bean id="jdbc" abstract="true" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <beans:property name="driverClassName" value="${database.jdbc.driverClass:#{null}}" />
@@ -173,8 +173,9 @@
     </beans:bean>
 
     <beans:bean id="previewPageModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
         <beans:property name="preview" value="true"/>
+        <!-- urlStrategy is manually constructed with the shared theme being previewed -->
+        <beans:property name="urlStrategy"><beans:null/></beans:property>
     </beans:bean>
 
     <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype"/>
@@ -185,7 +186,9 @@
     </beans:bean>
 
     <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="previewUrlStrategy"/>
+        <beans:property name="preview" value="true"/>
+        <!-- urlStrategy is manually constructed with the shared theme being previewed -->
+        <beans:property name="urlStrategy"><beans:null/></beans:property>
     </beans:bean>
 
     <beans:bean id="feedModel" class="org.apache.roller.weblogger.ui.rendering.model.FeedModel" scope="prototype">
@@ -196,8 +199,6 @@
     <beans:bean id="searchResultsModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel" scope="prototype">
         <beans:property name="indexManager" ref="indexManager"/>
     </beans:bean>
-
-    <beans:bean id="previewUrlStrategy" class="org.apache.roller.weblogger.business.PreviewURLStrategy"/>
 
     <beans:bean id="siteModel" class="org.apache.roller.weblogger.ui.rendering.model.SiteModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>

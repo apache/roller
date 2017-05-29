@@ -328,7 +328,7 @@ public class Utilities {
      */
     public static String getQueryString(Map<String, String> params) {
         if (params == null) {
-            return null;
+            return "";
         }
 
         StringBuilder queryString = new StringBuilder();
