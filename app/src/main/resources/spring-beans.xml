@@ -42,48 +42,48 @@
     <!-- Have JSR-250 annotations (PostConstruct, PreDestroy) honored by Spring -->
     <beans:bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 
-    <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.Weblogger">
+    <beans:bean id="webloggerBean" class="org.tightblog.business.Weblogger">
         <beans:constructor-arg ref="themeManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
     </beans:bean>
 
-    <beans:bean id="cacheManager" class="org.apache.roller.weblogger.util.cache.CacheManager"/>
+    <beans:bean id="cacheManager" class="org.tightblog.rendering.cache.CacheManager"/>
 
-    <beans:bean id="menuHelper" class="org.apache.roller.weblogger.ui.core.menu.MenuHelper">
+    <beans:bean id="menuHelper" class="org.tightblog.ui.menu.MenuHelper">
         <beans:property name="menuCache" ref="staticMenuCache"/>
     </beans:bean>
 
-    <beans:bean id="persistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy"/>
+    <beans:bean id="persistenceStrategy" class="org.tightblog.business.JPAPersistenceStrategy"/>
 
-    <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">
+    <beans:bean id="indexManager" class="org.tightblog.business.search.IndexManagerImpl">
         <beans:constructor-arg ref="weblogEntryManager"/>
     </beans:bean>
 
-    <beans:bean id="mediaFileManager" class="org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl">
+    <beans:bean id="mediaFileManager" class="org.tightblog.business.MediaFileManagerImpl">
         <beans:constructor-arg ref="fileContentManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
     </beans:bean>
 
-    <beans:bean id="fileContentManager" class="org.apache.roller.weblogger.business.FileContentManagerImpl"/>
+    <beans:bean id="fileContentManager" class="org.tightblog.business.FileContentManagerImpl"/>
 
-    <beans:bean id="pingTargetManager" class="org.apache.roller.weblogger.business.jpa.JPAPingTargetManagerImpl">
+    <beans:bean id="pingTargetManager" class="org.tightblog.business.PingTargetManagerImpl">
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:constructor-arg ref="urlStrategy"/>
     </beans:bean>
 
-    <beans:bean id="themeManager" class="org.apache.roller.weblogger.business.themes.ThemeManagerImpl">
+    <beans:bean id="themeManager" class="org.tightblog.business.themes.ThemeManagerImpl">
         <beans:constructor-arg name="themeDirOverride" value="${themes.dir:#{null}}"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
-    <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
+    <beans:bean id="userManager" class="org.tightblog.business.UserManagerImpl">
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
-    <beans:bean id="weblogManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl">
+    <beans:bean id="weblogManager" class="org.tightblog.business.WeblogManagerImpl">
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:constructor-arg ref="cacheManager"/>
@@ -94,13 +94,13 @@
         <beans:property name="weblogBlacklistCache" ref="weblogBlacklistCache"/>
     </beans:bean>
 
-    <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
+    <beans:bean id="weblogEntryManager" class="org.tightblog.business.WeblogEntryManagerImpl">
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
-    <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.URLStrategyImpl"/>
+    <beans:bean id="urlStrategy" class="org.tightblog.business.URLStrategyImpl"/>
 
     <beans:bean id="jdbc" abstract="true" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <beans:property name="driverClassName" value="${database.jdbc.driverClass:#{null}}" />
@@ -141,7 +141,7 @@
         <beans:property name="templateResolver" ref="mailTemplateResolver" />
     </beans:bean>
 
-    <beans:bean id="mailManager" class="org.apache.roller.weblogger.business.MailManagerImpl">
+    <beans:bean id="mailManager" class="org.tightblog.business.MailManagerImpl">
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
@@ -151,20 +151,20 @@
     </beans:bean>
 
     <!-- Renderer Manager -->
-    <beans:bean id="rendererManager" class="org.apache.roller.weblogger.ui.rendering.RendererManager">
+    <beans:bean id="rendererManager" class="org.tightblog.rendering.RendererManager">
         <beans:property name="rendererFactories" ref="rendererFactorySet"/>
     </beans:bean>
 
     <beans:bean id="rendererFactorySet" class="org.springframework.beans.factory.config.SetFactoryBean">
         <beans:property name="sourceSet">
             <beans:set>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.velocity.VelocityRendererFactory"/>
+                <beans:bean class="org.tightblog.rendering.velocity.VelocityRendererFactory"/>
             </beans:set>
         </beans:property>
     </beans:bean>
 
     <!-- page models, additional models can be added as shown here: http://stackoverflow.com/a/13160350/1207540 -->
-    <beans:bean id="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
+    <beans:bean id="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
@@ -172,35 +172,35 @@
         <beans:property name="themeManager" ref="themeManager"/>
     </beans:bean>
 
-    <beans:bean id="previewPageModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.PageModel" scope="prototype">
+    <beans:bean id="previewPageModel" parent="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">
         <beans:property name="preview" value="true"/>
         <!-- urlStrategy is manually constructed with the shared theme being previewed -->
         <beans:property name="urlStrategy"><beans:null/></beans:property>
     </beans:bean>
 
-    <beans:bean id="utilitiesModel" class="org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel" scope="prototype"/>
+    <beans:bean id="utilitiesModel" class="org.tightblog.rendering.model.UtilitiesModel" scope="prototype"/>
 
-    <beans:bean id="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
+    <beans:bean id="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
-    <beans:bean id="previewUrlModel" parent="urlModel" class="org.apache.roller.weblogger.ui.rendering.model.URLModel" scope="prototype">
+    <beans:bean id="previewUrlModel" parent="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">
         <beans:property name="preview" value="true"/>
         <!-- urlStrategy is manually constructed with the shared theme being previewed -->
         <beans:property name="urlStrategy"><beans:null/></beans:property>
     </beans:bean>
 
-    <beans:bean id="feedModel" class="org.apache.roller.weblogger.ui.rendering.model.FeedModel" scope="prototype">
+    <beans:bean id="feedModel" class="org.tightblog.rendering.model.FeedModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
-    <beans:bean id="searchResultsModel" parent="pageModel" class="org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel" scope="prototype">
+    <beans:bean id="searchResultsModel" parent="pageModel" class="org.tightblog.rendering.model.SearchResultsModel" scope="prototype">
         <beans:property name="indexManager" ref="indexManager"/>
     </beans:bean>
 
-    <beans:bean id="siteModel" class="org.apache.roller.weblogger.ui.rendering.model.SiteModel" scope="prototype">
+    <beans:bean id="siteModel" class="org.tightblog.rendering.model.SiteModel" scope="prototype">
         <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
@@ -259,13 +259,13 @@
     <beans:bean id="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
             <beans:list>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.BlacklistCommentValidator">
+                <beans:bean class="org.tightblog.rendering.comment.BlacklistCommentValidator">
                     <beans:property name="weblogManager" ref="weblogManager"/>
                 </beans:bean>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.ExcessLinksCommentValidator"/>
-                <beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.ExcessSizeCommentValidator"/>
+                <beans:bean class="org.tightblog.rendering.comment.ExcessLinksCommentValidator"/>
+                <beans:bean class="org.tightblog.rendering.comment.ExcessSizeCommentValidator"/>
                 <!--Akismet requires configuration of user key below -->
-                <!--beans:bean class="org.apache.roller.weblogger.ui.rendering.comment.AkismetCommentValidator">
+                <!--beans:bean class="AkismetCommentValidator">
                     <beans:constructor-arg ref="urlStrategy"/>
                     <beans:constructor-arg name="apiKey" value="...your key here..."/>
                     <beans:property name="deleteBlatantSpam" value="false"/>
@@ -281,7 +281,7 @@
 
          Comment out below bean to disable this check.
     -->
-    <beans:bean id="commentAuthenticator" class="org.apache.roller.weblogger.ui.rendering.comment.MathCommentAuthenticator"/>
+    <beans:bean id="commentAuthenticator" class="org.tightblog.rendering.comment.MathCommentAuthenticator"/>
 
     <!-- Restricted URLs that may not represent blogs:  Used by the RequestMappingFilter to quickly toss-out non-blog URLs.
          Should be kept as-is.  To add items to this list, override and add to the subsequent customProtectedUrls element
@@ -314,12 +314,12 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="RequestMappingFilter" class="org.apache.roller.weblogger.ui.core.filters.RequestMappingFilter">
+    <beans:bean id="RequestMappingFilter" class="org.tightblog.ui.filters.RequestMappingFilter">
         <beans:property name="weblogManager" ref="weblogManager"/>
         <beans:property name="restrictedUrls" ref="customProtectedUrls"/>
     </beans:bean>
 
-    <beans:bean id="PersistenceSessionFilter" class="org.apache.roller.weblogger.ui.core.filters.PersistenceSessionFilter">
+    <beans:bean id="PersistenceSessionFilter" class="org.tightblog.ui.filters.PersistenceSessionFilter">
         <beans:property name="persistenceStrategy" ref="persistenceStrategy"/>
     </beans:bean>
 
@@ -328,31 +328,31 @@
         <beans:property name="cacheManager" ref="cacheManager"/>
     </beans:bean>
 
-    <beans:bean id="weblogPageCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">
+    <beans:bean id="weblogPageCache" parent="abstractCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogpage"/>
         <beans:property name="size" value="400"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
-    <beans:bean id="weblogBlacklistCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">
+    <beans:bean id="weblogBlacklistCache" parent="abstractCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogblacklist"/>
         <beans:property name="size" value="200"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
-    <beans:bean id="staticMenuCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.ExpiringCache">
+    <beans:bean id="staticMenuCache" parent="abstractCache" class="org.tightblog.rendering.cache.ExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.staticmenu"/>
         <beans:property name="size" value="50"/>
         <beans:property name="timeoutSec" value="7200"/>
     </beans:bean>
 
-    <beans:bean id="weblogFeedCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.LazyExpiringCache">
+    <beans:bean id="weblogFeedCache" parent="abstractCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogfeed"/>
         <beans:property name="size" value="200"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
-    <beans:bean id="siteWideCache" parent="abstractCache" class="org.apache.roller.weblogger.util.cache.SiteWideCache">
+    <beans:bean id="siteWideCache" parent="abstractCache" class="org.tightblog.rendering.cache.SiteWideCache">
         <beans:property name="cacheHandlerId" value="cache.sitewide"/>
         <beans:property name="size" value="50"/>
         <beans:property name="timeoutSec" value="1800"/>

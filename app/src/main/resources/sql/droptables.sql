@@ -38,4 +38,4 @@ drop table weblog_template_rendition;
 -- core platform tables
 drop table user_weblog_role;
 drop table weblog;
-drop table roller_user;
+drop table weblogger_user;
