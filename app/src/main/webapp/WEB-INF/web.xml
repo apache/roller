@@ -37,7 +37,7 @@
 
     <filter>
         <filter-name>BootstrapFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.BootstrapFilter</filter-class>
+        <filter-class>org.tightblog.ui.filters.BootstrapFilter</filter-class>
     </filter>
 
     <filter>
@@ -47,12 +47,12 @@
 
     <filter>
         <filter-name>InitFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.InitFilter</filter-class>
+        <filter-class>org.tightblog.ui.filters.InitFilter</filter-class>
     </filter>
 
     <filter>
         <filter-name>CharEncodingFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.CharEncodingFilter</filter-class>
+        <filter-class>org.tightblog.ui.filters.CharEncodingFilter</filter-class>
     </filter>
 
 
@@ -115,7 +115,7 @@
 
     <!-- Context Listeners -->
     <listener>
-        <listener-class>org.apache.roller.weblogger.business.WebloggerContext</listener-class>
+        <listener-class>org.tightblog.business.WebloggerContext</listener-class>
     </listener>
     
     <servlet>

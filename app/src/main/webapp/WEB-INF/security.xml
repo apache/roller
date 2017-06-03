@@ -72,13 +72,13 @@
     </beans:bean>
 
     <beans:bean id="ajaxInvalidSessionRedirectFilter"
-                class="org.apache.roller.weblogger.ui.core.filters.AjaxInvalidSessionRedirectFilter"/>
+                class="org.tightblog.ui.filters.AjaxInvalidSessionRedirectFilter"/>
 
     <beans:bean id="csrfRequestMatcher"
-                class="org.apache.roller.weblogger.ui.core.security.CsrfSecurityRequestMatcher"/>
+                class="org.tightblog.ui.security.CsrfSecurityRequestMatcher"/>
 
     <beans:bean id="authenticationSuccessHandler"
-                class="org.apache.roller.weblogger.ui.core.security.CustomAuthenticationSuccessHandler">
+                class="org.tightblog.ui.security.CustomAuthenticationSuccessHandler">
         <!-- userReferer works in conjuction with CustomAccessDeniedHandlerImpl, so non-AJAX CSRF exceptions
              can redirect back to appropriate page after re-authentication -->
         <beans:property name="userManager" ref="userManager"/>
@@ -86,7 +86,7 @@
     </beans:bean>
 
     <beans:bean id="accessDeniedHandler"
-                class="org.apache.roller.weblogger.ui.core.security.CustomAccessDeniedHandlerImpl">
+                class="org.tightblog.ui.security.CustomAccessDeniedHandlerImpl">
     </beans:bean>
 
     <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
@@ -114,7 +114,7 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="userDetailsService" class="org.apache.roller.weblogger.ui.core.security.CustomUserDetailsService">
+    <beans:bean id="userDetailsService" class="org.tightblog.ui.security.CustomUserDetailsService">
         <beans:property name="userManager" ref="userManager"/>
         <beans:property name="persistenceStrategy" ref="persistenceStrategy"/>
     </beans:bean>

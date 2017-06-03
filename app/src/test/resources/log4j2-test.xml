@@ -12,10 +12,9 @@
         <Root level="error">
             <AppenderRef ref="TightBlogTestFileAppender"/>
         </Root>
-        <Logger name="org.apache.roller" level="debug"/>
-        <!--Logger name="org.apache.roller.weblogger.business" level="debug"/-->
+        <Logger name="org.tightblog" level="debug"/>
+        <!--Logger name="org.tightblog.business" level="debug"/-->
         <Logger name="org.apache.tiles" level="error"/>
-        <Logger name="com.opensymphony.xwork2" level="error"/>
         <Logger name="org.springframework" level="warn"/>
         <Logger name="org.hibernate" level="error"/>
         <!-- Velocity talks *way* too much, so set it to log only FATAL problems -->

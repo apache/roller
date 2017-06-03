@@ -18,9 +18,9 @@
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 
 <% request.setAttribute("version",
-      org.apache.roller.weblogger.business.WebloggerStaticConfig.getProperty("weblogger.version", "Unknown")); %>
+      org.tightblog.business.WebloggerStaticConfig.getProperty("weblogger.version", "Unknown")); %>
 <% request.setAttribute("revision",
-      org.apache.roller.weblogger.business.WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown")); %>
+      org.tightblog.business.WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown")); %>
 
 <fmt:message key="footer.productName" >
     <fmt:param value="${version}" />
