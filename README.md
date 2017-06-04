@@ -1,14 +1,28 @@
-Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project.  As of 17 July 2016, <a href="https://github.com/gmazza/tightblog/releases">Release 1.0.0</a> is available.
+Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
+before deciding to go my own way due to increasingly differing architectural goals.  As of 4 June 2017, <a href="https://github.com/gmazza/tightblog/releases">Release 2.0</a> is available.
 
 TightBlog strives to be the mathematically cleanest and simplest implementation of a Java based blog server, suitable either for direct use or
 incorporation, as an Apache-licensed open source project, into larger projects.  Specifically, its goal is to satisfy all the needs of 80% of bloggers while
-avoiding seldom-requested functionality that bloats the application and creates maintenance burdens, doing more harm than good.
+avoiding seldom-requested functionality that creates maintenance burdens, distracting one from core functionality and hence doing more harm than good.
 
-This more realistic goal--along with adopting the Spring framework, REST, and other code modernizations--has allowed TightBlog to slim down considerably from its parent:
-The 1.0.0 release of TightBlog uses 17 database tables compared to Roller V5.1.2's 33, 187 Java source files to 493 in Roller, and 55 JSPs vs. Roller's 96.  Only increase,
-a nice one, is about 15 more JavaScript files have been added, due to TightBlog's increased emphasis on browser-side processing.
+This more realistic goal--along with adopting the Spring framework, REST, AngularJS and other code modernizations--has allowed TightBlog to slim down considerably from its parent, as can be seen in the following chart:
 
-TightBlog 2.0 is underway.  Simplifications continuing, as of 29 May 2017 the application is at 14 database tables, 151 Java source files and 37 JSPs.
+|Product|Released|Database Tables|Java Source Files|JSP Files|Lines Of Code|
+|-------|-----|-------|-----|-----|-----|-----|
+|Apache Roller 5.1.2|1 Mar 2015|33|493|96|95.7K|
+|TightBlog 1.0|17 July 2016|17|187|55|48.5K
+|TightBlog 2.0|4 June 2017|14|151|37|43.7K
+
+(Lines of code stats from <a href="https://www.openhub.net/p/tightblog">OpenHub</a>.) 
+
+Only increases with TightBlog are about 20 or so new JavaScript files added, due to TightBlog's increased emphasis on browser-side processing.
+
+Functionality-wise, TightBlog hasn't been all subtract and no add, though.  Some functionality in TightBlog not present in the latest release of Roller:
+
+* Bloggers may blog using <a href="http://commonmark.org/">CommonMark</a> in addition to standard HTML and Rich Text Editors. 
+* Blog entries have a "notes" field for the blogger to store anything helpful in maintaining the article.
+* There is a new tag management screen allowing for renaming, merging, and deleting tags attached to blog entries, as well as adding a new tag to all articles already having a given tag.
+* A new "search.enabled" setting has been added to static configuration allowing for shutting off the Lucene indexer used for blog searching, useful in saving processing/space for when you're relying on third party indexing tools like Google Custom Search instead.
 
 Check <a href="https://web-gmazza.rhcloud.com/blog/category/Blogs+%26+Wikis">my blog</a> for recent status updates.
 
@@ -32,5 +46,4 @@ and view http://localhost:8080/tightblog from a browser.  From there you can reg
 create and view comments, modify templates, etc., etc., everything you can do with production TightBlog.  Each time it is run,
 "mvn jetty:run" creates a new in-memory temporary database that exists until you Ctrl-Z out of the terminal window running this command.
 
-For actual installations on Tomcat or other servlet container, please read the <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a>
-on the TightBlog Wiki.
+For actual installations on Tomcat or other servlet container, please read the <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a> on the TightBlog Wiki.
