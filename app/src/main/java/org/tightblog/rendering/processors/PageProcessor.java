@@ -518,7 +518,7 @@ public class PageProcessor extends AbstractProcessor {
      * foo/20051110
      * foo/MyCategory/user=myname
      */
-    public String generateKey(WeblogPageRequest pageRequest) {
+    protected String generateKey(WeblogPageRequest pageRequest) {
 
         StringBuilder key = new StringBuilder();
 

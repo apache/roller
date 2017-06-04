@@ -30,46 +30,46 @@ import static org.junit.Assert.*;
  */
 public class InitFilterTest extends WebloggerTest {
 
-    private static final String SERVER_NAME = "roller.example.com";
+    private static final String SERVER_NAME = "tightblog.example.com";
 
     @Test
     public void testGetAbsoluteUrlOnRootWithHttp() throws Exception {
         String contextPath = "";
         String requestURI = "/";
-        String requestURL = "http://roller.example.com/";
+        String requestURL = "http://tightblog.example.com/";
 
         String absoluteUrl = InitFilter.getAbsoluteUrl(false, SERVER_NAME, contextPath, requestURI, requestURL);
-        assertEquals("http://roller.example.com", absoluteUrl);
+        assertEquals("http://tightblog.example.com", absoluteUrl);
     }
 
     @Test
     public void testGetAbsoluteUrlOnRootWithHttps() throws Exception {
         String contextPath = "";
         String requestURI = "/";
-        String requestURL = "https://roller.example.com/";
+        String requestURL = "https://tightblog.example.com/";
 
         String absoluteUrl = InitFilter.getAbsoluteUrl(true, SERVER_NAME, contextPath, requestURI, requestURL);
-        assertEquals("http://roller.example.com", absoluteUrl);
+        assertEquals("http://tightblog.example.com", absoluteUrl);
     }
 
     @Test
     public void testGetAbsoluteUrlAgainstTop() throws Exception {
-        String contextPath = "/roller";
-        String requestURI = "/roller/";
-        String requestURL = "http://roller.example.com/roller/";
+        String contextPath = "/tightblog";
+        String requestURI = "/tightblog/";
+        String requestURL = "http://tightblog.example.com/tightblog/";
 
         String absoluteUrl = InitFilter.getAbsoluteUrl(false, SERVER_NAME, contextPath, requestURI, requestURL);
-        assertEquals("http://roller.example.com/roller", absoluteUrl);
+        assertEquals("http://tightblog.example.com/tightblog", absoluteUrl);
     }
 
     @Test
     public void testGetAbsoluteUrlAgainstPermalink() throws Exception {
-        String contextPath = "/roller";
-        String requestURI = "/roller/handle/entry/title";
-        String requestURL = "http://roller.example.com/roller/handle/entry/title";
+        String contextPath = "/tightblog";
+        String requestURI = "/tightblog/handle/entry/title";
+        String requestURL = "http://tightblog.example.com/tightblog/handle/entry/title";
 
         String absoluteUrl = InitFilter.getAbsoluteUrl(false, SERVER_NAME, contextPath, requestURI, requestURL);
-        assertEquals("http://roller.example.com/roller", absoluteUrl);
+        assertEquals("http://tightblog.example.com/tightblog", absoluteUrl);
     }
 
     @Test

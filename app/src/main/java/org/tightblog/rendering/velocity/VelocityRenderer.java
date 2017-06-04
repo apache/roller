@@ -65,7 +65,7 @@ public class VelocityRenderer implements Renderer {
         try {
             // make sure that we can locate the template
             // if we can't then this will throw an exception
-            velocityTemplate = VelocityEngineWrapper.getTemplate(template.getId(), deviceType, "UTF-8");
+            velocityTemplate = VelocityEngineWrapper.getTemplate(template.getId(), deviceType);
 
         } catch (ResourceNotFoundException ex) {
             // velocity couldn't find the resource so lets log a warning
@@ -102,7 +102,7 @@ public class VelocityRenderer implements Renderer {
             Context ctx = new VelocityContext(model);
 
             if (velocityDecorator != null) {
-                /**
+                /*
                  * We only allow decorating once, so the process isn't fully
                  * recursive. This is just to keep it simple.
                  */

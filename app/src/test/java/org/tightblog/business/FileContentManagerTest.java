@@ -89,7 +89,7 @@ public class FileContentManagerTest extends WebloggerTest {
         // File should not exist initially
         try {
             fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
-            assertTrue("Non-existent file retrieved without any exception", false);
+            fail("Non-existent file retrieved without any exception");
         } catch (FileNotFoundException e) {
             assertTrue("Exception thrown for non-existent file as expected", true);
         }
@@ -108,7 +108,7 @@ public class FileContentManagerTest extends WebloggerTest {
         // File should not exist after delete
         try {
             fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
-            assertTrue("Non-existent file retrieved without any exception", false);
+            fail("Non-existent file retrieved without any exception");
         } catch (FileNotFoundException e) {
             assertTrue("Exception thrown for non-existant file as expected", true);
         }

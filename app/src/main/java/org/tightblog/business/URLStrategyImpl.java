@@ -69,8 +69,8 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getActionURL(String action, String namespace, Weblog weblog,
-                               Map<String, String> parameters, boolean absolute) {
-        String url = getRootURL(absolute) + namespace + "/" + action;
+                               Map<String, String> parameters) {
+        String url = getRootURL(true) + namespace + "/" + action;
 
         // add weblog handle parameter, if provided
         Map<String, String> params = new HashMap<>();
@@ -102,8 +102,8 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getCommentManagementURL(String weblogId, String entryId, boolean absolute) {
-        String url = getRootURL(absolute) + "/tb-ui/app/authoring/comments";
+    public String getCommentManagementURL(String weblogId, String entryId) {
+        String url = getRootURL(true) + "/tb-ui/app/authoring/comments";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
         params.put("entryId", entryId);
@@ -157,28 +157,28 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean absolute) {
-        return getWeblogURL(weblog, absolute) + "entrycomment/" + Utilities.encode(entryAnchor);
+    public String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor) {
+        return getWeblogURL(weblog, true) + "entrycomment/" + Utilities.encode(entryAnchor);
     }
 
     @Override
-    public String getMediaFileURL(Weblog weblog, String fileAnchor, boolean absolute) {
-        return getWeblogURL(weblog, absolute) + "mediaresource/" + Utilities.encode(fileAnchor);
+    public String getMediaFileURL(Weblog weblog, String fileAnchor) {
+        return getWeblogURL(weblog, true) + "mediaresource/" + Utilities.encode(fileAnchor);
     }
 
     @Override
-    public String getMediaFileThumbnailURL(Weblog weblog, String fileAnchor, boolean absolute) {
-        return getMediaFileURL(weblog, fileAnchor, absolute) + "?t=true";
+    public String getMediaFileThumbnailURL(Weblog weblog, String fileAnchor) {
+        return getMediaFileURL(weblog, fileAnchor) + "?t=true";
     }
 
     @Override
-    public String getWeblogCommentsURL(Weblog weblog, String entryAnchor, boolean absolute) {
-        return getWeblogEntryURL(weblog, entryAnchor, absolute) + "#comments";
+    public String getWeblogCommentsURL(Weblog weblog, String entryAnchor) {
+        return getWeblogEntryURL(weblog, entryAnchor, true) + "#comments";
     }
 
     @Override
-    public String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp, boolean absolute) {
-        return getWeblogEntryURL(weblog, entryAnchor, absolute) + "#comment-" + timeStamp;
+    public String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp) {
+        return getWeblogEntryURL(weblog, entryAnchor, true) + "#comment-" + timeStamp;
     }
 
     @Override

@@ -34,9 +34,10 @@ public class SharedTemplateRendition implements TemplateRendition {
     private String contentsFile = null;
     private String template = null;
 
-    public SharedTemplateRendition() {
+    SharedTemplateRendition() {
     }
 
+    // public scope needed by JAXB
     public String getContentsFile() {
         return contentsFile;
     }

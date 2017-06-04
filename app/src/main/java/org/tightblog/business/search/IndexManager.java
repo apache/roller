@@ -73,12 +73,6 @@ public interface IndexManager {
     Directory getIndexDirectory();
 
     /**
-     * Is the Tightblog indexing being used?  For better performance, should be
-     * deactivated if using third-party (e.g., Google) or no blog search functionality.
-     */
-    boolean isSearchEnabled();
-
-    /**
      * Are comments to be indexed and used for search results?
      */
     boolean isIndexComments();
@@ -87,10 +81,5 @@ public interface IndexManager {
      * Initialize the search system.
      */
     void initialize();
-
-    /**
-     * Method to call on application shutdown
-     */
-    void shutdown();
 
 }

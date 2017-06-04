@@ -156,7 +156,7 @@ public class FileContentManagerImpl implements FileContentManager {
         log.debug("attempted save file size = {}", size);
         try {
             File storageDirectory = this.getRealFile(weblog, null);
-            long userDirSize = getDirSize(storageDirectory, true);
+            long userDirSize = getDirSize(storageDirectory);
             log.debug("max userDirSize = {}", userDirSize);
             if (userDirSize + size > maxDirBytes) {
                 if (messages != null) {
@@ -189,10 +189,9 @@ public class FileContentManagerImpl implements FileContentManager {
     }
 
     /**
-     * Get the size in bytes of given directory.
-     * Optionally works recursively counting subdirectories if they exist.
+     * Get the size in bytes of given directory including its subdirectories
      */
-    private long getDirSize(File dir, boolean recurse) {
+    private long getDirSize(File dir) {
 
         long size = 0;
 
@@ -203,9 +202,9 @@ public class FileContentManagerImpl implements FileContentManager {
                 for (File file : files) {
                     if (!file.isDirectory()) {
                         dirSize += file.length();
-                    } else if (recurse) {
+                    } else {
                         // count a subdirectory
-                        dirSize += getDirSize(file, true);
+                        dirSize += getDirSize(file);
                     }
                 }
             }

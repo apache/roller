@@ -40,11 +40,9 @@ import java.time.Instant;
 import static org.junit.Assert.*;
 
 public class WeblogTemplateRenditionTest extends WebloggerTest {
-    User testUser = null;
-    Weblog testWeblog = null;
-    WeblogTemplate testPage = null;
-    WeblogTemplateRendition standardCode = null;
-    WeblogTemplateRendition mobileCode = null;
+    private User testUser = null;
+    private Weblog testWeblog = null;
+    private WeblogTemplate testPage = null;
 
     /**
      * All tests in this suite require a user and a weblog.
@@ -103,21 +101,19 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
 
         assertNotNull(testPageCheck);
 
-        standardCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
+        WeblogTemplateRendition standardCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
         assertNotNull(standardCode);
         assertEquals(standardTemplateCode.getRendition(), standardCode.getRendition());
 
-        mobileCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
+        WeblogTemplateRendition mobileCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
         assertNotNull(mobileCode);
         assertEquals(mobileTemplateCode.getRendition(), mobileCode.getRendition());
 
         // update template Code
-        standardCode = null;
         standardCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
         standardCode.setRendition("update.standard.template");
         weblogManager.saveTemplateRendition(standardCode);
 
-        mobileCode = null;
         mobileCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
         mobileCode.setRendition("update.mobile.template");
         weblogManager.saveTemplateRendition(mobileCode);
@@ -125,11 +121,9 @@ public class WeblogTemplateRenditionTest extends WebloggerTest {
         endSession(true);
 
         // check that update was successful
-        standardCode = null;
         standardCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
         assertEquals("update.standard.template", standardCode.getRendition());
 
-        mobileCode = null;
         mobileCode = testPageCheck.getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
         assertEquals("update.mobile.template", mobileCode.getRendition());
 

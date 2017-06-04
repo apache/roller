@@ -36,6 +36,6 @@ public final class FieldConstants {
     public static final String COMMENT_NAME = "name";
     public static final String CONSTANT = "constant";
     public static final String WEBSITE_HANDLE = "handle";
-    // CONSTANT_V used to recall all documents; must be lowercase
+    // CONSTANT_V used to retrieve all documents; must be lowercase
     public static final String CONSTANT_V = "v";
 }

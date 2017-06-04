@@ -55,11 +55,6 @@ public class IndexEntryTask extends AbstractIndexTask {
     }
 
     public void doRun() {
-        // since this task is normally run on a separate thread we must treat
-        // the weblog object passed in as a detached object which is prone to
-        // lazy initialization problems, so requery for the object now
-        this.weblogEntry = weblogEntryManager.getWeblogEntry(this.weblogEntry.getId(), false);
-
         IndexWriter writer = beginWriting();
         try {
             if (writer != null) {
@@ -68,8 +63,13 @@ public class IndexEntryTask extends AbstractIndexTask {
                 writer.deleteDocuments(term);
 
                 if (!deleteOnly) {
-                    // Add Doc
-                    writer.addDocument(getDocument(weblogEntry));
+                    // since this task is normally run on a separate thread we must treat
+                    // the weblog object passed in as a detached JPA entity object with
+                    // potentially obsolete data, so requery for the object now
+                    this.weblogEntry = weblogEntryManager.getWeblogEntry(this.weblogEntry.getId(), false);
+                    if (weblogEntry != null) {
+                        writer.addDocument(getDocument(weblogEntry));
+                    }
                 }
             }
         } catch (IOException e) {

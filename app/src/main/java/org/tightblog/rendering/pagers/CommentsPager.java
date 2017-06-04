@@ -20,7 +20,6 @@
  */
 package org.tightblog.rendering.pagers;
 
-import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Weblog;
@@ -59,7 +58,6 @@ public class CommentsPager extends AbstractPager {
 
     public CommentsPager(
             WeblogEntryManager weblogEntryManager,
-            URLStrategy strat,
             String baseUrl,
             Weblog weblog,
             String categoryName,
@@ -67,7 +65,7 @@ public class CommentsPager extends AbstractPager {
             int page,
             int length) {
 
-        super(strat, baseUrl, page);
+        super(baseUrl, page);
 
         this.weblogEntryManager = weblogEntryManager;
         this.weblog = weblog;
@@ -132,6 +130,7 @@ public class CommentsPager extends AbstractPager {
     /**
      * Get last updated time from items in pager
      */
+    @SuppressWarnings("unused")
     public Instant getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by post time, so use that

@@ -68,26 +68,6 @@ public interface PingTargetManager {
     List<PingTarget> getEnabledPingTargets();
 
     /**
-     * Check if the url of a ping target is well-formed.  For this test, it must parse as a <code>java.net.URL</code>,
-     * with protocol <code>http</code> and a non-empty <code>host</code> portion.
-     *
-     * @param pingTargetUrl url to check.
-     * @return true if the <code>pingTargetUrl</code> property of the ping target is a well-formed url.
-     */
-    boolean isUrlWellFormed(String pingTargetUrl);
-
-    /**
-     * Check if the host portion of the url of a ping target is known, meaning it is either a well-formed IP address
-     * or a hostname that resolves from the server.  The ping target url must parse as a <code>java.net.URL</code> in
-     * order for the hostname to be extracted for this test.  This will return false if that parsing fails.
-     *
-     * @param pingTargetUrl url to check.
-     * @return true if the <code>pingTargetUrl</code> (is well-formed and) the <code>host</code> portion of the url of the
-     * ping target is a valid IP address or a hostname that can be resolved on the server.
-     */
-    boolean isHostnameKnown(String pingTargetUrl);
-
-    /**
      * Add the weblog to the set whose URLs will be sent to the ping targets.  Normally called after a blog entry
      * update so the ping targets can be made aware.  This method can be called multiple times for the same weblog
      * (due to repeated edits) without concern of ping duplication as sets naturally discard duplicates.

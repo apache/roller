@@ -39,11 +39,6 @@ public final class WebloggerStaticConfig {
 
     private static Logger log = LoggerFactory.getLogger(WebloggerStaticConfig.class);
 
-    private static String defaultConfig = "/tightblog.properties";
-    private static String customConfig = "/tightblog-custom.properties";
-    private static String customJvmParam = "tightblog.custom.config";
-    private static File customConfigFile = null;
-
     private static Properties config;
 
     // special case for our context urls
@@ -66,6 +61,11 @@ public final class WebloggerStaticConfig {
      * We load the default properties and any custom properties we find
      */
     static {
+        String defaultConfig = "/tightblog.properties";
+        String customConfig = "/tightblog-custom.properties";
+        String customJvmParam = "tightblog.custom.config";
+        File customConfigFile;
+
         config = new Properties();
 
         try {
@@ -154,28 +154,11 @@ public final class WebloggerStaticConfig {
      * Retrieve a property as a boolean ... defaults to false if not present.
      */
     public static boolean getBooleanProperty(String name) {
-        return getBooleanProperty(name, false);
-    }
-
-    /**
-     * Retrieve a property as a boolean ... with specified default if not present.
-     */
-    public static boolean getBooleanProperty(String name, boolean defaultValue) {
-        // get the value first, then convert
         String value = WebloggerStaticConfig.getProperty(name);
-
         if (value == null) {
-            return defaultValue;
+            return false;
         }
-
         return Boolean.valueOf(value);
-    }
-
-    /**
-     * Retrieve a property as an int ... defaults to 0 if not present.
-     */
-    public static int getIntProperty(String name) {
-        return getIntProperty(name, 0);
     }
 
     /**

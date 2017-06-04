@@ -41,12 +41,12 @@ import static org.junit.Assert.*;
  */
 public class PingsTest extends WebloggerTest {
 
-    User testUser = null;
-    Weblog testWeblog = null;
-    PingTarget testCommonPing = null;
+    private User testUser = null;
+    private Weblog testWeblog = null;
+    private PingTarget testCommonPing = null;
 
     @Resource
-    PingTargetManager pingTargetManager;
+    private PingTargetManager pingTargetManager;
 
     public void setPingTargetManager(PingTargetManager pingTargetManager) {
         this.pingTargetManager = pingTargetManager;

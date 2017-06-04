@@ -271,7 +271,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return entries;
     }
 
-    public Map<LocalDate, List<WeblogEntry>> loadEntries(LocalDateTime startTime, LocalDateTime endTime) {
+    private Map<LocalDate, List<WeblogEntry>> loadEntries(LocalDateTime startTime, LocalDateTime endTime) {
 
         if (entries == null) {
             entries = new TreeMap<>(Collections.reverseOrder());
@@ -400,7 +400,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     /**
      * Parse data as either 6-char or 8-char format.
      */
-    protected LocalDate parseDate(String dateString) {
+    private LocalDate parseDate(String dateString) {
         DateTimeFormatter dtf;
         LocalDate ldt;
         if (dateString != null && StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
@@ -444,6 +444,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     /**
      * Get last updated time from items in pager
      */
+    @SuppressWarnings("unused")
     public Instant getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated

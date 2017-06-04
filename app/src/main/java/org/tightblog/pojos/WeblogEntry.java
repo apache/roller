@@ -58,8 +58,6 @@ import java.util.Set;
 @Entity
 @Table(name = "weblog_entry")
 @NamedQueries({
-        @NamedQuery(name = "WeblogEntry.getByCategory",
-                query = "SELECT w FROM WeblogEntry w WHERE w.category = ?1"),
         @NamedQuery(name = "WeblogEntry.getByWeblog&AnchorOrderByPubTimeDesc",
                 query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC"),
         @NamedQuery(name = "WeblogEntry.getByWeblog&Anchor",

@@ -18,7 +18,6 @@
 
 package org.tightblog.rendering.pagers;
 
-import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Weblog;
 import org.slf4j.Logger;
@@ -49,13 +48,12 @@ public class WeblogsPager extends AbstractPager {
 
     public WeblogsPager(
             WeblogManager weblogManager,
-            URLStrategy strat,
             String baseUrl,
             String letter,
             int page,
             int length) {
 
-        super(strat, baseUrl, page);
+        super(baseUrl, page);
 
         this.weblogManager = weblogManager;
         this.letter = letter;

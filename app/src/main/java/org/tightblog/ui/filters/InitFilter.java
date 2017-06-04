@@ -81,7 +81,7 @@ public class InitFilter implements Filter {
     public void destroy() {
     }
 
-    protected static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL) {
+    static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL) {
 
         String url;
 
@@ -117,7 +117,7 @@ public class InitFilter implements Filter {
         return removeTrailingSlash(url);
     }
 
-    protected static String removeTrailingSlash(String url) {
+    static String removeTrailingSlash(String url) {
         if (url.endsWith("/")) {
             return url.substring(0, url.length() - 1);
         }

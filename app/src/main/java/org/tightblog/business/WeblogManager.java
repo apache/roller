@@ -42,7 +42,7 @@ public interface WeblogManager {
      * Add new weblog, give creator admin permission, creates blogroll,
      * creates categories and other objects required for new weblog.
      *
-     * @param newWeblog New weblog to be created, must have creator.
+     * @param newWeblog New weblog to be created, must have creator field populated.
      */
     void addWeblog(Weblog newWeblog);
 
@@ -91,10 +91,9 @@ public interface WeblogManager {
      * Get users of a weblog.
      *
      * @param weblog      Weblog to retrieve users for
-     * @param enabledOnly Include only enabled users?
      * @return List of User objects.
      */
-    List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly);
+    List<User> getWeblogUsers(Weblog weblog);
 
     /**
      * Get map with 26 entries, one for each letter A-Z and
@@ -259,11 +258,6 @@ public interface WeblogManager {
      * Get WeblogCategory objects for a weblog.
      */
     List<WeblogCategory> getWeblogCategories(Weblog weblog);
-
-    /**
-     * Check if weblog category is in use.
-     */
-    boolean isWeblogCategoryInUse(WeblogCategory data);
 
     /**
      * Obtain the combined blacklist (global-defined & weblog-defined) for a given weblog.

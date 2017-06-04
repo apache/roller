@@ -36,14 +36,6 @@ public class UtilitiesTest extends WebloggerTest {
     }
 
     @Test
-    public void testExtractHTML() {
-        String test = "<a>keep me</a>";
-        String expect = "<a></a>";
-        String result = Utilities.extractHTML(test);
-        assertEquals(expect, result);
-    }
-
-    @Test
     public void testRemoveHTML() {
         String test = "<br><br><p>a <b>bold</b> sentence with a <a href=\"http://example.com\">link</a></p>";
         String expect = "a bold sentence with a link";

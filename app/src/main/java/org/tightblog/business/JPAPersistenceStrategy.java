@@ -178,7 +178,7 @@ public class JPAPersistenceStrategy {
      * @param clazz the class of object to remove
      * @param id    the id of the object to remove
      */
-    public void remove(Class clazz, String id) {
+    public void remove(Class<Object> clazz, String id) {
         EntityManager em = getEntityManager(true);
         Object po = em.find(clazz, id);
         em.remove(po);
@@ -222,7 +222,7 @@ public class JPAPersistenceStrategy {
      *                              already active
      * @return the EntityManager
      */
-    public EntityManager getEntityManager(boolean isTransactionRequired) {
+    private EntityManager getEntityManager(boolean isTransactionRequired) {
         EntityManager em = getThreadLocalEntityManager();
         if (isTransactionRequired && !em.getTransaction().isActive()) {
             em.getTransaction().begin();
@@ -244,6 +244,7 @@ public class JPAPersistenceStrategy {
 
     /**
      * Get named TypedQuery that won't commit changes to DB first (FlushModeType.COMMIT)
+     * FlushModeType.AUTO commits changes to DB prior to running statement
      *
      * @param queryName   the name of the query
      * @param resultClass return type of query
@@ -252,40 +253,13 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         TypedQuery<T> q = em.createNamedQuery(queryName, resultClass);
         // For performance, never flush/commit prior to running queries.
-        // Roller code assumes this behavior
-        q.setFlushMode(FlushModeType.COMMIT);
-        return q;
-    }
-
-    /**
-     * Get named query with default flush mode (usually FlushModeType.AUTO)
-     * FlushModeType.AUTO commits changes to DB prior to running statement
-     *
-     * @param queryName   the name of the query
-     * @param resultClass return type of query
-     */
-    public <T> TypedQuery<T> getNamedQueryCommitFirst(String queryName, Class<T> resultClass) {
-        EntityManager em = getEntityManager(true);
-        return em.createNamedQuery(queryName, resultClass);
-    }
-
-    /**
-     * Create query from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
-     *
-     * @param queryString the query
-     */
-    public Query getDynamicQuery(String queryString) {
-        EntityManager em = getEntityManager(false);
-        Query q = em.createQuery(queryString);
-        // For performance, never flush/commit prior to running queries.
-        // Roller code assumes this behavior
+        // TightBlog code assumes this behavior
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
 
     /**
      * Create TypedQuery from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
-     * Preferred over getDynamicQuery(String) due to it being typesafe.
      *
      * @param queryString the query
      * @param resultClass return type of query
@@ -294,7 +268,7 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         TypedQuery<T> q = em.createQuery(queryString, resultClass);
         // For performance, never flush/commit prior to running queries.
-        // Roller code assumes this behavior
+        // TightBlog code assumes this behavior
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }

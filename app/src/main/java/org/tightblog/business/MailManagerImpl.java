@@ -106,7 +106,7 @@ public class MailManagerImpl implements MailManager {
 
             // list of enabled website authors and admins
             List<String> reviewers = new ArrayList<>();
-            List<User> websiteUsers = weblogManager.getWeblogUsers(entry.getWeblog(), true);
+            List<User> websiteUsers = weblogManager.getWeblogUsers(entry.getWeblog());
 
             // build list of reviewers (website users with author permission)
             websiteUsers.stream().forEach(user -> {
@@ -162,7 +162,7 @@ public class MailManagerImpl implements MailManager {
             List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
             String[] to = adminEmails.toArray(new String[adminEmails.size()]);
 
-            String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin", null, null, true);
+            String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin", null, null);
 
             ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
             StringBuilder sb = new StringBuilder();
@@ -355,13 +355,13 @@ public class MailManagerImpl implements MailManager {
 
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
-        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true);
+        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
         ctx.setVariable("commentURL", commentURL);
         ctx.setVariable("messages", messages);
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("bean.entryId", entry.getId());
-        String manageURL = urlStrategy.getActionURL("comments", "/tb-ui/app/authoring", weblog, parameters, true);
+        String manageURL = urlStrategy.getActionURL("comments", "/tb-ui/app/authoring", weblog, parameters);
         ctx.setVariable("manageURL", manageURL);
 
         String msg = mailTemplateEngine.process("PendingCommentNotice.html", ctx);
@@ -430,7 +430,7 @@ public class MailManagerImpl implements MailManager {
 
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
-        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true);
+        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
         ctx.setVariable("commentURL", commentURL);
 
         String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
@@ -503,7 +503,7 @@ public class MailManagerImpl implements MailManager {
         StringBuilder msg = new StringBuilder();
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
-        msg.append(urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor(), true));
+        msg.append(urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor()));
 
         // send message to author of approved comment
         try {

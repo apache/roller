@@ -28,10 +28,6 @@ import java.io.PrintWriter;
  */
 public class WebloggerException extends Exception {
 
-    public WebloggerException() {
-        super();
-    }
-
     /**
      * Construct WebloggerException with message string.
      *
@@ -58,31 +54,6 @@ public class WebloggerException extends Exception {
      */
     public WebloggerException(Throwable throwable) {
         super(throwable);
-    }
-
-    /**
-     * Get root cause object, or null if none.
-     *
-     * @return Root cause or null if none.
-     */
-    public Throwable getRootCause() {
-        return getCause();
-    }
-
-    /**
-     * Get root cause message.
-     *
-     * @return Root cause message.
-     */
-    public String getErrorMessageChain() {
-        String rcmessage = "Top level: " + getMessage();
-        if (getCause() != null) {
-            rcmessage += "; 2nd level: " + getCause().getMessage();
-            if (getCause().getCause() != null) {
-                rcmessage += "; 3rd level: " + getCause().getCause().getMessage();
-            }
-        }
-        return rcmessage;
     }
 
     /**

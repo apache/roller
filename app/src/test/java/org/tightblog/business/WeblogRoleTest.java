@@ -37,8 +37,8 @@ import static org.junit.Assert.*;
  * Test WeblogRole related business operations.
  */
 public class WeblogRoleTest extends WebloggerTest {
-    User testUser = null;
-    Weblog testWeblog = null;
+    private User testUser = null;
+    private Weblog testWeblog = null;
 
     @Before
     public void setUp() throws Exception {
@@ -191,7 +191,7 @@ public class WeblogRoleTest extends WebloggerTest {
         assertEquals(testWeblog.getId(), userRoles.get(0).getWeblog().getId());
 
         // assert that website has user
-        List users = weblogManager.getWeblogUsers(testWeblog, true);
+        List users = weblogManager.getWeblogUsers(testWeblog);
         assertEquals(2, users.size());
 
         // test user can be retired from website

@@ -53,7 +53,7 @@ public interface URLStrategy {
      * Get a url to a UI action in a given namespace, optionally specifying a weblog object
      * if that is needed by the action.
      */
-    String getActionURL(String action, String namespace, Weblog weblog, Map<String, String> params, boolean absolute);
+    String getActionURL(String action, String namespace, Weblog weblog, Map<String, String> params);
 
     /**
      * Get a url to add a new weblog entry.
@@ -68,7 +68,7 @@ public interface URLStrategy {
     /**
      * Get a url for the comments for a specific weblog entry.
      */
-    String getCommentManagementURL(String weblogId, String entryId, boolean absolute);
+    String getCommentManagementURL(String weblogId, String entryId);
 
     /**
      * Get a url to weblog config page.
@@ -93,28 +93,27 @@ public interface URLStrategy {
     /**
      * Get the POST url for a weblog entry comment.
      */
-    String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean absolute);
+    String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor);
 
     /**
      * Get url for a single weblog entry comments on a given weblog.
      */
-    String getWeblogCommentsURL(Weblog weblog, String entryAnchor, boolean absolute);
+    String getWeblogCommentsURL(Weblog weblog, String entryAnchor);
 
     /**
      * Get url for a single weblog entry comment on a given weblog.
      */
-    String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp,
-                               boolean absolute);
+    String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp);
 
     /**
      * Get url for a single mediafile on a given weblog.
      */
-    String getMediaFileURL(Weblog weblog, String fileAnchor, boolean absolute);
+    String getMediaFileURL(Weblog weblog, String fileAnchor);
 
     /**
      * Get url for a single mediafile thumbnail on a given weblog.
      */
-    String getMediaFileThumbnailURL(Weblog weblog, String fileAnchor, boolean absolute);
+    String getMediaFileThumbnailURL(Weblog weblog, String fileAnchor);
 
     /**
      * Get url for a collection of entries on a given weblog.

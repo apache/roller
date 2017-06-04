@@ -30,7 +30,7 @@ import java.util.List;
 public class Menu {
     private List<MenuTab> tabs = new ArrayList<>();
 
-    public void addTab(MenuTab tab) {
+    void addTab(MenuTab tab) {
         this.tabs.add(tab);
     }
 
@@ -47,7 +47,7 @@ public class Menu {
         private boolean selected = false;
         private List<MenuTabItem> items = new ArrayList<>();
 
-        public void addItem(MenuTabItem item) {
+        void addItem(MenuTabItem item) {
             this.items.add(item);
         }
 
