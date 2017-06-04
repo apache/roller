@@ -91,7 +91,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><fmt:message key="entryEdit.status" /></label>
+                <fmt:message key="entryEdit.status" />
             </td>
             <td ng-cloak>
                 <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>

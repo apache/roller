@@ -79,7 +79,7 @@
 
                     <div class="sideformrow">
                         <label for="searchText" class="sideformrow"><fmt:message key="comments.searchString" />:</label>
-                        <input type="text" ng-model="ctrl.searchParams.searchText" size="30"/>
+                        <input id="searchText" type="text" ng-model="ctrl.searchParams.searchText" size="30"/>
                     </div>
                     <br />
                     <br />
@@ -100,7 +100,7 @@
                             <fmt:message key="comments.pendingStatus" />:
                         </label>
                         <div>
-                            <select ng-model="ctrl.searchParams.status" size="1" required>
+                            <select id="status" ng-model="ctrl.searchParams.status" size="1" required>
                                 <option ng-repeat="(key, value) in ctrl.lookupFields.statusOptions" value="{{key}}">{{value}}</option>
                             </select>
                         </div>

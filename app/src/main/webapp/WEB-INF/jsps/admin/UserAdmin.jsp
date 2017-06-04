@@ -58,7 +58,7 @@
 
 <table class="formtable" ng-show="ctrl.userBeingEdited">
   <tr>
-      <td class="label"><label for="userName"><fmt:message key="userSettings.username" /></label></td>
+      <td class="label"><fmt:message key="userSettings.username" /></td>
       <td class="field">
         <input type="text" size="30" maxlength="30" ng-model="ctrl.userBeingEdited.userName" readonly cssStyle="background: #e5e5e5">
       </td>
@@ -68,26 +68,26 @@
   </tr>
 
   <tr>
-      <td class="label"><label for="dateCreated"><fmt:message key="userSettings.accountCreateDate" /></label></td>
+      <td class="label"><fmt:message key="userSettings.accountCreateDate" /></td>
       <td class="field">{{ctrl.userBeingEdited.dateCreated | date:'short'}}</td>
       <td class="description"></td>
   </tr>
 
   <tr>
-      <td class="label"><label for="lastLogin"><fmt:message key="userSettings.lastLogin" /></label></td>
+      <td class="label"><fmt:message key="userSettings.lastLogin" /></td>
       <td class="field">{{ctrl.userBeingEdited.lastLogin | date:'short'}}</td>
       <td class="description"></td>
   </tr>
 
   <tr>
       <td class="label"><label for="screenName"><fmt:message key="userSettings.screenname" /></label></td>
-      <td class="field"><input type="text" size="30" ng-model="ctrl.userBeingEdited.screenName" minlength="3" maxlength="30" required></td>
+      <td class="field"><input id="screenName" type="text" size="30" ng-model="ctrl.userBeingEdited.screenName" minlength="3" maxlength="30" required></td>
       <td class="description"><fmt:message key="userAdmin.tip.screenName" /></td>
   </tr>
 
   <tr>
       <td class="label"><label for="emailAddress"><fmt:message key="userSettings.email" /></label></td>
-      <td class="field"><input type="email" size="40" ng-model="ctrl.userBeingEdited.emailAddress" maxlength="40" required></td>
+      <td class="field"><input id="emailAddress" type="email" size="40" ng-model="ctrl.userBeingEdited.emailAddress" maxlength="40" required></td>
       <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
   </tr>
 
@@ -95,13 +95,13 @@
       <tr>
           <td class="label"><label for="passwordText"><fmt:message key="userSettings.password" /></label></td>
           <td class="field">
-          <input type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20"></td>
+          <input id="passwordText" type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20"></td>
           <td class="description"><fmt:message key="userAdmin.tip.password" /></td>
       </tr>
       <tr>
           <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm" /></label></td>
           <td class="field">
-          <input type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20"></td>
+          <input id="passwordConfirm" type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20"></td>
           <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
       </tr>
   </c:if>
@@ -109,7 +109,7 @@
   <tr>
       <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>
       <td class="field">
-          <select ng-model="ctrl.userBeingEdited.locale" size="1">
+          <select id="locale" ng-model="ctrl.userBeingEdited.locale" size="1">
               <option ng-repeat="(key, value) in ctrl.metadata.locales" value="{{key}}">{{value}}</option>
           </select>
       </td>
@@ -119,7 +119,7 @@
   <tr>
       <td class="label"><label for="userStatus"><fmt:message key="userAdmin.userStatus" /></label></td>
       <td class="field">
-          <select ng-model="ctrl.userBeingEdited.status" size="1">
+          <select id="userStatus" ng-model="ctrl.userBeingEdited.status" size="1">
               <option ng-repeat="(key, value) in ctrl.metadata.userStatuses" value="{{key}}">{{value}}</option>
           </select>
       </td>
@@ -129,7 +129,7 @@
   <tr>
       <td class="label"><label for="globalRole"><fmt:message key="userAdmin.globalRole" /></label></td>
       <td class="field">
-          <select ng-model="ctrl.userBeingEdited.globalRole" size="1">
+          <select id="globalRole" ng-model="ctrl.userBeingEdited.globalRole" size="1">
               <option ng-repeat="(key, value) in ctrl.metadata.globalRoles" value="{{key}}">{{value}}</option>
           </select>
       </td>

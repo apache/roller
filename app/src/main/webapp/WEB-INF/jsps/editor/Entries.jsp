@@ -63,7 +63,7 @@
                     <div class="sideformrow">
                         <label for="categoryId" class="sideformrow">
                         <fmt:message key="entries.label.category" /></label>
-                        <select ng-model="ctrl.searchParams.categoryName" size="1" required>
+                        <select id="categoryId" ng-model="ctrl.searchParams.categoryName" size="1" required>
                            <option ng-repeat="(key, value) in ctrl.lookupFields.categories" value="{{key}}">{{value}}</option>
                         </select>
                     </div>
@@ -85,7 +85,7 @@
                             <fmt:message key="entries.label.status" />:
                         </label>
                         <div>
-                            <select ng-model="ctrl.searchParams.status" size="1" required>
+                            <select id="status" ng-model="ctrl.searchParams.status" size="1" required>
                                 <option ng-repeat="(key, value) in ctrl.lookupFields.statusOptions" value="{{key}}">{{value}}</option>
                             </select>
                         </div>
