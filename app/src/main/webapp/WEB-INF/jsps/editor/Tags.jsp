@@ -101,7 +101,7 @@
 
 <div id="change-tag-dialog" style="display:none">
   <label for="name"><fmt:message key='generic.name'/>:</label>
-  <input type="text" id="new-tag" class="text ui-widget-content ui-corner-all">
+  <input id="name" type="text" id="new-tag" class="text ui-widget-content ui-corner-all">
 </div>
 
 <div id="confirm-delete-dialog" style="display:none">

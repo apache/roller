@@ -97,7 +97,7 @@
     <tr>
         <td class="label"><label for="handle"><fmt:message key="weblogConfig.handle"/>*</label></td>
         <td class="field">
-        <input type="text" ng-model="ctrl.weblog.handle" size="30" maxlength="30"
+        <input id="handle" type="text" ng-model="ctrl.weblog.handle" size="30" maxlength="30"
         <c:choose>
             <c:when test="${weblogId == null}">required></c:when>
             <c:otherwise>readonly></c:otherwise>
@@ -121,7 +121,7 @@
         <tr>
         <td class="label"><label for="theme"><fmt:message key="weblogConfig.theme"/>*</label></td>
         <td class="field">
-        <select ng-model="ctrl.weblog.theme" size="1">
+        <select id="theme" ng-model="ctrl.weblog.theme" size="1">
             <option ng-repeat="(key, theme) in ctrl.metadata.sharedThemeMap" value="{{key}}">{{theme.name}}</option>
         </select>
         <div style="height:400px">

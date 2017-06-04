@@ -110,8 +110,8 @@ var msg= {
 
 <div id="edit-dialog" style="display:none">
     <span ng-show="ctrl.showUpdateErrorMessage"><fmt:message key='pingTarget.nameOrUrlNotUnique'/></span>
+    <input id="pingtarget-edit-id" type="hidden" ng-model="ctrl.pingTargetToEdit.id"/>
     <table>
-        <input id="pingtarget-edit-id" type="hidden" ng-model="ctrl.pingTargetToEdit.id"/>
         <tr>
             <td style="width:30%"><label for="name"><fmt:message key='generic.name'/></label></td>
             <td><input id="name" ng-model="ctrl.pingTargetToEdit.name" minlength="1" maxlength="40" size="50"/></td>

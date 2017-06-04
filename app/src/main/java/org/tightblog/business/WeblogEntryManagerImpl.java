@@ -315,7 +315,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         return query.getResultList().get(0);
     }
 
-
     @Override
     public WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor) {
 
@@ -478,7 +477,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         String queryString;
         List<Object> params = new ArrayList<>();
     }
-
 
     @Override
     public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) {

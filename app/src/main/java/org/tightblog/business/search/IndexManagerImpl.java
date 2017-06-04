@@ -145,8 +145,8 @@ public class IndexManagerImpl implements IndexManager {
                 } else {
                     log.info("Lucene search index already available and ready for use.");
                     if (!indexConsistencyMarker.createNewFile()) {
-                        throw new IOException("Could not create index consistency marker "
-                                + indexConsistencyMarker.getAbsolutePath() + " (file permission rights?)");
+                        throw new IOException("Could not create index consistency marker " +
+                                indexConsistencyMarker.getAbsolutePath() + " (file permission rights?)");
                     }
                 }
 

@@ -97,7 +97,7 @@ public class InstallerController {
     @RequestMapping(value = "/install")
     public ModelAndView install(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (WebloggerContext.isBootstrapped()) {
-            response.sendRedirect(request.getContextPath()+"/");
+            response.sendRedirect(request.getContextPath() + "/");
             return null;
         }
 
@@ -138,7 +138,7 @@ public class InstallerController {
     @RequestMapping(value = "/create")
     public ModelAndView createDatabaseTables(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (WebloggerContext.isBootstrapped()) {
-            response.sendRedirect(request.getContextPath()+"/");
+            response.sendRedirect(request.getContextPath() + "/");
             return null;
         }
         Map<String, Object> map = initializeMap();
@@ -178,7 +178,7 @@ public class InstallerController {
     @RequestMapping(value = "/bootstrap")
     public ModelAndView bootstrap(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (WebloggerContext.isBootstrapped()) {
-            response.sendRedirect(request.getContextPath()+"/");
+            response.sendRedirect(request.getContextPath() + "/");
             return null;
         }
 

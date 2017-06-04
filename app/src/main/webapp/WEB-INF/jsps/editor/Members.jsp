@@ -70,7 +70,7 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
 
     <div style="text-align: right; padding-bottom: 6px;">
         <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <fmt:message key="commentManagement.pending" />&nbsp;
+            <fmt:message key="comments.pending" />&nbsp;
     </div>
 
     <table class="rollertable">

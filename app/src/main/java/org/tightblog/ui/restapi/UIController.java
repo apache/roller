@@ -121,7 +121,7 @@ public class UIController {
     @RequestMapping(value = "/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().invalidate();
-        response.sendRedirect(request.getContextPath()+"/");
+        response.sendRedirect(request.getContextPath() + "/");
     }
 
     @RequestMapping(value = "/login-redirect")
