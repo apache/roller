@@ -135,7 +135,7 @@
         <tr>
             <td class="label"><fmt:message key="globalConfig.emailComments" /></td>
             <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCommentNotifications"></td>
-            <td class="description"></td>
+            <td class="description"><fmt:message key="globalConfig.tip.emailComments"/></td>
         </tr>
         <tr>
             <td class="label"><fmt:message key="globalConfig.ignoreUrls" /></td>

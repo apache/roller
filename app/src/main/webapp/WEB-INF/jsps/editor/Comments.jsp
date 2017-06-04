@@ -202,11 +202,11 @@
                         <td class="viewbody">
                         <div class="viewdetails bot">
                             <div class="details">
-                                <fmt:message key="comments.entryTitled" />&nbsp;:&nbsp;
+                                <fmt:message key="comments.entryTitled" />:&nbsp;
                                 <a ng-href='{{comment.weblogEntry.permalink}}' target="_blank">{{comment.weblogEntry.title}}</a>
                             </div>
                             <div class="details">
-                                <fmt:message key="comments.commentBy" />&nbsp;:&nbsp;
+                                <fmt:message key="comments.commentBy" />:&nbsp;
                                 <span ng-bind-html="ctrl.getCommentHeader(comment)"></span>
                             </div>
                             <span ng-if="comment.url">
