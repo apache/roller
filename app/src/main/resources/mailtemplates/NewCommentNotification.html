@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body style="background:white;color:black;font-size:12px">
-<span th:text="${comment.name} + #{email.comment.wrote} + ': '">
+<span th:text="${comment.name} + ' ' + #{email.comment.wrote} + ': '">
     A user wrote
 </span><br><br>
 <span th:utext="${comment.content}">(comment text)</span>
