@@ -128,7 +128,6 @@ public class SiteModel implements Model {
 
         return new CommentsPager(
                 weblogEntryManager,
-                urlStrategy,
                 pagerUrl,
                 null,
                 null,
@@ -150,7 +149,6 @@ public class SiteModel implements Model {
         }
 
         return new WeblogsPager(weblogManager,
-                urlStrategy,
                 pagerUrl,
                 letter,
                 pageRequest.getPageNum(),

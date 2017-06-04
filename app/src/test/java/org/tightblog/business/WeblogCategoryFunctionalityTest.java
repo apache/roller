@@ -39,12 +39,11 @@ import static org.junit.Assert.*;
  */
 public class WeblogCategoryFunctionalityTest extends WebloggerTest {
 
-    User testUser = null;
-    Weblog testWeblog = null;
-    WeblogCategory cat1 = null;
-    WeblogCategory cat2 = null;
-    WeblogCategory cat3 = null;
-    WeblogCategory testCat = null;
+    private User testUser = null;
+    private Weblog testWeblog = null;
+    private WeblogCategory cat1 = null;
+    private WeblogCategory cat2 = null;
+    private WeblogCategory testCat = null;
 
     /**
      * All tests in this suite require a user and a weblog.
@@ -58,7 +57,6 @@ public class WeblogCategoryFunctionalityTest extends WebloggerTest {
         // setup several categories for testing
         cat1 = setupWeblogCategory(testWeblog, "catTest-cat1");
         cat2 = setupWeblogCategory(testWeblog, "catTest-cat2");
-        cat3 = setupWeblogCategory(testWeblog, "catTest-cat3");
 
         // a simple test cat at the root level
         testCat = setupWeblogCategory(testWeblog, "catTest-testCat");
@@ -93,9 +91,9 @@ public class WeblogCategoryFunctionalityTest extends WebloggerTest {
         assertNotNull(cat);
         assertEquals(cat, cat1);
         
-        cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat3");
+        cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat2");
         assertNotNull(cat);
-        assertEquals(cat, cat3);
+        assertEquals(cat, cat2);
         
         // test lazy lookup, specifying just a name without slashes
         cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat1");
@@ -108,7 +106,7 @@ public class WeblogCategoryFunctionalityTest extends WebloggerTest {
         testWeblog = getManagedWeblog(testWeblog);
         List cats = weblogManager.getWeblogCategories(testWeblog);
         assertNotNull(cats);
-        assertEquals(5, cats.size());
+        assertEquals(4, cats.size());
     }
 
     @Test

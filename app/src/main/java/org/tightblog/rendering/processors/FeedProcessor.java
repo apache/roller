@@ -258,7 +258,7 @@ public class FeedProcessor extends AbstractProcessor {
      * foo/comments/cat/technology
      * foo/entries/tag/travel
      */
-    public String generateKey(WeblogFeedRequest feedRequest) {
+    protected String generateKey(WeblogFeedRequest feedRequest) {
         StringBuilder key = new StringBuilder();
 
         key.append("weblogfeed.key").append(":");

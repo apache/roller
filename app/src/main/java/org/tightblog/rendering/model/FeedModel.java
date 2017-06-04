@@ -152,7 +152,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
 
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {
-            super(weblogEntryManager, urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
+            super(weblogEntryManager, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getType(), null, null),
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), -1, feedRequest.getPage(),

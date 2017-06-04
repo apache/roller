@@ -18,7 +18,6 @@
 
 package org.tightblog.rendering.pagers;
 
-import org.tightblog.business.URLStrategy;
 import org.tightblog.util.Utilities;
 
 import java.util.HashMap;
@@ -29,13 +28,10 @@ import java.util.Map;
  */
 public abstract class AbstractPager implements Pager {
 
-    final URLStrategy urlStrategy;
     private String url = null;
     private int page = 0;
 
-    public AbstractPager(URLStrategy strat, String baseUrl, int pageNum) {
-
-        this.urlStrategy = strat;
+    public AbstractPager(String baseUrl, int pageNum) {
         this.url = baseUrl;
         if (pageNum > 0) {
             this.page = pageNum;

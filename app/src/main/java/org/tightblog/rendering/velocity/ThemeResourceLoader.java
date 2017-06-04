@@ -61,10 +61,10 @@ public class ThemeResourceLoader extends ResourceLoader {
      *
      * @param resourceId resource identifier for template rendition
      * @return InputStream containing template
-     * @throws ResourceNotFoundException
+     * @throws ResourceNotFoundException if the resourceId is invalid or no template can otherwise be found for it.
      */
     @Override
-    public InputStream getResourceStream(String resourceId) {
+    public InputStream getResourceStream(String resourceId) throws ResourceNotFoundException {
 
         logger.debug("Looking for: {}", resourceId);
 
@@ -127,7 +127,7 @@ public class ThemeResourceLoader extends ResourceLoader {
     }
 
     /**
-     * Velocity reloading not used.  Instead, template changes clear the page cache, triggering page regeneration that way.
+     * Velocity reloading not used.  Instead, template changes clear the page cache which triggers page regeneration.
      */
     @Override
     public boolean isSourceModified(Resource resource) {

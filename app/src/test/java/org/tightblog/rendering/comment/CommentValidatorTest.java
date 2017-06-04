@@ -36,9 +36,9 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class CommentValidatorTest extends WebloggerTest {
-    Weblog weblog = null;
-    User testUser = null;
-    WeblogEntry entry = null;
+    private Weblog weblog = null;
+    private User testUser = null;
+    private WeblogEntry entry = null;
 
     @Before
     public void setUp() throws Exception {

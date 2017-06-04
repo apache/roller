@@ -56,10 +56,7 @@ public interface FileContentManager {
      * @throws FileNotFoundException If path to save location does not exist.
      * @throws IOException           If there is an unexpected error during the save.
      */
-    void saveFileContent(Weblog weblog,
-                         String fileId,
-                         InputStream is)
-            throws IOException;
+    void saveFileContent(Weblog weblog, String fileId, InputStream is) throws IOException;
 
     /**
      * Delete file content from weblog's uploads area.
@@ -81,10 +78,6 @@ public interface FileContentManager {
      * @param messages    output parameter for resource bundle messages, or null if not necessary to receive them
      * @return true if the file can be saved, false otherwise.
      */
-    boolean canSave(Weblog weblog,
-                    String fileName,
-                    String contentType,
-                    long size,
-                    Map<String, List<String>> messages);
+    boolean canSave(Weblog weblog, String fileName, String contentType, long size, Map<String, List<String>> messages);
 
 }

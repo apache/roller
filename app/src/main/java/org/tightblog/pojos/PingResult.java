@@ -25,8 +25,8 @@ package org.tightblog.pojos;
  */
 public final class PingResult {
 
-    boolean error;
-    String message;
+    private boolean error;
+    private String message;
 
     public PingResult(Boolean error, String message) {
         this.error = error != null && error;
@@ -53,7 +53,4 @@ public final class PingResult {
         return "PingResult{" + "error=" + error + ", message='" + message + "'" + "}";
     }
 
-    // Inhibit construction
-    private PingResult() {
-    }
 }

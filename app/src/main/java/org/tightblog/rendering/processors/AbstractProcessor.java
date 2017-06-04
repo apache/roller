@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class AbstractProcessor implements ApplicationContextAware {
 
-    protected ApplicationContext appContext;
+    private ApplicationContext appContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

@@ -70,7 +70,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
     }
 
     // algorithm assumes category not yet added to the weblog's list
-    public void calculatePosition() {
+    private void calculatePosition() {
         int size = weblog.getWeblogCategories().size();
         if (size == 0) {
             this.position = 0;

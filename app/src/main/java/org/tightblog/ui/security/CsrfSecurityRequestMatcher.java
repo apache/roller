@@ -30,11 +30,12 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
     private RegexRequestMatcher unprotectedMatcher = new RegexRequestMatcher(".*/entrycomment/.*", null);
 
     @Override
+    /*
+     * Determine if CSRF checking needed for particular request
+     * @param request request being processed
+     * @return true if request subject to CSRF checking, false otherwise
+     */
     public boolean matches(HttpServletRequest request) {
-        if (allowedMethods.matcher(request.getMethod()).matches()) {
-            return false;
-        }
-
-        return !unprotectedMatcher.matches(request);
+        return !(allowedMethods.matcher(request.getMethod()).matches() || unprotectedMatcher.matches(request));
     }
 }

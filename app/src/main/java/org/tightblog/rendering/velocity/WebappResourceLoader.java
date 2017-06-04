@@ -51,8 +51,8 @@ public class WebappResourceLoader extends ResourceLoader {
     private static Logger logger = LoggerFactory.getLogger(WebappResourceLoader.class);
 
     // The root paths for templates (relative to webapp's root).
-    protected String servletPath = "/WEB-INF/velocity/";
-    protected ServletContext servletContext = null;
+    private String servletPath = "/WEB-INF/velocity/";
+    private ServletContext servletContext = null;
 
     /**
      * This is abstract in the base class, so we need it. <br>

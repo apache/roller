@@ -65,7 +65,7 @@ public class ExpiringCacheEntry {
     /**
      * Determine if this cache entry has expired.
      */
-    public boolean hasExpired() {
+    private boolean hasExpired() {
         if (timeout < 0) {
             return false;
         }

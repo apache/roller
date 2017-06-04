@@ -42,17 +42,10 @@ import java.util.List;
  */
 public class SQLScriptRunner {
 
-    private List<String> commands = new ArrayList<String>();
-    private List<String> messages = new ArrayList<String>();
+    private List<String> commands = new ArrayList<>();
+    private List<String> messages = new ArrayList<>();
     private boolean failed = false;
     private boolean errors = false;
-
-    /**
-     * Creates a new instance of SQLScriptRunner from an InputStream
-     */
-    public SQLScriptRunner(InputStream is) throws IOException {
-        getCommands(is);
-    }
 
     /**
      * Creates a new instance of SQLScriptRunner from a file-based reference

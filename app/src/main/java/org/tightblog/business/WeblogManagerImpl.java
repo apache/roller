@@ -385,7 +385,7 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) {
+    public List<User> getWeblogUsers(Weblog weblog) {
         List<User> users = new ArrayList<>();
         List<UserWeblogRole> roles = userManager.getWeblogRoles(weblog);
         for (UserWeblogRole role : roles) {
@@ -394,7 +394,7 @@ public class WeblogManagerImpl implements WeblogManager {
                 log.error("ERROR user is null, userId: {}", role.getUser().getId());
                 continue;
             }
-            if (!enabledOnly || UserStatus.ENABLED.equals(user.getStatus())) {
+            if (UserStatus.ENABLED.equals(user.getStatus())) {
                 users.add(user);
             }
         }
@@ -739,14 +739,6 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public boolean isWeblogCategoryInUse(WeblogCategory cat) {
-        TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByCategory", WeblogEntry.class);
-        q.setParameter(1, cat);
-        int entryCount = q.getResultList().size();
-        return entryCount > 0;
-    }
-
-    @Override
     public Blacklist getWeblogBlacklist(Weblog weblog) {
         if (StringUtils.isEmpty(weblog.getBlacklist())) {
             // just rely on the global blacklist if no overrides
@@ -806,14 +798,13 @@ public class WeblogManagerImpl implements WeblogManager {
         }
 
         // sort results by name, because query had to sort by total
-        Collections.sort(results, WeblogEntryTagAggregate.comparator);
+        results.sort(WeblogEntryTagAggregate.comparator);
 
         return results;
     }
 
     @Override
     public List<WeblogEntryTagAggregate> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit) {
-        Query query;
         List queryResults;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
 
@@ -839,7 +830,9 @@ public class WeblogManagerImpl implements WeblogManager {
         }
         queryString.append(" GROUP BY w.name ORDER BY ").append(sortBy);
 
-        query = strategy.getDynamicQuery(queryString.toString());
+        TypedQuery<WeblogEntryTagAggregate> query =
+                strategy.getDynamicQuery(queryString.toString(), WeblogEntryTagAggregate.class);
+
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));
         }
@@ -864,9 +857,9 @@ public class WeblogManagerImpl implements WeblogManager {
         }
 
         if (sortByName) {
-            Collections.sort(results, WeblogEntryTagAggregate.comparator);
+            results.sort(WeblogEntryTagAggregate.comparator);
         } else {
-            Collections.sort(results, WeblogEntryTagAggregate.countComparator);
+            results.sort(WeblogEntryTagAggregate.countComparator);
         }
 
         return results;
@@ -943,7 +936,7 @@ public class WeblogManagerImpl implements WeblogManager {
         return resultsMap;
     }
 
-    public Blacklist getSiteBlacklist() {
+    private Blacklist getSiteBlacklist() {
         if (siteBlacklist == null) {
             WebloggerProperties props = strategy.getWebloggerProperties();
             siteBlacklist = new Blacklist(props.getCommentSpamFilter(), null);
@@ -951,6 +944,7 @@ public class WeblogManagerImpl implements WeblogManager {
         return siteBlacklist;
     }
 
+    @Override
     public void setSiteBlacklist(Blacklist siteBlacklist) {
         this.siteBlacklist = siteBlacklist;
     }

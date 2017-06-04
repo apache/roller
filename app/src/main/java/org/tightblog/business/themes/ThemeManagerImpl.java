@@ -45,6 +45,7 @@ import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,11 +62,9 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
     private ServletContext servletContext;
 
-    static FileTypeMap map = null;
-
     static {
         // TODO: figure out why PNG is missing from Java MIME types
-        map = FileTypeMap.getDefaultFileTypeMap();
+        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
         if (map instanceof MimetypesFileTypeMap) {
             try {
                 ((MimetypesFileTypeMap) map).addMimeTypes("image/png png PNG");
@@ -128,7 +127,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
             // for convenience create an alphabetized list also
             themeList = new ArrayList<>(this.themeMap.values());
-            themeList.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
+            themeList.sort(Comparator.comparing(SharedTheme::getName));
             log.info("Successfully loaded {} themes from disk.", this.themeMap.size());
         }
     }

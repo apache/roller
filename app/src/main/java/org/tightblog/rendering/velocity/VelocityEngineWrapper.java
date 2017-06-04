@@ -25,6 +25,8 @@ import java.util.Properties;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.mobile.device.DeviceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +43,11 @@ import org.slf4j.LoggerFactory;
  * to use.
  * <p>
  * We construct our own instance of VelocityEngine, initialize it, and provide
- * access to the instance via the Singleton getInstance() method.
+ * access to the instance via the Singleton getEngine() method.
  */
 public class VelocityEngineWrapper {
 
-    public static final String VELOCITY_CONFIG = "/velocity.properties";
+    private static final String VELOCITY_CONFIG = "/velocity.properties";
 
     private static Logger log = LoggerFactory.getLogger(VelocityEngineWrapper.class);
 
@@ -90,34 +92,8 @@ public class VelocityEngineWrapper {
      *
      * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
      */
-    public static Template getTemplate(String name) {
-        return velocityEngine.getTemplate(name + "|normal");
-    }
-
-    /**
-     * Convenience static method for retrieving a Velocity template.
-     *
-     * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
-     */
-    public static Template getTemplate(String name, DeviceType deviceType) {
-        return velocityEngine.getTemplate(name + "|" + deviceType);
-    }
-
-    /**
-     * Convenience static method for retrieving a Velocity template.
-     *
-     * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
-     */
-    public static Template getTemplate(String name, String encoding) {
-        return velocityEngine.getTemplate(name + "|normal", encoding);
-    }
-
-    /**
-     * Convenience static method for retrieving a Velocity template.
-     *
-     * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
-     */
-    public static Template getTemplate(String name, DeviceType deviceType, String encoding) {
-        return velocityEngine.getTemplate(name + "|" + deviceType, encoding);
+    public static Template getTemplate(String name, DeviceType deviceType)
+            throws ResourceNotFoundException, ParseErrorException {
+        return velocityEngine.getTemplate(name + "|" + deviceType, "UTF-8");
     }
 }

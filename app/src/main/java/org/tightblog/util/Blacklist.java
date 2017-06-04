@@ -61,14 +61,6 @@ public final class Blacklist {
         return regexRules;
     }
 
-    public int getStringRulesCount() {
-        return stringRules.size();
-    }
-
-    public int getRegexRulesCount() {
-        return regexRules.size();
-    }
-
     /**
      * Test String against the RegularExpression rules.
      */

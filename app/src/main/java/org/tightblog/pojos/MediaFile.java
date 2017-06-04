@@ -222,10 +222,7 @@ public class MediaFile {
      */
     @Transient
     public boolean isImageFile() {
-        if (getContentType() == null) {
-            return false;
-        }
-        return getContentType().toLowerCase().startsWith("image/");
+        return contentType != null && contentType.toLowerCase().startsWith("image/");
     }
 
     /**
@@ -234,7 +231,7 @@ public class MediaFile {
     @Transient
     public String getPermalink() {
         return WebloggerContext.getWeblogger().getUrlStrategy()
-                .getMediaFileURL(getDirectory().getWeblog(), this.getId(), true);
+                .getMediaFileURL(getDirectory().getWeblog(), this.getId());
     }
 
     /**
@@ -244,7 +241,7 @@ public class MediaFile {
     @Transient
     public String getThumbnailURL() {
         return WebloggerContext.getWeblogger().getUrlStrategy()
-                .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId(), true);
+                .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId());
     }
 
     @ManyToOne

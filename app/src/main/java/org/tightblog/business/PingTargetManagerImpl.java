@@ -31,10 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.TypedQuery;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -55,9 +52,10 @@ public class PingTargetManagerImpl implements PingTargetManager {
 
     private final URLStrategy urlStrategy;
 
-    // for debugging, will log but not send ping out.
+    // configurable via Spring DI for debugging, will log but not send ping out.
     private boolean logPingsOnly = false;
 
+    @SuppressWarnings("unused")
     public void setLogPingsOnly(boolean boolVal) {
         logPingsOnly = boolVal;
     }
@@ -83,45 +81,6 @@ public class PingTargetManagerImpl implements PingTargetManager {
     @Override
     public PingTarget getPingTarget(String id) {
         return strategy.load(PingTarget.class, id);
-    }
-
-    @Override
-    public boolean isUrlWellFormed(String url) {
-
-        if (url == null || url.trim().length() == 0) {
-            return false;
-        }
-        try {
-            URL parsedUrl = new URL(url);
-            // OK.  If we get here, it parses ok.  Now just check
-            // that the protocol is http and there is a host portion.
-            boolean isHttp = parsedUrl.getProtocol().equals("http");
-            boolean hasHost = (parsedUrl.getHost() != null) &&
-                    (parsedUrl.getHost().trim().length() > 0);
-            return isHttp && hasHost;
-        } catch (MalformedURLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isHostnameKnown(String url) {
-        if (url == null || url.trim().length() == 0) {
-            return false;
-        }
-        try {
-            URL parsedUrl = new URL(url);
-            String host = parsedUrl.getHost();
-            if (host == null || host.trim().length() == 0) {
-                return false;
-            }
-            InetAddress addr = InetAddress.getByName(host);
-            return true;
-        } catch (MalformedURLException e) {
-            return false;
-        } catch (UnknownHostException e) {
-            return false;
-        }
     }
 
     @Override

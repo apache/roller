@@ -76,7 +76,7 @@ public class IndexWeblogTask extends AbstractIndexTask {
         try {
             if (writer != null) {
 
-                // Delete Doc
+                // Delete all entries from given weblog(s)
                 if (weblog != null) {
                     Term tWebsite = getTerm(FieldConstants.WEBSITE_HANDLE, weblog.getHandle());
 
@@ -89,7 +89,7 @@ public class IndexWeblogTask extends AbstractIndexTask {
                 }
 
                 if (!deleteOnly) {
-                    // Re-Add Doc
+                    // Add entries from weblog(s)
                     WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                     wesc.setWeblog(weblog);
                     wesc.setStatus(PubStatus.PUBLISHED);

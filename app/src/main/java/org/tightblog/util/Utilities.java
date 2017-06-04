@@ -63,8 +63,6 @@ public class Utilities {
 
     private static Logger log = LoggerFactory.getLogger(Utilities.class);
 
-    public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
-
     public static final String FORMAT_6CHARS = "yyyyMM";
     public static final String FORMAT_8CHARS = "yyyyMMdd";
     public static final int PERCENT_100 = 100;
@@ -223,41 +221,6 @@ public class Utilities {
             str2 = str2 + appendToEnd;
         }
         return str2;
-    }
-
-    /**
-     * Extract (keep) JUST the HTML from the String.
-     *
-     * @param str String to remove HTML from
-     * @return String with HTML removed
-     */
-    public static String extractHTML(String str) {
-        if (str == null) {
-            return "";
-        }
-        StringBuilder ret = new StringBuilder(str.length());
-        int start = 0;
-        int beginTag = str.indexOf('<');
-        if (beginTag == -1) {
-            return str;
-        }
-
-        while (beginTag >= start) {
-            int endTag = str.indexOf('>', beginTag);
-
-            // if endTag found, keep tag
-            if (endTag > -1) {
-                ret.append(str.substring(beginTag, endTag + 1));
-
-                // move start forward and find another tag
-                start = endTag + 1;
-                beginTag = str.indexOf('<', start);
-            } else {
-                // if no endTag found, break
-                break;
-            }
-        }
-        return ret.toString();
     }
 
     /**

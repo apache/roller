@@ -50,7 +50,7 @@ public class MediaFileTest extends WebloggerTest {
     private User testUser = null;
     private Weblog testWeblog = null;
 
-    public final static String TEST_IMAGE = "/hawk.jpg";
+    private final static String TEST_IMAGE = "/hawk.jpg";
 
     @Resource
     private MediaFileManager mediaFileManager;
@@ -83,14 +83,14 @@ public class MediaFileTest extends WebloggerTest {
 
         try {
             mediaFileManager.createMediaDirectory(testWeblog, "");
-            assertTrue(false);
+            fail("did not fail with invalid name");
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
 
         try {
             mediaFileManager.createMediaDirectory(testWeblog, "default");
-            assertTrue(false);
+            fail("did not fail with duplicate name");
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
@@ -110,9 +110,8 @@ public class MediaFileTest extends WebloggerTest {
         // show throw error when creating directory that already exists
         try {
             mediaFileManager.createMediaDirectory(testWeblog, "test1");
-            assertTrue(false);
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
+            fail("should not have allowed creation of directory with same name");
+        } catch (IllegalArgumentException ignored) {
         }
     }
 

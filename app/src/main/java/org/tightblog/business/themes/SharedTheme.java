@@ -59,7 +59,7 @@ public class SharedTheme {
     @XmlElements(@XmlElement(name = "template"))
     private Set<SharedTemplate> tempTemplates = new HashSet<>();
 
-    public Set<SharedTemplate> getTempTemplates() {
+    Set<SharedTemplate> getTempTemplates() {
         return tempTemplates;
     }
 

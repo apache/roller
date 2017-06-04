@@ -119,7 +119,7 @@ public class UIController {
     }
 
     @RequestMapping(value = "/logout")
-    public void logout(Principal principal, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().invalidate();
         response.sendRedirect(request.getContextPath()+"/");
     }

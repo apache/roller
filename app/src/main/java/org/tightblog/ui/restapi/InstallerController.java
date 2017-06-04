@@ -223,7 +223,7 @@ public class InstallerController {
             }
 
             // OK, exists -- does the database schema match that used by the application?
-            int applicationVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version");
+            int applicationVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version", 0);
             int dbversion = -1;
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(

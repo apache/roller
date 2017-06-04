@@ -38,7 +38,7 @@ import java.util.Map;
 public class BigWeblogCalendar extends WeblogCalendar {
 
     private Map<LocalDate, List<WeblogEntry>> monthMap;
-    protected DateTimeFormatter singleDayFormat;
+    private DateTimeFormatter singleDayFormat;
 
     public BigWeblogCalendar(WeblogPageRequest pRequest, WeblogEntryManager wem, URLStrategy urlStrategy) {
         super(wem, urlStrategy, pRequest);

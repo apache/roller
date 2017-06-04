@@ -122,22 +122,6 @@ public class URLModel implements Model {
         return urlStrategy.getRegisterURL(false);
     }
 
-    /**
-     * URL for a specific UI action
-     */
-    public String action(String action, String namespace) {
-        if (namespace != null) {
-            if ("/tb-ui/app".equals(namespace)) {
-                return urlStrategy.getActionURL(action, namespace, null, null, true);
-            } else if ("/tb-ui/app/authoring".equals(namespace)) {
-                return urlStrategy.getActionURL(action, namespace, weblog, null, true);
-            } else if ("/tb-ui/app/admin".equals(namespace)) {
-                return urlStrategy.getActionURL(action, namespace, null, null, true);
-            }
-        }
-        return null;
-    }
-
     public String getCommentAuthenticator() {
         return getSite() + "/tb-ui/rendering/comment/authform";
     }
@@ -155,15 +139,15 @@ public class URLModel implements Model {
     }
 
     public String entryComment(String anchor) {
-        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor, true);
+        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor);
     }
 
     public String comment(String anchor, String timeStamp) {
-        return urlStrategy.getWeblogCommentURL(weblog, anchor, timeStamp, true);
+        return urlStrategy.getWeblogCommentURL(weblog, anchor, timeStamp);
     }
 
     public String comments(String anchor) {
-        return urlStrategy.getWeblogCommentsURL(weblog, anchor, true);
+        return urlStrategy.getWeblogCommentsURL(weblog, anchor);
     }
 
     public String category(String catName) {

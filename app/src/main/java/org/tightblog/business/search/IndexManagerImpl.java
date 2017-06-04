@@ -106,11 +106,6 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     @Override
-    public boolean isSearchEnabled() {
-        return searchEnabled;
-    }
-
-    @Override
     public boolean isIndexComments() {
         return indexComments;
     }
@@ -286,7 +281,6 @@ public class IndexManagerImpl implements IndexManager {
         }
     }
 
-    @Override
     @PreDestroy
     public void shutdown() {
         if (searchEnabled) {

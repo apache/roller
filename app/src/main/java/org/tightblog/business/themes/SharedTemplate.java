@@ -45,7 +45,10 @@ public class SharedTemplate implements Template {
     private String description = null;
     private String relativePath = null;
 
-    private String contents = null;
+    @SuppressWarnings("unused")
+    public SharedTemplate() {
+        // used by Spring initialization
+    }
 
     public SharedTemplate(String id, TemplateRendition.Parser lang) {
         this.id = id;
@@ -57,9 +60,6 @@ public class SharedTemplate implements Template {
 
     //hash map to cache template Code objects parsed
     private Map<TemplateRendition.RenditionType, SharedTemplateRendition> templateRenditionHashMap = new HashMap<>();
-
-    public SharedTemplate() {
-    }
 
     public String getId() {
         return id;
@@ -93,7 +93,7 @@ public class SharedTemplate implements Template {
         this.relativePath = relativePath;
     }
 
-    public void addTemplateRendition(SharedTemplateRendition rendition) {
+    void addTemplateRendition(SharedTemplateRendition rendition) {
         this.templateRenditionHashMap.put(rendition.getRenditionType(), rendition);
     }
 
@@ -102,13 +102,15 @@ public class SharedTemplate implements Template {
         return templateRenditionHashMap.get(type);
     }
 
-    public Map<TemplateRendition.RenditionType, SharedTemplateRendition> getRenditionMap() {
+    Map<TemplateRendition.RenditionType, SharedTemplateRendition> getRenditionMap() {
         return templateRenditionHashMap;
     }
 
     @XmlJavaTypeAdapter(value = MapAdapter.class)
     @XmlElements(@XmlElement(name = "renditions"))
+    @SuppressWarnings("unused")
     public void setRenditionMap(Map<TemplateRendition.RenditionType, SharedTemplateRendition> renditionTable) {
+        // used by JAXB to create SharedTheme instances from theme XML definitions
         this.templateRenditionHashMap = renditionTable;
     }
 

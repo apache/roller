@@ -62,7 +62,7 @@ public final class MenuHelper {
         private List<ParsedMenu> menuList = new ArrayList<>(2);
 
         @XmlElements(@XmlElement(name = "menu"))
-        public List<ParsedMenu> getMenuList() {
+        List<ParsedMenu> getMenuList() {
             return menuList;
         }
 
