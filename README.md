@@ -8,10 +8,10 @@ avoiding seldom-requested functionality that creates maintenance burdens, distra
 This more realistic goal--along with adopting the Spring framework, REST, AngularJS and other code modernizations--has allowed TightBlog to slim down considerably from its parent, as can be seen in the following chart:
 
 |Product|Released|Database Tables|Java Source Files|JSP Files|Lines Of Code|
-|-------|-----|-------|-----|-----|-----|-----|
+|-----|-----|-----|-----|-----|-----|
 |Apache Roller 5.1.2|1 Mar 2015|33|493|96|95.7K|
-|TightBlog 1.0|17 July 2016|17|187|55|48.5K
-|TightBlog 2.0|4 June 2017|14|151|37|43.7K
+|TightBlog 1.0|17 July 2016|17|187|55|48.5K|
+|TightBlog 2.0|4 June 2017|14|151|37|43.7K|
 
 (Lines of code stats from <a href="https://www.openhub.net/p/tightblog">OpenHub</a>.) 
 
