@@ -196,7 +196,7 @@
          enforce SSL on specified pages, see here:
          http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-requires-channel
     -->
-    <!--security-constraint>
+    <security-constraint>
         <web-resource-collection>
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/roller_j_security_check</url-pattern>
@@ -211,6 +211,6 @@
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
-    </security-constraint-->
+    </security-constraint>
 
 </web-app>
