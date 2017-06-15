@@ -5,7 +5,7 @@
         <Console name="Console">
             <PatternLayout pattern="%d [%thread] %level{length=2} %logger{1.1.} - %msg%n"/>
         </Console>
-        <File name="TightBlogFileAppender" fileName="${env.CATALINA_HOME}/logs/tightblog.log">
+        <File name="TightBlogFileAppender" fileName="${env:CATALINA_BASE}/logs/tightblog.log">
             <PatternLayout>
                 <Pattern>%d [%thread] %level{length=2} %logger{1.1.} - %msg%n</Pattern>
             </PatternLayout>
