@@ -17,14 +17,14 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<s:set name="tabMenu" value="menu"/>
+<s:set var="tabMenu" value="menu"/>
 <s:if test="#tabMenu != null">
 
 <table class="menuTabTable" cellspacing="0" >
 <tr>
-<s:iterator id="tab" value="#tabMenu.tabs" >
+<s:iterator var="tab" value="#tabMenu.tabs" >
     <s:if test="#tab.selected">
-        <s:set name="selectedTab" value="#tab" />
+        <s:set var="selectedTab" value="#tab" />
         <td class="menuTabSelected">
     </s:if>
     <s:else>
@@ -44,7 +44,7 @@
 <table class="menuItemTable" cellspacing="0" >
     <tr>
         <td class="padleft">
-            <s:iterator id="tabItem" value="#selectedTab.items" status="stat">
+            <s:iterator var="tabItem" value="#selectedTab.items" status="stat">
                 <s:if test="!#stat.first">|</s:if>
                 <s:if test="#tabItem.selected">
                     <a class="menuItemSelected" href="<s:url action="%{#tabItem.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>"><s:text name="%{#tabItem.key}" /></a>

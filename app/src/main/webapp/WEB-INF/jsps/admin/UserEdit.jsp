@@ -148,7 +148,7 @@
         <s:if test="permissions != null && !permissions.isEmpty() > 0">
             <p><s:text name="userAdmin.userMemberOf" />:</p>
             <table class="rollertable" style="width: 80%">
-                <s:iterator id="perms" value="permissions">
+                <s:iterator var="perms" value="permissions">
                     <tr>
                         <td width="%30">
                             <a href='<s:property value="#perms.weblog.absoluteURL" />'>
@@ -156,7 +156,7 @@
                             </a>
                         </td>
                         <td width="%15">
-                            <s:url action="entryAdd" namespace="/roller-ui/authoring" id="newEntry">
+                            <s:url action="entryAdd" namespace="/roller-ui/authoring" var="newEntry">
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                             <img src='<s:url value="/images/page_white_edit.png"/>' />
@@ -164,7 +164,7 @@
                             <s:text name="userAdmin.newEntry" /></a>
                         </td>
                         <td width="%15">
-                            <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
+                            <s:url action="entries" namespace="/roller-ui/authoring" var="editEntries">
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                             <img src='<s:url value="/images/page_white_edit.png"/>' />
@@ -172,7 +172,7 @@
                             <s:text name="userAdmin.editEntries" /></a>
                         </td>
                         <td width="%15">
-                            <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
+                            <s:url action="weblogConfig" namespace="/roller-ui/authoring" var="manageWeblog">
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                             <img src='<s:url value="/images/page_white_edit.png"/>' />

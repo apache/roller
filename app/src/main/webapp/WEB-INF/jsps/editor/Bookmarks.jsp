@@ -98,7 +98,7 @@ function onMove()
         <s:if test="folder.bookmarks.size > 0">
         
         <%-- Bookmarks --%>
-        <s:iterator id="bookmark" value="folder.bookmarks" status="rowstatus">
+        <s:iterator var="bookmark" value="folder.bookmarks" status="rowstatus">
             <s:if test="#rowstatus.odd == true">
                 <tr class="rollertable_odd">
             </s:if>

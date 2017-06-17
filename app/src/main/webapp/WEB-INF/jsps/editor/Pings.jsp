@@ -44,7 +44,7 @@
 </tr>
 
 <%-- Table of current common targets with actions --%>
-<s:iterator id="pingTarget" value="commonPingTargets" status="rowstatus">
+<s:iterator var="pingTarget" value="commonPingTargets" status="rowstatus">
     <s:if test="#rowstatus.odd == true">
         <tr class="rollertable_odd">
     </s:if>

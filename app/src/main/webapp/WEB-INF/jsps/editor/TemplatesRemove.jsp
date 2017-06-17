@@ -35,7 +35,7 @@
 	<s:hidden name="ids" />
 	<s:hidden name="weblog" value="%{actionWeblog.handle}" />
 	
-	<s:iterator id="p" value="templates" status="rowstatus">
+	<s:iterator var="p" value="templates" status="rowstatus">
 		<p>
 			<s:text name="pageRemove.pageId" /> = [<s:property value="#p.id" />]
 			<s:text name="pageRemove.pageName" /> = [<s:property value="#p.name" />]
