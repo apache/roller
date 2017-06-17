@@ -285,7 +285,10 @@ span.button {
     margin: 1em 0 1em 0;
 }
 
-div.bottom-controls div,
-div.top-controls, div.top-controls div, div.top-controls span, div.top-controls select {
+div.image-controls,
+div.image-controls div,
+div.image-controls span,
+div.image-controls select,
+div.image-controls input {
     display: inline;
 }

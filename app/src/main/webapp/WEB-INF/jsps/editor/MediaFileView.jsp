@@ -66,7 +66,7 @@
             document.mediaFileViewForm.submit();
         }
     }
-    
+
     function onView() {
         document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
         document.mediaFileViewForm.submit();
@@ -201,19 +201,19 @@
     <s:hidden name="newDirectoryName" />
     <input type="hidden" name="mediaFileId" value="" />
 
-      <div class="top-controls">
+      <div class="image-controls">
+
           <s:if test="!allDirectories.isEmpty">
               <%-- Folder to View combo-box --%>
               <span><s:text name="mediaFileView.viewFolder"/>:</span>
               <s:select id="viewDirectoryMenu" name="viewDirectoryId"
                         list="allDirectories" listKey="id" listValue="name" onchange="onView()"/>
           </s:if>
-      </div>
 
-      <div class="top-controls">
           <span><s:text name="mediaFileView.sortBy"/>:</span>
           <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key" listValue="value"
                     onchange="document.mediaFileViewForm.submit();"/>
+
       </div>
 
 
@@ -354,16 +354,16 @@
 
       <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
 
-        <div class="bottom-controls">
+        <div class="image-controls">
 
             <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
                 <input id="toggleButton" type="button" class="btn" style="display: inline"
                        value='<s:text name="generic.toggle" />' onclick="onToggle()" />
 
-                <input id="deleteButton" type="button"  class="btn" style="display: inline"
+                <input id="deleteButton" type="button"  class="btn btn-danger" style="display: inline"
                        value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
 
-                <input id="moveButton" type="button" class="btn" style="display: inline"
+                <input id="moveButton" type="button" class="btn btn-primary" style="display: inline"
                        value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
 
             </s:if>

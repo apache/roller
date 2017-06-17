@@ -47,7 +47,7 @@
                     <div style="padding-left:2em; padding-top:1em">
                         <s:text name="mediaFileView.directoryName" />
                         <input type="text" id="newDirectoryName" name="newDirectoryName" size="10" maxlength="25" />
-                        <input type="button" id="newDirectoryButton" class="btn"
+                        <input type="button" id="newDirectoryButton" class="btn btn-primary"
                             value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
                     </div>
                 </div>
@@ -114,7 +114,7 @@
 
                         <tr>
                             <td>
-                                <s:submit id="searchButton" cssClass="btn"
+                                <s:submit id="searchButton" cssClass="btn btn-primary"
                                     value="%{getText('mediaFileView.search')}" cssStyle="margin:5px 0px;"/>
                             </td>
                             <td>
