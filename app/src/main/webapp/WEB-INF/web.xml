@@ -482,6 +482,13 @@
         <mapped-name>Session</mapped-name>
     </resource-ref>
 
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
+
     <!--
          Uncomment below to use SSL on sensitive pages.  Alternatively,
          can lock up the entire site with this single element:
