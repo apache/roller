@@ -54,6 +54,8 @@
         <!-- Needed to allow for popups -->
         <headers>
             <frame-options policy="SAMEORIGIN"/>
+            <!-- Disabled to allow some non-SSL pages & resources -->
+            <hsts disabled="true"/>
         </headers>
 
         <form-login login-page="/tb-ui/app/login"
