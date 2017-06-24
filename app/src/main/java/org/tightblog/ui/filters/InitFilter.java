@@ -70,9 +70,8 @@ public class InitFilter implements Filter {
     }
 
     private String getAbsoluteUrl(HttpServletRequest request) {
-        return getAbsoluteUrl(request.isSecure(),
-                request.getServerName(), request.getContextPath(),
-                request.getRequestURI(), request.getRequestURL().toString());
+        return getAbsoluteUrl(request.getServerName(), request.getContextPath(),
+                request.getRequestURI());
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -81,17 +80,8 @@ public class InitFilter implements Filter {
     public void destroy() {
     }
 
-    static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL) {
-
-        String url;
-
-        String fullUrl;
-
-        if (!secure) {
-            fullUrl = requestURL;
-        } else {
-            fullUrl = "http://" + serverName + contextPath;
-        }
+    static String getAbsoluteUrl(String serverName, String contextPath, String requestURI) {
+        String fullUrl = "//" + serverName + contextPath;
 
         // if the uri is only "/" then we are basically done
         if ("/".equals(requestURI)) {
@@ -99,9 +89,10 @@ public class InitFilter implements Filter {
             return removeTrailingSlash(fullUrl);
         }
 
+        String url;
+
         // find first "/" starting after hostname is specified
-        int index = fullUrl.indexOf('/',
-                fullUrl.indexOf(serverName));
+        int index = fullUrl.indexOf('/', fullUrl.indexOf(serverName));
 
         if (index != -1) {
             // extract just the part leading up to uri
