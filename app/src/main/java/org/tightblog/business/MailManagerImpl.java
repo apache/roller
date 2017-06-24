@@ -73,6 +73,11 @@ public class MailManagerImpl implements MailManager {
 
     private SpringTemplateEngine mailTemplateEngine;
 
+    // by default TightBlog uses protocol-relative URLs ("//...") to support HTTP and/or HTTPS usage
+    // these do not work well in email clients which don't know which scheme is in use
+    // urlPrefix defines the scheme to use for these links
+    private String urlPrefix = "https:";
+
     public MailManagerImpl(UserManager umgr, WeblogManager wmgr, WeblogEntryManager wemgr,
                            URLStrategy strategy, JavaMailSender sender,
                            SpringTemplateEngine mailTemplateEngine) {
@@ -82,10 +87,19 @@ public class MailManagerImpl implements MailManager {
         urlStrategy = strategy;
         mailSender = sender;
         this.mailTemplateEngine = mailTemplateEngine;
+        // if an absoluteurl is defined in static config, it presumably will have the scheme
+        String absoluteSite = WebloggerStaticConfig.getProperty("site.absoluteurl");
+        if (absoluteSite != null && absoluteSite.length() > 0) {
+            urlPrefix = "";
+        }
     }
 
     private boolean isMailEnabled() {
         return WebloggerStaticConfig.getBooleanProperty("mail.enabled");
+    }
+
+    public void setUrlPrefix(String urlPrefix) {
+        this.urlPrefix = urlPrefix;
     }
 
     @Override
@@ -119,7 +133,7 @@ public class MailManagerImpl implements MailManager {
             to = reviewers.toArray(new String[reviewers.size()]);
 
             // Figure URL to entry edit page
-            String editURL = urlStrategy.getEntryEditURL(entry.getWeblog().getHandle(), entry.getId(), true);
+            String editURL = urlPrefix + urlStrategy.getEntryEditURL(entry.getWeblog().getHandle(), entry.getId(), true);
 
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", entry.getWeblog().getLocaleInstance());
@@ -162,7 +176,8 @@ public class MailManagerImpl implements MailManager {
             List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
             String[] to = adminEmails.toArray(new String[adminEmails.size()]);
 
-            String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin", null, null);
+            String userAdminURL = urlPrefix + urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin",
+                    null, null);
 
             ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
             StringBuilder sb = new StringBuilder();
@@ -201,7 +216,7 @@ public class MailManagerImpl implements MailManager {
         try {
             String[] to = new String[]{user.getEmailAddress()};
 
-            String loginURL = urlStrategy.getLoginURL(true);
+            String loginURL = urlPrefix + urlStrategy.getLoginURL(true);
 
             ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources",
                     Locale.forLanguageTag(user.getLocale()));
@@ -280,7 +295,7 @@ public class MailManagerImpl implements MailManager {
         String content;
 
         // Figure URL to entry edit page
-        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
+        String rootURL = urlPrefix + WebloggerStaticConfig.getAbsoluteContextURL();
         String url = rootURL + "/tb-ui/app/home";
 
         ResourceBundle resources = ResourceBundle.getBundle(
@@ -327,7 +342,7 @@ public class MailManagerImpl implements MailManager {
                 "user.account.activation.mail.subject");
         String content;
 
-        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
+        String rootURL = urlPrefix + WebloggerStaticConfig.getAbsoluteContextURL();
 
         StringBuilder sb = new StringBuilder();
 
@@ -356,13 +371,13 @@ public class MailManagerImpl implements MailManager {
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
         String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
-        ctx.setVariable("commentURL", commentURL);
+        ctx.setVariable("commentURL", urlPrefix + commentURL);
         ctx.setVariable("messages", messages);
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("bean.entryId", entry.getId());
         String manageURL = urlStrategy.getActionURL("comments", "/tb-ui/app/authoring", weblog, parameters);
-        ctx.setVariable("manageURL", manageURL);
+        ctx.setVariable("manageURL", urlPrefix + manageURL);
 
         String msg = mailTemplateEngine.process("PendingCommentNotice.html", ctx);
 
@@ -431,7 +446,7 @@ public class MailManagerImpl implements MailManager {
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
         String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
-        ctx.setVariable("commentURL", commentURL);
+        ctx.setVariable("commentURL", urlPrefix + commentURL);
 
         String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
 
@@ -503,7 +518,7 @@ public class MailManagerImpl implements MailManager {
         StringBuilder msg = new StringBuilder();
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
-        msg.append(urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor()));
+        msg.append(urlPrefix).append(urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor()));
 
         // send message to author of approved comment
         try {
