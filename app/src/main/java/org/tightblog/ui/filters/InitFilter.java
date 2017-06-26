@@ -71,7 +71,7 @@ public class InitFilter implements Filter {
 
     private String getAbsoluteUrl(HttpServletRequest request) {
         return getAbsoluteUrl(request.getServerName(), request.getContextPath(),
-                request.getRequestURI());
+                request.getRequestURI(), request.getRequestURL().toString());
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -80,8 +80,13 @@ public class InitFilter implements Filter {
     public void destroy() {
     }
 
-    static String getAbsoluteUrl(String serverName, String contextPath, String requestURI) {
-        String fullUrl = "//" + serverName + contextPath;
+    static String getAbsoluteUrl(String serverName, String contextPath, String requestURI, String requestURL) {
+        // need to work with requestURL to ensure port number (if any) is retained.
+
+        String fullUrl = requestURL;
+        // strip out the http: or https: to switch to a protocol-relative URL (//)
+        int schemeDelimiter = fullUrl.indexOf("//");
+        fullUrl = fullUrl.substring(schemeDelimiter);
 
         // if the uri is only "/" then we are basically done
         if ("/".equals(requestURI)) {

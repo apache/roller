@@ -70,6 +70,13 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
+    <!-- Init filter.  performs some initialization on first request -->
+    <filter-mapping>
+        <filter-name>InitFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>MultipartFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -95,13 +102,6 @@
     NOTE: Any filters preceding this one MUST NOT use persistence sessions.-->
     <filter-mapping>
         <filter-name>PersistenceSessionFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-
-    <!-- Init filter.  performs some initialization on first request -->
-    <filter-mapping>
-        <filter-name>InitFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
