@@ -410,6 +410,8 @@
                 <configuration>
                     <webApp>
                         <contextPath>/tightblog</contextPath>
+                        <!-- Override to disable SSL requirements when running via mvn jetty:run -->
+                        <overrideDescriptor>src/test/resources/override-web.xml</overrideDescriptor>
                     </webApp>
                     <jettyXml>src/test/resources/jetty.xml</jettyXml>
                     <systemProperties>
