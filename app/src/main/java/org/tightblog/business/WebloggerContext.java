@@ -111,6 +111,10 @@ public class WebloggerContext extends ContextLoaderListener {
         PingTargetManager pingTargetManager = context.getBean("pingTargetManager", PingTargetManager.class);
         pingTargetManager.initialize();
 
+        // Mail Manager needs to have the root URL of the application (calculated by InitFilter) prior to initialization
+        MailManager mailManager = context.getBean("mailManager", MailManager.class);
+        mailManager.initialize();
+
         log.info("TightBlog Weblogger successfully bootstrapped");
         log.info("   Version: {}", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
         log.info("   Revision: {}", WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));

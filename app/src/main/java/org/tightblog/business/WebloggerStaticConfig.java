@@ -111,7 +111,7 @@ public final class WebloggerStaticConfig {
                 Enumeration keys = config.keys();
                 while (keys.hasMoreElements()) {
                     key = (String) keys.nextElement();
-                    log.debug(key + " = {}", config.getProperty(key));
+                    log.debug(key + " = {}", WebloggerStaticConfig.getProperty(key));
                 }
             }
 
@@ -124,12 +124,15 @@ public final class WebloggerStaticConfig {
     /**
      * Retrieve a property value
      *
+     * Note a Properties.getProperty("foo.bar") for any property not listed is "null"
+     * while a property listed but with no value (e.g., "foo.bar=" is an empty string.
+     *
      * @param key Name of the property
      * @return String Value of property requested, null if not found
      */
     public static String getProperty(String key) {
-        log.debug("Fetching property [{} = {}]", key, config.getProperty(key));
         String value = config.getProperty(key);
+        log.debug("Fetching property [{} = {}]", key, value);
         return value == null ? null : value.trim();
     }
 
@@ -141,13 +144,9 @@ public final class WebloggerStaticConfig {
      * @return String Value of property requested or defaultValue
      */
     public static String getProperty(String key, String defaultValue) {
-        log.debug("Fetching property [{} = {}], default value = {}", key, config.getProperty(key), defaultValue);
-        String value = config.getProperty(key);
-        if (value == null) {
-            return defaultValue;
-        }
-
-        return value.trim();
+        String value = WebloggerStaticConfig.getProperty(key);
+        log.debug("Fetching property [{} = {}], default value = {}", key, value, defaultValue);
+        return value == null ? defaultValue : value;
     }
 
     /**
@@ -155,7 +154,7 @@ public final class WebloggerStaticConfig {
      */
     public static boolean getBooleanProperty(String name) {
         String value = WebloggerStaticConfig.getProperty(name);
-        if (value == null) {
+        if (value == null || value.length() == 0) {
             return false;
         }
         return Boolean.valueOf(value);
@@ -168,7 +167,7 @@ public final class WebloggerStaticConfig {
         // get the value first, then convert
         String value = WebloggerStaticConfig.getProperty(name);
 
-        if (value == null) {
+        if (value == null || value.length() == 0) {
             return defaultValue;
         }
 
@@ -186,17 +185,8 @@ public final class WebloggerStaticConfig {
 
     /**
      * Get the absolute url to this site.
-     * <p>
-     * This method will just return the value of the "site.absoluteurl"
-     * property if it is set, otherwise it will return the non-persisted
-     * value which is set by the InitFilter.
      */
     public static String getAbsoluteContextURL() {
-        // db prop takes priority if it exists
-        String absURL = getProperty("site.absoluteurl");
-        if (absURL != null && absURL.trim().length() > 0) {
-            return absURL;
-        }
         return absoluteContextURL;
     }
 

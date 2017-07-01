@@ -99,4 +99,8 @@ public interface MailManager {
      */
     void sendNewCommentNotification(WeblogEntryComment comment);
 
+    /**
+     * Initialize the mail system.
+     */
+    void initialize();
 }

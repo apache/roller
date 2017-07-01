@@ -73,10 +73,10 @@ public class MailManagerImpl implements MailManager {
 
     private SpringTemplateEngine mailTemplateEngine;
 
-    // by default TightBlog uses protocol-relative URLs ("//...") to support HTTP and/or HTTPS usage
-    // these do not work well in email clients which don't know which scheme is in use
-    // urlPrefix defines the scheme to use for these links
-    private String urlPrefix = "https:";
+    // Prefix to add to URL.  By default TightBlog uses protocol-relative URLs ("//...") to support both
+    // HTTP and HTTPS usage.  These do not work well in email clients which don't know which scheme is in use.
+    // Should be kept as an empty string if protocol-relative URLs aren't being used.
+    private String urlPrefix = "";
 
     public MailManagerImpl(UserManager umgr, WeblogManager wmgr, WeblogEntryManager wemgr,
                            URLStrategy strategy, JavaMailSender sender,
@@ -87,10 +87,14 @@ public class MailManagerImpl implements MailManager {
         urlStrategy = strategy;
         mailSender = sender;
         this.mailTemplateEngine = mailTemplateEngine;
-        // if an absoluteurl is defined in static config, it presumably will have the scheme
-        String absoluteSite = WebloggerStaticConfig.getProperty("site.absoluteurl");
-        if (absoluteSite != null && absoluteSite.length() > 0) {
-            urlPrefix = "";
+    }
+
+    @Override
+    public void initialize() {
+        // if a protocol-relative URL being used, hardcode it to https:// when used in emails
+        String absoluteURL = WebloggerStaticConfig.getAbsoluteContextURL();
+        if (absoluteURL != null && "//".equals(absoluteURL.substring(0,2))) {
+            urlPrefix = "https:";
         }
     }
 
