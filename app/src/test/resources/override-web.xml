@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+
+    <!-- As configured in app/pom.xml for Jetty Maven Plugin, overrides main web.xml, turning off
+         SSL requirements when demoing via mvn jetty:run -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPS resources</web-resource-name>
+            <url-pattern>/roller_j_security_check</url-pattern>
+            <url-pattern>/tb-ui/app/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+</web-app>

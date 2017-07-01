@@ -183,30 +183,29 @@
     </resource-ref>
 
     <!--
-         Uncomment below to use SSL on sensitive pages.  Alternatively,
-         can lock up the entire site with this single element:
-         <url-pattern>/*</url-pattern>, if you do site-wide however must
-         set Absolute URL to Site field (Server Admin | Configuration | Settings)
-         e.g., to https://localhost:8443/tightblog.
+         Specifies the pages which must run on SSL.  Default below has the
+         the blogger UI user by the blogger run on SSL while the blog itself
+         remains unencrypted for readers.
+
+         Can alternatively lock up the entire site with this single element:
+         <url-pattern>/*</url-pattern>.  This is the increasingly recommended
+         approach, albeit at a cost of higher bandwidth demands.
 
          Servlet container-specific SSL configuration must be done,
          see your servlet container's documentation for details.
 
-         As an alternative, can instead modify the security.xml file to
-         enforce SSL on specified pages, see here:
+         SSL can also be enforced via the Spring security.xml file:
          http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-requires-channel
+
+         Related issue: If you wish to override TightBlog's calculation of the root URL
+         of your TightBlog instance (done in class InitFilter), that can be done via
+         setting the site.absoluteurl property in your tightblog-custom.xml.
     -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/roller_j_security_check</url-pattern>
-            <url-pattern>/tb-ui/app/login</url-pattern>
-            <url-pattern>/tb-ui/app/register</url-pattern>
-            <url-pattern>/tb-ui/app/profile</url-pattern>
-            <url-pattern>/tb-ui/app/admin/*</url-pattern>
-            <url-pattern>/tb-ui/app/login-redirect</url-pattern>
-            <url-pattern>/tb-ui/app/authoring/userdata</url-pattern>
-            <url-pattern>/tb-ui/app/authoring/members</url-pattern>
+            <url-pattern>/tb-ui/app/*</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
