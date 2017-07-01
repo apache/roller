@@ -197,8 +197,8 @@
          SSL can also be enforced via the Spring security.xml file:
          http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-requires-channel
 
-         Related issue: If you wish to override TightBlog's calculation of the root URL
-         of your TightBlog instance (done in class InitFilter), that can be done via
+         Related issue: If you wish to override TightBlog's determination of the root URL
+         of your TightBlog instance (done in class InitFilter), that can be done by
          setting the site.absoluteurl property in your tightblog-custom.xml.
     -->
     <security-constraint>
