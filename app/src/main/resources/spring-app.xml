@@ -36,8 +36,6 @@
         <task:scheduled ref="weblogManager" method="resetAllHitCounts" cron="0 0 0 * * *"/>
         <!-- every 4 hours -->
         <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0 0/4 * * *"/>
-        <!-- every hour, one-time startup 5 min delay -->
-        <task:scheduled ref="pingTargetManager" method="sendPings" initial-delay="300000" fixed-delay="3600000"/>
         <!-- every 5 mins, one-time startup 5 min delay -->
         <task:scheduled ref="weblogManager" method="updateHitCounters" initial-delay="300000" fixed-delay="180000"/>
     </task:scheduled-tasks>

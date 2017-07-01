@@ -104,12 +104,9 @@ public class WebloggerContext extends ContextLoaderListener {
 
         strategy = context.getBean("persistenceStrategy", JPAPersistenceStrategy.class);
 
-        // IndexManager and PingTargetManager need a functioning database, so delaying
-        // their initialization to this point.
+        // IndexManager needs a functioning database, so delaying its initialization to this point.
         IndexManager indexManager = context.getBean("indexManager", IndexManager.class);
         indexManager.initialize();
-        PingTargetManager pingTargetManager = context.getBean("pingTargetManager", PingTargetManager.class);
-        pingTargetManager.initialize();
 
         // Mail Manager needs to have the root URL of the application (calculated by InitFilter) prior to initialization
         MailManager mailManager = context.getBean("mailManager", MailManager.class);

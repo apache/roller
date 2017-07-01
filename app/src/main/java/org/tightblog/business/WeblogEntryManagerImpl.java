@@ -61,7 +61,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntryManagerImpl.class);
 
-    private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
 
     private WeblogManager weblogManager;
@@ -73,9 +72,8 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<>());
 
-    protected WeblogEntryManagerImpl(PingTargetManager mgr, JPAPersistenceStrategy strategy) {
+    protected WeblogEntryManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Weblog Manager");
-        this.pingTargetManager = mgr;
         this.strategy = strategy;
     }
 
@@ -123,12 +121,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         if (entry.isPublished()) {
             strategy.store(entry.getWeblog());
         }
-
-        if (entry.isPublished()) {
-            // Queue applicable pings for this update.
-            pingTargetManager.addToPingSet(entry.getWeblog());
-        }
-
     }
 
     @Override

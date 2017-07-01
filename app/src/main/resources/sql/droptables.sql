@@ -1,5 +1,5 @@
 -- Licensed to the Apache Software Foundation (ASF) under one or more
---  contributor license agreements.  The ASF licenses this file to You
+-- contributor license agreements.  The ASF licenses this file to You
 -- under the Apache License, Version 2.0 (the "License"); you may not
 -- use this file except in compliance with the License.
 -- You may obtain a copy of the License at
@@ -21,7 +21,6 @@
 drop table weblogger_properties;
 
 -- supplemental services tables
-drop table ping_target;
 drop table blogroll_link;
 drop table media_file;
 drop table media_directory;

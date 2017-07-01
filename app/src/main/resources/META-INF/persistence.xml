@@ -7,7 +7,6 @@
     -->
     <class>org.tightblog.pojos.MediaFile</class>
     <class>org.tightblog.pojos.MediaDirectory</class>
-    <class>org.tightblog.pojos.PingTarget</class>
     <class>org.tightblog.pojos.User</class>
     <class>org.tightblog.pojos.UserCredentials</class>
     <class>org.tightblog.pojos.Weblog</class>
