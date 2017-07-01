@@ -12,12 +12,13 @@ This more realistic goal--along with adopting the Spring framework, REST, Angula
 |Apache Roller 5.1.2|1 Mar 2015|33|493|96|95.7K|
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
+|TightBlog 2.0.1|?|13|146|36|42.4K|
 
-(Lines of code stats from <a href="https://www.openhub.net/p/tightblog">OpenHub</a>.) 
+(Lines of code based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.) 
 
 Only increases with TightBlog are about 20 or so new JavaScript files added, due to TightBlog's increased emphasis on browser-side processing.
 
-Functionality-wise, TightBlog hasn't been all subtract and no add, though.  Some functionality in TightBlog not present in the latest release of Roller:
+In addition to the cleanout of old functionality some new features have been added:
 
 * Bloggers may blog using <a href="http://commonmark.org/">CommonMark</a> in addition to standard HTML and Rich Text Editors. 
 * Blog entries have a "notes" field for the blogger to store anything helpful in maintaining the article.

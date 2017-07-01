@@ -179,11 +179,6 @@ public class UIController {
         return getAdminPage(principal, "cacheInfo");
     }
 
-    @RequestMapping(value = "/admin/pingTargets")
-    public ModelAndView pingTargets(Principal principal) {
-        return getAdminPage(principal, "pingTargets");
-    }
-
     @RequestMapping(value = "/admin/globalConfig")
     public ModelAndView globalConfig(Principal principal) {
         return getAdminPage(principal, "globalConfig");

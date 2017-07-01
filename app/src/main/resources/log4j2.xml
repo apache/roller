@@ -19,8 +19,6 @@
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="org.springframework" level="warn"/>
         <Logger name="org.hibernate" level="info"/>
-        <!-- "warn" to see no ping results, "info" for ping failures only, "debug" for all ping results -->
-        <Logger name="org.tightblog.business.PingTargetManagerImpl" level="debug"/>
         <!-- Velocity talks *way* too much, so set it to log only FATAL problems -->
         <Logger name="org.apache.velocity" level="fatal"/>
     </Loggers>

@@ -68,11 +68,6 @@
 
     <beans:bean id="fileContentManager" class="org.tightblog.business.FileContentManagerImpl"/>
 
-    <beans:bean id="pingTargetManager" class="org.tightblog.business.PingTargetManagerImpl">
-        <beans:constructor-arg ref="persistenceStrategy"/>
-        <beans:constructor-arg ref="urlStrategy"/>
-    </beans:bean>
-
     <beans:bean id="themeManager" class="org.tightblog.business.themes.ThemeManagerImpl">
         <beans:constructor-arg name="themeDirOverride" value="${themes.dir:#{null}}"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
@@ -95,7 +90,6 @@
     </beans:bean>
 
     <beans:bean id="weblogEntryManager" class="org.tightblog.business.WeblogEntryManagerImpl">
-        <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="persistenceStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>

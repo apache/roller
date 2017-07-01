@@ -10,9 +10,6 @@ Defines the menus provided with Weblogger
             <tabItem action="userAdmin"
                      actionPath="/tb-ui/app/admin/"
                      titleKey="userAdmin.title"/>
-            <tabItem action="pingTargets"
-                     actionPath="/tb-ui/app/admin/"
-                     titleKey="pingTargets.title"/>
             <tabItem action="cacheInfo"
                      actionPath="/tb-ui/app/admin/"
                      titleKey="cacheInfo.title"/>
