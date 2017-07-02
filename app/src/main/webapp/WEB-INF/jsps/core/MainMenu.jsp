@@ -63,7 +63,7 @@ var msg= {
 
                    <tr>
                        <td class="mm_subtable_label"><fmt:message key='mainMenu.weblog'/></td>
-                       <td><a href='{{role.weblog.absoluteURL}}'>{{role.weblog.absoluteURL}}</a></td>
+                       <td><a href='{{role.weblog.absoluteURL}}' target="_blank">{{role.weblog.absoluteURL}}</a></td>
                    </tr>
 
                    <tr>
