@@ -123,7 +123,7 @@
             </td>
             <td>
                 <span ng-show="ctrl.entry.status == 'PUBLISHED'">
-                    <a id="permalink" ng-href='{{ctrl.entry.permalink}}'>{{ctrl.entry.permalink}}</a>
+                    <a id="permalink" ng-href='{{ctrl.entry.permalink}}' target="_blank">{{ctrl.entry.permalink}}</a>
                     <img src='<c:url value="/images/launch-link.png"/>' />
                 </span>
                 <span ng-show="ctrl.entry.status != 'PUBLISHED'">

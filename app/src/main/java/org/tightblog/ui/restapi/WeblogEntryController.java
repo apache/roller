@@ -157,8 +157,10 @@ public class WeblogEntryController {
             criteria.setMaxResults(ITEMS_PER_PAGE + 1);
             List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(criteria);
             data.entries = new ArrayList<>();
-            data.entries.addAll(rawEntries.stream().peek(re -> re.setWeblog(null))
+            data.entries.addAll(rawEntries.stream()
+                    .peek(re -> re.setWeblog(null))
                     .peek(re -> re.getCategory().setWeblog(null))
+                    .peek(re -> re.setPermalink(urlStrategy.getWeblogEntryURL(weblog, re.getAnchor(), true)))
                     .collect(Collectors.toList()));
 
             if (rawEntries.size() > ITEMS_PER_PAGE) {
