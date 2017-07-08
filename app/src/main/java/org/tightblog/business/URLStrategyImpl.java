@@ -68,6 +68,11 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
+    public String getCommentNotificationUnsubscribeUrl(String commentId) {
+        return getRootURL(true) + "/tb-ui/app/unsubscribe?commentId=" + commentId;
+    }
+
+    @Override
     public String getActionURL(String action, String namespace, Weblog weblog,
                                Map<String, String> parameters) {
         String url = getRootURL(true) + namespace + "/" + action;

@@ -15,8 +15,11 @@
  */
 package org.tightblog.ui.restapi;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
+import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
@@ -26,6 +29,8 @@ import org.tightblog.pojos.UserSearchCriteria;
 import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.ui.menu.Menu;
@@ -63,6 +68,13 @@ public class UIController {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    @Autowired
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     @Autowired
@@ -116,6 +128,17 @@ public class UIController {
 
         }
         return tightblogModelAndView("login", myMap, (User) null, null);
+    }
+
+    @RequestMapping(value = "/unsubscribe")
+    public ModelAndView unsubscribe(@RequestParam String commentId) throws IOException {
+
+        Pair<String, Boolean> results = weblogEntryManager.stopNotificationsForCommenter(commentId);
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("found", results.getRight());
+        myMap.put("weblogEntryTitle", results.getLeft());
+
+        return tightblogModelAndView("unsubscribed", myMap, (User) null, null);
     }
 
     @RequestMapping(value = "/logout")

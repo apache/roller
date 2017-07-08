@@ -97,7 +97,7 @@ public interface MailManager {
      *
      * @param comment new comment to announce
      */
-    void sendNewCommentNotification(WeblogEntryComment comment);
+    void sendNewPublishedCommentNotification(WeblogEntryComment comment);
 
     /**
      * Initialize the mail system.

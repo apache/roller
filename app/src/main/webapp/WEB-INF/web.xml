@@ -206,6 +206,8 @@
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/roller_j_security_check</url-pattern>
             <url-pattern>/tb-ui/app/*</url-pattern>
+            <url-pattern>/tb-ui/admin/*</url-pattern>
+            <url-pattern>/tb-ui/authoring/*</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

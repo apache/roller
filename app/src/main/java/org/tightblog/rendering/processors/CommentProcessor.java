@@ -368,7 +368,7 @@ public class CommentProcessor extends AbstractProcessor {
                 persistenceStrategy.flush();
 
                 if (noModerationNeeded) {
-                    mailManager.sendNewCommentNotification(commentForm);
+                    mailManager.sendNewPublishedCommentNotification(commentForm);
                 } else {
                     mailManager.sendPendingCommentNotice(commentForm, messages);
                 }

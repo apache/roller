@@ -63,7 +63,7 @@
           <th width="5%"><fmt:message key="bookmarks.visitLink" /></th>
       </tr>
     </thead>
-    <tbody id="tableBody">
+    <tbody id="tableBody" ng-cloak>
       <tr ng-repeat="item in ctrl.items | orderBy:'position'" ng-class-even="'altrow'">
         <td class="center" style="vertical-align:middle">
             <input type="checkbox" name="idSelections" ng-attr-title="checkbox for {{item.name}}" value="{{item.id}}" />

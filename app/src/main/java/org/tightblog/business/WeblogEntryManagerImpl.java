@@ -21,6 +21,7 @@
 package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.tightblog.pojos.AtomEnclosure;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Weblog;
@@ -650,4 +651,33 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         return resource;
     }
 
+    @Override
+    public Pair<String, Boolean> stopNotificationsForCommenter(String commentId) {
+        boolean found = false;
+        String blogEntryTitle = null;
+
+        WeblogEntryComment commentWithUnsubscribingUser = strategy.load(WeblogEntryComment.class, commentId);
+
+        if (commentWithUnsubscribingUser != null) {
+            // get entry
+            WeblogEntry entry = commentWithUnsubscribingUser.getWeblogEntry();
+            blogEntryTitle = entry.getTitle();
+
+            // turn off notify on all comments for this entry by user
+            List<WeblogEntryComment> comments = getComments(CommentSearchCriteria.builder(
+                    entry, false, false));
+
+            for (WeblogEntryComment comment : comments) {
+                if (comment.getNotify() && comment.getEmail().equalsIgnoreCase(commentWithUnsubscribingUser.getEmail())) {
+                    comment.setNotify(false);
+                    strategy.store(comment);
+                    found = true;
+                }
+            }
+            if (found) {
+                strategy.flush();
+            }
+        }
+        return Pair.of(blogEntryTitle, found);
+    }
 }

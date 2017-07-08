@@ -53,8 +53,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class MailManagerImpl implements MailManager {
@@ -412,7 +410,7 @@ public class MailManagerImpl implements MailManager {
     }
 
     @Override
-    public void sendNewCommentNotification(WeblogEntryComment comment) {
+    public void sendNewPublishedCommentNotification(WeblogEntryComment comment) {
         if (!isMailEnabled() ||
                 !WebloggerContext.getWebloggerProperties().isUsersCommentNotifications() ||
                 !comment.getApproved()) {
@@ -425,45 +423,41 @@ public class MailManagerImpl implements MailManager {
         User user = entry.getCreator();
 
         // build list of email addresses to send notification to
-        Set<String> subscribers = new TreeSet<>();
+        Map<String, String> subscribers = new HashMap<>();
 
         // Get all the subscribers to this comment thread
         List<WeblogEntryComment> priorComments = weblogEntryManager.getComments(
-                CommentSearchCriteria.approvedComments(entry, false))
+                CommentSearchCriteria.builder(entry, true, false))
                 .stream()
                 // don't send a routing email to the person who made the comment.
-                .filter(pc -> !comment.getEmail().equals(pc.getEmail()))
+                .filter(pc -> !comment.getEmail().equalsIgnoreCase(pc.getEmail()))
                 .collect(Collectors.toList());
 
         for (WeblogEntryComment priorComment : priorComments) {
             // if user has commented twice, count the most recent notify setting
             if (priorComment.getNotify()) {
                 log.info("Add to subscribers list: {}", priorComment.getEmail());
-                subscribers.add(priorComment.getEmail());
+                subscribers.put(priorComment.getEmail().toLowerCase(), priorComment.getId());
             } else {
                 // remove user who doesn't want to be notified
                 log.info("Remove from subscribers list: {}", priorComment.getEmail());
-                subscribers.remove(priorComment.getEmail());
+                subscribers.remove(priorComment.getEmail().toLowerCase());
             }
         }
 
-        Context ctx = new Context(weblog.getLocaleInstance());
-        ctx.setVariable("comment", comment);
-        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
-        ctx.setVariable("commentURL", urlPrefix + commentURL);
-
-        String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
-
         String subject = resources.getString("email.comment.title") + ": " + entry.getTitle();
 
-        // send message to email recipients
         try {
             String from = user.getEmailAddress();
 
+            // send message to blog members (same email for everyone)
             if (weblog.getEmailComments() &&
                     // if must moderate on, blogger(s) already got pending email, good enough.
                     !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
                 List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
+
+                Context ctx = getPublishedCommentNotificationContext(comment, null);
+                String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
 
                 String[] bloggerEmailAddrs = bloggerList.stream()
                         .map(UserWeblogRole::getUser)
@@ -473,12 +467,13 @@ public class MailManagerImpl implements MailManager {
                 sendHTMLMessage(from, bloggerEmailAddrs, null, null, subject, msg);
             }
 
-            // now send to subscribers
+            // now send to subscribers (different email each with different unsubscribe link)
             if (subscribers.size() > 0) {
-                // Form array of commenter addrs
-                String[] commenterAddrs = subscribers.toArray(new String[subscribers.size()]);
-
-                sendHTMLMessage(from, null, null, commenterAddrs, subject, msg);
+                for (Map.Entry<String, String> subscriber : subscribers.entrySet()) {
+                    Context ctx = getPublishedCommentNotificationContext(comment, subscriber);
+                    String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
+                    sendHTMLMessage(from, null, null, new String[]{subscriber.getKey()}, subject, msg);
+                }
             }
         } catch (Exception e) {
             log.warn("Exception sending comment notification mail", e);
@@ -487,6 +482,22 @@ public class MailManagerImpl implements MailManager {
 
         log.debug("Done sending email message");
     }
+
+    private Context getPublishedCommentNotificationContext(WeblogEntryComment comment, Map.Entry<String, String> subscriber) {
+        WeblogEntry entry = comment.getWeblogEntry();
+        Weblog weblog = entry.getWeblog();
+
+        // construct model for email
+        Context ctx = new Context(weblog.getLocaleInstance());
+        ctx.setVariable("comment", comment);
+        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
+        ctx.setVariable("commentURL", urlPrefix + commentURL);
+        if (subscriber != null) {
+            ctx.setVariable("unsubscribeURL", urlPrefix + urlStrategy.getCommentNotificationUnsubscribeUrl(subscriber.getValue()));
+        }
+        return ctx;
+    }
+
 
     @Override
     public void sendYourCommentWasApprovedNotifications(List<WeblogEntryComment> comments) {
@@ -501,7 +512,7 @@ public class MailManagerImpl implements MailManager {
         for (WeblogEntryComment comment : comments) {
 
             // Send email notifications because a new comment has been approved
-            sendNewCommentNotification(comment);
+            sendNewPublishedCommentNotification(comment);
 
             // Send approval notification to author of approved comment
             sendYourCommentWasApprovedNotification(comment, resources);

@@ -201,16 +201,16 @@ group by weblogid, name;
 create table weblog_entry_comment (
     id         varchar(48) not null primary key,
     entryid    varchar(48) not null,
+    status     varchar(20) not null,
     name       varchar(255) not null,
     email      varchar(255) not null,
-    url        varchar(255),
+    notify     $db.BOOLEAN_SQL_TYPE_FALSE not null,
     content    $db.TEXT_SQL_TYPE,
     posttime   $db.TIMESTAMP_SQL_TYPE not null,
-    notify     $db.BOOLEAN_SQL_TYPE_FALSE not null,
+    url        varchar(255),
     remotehost varchar(128),
     referrer   varchar(255),
-    useragent  varchar(255),
-    status     varchar(20) not null
+    useragent  varchar(255)
 );
 
 alter table weblog_entry_comment add constraint co_entryid_fk

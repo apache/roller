@@ -493,13 +493,19 @@ public class WeblogEntry {
     @JsonIgnore
     public List<WeblogEntryComment> getComments() {
         WeblogEntryManager wmgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
-        return wmgr.getComments(CommentSearchCriteria.approvedComments(this, true));
+        return wmgr.getComments(CommentSearchCriteria.builder(this, true, false));
     }
 
     @Transient
     public long getCommentCount() {
         WeblogEntryManager wmgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
-        return wmgr.getCommentCount(CommentSearchCriteria.approvedComments(this, true));
+        return wmgr.getCommentCount(CommentSearchCriteria.builder(this, true, true));
+    }
+
+    @Transient
+    public long getCommentCountIncludingUnapproved() {
+        WeblogEntryManager wmgr = WebloggerContext.getWeblogger().getWeblogEntryManager();
+        return wmgr.getCommentCount(CommentSearchCriteria.builder(this, false, true));
     }
 
     /**

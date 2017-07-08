@@ -20,6 +20,7 @@
  */
 package org.tightblog.business;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.tightblog.pojos.AtomEnclosure;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Weblog;
@@ -168,5 +169,15 @@ public interface WeblogEntryManager {
      * @return AtomEnclosure element for the resource
      */
     AtomEnclosure generateEnclosure(String url);
+
+    /**
+     * Turn off further notifications to a blog commenter who requested "notify me"
+     * for future comments for a particular weblog entry.
+     * @param commentId weblog entry id where commenter commented
+     * @return Pair &lt;String, Boolean> = String is blog entry title or null if not found,
+     *         Boolean is true if subscribed user found (& hence unsubscribed), false if user
+     *         not found or blog entry not found.
+     */
+    Pair<String, Boolean> stopNotificationsForCommenter(String commentId);
 
 }
