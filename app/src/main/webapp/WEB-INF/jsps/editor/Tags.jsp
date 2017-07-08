@@ -75,7 +75,7 @@
         <th width="16%"></th>
     </tr>
 
-    <tr ng-repeat="tag in ctrl.tagData.tags" ng-class-even="'altrow'">
+    <tr ng-repeat="tag in ctrl.tagData.tags" ng-class-even="'altrow'" ng-cloak>
 
         <td>{{tag.name}}</td>
         <td>{{tag.total}}</td>

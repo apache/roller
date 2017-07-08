@@ -46,7 +46,7 @@
     </c:otherwise>
 </c:choose>
 
-<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMsg">
+<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMsg" ng-cloak>
    <b>{{ctrl.errorMsg}}</b>
 </div>
 

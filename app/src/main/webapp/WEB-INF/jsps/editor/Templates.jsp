@@ -81,7 +81,7 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
           <th width="4%"><fmt:message key="generic.view"/></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody ng-cloak>
         <tr ng-repeat="tpl in ctrl.weblogTemplateData.templates" ng-class-even="'altrow'">
             <td class="center" style="vertical-align:middle">
               <span ng-if="tpl.derivation != 'Default'">

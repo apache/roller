@@ -38,7 +38,7 @@ var msg= {
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/home'/>"/>
 
-<div>
+<div ng-cloak>
 
     <span ng-show="ctrl.roles.length == 0">
         <p><fmt:message key="mainMenu.prompt.noBlog" /></p>

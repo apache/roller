@@ -79,7 +79,7 @@
 
 <%-- Media file folder contents --%>
 
-<div width="720px" height="500px">
+<div width="720px" height="500px" ng-cloak>
     <ul id = "myMenu">
         <li ng-if="ctrl.mediaFiles.length == 0" style="text-align: center;list-style-type:none;">
            <fmt:message key="mediaFileView.noFiles"/>

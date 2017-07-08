@@ -83,7 +83,7 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
              <th width="20%"><fmt:message key="members.remove" /></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody ng-cloak>
             <tr ng-repeat="role in ctrl.roles" id="{{role.user.id}}" ng-class="{rollertable_pending: role.pending}">
                 <td>
                   <img src='<c:url value="/images/user.png"/>' border="0" alt="icon" />

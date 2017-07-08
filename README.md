@@ -12,7 +12,7 @@ This more realistic goal--along with adopting the Spring framework, REST, Angula
 |Apache Roller 5.1.2|1 Mar 2015|33|493|96|95.7K|
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
-|TightBlog 2.0.1|?|13|146|36|42.4K|
+|TightBlog 2.0.1|?|13|146|37|42.4K|
 
 (Lines of code based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.) 
 

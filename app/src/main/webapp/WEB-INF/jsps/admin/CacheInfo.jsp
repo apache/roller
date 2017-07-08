@@ -66,7 +66,7 @@
         <th style="width:10%"></th>
     </tr>
 </thead>
-<tbody id="tableBody">
+<tbody id="tableBody" ng-cloak>
       <tr ng-repeat="(key,item) in ctrl.cacheData" ng-class-even="'altrow'">
         <td>{{key}}</td>
         <td>{{item.startTime | date:'short'}}</td>

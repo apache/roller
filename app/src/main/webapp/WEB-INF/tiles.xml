@@ -75,6 +75,11 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
     </definition>
 
+    <definition name=".unsubscribed" extends=".tiles-no-nav-page" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Unsubscribed.jsp" />
+        <put-attribute name="titleRight" value="unsubscribed.header.title"/>
+    </definition>
+
     <definition name=".mainMenu" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/MainMenu.jsp" />
     </definition>

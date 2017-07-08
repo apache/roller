@@ -59,7 +59,7 @@
             <th width="7%"><fmt:message key="categories.remove"/></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody ng-cloak>
           <tr ng-repeat="item in ctrl.items | orderBy:'position'" ng-class-even="'altrow'">
               <td>{{item.name}}</td>
               <td align="center">

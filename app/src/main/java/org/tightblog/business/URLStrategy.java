@@ -137,4 +137,10 @@ public interface URLStrategy {
      */
     String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute);
 
+    /**
+     * Generate the URL that commenters who selected "notify me" for future comments for an entry can
+     * use to unsubscribe from further comments.
+     */
+    String getCommentNotificationUnsubscribeUrl(String commentId);
+
 }

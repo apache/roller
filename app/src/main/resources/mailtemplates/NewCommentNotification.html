@@ -14,5 +14,12 @@
     Reply:
 </span>
 <a href="replyurl.html" th:href="${commentURL}" th:text="${commentURL}">replyurl</a>
+<br><br><hr>
+<span style="font-size:11px" th:text="#{email.comment.receiveReason}"><br>
+    (receive reason)
+</span>
+<span style="font-size:11px" th:utext="#{email.comment.unsubscribeLink(${unsubscribeURL})}"><br>
+    (unsubscribe link)
+</span>
 </body>
 </html>

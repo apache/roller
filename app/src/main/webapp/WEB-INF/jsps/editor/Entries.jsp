@@ -115,7 +115,7 @@
 <%-- Number of entries and date message --%>
 <%-- ============================================================= --%>
 
-<div class="tablenav">
+<div class="tablenav" ng-cloak>
 
     <div style="float:left;">
         {{entryArr.length}} <fmt:message key="entries.nowShowing"/>
@@ -179,7 +179,7 @@
     </tr>
 
     <tr ng-repeat="entry in ctrl.entriesData.entries"
-        ng-class="{DRAFT : 'draftentry', PENDING : 'pendingentry', SCHEDULED : 'scheduledentry'}[entry.status]">
+        ng-class="{DRAFT : 'draftentry', PENDING : 'pendingentry', SCHEDULED : 'scheduledentry'}[entry.status]" ng-cloak>
 
         <td>
             <span ng-if="entry.pubTime != null">

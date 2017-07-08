@@ -24,14 +24,14 @@
     <div class="menu-tr">
         <div class="menu-tl">
             
-            <div class="sidebarInner">
+            <div class="sidebarInner" ng-cloak>
                 
                 <h3><fmt:message key="entryEdit.comments" /></h3>
 
-                <div ng-show="ctrl.entry.commentCount > 0">
+                <div ng-show="ctrl.entry.commentCountIncludingUnapproved > 0">
                     <a ng-href="{{ctrl.entry.commentsUrl}}" ng-bind-html="ctrl.commentCountMsg"></a>
                 </div>
-                <div ng-show="ctrl.entry.commentCount == 0">
+                <div ng-show="ctrl.entry.commentCountIncludingUnapproved == 0">
                     <fmt:message key="generic.none" />
                 </div>
                 

@@ -121,7 +121,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         var self = this;
         this.recentEntries = {};
         this.urlRoot = contextPath + '/tb-ui/authoring/rest/weblogentries/';
-        this.entry = { commentCount : 0, category : {} };
+        this.entry = { commentCountIncludingUnapproved : 0, category : {} };
         this.quillEditor = null;
         this.errorObj = {};
 
@@ -180,7 +180,8 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
             $http.get(this.urlRoot + entryId).then(
               function(response) {
                  self.entry = response.data;
-                 self.commentCountMsg = $sce.trustAsHtml($interpolate(msg.commentCountTmpl)({commentCount:self.entry.commentCount}));
+                 self.commentCountMsg = $sce.trustAsHtml($interpolate(msg.commentCountTmpl)
+                    ({commentCount:self.entry.commentCountIncludingUnapproved}));
                  self.entry.commentDays = "" + self.entry.commentDays;
 
                  // move into RTE.
