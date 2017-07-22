@@ -68,7 +68,11 @@ public class UtilitiesModel implements Model {
      * Return message string
      */
     public String msg(String key) {
-        return messages.getString(key);
+        try {
+            return messages.getString(key);
+        } catch (NullPointerException e) {
+            return "???" + key + "???";
+        }
     }
 
     /**

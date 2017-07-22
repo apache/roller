@@ -517,13 +517,12 @@ public class WeblogEntryController {
                 }
 
                 entry.setUpdateTime(Instant.now());
-                if (PubStatus.PUBLISHED.equals(entryData.getStatus())) {
-                    Instant pubTime = calculatePubTime(entryData);
-                    entry.setPubTime((pubTime != null) ? pubTime : entry.getUpdateTime());
+                Instant pubTime = calculatePubTime(entryData);
+                entry.setPubTime((pubTime != null) ? pubTime : entry.getUpdateTime());
 
-                    if (entry.getPubTime().isAfter(Instant.now().plus(1, ChronoUnit.MINUTES))) {
-                        entryData.setStatus(PubStatus.SCHEDULED);
-                    }
+                if (PubStatus.PUBLISHED.equals(entryData.getStatus()) &&
+                        entry.getPubTime().isAfter(Instant.now().plus(1, ChronoUnit.MINUTES))) {
+                    entryData.setStatus(PubStatus.SCHEDULED);
                 }
 
                 entry.setStatus(entryData.getStatus());

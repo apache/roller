@@ -68,7 +68,6 @@ public class JPAPersistenceStrategy {
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             if (key.startsWith("javax.persistence.") ||
-                    key.startsWith("openjpa.") ||
                     key.startsWith("eclipselink.") ||
                     key.startsWith("hibernate.")) {
                 String value = WebloggerStaticConfig.getProperty(key);

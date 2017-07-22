@@ -135,7 +135,7 @@ tightblogApp.directive('confirmDeleteDialog', function(){
         link: function(scope, elem, attr, ctrl) {
             var dialogId = '#' + attr.confirmDeleteDialog;
             elem.bind('click', function(e) {
-                $(dialogId).dialog("option", {"title" : attr.nameToDelete})
+                $(dialogId).dialog("option", {"title" : "Delete Category " + attr.nameToDelete})
                            .dialog('open');
             });
         }

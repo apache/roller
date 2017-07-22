@@ -158,6 +158,10 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogCollectionURL(weblog, null, null, tag, -1, true);
     }
 
+    public String date(String date) {
+        return urlStrategy.getWeblogCollectionURL(weblog, null, date, null, -1, true);
+    }
+
     public String getSearch() {
         return urlStrategy.getWeblogSearchURL(weblog, null, null, -1, false);
     }

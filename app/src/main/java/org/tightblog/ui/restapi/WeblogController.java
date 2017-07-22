@@ -370,6 +370,14 @@ public class WeblogController {
         public Map<String, SharedTheme> getSharedThemeMap() {
             return sharedThemeMap;
         }
+
+        public boolean isUsersOverrideAnalyticsCode() {
+            return usersOverrideAnalyticsCode;
+        }
+
+        public boolean isUsersCommentNotifications() {
+            return usersCommentNotifications;
+        }
     }
 
 }
