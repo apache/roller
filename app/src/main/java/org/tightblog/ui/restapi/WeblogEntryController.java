@@ -514,6 +514,7 @@ public class WeblogEntryController {
                     entry.setCreator(user);
                     entry.setWeblog(weblog);
                     entry.setEditFormat(entryData.getEditFormat());
+                    entryData.setWeblog(weblog);
                 }
 
                 entry.setUpdateTime(Instant.now());
