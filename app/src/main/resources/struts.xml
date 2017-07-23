@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-    "http://struts.apache.org/dtds/struts-2.3.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
 <struts>
     
     <!-- Weblogger default package -->
-    <package name="weblogger" namespace="/roller-ui" extends="struts-default">
+    <package name="weblogger" namespace="/roller-ui" extends="struts-default" strict-method-invocation="false">
         
         <!-- Define Tiles result type -->
         <result-types>
@@ -142,8 +143,7 @@
     
     
     <!-- Weblogger install/bootstrap actions -->
-    <package name="weblogger-install" namespace="/roller-ui/install" extends="weblogger">
-    
+    <package name="weblogger-install" namespace="/roller-ui/install" extends="weblogger" strict-method-invocation="false">
         <action name="install"
                 class="org.apache.roller.weblogger.ui.struts2.core.Install">
             <result name="database_error" type="tiles">.DatabaseError</result>
@@ -157,7 +157,7 @@
     
     
     <!-- Weblogger Admin UI (includes planet) -->
-    <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger">
+    <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger" strict-method-invocation="false">
         
         <action name="globalConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.GlobalConfig">
@@ -245,7 +245,7 @@
     
     
     <!-- Weblogger Authoring UI -->
-    <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
+    <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger" strict-method-invocation="false">
 
         <action name="mediaFileAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
@@ -532,7 +532,7 @@
 
     <!-- Weblogger Authoring UI - overlay pages-->
     
-    <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring">
+    <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring" strict-method-invocation="false">
 
         <action name="mediaFileAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
