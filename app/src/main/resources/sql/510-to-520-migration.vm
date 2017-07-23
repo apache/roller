@@ -32,8 +32,8 @@
 
 #expandTimestampNotNull('pingqueueentry' 'entrytime')
 #expandTimestamp('pingtarget' 'lastsuccess')
-#expandTimestampNotNull('rag_entry' 'published')
 #expandTimestamp('rag_entry' 'updated')
+#expandTimestampNotNull('rag_entry' 'published')
 #expandTimestamp('rag_subscription' 'last_updated')
 #expandTimestamp('roller_audit_log' 'change_time')
 #expandTimestampNotNull('roller_comment' 'posttime')
