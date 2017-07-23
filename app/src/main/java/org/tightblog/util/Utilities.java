@@ -153,6 +153,7 @@ public class Utilities {
 
     /**
      * Replaces occurrences of non-alphanumeric characters with a supplied char.
+     * Exception: apostrophes are skipped
      */
     public static String replaceNonAlphanumeric(String str, char subst) {
         StringBuilder ret = new StringBuilder(str.length());
@@ -160,7 +161,7 @@ public class Utilities {
         for (char aChar : testChars) {
             if (Character.isLetterOrDigit(aChar)) {
                 ret.append(aChar);
-            } else {
+            } else if (aChar != '\'') {
                 ret.append(subst);
             }
         }
