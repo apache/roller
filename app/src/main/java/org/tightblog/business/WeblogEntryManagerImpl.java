@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
@@ -68,6 +69,12 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
     }
 
     // cached mapping of entryAnchors -> entryIds
@@ -292,7 +299,15 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
             query.setMaxResults(criteria.getMaxResults());
         }
 
-        return query.getResultList();
+        List<WeblogEntry> results = query.getResultList();
+
+        if (criteria.isCalculatePermalinks()) {
+            results = results.stream()
+                    .peek(re -> re.setPermalink(urlStrategy.getWeblogEntryURL(re.getWeblog(), re.getAnchor(), true)))
+                    .collect(Collectors.toList());
+        }
+
+        return results;
     }
 
     @Override

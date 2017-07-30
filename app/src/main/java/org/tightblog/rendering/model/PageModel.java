@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Model which provides information needed to render a weblog page.
@@ -261,6 +262,7 @@ public class PageModel implements Model {
         wesc.setCategoryName(cat);
         wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         wesc.setMaxResults(length);
+        wesc.setCalculatePermalinks(true);
         recentEntries = weblogEntryManager.getWeblogEntries(wesc);
         return recentEntries;
     }

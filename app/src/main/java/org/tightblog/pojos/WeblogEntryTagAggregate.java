@@ -30,8 +30,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Comparator;
@@ -41,11 +39,6 @@ import java.util.Comparator;
  */
 @Entity
 @Table(name = "weblog_entry_tag_agg")
-@NamedQueries({
-        @NamedQuery(name = "WeblogEntryTagAggregate.getPopularTagsByWeblog",
-                query = "SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 " +
-                        "GROUP BY w.name ORDER BY SUM(w.total) DESC")
-})
 public class WeblogEntryTagAggregate {
 
     private String name = null;
@@ -128,7 +121,7 @@ public class WeblogEntryTagAggregate {
                 .toHashCode();
     }
 
-    public static java.util.Comparator<WeblogEntryTagAggregate> comparator = (weta1, weta2) ->
+    public static java.util.Comparator<WeblogEntryTagAggregate> nameComparator = (weta1, weta2) ->
             weta1.getName().compareToIgnoreCase(weta2.getName());
 
     public static Comparator<WeblogEntryTagAggregate> countComparator = (weta1, weta2) -> {
