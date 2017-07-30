@@ -32,7 +32,7 @@
         text: msg.updateLabel,
         click: function() {
             var currentTag = $(this).data('currentTag');
-            var newTag = $('#new-tag').val().trim();
+            var newTag = $('#tagname').val().trim();
             if ($(this).data('action') == 'rename') {
                 angular.element('#ngapp-div').scope().ctrl.renameTag(currentTag, newTag);
             } else {
@@ -40,14 +40,14 @@
             }
             angular.element('#ngapp-div').scope().$apply();
             $( this ).dialog( "close" );
-            $('#new-tag').val('');
+            $('#tagname').val('');
         }
       },
       {
         text: msg.cancelLabel,
         click: function() {
           $( this ).dialog( "close" );
-          $('#new-tag').val('');
+          $('#tagname').val('');
         }
       }
       ]

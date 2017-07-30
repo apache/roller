@@ -91,6 +91,7 @@
 
     <beans:bean id="weblogEntryManager" class="org.tightblog.business.WeblogEntryManagerImpl">
         <beans:constructor-arg ref="persistenceStrategy"/>
+        <beans:property name="urlStrategy" ref="urlStrategy"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 

@@ -183,31 +183,32 @@
     </resource-ref>
 
     <!--
-         Specifies the pages which must run on SSL.  Default below has the
-         the blogger UI user by the blogger run on SSL while the blog itself
-         remains unencrypted for readers.
-
-         Can alternatively lock up the entire site with this single element:
-         <url-pattern>/*</url-pattern>.  This is the increasingly recommended
-         approach, albeit at a cost of higher bandwidth demands.
+         Specifies the pages which must run on SSL.  Default below uses SSL
+         on every page, both the blogging UI and the rendered blog entries
+         that visitors read.
 
          Servlet container-specific SSL configuration must be done,
          see your servlet container's documentation for details.
 
          SSL can also be enforced via the Spring security.xml file:
          http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-requires-channel
-
-         Related issue: If you wish to override TightBlog's determination of the root URL
-         of your TightBlog instance (done in class InitFilter), that can be done by
-         setting the site.absoluteurl property in your tightblog-custom.xml.
     -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>HTTPS resources</web-resource-name>
-            <url-pattern>/roller_j_security_check</url-pattern>
+            <url-pattern>/*</url-pattern>
+            <!-- Comment-out above, uncomment below to require SSL just on
+                 log-in and blogging UI pages, not the rendered blog pages
+                 that blog visitors read.  SSL (https://) may still be used
+                 as URLs for the blog pages, just not required.  Note with
+                 this method blog entry comments and comment metadata (name and
+                 email address, etc.) will be sent in cleartext unless commenter
+                 switches to the https:// URL.
+            -->
+            <!--url-pattern>/roller_j_security_check</url-pattern>
             <url-pattern>/tb-ui/app/*</url-pattern>
             <url-pattern>/tb-ui/admin/*</url-pattern>
-            <url-pattern>/tb-ui/authoring/*</url-pattern>
+            <url-pattern>/tb-ui/authoring/*</url-pattern-->
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

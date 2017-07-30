@@ -758,63 +758,40 @@ public class WeblogManagerImpl implements WeblogManager {
 
     @Override
     public List<WeblogEntryTagAggregate> getPopularTags(Weblog weblog, int offset, int limit) {
-        TypedQuery<WeblogEntryTagAggregate> query;
-        List queryResults;
-        int queryLimit = (limit >= 0) ? limit : 25;
 
-        query = strategy.getNamedQuery("WeblogEntryTagAggregate.getPopularTagsByWeblog", WeblogEntryTagAggregate.class);
-        query.setParameter(1, weblog);
-
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (limit != -1) {
-            query.setMaxResults(queryLimit);
-        }
-        queryResults = query.getResultList();
+        List<WeblogEntryTagAggregate> tagAggs = getTags(weblog, "name", null, offset, (limit >= 0) ? limit : 25);
 
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
 
-        List<WeblogEntryTagAggregate> results = new ArrayList<>(queryLimit);
-
-        for (Object obj : queryResults) {
-            Object[] row = (Object[]) obj;
-            WeblogEntryTagAggregate t = new WeblogEntryTagAggregate();
-            t.setName((String) row[0]);
-            t.setTotal(((Number) row[1]).intValue());
-
-            min = Math.min(min, t.getTotal());
-            max = Math.max(max, t.getTotal());
-            results.add(t);
+        for (WeblogEntryTagAggregate tagAgg : tagAggs) {
+            min = Math.min(min, tagAgg.getTotal());
+            max = Math.max(max, tagAgg.getTotal());
         }
 
         min = Math.log(1 + min);
         max = Math.log(1 + max);
 
         double range = Math.max(.01, max - min) * 1.0001;
-        for (WeblogEntryTagAggregate t : results) {
-            t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1 + t.getTotal()) - min) / range)));
+        for (WeblogEntryTagAggregate tagAgg : tagAggs) {
+            tagAgg.setIntensity((int) (1 + Math.floor(5 * (Math.log(1 + tagAgg.getTotal()) - min) / range)));
         }
 
-        // sort results by name, because query had to sort by total
-        results.sort(WeblogEntryTagAggregate.comparator);
-
-        return results;
+        return tagAggs;
     }
 
     @Override
-    public List<WeblogEntryTagAggregate> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit) {
-        List queryResults;
-        boolean sortByName = sortBy == null || !sortBy.equals("count");
+    public List<WeblogEntryTagAggregate> getTags(Weblog weblog, String sortBy, String startsWith, int offset, int limit) {
+        boolean sortByName = !"count".equals(sortBy);
 
         List<Object> params = new ArrayList<>();
         int size = 0;
+
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE 1 = 1");
 
-        if (website != null) {
-            params.add(size++, website.getId());
+        if (weblog != null) {
+            params.add(size++, weblog.getId());
             queryString.append(" AND w.weblog.id = ?").append(size);
         }
 
@@ -823,10 +800,10 @@ public class WeblogManagerImpl implements WeblogManager {
             queryString.append(" AND w.name LIKE ?").append(size);
         }
 
-        if (sortBy != null && sortBy.equals("count")) {
-            sortBy = "w.total DESC";
-        } else {
+        if (sortByName) {
             sortBy = "w.name";
+        } else {
+            sortBy = "SUM(w.total) DESC";
         }
         queryString.append(" GROUP BY w.name ORDER BY ").append(sortBy);
 
@@ -842,7 +819,7 @@ public class WeblogManagerImpl implements WeblogManager {
         if (limit != -1) {
             query.setMaxResults(limit);
         }
-        queryResults = query.getResultList();
+        List queryResults = query.getResultList();
 
         List<WeblogEntryTagAggregate> results = new ArrayList<>();
         if (queryResults != null) {
@@ -857,7 +834,7 @@ public class WeblogManagerImpl implements WeblogManager {
         }
 
         if (sortByName) {
-            results.sort(WeblogEntryTagAggregate.comparator);
+            results.sort(WeblogEntryTagAggregate.nameComparator);
         } else {
             results.sort(WeblogEntryTagAggregate.countComparator);
         }
@@ -928,6 +905,10 @@ public class WeblogManagerImpl implements WeblogManager {
                 strategy.store(newTag);
                 updatedEntries++;
             }
+        }
+
+        if (updatedEntries > 0) {
+            weblog.invalidateCache();
         }
 
         strategy.flush();

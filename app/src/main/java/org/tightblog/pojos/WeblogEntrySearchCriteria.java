@@ -47,6 +47,9 @@ public class WeblogEntrySearchCriteria {
     // Order of sort
     private SortOrder sortOrder = SortOrder.DESCENDING;
 
+    // Retrieve Permalink URLs for weblog entries?
+    private boolean calculatePermalinks;
+
     // Offset into results for paging
     private int offset = 0;
 
@@ -148,4 +151,11 @@ public class WeblogEntrySearchCriteria {
         this.maxResults = maxResults;
     }
 
+    public boolean isCalculatePermalinks() {
+        return calculatePermalinks;
+    }
+
+    public void setCalculatePermalinks(boolean calculatePermalinks) {
+        this.calculatePermalinks = calculatePermalinks;
+    }
 }
