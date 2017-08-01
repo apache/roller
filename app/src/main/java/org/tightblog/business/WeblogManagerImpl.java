@@ -871,11 +871,18 @@ public class WeblogManagerImpl implements WeblogManager {
 
     @Override
     public void removeTag(Weblog weblog, String tagName) {
-        Query removeCategories = strategy.getNamedUpdate("WeblogEntryTag.removeByWeblogAndTagName");
-        removeCategories.setParameter(1, weblog);
-        removeCategories.setParameter(2, tagName);
-        removeCategories.executeUpdate();
+        Query removeTag = strategy.getNamedUpdate("WeblogEntryTag.removeByWeblogAndTagName");
+        removeTag.setParameter(1, weblog);
+        removeTag.setParameter(2, tagName);
+        removeTag.executeUpdate();
         weblog.invalidateCache();
+        // clear JPA cache of weblog entries for a weblog, to ensure no old tag data
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(weblog);
+        List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
+        for (WeblogEntry entry : entries) {
+            strategy.evict(WeblogEntry.class, entry.getId());
+        }
         strategy.flush();
     }
 
@@ -903,6 +910,8 @@ public class WeblogManagerImpl implements WeblogManager {
             } else {
                 WeblogEntryTag newTag = new WeblogEntryTag(weblog, currentTag.getWeblogEntry(), newTagName);
                 strategy.store(newTag);
+                // clear JPA cache, to ensure no old tag data
+                strategy.evict(WeblogEntry.class, currentTag.getWeblogEntry().getId());
                 updatedEntries++;
             }
         }

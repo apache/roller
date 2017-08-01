@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import javax.naming.NamingException;
+import javax.persistence.Cache;
 import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -144,6 +145,18 @@ public class JPAPersistenceStrategy {
             return em.find(clazz, id, props);
         }
         return em.find(clazz, id);
+    }
+
+    /**
+     * Evict object from JPA's second-level cache
+     * https://en.wikibooks.org/wiki/Java_Persistence/Caching#2nd_Level_Cache
+     *
+     * @param clazz the class of object to evict from cache
+     * @param id    the id of the object to evict from cache
+     */
+    public void evict(Class clazz, String id) {
+        Cache cache = emf.getCache();
+        cache.evict(clazz, id);
     }
 
     /**
