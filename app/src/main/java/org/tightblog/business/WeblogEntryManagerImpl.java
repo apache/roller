@@ -47,6 +47,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -150,6 +151,49 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());
     }
 
+    @Override
+    public WeblogEntry findNearestWeblogEntry(Weblog weblog, String cat, LocalDateTime targetDate, boolean succeeding) {
+        WeblogEntry nearestEntry = null;
+
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(weblog);
+        wesc.setCategoryName(cat);
+        wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        wesc.setMaxResults(1);
+        if (succeeding) {
+            wesc.setStartDate(targetDate.atZone(ZoneId.systemDefault()).toInstant());
+            wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
+        } else {
+            wesc.setEndDate(targetDate.atZone(ZoneId.systemDefault()).toInstant());
+            wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
+        }
+        List entries = getWeblogEntries(wesc);
+        if (entries.size() > 0) {
+            nearestEntry = (WeblogEntry) entries.get(0);
+        }
+        return nearestEntry;
+    }
+
+    @Override
+    public WeblogEntry getNextEntry(WeblogEntry current, String catName) {
+        WeblogEntry entry = null;
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, true);
+        if (entryList != null && entryList.size() > 0) {
+            entry = entryList.get(0);
+        }
+        return entry;
+    }
+
+    @Override
+    public WeblogEntry getPreviousEntry(WeblogEntry current, String catName) {
+        WeblogEntry entry = null;
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, false);
+        if (entryList != null && entryList.size() > 0) {
+            entry = entryList.get(0);
+        }
+        return entry;
+    }
+
     private List<WeblogEntry> getNextPrevEntries(WeblogEntry current, String catName, boolean next) {
 
         if (current == null || current.getPubTime() == null) {
@@ -167,15 +211,18 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         params.add(size++, current.getWeblog());
         whereClause.append("e.weblog = ?").append(size);
 
+        params.add(size++, current.getId());
+        whereClause.append(" AND e.id <> ?").append(size);
+
         params.add(size++, WeblogEntry.PubStatus.PUBLISHED);
         whereClause.append(" AND e.status = ?").append(size);
 
         if (next) {
             params.add(size++, current.getPubTime());
-            whereClause.append(" AND e.pubTime > ?").append(size);
+            whereClause.append(" AND e.pubTime >= ?").append(size);
         } else {
             params.add(size++, current.getPubTime());
-            whereClause.append(" AND e.pubTime < ?").append(size);
+            whereClause.append(" AND e.pubTime <= ?").append(size);
         }
 
         if (catName != null) {
@@ -187,9 +234,9 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (next) {
-            whereClause.append(" ORDER BY e.pubTime ASC");
+            whereClause.append(" ORDER BY e.pubTime ASC, e.id ASC");
         } else {
-            whereClause.append(" ORDER BY e.pubTime DESC");
+            whereClause.append(" ORDER BY e.pubTime DESC, e.id DESC");
         }
         query = strategy.getDynamicQuery(queryString + whereClause.toString(), WeblogEntry.class);
         for (int i = 0; i < params.size(); i++) {
@@ -267,17 +314,10 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (!countOnly) {
-            if (criteria.getSortBy() != null && criteria.getSortBy().equals(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME)) {
-                qd.queryString += " ORDER BY e.updateTime ";
-            } else {
-                qd.queryString += " ORDER BY e.pubTime ";
-            }
-
-            if (criteria.getSortOrder() != null && criteria.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
-                qd.queryString += "ASC ";
-            } else {
-                qd.queryString += "DESC ";
-            }
+            qd.queryString += " ORDER BY ";
+            qd.queryString += WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.equals(criteria.getSortBy()) ? " e.updateTime " : " e.pubTime ";
+            String sortOrder = WeblogEntrySearchCriteria.SortOrder.ASCENDING.equals(criteria.getSortOrder()) ? " ASC " : " DESC ";
+            qd.queryString += sortOrder + ", e.id " + sortOrder;
         }
 
         return qd;
@@ -554,26 +594,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
             map.putIfAbsent(maybeDate, formatter.format(maybeDate));
         }
         return map;
-    }
-
-    @Override
-    public WeblogEntry getNextEntry(WeblogEntry current, String catName) {
-        WeblogEntry entry = null;
-        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, true);
-        if (entryList != null && entryList.size() > 0) {
-            entry = entryList.get(0);
-        }
-        return entry;
-    }
-
-    @Override
-    public WeblogEntry getPreviousEntry(WeblogEntry current, String catName) {
-        WeblogEntry entry = null;
-        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, false);
-        if (entryList != null && entryList.size() > 0) {
-            entry = entryList.get(0);
-        }
-        return entry;
     }
 
     @Override

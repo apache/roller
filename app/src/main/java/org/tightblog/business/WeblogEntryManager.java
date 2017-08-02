@@ -29,6 +29,7 @@ import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogEntrySearchCriteria;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -90,20 +91,32 @@ public interface WeblogEntryManager {
     Map<LocalDate, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc);
 
     /**
-     * Get the WeblogEntry following, chronologically, the current entry.
-     * Restrict by the Category, if named.
+     * Find nearest published blog entry before or after a given target date.  Useful for date-based
+     * pagination where it is desired to determine the next or previous time period that
+     * contains a blog entry.
      *
-     * @param current The "current" WeblogEntryData
+     * @param weblog weblog whose entries to search
+     * @param categoryName Category name that entry must belong to or null if entry may belong to any category
+     * @param targetDate Earliest (if succeeding = true) or latest (succeeding = false) publish time of blog entry
+     * @param succeeding If true, find the first blog entry whose publish time comes after the targetDate, if false, the
+     *                   entry closest to but before the targetDate.
+     * @return WeblogEntry meeting the above criteria or null if no entry matches
+     */
+    WeblogEntry findNearestWeblogEntry(Weblog weblog, String categoryName, LocalDateTime targetDate, boolean succeeding);
+
+    /**
+     * Get the WeblogEntry following, chronologically, the current entry.
+     *
+     * @param current The "current" WeblogEntry
      * @param catName The value of the requested Category Name
      */
     WeblogEntry getNextEntry(WeblogEntry current, String catName);
 
     /**
      * Get the WeblogEntry prior to, chronologically, the current entry.
-     * Restrict by the Category, if named.
      *
-     * @param current The "current" WeblogEntryData.
-     * @param catName The value of the requested Category Name.
+     * @param current The "current" WeblogEntry
+     * @param catName The value of the requested Category Name
      */
     WeblogEntry getPreviousEntry(WeblogEntry current, String catName);
 

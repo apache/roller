@@ -42,7 +42,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -55,21 +54,20 @@ import java.util.TimeZone;
  */
 public class WeblogCalendar {
 
+    private WeblogPageRequest pageRequest = null;
+    private Map<LocalDate, String> monthMap;
+    private LocalDate dayInMonth = null;
+    private String pageLink = null;
+    private LocalDate prevMonth = null;
+    private LocalDate nextMonth = null;
+    private DateTimeFormatter sixCharDateFormat;
+
     protected WeblogEntryManager weblogEntryManager;
     protected URLStrategy urlStrategy;
-    protected WeblogPageRequest pageRequest = null;
-
     protected Weblog weblog = null;
-
-    private Map<LocalDate, String> monthMap;
-    protected LocalDate dayInMonth = null;
     protected String cat = null;
-    protected String pageLink = null;
-    protected LocalDate prevMonth = null;
-    protected LocalDate nextMonth = null;
-    protected DateTimeFormatter eightCharDateFormat;
-    protected DateTimeFormatter sixCharDateFormat;
     protected String mClassSuffix = "";
+    protected DateTimeFormatter eightCharDateFormat;
 
     public WeblogCalendar(WeblogEntryManager wem, URLStrategy urlStrategy, WeblogPageRequest pRequest) {
         this.weblogEntryManager = wem;
@@ -94,8 +92,11 @@ public class WeblogCalendar {
         LocalDateTime endTime = dayInMonth.withDayOfMonth(dayInMonth.lengthOfMonth()).atStartOfDay().plusDays(1).minusNanos(1);
 
         // determine if we should have next and prev month links, and if so, the months for them to point to
-        prevMonth = findNearestMonthWithArticles(startTime.minusNanos(1), false);
-        nextMonth = findNearestMonthWithArticles(endTime.plusNanos(1), true);
+        WeblogEntry temp = weblogEntryManager.findNearestWeblogEntry(weblog, cat, startTime.minusNanos(1), false);
+        prevMonth = firstDayOfMonthOfWeblogEntry(temp);
+
+        temp = weblogEntryManager.findNearestWeblogEntry(weblog, cat, endTime.plusNanos(1), true);
+        nextMonth = firstDayOfMonthOfWeblogEntry(temp);
 
         // retrieve the entries for this month
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
@@ -107,27 +108,8 @@ public class WeblogCalendar {
         loadWeblogEntries(wesc);
     }
 
-    private LocalDate findNearestMonthWithArticles(LocalDateTime targetDate, boolean succeedingMonth) {
-        LocalDate nearestMonth = null;
-
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(weblog);
-        wesc.setCategoryName(cat);
-        wesc.setStatus(PubStatus.PUBLISHED);
-        wesc.setMaxResults(1);
-        if (succeedingMonth) {
-            wesc.setStartDate(targetDate.atZone(ZoneId.systemDefault()).toInstant());
-            wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
-        } else {
-            wesc.setEndDate(targetDate.atZone(ZoneId.systemDefault()).toInstant());
-            wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
-        }
-        List entries = weblogEntryManager.getWeblogEntries(wesc);
-        if (entries.size() > 0) {
-            WeblogEntry nearestEntry = (WeblogEntry) entries.get(0);
-            nearestMonth = nearestEntry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1);
-        }
-        return nearestMonth;
+    private LocalDate firstDayOfMonthOfWeblogEntry(WeblogEntry entry) {
+        return (entry == null) ? null : entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1);
     }
 
     protected String getContent(LocalDate day) {
@@ -146,7 +128,7 @@ public class WeblogCalendar {
      * @param alwaysURL Always return a URL, never return null
      * @return URL for day, or null if no weblog entry on that day
      */
-    protected String computeUrl(LocalDate day, boolean createMonthURL, boolean alwaysURL) {
+    private String computeUrl(LocalDate day, boolean createMonthURL, boolean alwaysURL) {
         String dateString = getDateStringOfEntryOnDay(day);
         if (dateString == null) {
             if (alwaysURL) {
