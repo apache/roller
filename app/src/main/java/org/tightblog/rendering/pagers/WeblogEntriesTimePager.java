@@ -219,45 +219,38 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
             timePeriod = parseDate(dateString);
 
-            ZonedDateTime weblogInitialDate = weblog.getDateCreated().atZone(weblog.getZoneId()).minusDays(1);
-
             if (interval == PagingInterval.DAY) {
                 startTime = timePeriod.atStartOfDay();
                 endTime = timePeriod.atStartOfDay().plusDays(1).minusNanos(1);
 
-                nextTimePeriod = timePeriod.plusDays(1);
-                ZonedDateTime next = ZonedDateTime.of(nextTimePeriod.atStartOfDay(), zoneId);
+                // determine if we should have next and prev month links, and if so, the months for them to point to
+                WeblogEntry temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, startTime.minusNanos(1), false);
+                prevTimePeriod = weblogEntryPublishDateToLocalDate(temp);
 
-                if (next.isAfter(getToday())) {
-                    nextTimePeriod = null;
-                }
-
-                // don't allow for paging into days before the blog's create date
-                prevTimePeriod = timePeriod.minusDays(1);
-                ZonedDateTime prev = ZonedDateTime.of(prevTimePeriod.atStartOfDay(), zoneId);
-                if (prev.isBefore(weblogInitialDate)) {
-                    prevTimePeriod = null;
-                }
+                temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, endTime.plusNanos(1), true);
+                nextTimePeriod = weblogEntryPublishDateToLocalDate(temp);
             } else {
                 startTime = timePeriod.withDayOfMonth(1).atStartOfDay();
                 endTime = startTime.plusMonths(1).minusNanos(1);
 
-                nextTimePeriod = timePeriod.plusMonths(1);
+                // determine if we should have next and prev month links, and if so, the months for them to point to
+                WeblogEntry temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, startTime.minusNanos(1), false);
+                prevTimePeriod = firstDayOfMonthOfWeblogEntry(temp);
 
-                // don't allow for paging into months in the future
-                if (YearMonth.from(nextTimePeriod).isAfter(YearMonth.from(getToday()))) {
-                    nextTimePeriod = null;
-                }
-
-                // don't allow for paging into months before the blog's create date
-                prevTimePeriod = timePeriod.minusMonths(1);
-                if (YearMonth.from(prevTimePeriod).isBefore(YearMonth.from(weblogInitialDate).minusMonths(1))) {
-                    prevTimePeriod = null;
-                }
+                temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, endTime.plusNanos(1), true);
+                nextTimePeriod = firstDayOfMonthOfWeblogEntry(temp);
             }
         }
 
         loadEntries(startTime, endTime);
+    }
+
+    private LocalDate weblogEntryPublishDateToLocalDate(WeblogEntry entry) {
+        return (entry == null) ? null : entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private LocalDate firstDayOfMonthOfWeblogEntry(WeblogEntry entry) {
+        return (entry == null) ? null : weblogEntryPublishDateToLocalDate(entry).withDayOfMonth(1);
     }
 
     public List<WeblogEntry> getItems() {
