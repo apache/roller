@@ -132,6 +132,7 @@
 	}
     </style>
     #showMetaDescription()
+    #checkSuppressIndexing()
     #showAnalyticsTrackingCode($model.weblog)
 </head>
 <body>

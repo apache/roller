@@ -42,6 +42,8 @@ Macros defined in this file:
     #showMobileCategoryLinksList()
     #showAtomFeedsList($weblog)
 
+    #checkSuppressIndexing()
+
     #showWeblogEntryCalendar($big)
 
     #showPageMenu($addExternalPages)
@@ -515,6 +517,15 @@ Show weblog's categories in specified parent category.
     </ul>
 #end
 
+
+#**
+ * Determine if a robots meta tag suppressing indexing is called for
+ *#
+#macro(checkSuppressIndexing)
+    #if($model.addNoIndexDirective)
+        <meta name="robots" content="noindex">
+    #end
+#end
 
 #**
  * Show TightBlog Page Navigation Bar, includes links to all pages.

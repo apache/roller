@@ -3,6 +3,7 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="noindex">
     <title>$model.weblog.name: Search Results for '$model.term'</title>
     #includeTemplate("standard_head")
     #if ($model.hits > 0)

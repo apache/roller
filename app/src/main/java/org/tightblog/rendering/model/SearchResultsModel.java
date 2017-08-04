@@ -148,6 +148,11 @@ public class SearchResultsModel extends PageModel {
         return true;
     }
 
+    @Override
+    public boolean isAddNoIndexDirective() {
+        return true;
+    }
+
     // override page model and return search results pager
     public WeblogEntriesPager getWeblogEntriesPager() {
         return pager;
