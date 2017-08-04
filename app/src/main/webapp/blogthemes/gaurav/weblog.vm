@@ -5,6 +5,7 @@
 	<title>$model.weblog.name: $model.weblog.tagline</title>
     <link rel="shortcut icon" href="$url.absoluteSite/favicon.ico">
 	#showAutodiscoveryLinks($model.weblog)
+    #checkSuppressIndexing()
     #showAnalyticsTrackingCode($model.weblog)
     #showMetaDescription()
 </head>

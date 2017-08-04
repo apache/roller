@@ -49,6 +49,8 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogDate = null;
     private String tag = null;
     private int pageNum = 0;
+    // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
+    private boolean noIndex = false;
     private Map<String, String[]> customParams = new HashMap<>();
 
     // heavyweight attributes
@@ -106,6 +108,9 @@ public class WeblogPageRequest extends WeblogRequest {
                 } else if ("date".equals(this.context)) {
                     if (this.isValidDateString(pathElements[1])) {
                         this.weblogDate = pathElements[1];
+                        // discourage date-based URLs from appearing in search engine results
+                        // (encourages appearance of blog home URL or permalinks instead)
+                        noIndex = true;
                     } else {
                         throw new IllegalArgumentException("Invalid date, " + request.getRequestURL());
                     }
@@ -191,6 +196,8 @@ public class WeblogPageRequest extends WeblogRequest {
         // page request param is supported in all views
         if (request.getParameter("page") != null) {
             String pageInt = request.getParameter("page");
+            // only index first pages (i.e., those without this parameter)
+            noIndex = true;
             try {
                 this.pageNum = Integer.parseInt(pageInt);
             } catch (NumberFormatException e) {
@@ -279,4 +286,7 @@ public class WeblogPageRequest extends WeblogRequest {
         return otherPageHit;
     }
 
+    public boolean isNoIndex() {
+        return noIndex;
+    }
 }

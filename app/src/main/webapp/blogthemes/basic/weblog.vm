@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" href="$url.absoluteSite/favicon.ico">
     <title>$model.weblog.name</title>
+    #checkSuppressIndexing()
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
     <link rel="stylesheet" href='$url.page("basic", "basic-custom.css")' />

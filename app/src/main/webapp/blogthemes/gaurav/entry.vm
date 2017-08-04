@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   #includeTemplate("standard_head")
   <title>$model.weblog.name: $model.weblogEntry.title</title>
+  #checkSuppressIndexing()
   #showAnalyticsTrackingCode($model.weblog)
   #showMetaDescription()
 </head>

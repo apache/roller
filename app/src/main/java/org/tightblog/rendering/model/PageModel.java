@@ -170,6 +170,16 @@ public class PageModel implements Model {
     }
 
     /**
+     * Whether a "noindex" directive should be added to the page to discourage
+     * search engines from returning the page in search results
+     *
+     * @return true if page shouldn't be indexed
+     */
+    public boolean isAddNoIndexDirective() {
+        return preview || pageRequest.isNoIndex();
+    }
+
+    /**
      * Adds a tracking code for website analytics (e.g. Google Analytics). Will use the blog-defined
      * tracking code if defined and permitted by the installation, else the server-defined tracking
      * code if defined will be used.
