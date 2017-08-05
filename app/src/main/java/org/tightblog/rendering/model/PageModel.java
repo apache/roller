@@ -243,7 +243,7 @@ public class PageModel implements Model {
     }
 
     /**
-     * Get category path or name specified by request.
+     * Get category name specified by request.
      */
     public String getCategoryName() {
         return pageRequest.getWeblogCategoryName();

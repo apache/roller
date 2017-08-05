@@ -10,7 +10,7 @@
         #if($entry.creator.screenName) By $entry.creator.screenName #end
         <br/> 
     </p>
-    <p class="entryDescription">                    
-        $utils.truncateText($model.getTransformedText($entry)), 240, 260, "...")
+    <p class="entryDescription">
+        $utils.truncateText($model.getTransformedText($entry), 240, 260, "...")
     </p>
 </div>

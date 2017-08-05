@@ -362,8 +362,6 @@ public class WeblogEntryController {
             if (entry != null) {
                 Weblog weblog = entry.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
-                    String tagsAsString = String.join(" ", entry.getTags().stream().map(WeblogEntryTag::getName).collect(Collectors.toSet()));
-                    entry.setTagsAsString(tagsAsString);
                     entry.setCommentsUrl(urlStrategy.getCommentManagementURL(weblog.getId(), entry.getId()));
                     entry.setPermalink(urlStrategy.getWeblogEntryURL(weblog, entry.getAnchor(), true));
                     entry.setPreviewUrl(urlStrategy.getWeblogEntryPreviewURL(entry));
