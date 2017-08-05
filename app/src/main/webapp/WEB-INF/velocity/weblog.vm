@@ -456,14 +456,14 @@ Show weblog's categories in specified parent category.
 *#
 #macro(showWeblogCategoryLinksList)
     <ul class="rCategory">
-    #if ($model.category || $model.permalink)
+    #if ($model.categoryName || $model.permalink)
         <li><a href="$url.home">$utils.msg("generic.all")</a></li>
     #else
         <li class="selected"><a href="$url.home">$utils.msg("generic.all")</a></li>
     #end
     #set($cats = $model.weblog.getWeblogCategories())
     #foreach($cat in $cats)
-        #if ($model.category && $model.category == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
+        #if ($model.categoryName == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
             <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
         #else
             <li><a href="$url.category($cat.name)">$cat.name</a></li>

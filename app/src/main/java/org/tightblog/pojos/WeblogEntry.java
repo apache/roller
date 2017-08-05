@@ -27,8 +27,6 @@ import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -51,6 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Represents a Weblog Entry.
@@ -68,8 +67,6 @@ import java.util.Set;
                 query = "UPDATE WeblogEntry e SET e.commentDays = ?1 WHERE e.weblog = ?2")
 })
 public class WeblogEntry {
-
-    private static Logger log = LoggerFactory.getLogger(WeblogEntry.class);
 
     public enum PubStatus { DRAFT, PUBLISHED, PENDING, SCHEDULED }
 
@@ -130,12 +127,13 @@ public class WeblogEntry {
     // temporary non-persisted fields used for form entry
     private int hours = 0;
     private int minutes = 0;
-    private String tagsAsString;
+
     private String dateString;
     private String editUrl;
     private String commentsUrl;
     private String permalink;
     private String previewUrl;
+    private String tagsAsString;
 
     //----------------------------------------------------------- Construction
 
@@ -449,11 +447,14 @@ public class WeblogEntry {
 
     @Transient
     public String getTagsAsString() {
+        if (tagsAsString == null) {
+            tagsAsString = String.join(" ", getTags().stream().map(WeblogEntryTag::getName).collect(Collectors.toSet()));
+        }
         return tagsAsString;
     }
 
-    public void setTagsAsString(String tags) {
-        tagsAsString = tags;
+    public void setTagsAsString(String tagsAsString) {
+        this.tagsAsString = tagsAsString;
     }
 
     /**

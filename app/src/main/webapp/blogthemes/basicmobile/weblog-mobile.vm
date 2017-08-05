@@ -13,9 +13,9 @@
   <link rel="stylesheet" href='$url.page("basicmobile", "basic-custom.css")' />
   <link rel="stylesheet" href="$url.absoluteSite/tb-ui/styles/jquery.mobile-theme/default.min.css" />
   <link rel="stylesheet" href="$url.absoluteSite/tb-ui/styles/jquery.mobile-theme/jquery.mobile.icons.min.css" />
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
+  <link rel="stylesheet" href="//code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
 
-  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 
   <script>
 
@@ -25,7 +25,7 @@
 
   </script>
 
-  <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+  <script src="//code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 
   <script>
     $(document).bind("pageinit", function(){
