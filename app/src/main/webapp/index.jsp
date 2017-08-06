@@ -20,6 +20,5 @@
 --%>
 <%@ page session="false" %>
 <%
-RequestDispatcher defaultpage = request.getRequestDispatcher("/tb-ui/app/get-default-blog");
-defaultpage.forward(request, response);
+response.sendRedirect(request.getContextPath() + "/tb-ui/app/get-default-blog");
 %>
