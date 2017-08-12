@@ -33,12 +33,14 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Browse media files action.
  */
 @SuppressWarnings("serial")
+@AllowedMethods({"execute"})
 public class MediaFileImageChooser extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileImageChooser.class);
 

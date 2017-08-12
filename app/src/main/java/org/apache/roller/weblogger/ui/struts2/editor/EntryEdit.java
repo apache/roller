@@ -57,11 +57,13 @@ import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Edit a new or existing entry.
  */
+@AllowedMethods({"execute","firstSave","saveDraft","publish","entryEdit","entryAdd"})
 public final class EntryEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryEdit.class);

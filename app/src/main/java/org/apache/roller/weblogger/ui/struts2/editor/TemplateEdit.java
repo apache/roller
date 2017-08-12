@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.Date;
@@ -37,6 +38,7 @@ import java.util.Map;
 /**
  * Action which handles editing for a single WeblogTemplate.
  */
+@AllowedMethods({"execute","move"})
 public class TemplateEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(TemplateEdit.class);

@@ -37,10 +37,12 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Action for controlling theme selection.
  */
+@AllowedMethods({"execute","save"})
 public class ThemeEdit extends UIAction {
 
     private static final long serialVersionUID = 4644653507344432426L;

@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.core;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Handle user logins.
@@ -33,6 +34,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  *
  * @see org.apache.roller.weblogger.ui.struts2.core.Register
  */
+@AllowedMethods({"execute"})
 public class Login extends UIAction {
     
     private String error = null;

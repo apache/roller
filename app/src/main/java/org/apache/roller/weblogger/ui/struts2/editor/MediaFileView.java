@@ -37,12 +37,14 @@ import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * View media files.
  */
 @SuppressWarnings("serial")
+@AllowedMethods({"execute","view","search","delete","deleteSelected","deleteFolder","includeInGallery","moveSelected"})
 public class MediaFileView extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileView.class);
