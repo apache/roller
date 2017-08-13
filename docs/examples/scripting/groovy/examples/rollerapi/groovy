@@ -3,22 +3,22 @@
 # -- ENSURE THESE ARE CORRECT ---
 
 # Directory where Groovy release is installed
-export GROOVY_HOME=/Applications/Java/groovy
+export GROOVY_HOME=/Applications/Java/groovy-2.4.8
 
 # Directory of Roller webapp context
-export WEBAPP_DIR=../../../../../apps/weblogger/build/webapp
+export WEBAPP_DIR=../../../../../../app/target/roller
 
 # Directory of additional jars
-export JARS_DIR=/Applications/Java/tomcat/common/lib
+export JARS_DIR=/Applications/Java/lib
 
 
 # --- SHOULD NOT NEED TO EDIT BELOW THIS LINE ---
 
 RGPATH=${WEBAPP_DIR}/WEB-INF/classes:\
-${GROOVY_HOME}/embeddable/groovy-all-1.0.jar:\
-${GROOVY_HOME}/lib/commons-cli-1.0.jar:\
-${GROOVY_HOME}/lib/ant-1.6.5.jar:\
-${GROOVY_HOME}/lib/ant-launcher.1.6.5.jar
+${GROOVY_HOME}/embeddable/groovy-all-2.4.8.jar:\
+${GROOVY_HOME}/lib/commons-cli-1.2.jar:\
+${GROOVY_HOME}/lib/ant-1.9.4.jar:\
+${GROOVY_HOME}/lib/ant-launcher-1.9.4.jar
 
 for i in "$WEBAPP_DIR"/WEB-INF/lib/*.jar; do
   RGPATH="$RGPATH":"$i"

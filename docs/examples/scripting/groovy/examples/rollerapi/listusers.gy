@@ -21,12 +21,12 @@ try {
     org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
     roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
     
-    users = roller.getUserManager().getUsers(null, null, null, null, 0, -1);
+    users = roller.getUserManager().getUsers(null, null, null, 0, -1);
     for (u in users) {
        println "   User [${u.userName}] has password [${u.password}]";
-       weblogs = roller.getUserManager().getWebsites(u, null, null, null, null, 0, Integer.MAX_VALUE);
-       for (w in weblogs) {
-          println "      Belongs to weblog [${w.handle}]";
+        permissions = roller.getUserManager().getWeblogPermissions(u)
+       for (p in permissions) {
+          println "      Belongs to weblog [${p.getWeblog().getHandle()}]";
        }
     } 
 } catch (Exception e) {
