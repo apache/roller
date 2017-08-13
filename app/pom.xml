@@ -153,6 +153,12 @@ limitations under the License.
         </dependency>
 
         <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-tiles-plugin</artifactId>
+            <version>2.5.12</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
             <scope>compile</scope>
@@ -166,11 +172,6 @@ limitations under the License.
             <version>4.10.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-tiles-plugin</artifactId>
-            <version>2.5.12</version>
-        </dependency>
 
         <dependency>
             <groupId>log4j</groupId>

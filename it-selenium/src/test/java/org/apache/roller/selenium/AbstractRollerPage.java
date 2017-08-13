@@ -21,7 +21,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Abstract class holding functionality common to Selenium Page Objects
@@ -30,13 +32,21 @@ import org.openqa.selenium.support.ui.Select;
 public abstract class AbstractRollerPage {
 
     protected WebDriver driver;
-    protected String pageName;
+
+    protected void verifyPageTitle(String waitForElementId, String pageTitle) {
+
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until( ExpectedConditions.visibilityOf( driver.findElement(By.id(waitForElementId))));
+
+        verifyPageTitle(pageTitle);
+    }
 
     protected void verifyPageTitle(String pageTitle) {
-        if(!driver.getTitle().equals(pageTitle)) {
-            throw new IllegalStateException("This is not the " + pageName + ", current page is: "
-                    + driver.getTitle());
+
+        if (!driver.getTitle().equals(pageTitle)) {
+            throw new IllegalStateException("This is not the " + pageTitle + ", current page is: " + driver.getTitle());
         }
+        System.out.println("Verified page title: " + pageTitle);
     }
 
     /*
@@ -48,8 +58,7 @@ public abstract class AbstractRollerPage {
         try {
             WebElement div = driver.findElement(By.id(idOnPage));
         } catch (NoSuchElementException e) {
-            throw new IllegalStateException("This is not the " + pageName + ", HTML ID: "
-                    + idOnPage + " not found.");
+            throw new IllegalStateException("HTML ID: " + idOnPage + " not found.");
         }
     }
 
@@ -60,11 +69,15 @@ public abstract class AbstractRollerPage {
     }
 
     protected void clickById(String buttonId) {
-        driver.findElement(By.id(buttonId)).click();
+        WebElement element = driver.findElement(By.id(buttonId));
+        element.click();
+        System.out.println("Element " + element.getTagName() + " id:" + element.getAttribute("id") + " clicked");
     }
 
     protected void clickByLinkText(String buttonText) {
-        driver.findElement(By.linkText(buttonText)).click();
+        WebElement element = driver.findElement(By.linkText(buttonText));
+        element.click();
+        System.out.println("Element " + element.getTagName() + " id:" + element.getAttribute("id") + " clicked");
     }
 
     protected String getTextByCSS(String cssSelector) {

@@ -32,11 +32,6 @@
     <artifactId>roller-selenium-tests</artifactId>
     <packaging>war</packaging>
 
-    <properties>
-        <selenium.version>2.47.1</selenium.version>
-        <javamail.version>1.4.7</javamail.version>
-    </properties>
-
     <!-- Process to run Selenium tests (actually no tests right now, just a skeleton)
          1. Tests presently require Firefox browser, Chrome on the to-do list.
 
@@ -49,27 +44,38 @@
          4. Feel free to add more Selenium tests!
     -->
     <dependencies>
+
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>${selenium.version}</version>
+            <version>3.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
-            <version>${selenium.version}</version>
+            <version>3.4.0</version>
         </dependency>
+
         <!-- Will bring in once we configure a Chrome option -->
         <!--dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-chrome-driver</artifactId>
             <version>${selenium.version}</version>
         </dependency-->
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
         <!--
              Type "war" listed below makes this a WAR overlay (i.e., incorporating
              another WAR into this project in making a new WAR, with any additional
@@ -81,16 +87,22 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Activates integration tests (by default, classes under tests
-                 that end with "IT")
+
+            <!-- Activates integration tests (by default, classes under tests that end with "IT")
             -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.12.4</version>
+                <version>2.20</version>
                 <executions>
                     <execution>
                         <goals>
@@ -100,6 +112,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- Activates the Derby database during the integration test phase -->
             <plugin>
                 <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
@@ -135,6 +148,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- Activates the Roller application during the integration test phase -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
@@ -163,7 +177,7 @@
                         </goals>
                         <configuration>
                             <scanIntervalSeconds>0</scanIntervalSeconds>
-                            <daemon>true</daemon>
+                            <!-- <daemon>true</daemon> -->
                         </configuration>
                     </execution>
                     <execution>
@@ -175,21 +189,25 @@
                     </execution>
                 </executions>
                 <dependencies>
+
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
                         <version>${derby.version}</version>
                     </dependency>
+
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyclient</artifactId>
                         <version>${derby.version}</version>
                     </dependency>
+
                     <dependency>
                         <groupId>javax.mail</groupId>
                         <artifactId>mail</artifactId>
-                        <version>${javamail.version}</version>
+                        <version>1.4.7</version>
                     </dependency>
+
                 </dependencies>
             </plugin>
         </plugins>
