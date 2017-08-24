@@ -25,19 +25,22 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class ExcessSizeCommentValidatorTest {
+public class ExcessLinksCommentValidatorTest {
 
-    @Test
-    public void checkDefaultThreshold() throws Exception {
-        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        int threshold = validator.getLimit();
-        assertEquals("default threshold not expected value", 1000, threshold);
+    private String generateCommentWithLinks(int numLinks) {
+        StringBuilder commentBuilder = new StringBuilder();
+        for (int i = 0 ; i < numLinks ; i++) {
+            char delim = (i % 2 == 0) ? '\'' : '"';
+            commentBuilder.append("hi <a href=").append(delim)
+                .append("http://www.aa.com").append(delim)
+                .append(">link ").append(i+1).append("</a>");
+        }
+        return commentBuilder.toString();
     }
 
     @Test
     public void acceptNullComment() throws Exception {
-        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        validator.setLimit(10);
+        ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(null);
         Map<String, List<String>> messageMap = new HashMap<>();
@@ -48,10 +51,9 @@ public class ExcessSizeCommentValidatorTest {
 
     @Test
     public void acceptCommentLessThanLimit() throws Exception {
-        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        validator.setLimit(7);
+        ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         WeblogEntryComment wec = new WeblogEntryComment();
-        wec.setContent("123456");
+        wec.setContent(generateCommentWithLinks(2));
         Map<String, List<String>> messageMap = new HashMap<>();
         validator.validate(wec, messageMap);
         assertEquals("Comment below limit wasn't accepted", Utilities.PERCENT_100, Utilities.PERCENT_100);
@@ -60,10 +62,9 @@ public class ExcessSizeCommentValidatorTest {
 
     @Test
     public void acceptCommentEqualToLimit() throws Exception {
-        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        validator.setLimit(6);
+        ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         WeblogEntryComment wec = new WeblogEntryComment();
-        wec.setContent("123456");
+        wec.setContent(generateCommentWithLinks(3));
         Map<String, List<String>> messageMap = new HashMap<>();
         validator.validate(wec, messageMap);
         assertEquals("Comment at limit wasn't accepted", Utilities.PERCENT_100, Utilities.PERCENT_100);
@@ -72,21 +73,19 @@ public class ExcessSizeCommentValidatorTest {
 
     @Test
     public void failCommentMoreThanLimit() throws Exception {
-        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        int limitLength = 5;
-        validator.setLimit(limitLength);
+        ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         WeblogEntryComment wec = new WeblogEntryComment();
-        wec.setContent("123456");
+        wec.setContent(generateCommentWithLinks(4));
         Map<String, List<String>> messageMap = new HashMap<>();
         validator.validate(wec, messageMap);
-        String expectedKey = "comment.validator.excessSizeMessage";
+        String expectedKey = "comment.validator.excessLinksMessage";
         assertEquals("Comment above limit was accepted", 0, 0);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
         assertEquals("Message Map missing correct key", true,
                 messageMap.containsKey(expectedKey));
         assertEquals("Message Map value hasn't one element", 1,
                 messageMap.get(expectedKey).size());
-        assertEquals("Message Map value isn't limit size", "" + limitLength,
+        assertEquals("Message Map value isn't limit size", "3",
                 messageMap.get(expectedKey).get(0));
     }
 }

@@ -28,14 +28,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Validates comment only if its number of links don't exceed the configured threshold.
+ * Validates comment only if its number of links don't exceed the configured limit.
  */
 public class ExcessLinksCommentValidator implements CommentValidator {
     private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");
-    private int threshold = 3;
+    private int limit = 3;
 
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     public String getName() {
@@ -43,13 +47,15 @@ public class ExcessLinksCommentValidator implements CommentValidator {
     }
 
     public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        Matcher m = linkPattern.matcher(comment.getContent());
-        int count = 0;
-        while (m.find()) {
-            if (count++ > threshold) {
-                messages.put("comment.validator.excessLinksMessage",
-                        Collections.singletonList(Integer.toString(threshold)));
-                return 0;
+        if (comment.getContent() != null) {
+            Matcher m = linkPattern.matcher(comment.getContent());
+            int count = 0;
+            while (m.find()) {
+                if (++count > limit) {
+                    messages.put("comment.validator.excessLinksMessage",
+                            Collections.singletonList(Integer.toString(limit)));
+                    return 0;
+                }
             }
         }
         return Utilities.PERCENT_100;

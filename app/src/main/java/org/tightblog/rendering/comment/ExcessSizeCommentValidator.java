@@ -26,13 +26,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Validates comment only if it does not exceed number of characters specified by the threshold property.
+ * Validates comment only if it does not exceed number of characters specified by the limit property.
  */
 public class ExcessSizeCommentValidator implements CommentValidator {
-    private int threshold = 1000;
+    private int limit = 1000;
 
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     public String getName() {
@@ -40,9 +44,9 @@ public class ExcessSizeCommentValidator implements CommentValidator {
     }
 
     public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        if (comment.getContent() != null && comment.getContent().length() > threshold) {
+        if (comment.getContent() != null && comment.getContent().length() > limit) {
             messages.put("comment.validator.excessSizeMessage",
-                    Collections.singletonList(Integer.toString(threshold)));
+                    Collections.singletonList(Integer.toString(limit)));
             return 0;
         }
         return Utilities.PERCENT_100;
