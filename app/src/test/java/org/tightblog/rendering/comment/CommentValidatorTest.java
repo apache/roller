@@ -57,25 +57,6 @@ public class CommentValidatorTest extends WebloggerTest {
     }
 
     @Test
-    public void testExcessSizeCommentValidator() {
-        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        Map<String, List<String>> msgs = new HashMap<>();
-        WeblogEntryComment comment = createEmptyComment();
-
-        // string that exceeds default excess size threshold of 1000
-        StringBuilder sb = new StringBuilder();
-        for (int i=0; i<101; i++) {
-            sb.append("0123456789");
-        }
-        
-        comment.setContent("short stuff"); 
-        assertEquals(100, validator.validate(comment, msgs));
-
-        comment.setContent(sb.toString()); 
-        assertTrue(validator.validate(comment, msgs) != 100);
-    }
-
-    @Test
     public void testExcessLinksCommentValidator() {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
 
