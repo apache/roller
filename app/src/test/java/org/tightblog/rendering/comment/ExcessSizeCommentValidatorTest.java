@@ -35,14 +35,20 @@ public class ExcessSizeCommentValidatorTest {
     }
 
     @Test
+    public void nameTest() {
+        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
+        assertEquals("Excess Size Comment Validator", validator.getName());
+    }
+
+    @Test
     public void acceptNullComment() throws Exception {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         validator.setLimit(10);
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(null);
         Map<String, List<String>> messageMap = new HashMap<>();
-        validator.validate(wec, messageMap);
-        assertEquals("Null comment wasn't accepted", Utilities.PERCENT_100, Utilities.PERCENT_100);
+        int result = validator.validate(wec, messageMap);
+        assertEquals("Null comment wasn't accepted", Utilities.PERCENT_100, result);
         assertEquals(0, messageMap.size());
     }
 
@@ -53,8 +59,8 @@ public class ExcessSizeCommentValidatorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent("123456");
         Map<String, List<String>> messageMap = new HashMap<>();
-        validator.validate(wec, messageMap);
-        assertEquals("Comment below limit wasn't accepted", Utilities.PERCENT_100, Utilities.PERCENT_100);
+        int result = validator.validate(wec, messageMap);
+        assertEquals("Comment below limit wasn't accepted", Utilities.PERCENT_100, result);
         assertEquals(0, messageMap.size());
     }
 
@@ -65,8 +71,8 @@ public class ExcessSizeCommentValidatorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent("123456");
         Map<String, List<String>> messageMap = new HashMap<>();
-        validator.validate(wec, messageMap);
-        assertEquals("Comment at limit wasn't accepted", Utilities.PERCENT_100, Utilities.PERCENT_100);
+        int result = validator.validate(wec, messageMap);
+        assertEquals("Comment at limit wasn't accepted", Utilities.PERCENT_100, result);
         assertEquals(0, messageMap.size());
     }
 
@@ -78,9 +84,9 @@ public class ExcessSizeCommentValidatorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent("123456");
         Map<String, List<String>> messageMap = new HashMap<>();
-        validator.validate(wec, messageMap);
+        int result = validator.validate(wec, messageMap);
         String expectedKey = "comment.validator.excessSizeMessage";
-        assertEquals("Comment above limit was accepted", 0, 0);
+        assertEquals("Comment above limit was accepted", 0, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
         assertEquals("Message Map missing correct key", true,
                 messageMap.containsKey(expectedKey));
