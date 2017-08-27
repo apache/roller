@@ -63,14 +63,14 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         String str = "<p>";
         str += messages.getString("comments.mathAuthenticatorQuestion");
         str += "</p><p>" + value1o + " + " + value2o;
-        str += " = <input name=\"answer\" value=\"";
-        str += answer + "\" /></p>";
+        str += " = <input name='answer' value='";
+        str += answer + "'></p>";
         return str;
     }
 
     public boolean authenticate(HttpServletRequest request) {
 
-        boolean authentic = false;
+        boolean authenticated = false;
 
         HttpSession session = request.getSession(false);
         String answerString = request.getParameter("answer");
@@ -81,7 +81,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
                 Integer sum = (Integer) session.getAttribute("mathAnswer");
 
                 if (sum != null && answer == sum) {
-                    authentic = true;
+                    authenticated = true;
                     session.removeAttribute("mathAnswer");
                     session.removeAttribute("mathValue1");
                     session.removeAttribute("mathValue2");
@@ -94,7 +94,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
             }
         }
 
-        return authentic;
+        return authenticated;
     }
 
 }

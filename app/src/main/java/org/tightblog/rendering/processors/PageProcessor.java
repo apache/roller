@@ -492,7 +492,7 @@ public class PageProcessor extends AbstractProcessor {
 
             Blacklist testBlacklist = weblogManager.getWeblogBlacklist(pageRequest.getWeblog());
 
-            if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
+            if (!referrerUrl.matches(requestSite + ".*\\.tb-ui.*") &&
                     testBlacklist.isBlacklisted(referrerUrl)) {
                 return true;
             }
