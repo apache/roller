@@ -38,16 +38,16 @@ limitations under the License.
     <inceptionYear>2002</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/roller/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/roller/trunk</developerConnection>
-        <url>http://svn.apache.org/viewvc/roller/trunk</url>
+        <url>https://github.com/apache/roller</url>
+        <connection>scm:git:git://github.com/apache/roller.git</connection>
+        <developerConnection>scm:git:git@github.com:apache/roller.git</developerConnection>
     </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <derby.version>10.11.1.1</derby.version>
-        <roller.version>5.2.0-SNAPSHOT</roller.version>
+        <roller.version>5.2.0</roller.version>
     </properties>
 
     <modules>
