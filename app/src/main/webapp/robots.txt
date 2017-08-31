@@ -1,6 +1,7 @@
 User-agent: *
-Disallow: /images
-Disallow: /tb-
+Disallow: /images/
+Disallow: /tb-ui/
 Disallow: /theme
-Disallow: /resources
-Disallow: /comment
+Disallow: /resources/
+Disallow: /comment/
+Disallow: /*?
