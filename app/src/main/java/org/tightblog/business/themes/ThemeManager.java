@@ -40,10 +40,10 @@ public interface ThemeManager {
     /**
      * Get the SharedTheme object with the given id.
      *
-     * @return Theme The SharedTheme object with the given id.
+     * @return theme The SharedTheme object with the given id.
      * @throws IllegalArgumentException If the named theme cannot be found.
      **/
-    SharedTheme getSharedTheme(String id);
+    SharedTheme getSharedTheme(String id) throws IllegalArgumentException;
 
     /**
      * Get the WeblogTheme for a given weblog.

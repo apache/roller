@@ -102,8 +102,8 @@ public class Weblog {
     private int hitsToday = 0;
     private boolean applyCommentDefaults = false;
 
-    // needed when viewing theme previews, to ensure proper templates being called
-    private boolean tempPreviewWeblog = false;
+    // is this weblog instance used for previewing a theme?
+    private boolean usedForThemePreview = false;
 
     public enum EditFormat {
         HTML("weblogConfig.editFormat.html", true),
@@ -312,7 +312,7 @@ public class Weblog {
         this.setLastModified(other.getLastModified());
         this.setWeblogCategories(other.getWeblogCategories());
         this.setAnalyticsCode(other.getAnalyticsCode());
-        this.setTempPreviewWeblog(other.isTempPreviewWeblog());
+        this.setUsedForThemePreview(other.isUsedForThemePreview());
         this.setBookmarks(other.getBookmarks());
     }
 
@@ -530,12 +530,12 @@ public class Weblog {
     }
 
     @Transient
-    public boolean isTempPreviewWeblog() {
-        return tempPreviewWeblog;
+    public boolean isUsedForThemePreview() {
+        return usedForThemePreview;
     }
 
-    public void setTempPreviewWeblog(boolean tempPreviewWeblog) {
-        this.tempPreviewWeblog = tempPreviewWeblog;
+    public void setUsedForThemePreview(boolean usedForThemePreview) {
+        this.usedForThemePreview = usedForThemePreview;
     }
 
     // convenience methods for populating fields from forms

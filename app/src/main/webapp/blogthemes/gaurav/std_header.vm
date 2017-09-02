@@ -44,9 +44,9 @@
 				        #set($isSelected = false)
 				        #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
 				        #if (!$isSelected)
-				            <li><a href="$url.page(null, $iPage.relativePath)">$iPage.name</a></li>
+				            <li><a href="$url.page($iPage.relativePath)">$iPage.name</a></li>
 				        #else
-				            <li class="active"><a href="$url.page(null, $iPage.relativePath)">$iPage.name</a></li>
+				            <li class="active"><a href="$url.page($iPage.relativePath)">$iPage.name</a></li>
 				        #end
 				    #end
 				#end

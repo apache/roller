@@ -82,7 +82,7 @@ public class WeblogTheme {
         pageMap.putAll(this.sharedTheme.getTemplatesByName());
 
         // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
-        if (!weblog.isTempPreviewWeblog()) {
+        if (!weblog.isUsedForThemePreview()) {
             for (WeblogTemplate template : weblogManager.getTemplates(this.weblog)) {
                 if (pageMap.get(template.getName()) != null) {
                     // mark weblog template as an override
@@ -103,7 +103,7 @@ public class WeblogTheme {
     public Template getTemplateByAction(ComponentType action) {
         Template template = null;
 
-        if (!weblog.isTempPreviewWeblog()) {
+        if (!weblog.isUsedForThemePreview()) {
             template = weblogManager.getTemplateByAction(this.weblog, action);
         }
         if (template == null) {
@@ -119,7 +119,7 @@ public class WeblogTheme {
     public Template getTemplateByName(String name) {
         Template template = null;
 
-        if (!weblog.isTempPreviewWeblog()) {
+        if (!weblog.isUsedForThemePreview()) {
             template = weblogManager.getTemplateByName(this.weblog, name);
         }
         if (template == null) {
@@ -135,7 +135,7 @@ public class WeblogTheme {
     public Template getTemplateByPath(String path) {
         Template template = null;
 
-        if (!weblog.isTempPreviewWeblog()) {
+        if (!weblog.isUsedForThemePreview()) {
             template = weblogManager.getTemplateByPath(this.weblog, path);
         }
         if (template == null) {

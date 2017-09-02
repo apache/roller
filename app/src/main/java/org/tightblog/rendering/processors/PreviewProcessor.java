@@ -100,9 +100,7 @@ public class PreviewProcessor extends AbstractProcessor {
         log.debug("Entering");
 
         Weblog weblog;
-        WeblogPageRequest previewRequest;
-
-        previewRequest = new WeblogPageRequest(request);
+        WeblogPageRequest previewRequest = new WeblogPageRequest(request);
 
         User user = userManager.getEnabledUserByUserName(p.getName());
 
@@ -120,34 +118,24 @@ public class PreviewProcessor extends AbstractProcessor {
             return;
         }
 
-        // if theme provided, indicates a theme preview rather than a entry draft preview
+        // if theme provided, indicates a theme preview rather than an entry draft preview
         String previewThemeName = request.getParameter("theme");
         if (previewThemeName != null) {
-
-            // try getting the preview theme
-            log.debug("preview theme = {}", previewThemeName);
-
-            SharedTheme previewTheme = null;
-
             try {
-                previewTheme = themeManager.getSharedTheme(previewThemeName);
+                SharedTheme previewTheme = themeManager.getSharedTheme(previewThemeName);
+
+                if (previewTheme.isEnabled()) {
+                    Weblog previewWeblog = new Weblog();
+                    previewWeblog.setData(weblog);
+                    previewWeblog.setTheme(previewTheme.getId());
+                    previewWeblog.setUsedForThemePreview(true);
+                    previewRequest.setWeblog(previewWeblog);
+                    weblog = previewWeblog;
+                }
             } catch (IllegalArgumentException tnfe) {
-                // unknown theme given in URL, so default to current theme below
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
-
-            // construct a temporary Website object for this request
-            // and set the weblog theme to our previewTheme
-            Weblog tmpWebsite = new Weblog();
-            tmpWebsite.setData(weblog);
-            if (previewTheme != null && previewTheme.isEnabled()) {
-                tmpWebsite.setTheme(previewTheme.getId());
-                tmpWebsite.setTempPreviewWeblog(true);
-            }
-
-            // we've got to set the weblog in our previewRequest because that's
-            // the object that gets referenced during rendering operations
-            previewRequest.setWeblog(tmpWebsite);
-            weblog = tmpWebsite;
         }
 
         Template page = null;
