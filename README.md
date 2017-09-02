@@ -1,5 +1,5 @@
 Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
-before deciding to go my own way due to increasingly differing architectural goals.  As of 6 August 2017, <a href="https://github.com/gmazza/tightblog/releases">Release 2.0.2</a> is available.
+before deciding to go my own way due to increasingly differing architectural goals.  As of 2 September 2017, <a href="https://github.com/gmazza/tightblog/releases">Release 2.0.3</a> is available.
 
 TightBlog strives to be the mathematically cleanest and simplest implementation of a Java based blog server, suitable either for direct use or
 incorporation, as an Apache-licensed open source project, into larger projects.  Specifically, its goal is to satisfy all the needs of 80% of bloggers while
