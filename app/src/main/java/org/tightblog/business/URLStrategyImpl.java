@@ -127,7 +127,6 @@ public class URLStrategyImpl implements URLStrategy {
     public String getWeblogURL(Weblog weblog, boolean absolute) {
         String url = getRootWeblogURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
-        addPreviewParams(params);
         return url + Utilities.getQueryString(params);
     }
 
@@ -140,17 +139,13 @@ public class URLStrategyImpl implements URLStrategy {
         }
     }
 
-    private void addPreviewParams(Map<String, String> params) {
-        if (previewTheme != null) {
-            params.put("theme", Utilities.encode(previewTheme));
-        }
-    }
-
     @Override
     public String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute) {
         String url = getRootWeblogURL(weblog, absolute) + "entry/" + Utilities.encode(entryAnchor);
         Map<String, String> params = new HashMap<>();
-        addPreviewParams(params);
+        if (weblog.isUsedForThemePreview()) {
+            addPreviewParams(params);
+        }
         return url + Utilities.getQueryString(params);
     }
 
@@ -212,21 +207,27 @@ public class URLStrategyImpl implements URLStrategy {
             params.put("page", Integer.toString(pageNum));
         }
 
-        addPreviewParams(params);
+        if (weblog.isUsedForThemePreview()) {
+            addPreviewParams(params);
+        }
 
         return pathinfo + Utilities.getQueryString(params);
     }
 
+    private void addPreviewParams(Map<String, String> params) {
+        if (previewTheme != null) {
+            params.put("theme", Utilities.encode(previewTheme));
+        }
+    }
+
     @Override
-    public String getWeblogPageURL(Weblog weblog, String theme, String pageLink, String entryAnchor, String category,
+    public String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
                                    String dateString, String tag, int pageNum, boolean absolute) {
 
         String pathinfo = getRootWeblogURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
 
-        if (theme != null) {
-            params.put("theme", Utilities.encode(theme));
-        } else {
+        if (weblog.isUsedForThemePreview()) {
             addPreviewParams(params);
         }
 
@@ -285,6 +286,10 @@ public class URLStrategyImpl implements URLStrategy {
             if (pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
             }
+        }
+
+        if (weblog.isUsedForThemePreview()) {
+            addPreviewParams(params);
         }
 
         return url + Utilities.getQueryString(params);

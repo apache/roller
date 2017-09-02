@@ -205,14 +205,14 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     /**
      * Create URL that encodes pager state using most appropriate form of URL.
      */
-    protected String createURL(Weblog website, String pageLink, String entryAnchor) {
+    protected String createURL(Weblog weblog, String pageLink, String entryAnchor) {
 
         if (pageLink != null) {
-            return urlStrategy.getWeblogPageURL(website, null, pageLink, entryAnchor, null, null, null, 0, false);
+            return urlStrategy.getWeblogPageURL(weblog, pageLink, entryAnchor, null, null, null, 0, false);
         } else if (entryAnchor != null) {
-            return urlStrategy.getWeblogEntryURL(website, entryAnchor, true);
+            return urlStrategy.getWeblogEntryURL(weblog, entryAnchor, true);
         }
         // home page URL
-        return urlStrategy.getWeblogCollectionURL(website, null, null, null, 0, false);
+        return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, 0, false);
     }
 }

@@ -544,7 +544,7 @@ Show weblog's categories in specified parent category.
                     #set($isSelected = false)
                     #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
                     #if (!$isSelected)
-                        <li class="rNavItem"><a href='$url.page(null, $iPage.relativePath)'><span>$iPage.name</span></a></li>
+                        <li class="rNavItem"><a href='$url.page($iPage.relativePath)'><span>$iPage.name</span></a></li>
                     #else
                         <li class="rNavItem"><span>$iPage.name</span></li>
                     #end

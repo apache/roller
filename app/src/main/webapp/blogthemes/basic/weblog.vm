@@ -8,7 +8,7 @@
     #checkSuppressIndexing()
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
-    <link rel="stylesheet" href='$url.page("basic", "basic-custom.css")' />
+    <link rel="stylesheet" href='$url.page("basic-custom.css")' />
     #showMetaDescription()
 </head>
 <!-- weblog -->

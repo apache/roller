@@ -143,7 +143,7 @@ public class WeblogCalendar {
             url = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
         } else {
             // create page URL
-            url = urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, cat, dateString, null, -1, false);
+            url = urlStrategy.getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
         }
         return url;
     }
@@ -191,7 +191,7 @@ public class WeblogCalendar {
             url = urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false);
         } else {
             // create page URL
-            url = urlStrategy.getWeblogPageURL(weblog, null, pageLink, null, cat, null, null, -1, false);
+            url = urlStrategy.getWeblogPageURL(weblog, pageLink, null, cat, null, null, -1, false);
         }
         return url;
     }

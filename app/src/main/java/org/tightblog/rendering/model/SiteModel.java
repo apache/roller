@@ -123,7 +123,7 @@ public class SiteModel implements Model {
      */
     public Pager getCommentsPager(int sinceDays, int length) {
 
-        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
+        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(),
                 pageLink, null, null, null, null, 0, false);
 
         return new CommentsPager(
@@ -141,7 +141,7 @@ public class SiteModel implements Model {
      */
     public Pager getWeblogsByLetterPager(String letter, int length) {
 
-        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(), null,
+        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(),
                 pageLink, null, null, null, null, 0, false);
 
         if (letter != null && StringUtils.isEmpty(letter)) {

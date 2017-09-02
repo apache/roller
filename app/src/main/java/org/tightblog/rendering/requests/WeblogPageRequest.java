@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents a request for a Roller weblog page
+ * Represents a request for a TightBlog weblog page
  * <p>
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
@@ -136,7 +136,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     // Other page
                     otherPageHit = true;
                 } else {
-                    throw new IllegalArgumentException("Context " + this.context + " not supported, " + request.getRequestURL());
+                    throw new IllegalArgumentException("Context \"" + this.context + "\" not supported, " + request.getRequestURL());
                 }
 
             } else {
