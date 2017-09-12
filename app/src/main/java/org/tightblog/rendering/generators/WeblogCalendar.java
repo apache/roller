@@ -57,7 +57,6 @@ public class WeblogCalendar {
     private WeblogPageRequest pageRequest = null;
     private Map<LocalDate, String> monthMap;
     private LocalDate dayInMonth = null;
-    private String pageLink = null;
     private LocalDate prevMonth = null;
     private LocalDate nextMonth = null;
     private DateTimeFormatter sixCharDateFormat;
@@ -77,7 +76,6 @@ public class WeblogCalendar {
         weblog = pageRequest.getWeblog();
         eightCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
         sixCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
-        pageLink = pageRequest.getWeblogTemplateName();
 
         if (pageRequest.getWeblogCategoryName() != null) {
             cat = pageRequest.getWeblogCategoryName();
@@ -137,15 +135,7 @@ public class WeblogCalendar {
                 return null;
             }
         }
-        String url;
-        if (pageLink == null) {
-            // create date URL
-            url = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
-        } else {
-            // create page URL
-            url = urlStrategy.getWeblogPageURL(weblog, pageLink, cat, dateString, null, -1, false);
-        }
-        return url;
+        return urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
     }
 
     protected void loadWeblogEntries(WeblogEntrySearchCriteria wesc) {
@@ -185,15 +175,7 @@ public class WeblogCalendar {
     }
 
     private String computeTodayMonthUrl() {
-        String url;
-        if (pageLink == null) {
-            // create default URL
-            url = urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false);
-        } else {
-            // create page URL
-            url = urlStrategy.getWeblogPageURL(weblog, pageLink, cat, null, null, -1, false);
-        }
-        return url;
+        return urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false);
     }
 
     private Calendar newCalendarInstance() {

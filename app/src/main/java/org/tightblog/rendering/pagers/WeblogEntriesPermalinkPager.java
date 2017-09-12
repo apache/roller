@@ -208,7 +208,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     protected String createURL(Weblog weblog, String pageLink, WeblogEntry entry) {
 
         if (pageLink != null) {
-            return urlStrategy.getWeblogPageURL(weblog, pageLink, null, null, null, 0, false);
+            return urlStrategy.getCustomPageURL(weblog, pageLink, false);
         } else if (entry != null) {
             return urlStrategy.getWeblogEntryURL(entry, true);
         }

@@ -133,25 +133,6 @@ public class URLStrategyImpl implements URLStrategy {
         return url + Utilities.getQueryString(params);
     }
 
-    /* Weblog URL before any params added */
-    private String getRootWeblogURL(Weblog weblog, boolean absolute) {
-        if (previewTheme == null) {
-            return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
-        } else {
-            return getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
-        }
-    }
-
-    @Override
-    public String getWeblogEntryURL(WeblogEntry entry, boolean absolute) {
-        String url = getRootWeblogURL(entry.getWeblog(), absolute) + "entry/" + Utilities.encode(entry.getAnchor());
-        Map<String, String> params = new HashMap<>();
-        if (isThemePreview) {
-            addPreviewParams(params);
-        }
-        return url + Utilities.getQueryString(params);
-    }
-
     @Override
     public String getWeblogEntryDraftPreviewURL(WeblogEntry entry) {
         String url = getRootURL(true) + PREVIEW_URL_SEGMENT + entry.getWeblog().getHandle() + "/";
@@ -185,6 +166,39 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
+    public String getWeblogFeedURL(Weblog weblog, String type, String category, String tag) {
+
+        String url = getWeblogURL(weblog, true) + "feed/" + type;
+
+        Map<String, String> params = new HashMap<>();
+        if (category != null && category.trim().length() > 0) {
+            params.put("cat", Utilities.encode(category));
+        }
+        if (tag != null && tag.trim().length() > 0) {
+            params.put("tag", Utilities.encode(tag));
+        }
+
+        return url + Utilities.getQueryString(params);
+    }
+
+    /* Weblog URL before any params added */
+    private String getRootWeblogURL(Weblog weblog, boolean absolute) {
+        if (previewTheme == null) {
+            return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
+        } else {
+            return getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
+        }
+    }
+
+    @Override
+    public String getWeblogEntryURL(WeblogEntry entry, boolean absolute) {
+        String url = getRootWeblogURL(entry.getWeblog(), absolute) + "entry/" + Utilities.encode(entry.getAnchor());
+        Map<String, String> params = new HashMap<>();
+        addThemeOverrideIfPresent(params);
+        return url + Utilities.getQueryString(params);
+    }
+
+    @Override
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                          int pageNum, boolean absolute) {
 
@@ -210,68 +224,19 @@ public class URLStrategyImpl implements URLStrategy {
             params.put("page", Integer.toString(pageNum));
         }
 
-        if (isThemePreview) {
-            addPreviewParams(params);
-        }
-
-        return pathinfo + Utilities.getQueryString(params);
-    }
-
-    private void addPreviewParams(Map<String, String> params) {
-        if (isThemePreview) {
-            params.put("theme", Utilities.encode(previewTheme));
-        }
-    }
-
-    @Override
-    public String getWeblogPageURL(Weblog weblog, String pageLink, String category,
-                                   String dateString, String tag, int pageNum, boolean absolute) {
-
-        String pathinfo = getRootWeblogURL(weblog, absolute);
-        Map<String, String> params = new HashMap<>();
-
-        if (isThemePreview) {
-            addPreviewParams(params);
-        }
-
-        if (pageLink != null) {
-            pathinfo += "page/" + pageLink;
-
-            // for custom pages we only allow query params
-            if (dateString != null) {
-                params.put("date", dateString);
-            }
-            if (category != null) {
-                params.put("cat", Utilities.encode(category));
-            }
-            if (tag != null) {
-                params.put("tag", Utilities.encode(tag));
-            }
-            if (pageNum > 0) {
-                params.put("page", Integer.toString(pageNum));
-            }
-        } else {
-            // if there is no page link then this is just a typical collection url
-            return getWeblogCollectionURL(weblog, category, dateString, tag, pageNum, absolute);
-        }
-
+        addThemeOverrideIfPresent(params);
         return pathinfo + Utilities.getQueryString(params);
     }
 
     @Override
-    public String getWeblogFeedURL(Weblog weblog, String type, String category, String tag) {
+    public String getCustomPageURL(Weblog weblog, String pageLink, boolean absolute) {
 
-        String url = getWeblogURL(weblog, true) + "feed/" + type;
+        String url = getRootWeblogURL(weblog, absolute);
 
-        Map<String, String> params = new HashMap<>();
-        if (category != null && category.trim().length() > 0) {
-            params.put("cat", Utilities.encode(category));
+        if (pageLink != null && pageLink.length() > 0) {
+            url += "page/" + pageLink;
         }
-        if (tag != null && tag.trim().length() > 0) {
-            params.put("tag", Utilities.encode(tag));
-        }
-
-        return url + Utilities.getQueryString(params);
+        return url;
     }
 
     @Override
@@ -291,11 +256,14 @@ public class URLStrategyImpl implements URLStrategy {
             }
         }
 
-        if (isThemePreview) {
-            addPreviewParams(params);
-        }
-
+        addThemeOverrideIfPresent(params);
         return url + Utilities.getQueryString(params);
+    }
+
+    private void addThemeOverrideIfPresent(Map<String, String> params) {
+        if (isThemePreview) {
+            params.put("theme", Utilities.encode(previewTheme));
+        }
     }
 
 }
