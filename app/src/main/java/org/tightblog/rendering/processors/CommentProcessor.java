@@ -35,7 +35,7 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
-import org.tightblog.rendering.requests.WeblogEntryRequest;
+import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
@@ -180,10 +180,10 @@ public class CommentProcessor extends AbstractProcessor {
             log.debug("Handling regular comment post");
         }
 
-        WeblogEntryRequest commentRequest;
+        WeblogPageRequest commentRequest;
 
         try {
-            commentRequest = new WeblogEntryRequest(request);
+            commentRequest = new WeblogPageRequest(request);
 
             // check weblog specified by comment request
             weblog = commentRequest.getWeblog();
@@ -260,8 +260,8 @@ public class CommentProcessor extends AbstractProcessor {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Doing comment posting for entry = {}", urlStrategy.getWeblogEntryURL(entry.getWeblog(),
-                    entry.getAnchor(), true));
+            log.debug("Doing comment posting for entry = {}", urlStrategy.getWeblogEntryURL(entry,
+                    true));
             log.debug("name = " + commentForm.getName());
             log.debug("email = " + commentForm.getEmail());
             log.debug("url = " + commentForm.getUrl());
@@ -429,7 +429,7 @@ public class CommentProcessor extends AbstractProcessor {
         int singleResponse;
         if (commentValidators.size() > 0) {
             for (CommentValidator val : commentValidators) {
-                log.debug("Invoking comment validator {}", val.getName());
+                log.debug("Invoking comment validator {}", val.getClass().getName());
                 singleResponse = val.validate(comment, messages);
                 if (singleResponse == -1) { // blatant spam
                     return -1;

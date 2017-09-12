@@ -30,10 +30,10 @@
 #macro(showEntriesAtom10 $entries)
 #foreach($entry in $entries)
     <entry>
-        <id>$url.entry($entry.anchor)</id>
+        <id>$url.entry($entry)</id>
         <title type="html">$utils.escapeXML($entry.title)</title>
         <author><name>$entry.creator.screenName</name></author>
-        <link rel="alternate" type="text/html" href="$url.entry($entry.anchor)"/>
+        <link rel="alternate" type="text/html" href="$url.entry($entry)"/>
         <published>$utils.formatIsoOffsetDateTime($entry.pubTime)</published>
         <updated>$utils.formatIsoOffsetDateTime($entry.updateTime)</updated>
         <category term="$utils.escapeXML($entry.category.name)" label="$utils.escapeXML($entry.category.name)" />
@@ -59,10 +59,10 @@
 #macro(showCommentsAtom10 $comments)
     #foreach($comment in $comments)
     <entry>
-        <id>$url.entry($comment.weblogEntry.anchor)#comment-${comment.timestamp}</id>
+        <id>$url.entry($comment.weblogEntry)#comment-${comment.timestamp}</id>
         <title type="html">Re: $utils.escapeXML($comment.weblogEntry.title)</title>
         <author><name>$utils.escapeXML($comment.name)</name></author>
-        <link rel="alternate" type="text/html" href="$url.entry($comment.weblogEntry.anchor)#comment-${comment.timestamp}"/>
+        <link rel="alternate" type="text/html" href="$url.entry($comment.weblogEntry)#comment-${comment.timestamp}"/>
         <published>$utils.formatIsoOffsetDateTime($comment.postTime)</published>
         <updated>$utils.formatIsoOffsetDateTime($comment.postTime)</updated>
         <content type="html">$utils.escapeXML($comment.content)</content>

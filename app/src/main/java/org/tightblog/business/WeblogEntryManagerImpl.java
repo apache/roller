@@ -343,7 +343,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
         if (criteria.isCalculatePermalinks()) {
             results = results.stream()
-                    .peek(re -> re.setPermalink(urlStrategy.getWeblogEntryURL(re.getWeblog(), re.getAnchor(), true)))
+                    .peek(we -> we.setPermalink(urlStrategy.getWeblogEntryURL(we, true)))
                     .collect(Collectors.toList());
         }
 
@@ -364,10 +364,10 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor) {
+    public WeblogEntry getWeblogEntryByAnchor(Weblog weblog, String anchor) {
 
-        if (website == null) {
-            throw new IllegalArgumentException("Website is null");
+        if (weblog == null) {
+            throw new IllegalArgumentException("Weblog is null");
         }
 
         if (anchor == null) {
@@ -375,7 +375,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         // mapping key is combo of weblog + anchor
-        String mappingKey = website.getHandle() + ":" + anchor;
+        String mappingKey = weblog.getHandle() + ":" + anchor;
 
         // check cache first
         // NOTE: if we ever allow changing anchors then this needs updating
@@ -394,7 +394,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         // cache failed, do lookup
         TypedQuery<WeblogEntry> q = strategy.getNamedQuery(
                 "WeblogEntry.getByWeblog&AnchorOrderByPubTimeDesc", WeblogEntry.class);
-        q.setParameter(1, website);
+        q.setParameter(1, weblog);
         q.setParameter(2, anchor);
         WeblogEntry entry;
         try {

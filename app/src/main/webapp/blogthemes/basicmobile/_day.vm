@@ -15,18 +15,18 @@
             #if($model.permalink || $utils.isEmpty($entry.summary))
                 $model.getTransformedText($entry)
             #else
-                $model.getTransformedSummary($entry) $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
+                $model.getTransformedSummary($entry) $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry)])
             #end
         </p>
         <p class="entryInfo">
-            Posted at <a href="$url.entry($entry.anchor)">$utils.formatDateTime($entry.pubTime, $utils.msg("macro.weblog.timedatepattern"))</a>
+            Posted at <a href="$url.entry($entry)">$utils.formatDateTime($entry.pubTime, $utils.msg("macro.weblog.timedatepattern"))</a>
             by $entry.creator.screenName in <span class="category">$entry.category.name</span>
             #if ($model.isUserBlogPublisher($entry.weblog))
                 |&nbsp;<a href="$url.editEntry($entry.anchor)">$utils.msg("generic.edit")</a>
             #end
             #set($commentCount = $entry.commentCount)
             #if($entry.commentsStillAllowed || $commentCount > 0)
-                #set($link = "$url.comments($entry.anchor)" )
+                #set($link = "$url.comments($entry)" )
                 |&nbsp;<a href="$link" class="commentsLink">$utils.msg("macro.weblog.comments") [$commentCount]</a>
             #end
         </p>

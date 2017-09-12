@@ -33,9 +33,6 @@ import java.util.Map;
  * Validates comment if comment does not contain blacklisted words.
  */
 public class BlacklistCommentValidator implements CommentValidator {
-    public String getName() {
-        return "Blacklist Comment Validator";
-    }
 
     private WeblogManager weblogManager;
 

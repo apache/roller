@@ -29,11 +29,6 @@ import java.util.Map;
 public interface CommentValidator {
 
     /**
-     * Plain text name of validator for display purposes.
-     */
-    String getName();
-
-    /**
      * @param comment  Comment to be validated
      * @param messages Map of resource bundle strings and optional arguments to which errors will added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)

@@ -78,25 +78,25 @@ public class AkismetCommentValidator implements CommentValidator {
         this.apiKey = apiKey;
     }
 
-    public String getName() {
-        return "Akismet Comment Validator";
+    String createAPICall(WeblogEntryComment comment) {
+        WeblogEntry entry = comment.getWeblogEntry();
+
+        String apiCall = "blog=" + urlStrategy.getWeblogURL(entry.getWeblog(), true);
+        apiCall += "&user_ip=" + comment.getRemoteHost();
+        apiCall += "&user_agent=" + comment.getUserAgent();
+        apiCall += "&referrer=" + comment.getReferrer();
+        apiCall += "&permalink=" + urlStrategy.getWeblogEntryURL(entry, true);
+        apiCall += "&comment_type=comment&comment_author=" + comment.getName();
+        apiCall += "&comment_author_email=" + comment.getEmail();
+        apiCall += "&comment_author_url=" + comment.getUrl();
+        apiCall += "&comment_content=" + comment.getContent();
+        return apiCall;
     }
 
+    @Override
     public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        WeblogEntry entry = comment.getWeblogEntry();
-        StringBuilder sb = new StringBuilder();
-        sb.append("blog=").append(
-                urlStrategy.getWeblogURL(entry.getWeblog(), true)).append("&");
-        sb.append("user_ip=").append(comment.getRemoteHost()).append("&");
-        sb.append("user_agent=").append(comment.getUserAgent()).append("&");
-        sb.append("referrer=").append(comment.getReferrer()).append("&");
-        sb.append("permalink=").append(urlStrategy.getWeblogEntryURL(entry.getWeblog(),
-                entry.getAnchor(), true)).append("&");
-        sb.append("comment_type=").append("comment").append("&");
-        sb.append("comment_author=").append(comment.getName()).append("&");
-        sb.append("comment_author_email=").append(comment.getEmail()).append("&");
-        sb.append("comment_author_url=").append(comment.getUrl()).append("&");
-        sb.append("comment_content=").append(comment.getContent());
+
+        String apiCall = createAPICall(comment);
 
         try {
             URL url = new URL("http://" + apiKey + ".rest.akismet.com/1.1/comment-check");
@@ -105,10 +105,10 @@ public class AkismetCommentValidator implements CommentValidator {
 
             conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
-            conn.setRequestProperty("Content-length", Integer.toString(sb.length()));
+            conn.setRequestProperty("Content-length", Integer.toString(apiCall.length()));
 
             OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
-            osr.write(sb.toString(), 0, sb.length());
+            osr.write(apiCall, 0, apiCall.length());
             osr.flush();
             osr.close();
 

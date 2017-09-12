@@ -38,10 +38,6 @@ public class ExcessSizeCommentValidator implements CommentValidator {
         this.limit = limit;
     }
 
-    public String getName() {
-        return "Excess Size Comment Validator";
-    }
-
     public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         if (comment.getContent() != null && comment.getContent().length() > limit) {
             messages.put("comment.validator.excessSizeMessage",

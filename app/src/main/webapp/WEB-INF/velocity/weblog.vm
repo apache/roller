@@ -244,7 +244,7 @@ Show comments for weblog entry according to TightBlog configuration.
 
                 $utils.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $utils.msg( "macro.weblog.datetimepattern" ))
 
-                <a href="$url.comment($entry.anchor, $comment.timestamp)"
+                <a href="$url.comment($entry, $comment.timestamp)"
                    class="entrypermalink" title="$utils.msg( "macro.weblog.commentpermalink.title" )">#</a>
                 </p>
 
@@ -292,7 +292,7 @@ Show comments for weblog entry according to TightBlog configuration.
                 #end
 
                 $utils.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $utils.msg( "macro.weblog.datetimepattern" ))
-                ##<a href="$url.comment($entry.anchor, $comment.timestamp)" title="$utils.msg( "macro.weblog.commentpermalink.title" )" data-role="button" data-inline="true" data-mini="true">#</a>
+                ##<a href="$url.comment($entry, $comment.timestamp)" title="$utils.msg( "macro.weblog.commentpermalink.title" )" data-role="button" data-inline="true" data-mini="true">#</a>
               </p>
             </li>
           #end
@@ -320,7 +320,7 @@ Show comments form for weblog entry.
         <span class="status">$cform.message</span>
     #end
 
-    <form method="post" action="$url.entryComment($entry.anchor)" focus="name" name="commentForm"
+    <form method="post" action="$url.entryComment($entry)" focus="name" name="commentForm"
         onsubmit="saveUserInformation(this); return validateComments(this)">
         <input type="hidden" name="method" value="post" />
 

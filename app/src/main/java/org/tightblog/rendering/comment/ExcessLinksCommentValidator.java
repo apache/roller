@@ -42,10 +42,6 @@ public class ExcessLinksCommentValidator implements CommentValidator {
         this.limit = limit;
     }
 
-    public String getName() {
-        return "Excess Links Comment Validator";
-    }
-
     public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         if (comment.getContent() != null) {
             Matcher m = linkPattern.matcher(comment.getContent());
