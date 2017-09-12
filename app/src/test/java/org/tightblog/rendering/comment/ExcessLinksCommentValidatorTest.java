@@ -39,12 +39,6 @@ public class ExcessLinksCommentValidatorTest {
     }
 
     @Test
-    public void nameTest() {
-        ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
-        assertEquals("Excess Links Comment Validator", validator.getName());
-    }
-
-    @Test
     public void acceptNullComment() throws Exception {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         WeblogEntryComment wec = new WeblogEntryComment();

@@ -127,7 +127,7 @@ public class CommentController {
             data.comments = new ArrayList<>();
             data.comments.addAll(rawComments.stream()
                     .peek(c -> c.getWeblogEntry().setPermalink(
-                            urlStrategy.getWeblogEntryURL(weblog, c.getWeblogEntry().getAnchor(), true)))
+                            urlStrategy.getWeblogEntryURL(c.getWeblogEntry(), true)))
                     .collect(Collectors.toList()));
 
             if (rawComments.size() > ITEMS_PER_PAGE) {

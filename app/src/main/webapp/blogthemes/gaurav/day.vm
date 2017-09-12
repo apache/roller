@@ -9,7 +9,7 @@
 		    #if($model.permalink)
 		    <h2 class="entryTitle">$entry.title</h2>
 		    #else
-		    <h2 class="entryTitle"><a href="$url.entry($entry.anchor)">$entry.title</a></h2>
+		    <h2 class="entryTitle"><a href="$url.entry($entry)">$entry.title</a></h2>
 		    #end
 
 			<p class="lead">by <span style="text-transform: capitalize;">$entry.creator.screenName</span></p>
@@ -24,7 +24,7 @@
 		        #else
 		            #if($utils.isNotEmpty($entry.summary))
 		                <p>$entry.summary</p>
-                        <a class="btn btn-primary" href="$url.entry($entry.anchor)">Read More <i class="icon-angle-right"></i></a>
+                        <a class="btn btn-primary" href="$url.entry($entry)">Read More <i class="icon-angle-right"></i></a>
                     #else
                         <p>$model.getTransformedText($entry)</p>
                     #end
@@ -34,7 +34,7 @@
 		    <p class="entryInfo" style="clear: right">
 		        #set($commentCount = $entry.commentCount)
 		        #if($entry.commentsStillAllowed || $commentCount > 0)
-		            #set($link = "$url.comments($entry.anchor)" )
+		            #set($link = "$url.comments($entry)" )
 		            <a href="$link" class="commentslink">$utils.msg("macro.weblog.comments") [$commentCount]</a>
 		        #end
 

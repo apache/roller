@@ -372,7 +372,7 @@ public class MailManagerImpl implements MailManager {
 
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
-        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
+        String commentURL = urlStrategy.getWeblogCommentsURL(entry);
         ctx.setVariable("commentURL", urlPrefix + commentURL);
         ctx.setVariable("messages", messages);
 
@@ -490,7 +490,7 @@ public class MailManagerImpl implements MailManager {
         // construct model for email
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
-        String commentURL = urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor());
+        String commentURL = urlStrategy.getWeblogCommentsURL(entry);
         ctx.setVariable("commentURL", urlPrefix + commentURL);
         if (subscriber != null) {
             ctx.setVariable("unsubscribeURL", urlPrefix + urlStrategy.getCommentNotificationUnsubscribeUrl(subscriber.getValue()));
@@ -533,7 +533,7 @@ public class MailManagerImpl implements MailManager {
         StringBuilder msg = new StringBuilder();
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
-        msg.append(urlPrefix).append(urlStrategy.getWeblogCommentsURL(weblog, entry.getAnchor()));
+        msg.append(urlPrefix).append(urlStrategy.getWeblogCommentsURL(entry));
 
         // send message to author of approved comment
         try {

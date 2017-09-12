@@ -72,7 +72,7 @@ public class BigWeblogCalendar extends WeblogCalendar {
 
             for (WeblogEntry entry : entries) {
                 sb.append("<div class=\"bCalendarDayContentBig\"><a href=\"");
-                sb.append(urlStrategy.getWeblogEntryURL(weblog, entry.getAnchor(), true));
+                sb.append(urlStrategy.getWeblogEntryURL(entry, true));
                 sb.append("\">");
 
                 String title = entry.getTitle().trim();

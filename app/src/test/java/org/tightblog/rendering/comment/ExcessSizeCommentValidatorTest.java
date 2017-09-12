@@ -35,12 +35,6 @@ public class ExcessSizeCommentValidatorTest {
     }
 
     @Test
-    public void nameTest() {
-        ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        assertEquals("Excess Size Comment Validator", validator.getName());
-    }
-
-    @Test
     public void acceptNullComment() throws Exception {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         validator.setLimit(10);

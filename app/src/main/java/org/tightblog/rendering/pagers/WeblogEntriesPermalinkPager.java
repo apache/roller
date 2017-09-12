@@ -134,7 +134,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
     public String getNextLink() {
         if (getNextEntry() != null) {
-            return createURL(weblog, pageLink, nextEntry.getAnchor());
+            return createURL(weblog, pageLink, nextEntry);
         }
         return null;
     }
@@ -149,7 +149,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
     public String getPrevLink() {
         if (getPrevEntry() != null) {
-            return createURL(weblog, pageLink, prevEntry.getAnchor());
+            return createURL(weblog, pageLink, prevEntry);
         }
         return null;
     }
@@ -205,12 +205,12 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     /**
      * Create URL that encodes pager state using most appropriate form of URL.
      */
-    protected String createURL(Weblog weblog, String pageLink, String entryAnchor) {
+    protected String createURL(Weblog weblog, String pageLink, WeblogEntry entry) {
 
         if (pageLink != null) {
-            return urlStrategy.getWeblogPageURL(weblog, pageLink, entryAnchor, null, null, null, 0, false);
-        } else if (entryAnchor != null) {
-            return urlStrategy.getWeblogEntryURL(weblog, entryAnchor, true);
+            return urlStrategy.getWeblogPageURL(weblog, pageLink, null, null, null, 0, false);
+        } else if (entry != null) {
+            return urlStrategy.getWeblogEntryURL(entry, true);
         }
         // home page URL
         return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, 0, false);

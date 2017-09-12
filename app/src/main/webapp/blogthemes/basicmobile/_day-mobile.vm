@@ -19,13 +19,13 @@
     </li>
     <li data-theme="a">
       #if(!$model.permalink)
-        <a href="$url.entry($entry.anchor)" data-transition="slide">
+        <a href="$url.entry($entry)" data-transition="slide">
       #end
         <p class="ui-li-desc content-textbox">
             #if($model.permalink || $utils.isEmpty($entry.summary))
                 $model.getTransformedText($entry)
             #else
-                $model.getTransformedSummary($entry) $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
+                $model.getTransformedSummary($entry) $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry)])
             #end
         </p>
         <p class="ui-li-desc content-textbox">

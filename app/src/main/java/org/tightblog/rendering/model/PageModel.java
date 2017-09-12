@@ -136,7 +136,8 @@ public class PageModel implements Model {
         this.requestParameters = (Map) initData.get("requestParameters");
 
         if (preview) {
-            this.urlStrategy = new URLStrategyImpl(pageRequest.getWeblog().getTheme());
+            this.urlStrategy = new URLStrategyImpl(pageRequest.getWeblog().getTheme(),
+                    pageRequest.getWeblog().isUsedForThemePreview());
         }
     }
 

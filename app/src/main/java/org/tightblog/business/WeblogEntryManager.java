@@ -61,7 +61,7 @@ public interface WeblogEntryManager {
     /**
      * Get weblog entry by anchor.
      */
-    WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor);
+    WeblogEntry getWeblogEntryByAnchor(Weblog weblog, String anchor);
 
     /**
      * Get WeblogEntries by offset/length as list in reverse chronological order.

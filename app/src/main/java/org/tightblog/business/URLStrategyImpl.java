@@ -36,12 +36,15 @@ public class URLStrategyImpl implements URLStrategy {
 
     private static final String PREVIEW_URL_SEGMENT = "/tb-ui/authoring/preview/";
 
+    private boolean isThemePreview = false;
+
     public URLStrategyImpl() {
         previewTheme = null;
     }
 
-    public URLStrategyImpl(String previewTheme) {
+    public URLStrategyImpl(String previewTheme, boolean isThemePreview) {
         this.previewTheme = previewTheme;
+        this.isThemePreview = isThemePreview;
     }
 
     private String getRootURL(boolean absolute) {
@@ -140,17 +143,17 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute) {
-        String url = getRootWeblogURL(weblog, absolute) + "entry/" + Utilities.encode(entryAnchor);
+    public String getWeblogEntryURL(WeblogEntry entry, boolean absolute) {
+        String url = getRootWeblogURL(entry.getWeblog(), absolute) + "entry/" + Utilities.encode(entry.getAnchor());
         Map<String, String> params = new HashMap<>();
-        if (weblog.isUsedForThemePreview()) {
+        if (isThemePreview) {
             addPreviewParams(params);
         }
         return url + Utilities.getQueryString(params);
     }
 
     @Override
-    public String getWeblogEntryPreviewURL(WeblogEntry entry) {
+    public String getWeblogEntryDraftPreviewURL(WeblogEntry entry) {
         String url = getRootURL(true) + PREVIEW_URL_SEGMENT + entry.getWeblog().getHandle() + "/";
         url += "entry/" + Utilities.encode(entry.getAnchor());
         return url;
@@ -172,13 +175,13 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogCommentsURL(Weblog weblog, String entryAnchor) {
-        return getWeblogEntryURL(weblog, entryAnchor, true) + "#comments";
+    public String getWeblogCommentsURL(WeblogEntry entry) {
+        return getWeblogEntryURL(entry, true) + "#comments";
     }
 
     @Override
-    public String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp) {
-        return getWeblogEntryURL(weblog, entryAnchor, true) + "#comment-" + timeStamp;
+    public String getWeblogCommentURL(WeblogEntry entry, String timeStamp) {
+        return getWeblogEntryURL(entry, true) + "#comment-" + timeStamp;
     }
 
     @Override
@@ -207,7 +210,7 @@ public class URLStrategyImpl implements URLStrategy {
             params.put("page", Integer.toString(pageNum));
         }
 
-        if (weblog.isUsedForThemePreview()) {
+        if (isThemePreview) {
             addPreviewParams(params);
         }
 
@@ -215,19 +218,19 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     private void addPreviewParams(Map<String, String> params) {
-        if (previewTheme != null) {
+        if (isThemePreview) {
             params.put("theme", Utilities.encode(previewTheme));
         }
     }
 
     @Override
-    public String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
+    public String getWeblogPageURL(Weblog weblog, String pageLink, String category,
                                    String dateString, String tag, int pageNum, boolean absolute) {
 
         String pathinfo = getRootWeblogURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
 
-        if (weblog.isUsedForThemePreview()) {
+        if (isThemePreview) {
             addPreviewParams(params);
         }
 
@@ -288,7 +291,7 @@ public class URLStrategyImpl implements URLStrategy {
             }
         }
 
-        if (weblog.isUsedForThemePreview()) {
+        if (isThemePreview) {
             addPreviewParams(params);
         }
 

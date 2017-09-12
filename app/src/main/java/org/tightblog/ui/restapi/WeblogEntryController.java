@@ -32,7 +32,6 @@ import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntry.PubStatus;
 import org.tightblog.pojos.WeblogEntrySearchCriteria;
-import org.tightblog.pojos.WeblogEntryTag;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
@@ -363,8 +362,8 @@ public class WeblogEntryController {
                 Weblog weblog = entry.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
                     entry.setCommentsUrl(urlStrategy.getCommentManagementURL(weblog.getId(), entry.getId()));
-                    entry.setPermalink(urlStrategy.getWeblogEntryURL(weblog, entry.getAnchor(), true));
-                    entry.setPreviewUrl(urlStrategy.getWeblogEntryPreviewURL(entry));
+                    entry.setPermalink(urlStrategy.getWeblogEntryURL(entry, true));
+                    entry.setPreviewUrl(urlStrategy.getWeblogEntryDraftPreviewURL(entry));
 
                     if (entry.getPubTime() != null) {
                         log.debug("entry pubtime is {}", entry.getPubTime());

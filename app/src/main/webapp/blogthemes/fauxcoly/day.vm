@@ -10,26 +10,26 @@
         #if($model.permalink)
         <h2 class="entryTitle">$entry.title</h2>
         #else
-        <h2 class="entryTitle"><a href="$url.entry($entry.anchor)">$entry.title</a></h2>
+        <h2 class="entryTitle"><a href="$url.entry($entry)">$entry.title</a></h2>
         #end
 
         <div class="entryContent">
             #if($model.permalink || $utils.isEmpty($entry.summary))
                 $model.getTransformedText($entry)
             #else
-                $model.getTransformedSummary($entry) $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry.anchor)])
+                $model.getTransformedSummary($entry) $utils.msg("macro.weblog.readMoreLink", [$url.entry($entry)])
             #end
         </div>
 
         <p class="entryInfo" style="clear: right">
             $entry.creator.screenName in <span class="category">$entry.category.name</span>
 
-            <a class="permalink" href="$url.entry($entry.anchor)">
+            <a class="permalink" href="$url.entry($entry)">
                 $utils.formatDateTime($entry.pubTime, $utils.msg("macro.weblog.timedatepattern"))</a>
 
             #set($commentCount = $entry.commentCount)
             #if($entry.commentsStillAllowed || $commentCount > 0)
-                #set($link = "$url.comments($entry.anchor)" )
+                #set($link = "$url.comments($entry)" )
                 <a href="$link" class="commentslink">$utils.msg("macro.weblog.comments") [$commentCount]</a>
             #end
 

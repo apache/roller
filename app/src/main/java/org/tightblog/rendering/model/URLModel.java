@@ -82,7 +82,7 @@ public class URLModel implements Model {
         this.weblog = weblogRequest.getWeblog();
 
         if (preview) {
-            this.urlStrategy = new URLStrategyImpl(weblog.getTheme());
+            this.urlStrategy = new URLStrategyImpl(weblog.getTheme(), weblog.isUsedForThemePreview());
         }
 
     }
@@ -134,20 +134,20 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, -1, true);
     }
 
-    public String entry(String anchor) {
-        return urlStrategy.getWeblogEntryURL(weblog, anchor, true);
+    public String entry(WeblogEntry entry) {
+        return urlStrategy.getWeblogEntryURL(entry, true);
     }
 
     public String entryComment(String anchor) {
         return urlStrategy.getWeblogEntryCommentURL(weblog, anchor);
     }
 
-    public String comment(String anchor, String timeStamp) {
-        return urlStrategy.getWeblogCommentURL(weblog, anchor, timeStamp);
+    public String comment(WeblogEntry entry, String timeStamp) {
+        return urlStrategy.getWeblogCommentURL(entry, timeStamp);
     }
 
-    public String comments(String anchor) {
-        return urlStrategy.getWeblogCommentsURL(weblog, anchor);
+    public String comments(WeblogEntry entry) {
+        return urlStrategy.getWeblogCommentsURL(entry);
     }
 
     public String category(String catName) {
@@ -167,7 +167,7 @@ public class URLModel implements Model {
     }
 
     public String page(String pageLink) {
-        return urlStrategy.getWeblogPageURL(weblog, pageLink, null, null, null, null, -1, true);
+        return urlStrategy.getWeblogPageURL(weblog, pageLink, null, null, null, -1, true);
     }
 
     public FeedURLS getFeed() {

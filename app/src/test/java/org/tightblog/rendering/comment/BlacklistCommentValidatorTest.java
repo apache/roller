@@ -51,12 +51,6 @@ public class BlacklistCommentValidatorTest {
     }
 
     @Test
-    public void nameTest() {
-        BlacklistCommentValidator validator = new BlacklistCommentValidator();
-        assertEquals("Blacklist Comment Validator", validator.getName());
-    }
-
-    @Test
     public void acceptNullComment() throws Exception {
         BlacklistCommentValidator validator = generateBlacklistValidator("badword");
         WeblogEntryComment wec = generateWeblogEntryComment();

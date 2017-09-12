@@ -57,8 +57,7 @@ public class WeblogPageRequest extends WeblogRequest {
     protected Template template = null;
 
     // Page hits
-    private boolean websitePageHit = false;
-    private boolean otherPageHit = false;
+    private boolean weblogPageHit = false;
 
     public WeblogPageRequest() {
     }
@@ -103,8 +102,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     this.weblogAnchor = Utilities.decode(pathElements[1]);
 
                     // Other page
-                    otherPageHit = true;
-
+                    weblogPageHit = true;
                 } else if ("date".equals(this.context)) {
                     if (this.isValidDateString(pathElements[1])) {
                         this.weblogDate = pathElements[1];
@@ -116,25 +114,25 @@ public class WeblogPageRequest extends WeblogRequest {
                     }
 
                     // Other page
-                    otherPageHit = true;
+                    weblogPageHit = true;
 
                 } else if ("category".equals(this.context)) {
                     this.weblogCategoryName = Utilities.decode(pathElements[1]);
 
                     // Other page
-                    otherPageHit = true;
+                    weblogPageHit = true;
 
                 } else if ("page".equals(this.context)) {
                     this.weblogTemplateName = pathElements[1];
 
                     // Other page, we do not want css etc stuff so filter out
                     if (!pathElements[1].contains(".")) {
-                        otherPageHit = true;
+                        weblogPageHit = true;
                     }
                 } else if ("tags".equals(this.context)) {
                     tag = pathElements[1];
                     // Other page
-                    otherPageHit = true;
+                    weblogPageHit = true;
                 } else {
                     throw new IllegalArgumentException("Context \"" + this.context + "\" not supported, " + request.getRequestURL());
                 }
@@ -147,7 +145,7 @@ public class WeblogPageRequest extends WeblogRequest {
             }
         } else {
             // default page
-            websitePageHit = true;
+            weblogPageHit = true;
         }
 
         /*
@@ -278,12 +276,8 @@ public class WeblogPageRequest extends WeblogRequest {
         return template;
     }
 
-    public boolean isWebsitePageHit() {
-        return websitePageHit;
-    }
-
-    public boolean isOtherPageHit() {
-        return otherPageHit;
+    public boolean isWeblogPageHit() {
+        return weblogPageHit;
     }
 
     public boolean isNoIndex() {

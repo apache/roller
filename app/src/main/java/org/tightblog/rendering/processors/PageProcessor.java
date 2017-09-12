@@ -224,7 +224,7 @@ public class PageProcessor extends AbstractProcessor {
                 log.debug("HIT {}", cacheKey);
 
                 // allow for hit counting
-                if (!isSiteWide && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
+                if (!isSiteWide && pageRequest.isWeblogPageHit()) {
                     this.processHit(weblog);
                 }
 
@@ -332,7 +332,7 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         // allow for hit counting
-        if (!isSiteWide && (pageRequest.isWebsitePageHit() || pageRequest.isOtherPageHit())) {
+        if (!isSiteWide && pageRequest.isWeblogPageHit()) {
             this.processHit(weblog);
         }
 

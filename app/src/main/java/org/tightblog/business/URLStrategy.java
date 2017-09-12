@@ -83,12 +83,12 @@ public interface URLStrategy {
     /**
      * Get url for a single weblog entry on a given weblog.
      */
-    String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute);
+    String getWeblogEntryURL(WeblogEntry entry, boolean absolute);
 
     /**
-     * Get the url for previewing a given blog entry.
+     * Get the url for previewing a draft of a given blog entry.
      */
-    String getWeblogEntryPreviewURL(WeblogEntry entry);
+    String getWeblogEntryDraftPreviewURL(WeblogEntry entry);
 
     /**
      * Get the POST url for a weblog entry comment.
@@ -97,13 +97,14 @@ public interface URLStrategy {
 
     /**
      * Get url for a single weblog entry comments on a given weblog.
+     * @param entry entry whose comments it is desired to view
      */
-    String getWeblogCommentsURL(Weblog weblog, String entryAnchor);
+    String getWeblogCommentsURL(WeblogEntry entry);
 
     /**
      * Get url for a single weblog entry comment on a given weblog.
      */
-    String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp);
+    String getWeblogCommentURL(WeblogEntry entry, String timeStamp);
 
     /**
      * Get url for a single mediafile on a given weblog.
@@ -124,7 +125,7 @@ public interface URLStrategy {
     /**
      * Get url for a custom page on a given weblog.
      */
-    String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
+    String getWeblogPageURL(Weblog weblog, String pageLink, String category,
                             String dateString, String tag, int pageNum, boolean absolute);
 
     /**
