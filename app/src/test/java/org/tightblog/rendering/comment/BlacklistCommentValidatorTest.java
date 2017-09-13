@@ -72,8 +72,7 @@ public class BlacklistCommentValidatorTest {
         String expectedKey = "comment.validator.blacklistMessage";
         assertEquals("Blacklisted term in URL wasn't failed", 0, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
-        assertEquals("Message Map missing correct key", true,
-                messageMap.containsKey(expectedKey));
+        assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
     }
 
     @Test

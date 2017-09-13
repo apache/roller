@@ -82,8 +82,7 @@ public class ExcessSizeCommentValidatorTest {
         String expectedKey = "comment.validator.excessSizeMessage";
         assertEquals("Comment above limit was accepted", 0, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
-        assertEquals("Message Map missing correct key", true,
-                messageMap.containsKey(expectedKey));
+        assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
         assertEquals("Message Map value hasn't one element", 1,
                 messageMap.get(expectedKey).size());
         assertEquals("Message Map value isn't limit size", "" + limitLength,

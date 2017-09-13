@@ -28,6 +28,10 @@ import java.util.Map;
  */
 public interface CommentValidator {
 
+    enum ValidationResult {
+        BLATANT_SPAM, SPAM, NOT_SPAM
+    }
+
     /**
      * @param comment  Comment to be validated
      * @param messages Map of resource bundle strings and optional arguments to which errors will added
