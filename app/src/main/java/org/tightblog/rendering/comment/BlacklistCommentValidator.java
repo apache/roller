@@ -24,7 +24,6 @@ package org.tightblog.rendering.comment;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.util.Blacklist;
-import org.tightblog.util.Utilities;
 
 import java.util.List;
 import java.util.Map;
@@ -40,12 +39,13 @@ public class BlacklistCommentValidator implements CommentValidator {
         this.weblogManager = weblogManager;
     }
 
-    public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
+    @Override
+    public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         if (checkComment(comment)) {
             messages.put("comment.validator.blacklistMessage", null);
-            return 0;
+            return ValidationResult.SPAM;
         }
-        return Utilities.PERCENT_100;
+        return ValidationResult.NOT_SPAM;
     }
 
     /**

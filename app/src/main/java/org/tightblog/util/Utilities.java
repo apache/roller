@@ -65,7 +65,6 @@ public class Utilities {
 
     public static final String FORMAT_6CHARS = "yyyyMM";
     public static final String FORMAT_8CHARS = "yyyyMMdd";
-    public static final int PERCENT_100 = 100;
     public static final int EIGHT_KB_IN_BYTES = 8192;
     public static final int TWENTYFOUR_KB_IN_BYTES = 24576;
     public static final int ONE_MB_IN_BYTES = 1024 * 1024;

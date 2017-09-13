@@ -24,7 +24,6 @@ import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +81,7 @@ public class AkismetCommentValidator implements CommentValidator {
         this.akismetCaller = new AkismetCaller();
     }
 
-    public void setAkismetCaller(AkismetCaller akismetCaller) {
+    void setAkismetCaller(AkismetCaller akismetCaller) {
         this.akismetCaller = akismetCaller;
     }
 
@@ -103,7 +102,7 @@ public class AkismetCommentValidator implements CommentValidator {
 
     static class AkismetCaller {
 
-        public ValidationResult makeAkismetCall(String apiKey, String apiRequestBody) throws IOException {
+        ValidationResult makeAkismetCall(String apiKey, String apiRequestBody) throws IOException {
             URL url = new URL("http://" + apiKey + ".rest.akismet.com/1.1/comment-check");
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
@@ -131,29 +130,25 @@ public class AkismetCommentValidator implements CommentValidator {
     }
 
     @Override
-    public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
+    public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
 
         String apiRequestBody = createAPIRequestBody(comment);
 
         try {
             ValidationResult response = akismetCaller.makeAkismetCall(apiKey, apiRequestBody);
-            if (ValidationResult.BLATANT_SPAM.equals(response)) {
-                if (deleteBlatantSpam) {
-                    return -1;
-                }
+            if (ValidationResult.BLATANT_SPAM.equals(response) && !deleteBlatantSpam) {
+                // with no autodelete, downgrade blatant spam to spam
                 messages.put("comment.validator.akismetMessage.blatantNoDelete", null);
-                return 0;
+                return ValidationResult.SPAM;
             } else if (ValidationResult.SPAM.equals(response)) {
                 messages.put("comment.validator.akismetMessage.spam", null);
-                return 0;
-            } else {
-                return Utilities.PERCENT_100;
             }
+            return response;
         } catch (Exception e) {
             log.error("ERROR checking comment against Akismet", e);
+            messages.put("comment.validator.akismetMessage.error", null);
+            // interpreting error as spam, better safe than sorry.
+            return ValidationResult.SPAM;
         }
-        // interpreting error as spam, better safe than sorry.
-        messages.put("comment.validator.akismetMessage.error", null);
-        return 0;
     }
 }

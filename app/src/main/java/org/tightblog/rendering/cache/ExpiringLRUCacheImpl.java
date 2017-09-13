@@ -84,7 +84,7 @@ public class ExpiringLRUCacheImpl implements Cache {
 
         // calculate efficiency
         if (misses + hits > 0) {
-            double efficiency = hits * Utilities.PERCENT_100 / (misses + hits);
+            double efficiency = hits * 100 / (misses + hits);
             stats.setEfficiency(efficiency);
         }
 

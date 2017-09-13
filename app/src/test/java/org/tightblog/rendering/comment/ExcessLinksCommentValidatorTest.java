@@ -17,7 +17,8 @@ package org.tightblog.rendering.comment;
 
 import org.junit.Test;
 import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.util.Utilities;
+import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
+
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +45,8 @@ public class ExcessLinksCommentValidatorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(null);
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(wec, messageMap);
-        assertEquals("Null comment wasn't accepted", Utilities.PERCENT_100, result);
+        ValidationResult result = validator.validate(wec, messageMap);
+        assertEquals("Null comment wasn't accepted", ValidationResult.NOT_SPAM, result);
         assertEquals(0, messageMap.size());
     }
 
@@ -55,8 +56,8 @@ public class ExcessLinksCommentValidatorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(generateCommentWithLinks(2));
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(wec, messageMap);
-        assertEquals("Comment below limit wasn't accepted", Utilities.PERCENT_100, result);
+        ValidationResult result = validator.validate(wec, messageMap);
+        assertEquals("Comment below limit wasn't accepted", ValidationResult.NOT_SPAM, result);
         assertEquals(0, messageMap.size());
     }
 
@@ -66,8 +67,8 @@ public class ExcessLinksCommentValidatorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(generateCommentWithLinks(3));
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(wec, messageMap);
-        assertEquals("Comment at limit wasn't accepted", Utilities.PERCENT_100, result);
+        ValidationResult result = validator.validate(wec, messageMap);
+        assertEquals("Comment at limit wasn't accepted", ValidationResult.NOT_SPAM, result);
         assertEquals(0, messageMap.size());
     }
 
@@ -77,9 +78,9 @@ public class ExcessLinksCommentValidatorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(generateCommentWithLinks(4));
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(wec, messageMap);
+        ValidationResult result = validator.validate(wec, messageMap);
         String expectedKey = "comment.validator.excessLinksMessage";
-        assertEquals("Comment above limit was accepted", 0, result);
+        assertEquals("Comment above limit was accepted", ValidationResult.SPAM, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
         assertEquals("Message Map value hasn't one element", 1,

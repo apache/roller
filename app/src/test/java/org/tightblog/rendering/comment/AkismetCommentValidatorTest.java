@@ -2,11 +2,13 @@ package org.tightblog.rendering.comment;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.rendering.comment.AkismetCommentValidator.AkismetCaller;
+import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,7 +17,9 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class AkismetCommentValidatorTest {
@@ -65,13 +69,18 @@ public class AkismetCommentValidatorTest {
         when(mockCaller.makeAkismetCall(anyString(), anyString())).
                 thenReturn(CommentValidator.ValidationResult.NOT_SPAM);
 
-        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlStrategy, "ignored");
+        String dummyApiKey = "myApiKey123";
+        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlStrategy, dummyApiKey);
+        String apiRequestBody = validator.createAPIRequestBody(testComment);
         validator.setAkismetCaller(mockCaller);
 
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(testComment, messageMap);
-        assertEquals("Comment not marked as non-spam", 100, result);
+        ValidationResult result = validator.validate(testComment, messageMap);
+        assertEquals("Comment not marked as non-spam", ValidationResult.NOT_SPAM, result);
         assertEquals("Message Map hasn't zero entries",0, messageMap.size());
+
+        // check to make sure AkismetCaller mock called with expected values
+        verify(mockCaller).makeAkismetCall(eq(dummyApiKey), eq(apiRequestBody));
     }
 
     @Test
@@ -86,9 +95,9 @@ public class AkismetCommentValidatorTest {
         validator.setAkismetCaller(mockCaller);
 
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(testComment, messageMap);
+        ValidationResult result = validator.validate(testComment, messageMap);
         String expectedKey = "comment.validator.akismetMessage.spam";
-        assertEquals("Comment not marked as spam", 0, result);
+        assertEquals("Comment not marked as spam", ValidationResult.SPAM, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
         assertNull("Message Map value isn't null", messageMap.get(expectedKey));
@@ -107,8 +116,8 @@ public class AkismetCommentValidatorTest {
         validator.setAkismetCaller(mockCaller);
 
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(testComment, messageMap);
-        assertEquals("Comment not marked as blatant spam", -1, result);
+        ValidationResult result = validator.validate(testComment, messageMap);
+        assertEquals("Comment not marked as blatant spam", ValidationResult.BLATANT_SPAM, result);
         assertEquals("Message Map hasn't zero entries",0, messageMap.size());
     }
 
@@ -125,9 +134,9 @@ public class AkismetCommentValidatorTest {
         validator.setAkismetCaller(mockCaller);
 
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(testComment, messageMap);
+        ValidationResult result = validator.validate(testComment, messageMap);
         String expectedKey = "comment.validator.akismetMessage.blatantNoDelete";
-        assertEquals("Non-delete blatant spam not marked as spam", 0, result);
+        assertEquals("Non-delete blatant spam not marked as spam", ValidationResult.SPAM, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
         assertNull("Message Map value isn't null", messageMap.get(expectedKey));
@@ -145,9 +154,9 @@ public class AkismetCommentValidatorTest {
         validator.setAkismetCaller(mockCaller);
 
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(testComment, messageMap);
+        ValidationResult result = validator.validate(testComment, messageMap);
         String expectedKey = "comment.validator.akismetMessage.error";
-        assertEquals("Comment not marked as spam", 0, result);
+        assertEquals("Comment not marked as spam", ValidationResult.SPAM, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
         assertNull("Message Map value isn't null", messageMap.get(expectedKey));

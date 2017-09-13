@@ -21,11 +21,12 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.util.Blacklist;
-import org.tightblog.util.Utilities;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
+
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -56,8 +57,8 @@ public class BlacklistCommentValidatorTest {
         WeblogEntryComment wec = generateWeblogEntryComment();
         wec.setContent(null);
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(wec, messageMap);
-        assertEquals("Null comment wasn't accepted", Utilities.PERCENT_100, result);
+        ValidationResult result = validator.validate(wec, messageMap);
+        assertEquals("Null comment wasn't accepted", ValidationResult.NOT_SPAM, result);
         assertEquals(0, messageMap.size());
     }
 
@@ -68,9 +69,9 @@ public class BlacklistCommentValidatorTest {
         WeblogEntryComment wec = generateWeblogEntryComment();
         wec.setUrl(badSite);
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(wec, messageMap);
+        ValidationResult result = validator.validate(wec, messageMap);
         String expectedKey = "comment.validator.blacklistMessage";
-        assertEquals("Blacklisted term in URL wasn't failed", 0, result);
+        assertEquals("Blacklisted term in URL wasn't failed", ValidationResult.SPAM, result);
         assertEquals("Message Map hasn't one entry",1, messageMap.size());
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
     }
@@ -81,8 +82,8 @@ public class BlacklistCommentValidatorTest {
         BlacklistCommentValidator validator = generateBlacklistValidator(badWord);
         WeblogEntryComment wec = generateWeblogEntryComment();
         wec.setEmail("abc@" + badWord);
-        int result = validator.validate(wec, new HashMap<>());
-        assertEquals("Blacklisted term in email address wasn't failed", 0, result);
+        ValidationResult result = validator.validate(wec, new HashMap<>());
+        assertEquals("Blacklisted term in email address wasn't failed", ValidationResult.SPAM, result);
     }
 
     @Test
@@ -91,8 +92,8 @@ public class BlacklistCommentValidatorTest {
         BlacklistCommentValidator validator = generateBlacklistValidator(badWord);
         WeblogEntryComment wec = generateWeblogEntryComment();
         wec.setName("Bob " + badWord);
-        int result = validator.validate(wec, new HashMap<>());
-        assertEquals("Blacklisted term in commenter name wasn't failed", 0, result);
+        ValidationResult result = validator.validate(wec, new HashMap<>());
+        assertEquals("Blacklisted term in commenter name wasn't failed", ValidationResult.SPAM, result);
     }
 
     @Test
@@ -101,8 +102,8 @@ public class BlacklistCommentValidatorTest {
         BlacklistCommentValidator validator = generateBlacklistValidator(badWord);
         WeblogEntryComment wec = generateWeblogEntryComment();
         wec.setContent("hello " + badWord + " how are you");
-        int result = validator.validate(wec, new HashMap<>());
-        assertEquals("Blacklisted term in comment content wasn't failed", 0, result);
+        ValidationResult result = validator.validate(wec, new HashMap<>());
+        assertEquals("Blacklisted term in comment content wasn't failed", ValidationResult.SPAM, result);
     }
 
     @Test
@@ -115,9 +116,9 @@ public class BlacklistCommentValidatorTest {
         wec.setEmail("bob@foo.com");
         wec.setContent("great blog article!");
         Map<String, List<String>> messageMap = new HashMap<>();
-        int result = validator.validate(wec, messageMap);
+        ValidationResult result = validator.validate(wec, messageMap);
         String expectedKey = "comment.validator.blacklistMessage";
-        assertEquals("Clean comment wasn't accepted", Utilities.PERCENT_100, result);
+        assertEquals("Clean comment wasn't accepted", ValidationResult.NOT_SPAM, result);
         assertEquals("Message Map hasn't zero entries",0, messageMap.size());
     }
 }

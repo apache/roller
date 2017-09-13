@@ -35,6 +35,7 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
+import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.I18nMessages;
@@ -318,13 +319,12 @@ public class CommentProcessor extends AbstractProcessor {
 
         String message = null;
         Map<String, List<String>> messages = new HashMap<>();
-        int validationScore = ownComment ? 100 : validateComment(commentForm, messages);
-        log.debug("Comment Validation score: {}", validationScore);
+        ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : validateComment(commentForm, messages);
 
         if (preview) {
             commentForm.setPreview(true);
         } else {
-            if (validationScore == Utilities.PERCENT_100) {
+            if (valResult == ValidationResult.NOT_SPAM) {
                 if (!ownComment && nonSpamCommentApprovalRequired) {
                     // Valid comments go into moderation if required
                     commentForm.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
@@ -360,7 +360,7 @@ public class CommentProcessor extends AbstractProcessor {
             }
 
             // Akismet validator can be configured to return -1 for blatant spam, if so configured, don't save in queue.
-            if (validationScore >= 0 && (!WeblogEntryComment.ApprovalStatus.SPAM.equals(commentForm.getStatus()) || !props.isAutodeleteSpam())) {
+            if (!ValidationResult.BLATANT_SPAM.equals(valResult) && (!WeblogEntryComment.ApprovalStatus.SPAM.equals(commentForm.getStatus()) || !props.isAutodeleteSpam())) {
 
                 boolean noModerationNeeded = ownComment ||
                         (!nonSpamCommentApprovalRequired && !WeblogEntryComment.ApprovalStatus.SPAM.equals(commentForm.getStatus()));
@@ -424,23 +424,24 @@ public class CommentProcessor extends AbstractProcessor {
         out.println(commentAuthenticator == null ? "" : commentAuthenticator.getHtml(request));
     }
 
-    protected int validateComment(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        int total = 0;
-        int singleResponse;
+    private ValidationResult validateComment(WeblogEntryComment comment, Map<String, List<String>> messages) {
+        boolean spamDetected = false;
+
+        ValidationResult singleResponse;
         if (commentValidators.size() > 0) {
             for (CommentValidator val : commentValidators) {
                 log.debug("Invoking comment validator {}", val.getClass().getName());
                 singleResponse = val.validate(comment, messages);
-                if (singleResponse == -1) { // blatant spam
-                    return -1;
+                if (ValidationResult.BLATANT_SPAM.equals(singleResponse)) {
+                    return ValidationResult.BLATANT_SPAM;
+                } else if (ValidationResult.SPAM.equals(singleResponse)) {
+                    spamDetected = true;
                 }
-                total += singleResponse;
             }
-            total = total / commentValidators.size();
+            return spamDetected ? ValidationResult.SPAM : ValidationResult.NOT_SPAM;
         } else {
             // When no validators: consider all comments valid
-            total = Utilities.PERCENT_100;
+            return ValidationResult.NOT_SPAM;
         }
-        return total;
     }
 }
