@@ -62,6 +62,12 @@ public class WeblogPageRequest extends WeblogRequest {
     public WeblogPageRequest() {
     }
 
+    static public class Creator {
+        public WeblogPageRequest create(HttpServletRequest request) {
+            return new WeblogPageRequest(request);
+        }
+    }
+
     /**
      * Construct the WeblogPageRequest by parsing the incoming url
      */
