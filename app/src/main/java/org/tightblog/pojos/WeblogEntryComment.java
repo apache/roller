@@ -219,7 +219,10 @@ public class WeblogEntryComment {
     }
 
     public String toString() {
-        return "{" + id.substring(0, 8) + "..., " + name + ", " + email + ", " + postTime + ", " + notify + "}";
+        return "{ id = " + id + ", weblog = "
+                + (weblogEntry != null && weblogEntry.getWeblog() != null ? weblogEntry.getWeblog().getHandle() : "(no weblog)")
+                + ", entry = " + (weblogEntry != null && weblogEntry.getAnchor() != null ? weblogEntry.getAnchor() : "(no weblog entry)")
+                + ", name = " + name + ", email = " + email + ", postTime = " + postTime + ", notify = " + notify + "}";
     }
 
     public boolean equals(Object other) {

@@ -19,7 +19,6 @@
 package org.tightblog.rendering.comment;
 
 import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.util.Utilities;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +41,8 @@ public class ExcessLinksCommentValidator implements CommentValidator {
         this.limit = limit;
     }
 
-    public int validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
+    @Override
+    public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         if (comment.getContent() != null) {
             Matcher m = linkPattern.matcher(comment.getContent());
             int count = 0;
@@ -50,11 +50,11 @@ public class ExcessLinksCommentValidator implements CommentValidator {
                 if (++count > limit) {
                     messages.put("comment.validator.excessLinksMessage",
                             Collections.singletonList(Integer.toString(limit)));
-                    return 0;
+                    return ValidationResult.SPAM;
                 }
             }
         }
-        return Utilities.PERCENT_100;
+        return ValidationResult.NOT_SPAM;
     }
 
 }

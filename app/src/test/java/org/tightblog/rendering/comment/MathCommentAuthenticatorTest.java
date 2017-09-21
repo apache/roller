@@ -84,7 +84,7 @@ public class MathCommentAuthenticatorTest {
         when(mockSession.getAttribute("mathAnswer")).thenReturn(82);
         MathCommentAuthenticator mca = new MathCommentAuthenticator();
         boolean actual = mca.authenticate(mockRequest);
-        assertEquals("Authenticate didn't pass with correct answer", true, actual);
+        assertTrue("Authenticate didn't pass with correct answer", actual);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class MathCommentAuthenticatorTest {
         HttpServletRequest mockRequest = createMockRequest(mockSession);
         MathCommentAuthenticator mca = new MathCommentAuthenticator();
         boolean actual = mca.authenticate(mockRequest);
-        assertEquals(false, actual);
+        assertFalse(actual);
     }
 
     @Test
@@ -104,6 +104,6 @@ public class MathCommentAuthenticatorTest {
         when(mockSession.getAttribute("mathAnswer")).thenReturn(84);
         MathCommentAuthenticator mca = new MathCommentAuthenticator();
         boolean actual = mca.authenticate(mockRequest);
-        assertEquals("Authenticate didn't fail with incorrect answer", false, actual);
+        assertFalse("Authenticate didn't fail with incorrect answer", actual);
     }
 }

@@ -186,7 +186,7 @@
 		
 						function validateComments(theForm) {
 							if (theForm.content.value == "") {
-								alert("$utils.msg( "macro.weblog.commentwarning" )");
+								alert("$utils.msg( "error.commentPostContentMissing" )");
 								theForm.content.focus();
 								return false;
 							}

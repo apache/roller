@@ -123,10 +123,19 @@ public interface URLStrategy {
                                   int pageNum, boolean absolute);
 
     /**
-     * Get url for a custom page on a given weblog.
+     * TightBlog, in its template section, allows for creation of custom external
+     * pages, HTML-generating templates containing arbitrary content that can be
+     * viewed via a specific link ourside of the normal pages for a blog, e.g.,
+     * "http://www.foo.com/myblog/page/MyPage.html."
+     * @param weblog weblog containing the custom external page.
+     * @param pageLink the page link (in the example above MyPage.html) defined by
+     *                 the blogger when creatuing the template that generates this
+     *                 page. For the example above, it would be MyPage.html.
+     * @param absolute if true, full URL, if false, URL relative to the blog's home
+     *                 page.
+     * @return URL, absolute or relative, for the given pageLink.
      */
-    String getWeblogPageURL(Weblog weblog, String pageLink, String category,
-                            String dateString, String tag, int pageNum, boolean absolute);
+    String getCustomPageURL(Weblog weblog, String pageLink, boolean absolute);
 
     /**
      * Get url for a feed on a given weblog.

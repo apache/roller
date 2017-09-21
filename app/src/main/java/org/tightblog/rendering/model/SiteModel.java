@@ -26,7 +26,6 @@ import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.rendering.pagers.CommentsPager;
 import org.tightblog.rendering.pagers.Pager;
 import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
 import org.tightblog.rendering.pagers.WeblogsPager;
@@ -115,34 +114,12 @@ public class SiteModel implements Model {
                 pageRequest.getWeblog());
     }
 
-    /*
-     * Get pager of most recent Comment objects across all weblogs,
-     * in reverse chrono order by postTime.
-     * @param offset   Offset into results (for paging)
-     * @param len      Max number of results to return
-     */
-    public Pager getCommentsPager(int sinceDays, int length) {
-
-        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(),
-                pageLink, null, null, null, 0, false);
-
-        return new CommentsPager(
-                weblogEntryManager,
-                pagerUrl,
-                null,
-                null,
-                sinceDays,
-                pageRequest.getPageNum(),
-                length);
-    }
-
     /**
      * Get pager of weblogs whose handles begin with specified letter
      */
     public Pager getWeblogsByLetterPager(String letter, int length) {
 
-        String pagerUrl = urlStrategy.getWeblogPageURL(pageRequest.getWeblog(),
-                pageLink, null, null, null, 0, false);
+        String pagerUrl = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageLink, false);
 
         if (letter != null && StringUtils.isEmpty(letter)) {
             letter = null;
@@ -171,7 +148,7 @@ public class SiteModel implements Model {
     }
 
     /**
-     * Get Website object by handle
+     * Get Weblog object by handle
      */
     public Weblog getWeblog(String handle) {
         Weblog weblog = null;

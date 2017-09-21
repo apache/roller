@@ -167,7 +167,7 @@ public class URLModel implements Model {
     }
 
     public String page(String pageLink) {
-        return urlStrategy.getWeblogPageURL(weblog, pageLink, null, null, null, -1, true);
+        return urlStrategy.getCustomPageURL(weblog, pageLink, true);
     }
 
     public FeedURLS getFeed() {
