@@ -208,41 +208,29 @@ public class CommentProcessor extends AbstractProcessor {
         log.debug("Incoming comment: {}", incomingComment.toString());
 
         // check comment for invalid input
-        // tests galore: make sure above cases return error and appropriate messages
-        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
-
         // Commenter can either be previewing or submitting the comment
-        // test: ensure method being read properly
+        // test #1: ensure method being read properly
         String method = request.getParameter("method");
         incomingComment.setPreview(method != null && method.equals("preview"));
 
-        String errorProperty = null;
+        String errorProperty;
         String[] errorValues = new String[1];
 
+        // test #2
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             errorProperty = "comments.disabled";
-        } else if (StringUtils.isBlank(incomingComment.getContent())) {
-            errorProperty = "macro.weblog.commentwarning";
-            log.debug("Comment field is blank");
-        } else if (StringUtils.isBlank(incomingComment.getName())) {
-            errorProperty = "error.commentPostNameMissing";
-            log.debug("Name field is blank");
-        } else if (StringUtils.isEmpty(incomingComment.getEmail()) || !incomingComment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
-            errorProperty = "error.commentPostFailedEmailAddress";
-            log.debug("Email Address is invalid: {}", incomingComment.getEmail());
-            // if there is an URL it must be valid
-        } else if (StringUtils.isNotEmpty(incomingComment.getUrl()) &&
-                !new UrlValidator(new String[]{"http", "https"}).isValid(incomingComment.getUrl())) {
-            errorProperty = "error.commentPostFailedURL";
-            log.debug("URL is invalid: {}", incomingComment.getUrl());
-            // if this is a real comment post then authenticate request
         } else if (!incomingComment.isPreview() && commentAuthenticator != null && !commentAuthenticator.authenticate(request)) {
+            // test #3
             errorValues[0] = request.getParameter("answer");
             errorProperty = "error.commentAuthFailed";
-            log.debug("Comment failed authentication");
+        } else {
+            errorProperty = validateComment(incomingComment);
         }
 
+        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
+
         // return error due to bad input
+        // test #4
         if (errorProperty != null) {
             incomingComment.setError(true);
             incomingComment.setMessage(messageUtils.getString(errorProperty, errorValues));
@@ -252,7 +240,7 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        // At this stage, comment good, only question is whether it is spam.
+        // At this stage, comment structurally good, only question is whether it is spam.
         // those with at least the POST role for the weblog don't need to have their comments moderated.
         boolean ownComment = false;
         String maybeUser = commentRequest.getAuthenticatedUser();
@@ -262,18 +250,17 @@ public class CommentProcessor extends AbstractProcessor {
 
         String message = null;
         Map<String, List<String>> messages = new HashMap<>();
-        // test: check even a spammy comment still approved if user is logged in.
-        // test: not so if person has just edit draft.
-        ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : validateComment(incomingComment, messages);
+        // test #5: check even a spammy comment still approved if user is logged in.
+        // test #6: not so if person has just edit draft.
+        ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : runSpamCheckers(incomingComment, messages);
 
         if (!incomingComment.isPreview()) {
 
-            // test: determine nonSpamCommentApprovalRequired calculated properly
+            // test #7: determine nonSpamCommentApprovalRequired calculated properly
             nonSpamCommentApprovalRequired = WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(commentOption) ||
                     WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments());
 
             if (valResult == ValidationResult.NOT_SPAM) {
-                // tests for these cases
                 if (!ownComment && nonSpamCommentApprovalRequired) {
                     // Valid comments go into moderation if required
                     incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
@@ -356,6 +343,23 @@ public class CommentProcessor extends AbstractProcessor {
         dispatcher.forward(request, response);
     }
 
+    String validateComment(WeblogEntryComment incomingComment) {
+        String errorProperty = null;
+
+        if (StringUtils.isBlank(incomingComment.getContent())) {
+            errorProperty = "error.commentPostContentMissing";
+        } else if (StringUtils.isBlank(incomingComment.getName())) {
+            errorProperty = "error.commentPostNameMissing";
+        } else if (StringUtils.isEmpty(incomingComment.getEmail()) || !incomingComment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
+            errorProperty = "error.commentPostFailedEmailAddress";
+        } else if (StringUtils.isNotEmpty(incomingComment.getUrl()) &&
+                !new UrlValidator(new String[]{"http", "https"}).isValid(incomingComment.getUrl())) {
+            errorProperty = "error.commentPostFailedURL";
+        }
+
+        return errorProperty;
+    }
+
     WeblogEntryComment createCommentFromRequest(HttpServletRequest request, WeblogEntry entry,
                                                 HTMLSanitizer.Level sanitizerLevel) {
 
@@ -405,7 +409,7 @@ public class CommentProcessor extends AbstractProcessor {
      * still set the comment authentication section dynamically.
      */
     @RequestMapping(value = "/authform", method = RequestMethod.GET)
-    public void generateAuthForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    void generateAuthForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         response.setContentType("text/html; charset=utf-8");
 
@@ -418,7 +422,7 @@ public class CommentProcessor extends AbstractProcessor {
         out.println(commentAuthenticator == null ? "" : commentAuthenticator.getHtml(request));
     }
 
-    ValidationResult validateComment(WeblogEntryComment comment, Map<String, List<String>> messages) {
+    ValidationResult runSpamCheckers(WeblogEntryComment comment, Map<String, List<String>> messages) {
         boolean spamDetected = false;
 
         ValidationResult singleResponse;
