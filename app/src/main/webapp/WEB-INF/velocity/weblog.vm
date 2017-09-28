@@ -320,7 +320,7 @@ Show comments form for weblog entry.
         <span class="status">$cform.message</span>
     #end
 
-    <form method="post" action="$url.entryComment($entry)" focus="name" name="commentForm"
+    <form method="post" focus="name" name="commentForm"
         onsubmit="saveUserInformation(this); return validateComments(this)">
         <input type="hidden" name="method" value="post" />
 
@@ -356,9 +356,8 @@ Show comments form for weblog entry.
                <div id="commentAuthenticator"></div>
             </li>
             <li>
-               <input type="button" class="button" name="post" value="&nbsp;$utils.msg("macro.weblog.postpreview" )&nbsp;"
-                  onclick="this.form.method.value='preview';this.form.submit()" />
-               <input type="submit" class="button" name="post" value="&nbsp;$utils.msg( "macro.weblog.post" )&nbsp;" />
+               <input type="submit" formaction="$url.entryCommentPreview($entry.anchor)" class="button" name="post" value="&nbsp;$utils.msg("macro.weblog.postpreview" )&nbsp;">
+               <input type="submit" formaction="$url.entryComment($entry.anchor)" class="button" name="post" value="&nbsp;$utils.msg( "macro.weblog.post" )&nbsp;">
             </li>
         </ul>
 

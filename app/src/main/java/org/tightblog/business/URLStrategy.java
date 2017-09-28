@@ -92,8 +92,9 @@ public interface URLStrategy {
 
     /**
      * Get the POST url for a weblog entry comment.
+     * @param preview true if commenter wishes to preview (not yet submit) comment
      */
-    String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor);
+    String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean isPreview);
 
     /**
      * Get url for a single weblog entry comments on a given weblog.

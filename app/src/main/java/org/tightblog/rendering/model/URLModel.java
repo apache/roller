@@ -139,7 +139,11 @@ public class URLModel implements Model {
     }
 
     public String entryComment(String anchor) {
-        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor);
+        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor, false);
+    }
+
+    public String entryCommentPreview(String anchor) {
+        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor, true);
     }
 
     public String comment(WeblogEntry entry, String timeStamp) {
