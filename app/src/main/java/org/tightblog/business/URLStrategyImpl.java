@@ -141,8 +141,9 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor) {
-        return getWeblogURL(weblog, true) + "entrycomment/" + Utilities.encode(entryAnchor);
+    public String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean isPreview) {
+        return getWeblogURL(weblog, true) + "entrycomment/"
+                + Utilities.encode(entryAnchor) + (isPreview ? "?preview=true" : "");
     }
 
     @Override

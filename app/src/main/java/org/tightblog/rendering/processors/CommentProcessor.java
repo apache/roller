@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -207,20 +207,15 @@ public class CommentProcessor extends AbstractProcessor {
         WeblogEntryComment incomingComment = createCommentFromRequest(request, entry, props.getCommentHtmlPolicy());
         log.debug("Incoming comment: {}", incomingComment.toString());
 
-        // check comment for invalid input
-        // Commenter can either be previewing or submitting the comment
-        // test #1: ensure method being read properly
-        String method = request.getParameter("method");
-        incomingComment.setPreview(method != null && method.equals("preview"));
-
+        // First check comment for valid input
         String errorProperty;
         String[] errorValues = new String[1];
 
-        // test #2
+        // test #1
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             errorProperty = "comments.disabled";
         } else if (!incomingComment.isPreview() && commentAuthenticator != null && !commentAuthenticator.authenticate(request)) {
-            // test #3
+            // test #2
             errorValues[0] = request.getParameter("answer");
             errorProperty = "error.commentAuthFailed";
         } else {
@@ -230,7 +225,7 @@ public class CommentProcessor extends AbstractProcessor {
         I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
 
         // return error due to bad input
-        // test #4
+        // test #3
         if (errorProperty != null) {
             incomingComment.setError(true);
             incomingComment.setMessage(messageUtils.getString(errorProperty, errorValues));
@@ -240,7 +235,7 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        // At this stage, comment structurally good, only question is whether it is spam.
+        // Next check comment for spam
         // those with at least the POST role for the weblog don't need to have their comments moderated.
         boolean ownComment = false;
         String maybeUser = commentRequest.getAuthenticatedUser();
@@ -250,13 +245,13 @@ public class CommentProcessor extends AbstractProcessor {
 
         String message = null;
         Map<String, List<String>> messages = new HashMap<>();
-        // test #5: check even a spammy comment still approved if user is logged in.
-        // test #6: not so if person has just edit draft.
+        // test #4: check even a spammy comment still approved if user is logged in.
+        // test #5: not so if person has just edit draft.
         ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : runSpamCheckers(incomingComment, messages);
 
         if (!incomingComment.isPreview()) {
 
-            // test #7: determine nonSpamCommentApprovalRequired calculated properly
+            // test #6: determine nonSpamCommentApprovalRequired calculated properly
             nonSpamCommentApprovalRequired = WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(commentOption) ||
                     WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments());
 
@@ -378,6 +373,9 @@ public class CommentProcessor extends AbstractProcessor {
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(Instant.now());
+
+        String previewCheck = request.getParameter("preview");
+        comment.setPreview(previewCheck != null && !"false".equalsIgnoreCase(previewCheck));
 
         // Validate url
         comment.setUrl(Utilities.removeHTML(request.getParameter("url")));

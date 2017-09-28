@@ -95,8 +95,7 @@
 							<div class="alert alert-success">$cform.message</div>
 						#end
 		
-						<form method="post" action="$url.entryComment($entry)" focus="name"
-							name="commentForm" onsubmit="fixURL(this); return validateComments(this)"> 
+						<form method="post" focus="name" name="commentForm" onsubmit="fixURL(this); return validateComments(this)">
 							<div class="row">   
 								<input type="hidden" name="method" value="post" />
 								<div class="form-group col-lg-4">
@@ -138,9 +137,8 @@
 								<div class="form-group col-lg-12">
 								   <script src="$url.site/scripts/clientSideInclude.js"></script>
 								   <div id="commentAuthenticator"></div>
-								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$utils.msg("macro.weblog.postpreview" )&nbsp;"
-								      onclick="this.form.method.value='preview';this.form.submit()" />
-								   <input type="submit" class="btn btn-success" name="post" value="&nbsp;$utils.msg( "macro.weblog.post" )&nbsp;" />
+								   <input type="submit" formaction="$url.entryCommentPreview($entry.anchor)" class="btn btn-primary" name="post" value="&nbsp;$utils.msg("macro.weblog.postpreview" )&nbsp;">
+								   <input type="submit" formaction="$url.entryComment($entry.anchor)" class="btn btn-success" name="post" value="&nbsp;$utils.msg( "macro.weblog.post" )&nbsp;">
 								</div>
 							</div>
 						</form>
