@@ -176,6 +176,7 @@
     <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger" >
 
         <global-allowed-methods>
+            clear,
             disable,
             delete,
             deleteConfirm,
