@@ -140,6 +140,9 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
                 theme,
                 user.getLocale(),
                 user.getTimeZone());
+            roller.getWeblogManager().addWeblog(website)
+            roller.flush()
+
             def cat = new org.apache.roller.weblogger.pojos.WeblogCategory(
                 website, "cat1", "cat1", null);
             roller.getWeblogEntryManager().saveWeblogCategory(cat);
