@@ -17,6 +17,7 @@ package org.tightblog.rendering.processors;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.pojos.Weblog;
@@ -27,7 +28,9 @@ import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.HTMLSanitizer;
+import org.tightblog.util.I18nMessages;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,11 +40,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,23 +53,27 @@ public class CommentProcessorTest {
 
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
+    private RequestDispatcher mockRequestDispatcher;
     private JPAPersistenceStrategy mockJPA;
     private WebloggerProperties properties;
     private CommentProcessor processor;
     private WeblogPageRequest.Creator wprCreator;
-    private WeblogPageRequest mockWPR;
+    private WeblogPageRequest commentRequest;
+    private I18nMessages messageUtils = I18nMessages.getMessages(Locale.ENGLISH);
 
     @Before
     public void initialize() {
         mockRequest = mock(HttpServletRequest.class);
         mockResponse = mock(HttpServletResponse.class);
+        mockRequestDispatcher = mock(RequestDispatcher.class);
+        when(mockRequest.getRequestDispatcher(anyString())).thenReturn(mockRequestDispatcher);
         mockJPA = mock(JPAPersistenceStrategy.class);
         properties = new WebloggerProperties();
         properties.setCommentHtmlPolicy(HTMLSanitizer.Level.LIMITED);
         when(mockJPA.getWebloggerProperties()).thenReturn(properties);
         wprCreator = mock(WeblogPageRequest.Creator.class);
-        mockWPR = mock(WeblogPageRequest.class);
-        when(wprCreator.create(any())).thenReturn(mockWPR);
+        commentRequest = new WeblogPageRequest();
+        when(wprCreator.create(any())).thenReturn(commentRequest);
         processor = new CommentProcessor();
         processor.setPersistenceStrategy(mockJPA);
         processor.setWeblogPageRequestCreator(wprCreator);
@@ -96,7 +103,7 @@ public class CommentProcessorTest {
 
     @Test
     public void postCommentReturn404IfWeblogEntryNotFound() {
-        when(mockWPR.getWeblog()).thenReturn(new Weblog());
+        commentRequest.setWeblog(new Weblog());
         processor.setWeblogEntryManager(mock(WeblogEntryManager.class));
 
         try {
@@ -106,6 +113,70 @@ public class CommentProcessorTest {
             fail();
         }
     }
+
+    @Test
+    public void testValidationErrorForwarding() {
+        processor = Mockito.spy(processor);
+
+        Weblog weblog = new Weblog();
+        weblog.setLocale("en");
+        weblog.setHandle("myhandle");
+        commentRequest.setWeblog(weblog);
+
+        WeblogEntry mockEntry = mock(WeblogEntry.class);
+        when(mockEntry.getAnchor()).thenReturn("myblogentry");
+
+        WeblogEntryManager mockWEM = mock(WeblogEntryManager.class);
+        when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(mockEntry);
+        processor.setWeblogEntryManager(mockWEM);
+
+        WeblogEntryComment incomingComment = new WeblogEntryComment();
+        // doReturn.when vs. when.theReturn wrt spies: https://stackoverflow.com/a/29394497/1207540
+        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(mockEntry), any());
+
+        try {
+            // will return disabled if comments not allowed
+            when(mockEntry.getCommentsStillAllowed()).thenReturn(false);
+            when(mockEntry.isPublished()).thenReturn(false);
+            verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
+
+            // will still show disabled if comments allowed but entry not published
+            when(mockEntry.getCommentsStillAllowed()).thenReturn(true);
+            when(mockEntry.isPublished()).thenReturn(false);
+            verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
+
+            // both published and comments allowed, will show auth error if latter failed
+            when(mockEntry.isPublished()).thenReturn(true);
+            incomingComment.setPreview(false);
+            when(mockRequest.getParameter("answer")).thenReturn("123");
+
+            CommentAuthenticator mockAuthenticator = mock(CommentAuthenticator.class);
+            when(mockAuthenticator.authenticate(mockRequest)).thenReturn(false);
+            processor.setCommentAuthenticator(mockAuthenticator);
+            verifyForwardDueToValidationError(incomingComment, "error.commentAuthFailed", "123");
+
+            // ensure auth not checked if preview
+            incomingComment.setPreview(true);
+            Mockito.doReturn("error.commentPostNameMissing").when(processor).validateComment(incomingComment);
+            verifyForwardDueToValidationError(incomingComment, "error.commentPostNameMissing", null);
+
+        } catch (IOException | ServletException e) {
+            fail();
+        }
+    }
+
+    private void verifyForwardDueToValidationError(WeblogEntryComment incomingComment, String errorProperty,
+                                                   String errorValue)
+            throws ServletException, IOException {
+        processor.postComment(mockRequest, mockResponse);
+        assertTrue(incomingComment.isError());
+        assertEquals(messageUtils.getString(errorProperty, errorValue), incomingComment.getSubmitResponseMessage());
+        verify(mockRequest).setAttribute("commentForm", incomingComment);
+        verify(mockRequest).getRequestDispatcher(PageProcessor.PATH + "/myhandle/entry/myblogentry");
+        verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+        Mockito.clearInvocations(mockRequest, mockRequestDispatcher);
+    }
+
 
     @Test
     public void testCreateCommentFromRequest() {

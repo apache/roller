@@ -161,7 +161,7 @@ public class PreviewProcessor extends AbstractProcessor {
             }
 
             // If this is a permalink then look for a permalink template
-        } else if (previewRequest.getWeblogAnchor() != null) {
+        } else if (previewRequest.getWeblogEntryAnchor() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
             } catch (Exception e) {

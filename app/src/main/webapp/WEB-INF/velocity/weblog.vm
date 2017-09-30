@@ -55,7 +55,7 @@ Macros defined in this file:
     #showNextPrevSearchControl($pager)
     #showMobileNextPrevSearchControl($pager)
     
-    #showMobilePopupDialog($id $header $message)
+    #showMobilePopupDialog($id $header $submitResponseMessage)
 *#
 
 
@@ -315,9 +315,9 @@ Show comments form for weblog entry.
 #if( $entry.commentsStillAllowed )
 
     #if( $cform.error )
-        <span class="error">$cform.message</span>
-    #elseif( !$cform.error && !$utils.isEmpty($cform.message) )
-        <span class="status">$cform.message</span>
+        <span class="error">$cform.submitResponseMessage</span>
+    #elseif( !$cform.error && !$utils.isEmpty($cform.submitResponseMessage) )
+        <span class="status">$cform.submitResponseMessage</span>
     #end
 
     <form method="post" focus="name" name="commentForm"

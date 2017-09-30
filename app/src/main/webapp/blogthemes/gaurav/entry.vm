@@ -90,9 +90,9 @@
 					  	<div class="panel-body">
 							<a name="comment-form"></a>	
 						#if( $cform.error )
-							<div class="alert alert-danger">$cform.message</div>
-						#elseif( !$cform.error && !$utils.isEmpty($cform.message) )
-							<div class="alert alert-success">$cform.message</div>
+							<div class="alert alert-danger">$cform.submitResponseMessage</div>
+						#elseif( !$cform.error && !$utils.isEmpty($cform.submitResponseMessage) )
+							<div class="alert alert-success">$cform.submitResponseMessage</div>
 						#end
 		
 						<form method="post" focus="name" name="commentForm" onsubmit="fixURL(this); return validateComments(this)">

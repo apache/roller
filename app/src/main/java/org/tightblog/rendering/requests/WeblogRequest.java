@@ -150,6 +150,7 @@ public class WeblogRequest {
      * The Locale is determined via these rules ...
      * 1. if a locale is explicitly specified, then it is used
      * 2. if no locale is specified, then use the weblog default locale
+     * //TODO: cache localeinstance in weblog?
      */
     public Locale getLocaleInstance() {
         if (localeInstance == null) {
