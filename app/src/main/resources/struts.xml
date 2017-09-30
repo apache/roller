@@ -165,7 +165,7 @@
             <result name="bootstrap" type="tiles">.Bootstrap</result>
             <result name="success" type="chain">
                 <param name="actionName">home</param>
-                <param name="namespace">weblogger</param>
+                <param name="namespace">/roller-ui</param>
             </result>
         </action>
             
@@ -361,7 +361,7 @@
             <result name="input" type="tiles">.EntryEdit</result>
             <result name="error" type="chain">
                 <param name="actionName">menu</param>
-                <param name="namespace">weblogger</param>
+                <param name="namespace">/roller-ui</param>
             </result>
         </action>
         
@@ -371,7 +371,7 @@
             <result name="input" type="tiles">.EntryRemove</result>
             <result name="error" type="chain">
                 <param name="actionName">menu</param>
-                <param name="namespace">weblogger</param>
+                <param name="namespace">/roller-ui</param>
             </result>
             <result name="success" type="chain">entryAdd</result>
         </action>
@@ -392,7 +392,7 @@
           <result name="input" type="tiles">.EntryRemove</result>
             <result name="error" type="chain">
                 <param name="actionName">menu</param>
-                <param name="namespace">weblogger</param>
+                <param name="namespace">/roller-ui</param>
             </result>
           <result name="success" type="chain">entries</result>
         </action>
@@ -515,7 +515,7 @@
             <result name="confirm" type="tiles">.WeblogRemoveConfirm</result>
             <result name="success" type="chain">
                 <param name="actionName">menu</param>
-                <param name="namespace">weblogger</param>
+                <param name="namespace">/roller-ui</param>
             </result>
         </action>
         
@@ -583,11 +583,11 @@
             <result name="input" type="tiles">.MemberResign</result>
             <result name="error" type="chain">
                 <param name="actionName">menu</param>
-                <param name="namespace">weblogger</param>
+                <param name="namespace">/roller-ui</param>
             </result>
             <result name="success" type="chain">
                 <param name="actionName">menu</param>
-                <param name="namespace">weblogger</param>
+                <param name="namespace">/roller-ui</param>
             </result>
         </action>
 
