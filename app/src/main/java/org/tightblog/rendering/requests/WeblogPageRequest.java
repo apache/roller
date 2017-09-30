@@ -43,7 +43,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
     // lightweight attributes
     private String context = null;
-    private String weblogAnchor = null;
+    private String weblogEntryAnchor = null;
     private String weblogTemplateName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
@@ -105,7 +105,7 @@ public class WeblogPageRequest extends WeblogRequest {
             if (pathElements.length == 2) {
 
                 if ("entry".equals(this.context)) {
-                    this.weblogAnchor = Utilities.decode(pathElements[1]);
+                    this.weblogEntryAnchor = Utilities.decode(pathElements[1]);
 
                     // Other page
                     weblogPageHit = true;
@@ -155,14 +155,15 @@ public class WeblogPageRequest extends WeblogRequest {
         }
 
         /*
-         * parse request parameters
+         * Parse request parameters
          *
-         * the only params we currently allow are: date - specifies a weblog
-         * date string cat - specifies a weblog category anchor - specifies a
-         * weblog entry (old way) entry - specifies a weblog entry
+         * Params allowed:
+         * date - specifies a weblog date string
+         * cat - specifies a weblog category
+         * entry - specifies a weblog entry
          *
-         * we only allow request params if the path info is null or on user
-         * defined pages (for backwards compatability). this way we prevent
+         * We allow request params only if the path info is null or on user
+         * defined pages (for backwards compatibility). This way we prevent
          * mixing of path based and query param style urls.
          */
         if (pathInfo == null || this.weblogTemplateName != null) {
@@ -171,17 +172,12 @@ public class WeblogPageRequest extends WeblogRequest {
             if (request.getParameter("entry") != null) {
                 String anchor = request.getParameter("entry");
                 if (StringUtils.isNotEmpty(anchor)) {
-                    this.weblogAnchor = anchor;
-                }
-            } else if (request.getParameter("anchor") != null) {
-                String anchor = request.getParameter("anchor");
-                if (StringUtils.isNotEmpty(anchor)) {
-                    this.weblogAnchor = anchor;
+                    this.weblogEntryAnchor = anchor;
                 }
             }
 
             // only check for other params if we didn't find an anchor above or tags
-            if (this.weblogAnchor == null && this.tag == null) {
+            if (this.weblogEntryAnchor == null && this.tag == null) {
                 if (request.getParameter("date") != null) {
                     String date = request.getParameter("date");
                     if (this.isValidDateString(date)) {
@@ -221,7 +217,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
         if (log.isDebugEnabled()) {
             log.debug("context = " + context);
-            log.debug("weblogAnchor = " + weblogAnchor);
+            log.debug("weblogEntryAnchor = " + weblogEntryAnchor);
             log.debug("weblogDate = " + weblogDate);
             log.debug("weblogCategory = " + weblogCategoryName);
             log.debug("tag = " + tag);
@@ -240,8 +236,8 @@ public class WeblogPageRequest extends WeblogRequest {
         return context;
     }
 
-    public String getWeblogAnchor() {
-        return weblogAnchor;
+    public String getWeblogEntryAnchor() {
+        return weblogEntryAnchor;
     }
 
     public String getWeblogTemplateName() {

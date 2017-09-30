@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Model which provides information needed to render a weblog page.
@@ -159,7 +158,7 @@ public class PageModel implements Model {
      * Is this page considered a permalink?
      */
     public boolean isPermalink() {
-        return (pageRequest.getWeblogAnchor() != null);
+        return (pageRequest.getWeblogEntryAnchor() != null);
     }
 
     /**
@@ -218,8 +217,8 @@ public class PageModel implements Model {
      * Get weblog entry being displayed or null if none specified by request.
      */
     public WeblogEntry getWeblogEntry() {
-        if (weblogEntry == null && pageRequest.getWeblogAnchor() != null) {
-            weblogEntry = weblogEntryManager.getWeblogEntryByAnchor(getWeblog(), pageRequest.getWeblogAnchor());
+        if (weblogEntry == null && pageRequest.getWeblogEntryAnchor() != null) {
+            weblogEntry = weblogEntryManager.getWeblogEntryByAnchor(getWeblog(), pageRequest.getWeblogEntryAnchor());
         }
         return weblogEntry;
     }
@@ -340,13 +339,13 @@ public class PageModel implements Model {
     public WeblogEntriesPager getWeblogEntriesPager() {
 
         // determine which mode to use
-        if (pageRequest.getWeblogAnchor() != null) {
+        if (pageRequest.getWeblogEntryAnchor() != null) {
             return new WeblogEntriesPermalinkPager(
                     weblogEntryManager,
                     urlStrategy,
                     pageRequest.getWeblog(),
                     pageRequest.getWeblogTemplateName(),
-                    pageRequest.getWeblogAnchor(),
+                    pageRequest.getWeblogEntryAnchor(),
                     // preview can show draft entries
                     preview);
         } else {

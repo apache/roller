@@ -23,7 +23,6 @@ package org.tightblog.rendering.processors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.tightblog.business.MailManager;
-import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -125,13 +124,6 @@ public class CommentProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private URLStrategy urlStrategy;
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
-
-    @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
@@ -166,7 +158,6 @@ public class CommentProcessor extends AbstractProcessor {
     public void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
-
         WebloggerProperties.CommentPolicy commentOption = props.getCommentPolicy();
 
         if (WebloggerProperties.CommentPolicy.NONE.equals(commentOption)) {
@@ -175,16 +166,9 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        String dispatchUrl;
-
-        Weblog weblog;
-        WeblogEntry entry;
-        boolean nonSpamCommentApprovalRequired;
-
         WeblogPageRequest commentRequest = weblogPageRequestCreator.create(request);
 
-        // check weblog and entry exist
-        weblog = commentRequest.getWeblog();
+        Weblog weblog = commentRequest.getWeblog();
         if (weblog == null) {
             log.info("Commenter attempted to leave comment for weblog with unknown handle: {}, returning 404",
                     commentRequest.getWeblogHandle());
@@ -192,43 +176,40 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, commentRequest.getWeblogAnchor());
+        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, commentRequest.getWeblogEntryAnchor());
         if (entry == null) {
             log.info("Commenter attempted to leave comment for weblog {}'s entry with unknown anchor: {}, returning 404",
-                    commentRequest.getWeblogHandle(), commentRequest.getWeblogAnchor());
+                    commentRequest.getWeblogHandle(), commentRequest.getWeblogEntryAnchor());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        // We're forwarding to the PageProcessor to re-render the blog entry with the comment processing results
-        dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle();
-        dispatchUrl += "/entry/" + Utilities.encode(commentRequest.getWeblogAnchor());
+        // At this stage, CommentProcessor forwards to the PageProcessor with the comment processing results
+        String dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle() + "/entry/"
+                + Utilities.encode(entry.getAnchor());
+
+        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
 
         WeblogEntryComment incomingComment = createCommentFromRequest(request, entry, props.getCommentHtmlPolicy());
         log.debug("Incoming comment: {}", incomingComment.toString());
 
-        // First check comment for valid input
+        // First check comment for valid and authorized input
         String errorProperty;
-        String[] errorValues = new String[1];
+        String errorValue = "";
 
-        // test #1
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             errorProperty = "comments.disabled";
         } else if (!incomingComment.isPreview() && commentAuthenticator != null && !commentAuthenticator.authenticate(request)) {
-            // test #2
-            errorValues[0] = request.getParameter("answer");
+            errorValue = request.getParameter("answer");
             errorProperty = "error.commentAuthFailed";
         } else {
             errorProperty = validateComment(incomingComment);
         }
 
-        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
-
         // return error due to bad input
-        // test #3
         if (errorProperty != null) {
             incomingComment.setError(true);
-            incomingComment.setMessage(messageUtils.getString(errorProperty, errorValues));
+            incomingComment.setSubmitResponseMessage(messageUtils.getString(errorProperty, errorValue));
             request.setAttribute("commentForm", incomingComment);
             RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
             dispatcher.forward(request, response);
@@ -236,34 +217,33 @@ public class CommentProcessor extends AbstractProcessor {
         }
 
         // Next check comment for spam
-        // those with at least the POST role for the weblog don't need to have their comments moderated.
-        boolean ownComment = false;
-        String maybeUser = commentRequest.getAuthenticatedUser();
-        if (maybeUser != null) {
-            ownComment = userManager.checkWeblogRole(maybeUser, commentRequest.getWeblogHandle(), WeblogRole.POST);
-        }
-
-        String message = null;
-        Map<String, List<String>> messages = new HashMap<>();
-        // test #4: check even a spammy comment still approved if user is logged in.
-        // test #5: not so if person has just edit draft.
-        ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : runSpamCheckers(incomingComment, messages);
-
         if (!incomingComment.isPreview()) {
+            String commentStatusKey;
 
-            // test #6: determine nonSpamCommentApprovalRequired calculated properly
-            nonSpamCommentApprovalRequired = WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(commentOption) ||
+            // test #1: determine nonSpamCommentApprovalRequired calculated properly
+            boolean allCommentApprovalRequired = WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(commentOption) ||
                     WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments());
 
+            // test #2: those logged in with at least the POST role don't need comment moderation.
+            boolean ownComment = false;
+            String maybeUser = commentRequest.getAuthenticatedUser();
+            if (maybeUser != null) {
+                ownComment = userManager.checkWeblogRole(maybeUser, weblog.getHandle(), WeblogRole.POST);
+            }
+
+            Map<String, List<String>> spamEvaluations = new HashMap<>();
+            ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : runSpamCheckers(incomingComment, spamEvaluations);
+
+            // test #3: check status, status key set as expected
             if (valResult == ValidationResult.NOT_SPAM) {
-                if (!ownComment && nonSpamCommentApprovalRequired) {
+                if (!ownComment && allCommentApprovalRequired) {
                     // Valid comments go into moderation if required
                     incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
-                    message = messageUtils.getString("commentServlet.submittedToModerator");
+                    commentStatusKey = "commentServlet.submittedToModerator";
                 } else {
                     // else they're approved
                     incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
-                    message = messageUtils.getString("commentServlet.commentAccepted");
+                    commentStatusKey = "commentServlet.commentAccepted";
                 }
             } else {
                 // Invalid comments are marked as spam, but just a moderation message sent to spammer
@@ -271,43 +251,42 @@ public class CommentProcessor extends AbstractProcessor {
                 // the spam message so it will pass through; also indicating that the message is subject
                 // to moderation (and sure refusal) discourages future spamming attempts.
                 incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.SPAM);
-                message = messageUtils.getString("commentServlet.submittedToModerator");
+                commentStatusKey = "commentServlet.submittedToModerator";
 
-                // log specific error messages if they exist
-                // test: capture logging, make sure correct.
                 log.debug("Comment marked as spam, reasons: ");
-                if (messages.size() > 0) {
-                    for (Map.Entry<String, List<String>> item : messages.entrySet()) {
-                        if (item.getValue() != null) {
-                            log.debug(messageUtils.getString(item.getKey(), item.getValue() != null ?
-                                    item.getValue().toArray() : null));
-                        } else {
-                            log.debug(messageUtils.getString(item.getKey()));
-                        }
+                if (spamEvaluations.size() > 0) {
+                    for (Map.Entry<String, List<String>> item : spamEvaluations.entrySet()) {
+                        log.debug(messageUtils.getString(item.getKey(), item.getValue() != null ?
+                                item.getValue().toArray() : null));
                     }
                 } else {
                     log.debug("None available.");
                 }
             }
 
-            // Akismet validator can be configured to return -1 for blatant spam, if so configured, don't save in queue.
+            // test #4: verify correct commentStatusKey added
+            incomingComment.setSubmitResponseMessage(messageUtils.getString(commentStatusKey));
+
+            // Don't save spam if evaluated as blatant or if blog server configured to ignore all spam.
             if (!ValidationResult.BLATANT_SPAM.equals(valResult) && (!WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus()) || !props.isAutodeleteSpam())) {
 
                 boolean noModerationNeeded = ownComment ||
-                        (!nonSpamCommentApprovalRequired && !WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus()));
-                // test: need to test saveComment called.
+                        (!allCommentApprovalRequired && !WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus()));
+
+                // test #5: verify saveComment called/not called when expected
                 weblogEntryManager.saveComment(incomingComment, noModerationNeeded);
                 persistenceStrategy.flush();
 
-                // need to test these methods called
+                // test #6: verify methods called as expected
                 if (noModerationNeeded) {
                     mailManager.sendNewPublishedCommentNotification(incomingComment);
                 } else {
-                    mailManager.sendPendingCommentNotice(incomingComment, messages);
+                    mailManager.sendPendingCommentNotice(incomingComment, spamEvaluations);
                 }
 
                 // only re-index/invalidate the cache if comment isn't moderated
-                if (!nonSpamCommentApprovalRequired) {
+                // test #7: verify methods called as expected
+                if (!allCommentApprovalRequired) {
 
                     // if published, index the entry
                     if (entry.isPublished() && indexManager.isIndexComments()) {
@@ -318,22 +297,18 @@ public class CommentProcessor extends AbstractProcessor {
                     cacheManager.invalidate(incomingComment);
                 }
 
-                // comment was successful, clear the comment form
+                // comment was saved to the DB, clear the comment form
                 incomingComment = new WeblogEntryComment();
                 incomingComment.initializeFormFields();
             }
+
         }
 
-        // the work has been done, now send the user back to the entry page
-        if (message != null) {
-            incomingComment.setMessage(message);
-        }
-        // for subsequent processing by PageProcessor, which will put in into PageModel
-        // so the templates can work with the comments.
-        request.setAttribute("commentForm", incomingComment);
-
-        // off to PageProcessor's POST handling.
+        // now send the user back to the entry page
+        // provide comment to PageProcessor so latter can place it in the PageModel for rendering
         log.debug("comment processed, forwarding to {}", dispatchUrl);
+        // test #8: verify comment form returned
+        request.setAttribute("commentForm", incomingComment);
         RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
         dispatcher.forward(request, response);
     }

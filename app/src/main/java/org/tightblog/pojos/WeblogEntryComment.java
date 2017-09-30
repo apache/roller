@@ -69,7 +69,7 @@ public class WeblogEntryComment {
     // transient fields involved during comment submittal
     private boolean error = false;
     private boolean preview = false;
-    private String message = null;
+    private String submitResponseMessage = null;
 
     @Id
     public String getId() {
@@ -275,12 +275,12 @@ public class WeblogEntryComment {
     }
 
     @Transient
-    public String getMessage() {
-        return message;
+    public String getSubmitResponseMessage() {
+        return submitResponseMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setSubmitResponseMessage(String submitResponseMessage) {
+        this.submitResponseMessage = submitResponseMessage;
     }
 
     @Transient

@@ -264,7 +264,7 @@ public class PageProcessor extends AbstractProcessor {
             }
 
         // If this is a permalink then look for a permalink template
-        } else if (pageRequest.getWeblogAnchor() != null) {
+        } else if (pageRequest.getWeblogEntryAnchor() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.PERMALINK);
             } catch (Exception e) {
@@ -297,11 +297,11 @@ public class PageProcessor extends AbstractProcessor {
         if (pageRequest.getWeblogTemplateName() != null && StringUtils.isEmpty(page.getRelativePath())) {
             invalid = true;
         }
-        if (pageRequest.getWeblogAnchor() != null) {
+        if (pageRequest.getWeblogEntryAnchor() != null) {
 
             // permalink specified.
             // entry must exist and be published before current time
-            WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogAnchor());
+            WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogEntryAnchor());
 
             if (entry == null) {
                 invalid = true;
@@ -525,11 +525,11 @@ public class PageProcessor extends AbstractProcessor {
         key.append("weblogpage.key").append(":");
         key.append(pageRequest.getWeblogHandle());
 
-        if (pageRequest.getWeblogAnchor() != null) {
+        if (pageRequest.getWeblogEntryAnchor() != null) {
             String anchor = null;
             try {
                 // may contain spaces or other bad chars
-                anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
+                anchor = URLEncoder.encode(pageRequest.getWeblogEntryAnchor(), "UTF-8");
             } catch (UnsupportedEncodingException ex) {
                 // ignored
             }
@@ -559,7 +559,7 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         // add page number when applicable
-        if (pageRequest.getWeblogAnchor() == null) {
+        if (pageRequest.getWeblogEntryAnchor() == null) {
             key.append("/page=").append(pageRequest.getPageNum());
         }
 
