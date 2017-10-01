@@ -12,7 +12,7 @@ This product includes:
     Copyright 2003 Simon Brown, All rights reserved.
 
 * Code written by Sun Microsystems, Inc. 
-    Copyright 2005 Sun Microsystems, Inc.
+    Copyright 2009 Sun Microsystems, Inc.
 
 * Code written by Dave Johnson for RSS and Atom in Action
     Copyright 2005 David M Johnson (For RSS and Atom In Action)
