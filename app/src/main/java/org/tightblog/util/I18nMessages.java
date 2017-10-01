@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A utility class for handling i18n messaging.
  */
-public final class I18nMessages {
+public class I18nMessages {
 
     private static Logger log = LoggerFactory.getLogger(I18nMessages.class);
 

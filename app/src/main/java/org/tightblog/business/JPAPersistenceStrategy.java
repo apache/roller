@@ -331,7 +331,7 @@ public class JPAPersistenceStrategy {
 
     public WebloggerProperties getWebloggerProperties() {
         // Eclipselink logging shows WebloggerProperties is cached (with the cached value
-        // updated when needed) so SQL queries aren't happening with each call.
+        // updated when needed) so SQL queries don't occur with every call.
         return load(WebloggerProperties.class, "1");
     }
 }

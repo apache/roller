@@ -312,11 +312,11 @@ Show comments form for weblog entry.
     <div class="comments-head">$utils.msg("macro.weblog.postcommentHeader")</div>
     <a name="comment-form"></a>
 
-#if( $entry.commentsStillAllowed )
+#if( $model.canSubmitNewComments($entry) )
 
-    #if( $cform.error )
+    #if( $cform.invalid )
         <span class="error">$cform.submitResponseMessage</span>
-    #elseif( !$cform.error && !$utils.isEmpty($cform.submitResponseMessage) )
+    #elseif( !$cform.invalid && !$utils.isEmpty($cform.submitResponseMessage) )
         <span class="status">$cform.submitResponseMessage</span>
     #end
 

@@ -25,7 +25,7 @@
                 |&nbsp;<a href="$url.editEntry($entry.anchor)">$utils.msg("generic.edit")</a>
             #end
             #set($commentCount = $entry.commentCount)
-            #if($entry.commentsStillAllowed || $commentCount > 0)
+            #if($model.canSubmitNewComments($entry) || $commentCount > 0)
                 #set($link = "$url.comments($entry)" )
                 |&nbsp;<a href="$link" class="commentsLink">$utils.msg("macro.weblog.comments") [$commentCount]</a>
             #end

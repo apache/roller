@@ -115,8 +115,10 @@ public interface UserManager {
      * @param username     Username whose role is being checked
      * @param weblogHandle target weblog handle of the role
      * @param role         Minimum WeblogRole being checked for
-     * @return true if user has WeblogRole or more powerful, or is global admin.
-     * false if not or if either username and/or weblogHandle can't be found.
+     * @return true if a user and weblog can be identified from the passed in username and weblogHandle
+     * and the user is either a global admin or has the role or more powerful for the Weblog.
+     * false otherwise, including the cases where the username and/or weblogHandle is an empty string
+     * or null.
      */
     boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role);
 

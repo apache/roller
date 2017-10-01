@@ -59,7 +59,7 @@ public class CommentProcessorTest {
     private CommentProcessor processor;
     private WeblogPageRequest.Creator wprCreator;
     private WeblogPageRequest commentRequest;
-    private I18nMessages messageUtils = I18nMessages.getMessages(Locale.ENGLISH);
+    private I18nMessages mockMessageUtils;
 
     @Before
     public void initialize() {
@@ -77,6 +77,7 @@ public class CommentProcessorTest {
         processor = new CommentProcessor();
         processor.setPersistenceStrategy(mockJPA);
         processor.setWeblogPageRequestCreator(wprCreator);
+        mockMessageUtils = mock(I18nMessages.class);
     }
 
     @Test
@@ -123,30 +124,30 @@ public class CommentProcessorTest {
         weblog.setHandle("myhandle");
         commentRequest.setWeblog(weblog);
 
-        WeblogEntry mockEntry = mock(WeblogEntry.class);
-        when(mockEntry.getAnchor()).thenReturn("myblogentry");
+        WeblogEntry entry = new WeblogEntry();
+        entry.setAnchor("myblogentry");
 
         WeblogEntryManager mockWEM = mock(WeblogEntryManager.class);
-        when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(mockEntry);
+        when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
         processor.setWeblogEntryManager(mockWEM);
 
         WeblogEntryComment incomingComment = new WeblogEntryComment();
         // doReturn.when vs. when.theReturn wrt spies: https://stackoverflow.com/a/29394497/1207540
-        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(mockEntry), any());
+        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(entry), any());
+        Mockito.doReturn(mockMessageUtils).when(processor).getI18nMessages(any(Locale.class));
 
         try {
             // will return disabled if comments not allowed
-            when(mockEntry.getCommentsStillAllowed()).thenReturn(false);
-            when(mockEntry.isPublished()).thenReturn(false);
+            when(mockWEM.canSubmitNewComments(entry)).thenReturn(false);
+            entry.setStatus(WeblogEntry.PubStatus.DRAFT);
             verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
 
             // will still show disabled if comments allowed but entry not published
-            when(mockEntry.getCommentsStillAllowed()).thenReturn(true);
-            when(mockEntry.isPublished()).thenReturn(false);
+            when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
             verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
 
             // both published and comments allowed, will show auth error if latter failed
-            when(mockEntry.isPublished()).thenReturn(true);
+            entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
             incomingComment.setPreview(false);
             when(mockRequest.getParameter("answer")).thenReturn("123");
 
@@ -169,15 +170,68 @@ public class CommentProcessorTest {
                                                    String errorValue)
             throws ServletException, IOException {
         processor.postComment(mockRequest, mockResponse);
-        assertTrue(incomingComment.isError());
-        assertEquals(messageUtils.getString(errorProperty, errorValue), incomingComment.getSubmitResponseMessage());
+        assertTrue(incomingComment.isInvalid());
+        verify(mockMessageUtils).getString(errorProperty, errorValue);
         verify(mockRequest).setAttribute("commentForm", incomingComment);
         verify(mockRequest).getRequestDispatcher(PageProcessor.PATH + "/myhandle/entry/myblogentry");
         verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
-        Mockito.clearInvocations(mockRequest, mockRequestDispatcher);
+        Mockito.clearInvocations(mockMessageUtils, mockRequest, mockRequestDispatcher);
     }
+/*
+    @Test
+    public void testCommentSpamChecking() {
+        processor = Mockito.spy(processor);
 
+        Weblog weblog = new Weblog();
+        weblog.setLocale("en");
+        commentRequest.setWeblog(weblog);
 
+        WeblogEntry entry = new WeblogEntry();
+        entry.setAnchor("myblogentry");
+
+        CommentAuthenticator mockAuthenticator = mock(CommentAuthenticator.class);
+        when(mockAuthenticator.authenticate(mockRequest)).thenReturn(false);
+        processor.setCommentAuthenticator(mockAuthenticator);
+
+        WeblogEntryManager mockWEM = mock(WeblogEntryManager.class);
+        when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
+        when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
+        processor.setWeblogEntryManager(mockWEM);
+
+        WeblogEntryComment incomingComment = new WeblogEntryComment();
+        // doReturn.when vs. when.theReturn wrt spies: https://stackoverflow.com/a/29394497/1207540
+        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(entry), any());
+        Mockito.doReturn(mockMessageUtils).when(processor).getI18nMessages(any(Locale.class));
+        Mockito.doReturn(null).when(processor).validateComment(incomingComment);
+
+        try {
+            // will return disabled if comments not allowed
+            when(mockWEM.canSubmitNewComments(entry)).thenReturn(false);
+            entry.setStatus(WeblogEntry.PubStatus.DRAFT);
+            verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
+
+            // will still show disabled if comments allowed but entry not published
+            when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
+            entry.setStatus(WeblogEntry.PubStatus.DRAFT);
+            verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
+
+            // both published and comments allowed, will show auth error if latter failed
+            entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+            incomingComment.setPreview(false);
+            when(mockRequest.getParameter("answer")).thenReturn("123");
+
+            verifyForwardDueToValidationError(incomingComment, "error.commentAuthFailed", "123");
+
+            // ensure auth not checked if preview
+            incomingComment.setPreview(true);
+            Mockito.doReturn("error.commentPostNameMissing").when(processor).validateComment(incomingComment);
+            verifyForwardDueToValidationError(incomingComment, "error.commentPostNameMissing", null);
+
+        } catch (IOException | ServletException e) {
+            fail();
+        }
+    }
+*/
     @Test
     public void testCreateCommentFromRequest() {
         when(mockRequest.getParameter("notify")).thenReturn("anything");

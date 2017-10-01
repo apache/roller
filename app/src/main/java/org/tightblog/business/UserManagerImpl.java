@@ -20,6 +20,7 @@
  */
 package org.tightblog.business;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserCredentials;
@@ -121,43 +122,44 @@ public class UserManagerImpl implements UserManager {
     @Override
     public User getEnabledUserByUserName(String userName) {
 
-        if (userName == null) {
-            throw new IllegalArgumentException("userName cannot be null");
-        }
+        User enabledUser = null;
 
-        // check cache first
-        if (userNameToIdMap.containsKey(userName)) {
-            User user = getUser(userNameToIdMap.get(userName));
-            if (user != null) {
-                // return the user only if enabled
-                if (UserStatus.ENABLED.equals(user.getStatus())) {
-                    log.debug("userNameToIdMap CACHE HIT - {}", userName);
-                    return user;
+        if (!StringUtils.isEmpty(userName)) {
+            // check cache first
+            if (userNameToIdMap.containsKey(userName)) {
+                User tmpUser = getUser(userNameToIdMap.get(userName));
+                if (tmpUser != null) {
+                    // return the user only if enabled
+                    if (UserStatus.ENABLED.equals(tmpUser.getStatus())) {
+                        log.debug("userNameToIdMap CACHE HIT - {}", userName);
+                        enabledUser = tmpUser;
+                    }
+                } else {
+                    // mapping hit with lookup miss?  mapping must be old, remove it
+                    userNameToIdMap.remove(userName);
                 }
-            } else {
-                // mapping hit with lookup miss?  mapping must be old, remove it
-                userNameToIdMap.remove(userName);
+            }
+
+            // cache failed? do lookup
+            if (enabledUser == null) {
+                TypedQuery<User> query = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
+                query.setParameter(1, userName);
+
+                try {
+                    enabledUser = query.getSingleResult();
+                } catch (NoResultException e) {
+                    enabledUser = null;
+                }
+
+                // add mapping to cache
+                if (enabledUser != null) {
+                    log.debug("userNameToIdMap CACHE MISS - {}", userName);
+                    this.userNameToIdMap.put(enabledUser.getUserName(), enabledUser.getId());
+                }
             }
         }
 
-        // cache failed, do lookup
-        TypedQuery<User> query = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
-        query.setParameter(1, userName);
-
-        User user;
-        try {
-            user = query.getSingleResult();
-        } catch (NoResultException e) {
-            user = null;
-        }
-
-        // add mapping to cache
-        if (user != null) {
-            log.debug("userNameToIdMap CACHE MISS - {}", userName);
-            this.userNameToIdMap.put(user.getUserName(), user.getId());
-        }
-
-        return user;
+        return enabledUser;
     }
 
     @Override
@@ -221,30 +223,31 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) {
+        boolean hasRole = false;
+
         User userToCheck = getEnabledUserByUserName(username);
-        Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle, null);
-        return !(userToCheck == null || weblogToCheck == null) && checkWeblogRole(userToCheck, weblogToCheck, role);
+        if (userToCheck != null) {
+            Weblog weblogToCheck = weblogManager.getWeblogByHandle(weblogHandle, null);
+            hasRole = weblogToCheck != null && checkWeblogRole(userToCheck, weblogToCheck, role);
+        }
+        return hasRole;
     }
 
     @Override
     public boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role) {
+        boolean hasRole = false;
 
-        // if user has specified permission in weblog return true
-        UserWeblogRole existingRole = getWeblogRole(user, weblog);
-        if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
-            return true;
+        if (user != null & weblog != null) {
+            if (GlobalRole.ADMIN.equals(user.getGlobalRole())) {
+                hasRole = true;
+            } else {
+                UserWeblogRole existingRole = getWeblogRole(user, weblog);
+                if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
+                    hasRole = true;
+                }
+            }
         }
-
-        // if Blog Server admin would still have any weblog role
-        if (GlobalRole.ADMIN.equals(user.getGlobalRole())) {
-            return true;
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("ROLE CHECK FAILED: user {} does not have {} or greater rights on weblog {}", weblog.getHandle(),
-                    user.getUserName(), role.name());
-        }
-        return false;
+        return hasRole;
     }
 
     @Override

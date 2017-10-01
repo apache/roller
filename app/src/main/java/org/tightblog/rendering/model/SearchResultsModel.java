@@ -121,7 +121,7 @@ public class SearchResultsModel extends PageModel {
         if (search.getResultsCount() == -1) {
             // this means there has been a parsing (or IO) error
             this.errorMessage = I18nMessages.getMessages(
-                    searchRequest.getLocaleInstance()).getString("error.searchProblem");
+                    searchRequest.getWeblog().getLocaleInstance()).getString("error.searchProblem");
         } else {
 
             TopFieldDocs docs = search.getResults();
@@ -139,13 +139,6 @@ public class SearchResultsModel extends PageModel {
 
         pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, listMap,
                 (hits > (offset + limit)));
-    }
-
-    /**
-     * Is this page showing search results?
-     */
-    public boolean isSearchResults() {
-        return true;
     }
 
     @Override

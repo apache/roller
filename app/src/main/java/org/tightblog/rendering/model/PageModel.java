@@ -162,14 +162,6 @@ public class PageModel implements Model {
     }
 
     /**
-     * Is this page showing search results?
-     */
-    public boolean isSearchResults() {
-        // the search results model will extend this class and override this
-        return false;
-    }
-
-    /**
      * Whether a "noindex" directive should be added to the page to discourage
      * search engines from returning the page in search results
      *
@@ -204,6 +196,10 @@ public class PageModel implements Model {
 
     public String getTransformedSummary(WeblogEntry entry) {
         return render(entry.getEditFormat(), entry.getSummary());
+    }
+
+    public boolean canSubmitNewComments(WeblogEntry entry) {
+        return weblogEntryManager.canSubmitNewComments(entry);
     }
 
     /**
