@@ -44,7 +44,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -455,39 +454,6 @@ public class WeblogEntry {
 
     public void setTagsAsString(String tagsAsString) {
         this.tagsAsString = tagsAsString;
-    }
-
-    /**
-     * True if comments are still allowed on this entry considering the
-     * commentDays field as well as the weblog and site-wide configs.
-     */
-    @Transient
-    @JsonIgnore
-    // Not serialized into JSON as necessary weblog object not always present.
-    public boolean getCommentsStillAllowed() {
-        if (WebloggerProperties.CommentPolicy.NONE.equals(
-                WebloggerContext.getWebloggerProperties().getCommentPolicy())) {
-            return false;
-        }
-        if (WebloggerProperties.CommentPolicy.NONE.equals(getWeblog().getAllowComments())) {
-            return false;
-        }
-        if (getCommentDays() == 0) {
-            return false;
-        }
-        if (getCommentDays() < 0) {
-            return true;
-        }
-        boolean ret = false;
-
-        Instant inPubTime = getPubTime();
-        if (inPubTime != null) {
-            Instant lastCommentDay = inPubTime.plus(getCommentDays(), ChronoUnit.DAYS);
-            if (Instant.now().isBefore(lastCommentDay)) {
-                ret = true;
-            }
-        }
-        return ret;
     }
 
     @Transient

@@ -150,12 +150,18 @@ public interface WeblogEntryManager {
     /**
      * Create unique anchor for weblog entry.
      */
-    String createAnchor(WeblogEntry data);
+    String createAnchor(WeblogEntry entry);
+
+    /**
+     * Determine whether further comments for a particular blog entry are allowed.
+     * @return true if additional comments may be made, false otherwise.
+     */
+    boolean canSubmitNewComments(WeblogEntry entry);
 
     /**
      * Apply comment default settings from website to all of website's entries.
      */
-    void applyCommentDefaultsToEntries(Weblog website);
+    void applyCommentDefaultsToEntries(Weblog weblog);
 
     /**
      * Get comment count based on specified CommentSearchCriteria

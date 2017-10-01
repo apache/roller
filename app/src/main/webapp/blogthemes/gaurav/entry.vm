@@ -82,16 +82,16 @@
 				</div>
 
 					#set($cform = $model.getCommentForm())
-					#if( $entry.commentsStillAllowed )
+					#if( $model.canSubmitNewComments($entry) )
 					<div class="panel panel-default">
 							<div class="panel-heading">
 							<h3 class="panel-title">Leave a Comment</h3>
 						</div>
 					  	<div class="panel-body">
 							<a name="comment-form"></a>	
-						#if( $cform.error )
+						#if( $cform.invalid )
 							<div class="alert alert-danger">$cform.submitResponseMessage</div>
-						#elseif( !$cform.error && !$utils.isEmpty($cform.submitResponseMessage) )
+						#elseif( !$cform.invalid && !$utils.isEmpty($cform.submitResponseMessage) )
 							<div class="alert alert-success">$cform.submitResponseMessage</div>
 						#end
 		

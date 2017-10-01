@@ -104,6 +104,7 @@ public class Weblog {
 
     // is this weblog instance used for previewing a theme?
     private boolean usedForThemePreview = false;
+    private Locale localeInstance = null;
 
     public enum EditFormat {
         HTML("weblogConfig.editFormat.html", true),
@@ -324,7 +325,10 @@ public class Weblog {
     @Transient
     @JsonIgnore
     public Locale getLocaleInstance() {
-        return Locale.forLanguageTag(getLocale());
+        if (localeInstance == null) {
+            localeInstance = Locale.forLanguageTag(getLocale());
+        }
+        return localeInstance;
     }
 
     /**

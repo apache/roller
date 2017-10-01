@@ -361,7 +361,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendPendingCommentNotice(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        if (!isMailEnabled() || comment.getApproved()) {
+        if (!isMailEnabled() || comment.isApproved()) {
             return;
         }
 
@@ -398,7 +398,7 @@ public class MailManagerImpl implements MailManager {
 
             String from = user.getEmailAddress();
 
-            if (comment.getPending() || weblog.getEmailComments()) {
+            if (comment.isPending() || weblog.getEmailComments()) {
                 sendHTMLMessage(from, bloggerEmailAddrs, null, null, subject, msg);
             }
         } catch (Exception e) {
@@ -413,7 +413,7 @@ public class MailManagerImpl implements MailManager {
     public void sendNewPublishedCommentNotification(WeblogEntryComment comment) {
         if (!isMailEnabled() ||
                 !WebloggerContext.getWebloggerProperties().isUsersCommentNotifications() ||
-                !comment.getApproved()) {
+                !comment.isApproved()) {
             return;
         }
 

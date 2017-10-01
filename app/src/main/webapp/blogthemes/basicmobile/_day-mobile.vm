@@ -12,7 +12,7 @@
          #if($model.isUserBlogPublisher($entry.weblog))
            &nbsp;|&nbsp;&nbsp;<a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$utils.msg("generic.edit")</a>
          #end
-         #if($entry.commentsStillAllowed || $commentCount > 0)
+         #if($model.canSubmitNewComments($entry) || $commentCount > 0)
            |&nbsp;&nbsp;$utils.msg("macro.weblog.comments") [$commentCount]
          #end
        </div>

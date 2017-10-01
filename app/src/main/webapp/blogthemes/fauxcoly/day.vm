@@ -28,7 +28,7 @@
                 $utils.formatDateTime($entry.pubTime, $utils.msg("macro.weblog.timedatepattern"))</a>
 
             #set($commentCount = $entry.commentCount)
-            #if($entry.commentsStillAllowed || $commentCount > 0)
+            #if($model.canSubmitNewComments($entry) || $commentCount > 0)
                 #set($link = "$url.comments($entry)" )
                 <a href="$link" class="commentslink">$utils.msg("macro.weblog.comments") [$commentCount]</a>
             #end

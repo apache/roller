@@ -61,7 +61,7 @@ public class UtilitiesModel implements Model {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         zoneId = (weblogRequest == null) ? ZoneId.systemDefault() : weblogRequest.getWeblog().getZoneId();
         messages = I18nMessages.getMessages(
-                (weblogRequest == null) ? Locale.ENGLISH : weblogRequest.getLocaleInstance());
+                (weblogRequest == null) ? Locale.ENGLISH : weblogRequest.getWeblog().getLocaleInstance());
     }
 
     /**

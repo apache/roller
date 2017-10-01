@@ -597,6 +597,32 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
+    public boolean canSubmitNewComments(WeblogEntry entry) {
+        if (WebloggerProperties.CommentPolicy.NONE.equals(strategy.getWebloggerProperties().getCommentPolicy())) {
+            return false;
+        }
+        if (WebloggerProperties.CommentPolicy.NONE.equals(entry.getWeblog().getAllowComments())) {
+            return false;
+        }
+        if (entry.getCommentDays() == 0) {
+            return false;
+        }
+        if (entry.getCommentDays() < 0) {
+            return true;
+        }
+        boolean ret = false;
+
+        Instant inPubTime = entry.getPubTime();
+        if (inPubTime != null) {
+            Instant lastCommentDay = inPubTime.plus(entry.getCommentDays(), ChronoUnit.DAYS);
+            if (Instant.now().isBefore(lastCommentDay)) {
+                ret = true;
+            }
+        }
+        return ret;
+    }
+
+    @Override
     public void applyCommentDefaultsToEntries(Weblog weblog) {
         Query q = strategy.getNamedUpdate("WeblogEntry.updateCommentDaysByWeblog");
         q.setParameter(1, weblog.getDefaultCommentDays());

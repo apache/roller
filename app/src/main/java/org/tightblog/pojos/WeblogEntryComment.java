@@ -40,11 +40,19 @@ import java.time.Instant;
 @Table(name = "weblog_entry_comment")
 public class WeblogEntryComment {
 
-    // approval status states
-    // Reason for having both PENDING and DISAPPROVED is that the former triggers
-    // email notifications upon subsequent approval while the latter does not.
     public enum ApprovalStatus {
-        APPROVED, DISAPPROVED, SPAM, PENDING
+        // Comment missing required fields like name or email.  Not serialized to database.
+        INVALID,
+        // Comment identified as spam, either deleted or subject to moderation depending on blog config.
+        SPAM,
+        // Comment not identified as spam, subject to moderation.  If blog so configured, email sent
+        // to commenter upon approval.
+        PENDING,
+        // Comment approved and currently visible (published)
+        APPROVED,
+        // Approved comment subsequently disapproved and not viewable on blog.  No email notification
+        // sent to commenter if re-approved.
+        DISAPPROVED
     }
 
     // attributes
@@ -67,7 +75,6 @@ public class WeblogEntryComment {
     }
 
     // transient fields involved during comment submittal
-    private boolean error = false;
     private boolean preview = false;
     private String submitResponseMessage = null;
 
@@ -184,18 +191,10 @@ public class WeblogEntryComment {
     }
 
     /**
-     * Indicates that weblog owner considers this comment to be spam.
-     */
-    @Transient
-    public Boolean getSpam() {
-        return ApprovalStatus.SPAM.equals(getStatus());
-    }
-
-    /**
      * True if comment is pending moderator approval.
      */
     @Transient
-    public Boolean getPending() {
+    public Boolean isPending() {
         return ApprovalStatus.PENDING.equals(getStatus());
     }
 
@@ -203,8 +202,13 @@ public class WeblogEntryComment {
      * Indicates that comment has been approved for display on weblog.
      */
     @Transient
-    public Boolean getApproved() {
+    public Boolean isApproved() {
         return ApprovalStatus.APPROVED.equals(getStatus());
+    }
+
+    @Transient
+    public boolean isInvalid() {
+        return ApprovalStatus.INVALID.equals(getStatus());
     }
 
     /**
@@ -264,16 +268,6 @@ public class WeblogEntryComment {
     }
 
     // fields involved with rendering comments on blogs
-
-    @Transient
-    public boolean isError() {
-        return error;
-    }
-
-    public void setError(boolean error) {
-        this.error = error;
-    }
-
     @Transient
     public String getSubmitResponseMessage() {
         return submitResponseMessage;

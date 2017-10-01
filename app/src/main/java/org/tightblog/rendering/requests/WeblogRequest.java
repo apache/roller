@@ -20,7 +20,6 @@
  */
 package org.tightblog.rendering.requests;
 
-import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.tightblog.business.WebloggerContext;
@@ -65,7 +64,6 @@ public class WeblogRequest {
 
     // heavyweight attributes
     private Weblog weblog = null;
-    private Locale localeInstance = null;
 
     public WeblogRequest() {
     }
@@ -142,21 +140,6 @@ public class WeblogRequest {
 
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
-    }
-
-    /**
-     * Get the Locale instance to be used for this request.
-     * <p>
-     * The Locale is determined via these rules ...
-     * 1. if a locale is explicitly specified, then it is used
-     * 2. if no locale is specified, then use the weblog default locale
-     * //TODO: cache localeinstance in weblog?
-     */
-    public Locale getLocaleInstance() {
-        if (localeInstance == null) {
-            localeInstance = getWeblog().getLocaleInstance();
-        }
-        return localeInstance;
     }
 
     public String getAuthenticatedUser() {

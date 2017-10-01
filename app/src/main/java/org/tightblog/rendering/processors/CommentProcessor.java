@@ -32,6 +32,7 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
@@ -59,6 +60,7 @@ import java.io.PrintWriter;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -188,55 +190,48 @@ public class CommentProcessor extends AbstractProcessor {
         String dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle() + "/entry/"
                 + Utilities.encode(entry.getAnchor());
 
-        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
+        I18nMessages messageUtils = getI18nMessages(weblog.getLocaleInstance());
 
         WeblogEntryComment incomingComment = createCommentFromRequest(request, entry, props.getCommentHtmlPolicy());
         log.debug("Incoming comment: {}", incomingComment.toString());
 
         // First check comment for valid and authorized input
         String errorProperty;
-        String errorValue = "";
+        String errorValue = null;
 
-        if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
+        if (!weblogEntryManager.canSubmitNewComments(entry) || !entry.isPublished()) {
             errorProperty = "comments.disabled";
-        } else if (!incomingComment.isPreview() && commentAuthenticator != null && !commentAuthenticator.authenticate(request)) {
+        } else if (!incomingComment.isPreview() && commentAuthenticator != null
+                && !commentAuthenticator.authenticate(request)) {
             errorValue = request.getParameter("answer");
             errorProperty = "error.commentAuthFailed";
         } else {
             errorProperty = validateComment(incomingComment);
         }
 
-        // return error due to bad input
         if (errorProperty != null) {
-            incomingComment.setError(true);
+            // return error due to bad input
+            incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.INVALID);
             incomingComment.setSubmitResponseMessage(messageUtils.getString(errorProperty, errorValue));
-            request.setAttribute("commentForm", incomingComment);
-            RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
-            dispatcher.forward(request, response);
-            return;
-        }
-
-        // Next check comment for spam
-        if (!incomingComment.isPreview()) {
-            String commentStatusKey;
-
+        } else if (!incomingComment.isPreview()) {
+            // Otherwise next check comment for spam
             // test #1: determine nonSpamCommentApprovalRequired calculated properly
-            boolean allCommentApprovalRequired = WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(commentOption) ||
-                    WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments());
-
             // test #2: those logged in with at least the POST role don't need comment moderation.
-            boolean ownComment = false;
-            String maybeUser = commentRequest.getAuthenticatedUser();
-            if (maybeUser != null) {
-                ownComment = userManager.checkWeblogRole(maybeUser, weblog.getHandle(), WeblogRole.POST);
-            }
+            boolean ownComment = userManager.checkWeblogRole(commentRequest.getAuthenticatedUser(), weblog.getHandle(),
+                    WeblogRole.POST);
+
+            boolean commentRequiresApproval = !ownComment && (CommentPolicy.MUSTMODERATE.equals(commentOption) ||
+                    CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments()));
 
             Map<String, List<String>> spamEvaluations = new HashMap<>();
-            ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : runSpamCheckers(incomingComment, spamEvaluations);
+            ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : runSpamCheckers(incomingComment,
+                    spamEvaluations);
+
+            String commentStatusKey;
 
             // test #3: check status, status key set as expected
             if (valResult == ValidationResult.NOT_SPAM) {
-                if (!ownComment && allCommentApprovalRequired) {
+                if (commentRequiresApproval) {
                     // Valid comments go into moderation if required
                     incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
                     commentStatusKey = "commentServlet.submittedToModerator";
@@ -247,46 +242,38 @@ public class CommentProcessor extends AbstractProcessor {
                 }
             } else {
                 // Invalid comments are marked as spam, but just a moderation message sent to spammer
-                // Informing the spammer the reasons for its detection encourages the spammer to just modify
+                // Informing the spammer the reasons for its detection encourages the spammer to modify
                 // the spam message so it will pass through; also indicating that the message is subject
                 // to moderation (and sure refusal) discourages future spamming attempts.
                 incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.SPAM);
                 commentStatusKey = "commentServlet.submittedToModerator";
-
-                log.debug("Comment marked as spam, reasons: ");
-                if (spamEvaluations.size() > 0) {
-                    for (Map.Entry<String, List<String>> item : spamEvaluations.entrySet()) {
-                        log.debug(messageUtils.getString(item.getKey(), item.getValue() != null ?
-                                item.getValue().toArray() : null));
-                    }
-                } else {
-                    log.debug("None available.");
-                }
             }
 
             // test #4: verify correct commentStatusKey added
             incomingComment.setSubmitResponseMessage(messageUtils.getString(commentStatusKey));
 
             // Don't save spam if evaluated as blatant or if blog server configured to ignore all spam.
-            if (!ValidationResult.BLATANT_SPAM.equals(valResult) && (!WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus()) || !props.isAutodeleteSpam())) {
+            if (!ValidationResult.BLATANT_SPAM.equals(valResult) &&
+                    (!WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus())
+                            || !props.isAutodeleteSpam())) {
 
-                boolean noModerationNeeded = ownComment ||
-                        (!allCommentApprovalRequired && !WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus()));
+                // if spam, requires approval
+                commentRequiresApproval |= WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus());
 
                 // test #5: verify saveComment called/not called when expected
-                weblogEntryManager.saveComment(incomingComment, noModerationNeeded);
+                weblogEntryManager.saveComment(incomingComment, !commentRequiresApproval);
                 persistenceStrategy.flush();
 
                 // test #6: verify methods called as expected
-                if (noModerationNeeded) {
-                    mailManager.sendNewPublishedCommentNotification(incomingComment);
-                } else {
+                if (commentRequiresApproval) {
                     mailManager.sendPendingCommentNotice(incomingComment, spamEvaluations);
+                } else {
+                    mailManager.sendNewPublishedCommentNotification(incomingComment);
                 }
 
                 // only re-index/invalidate the cache if comment isn't moderated
                 // test #7: verify methods called as expected
-                if (!allCommentApprovalRequired) {
+                if (!commentRequiresApproval) {
 
                     // if published, index the entry
                     if (entry.isPublished() && indexManager.isIndexComments()) {
@@ -301,7 +288,6 @@ public class CommentProcessor extends AbstractProcessor {
                 incomingComment = new WeblogEntryComment();
                 incomingComment.initializeFormFields();
             }
-
         }
 
         // now send the user back to the entry page
@@ -313,6 +299,10 @@ public class CommentProcessor extends AbstractProcessor {
         dispatcher.forward(request, response);
     }
 
+    I18nMessages getI18nMessages(Locale locale) {
+        return I18nMessages.getMessages(locale);
+    }
+
     String validateComment(WeblogEntryComment incomingComment) {
         String errorProperty = null;
 
@@ -320,7 +310,8 @@ public class CommentProcessor extends AbstractProcessor {
             errorProperty = "error.commentPostContentMissing";
         } else if (StringUtils.isBlank(incomingComment.getName())) {
             errorProperty = "error.commentPostNameMissing";
-        } else if (StringUtils.isEmpty(incomingComment.getEmail()) || !incomingComment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
+        } else if (StringUtils.isEmpty(incomingComment.getEmail())
+                || !incomingComment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
             errorProperty = "error.commentPostFailedEmailAddress";
         } else if (StringUtils.isNotEmpty(incomingComment.getUrl()) &&
                 !new UrlValidator(new String[]{"http", "https"}).isValid(incomingComment.getUrl())) {
