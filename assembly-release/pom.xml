@@ -33,7 +33,7 @@
     <description>Assembles Roller into a distribution package</description>
 
     <!--
-         Check the README.txt in the Roller base folder for 
+         Check the README.md in the Roller base folder for
          information on creating the Roller distribution files.
     -->
     <build>
