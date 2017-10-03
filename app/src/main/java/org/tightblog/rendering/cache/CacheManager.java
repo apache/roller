@@ -49,7 +49,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * their cached data needs to be invalidated, and the CacheManager makes that
  * process easier.
  */
-public final class CacheManager {
+public class CacheManager {
 
     private static Logger log = LoggerFactory.getLogger(CacheManager.class);
 

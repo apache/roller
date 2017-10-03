@@ -30,6 +30,7 @@ import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
@@ -211,12 +212,10 @@ public class CommentProcessor extends AbstractProcessor {
 
         if (errorProperty != null) {
             // return error due to bad input
-            incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.INVALID);
+            incomingComment.setStatus(ApprovalStatus.INVALID);
             incomingComment.setSubmitResponseMessage(messageUtils.getString(errorProperty, errorValue));
         } else if (!incomingComment.isPreview()) {
             // Otherwise next check comment for spam
-            // test #1: determine nonSpamCommentApprovalRequired calculated properly
-            // test #2: those logged in with at least the POST role don't need comment moderation.
             boolean ownComment = userManager.checkWeblogRole(commentRequest.getAuthenticatedUser(), weblog.getHandle(),
                     WeblogRole.POST);
 
@@ -229,15 +228,14 @@ public class CommentProcessor extends AbstractProcessor {
 
             String commentStatusKey;
 
-            // test #3: check status, status key set as expected
             if (valResult == ValidationResult.NOT_SPAM) {
                 if (commentRequiresApproval) {
                     // Valid comments go into moderation if required
-                    incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
+                    incomingComment.setStatus(ApprovalStatus.PENDING);
                     commentStatusKey = "commentServlet.submittedToModerator";
                 } else {
                     // else they're approved
-                    incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
+                    incomingComment.setStatus(ApprovalStatus.APPROVED);
                     commentStatusKey = "commentServlet.commentAccepted";
                 }
             } else {
@@ -245,55 +243,45 @@ public class CommentProcessor extends AbstractProcessor {
                 // Informing the spammer the reasons for its detection encourages the spammer to modify
                 // the spam message so it will pass through; also indicating that the message is subject
                 // to moderation (and sure refusal) discourages future spamming attempts.
-                incomingComment.setStatus(WeblogEntryComment.ApprovalStatus.SPAM);
+                incomingComment.setStatus(ApprovalStatus.SPAM);
                 commentStatusKey = "commentServlet.submittedToModerator";
             }
 
-            // test #4: verify correct commentStatusKey added
             incomingComment.setSubmitResponseMessage(messageUtils.getString(commentStatusKey));
 
             // Don't save spam if evaluated as blatant or if blog server configured to ignore all spam.
             if (!ValidationResult.BLATANT_SPAM.equals(valResult) &&
-                    (!WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus())
+                    (!ApprovalStatus.SPAM.equals(incomingComment.getStatus())
                             || !props.isAutodeleteSpam())) {
 
                 // if spam, requires approval
-                commentRequiresApproval |= WeblogEntryComment.ApprovalStatus.SPAM.equals(incomingComment.getStatus());
+                commentRequiresApproval |= ApprovalStatus.SPAM.equals(incomingComment.getStatus());
 
-                // test #5: verify saveComment called/not called when expected
                 weblogEntryManager.saveComment(incomingComment, !commentRequiresApproval);
                 persistenceStrategy.flush();
 
-                // test #6: verify methods called as expected
                 if (commentRequiresApproval) {
                     mailManager.sendPendingCommentNotice(incomingComment, spamEvaluations);
                 } else {
                     mailManager.sendNewPublishedCommentNotification(incomingComment);
-                }
 
-                // only re-index/invalidate the cache if comment isn't moderated
-                // test #7: verify methods called as expected
-                if (!commentRequiresApproval) {
-
-                    // if published, index the entry
-                    if (entry.isPublished() && indexManager.isIndexComments()) {
+                    if (indexManager.isIndexComments()) {
                         indexManager.updateIndex(entry, false);
                     }
 
                     // Clear all caches associated with comment
                     cacheManager.invalidate(incomingComment);
                 }
-
-                // comment was saved to the DB, clear the comment form
-                incomingComment = new WeblogEntryComment();
-                incomingComment.initializeFormFields();
             }
+
+            // clear the comment form
+            incomingComment = new WeblogEntryComment();
+            incomingComment.initializeFormFields();
         }
 
         // now send the user back to the entry page
         // provide comment to PageProcessor so latter can place it in the PageModel for rendering
         log.debug("comment processed, forwarding to {}", dispatchUrl);
-        // test #8: verify comment form returned
         request.setAttribute("commentForm", incomingComment);
         RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
         dispatcher.forward(request, response);
