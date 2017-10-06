@@ -28,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents a request for a TightBlog weblog page
@@ -51,7 +49,6 @@ public class WeblogPageRequest extends WeblogRequest {
     private int pageNum = 0;
     // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
     private boolean noIndex = false;
-    private Map<String, String[]> customParams = new HashMap<>();
 
     // heavyweight attributes
     protected Template template = null;
@@ -205,16 +202,6 @@ public class WeblogPageRequest extends WeblogRequest {
             }
         }
 
-        // build customParams Map, we remove built-in params because we only
-        // want this map to represent params defined by the template author
-        customParams = new HashMap<>(request.getParameterMap());
-        customParams.remove("entry");
-        customParams.remove("anchor");
-        customParams.remove("date");
-        customParams.remove("cat");
-        customParams.remove("page");
-        customParams.remove("tag");
-
         if (log.isDebugEnabled()) {
             log.debug("context = " + context);
             log.debug("weblogEntryAnchor = " + weblogEntryAnchor);
@@ -258,10 +245,6 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public int getPageNum() {
         return pageNum;
-    }
-
-    public Map<String, String[]> getCustomParams() {
-        return customParams;
     }
 
     public String getTag() {

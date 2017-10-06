@@ -36,7 +36,7 @@ import org.springframework.mobile.device.DeviceType;
  * rendering technology.  This allows us to provide easily pluggable rendering
  * implementations.
  */
-public final class RendererManager {
+public class RendererManager {
 
     // a set of all renderer factories we are consulting
     private Set<RendererFactory> rendererFactories = new HashSet<>();
