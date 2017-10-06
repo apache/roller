@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AbstractProcessor implements ApplicationContextAware {
+public abstract class AbstractProcessor implements ApplicationContextAware {
 
     private ApplicationContext appContext;
 

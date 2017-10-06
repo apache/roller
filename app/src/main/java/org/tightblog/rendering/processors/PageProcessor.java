@@ -23,7 +23,6 @@ package org.tightblog.rendering.processors;
 import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
@@ -33,7 +32,6 @@ import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.rendering.Renderer;
 import org.tightblog.rendering.RendererManager;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.util.Blacklist;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -46,12 +44,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.HashMap;
@@ -131,19 +126,6 @@ public class PageProcessor extends AbstractProcessor {
         cacheLoggedInPages = boolVal;
     }
 
-    // use site & weblog blacklists to check incoming referrers, returning a 403 if a match.
-    private boolean processReferrers = false;
-
-    @Autowired(required = false)
-    public void setProcessReferrers(@Qualifier("site.blacklist.check.referrers") boolean boolVal) {
-        processReferrers = boolVal;
-    }
-
-    @PostConstruct
-    public void init() {
-        log.debug("PageProcessor: Referrer spam check enabled = {}", this.processReferrers);
-    }
-
     /**
      * Handle GET requests for weblog pages.
      */
@@ -163,18 +145,6 @@ public class PageProcessor extends AbstractProcessor {
 
             // is this the site-wide weblog?
             isSiteWide = themeManager.getSharedTheme(pageRequest.getWeblog().getTheme()).isSiteWide();
-
-            if (this.processReferrers && !isSiteWide) {
-                boolean spam = processReferrer(request, pageRequest);
-                if (spam) {
-                    log.debug("evaluated to be a spammer, returning a 403");
-                    if (!response.isCommitted()) {
-                        response.reset();
-                    }
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return;
-                }
-            }
 
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
@@ -448,151 +418,49 @@ public class PageProcessor extends AbstractProcessor {
     }
 
     /**
-     * Process the incoming request to extract referrer info and pass it on to
-     * the referrer processing queue for tracking.
-     *
-     * @return true if referrer was spam, false otherwise
-     */
-    private boolean processReferrer(HttpServletRequest request, WeblogPageRequest pageRequest) {
-        log.debug("processing referrer for {}", request.getRequestURI());
-
-        String referrerUrl = request.getHeader("Referer");
-        StringBuffer reqsb = request.getRequestURL();
-        if (request.getQueryString() != null) {
-            reqsb.append("?");
-            reqsb.append(request.getQueryString());
-        }
-        String requestUrl = reqsb.toString();
-        log.debug("referrer = {}", referrerUrl);
-
-        // if this came from persons own blog then don't process it
-        String selfSiteFragment = "/" + pageRequest.getWeblogHandle();
-        if (referrerUrl != null && referrerUrl.contains(selfSiteFragment)) {
-            log.debug("skipping referrer from own blog");
-            return false;
-        }
-
-        // Base page URLs, with and without www.
-        String basePageUrlWWW = WebloggerStaticConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
-        String basePageUrl = basePageUrlWWW;
-        if (basePageUrlWWW.startsWith("http://www.")) {
-            // chop off the http://www.
-            basePageUrl = "http://" + basePageUrlWWW.substring(11);
-        }
-
-        // ignore referrers coming from users own blog
-        if (referrerUrl != null && !referrerUrl.startsWith(basePageUrl) && !referrerUrl.startsWith(basePageUrlWWW)) {
-
-            // treat editor referral as direct
-            int lastSlash = requestUrl.indexOf('/', 8);
-            if (lastSlash == -1) {
-                lastSlash = requestUrl.length();
-            }
-            String requestSite = requestUrl.substring(0, lastSlash);
-
-            Blacklist testBlacklist = weblogManager.getWeblogBlacklist(pageRequest.getWeblog());
-
-            if (!referrerUrl.matches(requestSite + ".*\\.tb-ui.*") &&
-                    testBlacklist.isBlacklisted(referrerUrl)) {
-                return true;
-            }
-        } else {
-            log.debug("Ignoring referer = {}", referrerUrl);
-            return false;
-        }
-
-        return false;
-    }
-
-    /**
      * Generate a cache key from a parsed weblog page request.
-     * This generates a key of the form ...
-     * <p>
-     * <handle>/<ctx>[/anchor][/user]
-     * or
-     * <handle>/<ctx>[/template][/date][/category][/user]
-     * <p>
-     * Examples:
-     * foo
-     * foo/entry_anchor
-     * foo/20051110
-     * foo/MyCategory/user=myname
      */
-    protected String generateKey(WeblogPageRequest pageRequest) {
-
+    String generateKey(WeblogPageRequest request) {
         StringBuilder key = new StringBuilder();
 
         key.append("weblogpage.key").append(":");
-        key.append(pageRequest.getWeblogHandle());
+        key.append(request.getWeblogHandle());
 
-        if (pageRequest.getWeblogEntryAnchor() != null) {
-            String anchor = null;
-            try {
-                // may contain spaces or other bad chars
-                anchor = URLEncoder.encode(pageRequest.getWeblogEntryAnchor(), "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                // ignored
-            }
-
-            key.append("/entry/").append(anchor);
+        if (request.getWeblogEntryAnchor() != null) {
+            key.append("/entry/").append(request.getWeblogEntryAnchor());
         } else {
-
-            if (pageRequest.getWeblogTemplateName() != null) {
-                key.append("/page/").append(pageRequest.getWeblogTemplateName());
+            if (request.getWeblogTemplateName() != null) {
+                key.append("/page/").append(request.getWeblogTemplateName());
             }
 
-            if (pageRequest.getWeblogDate() != null) {
-                key.append("/").append(pageRequest.getWeblogDate());
+            if (request.getWeblogDate() != null) {
+                key.append("/date/").append(request.getWeblogDate());
             }
 
-            if (pageRequest.getWeblogCategoryName() != null) {
-                String cat = pageRequest.getWeblogCategoryName();
+            if (request.getWeblogCategoryName() != null) {
+                String cat = request.getWeblogCategoryName();
                 cat = Utilities.encode(cat);
                 key.append("/cat/").append(cat);
             }
 
-            if (pageRequest.getTag() != null) {
-                String tag = pageRequest.getTag();
+            if (request.getTag() != null) {
+                String tag = request.getTag();
                 tag = Utilities.encode(tag);
                 key.append("/tag/").append(tag);
             }
-        }
 
-        // add page number when applicable
-        if (pageRequest.getWeblogEntryAnchor() == null) {
-            key.append("/page=").append(pageRequest.getPageNum());
+            if (request.getPageNum() > 0) {
+                key.append("/page=").append(request.getPageNum());
+            }
         }
 
         // add login state
-        if (pageRequest.getAuthenticatedUser() != null) {
-            key.append("/user=").append(pageRequest.getAuthenticatedUser());
+        if (request.getAuthenticatedUser() != null) {
+            key.append("/user=").append(request.getAuthenticatedUser());
         }
 
-        key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
-
-        // we allow for arbitrary query params for custom pages
-        if (pageRequest.getWeblogTemplateName() != null &&
-                pageRequest.getCustomParams().size() > 0) {
-            String queryString = paramsToString(pageRequest.getCustomParams());
-
-            key.append("/qp=").append(queryString);
-        }
+        key.append("/deviceType=").append(request.getDeviceType().toString());
 
         return key.toString();
     }
-
-    private String paramsToString(Map<String, String[]> map) {
-        if (map == null) {
-            return null;
-        }
-
-        StringBuilder string = new StringBuilder();
-        for (Map.Entry<String, String[]> entry : map.entrySet()) {
-            if (entry.getKey() != null) {
-                string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
-            }
-        }
-        return Utilities.toBase64(string.toString().substring(1).getBytes());
-    }
-
 }
