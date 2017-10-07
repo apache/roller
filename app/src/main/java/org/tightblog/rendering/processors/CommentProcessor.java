@@ -26,6 +26,7 @@ import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.JPAPersistenceStrategy;
+import org.tightblog.business.WeblogManager;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -120,6 +121,13 @@ public class CommentProcessor extends AbstractProcessor {
     }
 
     @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
@@ -169,38 +177,42 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        WeblogPageRequest commentRequest = weblogPageRequestCreator.create(request);
+        WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
-        Weblog weblog = commentRequest.getWeblog();
+        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
         if (weblog == null) {
             log.info("Commenter attempted to leave comment for weblog with unknown handle: {}, returning 404",
-                    commentRequest.getWeblogHandle());
+                    incomingRequest.getWeblogHandle());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        } else {
+            incomingRequest.setWeblog(weblog);
         }
 
-        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, commentRequest.getWeblogEntryAnchor());
-        if (entry == null) {
-            log.info("Commenter attempted to leave comment for weblog {}'s entry with unknown anchor: {}, returning 404",
-                    commentRequest.getWeblogHandle(), commentRequest.getWeblogEntryAnchor());
+        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
+        if (entry == null || !entry.isPublished()) {
+            log.info("Commenter attempted to leave comment for weblog {}'s entry with unknown or unpublished anchor: {}, returning 404",
+                    incomingRequest.getWeblogHandle(), incomingRequest.getWeblogEntryAnchor());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        } else {
+            incomingRequest.setWeblogEntry(entry);
         }
 
         // At this stage, CommentProcessor forwards to the PageProcessor with the comment processing results
         String dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle() + "/entry/"
-                + Utilities.encode(entry.getAnchor());
+                + Utilities.encode(incomingRequest.getWeblogEntry().getAnchor());
 
         I18nMessages messageUtils = getI18nMessages(weblog.getLocaleInstance());
 
-        WeblogEntryComment incomingComment = createCommentFromRequest(request, entry, props.getCommentHtmlPolicy());
+        WeblogEntryComment incomingComment = createCommentFromRequest(request, incomingRequest.getWeblogEntry(), props.getCommentHtmlPolicy());
         log.debug("Incoming comment: {}", incomingComment.toString());
 
         // First check comment for valid and authorized input
         String errorProperty;
         String errorValue = null;
 
-        if (!weblogEntryManager.canSubmitNewComments(entry) || !entry.isPublished()) {
+        if (!weblogEntryManager.canSubmitNewComments(incomingRequest.getWeblogEntry())) {
             errorProperty = "comments.disabled";
         } else if (!incomingComment.isPreview() && commentAuthenticator != null
                 && !commentAuthenticator.authenticate(request)) {
@@ -216,7 +228,7 @@ public class CommentProcessor extends AbstractProcessor {
             incomingComment.setSubmitResponseMessage(messageUtils.getString(errorProperty, errorValue));
         } else if (!incomingComment.isPreview()) {
             // Otherwise next check comment for spam
-            boolean ownComment = userManager.checkWeblogRole(commentRequest.getAuthenticatedUser(), weblog.getHandle(),
+            boolean ownComment = userManager.checkWeblogRole(incomingRequest.getAuthenticatedUser(), weblog.getHandle(),
                     WeblogRole.POST);
 
             boolean commentRequiresApproval = !ownComment && (CommentPolicy.MUSTMODERATE.equals(commentOption) ||
@@ -266,7 +278,7 @@ public class CommentProcessor extends AbstractProcessor {
                     mailManager.sendNewPublishedCommentNotification(incomingComment);
 
                     if (indexManager.isIndexComments()) {
-                        indexManager.updateIndex(entry, false);
+                        indexManager.updateIndex(incomingRequest.getWeblogEntry(), false);
                     }
 
                     // Clear all caches associated with comment

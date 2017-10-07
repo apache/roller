@@ -208,10 +208,13 @@ public class URLStrategyImpl implements URLStrategy {
 
         if (category != null && dateString == null) {
             pathinfo += "category/" + Utilities.encodePath(category);
+            if (tag != null) {
+                pathinfo += "tag/" + Utilities.encodePath(tag);
+            }
         } else if (dateString != null && category == null) {
             pathinfo += "date/" + dateString;
         } else if (tag != null) {
-            pathinfo += "tags/" + Utilities.encodePath(tag);
+            pathinfo += "tag/" + Utilities.encodePath(tag);
         } else {
             if (dateString != null) {
                 params.put("date", dateString);

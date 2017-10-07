@@ -107,9 +107,11 @@ public class FeedProcessor extends AbstractProcessor {
             // parse the incoming request and extract the relevant data
             feedRequest = new WeblogFeedRequest(request);
 
-            weblog = feedRequest.getWeblog();
+            weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);
             if (weblog == null) {
                 throw new IllegalStateException("unable to lookup weblog: " + feedRequest.getWeblogHandle());
+            } else {
+                feedRequest.setWeblog(weblog);
             }
 
             // Is this the site-wide weblog? If so, make a combined feed using all blogs...

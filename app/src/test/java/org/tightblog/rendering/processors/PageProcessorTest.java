@@ -1,7 +1,7 @@
 package org.tightblog.rendering.processors;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mobile.device.DeviceType;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
@@ -38,8 +38,8 @@ public class PageProcessorTest {
     private RendererManager mockRendererManager;
     private ThemeManager mockThemeManager;
 
-    @Before
-    public void initializePerTest() {
+    // not done as a @before as not all tests need these mocks
+    private void initializeMocks() {
         mockRequest = mock(HttpServletRequest.class);
         mockResponse = mock(HttpServletResponse.class);
         mockRequestDispatcher = mock(RequestDispatcher.class);
@@ -51,6 +51,7 @@ public class PageProcessorTest {
         when(wprCreator.create(any())).thenReturn(pageRequest);
         mockWEM = mock(WeblogEntryManager.class);
         processor = new PageProcessor();
+        processor.setWeblogPageRequestCreator(wprCreator);
         processor.setWeblogEntryManager(mockWEM);
 
         mockCache = mock(LazyExpiringCache.class);
@@ -67,5 +68,27 @@ public class PageProcessorTest {
 
     @Test
     public void testGenerateKey() {
+        WeblogPageRequest request = mock(WeblogPageRequest.class);
+        when(request.getWeblogHandle()).thenReturn("bobsblog");
+        when(request.getWeblogEntryAnchor()).thenReturn("neatoentry");
+        when(request.getAuthenticatedUser()).thenReturn("bob");
+        when(request.getDeviceType()).thenReturn(DeviceType.TABLET);
+
+        String test1 = PageProcessor.generateKey(request);
+        assertEquals("weblogpage.key:bobsblog/entry/neatoentry/user=bob/deviceType=TABLET", test1);
+
+        when(request.getWeblogEntryAnchor()).thenReturn(null);
+        when(request.getAuthenticatedUser()).thenReturn(null);
+        when(request.getDeviceType()).thenReturn(DeviceType.MOBILE);
+        when(request.getWeblogTemplateName()).thenReturn("mytemplate");
+        when(request.getWeblogDate()).thenReturn("20171006");
+        when(request.getWeblogCategoryName()).thenReturn("finance");
+        when(request.getTag()).thenReturn("taxes");
+        when(request.getPageNum()).thenReturn(5);
+
+        test1 = PageProcessor.generateKey(request);
+        assertEquals("weblogpage.key:bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
+                "taxes/page=5/deviceType=MOBILE", test1);
     }
+
 }

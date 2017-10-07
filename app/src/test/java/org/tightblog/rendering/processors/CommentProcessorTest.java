@@ -23,6 +23,7 @@ import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
+import org.tightblog.business.WeblogManager;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -67,6 +68,7 @@ public class CommentProcessorTest {
     private WeblogPageRequest.Creator wprCreator;
     private WeblogPageRequest commentRequest;
     private I18nMessages mockMessageUtils;
+    private WeblogManager mockWM;
     private WeblogEntryManager mockWEM;
 
     @Before
@@ -82,10 +84,12 @@ public class CommentProcessorTest {
         wprCreator = mock(WeblogPageRequest.Creator.class);
         commentRequest = new WeblogPageRequest();
         when(wprCreator.create(any())).thenReturn(commentRequest);
+        mockWM = mock(WeblogManager.class);
         mockWEM = mock(WeblogEntryManager.class);
         processor = new CommentProcessor();
         processor.setPersistenceStrategy(mockJPA);
         processor.setWeblogPageRequestCreator(wprCreator);
+        processor.setWeblogManager(mockWM);
         processor.setWeblogEntryManager(mockWEM);
         mockMessageUtils = mock(I18nMessages.class);
     }
@@ -113,12 +117,19 @@ public class CommentProcessorTest {
     }
 
     @Test
-    public void postCommentReturn404IfWeblogEntryNotFound() {
-        commentRequest.setWeblog(new Weblog());
+    public void postCommentReturn404IfWeblogEntryUnavailable() {
+        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(new Weblog());
 
         try {
+            // entry null
             processor.postComment(mockRequest, mockResponse);
-            verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
+
+            // entry available but not published
+            WeblogEntry entry = new WeblogEntry();
+            entry.setStatus(WeblogEntry.PubStatus.DRAFT);
+            when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
+            processor.postComment(mockRequest, mockResponse);
+            verify(mockResponse, times(2)).sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (IOException | ServletException e) {
             fail();
         }
@@ -135,7 +146,9 @@ public class CommentProcessorTest {
 
         WeblogEntry entry = new WeblogEntry();
         entry.setAnchor("myblogentry");
+        entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
 
+        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
 
         WeblogEntryComment incomingComment = new WeblogEntryComment();
@@ -146,15 +159,10 @@ public class CommentProcessorTest {
         try {
             // will return disabled if comments not allowed
             when(mockWEM.canSubmitNewComments(entry)).thenReturn(false);
-            entry.setStatus(WeblogEntry.PubStatus.DRAFT);
             verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
 
-            // will still show disabled if comments allowed but entry not published
+            // comments allowed, but will show auth error if latter failed
             when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
-            verifyForwardDueToValidationError(incomingComment, "comments.disabled", null);
-
-            // both published and comments allowed, will show auth error if latter failed
-            entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
             incomingComment.setPreview(false);
             when(mockRequest.getParameter("answer")).thenReturn("123");
 
@@ -194,10 +202,7 @@ public class CommentProcessorTest {
         processor = Mockito.spy(processor);
 
         // setup to ensure comment is at least valid so spam check can start
-        Weblog weblog = new Weblog();
-        weblog.setLocale("en");
-        weblog.setHandle("myhandle");
-        commentRequest.setWeblog(weblog);
+        commentRequest.setWeblogHandle("myhandle");
 
         WeblogEntry entry = new WeblogEntry();
         entry.setAnchor("myblogentry");
@@ -207,6 +212,10 @@ public class CommentProcessorTest {
         when(mockAuthenticator.authenticate(mockRequest)).thenReturn(true);
         processor.setCommentAuthenticator(mockAuthenticator);
 
+        Weblog weblog = new Weblog();
+        weblog.setLocale("en");
+        weblog.setHandle("myhandle");
+        when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(weblog);
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
         when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
 

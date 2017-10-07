@@ -39,7 +39,6 @@ import org.tightblog.rendering.cache.SiteWideCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -113,45 +112,38 @@ public class PageProcessor extends AbstractProcessor {
         this.themeManager = themeManager;
     }
 
-    // Weblog pages shown to logged-in users are frequently different from unauthed readers (e.g., have
-    // different left-side menus allowing for blog administration) so need to be cached additionally.
-    // Set cacheLoggedInPages to "false" to not cache these pages.  Recommended to keep true,
-    // but false can be useful when debugging templates and want to trace the page rendering instead
-    // of just retrieving the page from the cache, or if it is otherwise undesired to have logged-in
-    // pages consuming any part of the WeblogPageCache.
-    private boolean cacheLoggedInPages = true;
+    private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    @Autowired(required = false)
-    public void setCacheLoggedInPages(@Qualifier("cache.cacheLoggedInPages") boolean boolVal) {
-        cacheLoggedInPages = boolVal;
+    public PageProcessor() {
+        this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+    }
+
+    public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
+        this.weblogPageRequestCreator = creator;
     }
 
     /**
-     * Handle GET requests for weblog pages.
+     * Handle requests for weblog pages. GETs are for standard read-only retrieval of blog pages,
+     * POSTs are for handling responses from the CommentProcessor, those will have a commentForm
+     * attribute that translates to a WeblogEntryComment instance containing the comment.
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public void getPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Weblog weblog;
         boolean isSiteWide;
 
-        WeblogPageRequest pageRequest;
-        try {
-            pageRequest = new WeblogPageRequest(request);
+        WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
-            weblog = pageRequest.getWeblog();
-            if (weblog == null) {
-                throw new IllegalStateException("unable to lookup weblog: " + pageRequest.getWeblogHandle());
-            }
-
-            // is this the site-wide weblog?
-            isSiteWide = themeManager.getSharedTheme(pageRequest.getWeblog().getTheme()).isSiteWide();
-
-        } catch (Exception e) {
-            // some kind of error parsing the request or looking up weblog
-            log.debug("error creating page request", e);
+        weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        } else {
+            incomingRequest.setWeblog(weblog);
         }
+
+        // is this the site-wide weblog?
+        isSiteWide = themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide();
 
         // determine the lastModified date for this content
         long lastModified = Clock.systemDefaultZone().millis();
@@ -164,24 +156,22 @@ public class PageProcessor extends AbstractProcessor {
         // 304 Not Modified handling.
         // We skip this for logged in users to avoid the scenario where a user
         // views their weblog, logs in, then gets a 304 without the 'edit' links
-        if (!pageRequest.isLoggedIn()) {
-            if (Utilities.respondIfNotModified(request, response, lastModified, pageRequest.getDeviceType())) {
+        if (!incomingRequest.isLoggedIn()) {
+            if (Utilities.respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
                 return;
             } else {
                 // set last-modified date
-                Utilities.setLastModifiedHeader(response, lastModified, pageRequest.getDeviceType());
+                Utilities.setLastModifiedHeader(response, lastModified, incomingRequest.getDeviceType());
             }
         }
 
         // generate cache key
-        String cacheKey = generateKey(pageRequest);
+        String cacheKey = generateKey(incomingRequest);
 
-        // cached content checking, bypass cache if a comment form is present
-        // i.e., request came from CommentProcessor and comment submission feedback/preview,
-        // etc. is needed.
+        // Check cache for content except during comment feedback/preview (i.e., commentForm present)
         WeblogEntryComment commentForm = (WeblogEntryComment) request.getAttribute("commentForm");
 
-        if (commentForm == null && (cacheLoggedInPages || !pageRequest.isLoggedIn())) {
+        if (commentForm == null) {
 
             CachedContent cachedContent;
             if (isSiteWide) {
@@ -194,8 +184,8 @@ public class PageProcessor extends AbstractProcessor {
                 log.debug("HIT {}", cacheKey);
 
                 // allow for hit counting
-                if (!isSiteWide && pageRequest.isWeblogPageHit()) {
-                    this.processHit(weblog);
+                if (!isSiteWide && incomingRequest.isWeblogPageHit()) {
+                    weblogManager.incrementHitCount(weblog);
                 }
 
                 response.setContentLength(cachedContent.getContent().length);
@@ -207,117 +197,71 @@ public class PageProcessor extends AbstractProcessor {
             }
         }
 
-        log.debug("Looking for template to use for rendering");
+        boolean invalid = false;
 
         // figure out what template to use
-        Template page = null;
+        if ("page".equals(incomingRequest.getContext())) {
+            Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
 
-        if ("page".equals(pageRequest.getContext())) {
-            page = pageRequest.getWeblogTemplate();
+            // block internal custom pages from appearance
+            if (!StringUtils.isEmpty(template.getRelativePath())) {
+                incomingRequest.setTemplate(template);
+            }
+        } else {
+            if (incomingRequest.getWeblogEntryAnchor() != null) {
+                WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
 
-            // if we don't have this page then 404, we don't let
-            // this one fall through to the default template
-            if (page == null) {
-                if (!response.isCommitted()) {
-                    response.reset();
+                if (entry == null || !entry.isPublished() || Instant.now().isBefore(entry.getPubTime())) {
+                    invalid = true;
+                } else {
+                    incomingRequest.setWeblogEntry(entry);
+                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.PERMALINK));
                 }
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
+            } else if ("tag".equals(incomingRequest.getContext()) && incomingRequest.getTag() != null) {
+                if (!weblogManager.getTagExists((isSiteWide) ? null : weblog, incomingRequest.getTag())) {
+                    invalid = true;
+                } else {
+                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.TAGSINDEX));
+                }
             }
 
-        // If request specified tags section index, then look for custom template
-        } else if ("tags".equals(pageRequest.getContext()) && pageRequest.getTag() != null) {
-            try {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.TAGSINDEX);
-            } catch (Exception e) {
-                log.error("Error getting weblog page for action 'tagsIndex'", e);
+            if (incomingRequest.getWeblogCategoryName() != null) {
+                // category must exist if specified
+                WeblogCategory test = weblogManager.getWeblogCategoryByName(incomingRequest.getWeblog(),
+                        incomingRequest.getWeblogCategoryName());
+                if (test == null) {
+                    invalid = true;
+                }
             }
 
-        // If this is a permalink then look for a permalink template
-        } else if (pageRequest.getWeblogEntryAnchor() != null) {
-            try {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.PERMALINK);
-            } catch (Exception e) {
-                log.error("Error getting weblog page for action 'permalink'", e);
-            }
-        }
-
-        // if we haven't found a page yet then try our default page
-        if (page == null) {
-            try {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
-            } catch (Exception e) {
-                log.error("Error getting default page for weblog = {}", weblog.getHandle(), e);
+            // if valid but we haven't found a template yet then try our default page
+            if (!invalid && incomingRequest.getTemplate() == null) {
+                incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG));
             }
         }
 
-        // Still no page? Then that is a 404
-        if (page == null) {
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
-        log.debug("page found, dealing with it");
-
-        // validation. make sure that request input makes sense.
-        boolean invalid = false;
-        if (pageRequest.getWeblogTemplateName() != null && StringUtils.isEmpty(page.getRelativePath())) {
-            invalid = true;
-        }
-        if (pageRequest.getWeblogEntryAnchor() != null) {
-
-            // permalink specified.
-            // entry must exist and be published before current time
-            WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogEntryAnchor());
-
-            if (entry == null) {
-                invalid = true;
-            } else if (!entry.isPublished()) {
-                invalid = true;
-            } else if (Instant.now().isBefore(entry.getPubTime())) {
-                invalid = true;
-            }
-        } else if (pageRequest.getWeblogCategoryName() != null) {
-            // category specified. category must exist.
-            WeblogCategory test = weblogManager.getWeblogCategoryByName(pageRequest.getWeblog(),
-                    pageRequest.getWeblogCategoryName());
-            if (test == null) {
-                invalid = true;
-            }
-        } else if (pageRequest.getTag() != null) {
-            // tags specified. make sure they exist.
-            invalid = !weblogManager.getTagExists((isSiteWide) ? null : weblog, pageRequest.getTag());
-        }
-
-        if (invalid) {
-            log.debug("page failed validation, bailing out");
-            if (!response.isCommitted()) {
-                response.reset();
-            }
+        if (invalid || incomingRequest.getTemplate() == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
         // allow for hit counting
-        if (!isSiteWide && pageRequest.isWeblogPageHit()) {
-            this.processHit(weblog);
+        if (!isSiteWide && incomingRequest.isWeblogPageHit()) {
+            weblogManager.incrementHitCount(weblog);
         }
 
         // looks like we need to render content
-        String contentType = page.getRole().getContentType() + "; charset=utf-8";
+        String contentType = incomingRequest.getTemplate().getRole().getContentType() + "; charset=utf-8";
 
         Map<String, Object> model;
 
         // special hack for menu tag
-        request.setAttribute("pageRequest", pageRequest);
+        request.setAttribute("pageRequest", incomingRequest);
 
         // populate the rendering model
         Map<String, Object> initData = new HashMap<>();
         initData.put("requestParameters", request.getParameterMap());
-        initData.put("parsedRequest", pageRequest);
+        initData.put("parsedRequest", incomingRequest);
 
         // if this GET is for a comment preview, store the comment form
         if (commentForm != null) {
@@ -335,14 +279,11 @@ public class PageProcessor extends AbstractProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page, pageRequest.getDeviceType());
+            renderer = rendererManager.getRenderer(incomingRequest.getTemplate(), incomingRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(
-            log.error("Couldn't find renderer for page {}", page.getId(), e);
+            log.error("Couldn't find renderer for page {}", incomingRequest.getTemplate().getId(), e);
 
-            if (!response.isCommitted()) {
-                response.reset();
-            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -358,12 +299,7 @@ public class PageProcessor extends AbstractProcessor {
             rendererOutput.flush();
             rendererOutput.close();
         } catch (Exception e) {
-            // bummer, error during rendering
-            log.error("Error during rendering for page {}", page.getId(), e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
+            log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -375,8 +311,8 @@ public class PageProcessor extends AbstractProcessor {
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
 
-        // cache rendered content. only cache if user is not logged in?
-        if ((cacheLoggedInPages || !pageRequest.isLoggedIn()) && request.getAttribute("skipCache") == null) {
+        // Cache rendered content (providing not during comment handling)
+        if (commentForm == null) {
             log.debug("PUT {}", cacheKey);
 
             // put it in the right cache
@@ -388,39 +324,12 @@ public class PageProcessor extends AbstractProcessor {
         } else {
             log.debug("SKIPPED {}", cacheKey);
         }
-
-        log.debug("Exiting");
-    }
-
-    /**
-     * Handle POST requests.
-     * <p>
-     * We have this here because the comment servlet actually forwards some of
-     * its requests on to us to render some pages with custom messaging. We may
-     * want to revisit this approach in the future and see if we can do this in
-     * a different way, but for now this is the easy way.
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public void getPageViaPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        // make sure caching is disabled
-        request.setAttribute("skipCache", "true");
-
-        // handle just like a GET request
-        this.getPage(request, response);
-    }
-
-    /**
-     * Notify the hit tracker that it has an incoming page hit.
-     */
-    private void processHit(Weblog weblog) {
-        weblogManager.incrementHitCount(weblog);
     }
 
     /**
      * Generate a cache key from a parsed weblog page request.
      */
-    String generateKey(WeblogPageRequest request) {
+    static String generateKey(WeblogPageRequest request) {
         StringBuilder key = new StringBuilder();
 
         key.append("weblogpage.key").append(":");

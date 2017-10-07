@@ -81,7 +81,7 @@ public class SiteModel implements Model {
             throw new IllegalStateException("Missing WeblogPageRequest object");
         }
 
-        Template weblogPage = pageRequest.getWeblogTemplate();
+        Template weblogPage = pageRequest.getTemplate();
         pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
     }
 
