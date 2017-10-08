@@ -359,13 +359,6 @@ limitations under the License.
 
         <dependency>
             <groupId>com.rometools</groupId>
-            <artifactId>rome-fetcher</artifactId>
-            <version>${rome.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.rometools</groupId>
             <artifactId>rome-propono</artifactId>
             <version>${rome.version}</version>
             <scope>compile</scope>
@@ -534,7 +527,7 @@ limitations under the License.
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
@@ -703,7 +696,7 @@ limitations under the License.
             </resource>
             <resource>
                 <!-- ensure version gets substitution -->
-                <directory>${project.basedir}/src/main/resources</directory>
+                <directory>${project.basedir}/src/main/resources-filtered</directory>
                 <filtering>true</filtering>
                 <includes>
                     <include>roller-version.properties</include>
