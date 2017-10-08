@@ -161,9 +161,9 @@ public class RequestMappingFilter implements Filter {
             }
             response.sendRedirect(redirectUrl);
             return true;
-        } else if (weblogRequestContext != null && "tags".equals(weblogRequestContext)) {
-            // tags section can have an index page at /<weblog>/tags/ and
-            // a tags query at /<weblog>/tags/tagToSearch, but that's it
+        } else if (weblogRequestContext != null && "tag".equals(weblogRequestContext)) {
+            // tags section can have an index page at /<weblog>/tag/ and
+            // a tag query at /<weblog>/tag/tagToSearch, but that's it
             if ((weblogRequestData == null && !trailingSlash) ||
                     (weblogRequestData != null && trailingSlash)) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -208,7 +208,7 @@ public class RequestMappingFilter implements Filter {
         } else {
             // no context means weblog homepage
             if (context == null || context.equals("page") || context.equals("entry") ||
-                    context.equals("date") || context.equals("category") || context.equals("tags")) {
+                    context.equals("date") || context.equals("category") || context.equals("tag")) {
                 forwardUrl = generateForwardUrl(PageProcessor.PATH, handle, context, data);
             } else if (context.equals("feed")) {
                 forwardUrl = generateForwardUrl(FeedProcessor.PATH, handle, null, data);

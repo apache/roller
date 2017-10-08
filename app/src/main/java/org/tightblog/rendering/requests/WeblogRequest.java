@@ -22,7 +22,6 @@ package org.tightblog.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.tightblog.business.WebloggerContext;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.util.Utilities;
 import org.springframework.mobile.device.DeviceType;
@@ -62,7 +61,7 @@ public class WeblogRequest {
     private String authenticatedUser = null;
     private DeviceType deviceType = DeviceType.NORMAL;
 
-    // heavyweight attributes
+    // heavyweight attributes populated by processors
     private Weblog weblog = null;
 
     public WeblogRequest() {
@@ -129,12 +128,6 @@ public class WeblogRequest {
     }
 
     public Weblog getWeblog() {
-        if (weblog == null && weblogHandle != null) {
-            weblog = WebloggerContext.getWeblogger().getWeblogManager().getWeblogByHandle(weblogHandle, true);
-            if (weblog == null) {
-                throw new IllegalStateException("Unknown Weblog: " + weblogHandle);
-            }
-        }
         return weblog;
     }
 

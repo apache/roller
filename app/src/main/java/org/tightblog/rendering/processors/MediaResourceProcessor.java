@@ -21,6 +21,7 @@
 package org.tightblog.rendering.processors;
 
 import org.tightblog.business.MediaFileManager;
+import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.requests.WeblogRequest;
@@ -54,6 +55,13 @@ public class MediaResourceProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/media-resources";
 
     @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    @Autowired
     private MediaFileManager mediaFileManager;
 
     public void setMediaFileManager(MediaFileManager mediaFileManager) {
@@ -78,9 +86,11 @@ public class MediaResourceProcessor extends AbstractProcessor {
             // parse the incoming request and extract the relevant data
             resourceRequest = new WeblogRequest(request);
 
-            weblog = resourceRequest.getWeblog();
+            weblog = weblogManager.getWeblogByHandle(resourceRequest.getWeblogHandle(), true);
             if (weblog == null) {
                 throw new IllegalArgumentException("unable to lookup weblog: " + resourceRequest.getWeblogHandle());
+            } else {
+                resourceRequest.setWeblog(weblog);
             }
 
             // we want only the path info left over from after the weblog parsing

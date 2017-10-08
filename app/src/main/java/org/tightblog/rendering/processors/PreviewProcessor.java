@@ -21,6 +21,7 @@
 package org.tightblog.rendering.processors;
 
 import org.tightblog.business.UserManager;
+import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTheme;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -90,6 +91,13 @@ public class PreviewProcessor extends AbstractProcessor {
         this.userManager = userManager;
     }
 
+    @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     @PostConstruct
     public void init() {
         log.info("Initializing PreviewProcessor...");
@@ -100,17 +108,20 @@ public class PreviewProcessor extends AbstractProcessor {
         log.debug("Entering");
 
         Weblog weblog;
-        WeblogPageRequest previewRequest = new WeblogPageRequest(request);
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(request);
 
         User user = userManager.getEnabledUserByUserName(p.getName());
 
-        // lookup weblog specified by preview request
-        weblog = previewRequest.getWeblog();
+        weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
         if (weblog == null) {
-            log.debug("error creating preview request: {}", previewRequest);
+            log.debug("error creating preview request: {}", incomingRequest);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
-        } else if (!userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
+        } else {
+            incomingRequest.setWeblog(weblog);
+        }
+
+        if (!userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
             // user must have access rights on blog being previewed
             log.warn("User {} attempting to preview blog {} without access rights, blocking", user != null ? user.getUserName() : "(missing)",
                     weblog.getHandle());
@@ -129,7 +140,7 @@ public class PreviewProcessor extends AbstractProcessor {
                     previewWeblog.setData(weblog);
                     previewWeblog.setTheme(previewTheme.getId());
                     previewWeblog.setUsedForThemePreview(true);
-                    previewRequest.setWeblog(previewWeblog);
+                    incomingRequest.setWeblog(previewWeblog);
                     weblog = previewWeblog;
                 }
             } catch (IllegalArgumentException tnfe) {
@@ -139,11 +150,13 @@ public class PreviewProcessor extends AbstractProcessor {
         }
 
         Template page = null;
-        if ("page".equals(previewRequest.getContext())) {
-            page = previewRequest.getWeblogTemplate();
+        if ("page".equals(incomingRequest.getContext())) {
+            page = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
+
+            incomingRequest.setTemplate(page);
 
             // If request specified tags section index, then look for custom template
-        } else if ("tags".equals(previewRequest.getContext()) && previewRequest.getTag() == null) {
+        } else if ("tags".equals(incomingRequest.getContext()) && incomingRequest.getTag() == null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
             } catch (Exception e) {
@@ -161,7 +174,7 @@ public class PreviewProcessor extends AbstractProcessor {
             }
 
             // If this is a permalink then look for a permalink template
-        } else if (previewRequest.getWeblogEntryAnchor() != null) {
+        } else if (incomingRequest.getWeblogEntryAnchor() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
             } catch (Exception e) {
@@ -191,11 +204,11 @@ public class PreviewProcessor extends AbstractProcessor {
         Map<String, Object> model;
 
         // special hack for menu tag
-        request.setAttribute("pageRequest", previewRequest);
+        request.setAttribute("pageRequest", incomingRequest);
 
         // populate the rendering model
         Map<String, Object> initData = new HashMap<>();
-        initData.put("parsedRequest", previewRequest);
+        initData.put("parsedRequest", incomingRequest);
 
         // Load models for page previewing
         model = getModelMap("previewModelSet", initData);
@@ -209,7 +222,7 @@ public class PreviewProcessor extends AbstractProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page, previewRequest.getDeviceType());
+            renderer = rendererManager.getRenderer(page, incomingRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page {}", page.getId(), e);

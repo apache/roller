@@ -213,21 +213,14 @@ public class PageModel implements Model {
      * Get weblog entry being displayed or null if none specified by request.
      */
     public WeblogEntry getWeblogEntry() {
-        if (weblogEntry == null && pageRequest.getWeblogEntryAnchor() != null) {
-            weblogEntry = weblogEntryManager.getWeblogEntryByAnchor(getWeblog(), pageRequest.getWeblogEntryAnchor());
-        }
-        return weblogEntry;
+        return pageRequest.getWeblogEntry();
     }
 
     /**
-     * Get weblog entry being displayed or null if none specified by request.
+     * Get weblog template being displayed.
      */
     public Template getWeblogPage() {
-        if (pageRequest.getWeblogTemplateName() != null) {
-            return pageRequest.getWeblogTemplate();
-        } else {
-            return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByAction(Template.ComponentType.WEBLOG);
-        }
+        return pageRequest.getTemplate();
     }
 
     public List<? extends Template> getTemplates() {

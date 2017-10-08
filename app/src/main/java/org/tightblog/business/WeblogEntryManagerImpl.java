@@ -598,6 +598,9 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
     @Override
     public boolean canSubmitNewComments(WeblogEntry entry) {
+        if (!entry.isPublished()) {
+            return false;
+        }
         if (WebloggerProperties.CommentPolicy.NONE.equals(strategy.getWebloggerProperties().getCommentPolicy())) {
             return false;
         }

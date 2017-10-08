@@ -20,6 +20,7 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
@@ -62,6 +63,13 @@ public class SearchProcessor extends AbstractProcessor {
     }
 
     @Autowired
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    @Autowired
     protected ThemeManager themeManager;
 
     public void setThemeManager(ThemeManager themeManager) {
@@ -85,13 +93,15 @@ public class SearchProcessor extends AbstractProcessor {
         try {
             searchRequest = new WeblogSearchRequest(request);
 
-            // now make sure the specified weblog really exists
-            weblog = searchRequest.getWeblog();
+            weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);
             if (weblog == null) {
                 log.info("Weblog not found: {}", searchRequest.getWeblogHandle());
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
+            } else {
+                searchRequest.setWeblog(weblog);
             }
+
         } catch (Exception e) {
             // invalid search request format or weblog doesn't exist
             log.debug("Error creating weblog search request", e);
