@@ -23,12 +23,14 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Prepares creation of a new weblog entry with an embedded pointer to a media file.
  */
 @SuppressWarnings("serial")
+@AllowedMethods({"execute"})
 public class EntryAddWithMediaFile extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(EntryAddWithMediaFile.class);

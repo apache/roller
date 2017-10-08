@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.List;
 /**
  * Remove a weblog entry.
  */
+@AllowedMethods({"execute","remove"})
 public class EntryRemove extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryRemove.class);

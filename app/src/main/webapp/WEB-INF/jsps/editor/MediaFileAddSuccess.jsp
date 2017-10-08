@@ -80,7 +80,7 @@
 
         <%-- checkboxed list of images uploaded --%>
         <table class="mediaFileTable">
-            <s:iterator value="newImages" id="newImage">
+            <s:iterator value="newImages" var="newImage">
             <tr>
                 <td width="5%">
                     <%-- checkbox for file --%>
@@ -122,7 +122,7 @@
 
         <%-- checkboxed list of other files uploaded --%>
         <table class="mediaFileTable">
-            <s:iterator value="newFiles" id="newFile">
+            <s:iterator value="newFiles" var="newFile">
             <tr>
                 <td width="20%">
                     <%-- radio button for file --%>

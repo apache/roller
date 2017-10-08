@@ -15,6 +15,10 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
+
+<meta charset="UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+
 <% response.setContentType("text/html; charset=UTF-8"); %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>

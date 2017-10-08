@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import javax.servlet.http.HttpServletResponse;
@@ -36,8 +37,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Edit a new or existing folder.
  */
+@AllowedMethods({"execute","save"})
 public class FolderEdit extends UIAction implements ServletResponseAware {
-    
+
     private static Log log = LogFactory.getLog(FolderEdit.class);
 
     // bean for managing form data

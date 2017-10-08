@@ -77,20 +77,23 @@
             </td>
        </tr>
 
-       <tr>
+        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.permalink" /></label>
+                <label for="status"><s:text name="mediaFileEdit.permalink"/></label>
             </td>
             <td>
-                <a href='<s:text name="bean.permalink" />' target="_blank"
+                <s:url var="linkIconURL" value="/images/link.png"></s:url>
+
+                <a href='<s:property value="bean.permalink" />' target="_blank"
                    title='<s:text name="mediaFileEdit.linkTitle" />'>
-                   <s:url var="linkIconURL" value="/images/link.png"></s:url>
-                   <img border="0" src='<s:property value="%{linkIconURL}" />'
-                       style="padding:2px 2px;" alt="link" />
+                    <img border="0" src='<s:property value="%{linkIconURL}" />' style="padding:2px 2px;" alt="link"/>
                 </a>
-                <input type="text" id="clip_text" size="50" style="width:90%" value='<s:text name="bean.permalink" />' readonly />
+
+                <input type="text" id="clip_text" size="50" style="width:90%"
+                       value='<s:property value="bean.permalink" />' readonly/>
+
             </td>
-       </tr>
+        </tr>
 
        <tr>
             <td class="entryEditFormLabel">
@@ -158,8 +161,8 @@
                 <label for="originalPath"><s:text name="mediaFileEdit.originalPath" /></label>
             </td>
             <td>
-                <div id="fileControldiv" class="miscControl">
-                    <s:textfield name="bean.originalPath" size="30" maxlength="100" tabindex="3" />
+                <div id="originalPathdiv" class="miscControl">
+                    <s:textfield name="bean.originalPath" id="originalPath" size="30" maxlength="100" tabindex="3" />
                     <br />
                 </div>
             </td>

@@ -25,11 +25,11 @@
 
     <s:hidden name="salt"/>
 
-    <s:iterator id="dg" value="globalConfigDef.displayGroups">
+    <s:iterator var="dg" value="globalConfigDef.displayGroups">
 
         <h2><s:text name="%{#dg.key}"/></h2>
 
-        <s:iterator id="pd" value="#dg.propertyDefs">
+        <s:iterator var="pd" value="#dg.propertyDefs">
 
             <%-- special condition for comment plugins --%>
             <s:if test="#pd.name == 'users.comments.plugins'">

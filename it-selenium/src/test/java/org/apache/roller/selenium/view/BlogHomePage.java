@@ -31,8 +31,7 @@ public class BlogHomePage extends AbstractRollerPage {
 
     public BlogHomePage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "blog home page";
-        verifyIdOnPage("id_weblog");
+        verifyPageTitle("searchForm", "Bob's Blog");
     }
 
     public EntryAddPage createNewBlogEntry() {

@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -45,6 +46,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 /**
  * Action which handles editing of global configuration.
  */
+@AllowedMethods({"execute","save"})
 public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
 
     private static Log log = LogFactory.getLog(GlobalConfig.class);

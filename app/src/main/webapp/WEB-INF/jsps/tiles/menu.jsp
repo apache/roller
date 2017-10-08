@@ -17,9 +17,10 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<s:set name="tabMenu" value="menu"/>
+<s:set var="tabMenu" value="menu"/>
 <s:if test="#tabMenu != null">
 
+<<<<<<< HEAD
     <%-- 
     <nav class="navbar navbar-default">
         <div class="container-fluid">

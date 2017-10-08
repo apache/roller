@@ -26,10 +26,12 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Add or modify a common ping target.
  */
+@AllowedMethods({"execute","save"})
 public class PingTargetEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(PingTargetEdit.class);

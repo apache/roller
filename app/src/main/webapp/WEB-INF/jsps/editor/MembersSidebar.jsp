@@ -27,7 +27,7 @@
             <hr size="1" noshade="noshade" />
             
             <img src='<s:url value="/images/email_edit.png"/>' alt="mail-icon" align="bottom" />
-            <s:url action="invite" id="inviteUrl">
+            <s:url action="invite" var="inviteUrl">
                <s:param name="weblog" value="%{actionWeblog.handle}" />
             </s:url>
             <a href='<s:property value="#inviteUrl" />'>

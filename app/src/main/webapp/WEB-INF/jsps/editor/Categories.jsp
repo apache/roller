@@ -43,7 +43,7 @@
 
         <s:if test="AllCategories != null && !AllCategories.isEmpty">
 
-            <s:iterator id="category" value="AllCategories" status="rowstatus">
+            <s:iterator var="category" value="AllCategories" status="rowstatus">
                 <tr>
                     <td><s:property value="#category.name"/></td>
 
@@ -62,12 +62,12 @@
                                 '<s:property value="categoryImage"/>' )">
                             <span class="glyphicon glyphicon-edit"></span>
                         </a>
-                        
+
                     </td>
 
                     <td class="rollertable" align="center">
                         <s:if test="AllCategories.size() > 1">
-                            
+
                             <s:set name="categoryId"    value="#category.id" />
                             <s:set name="categoryName"  value="#category.name" />
                             <s:set name="categoryInUse" value="#category.inUse.toString()" />
@@ -77,7 +77,7 @@
                                     <s:property value="categoryInUse"/> )" >
                                 <span class="glyphicon glyphicon-trash"></span>
                             </a>
-                            
+
                         </s:if>
                     </td>
 

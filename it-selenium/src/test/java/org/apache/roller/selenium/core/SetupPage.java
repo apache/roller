@@ -19,7 +19,12 @@ package org.apache.roller.selenium.core;
 
 import org.apache.roller.selenium.AbstractRollerPage;
 import org.apache.roller.selenium.view.BlogHomePage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * represents core/Setup.jsp
@@ -32,16 +37,16 @@ public class SetupPage extends AbstractRollerPage {
 
     public SetupPage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "Initial Setup Page";
-        verifyPageTitle("Front Page: Welcome to Roller!");
     }
 
     public RegisterPage createNewUser() {
+        verifyPageTitle("Front Page: Welcome to Roller!");
         clickById("a_createUser");
         return new RegisterPage(driver);
     }
 
     public BlogHomePage chooseFrontPageBlog() {
+        verifyPageTitle("setup_0", "Front Page: Welcome to Roller!");
         clickById("setup_0");
         return new BlogHomePage(driver);
     }

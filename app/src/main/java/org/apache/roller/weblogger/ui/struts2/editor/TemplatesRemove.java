@@ -32,10 +32,12 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Remove templates.
  */
+@AllowedMethods({"execute","remove","cancel"})
 public class TemplatesRemove extends UIAction {
 
     private static final long serialVersionUID = 895186156151331087L;

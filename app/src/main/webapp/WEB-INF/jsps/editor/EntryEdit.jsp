@@ -341,7 +341,7 @@
                 </s:url>
                 <input class="btn btn-danger" type="button"
                        value="<s:text name='weblogEdit.deleteEntry'/>"
-                       onclick="window.location='<s:property value="removeUrl" escape="false"/>'"/>
+                       onclick="window.location='<s:property value="removeUrl" escapeHtml="false"/>'"/>
             </span>
         </s:if>
 

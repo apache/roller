@@ -88,7 +88,7 @@
     </th>
 </tr>
 
-<s:iterator id="group" value="groups" status="rowstatus">
+<s:iterator var="group" value="groups" status="rowstatus">
     <s:if test="#rowstatus.odd == true">
         <tr class="rollertable_odd">
     </s:if>

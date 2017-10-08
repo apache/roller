@@ -247,7 +247,7 @@
 
                 <%-- List media files --%>
 
-                <s:iterator id="mediaFile" value="childFiles">
+                <s:iterator var="mediaFile" value="childFiles">
 
                     <li class="align-images"
                             onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
@@ -297,7 +297,7 @@
 
                 <%-- SEARCH RESULTS --%>
 
-                <s:iterator id="mediaFile" value="pager.items">
+                <s:iterator var="mediaFile" value="pager.items">
 
                     <li class="align-images"
                             onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">

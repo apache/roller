@@ -28,19 +28,21 @@ import java.lang.String;
  * Post-login page object to create, choose, configure blogs.
  */
 public class MainMenuPage extends AbstractRollerPage {
+    String pageTitle;
 
     public MainMenuPage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "Main Menu Page";
-        verifyPageTitle("Front Page: Main Menu");
+        pageTitle = "Front Page: Main Menu";
     }
 
     public CreateWeblogPage createWeblog() {
+        verifyPageTitle("createWeblogLink", pageTitle);
         clickByLinkText("create one?");
         return new CreateWeblogPage(driver);
     }
 
     public EntryAddPage createNewBlogEntry() {
+        verifyPageTitle("createWeblogLink", pageTitle);
         clickByLinkText("New Entry");
         return new EntryAddPage(driver);
     }

@@ -24,11 +24,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 
 /**
  * Manage planet groups.
  */
+@AllowedMethods({"execute","save","delete"})
 public class PlanetGroups extends PlanetUIAction {
     
     private static Log log = LogFactory.getLog(PlanetGroups.class);

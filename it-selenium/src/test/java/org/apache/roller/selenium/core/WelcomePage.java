@@ -32,12 +32,11 @@ public class WelcomePage extends AbstractRollerPage {
 
     public WelcomePage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "New User Registration Welcome Page";
-        verifyPageTitle("Front Page: New User Registration");
+        String pageTitle = "Front Page: Welcome to Roller";
+        verifyPageTitle("loginForm", pageTitle);
     }
 
     public LoginPage doRollerLogin() {
-        clickById("a_clickHere");
         return new LoginPage(driver);
     }
 

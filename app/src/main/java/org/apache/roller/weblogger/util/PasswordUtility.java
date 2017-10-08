@@ -214,7 +214,7 @@ public class PasswordUtility
     }
 
     /** 
-     * Reset user's password to specified value using specified algorythm (if needed) 
+     * Reset user's password to specified value using specified algorithm (if needed)
      */
     private static void resetPassword(
                     Connection con, String username, String password, String algorithm) 

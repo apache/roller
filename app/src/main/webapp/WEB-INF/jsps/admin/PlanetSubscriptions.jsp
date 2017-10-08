@@ -72,7 +72,7 @@ function confirmSubDelete(subUrl) {
             <s:text name="generic.delete" />
         </th>
     </tr>
-    <s:iterator id="sub" value="subscriptions" status="rowstatus">
+    <s:iterator var="sub" value="subscriptions" status="rowstatus">
         <s:if test="#rowstatus.odd == true">
             <tr class="rollertable_odd">
         </s:if>
@@ -85,7 +85,7 @@ function confirmSubDelete(subUrl) {
         </td>
         
         <td class="rollertable">
-            <s:set name="feedURL" value="#sub.feedURL" />
+            <s:set var="feedURL" value="#sub.feedURL" />
             ${fn:substring(feedURL, 0, 100)}
         </td>
         

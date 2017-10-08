@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -40,6 +41,7 @@ import org.apache.struts2.interceptor.ParameterAware;
  * TODO: fix bug in UserManager which doesn't remove permissions from the
  * website.permissions collection when a permission is deleted.
  */
+@AllowedMethods({"execute","save"})
 public class Members extends UIAction implements ParameterAware {
     
     private static Log log = LogFactory.getLog(Members.class);

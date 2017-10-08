@@ -206,7 +206,7 @@
                 <%-- it is a bit funky to use checkbox list here, but using checkbox didn't work for me :( 
                 we are effectively just creating a checkbox list of 1 item for each iteration of our collection. --%>
 
-            <s:iterator id="comment" value="pager.items" status="rowstatus">
+            <s:iterator var="comment" value="pager.items" status="rowstatus">
                 <tr>
                     <s:if test="actionName == 'comments'">
                         <%-- only blog admins (not the global admin) can approve blog comments --%>
@@ -289,7 +289,6 @@
                                         </div>
 
                                     </div>
-
                                     <div class="viewdetails bot">
 
                                         <div class="details bot">

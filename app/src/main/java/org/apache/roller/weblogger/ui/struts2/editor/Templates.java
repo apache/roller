@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,7 @@ import java.util.Map;
 /**
  * Templates listing page.
  */
+@AllowedMethods({"execute","add"})
 public class Templates extends UIAction {
 
 	private static Log log = LogFactory.getLog(Templates.class);

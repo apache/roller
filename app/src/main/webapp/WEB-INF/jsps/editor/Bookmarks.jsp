@@ -110,10 +110,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         
         <s:if test="folder.bookmarks.size > 0">
         
-        <%-- Blogroll links --%>
-
-        <s:iterator id="bookmark" value="folder.bookmarks" status="rowstatus">
-
+        <%-- Bookmarks --%>
+        <s:iterator var="bookmark" value="folder.bookmarks" status="rowstatus">
             <s:if test="#rowstatus.odd == true">
                 <tr class="rollertable_odd">
             </s:if>

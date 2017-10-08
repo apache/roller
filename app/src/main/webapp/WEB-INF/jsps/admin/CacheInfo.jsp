@@ -20,14 +20,14 @@
 <p class="subtitle"><s:text name="cacheInfo.subtitle" />
 <p><s:text name="cacheInfo.prompt" />
 
-<s:iterator id="cache" value="stats">
+<s:iterator var="cache" value="stats">
     <s:if test="#cache != null && !#cache.value.isEmpty">
         <table cellspacing="3" border="1">
             <tr>
                 <th colspan="2"><s:property value="#cache.key"/></th>
             </tr>
 
-            <s:iterator id="prop" value="#cache.value">
+            <s:iterator var="prop" value="#cache.value">
                 <tr>
                     <td><s:property value="#prop.key"/></td>
                     <td><s:property value="#prop.value"/></td>

@@ -32,11 +32,13 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * List bookmarks and folders and allow for moving them around and deleting them.
  */
+@AllowedMethods({"execute","delete","deleteFolder","move","view","folderCreated"})
 public class Bookmarks extends UIAction {
 
     private static Log log = LogFactory.getLog(Bookmarks.class);
