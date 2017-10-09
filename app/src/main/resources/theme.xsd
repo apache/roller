@@ -39,7 +39,6 @@
                                     <xs:enumeration value="weblog"/>
                                     <xs:enumeration value="permalink"/>
                                     <xs:enumeration value="search"/>
-                                    <xs:enumeration value="tagsIndex"/>
                                     <xs:enumeration value="stylesheet"/>
                                     <xs:enumeration value="javascript"/>
                                     <xs:enumeration value="customInternal"/>

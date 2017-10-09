@@ -220,8 +220,6 @@ public class PageProcessor extends AbstractProcessor {
             } else if ("tag".equals(incomingRequest.getContext()) && incomingRequest.getTag() != null) {
                 if (!weblogManager.getTagExists((isSiteWide) ? null : weblog, incomingRequest.getTag())) {
                     invalid = true;
-                } else {
-                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.TAGSINDEX));
                 }
             }
 

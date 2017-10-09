@@ -45,7 +45,6 @@ public interface Template {
         @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, "template.weblog.description"),
         @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, "template.permalink.description"),
         @XmlEnumValue("search")SEARCH("Search", "text/html", true, "template.search.description"),
-        @XmlEnumValue("tagsIndex")TAGSINDEX("Tag Index", "text/html", true, "template.tagsIndex.description"),
         @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, "template.stylesheet.description"),
         @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false,
                 "template.javascript.description"),

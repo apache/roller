@@ -161,14 +161,6 @@ public class RequestMappingFilter implements Filter {
             }
             response.sendRedirect(redirectUrl);
             return true;
-        } else if (weblogRequestContext != null && "tag".equals(weblogRequestContext)) {
-            // tags section can have an index page at /<weblog>/tag/ and
-            // a tag query at /<weblog>/tag/tagToSearch, but that's it
-            if ((weblogRequestData == null && !trailingSlash) ||
-                    (weblogRequestData != null && trailingSlash)) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return true;
-            }
         } else if (weblogRequestContext != null && trailingSlash) {
             // this means that someone has accessed a weblog url and included
             // a trailing slash, like /<weblog>/entry/<anchor>/ which is not
