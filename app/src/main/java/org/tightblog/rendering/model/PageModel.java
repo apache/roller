@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,7 +63,6 @@ public class PageModel implements Model {
 
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryComment commentForm = null;
-    private Map requestParameters = null;
     private boolean preview = false;
 
     protected URLStrategy urlStrategy = null;
@@ -100,8 +99,6 @@ public class PageModel implements Model {
         this.preview = preview;
     }
 
-    private WeblogEntry weblogEntry = null;
-
     /**
      * Creates an un-initialized new instance, Weblogger calls init() to complete
      * construction.
@@ -130,9 +127,6 @@ public class PageModel implements Model {
 
         // see if there is a comment form
         this.commentForm = (WeblogEntryComment) initData.get("commentForm");
-
-        // custom request parameters
-        this.requestParameters = (Map) initData.get("requestParameters");
 
         if (preview) {
             this.urlStrategy = new URLStrategyImpl(pageRequest.getWeblog().getTheme(),
@@ -372,19 +366,6 @@ public class PageModel implements Model {
             commentForm.initializeFormFields();
         }
         return commentForm;
-    }
-
-    /**
-     * Get request parameter by name.
-     */
-    public String getRequestParameter(String paramName) {
-        if (requestParameters != null) {
-            String[] values = (String[]) requestParameters.get(paramName);
-            if (values != null && values.length > 0) {
-                return values[0];
-            }
-        }
-        return null;
     }
 
     public boolean isUserAuthenticated() {

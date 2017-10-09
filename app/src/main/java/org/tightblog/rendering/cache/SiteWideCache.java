@@ -80,66 +80,61 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
         return lastModified;
     }
 
-    /**
-     * A weblog entry has changed.
-     */
-    public void invalidate(WeblogEntry entry) {
+    @Override
+    public void weblogChanged(Weblog weblog) {
         if (enabled) {
             this.contentCache.clear();
             this.lastUpdateTime = null;
         }
     }
 
-    /**
-     * A weblog has changed.
-     */
-    public void invalidate(Weblog website) {
-        if (enabled) {
-            this.contentCache.clear();
-            this.lastUpdateTime = null;
-        }
+    @Override
+    public void entryChanged(WeblogEntry entry) {
+        weblogChanged(entry.getWeblog());
     }
 
-    /**
-     * A bookmark has changed, invalidate only if site blog itself changed.
-     */
-    public void invalidate(WeblogBookmark bookmark) {
-        if (enabled && themeManager.getSharedTheme(bookmark.getWeblog().getTheme()).isSiteWide()) {
-            invalidate(bookmark.getWeblog());
-        }
-    }
-
-    /**
-     * A comment has changed, invalidate only if site blog itself changed.
-     */
-    public void invalidate(WeblogEntryComment comment) {
-        if (enabled && themeManager.getSharedTheme(comment.getWeblogEntry().getWeblog().getTheme()).isSiteWide()) {
-            invalidate(comment.getWeblogEntry().getWeblog());
-        }
-    }
-
-    /**
-     * A user profile has changed.
-     */
-    public void invalidate(User user) {
+    @Override
+    public void userChanged(User user) {
         // ignored
     }
 
     /**
-     * A category has changed, invalidate only if site blog itself changed.
+     * Trigger a weblog change only if the bookmark belongs to the site blog.
      */
-    public void invalidate(WeblogCategory category) {
-        if (enabled && themeManager.getSharedTheme(category.getWeblog().getTheme()).isSiteWide()) {
-            invalidate(category.getWeblog());
+    @Override
+    public void bookmarkChanged(WeblogBookmark bookmark) {
+        if (enabled && themeManager.getSharedTheme(bookmark.getWeblog().getTheme()).isSiteWide()) {
+            weblogChanged(bookmark.getWeblog());
         }
     }
 
     /**
-     * A weblog template has changed, invalidate only if site blog itself changed.
+     * Trigger a weblog change only if the comment belongs to the site blog.
      */
-    public void invalidate(WeblogTemplate template) {
+    @Override
+    public void commentChanged(WeblogEntryComment comment) {
+        if (enabled && themeManager.getSharedTheme(comment.getWeblogEntry().getWeblog().getTheme()).isSiteWide()) {
+            weblogChanged(comment.getWeblogEntry().getWeblog());
+        }
+    }
+
+    /**
+     * Trigger a weblog change only if the category belongs to the site blog.
+     */
+    @Override
+    public void categoryChanged(WeblogCategory category) {
+        if (enabled && themeManager.getSharedTheme(category.getWeblog().getTheme()).isSiteWide()) {
+            weblogChanged(category.getWeblog());
+        }
+    }
+
+    /**
+     * Trigger a weblog change only if the template belongs to the site blog.
+     */
+    @Override
+    public void templateChanged(WeblogTemplate template) {
         if (enabled && themeManager.getSharedTheme(template.getWeblog().getTheme()).isSiteWide()) {
-            invalidate(template.getWeblog());
+            weblogChanged(template.getWeblog());
         }
     }
 }
