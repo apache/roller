@@ -147,10 +147,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
 
             } else {
-                // empty data is only allowed for the tags section
-                if (!"tag".equals(this.context)) {
-                    throw new IllegalArgumentException("invalid index page, " + request.getRequestURL());
-                }
+                throw new IllegalArgumentException("invalid page request: " + request.getRequestURL());
             }
         } else {
             // default page

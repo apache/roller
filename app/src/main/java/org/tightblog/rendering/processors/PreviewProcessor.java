@@ -154,26 +154,7 @@ public class PreviewProcessor extends AbstractProcessor {
             page = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
 
             incomingRequest.setTemplate(page);
-
-            // If request specified tags section index, then look for custom template
-        } else if ("tags".equals(incomingRequest.getContext()) && incomingRequest.getTag() == null) {
-            try {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.TAGSINDEX);
-            } catch (Exception e) {
-                log.error("Error getting weblog page for action 'tagsIndex'", e);
-            }
-
-            // if we don't have a custom tags page then 404, we don't let
-            // this one fall through to the default template
-            if (page == null) {
-                if (!response.isCommitted()) {
-                    response.reset();
-                }
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-
-            // If this is a permalink then look for a permalink template
+          // If this is a permalink then look for a permalink template
         } else if (incomingRequest.getWeblogEntryAnchor() != null) {
             try {
                 page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);

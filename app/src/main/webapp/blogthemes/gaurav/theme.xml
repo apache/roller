@@ -32,16 +32,6 @@
         </renditions>
     </template>
 
-    <template role="tagsIndex">
-        <name>TagsIndex</name>
-        <renditions>
-            <rendition>
-                <contentsFile>tags_index.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
-    </template>
-
     <template role="search">
         <name>Search</name>
         <renditions>
