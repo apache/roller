@@ -26,7 +26,6 @@ import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.rendering.Renderer;
@@ -197,8 +196,6 @@ public class PageProcessor extends AbstractProcessor {
             }
         }
 
-        boolean invalid = false;
-
         // figure out what template to use
         if ("page".equals(incomingRequest.getContext())) {
             Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
@@ -208,6 +205,8 @@ public class PageProcessor extends AbstractProcessor {
                 incomingRequest.setTemplate(template);
             }
         } else {
+            boolean invalid = false;
+
             if (incomingRequest.getWeblogEntryAnchor() != null) {
                 WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
 
@@ -217,28 +216,15 @@ public class PageProcessor extends AbstractProcessor {
                     incomingRequest.setWeblogEntry(entry);
                     incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.PERMALINK));
                 }
-            } else if ("tag".equals(incomingRequest.getContext()) && incomingRequest.getTag() != null) {
-                if (!weblogManager.getTagExists((isSiteWide) ? null : weblog, incomingRequest.getTag())) {
-                    invalid = true;
-                }
             }
 
-            if (incomingRequest.getWeblogCategoryName() != null) {
-                // category must exist if specified
-                WeblogCategory test = weblogManager.getWeblogCategoryByName(incomingRequest.getWeblog(),
-                        incomingRequest.getWeblogCategoryName());
-                if (test == null) {
-                    invalid = true;
-                }
-            }
-
-            // if valid but we haven't found a template yet then try our default page
+            // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
             if (!invalid && incomingRequest.getTemplate() == null) {
                 incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG));
             }
         }
 
-        if (invalid || incomingRequest.getTemplate() == null) {
+        if (incomingRequest.getTemplate() == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }

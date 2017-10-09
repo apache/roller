@@ -80,6 +80,8 @@ public class WeblogPageRequest extends WeblogRequest {
         // parse the request object and figure out what we've got
         log.debug("parsing path {}", pathInfo);
 
+        weblogPageHit = true;
+
         /*
          * parse path info
          *
@@ -111,15 +113,10 @@ public class WeblogPageRequest extends WeblogRequest {
                         throw new IllegalArgumentException("Invalid path: " + pathInfo);
                     }
                 }
-
-                weblogPageHit = true;
-
             } else if (pathElements.length == 2) {
 
                 if ("entry".equals(this.context)) {
                     this.weblogEntryAnchor = Utilities.decode(pathElements[1]);
-
-                    weblogPageHit = true;
                 } else if ("date".equals(this.context)) {
                     if (this.isValidDateString(pathElements[1])) {
                         this.weblogDate = pathElements[1];
@@ -129,29 +126,21 @@ public class WeblogPageRequest extends WeblogRequest {
                     } else {
                         throw new IllegalArgumentException("Invalid date: " + request.getRequestURL());
                     }
-
-                    weblogPageHit = true;
                 } else if ("page".equals(this.context)) {
                     this.weblogTemplateName = pathElements[1];
 
                     // Other page, we do not want css etc stuff so filter out
-                    if (!pathElements[1].contains(".")) {
-                        weblogPageHit = true;
+                    if (pathElements[1].contains(".")) {
+                        weblogPageHit = false;
                     }
                 } else if ("tag".equals(this.context)) {
                     tag = pathElements[1];
-
-                    weblogPageHit = true;
                 } else {
                     throw new IllegalArgumentException("Context \"" + this.context + "\" not supported, " + request.getRequestURL());
                 }
-
             } else {
                 throw new IllegalArgumentException("invalid page request: " + request.getRequestURL());
             }
-        } else {
-            // default page
-            weblogPageHit = true;
         }
 
         // page request param is supported in all views
@@ -167,13 +156,13 @@ public class WeblogPageRequest extends WeblogRequest {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("context = " + context);
-            log.debug("weblogEntryAnchor = " + weblogEntryAnchor);
-            log.debug("weblogDate = " + weblogDate);
-            log.debug("weblogCategory = " + weblogCategoryName);
-            log.debug("tag = " + tag);
-            log.debug("template = " + weblogTemplateName);
-            log.debug("pageNum = " + pageNum);
+            log.debug("context = {}", context);
+            log.debug("weblogEntryAnchor = {}", weblogEntryAnchor);
+            log.debug("weblogDate = {}", weblogDate);
+            log.debug("weblogCategory = {}", weblogCategoryName);
+            log.debug("tag = {}", tag);
+            log.debug("template = {}", weblogTemplateName);
+            log.debug("pageNum = {}", pageNum);
         }
     }
 
