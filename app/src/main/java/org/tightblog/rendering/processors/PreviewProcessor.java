@@ -179,13 +179,10 @@ public class PreviewProcessor extends AbstractProcessor {
         log.debug("preview page found, dealing with it");
 
         // set the content type
-        String contentType = page.getRole().getContentType();
+        String contentType = page.getRole().getContentType() + "; charset=utf-8";
 
         // looks like we need to render content
         Map<String, Object> model;
-
-        // special hack for menu tag
-        request.setAttribute("pageRequest", incomingRequest);
 
         // populate the rendering model
         Map<String, Object> initData = new HashMap<>();

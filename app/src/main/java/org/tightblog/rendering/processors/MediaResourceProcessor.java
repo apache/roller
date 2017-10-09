@@ -136,11 +136,11 @@ public class MediaResourceProcessor extends AbstractProcessor {
         }
 
         // Respond with 304 Not Modified if it is not modified.
-        if (Utilities.respondIfNotModified(request, response, resourceLastMod, resourceRequest.getDeviceType())) {
+        if (respondIfNotModified(request, response, resourceLastMod, resourceRequest.getDeviceType())) {
             return;
         } else {
             // set last-modified date
-            Utilities.setLastModifiedHeader(response, resourceLastMod, resourceRequest.getDeviceType());
+            setLastModifiedHeader(response, resourceLastMod, resourceRequest.getDeviceType());
         }
 
         // set the content type based on whatever is in our web.xml mime defs

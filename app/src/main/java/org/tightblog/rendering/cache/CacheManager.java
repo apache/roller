@@ -96,15 +96,15 @@ public class CacheManager {
 
         log.debug("invalidating entry = {}", entry.getAnchor());
         for (BlogEventListener handler : cacheHandlers) {
-            handler.invalidate(entry);
+            handler.entryChanged(entry);
         }
     }
 
-    public void invalidate(Weblog website) {
+    public void invalidate(Weblog weblog) {
 
-        log.debug("invalidating website {}", website.getHandle());
+        log.debug("invalidating weblog {}", weblog.getHandle());
         for (BlogEventListener handler : cacheHandlers) {
-            handler.invalidate(website);
+            handler.weblogChanged(weblog);
         }
     }
 
@@ -112,7 +112,7 @@ public class CacheManager {
 
         log.debug("invalidating bookmark {}", bookmark.getId());
         for (BlogEventListener handler : cacheHandlers) {
-            handler.invalidate(bookmark);
+            handler.bookmarkChanged(bookmark);
         }
     }
 
@@ -120,7 +120,7 @@ public class CacheManager {
 
         log.debug("invalidating comment {}", comment.getId());
         for (BlogEventListener handler : cacheHandlers) {
-            handler.invalidate(comment);
+            handler.commentChanged(comment);
         }
     }
 
@@ -128,7 +128,7 @@ public class CacheManager {
 
         log.debug("invalidating user {}", user.getUserName());
         for (BlogEventListener handler : cacheHandlers) {
-            handler.invalidate(user);
+            handler.userChanged(user);
         }
     }
 
@@ -136,14 +136,14 @@ public class CacheManager {
 
         log.debug("invalidating category {}", category.getId());
         for (BlogEventListener handler : cacheHandlers) {
-            handler.invalidate(category);
+            handler.categoryChanged(category);
         }
     }
 
     public void invalidate(WeblogTemplate template) {
         log.debug("invalidating template {}", template.getId());
         for (BlogEventListener handler : cacheHandlers) {
-            handler.invalidate(template);
+            handler.templateChanged(template);
         }
     }
 

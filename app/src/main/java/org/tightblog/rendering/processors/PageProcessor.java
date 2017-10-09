@@ -53,7 +53,7 @@ import java.util.Map;
 /**
  * Rendering processor that provides access to weblog pages.
  * <p>
- * General approach of most rendering processor, including this one:
+ * General approach of most rendering processors including this one:
  * <ul>
  * <li>Create a request object to parse the request</li>
  * <li>Determine last modified time, return not-modified (HTTP 304) if possible</li>
@@ -128,12 +128,10 @@ public class PageProcessor extends AbstractProcessor {
      */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public void getPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Weblog weblog;
-        boolean isSiteWide;
 
         WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
-        weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -142,28 +140,30 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         // is this the site-wide weblog?
-        isSiteWide = themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide();
+        boolean isSiteWide = themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide();
 
         // determine the lastModified date for this content
-        long lastModified = Clock.systemDefaultZone().millis();
+        long lastModified;
         if (isSiteWide) {
             lastModified = siteWideCache.getLastModified().toEpochMilli();
         } else if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().toEpochMilli();
+        } else {
+            lastModified = getCurrentMillis();
         }
 
         // 304 Not Modified handling.
         // We skip this for logged in users to avoid the scenario where a user
         // views their weblog, logs in, then gets a 304 without the 'edit' links
         if (!incomingRequest.isLoggedIn()) {
-            if (Utilities.respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
+            if (respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
                 return;
             } else {
                 // set last-modified date
-                Utilities.setLastModifiedHeader(response, lastModified, incomingRequest.getDeviceType());
+                setLastModifiedHeader(response, lastModified, incomingRequest.getDeviceType());
             }
         }
-
+// HERE #1
         // generate cache key
         String cacheKey = generateKey(incomingRequest);
 
@@ -183,7 +183,7 @@ public class PageProcessor extends AbstractProcessor {
                 log.debug("HIT {}", cacheKey);
 
                 // allow for hit counting
-                if (!isSiteWide && incomingRequest.isWeblogPageHit()) {
+                if (incomingRequest.isWeblogPageHit()) {
                     weblogManager.incrementHitCount(weblog);
                 }
 
@@ -195,7 +195,9 @@ public class PageProcessor extends AbstractProcessor {
                 log.debug("MISS {}", cacheKey);
             }
         }
+// HERE #2
 
+        // not using cache so need to generate page from scratch
         // figure out what template to use
         if ("page".equals(incomingRequest.getContext())) {
             Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
@@ -229,85 +231,73 @@ public class PageProcessor extends AbstractProcessor {
             return;
         }
 
+// HERE #3
+
         // allow for hit counting
-        if (!isSiteWide && incomingRequest.isWeblogPageHit()) {
+        if (incomingRequest.isWeblogPageHit()) {
             weblogManager.incrementHitCount(weblog);
         }
 
-        // looks like we need to render content
-        String contentType = incomingRequest.getTemplate().getRole().getContentType() + "; charset=utf-8";
-
-        Map<String, Object> model;
-
-        // special hack for menu tag
-        request.setAttribute("pageRequest", incomingRequest);
+// HERE #4
 
         // populate the rendering model
         Map<String, Object> initData = new HashMap<>();
-        initData.put("requestParameters", request.getParameterMap());
         initData.put("parsedRequest", incomingRequest);
 
-        // if this GET is for a comment preview, store the comment form
+        // if we're handling comments, add the comment form
         if (commentForm != null) {
             initData.put("commentForm", commentForm);
         }
 
-        model = getModelMap("pageModelSet", initData);
+        Map<String, Object> model = getModelMap("pageModelSet", initData);
 
         // Load special models for site-wide blog
         if (isSiteWide) {
             model.putAll(getModelMap("siteModelSet", initData));
         }
 
-        // lookup Renderer we are going to use
-        Renderer renderer;
-        try {
-            log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(incomingRequest.getTemplate(), incomingRequest.getDeviceType());
-        } catch (Exception e) {
-            // nobody wants to render my content :(
-            log.error("Couldn't find renderer for page {}", incomingRequest.getTemplate().getId(), e);
+// HERE #5
 
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
-        // render content
-        CachedContent rendererOutput = new CachedContent(
-                Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
         try {
-            log.debug("Doing rendering");
+            // lookup Renderer we are going to use
+            Renderer renderer = rendererManager.getRenderer(incomingRequest.getTemplate(), incomingRequest.getDeviceType());
+
+            // render content
+            String contentType = incomingRequest.getTemplate().getRole().getContentType() + "; charset=utf-8";
+            CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
             renderer.render(model, rendererOutput.getCachedWriter());
-
-            // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
+
+            // flush rendered content to response
+            log.debug("Flushing response output");
+            response.setContentType(contentType);
+            response.setContentLength(rendererOutput.getContent().length);
+            response.getOutputStream().write(rendererOutput.getContent());
+
+// HERE #6
+
+            // if not comment handling, add rendered content to cache
+            if (commentForm == null) {
+                log.debug("PUT {}", cacheKey);
+
+                if (isSiteWide) {
+                    siteWideCache.put(cacheKey, rendererOutput);
+                } else {
+                    weblogPageCache.put(cacheKey, rendererOutput);
+                }
+            }
+
         } catch (Exception e) {
+// HERE #5
             log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
         }
 
-        // post rendering process
-        // flush rendered content to response
-        log.debug("Flushing response output");
-        response.setContentType(contentType);
-        response.setContentLength(rendererOutput.getContent().length);
-        response.getOutputStream().write(rendererOutput.getContent());
+    }
 
-        // Cache rendered content (providing not during comment handling)
-        if (commentForm == null) {
-            log.debug("PUT {}", cacheKey);
-
-            // put it in the right cache
-            if (isSiteWide) {
-                siteWideCache.put(cacheKey, rendererOutput);
-            } else {
-                weblogPageCache.put(cacheKey, rendererOutput);
-            }
-        } else {
-            log.debug("SKIPPED {}", cacheKey);
-        }
+    long getCurrentMillis() {
+        return Clock.systemDefaultZone().millis();
     }
 
     /**

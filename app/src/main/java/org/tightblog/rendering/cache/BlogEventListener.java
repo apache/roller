@@ -38,17 +38,17 @@ import org.tightblog.pojos.WeblogTemplate;
  */
 public interface BlogEventListener {
 
-    void invalidate(WeblogEntry entry);
+    void entryChanged(WeblogEntry entry);
 
-    void invalidate(Weblog website);
+    void weblogChanged(Weblog weblog);
 
-    void invalidate(WeblogBookmark bookmark);
+    void bookmarkChanged(WeblogBookmark bookmark);
 
-    void invalidate(WeblogEntryComment comment);
+    void commentChanged(WeblogEntryComment comment);
 
-    void invalidate(User user);
+    void userChanged(User user);
 
-    void invalidate(WeblogCategory category);
+    void categoryChanged(WeblogCategory category);
 
-    void invalidate(WeblogTemplate template);
+    void templateChanged(WeblogTemplate template);
 }

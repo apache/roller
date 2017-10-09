@@ -133,13 +133,12 @@ public class FeedProcessor extends AbstractProcessor {
         }
 
         // Respond with 304 Not Modified if it is not modified.
-        if (Utilities.respondIfNotModified(request, response,
-                lastModified, feedRequest.getDeviceType())) {
+        if (respondIfNotModified(request, response, lastModified, feedRequest.getDeviceType())) {
             return;
         }
 
         // set last-modified date
-        Utilities.setLastModifiedHeader(response, lastModified, feedRequest.getDeviceType());
+        setLastModifiedHeader(response, lastModified, feedRequest.getDeviceType());
 
         // set content type
         response.setContentType("application/atom+xml; charset=utf-8");

@@ -138,7 +138,7 @@ public class SearchProcessor extends AbstractProcessor {
         Map<String, Object> initData = new HashMap<>();
         initData.put("request", request);
 
-        // We need the 'parsedRequest' to be a pageRequest so other models
+        // We need the 'parsedRequest' to be a WeblogPageRequest so other models
         // used in a search are properly loaded, which means that searchRequest
         // needs its own custom initData property aside from the standard
         // weblogRequest.
