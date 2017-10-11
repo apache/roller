@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -142,19 +141,11 @@ public class PageProcessor extends AbstractProcessor {
         // is this the site-wide weblog?
         boolean isSiteWide = themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide();
 
-        // determine the lastModified date for this content
-        long lastModified;
-        if (isSiteWide) {
-            lastModified = siteWideCache.getLastModified().toEpochMilli();
-        } else if (weblog.getLastModified() != null) {
-            lastModified = weblog.getLastModified().toEpochMilli();
-        } else {
-            lastModified = getCurrentMillis();
-        }
-
         // 304 Not Modified handling.
         // We skip this for logged in users to avoid the scenario where a user
         // views their weblog, logs in, then gets a 304 without the 'edit' links
+        Instant lastModified = (isSiteWide) ? siteWideCache.getLastModified() : weblog.getLastModified();
+
         if (!incomingRequest.isLoggedIn()) {
             if (respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
                 return;
@@ -294,10 +285,6 @@ public class PageProcessor extends AbstractProcessor {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
-    }
-
-    long getCurrentMillis() {
-        return Clock.systemDefaultZone().millis();
     }
 
     /**

@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Clock;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,12 +125,8 @@ public class FeedProcessor extends AbstractProcessor {
         }
 
         // determine the lastModified date for this content
-        long lastModified = Clock.systemDefaultZone().millis();
-        if (feedRequest.isSiteWideFeed()) {
-            lastModified = siteWideCache.getLastModified().toEpochMilli();
-        } else if (weblog.getLastModified() != null) {
-            lastModified = weblog.getLastModified().toEpochMilli();
-        }
+        Instant lastModified = (feedRequest.isSiteWideFeed()) ? siteWideCache.getLastModified()
+                : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
         if (respondIfNotModified(request, response, lastModified, feedRequest.getDeviceType())) {

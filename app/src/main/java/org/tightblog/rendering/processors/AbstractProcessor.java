@@ -64,12 +64,12 @@ public abstract class AbstractProcessor implements ApplicationContextAware {
      *
      * @param request                - the request
      * @param response               - the response
-     * @param lastModifiedTimeMillis - the last modified time millis
+     * @param lastModifiedTime       - last modified time of the requested data or null if never modified
      * @param deviceType             - standard or mobile, null to not check
      * @return true if a response status was sent, false otherwise.
      */
     boolean respondIfNotModified(HttpServletRequest request, HttpServletResponse response,
-                                               long lastModifiedTimeMillis, DeviceType deviceType) {
+                                               Instant lastModifiedTime, DeviceType deviceType) {
 
         long sinceDate;
         try {
@@ -79,22 +79,18 @@ public abstract class AbstractProcessor implements ApplicationContextAware {
             return false;
         }
 
-        // truncate to seconds
-        lastModifiedTimeMillis -= (lastModifiedTimeMillis % DateUtils.MILLIS_PER_SECOND);
-
         if (log.isDebugEnabled()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd 'at' h:mm:ss a").withZone(ZoneId.systemDefault());
-            log.debug("since date = " + formatter.format(Instant.ofEpochMilli(sinceDate)));
-            log.debug("last mod date (truncated to seconds) = " + formatter.format(Instant.ofEpochMilli(lastModifiedTimeMillis)));
+            log.debug("since date = {}", formatter.format(Instant.ofEpochMilli(sinceDate)));
+            log.debug("last mod date = {}", lastModifiedTime == null ? "null" : formatter.format(lastModifiedTime));
         }
 
         // Set device type for device switching
         String eTag = (deviceType == null) ? null : deviceType.name();
-
         String previousToken = request.getHeader("If-None-Match");
-        if (eTag != null && previousToken != null && eTag.equals(previousToken) &&
-                lastModifiedTimeMillis <= sinceDate ||
-                (eTag == null || previousToken == null) && lastModifiedTimeMillis <= sinceDate) {
+
+        if ((eTag == null || previousToken == null || eTag.equals(previousToken)) &&
+                (lastModifiedTime == null || lastModifiedTime.toEpochMilli() <= sinceDate)) {
 
             log.debug("NOT MODIFIED {}", request.getRequestURL());
 
@@ -115,7 +111,7 @@ public abstract class AbstractProcessor implements ApplicationContextAware {
      * clients to revalidate the cache each time.
      */
     void setLastModifiedHeader(HttpServletResponse response,
-                                             long lastModifiedTimeMillis, DeviceType deviceType) {
+                                             Instant lastModifiedTime, DeviceType deviceType) {
 
         // Save our device type for device switching. Must use caching on headers for this to work.
         if (deviceType != null) {
@@ -123,7 +119,9 @@ public abstract class AbstractProcessor implements ApplicationContextAware {
             response.setHeader("ETag", eTag);
         }
 
-        response.setDateHeader("Last-Modified", lastModifiedTimeMillis);
+        if (lastModifiedTime != null) {
+            response.setDateHeader("Last-Modified", lastModifiedTime.toEpochMilli());
+        }
         // Force clients to revalidate each time
         // See RFC 2616 (HTTP 1.1 spec) secs 14.21, 13.2.1
         response.setDateHeader("Expires", 0);

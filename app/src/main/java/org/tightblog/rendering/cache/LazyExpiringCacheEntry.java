@@ -21,6 +21,7 @@
 package org.tightblog.rendering.cache;
 
 import java.time.Clock;
+import java.time.Instant;
 
 /**
  * A cache entry that is meant to expire in a lazy fashion.
@@ -46,11 +47,11 @@ import java.time.Clock;
 class LazyExpiringCacheEntry {
 
     private Object value = null;
-    private long timeCached = -1;
+    private Instant timeCached = null;
 
     LazyExpiringCacheEntry(Object item) {
         this.value = item;
-        this.timeCached = Clock.systemDefaultZone().millis();
+        this.timeCached = Clock.systemDefaultZone().instant();
     }
 
     /**
@@ -58,7 +59,7 @@ class LazyExpiringCacheEntry {
      * <p>
      * If the value has expired then we return null.
      */
-    public Object getValue(long lastInvalidated) {
+    public Object getValue(Instant lastInvalidated) {
         if (this.isInvalid(lastInvalidated)) {
             return null;
         } else {
@@ -69,8 +70,8 @@ class LazyExpiringCacheEntry {
     /**
      * Determine if this cache entry has expired.
      */
-    private boolean isInvalid(long lastInvalidated) {
-        return (this.timeCached < lastInvalidated);
+    private boolean isInvalid(Instant lastInvalidated) {
+        return (lastInvalidated != null && this.timeCached.isBefore(lastInvalidated));
     }
 
 }
