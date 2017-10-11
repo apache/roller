@@ -13,7 +13,6 @@ import org.tightblog.rendering.RendererManager;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.cache.SiteWideCache;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.util.Utilities;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.*;
@@ -95,31 +93,29 @@ public class PageProcessorTest {
         testTheme.setSiteWide(false);
         when(mockThemeManager.getSharedTheme(any())).thenReturn(testTheme);
 
-        // confirm respondIfNotModified called with current time in millis if weblog is non-site & has no last modified date
+        // confirm respondIfNotModified called with null last modified if weblog is non-site & has no last modified date
         processor = Mockito.spy(processor);
         weblog.setLastModified(null);
-        long testCurrentMillis = processor.getCurrentMillis();
-        doReturn(testCurrentMillis).when(processor).getCurrentMillis();
-        doReturn(true).when(processor).respondIfNotModified(any(), any(), anyLong(), any());
+        doReturn(true).when(processor).respondIfNotModified(any(), any(), any(Instant.class), any());
 
         processor.getPage(mockRequest, mockResponse);
         assertEquals(weblog, pageRequest.getWeblog());
-        verify(processor).respondIfNotModified(mockRequest, mockResponse, testCurrentMillis, DeviceType.NORMAL);
+        verify(processor).respondIfNotModified(mockRequest, mockResponse, null, DeviceType.NORMAL);
 
         // confirm respondIfNotModified called with weblog's last modified date if weblog is non-site & has last modified date
         Mockito.clearInvocations(processor);
-        Instant yesterday = Instant.ofEpochMilli(processor.getCurrentMillis()).minus(1, ChronoUnit.DAYS);
+        Instant yesterday = Instant.now().minus(1, ChronoUnit.DAYS);
         weblog.setLastModified(yesterday);
         processor.getPage(mockRequest, mockResponse);
-        verify(processor).respondIfNotModified(mockRequest, mockResponse, yesterday.toEpochMilli(), DeviceType.NORMAL);
+        verify(processor).respondIfNotModified(mockRequest, mockResponse, yesterday, DeviceType.NORMAL);
 
         // confirm respondIfNotModified called with site-wide cache's last modified date if weblog is site-wide
         Mockito.clearInvocations(processor);
         testTheme.setSiteWide(true);
-        Instant twoDaysAgo = Instant.ofEpochMilli(processor.getCurrentMillis()).minus(2, ChronoUnit.DAYS);
+        Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         when(mockSWCache.getLastModified()).thenReturn(twoDaysAgo);
         processor.getPage(mockRequest, mockResponse);
-        verify(processor).respondIfNotModified(mockRequest, mockResponse, twoDaysAgo.toEpochMilli(), DeviceType.NORMAL);
+        verify(processor).respondIfNotModified(mockRequest, mockResponse, twoDaysAgo, DeviceType.NORMAL);
 
         // TODO: confirm neither respondIfNotModified nor setLastModifiedHeader called for a request from a logged-in user
 

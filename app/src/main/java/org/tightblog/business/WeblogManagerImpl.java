@@ -744,8 +744,7 @@ public class WeblogManagerImpl implements WeblogManager {
             // just rely on the global blacklist if no overrides
             return getSiteBlacklist();
         } else {
-            Blacklist bl = (Blacklist) weblogBlacklistCache.get(weblog.getHandle(),
-                    weblog.getLastModified().toEpochMilli());
+            Blacklist bl = (Blacklist) weblogBlacklistCache.get(weblog.getHandle(), weblog.getLastModified());
 
             if (bl == null) {
                 bl = new Blacklist(weblog.getBlacklist(), getSiteBlacklist());

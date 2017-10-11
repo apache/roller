@@ -23,6 +23,8 @@ package org.tightblog.rendering.cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+
 /**
  * Cache for weblog page content.
  */
@@ -30,7 +32,7 @@ public class LazyExpiringCache extends ExpiringCache {
 
     private static Logger log = LoggerFactory.getLogger(LazyExpiringCache.class);
 
-    public Object get(String key, long lastModified) {
+    public Object get(String key, Instant lastModified) {
         if (enabled) {
             Object entry = null;
             LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.get(key);

@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
 
 /**
  * Serves media files uploaded by users.
@@ -121,13 +122,13 @@ public class MediaResourceProcessor extends AbstractProcessor {
             return;
         }
 
-        long resourceLastMod;
+        Instant resourceLastMod;
         InputStream resourceStream = null;
         MediaFile mediaFile;
 
         try {
             mediaFile = mediaFileManager.getMediaFile(resourceId, true);
-            resourceLastMod = mediaFile.getLastUpdated().toEpochMilli();
+            resourceLastMod = mediaFile.getLastUpdated();
         } catch (Exception ex) {
             // Not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);
