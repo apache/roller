@@ -11,8 +11,8 @@ if [ rcstring != "" ]; then
     mv target/roller-release-${vstring}-standard.zip    target/roller-release-${vstring}${rcstring}-standard.zip
 fi
 
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.tar.gz
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.zip
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-source.tar.gz 
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-source.zip
+gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.tar.gz \
+target/roller-release-${vstring}${rcstring}-standard.zip \
+target/roller-release-${vstring}${rcstring}-source.tar.gz \
+target/roller-release-${vstring}${rcstring}-source.zip
 
