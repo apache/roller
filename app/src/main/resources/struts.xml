@@ -78,6 +78,7 @@
         </global-results>
 
         <global-allowed-methods>
+            accept,
             activate,
             decline,
             execute
@@ -575,7 +576,7 @@
         <action name="invite"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MembersInvite">
             <result name="input" type="tiles">.MembersInvite</result>
-            <result name="disabled" type="tiles">.disabled</result>
+            <!-- <result name="disabled" type="tiles">.disabled</result> -->
             <result name="success" type="chain">members</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">members</param>
