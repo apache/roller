@@ -36,7 +36,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Manage planet group subscriptions, default group is "all".
  */
-@AllowedMethods({"execute","save","delete"})
+// TODO: make this work @AllowedMethods({"execute","save","delete"})
 public class PlanetSubscriptions extends PlanetUIAction {
     
     private static final Log LOGGER = LogFactory.getLog(PlanetSubscriptions.class);

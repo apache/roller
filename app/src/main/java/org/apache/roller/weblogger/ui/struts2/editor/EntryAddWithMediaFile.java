@@ -30,7 +30,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Prepares creation of a new weblog entry with an embedded pointer to a media file.
  */
 @SuppressWarnings("serial")
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class EntryAddWithMediaFile extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(EntryAddWithMediaFile.class);

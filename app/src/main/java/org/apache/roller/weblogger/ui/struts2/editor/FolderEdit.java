@@ -34,7 +34,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Edit a new or existing folder.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class FolderEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(FolderEdit.class);

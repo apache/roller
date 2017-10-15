@@ -35,7 +35,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Allows user to view and pick from list of his/her websites.
  */
-@AllowedMethods({"execute","accept","decline"})
+// TODO: make this work @AllowedMethods({"execute","accept","decline"})
 public class MainMenu extends UIAction {
     
     private static Log log = LogFactory.getLog(MainMenu.class);

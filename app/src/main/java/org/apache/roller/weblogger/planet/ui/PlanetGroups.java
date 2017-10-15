@@ -30,7 +30,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Manage planet groups.
  */
-@AllowedMethods({"execute","save","delete"})
+// TODO: make this work @AllowedMethods({"execute","save","delete"})
 public class PlanetGroups extends PlanetUIAction {
     
     private static Log log = LogFactory.getLog(PlanetGroups.class);

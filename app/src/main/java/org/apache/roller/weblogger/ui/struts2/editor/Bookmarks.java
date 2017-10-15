@@ -38,7 +38,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * List bookmarks and folders and allow for moving them around and deleting them.
  */
-@AllowedMethods({"execute","delete","deleteFolder","move","view","folderCreated"})
+// TODO: make this work @AllowedMethods({"execute","delete","deleteFolder","move","view","folderCreated"})
 public class Bookmarks extends UIAction {
 
     private static Log log = LogFactory.getLog(Bookmarks.class);

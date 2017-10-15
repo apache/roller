@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * Allows user to create a new website.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class CreateWeblog extends UIAction {
     
     private static Log log = LogFactory.getLog(CreateWeblog.class);

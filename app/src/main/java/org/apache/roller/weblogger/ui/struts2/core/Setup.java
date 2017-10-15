@@ -34,7 +34,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Page used to display Roller install instructions.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class Setup extends UIAction {
     
     private static final Log LOG = LogFactory.getLog(Setup.class);

@@ -52,7 +52,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Action for managing weblog comments.
  */
-@AllowedMethods({"execute","query","delete","update"})
+// TODO: make this work @AllowedMethods({"execute","query","delete","update"})
 public class Comments extends UIAction {
 
     private static final long serialVersionUID = -104973988372024709L;

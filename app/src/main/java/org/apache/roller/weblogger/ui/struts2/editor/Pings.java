@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 /**
  * Actions for setting up automatic ping configuration for a weblog.
  */
-@AllowedMethods({"execute","enable","disable","pingNow"})
+// TODO: make this work @AllowedMethods({"execute","enable","disable","pingNow"})
 public class Pings extends UIAction {
     
     private static Log log = LogFactory.getLog(Pings.class);

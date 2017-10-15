@@ -48,7 +48,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 /**
  * Action for managing global set of comments.
  */
-@AllowedMethods({"query","delete","update"})
+// TODO: make this work @AllowedMethods({"query","delete","update"})
 public class GlobalCommentManagement extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(GlobalCommentManagement.class);

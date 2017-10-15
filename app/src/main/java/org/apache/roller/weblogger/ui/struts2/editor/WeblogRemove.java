@@ -29,7 +29,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Action for removing a weblog.
  */
-@AllowedMethods({"execute","remove"})
+// TODO: make this work @AllowedMethods({"execute","remove"})
 public class WeblogRemove extends UIAction {
 
     private static Log log = LogFactory.getLog(WeblogRemove.class);

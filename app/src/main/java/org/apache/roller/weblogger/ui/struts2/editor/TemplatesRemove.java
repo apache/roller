@@ -37,7 +37,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Remove templates.
  */
-@AllowedMethods({"execute","remove","cancel"})
+// TODO: make this work @AllowedMethods({"execute","remove","cancel"})
 public class TemplatesRemove extends UIAction {
 
     private static final long serialVersionUID = 895186156151331087L;

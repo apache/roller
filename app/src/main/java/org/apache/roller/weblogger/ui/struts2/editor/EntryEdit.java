@@ -63,7 +63,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Edit a new or existing entry.
  */
-@AllowedMethods({"execute","firstSave","saveDraft","publish","entryEdit","entryAdd"})
+// TODO: make this work @AllowedMethods({"execute","firstSave","saveDraft","publish","entryEdit","entryAdd"})
 public final class EntryEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryEdit.class);

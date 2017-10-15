@@ -34,7 +34,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Admin action for managing global ping targets.
  */
-@AllowedMethods({"execute","enable","disable","delete","deleteConfirm"})
+// TODO: make this work @AllowedMethods({"execute","enable","disable","delete","deleteConfirm"})
 public class PingTargets extends UIAction {
     
     private static Log log = LogFactory.getLog(PingTargets.class);

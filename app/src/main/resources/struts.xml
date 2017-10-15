@@ -83,7 +83,7 @@
             decline,
             execute
         </global-allowed-methods>
-        
+
         <!-- Simple actions which basically just replace the global-forwards from
              the old struts 1 config.  this is the only way to do it in struts 2 -->
         <action name="home">

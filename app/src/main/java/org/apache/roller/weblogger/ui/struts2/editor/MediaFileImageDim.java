@@ -30,7 +30,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Action class for choosing image dimensions.
  */
 @SuppressWarnings("serial")
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class MediaFileImageDim extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileImageDim.class);

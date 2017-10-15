@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Remove a weblog entry.
  */
-@AllowedMethods({"execute","remove"})
+// TODO: make this work @AllowedMethods({"execute","remove"})
 public class EntryRemove extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryRemove.class);

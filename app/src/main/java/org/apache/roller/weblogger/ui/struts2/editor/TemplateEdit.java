@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Action which handles editing for a single WeblogTemplate.
  */
-@AllowedMethods({"execute","move"})
+// TODO: make this work @AllowedMethods({"execute","move"})
 public class TemplateEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(TemplateEdit.class);

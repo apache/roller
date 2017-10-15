@@ -34,7 +34,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Edit a new or existing bookmark (blogroll item).
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class BookmarkEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarkEdit.class);

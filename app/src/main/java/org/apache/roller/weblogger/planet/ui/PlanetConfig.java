@@ -42,7 +42,7 @@ import org.apache.struts2.interceptor.ParameterAware;
  *
  * Handles editing of planet global runtime properties.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     
     private static Log log = LogFactory.getLog(PlanetConfig.class);

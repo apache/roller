@@ -43,7 +43,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Action for modifying weblog configuration.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class WeblogConfig extends UIAction {
     
     private static Log log = LogFactory.getLog(WeblogConfig.class);
