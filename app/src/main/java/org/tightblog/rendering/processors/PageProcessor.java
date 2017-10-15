@@ -20,11 +20,11 @@
  */
 package org.tightblog.rendering.processors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
+import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -126,8 +126,7 @@ public class PageProcessor extends AbstractProcessor {
      * attribute that translates to a WeblogEntryComment instance containing the comment.
      */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
-    public void getPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
@@ -141,20 +140,15 @@ public class PageProcessor extends AbstractProcessor {
         // is this the site-wide weblog?
         boolean isSiteWide = themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide();
 
-        // 304 Not Modified handling.
-        // We skip this for logged in users to avoid the scenario where a user
-        // views their weblog, logs in, then gets a 304 without the 'edit' links
         Instant lastModified = (isSiteWide) ? siteWideCache.getLastModified() : weblog.getLastModified();
 
-        if (!incomingRequest.isLoggedIn()) {
-            if (respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
-                return;
-            } else {
-                // set last-modified date
-                setLastModifiedHeader(response, lastModified, incomingRequest.getDeviceType());
-            }
+        if (respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
+            return;
+        } else {
+            // set last-modified date
+            setLastModifiedHeader(response, lastModified, incomingRequest.getDeviceType());
         }
-// HERE #1
+
         // generate cache key
         String cacheKey = generateKey(incomingRequest);
 
@@ -162,13 +156,8 @@ public class PageProcessor extends AbstractProcessor {
         WeblogEntryComment commentForm = (WeblogEntryComment) request.getAttribute("commentForm");
 
         if (commentForm == null) {
-
-            CachedContent cachedContent;
-            if (isSiteWide) {
-                cachedContent = (CachedContent) siteWideCache.get(cacheKey);
-            } else {
-                cachedContent = (CachedContent) weblogPageCache.get(cacheKey, lastModified);
-            }
+            CachedContent cachedContent = (CachedContent) (isSiteWide ? siteWideCache.get(cacheKey)
+                    : weblogPageCache.get(cacheKey, lastModified));
 
             if (cachedContent != null) {
                 log.debug("HIT {}", cacheKey);
@@ -178,23 +167,22 @@ public class PageProcessor extends AbstractProcessor {
                     weblogManager.incrementHitCount(weblog);
                 }
 
-                response.setContentLength(cachedContent.getContent().length);
                 response.setContentType(cachedContent.getContentType());
+                response.setContentLength(cachedContent.getContent().length);
                 response.getOutputStream().write(cachedContent.getContent());
                 return;
             } else {
                 log.debug("MISS {}", cacheKey);
             }
         }
-// HERE #2
 
         // not using cache so need to generate page from scratch
         // figure out what template to use
-        if ("page".equals(incomingRequest.getContext())) {
+        if (incomingRequest.getWeblogTemplateName() != null) {
             Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
 
             // block internal custom pages from appearance
-            if (!StringUtils.isEmpty(template.getRelativePath())) {
+            if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
                 incomingRequest.setTemplate(template);
             }
         } else {
@@ -203,17 +191,17 @@ public class PageProcessor extends AbstractProcessor {
             if (incomingRequest.getWeblogEntryAnchor() != null) {
                 WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
 
-                if (entry == null || !entry.isPublished() || Instant.now().isBefore(entry.getPubTime())) {
+                if (entry == null || !entry.isPublished()) {
                     invalid = true;
                 } else {
                     incomingRequest.setWeblogEntry(entry);
-                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.PERMALINK));
+                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
                 }
             }
 
             // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
             if (!invalid && incomingRequest.getTemplate() == null) {
-                incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG));
+                incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
             }
         }
 
@@ -222,39 +210,28 @@ public class PageProcessor extends AbstractProcessor {
             return;
         }
 
-// HERE #3
-
-        // allow for hit counting
-        if (incomingRequest.isWeblogPageHit()) {
-            weblogManager.incrementHitCount(weblog);
-        }
-
-// HERE #4
-
-        // populate the rendering model
-        Map<String, Object> initData = new HashMap<>();
-        initData.put("parsedRequest", incomingRequest);
-
-        // if we're handling comments, add the comment form
-        if (commentForm != null) {
-            initData.put("commentForm", commentForm);
-        }
-
-        Map<String, Object> model = getModelMap("pageModelSet", initData);
-
-        // Load special models for site-wide blog
-        if (isSiteWide) {
-            model.putAll(getModelMap("siteModelSet", initData));
-        }
-
-// HERE #5
-
         try {
             // lookup Renderer we are going to use
             Renderer renderer = rendererManager.getRenderer(incomingRequest.getTemplate(), incomingRequest.getDeviceType());
 
+            // populate the rendering model
+            Map<String, Object> initData = new HashMap<>();
+            initData.put("parsedRequest", incomingRequest);
+
+            // if we're handling comments, add the comment form
+            if (commentForm != null) {
+                initData.put("commentForm", commentForm);
+            }
+
+            Map<String, Object> model = getModelMap("pageModelSet", initData);
+
+            // Load special models for site-wide blog
+            if (isSiteWide) {
+                model.putAll(getModelMap("siteModelSet", initData));
+            }
+
             // render content
-            String contentType = incomingRequest.getTemplate().getRole().getContentType() + "; charset=utf-8";
+            String contentType = incomingRequest.getTemplate().getRole().getContentType();
             CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
             renderer.render(model, rendererOutput.getCachedWriter());
             rendererOutput.flush();
@@ -262,14 +239,17 @@ public class PageProcessor extends AbstractProcessor {
 
             // flush rendered content to response
             log.debug("Flushing response output");
-            response.setContentType(contentType);
+            response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());
 
-// HERE #6
-
-            // if not comment handling, add rendered content to cache
+            // keep cache clear of pages with comment data
             if (commentForm == null) {
+
+                if (incomingRequest.isWeblogPageHit()) {
+                    weblogManager.incrementHitCount(weblog);
+                }
+
                 log.debug("PUT {}", cacheKey);
 
                 if (isSiteWide) {
@@ -280,11 +260,9 @@ public class PageProcessor extends AbstractProcessor {
             }
 
         } catch (Exception e) {
-// HERE #5
             log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
-
     }
 
     /**

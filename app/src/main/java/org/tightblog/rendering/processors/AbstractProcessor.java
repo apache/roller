@@ -114,10 +114,7 @@ public abstract class AbstractProcessor implements ApplicationContextAware {
                                              Instant lastModifiedTime, DeviceType deviceType) {
 
         // Save our device type for device switching. Must use caching on headers for this to work.
-        if (deviceType != null) {
-            String eTag = deviceType.name();
-            response.setHeader("ETag", eTag);
-        }
+        response.setHeader("ETag", deviceType.name());
 
         if (lastModifiedTime != null) {
             response.setDateHeader("Last-Modified", lastModifiedTime.toEpochMilli());

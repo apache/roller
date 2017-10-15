@@ -80,7 +80,7 @@ public interface Template {
         }
 
         public String getContentType() {
-            return contentType;
+            return contentType + "; charset=utf-8";
         }
 
         public boolean isSingleton() {

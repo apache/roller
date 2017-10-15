@@ -179,7 +179,7 @@ public class PreviewProcessor extends AbstractProcessor {
         log.debug("preview page found, dealing with it");
 
         // set the content type
-        String contentType = page.getRole().getContentType() + "; charset=utf-8";
+        String contentType = page.getRole().getContentType();
 
         // looks like we need to render content
         Map<String, Object> model;
