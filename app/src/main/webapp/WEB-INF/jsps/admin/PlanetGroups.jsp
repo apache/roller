@@ -33,13 +33,13 @@
     <s:hidden name="bean.id" />
     
     <div class="formrow">
-        <label for="title" class="formrow" /><s:text name="planetGroups.title" /></label>
+        <label for="bean.title" class="formrow" /><s:text name="planetGroups.title" /></label>
         <s:textfield name="bean.title" size="40" maxlength="255" />
         <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planetGroups.tip.title" />' />
     </div>
     
     <div class="formrow">
-        <label for="handle" class="formrow" /><s:text name="planetGroups.handle" /></label>
+        <label for="bean.handle" class="formrow" /><s:text name="planetGroups.handle" /></label>
         <s:textfield name="bean.handle" size="40" maxlength="255" />
         <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planetGroups.tip.handle" />' />
     </div>

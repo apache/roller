@@ -25,6 +25,7 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -178,5 +179,9 @@ public interface PlanetManager extends Manager {
                            Date endDate,
                            int offset, 
                            int len) throws RollerException;
-    
+
+    /**
+     * Add new PlanetGroup and add it to an existing planet.
+     */
+    void saveNewPlanetGroup(Planet planet, PlanetGroup planetGroup) throws WebloggerException;
 }
