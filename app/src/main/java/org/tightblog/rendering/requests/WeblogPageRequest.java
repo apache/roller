@@ -180,8 +180,16 @@ public class WeblogPageRequest extends WeblogRequest {
         return weblogEntryAnchor;
     }
 
+    public void setWeblogEntryAnchor(String weblogEntryAnchor) {
+        this.weblogEntryAnchor = weblogEntryAnchor;
+    }
+
     public String getWeblogTemplateName() {
         return weblogTemplateName;
+    }
+
+    public void setWeblogTemplateName(String weblogTemplateName) {
+        this.weblogTemplateName = weblogTemplateName;
     }
 
     public String getWeblogCategoryName() {
@@ -222,6 +230,10 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public boolean isWeblogPageHit() {
         return weblogPageHit;
+    }
+
+    public void setWeblogPageHit(boolean weblogPageHit) {
+        this.weblogPageHit = weblogPageHit;
     }
 
     public boolean isNoIndex() {

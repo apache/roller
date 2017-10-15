@@ -2,25 +2,36 @@ package org.tightblog.rendering.processors;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mobile.device.DeviceType;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTheme;
 import org.tightblog.business.themes.ThemeManager;
+import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.pojos.WeblogTemplate;
+import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.rendering.Renderer;
 import org.tightblog.rendering.RendererManager;
+import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.cache.SiteWideCache;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.util.WebloggerException;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.*;
@@ -39,6 +50,7 @@ public class PageProcessorTest {
     private WeblogPageRequest.Creator wprCreator;
     private WeblogPageRequest pageRequest;
     private WeblogEntryManager mockWEM;
+    private Weblog weblog;
 
     private LazyExpiringCache mockCache;
     private SiteWideCache mockSWCache;
@@ -61,12 +73,13 @@ public class PageProcessorTest {
         processor = new PageProcessor();
         processor.setWeblogPageRequestCreator(wprCreator);
         processor.setWeblogEntryManager(mockWEM);
-
         mockCache = mock(LazyExpiringCache.class);
         processor.setWeblogPageCache(mockCache);
         mockSWCache = mock(SiteWideCache.class);
         processor.setSiteWideCache(mockSWCache);
         mockWM = mock(WeblogManager.class);
+        weblog = new Weblog();
+        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
         processor.setWeblogManager(mockWM);
         mockRendererManager = mock(RendererManager.class);
         processor.setRendererManager(mockRendererManager);
@@ -79,15 +92,13 @@ public class PageProcessorTest {
         initializeMocks();
         pageRequest.setWeblogHandle("myhandle");
         when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(null);
-        processor.getPage(mockRequest, mockResponse);
+        processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
 
     @Test
     public void test304NotModifiedContent() throws IOException {
         initializeMocks();
-        Weblog weblog = new Weblog();
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
 
         SharedTheme testTheme = new SharedTheme();
         testTheme.setSiteWide(false);
@@ -95,18 +106,12 @@ public class PageProcessorTest {
 
         // confirm respondIfNotModified called with null last modified if weblog is non-site & has no last modified date
         processor = Mockito.spy(processor);
-        weblog.setLastModified(null);
-        doReturn(true).when(processor).respondIfNotModified(any(), any(), any(Instant.class), any());
-
-        processor.getPage(mockRequest, mockResponse);
-        assertEquals(weblog, pageRequest.getWeblog());
-        verify(processor).respondIfNotModified(mockRequest, mockResponse, null, DeviceType.NORMAL);
-
-        // confirm respondIfNotModified called with weblog's last modified date if weblog is non-site & has last modified date
-        Mockito.clearInvocations(processor);
         Instant yesterday = Instant.now().minus(1, ChronoUnit.DAYS);
         weblog.setLastModified(yesterday);
-        processor.getPage(mockRequest, mockResponse);
+        doReturn(true).when(processor).respondIfNotModified(any(), any(), any(Instant.class), any());
+
+        processor.handleRequest(mockRequest, mockResponse);
+        assertEquals(weblog, pageRequest.getWeblog());
         verify(processor).respondIfNotModified(mockRequest, mockResponse, yesterday, DeviceType.NORMAL);
 
         // confirm respondIfNotModified called with site-wide cache's last modified date if weblog is site-wide
@@ -114,18 +119,180 @@ public class PageProcessorTest {
         testTheme.setSiteWide(true);
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         when(mockSWCache.getLastModified()).thenReturn(twoDaysAgo);
-        processor.getPage(mockRequest, mockResponse);
+        processor.handleRequest(mockRequest, mockResponse);
         verify(processor).respondIfNotModified(mockRequest, mockResponse, twoDaysAgo, DeviceType.NORMAL);
-
-        // TODO: confirm neither respondIfNotModified nor setLastModifiedHeader called for a request from a logged-in user
-
-        // TODO: confirm setLastModifiedHeader() called if respondIfNotModified is false
-/*
-        Mockito.clearInvocations(processor);
-        doReturn(false).when(processor.respondIfNotModified(any(), any(), any(), any()));
-        processor.getPage(mockRequest, mockResponse);
-        verify(processor).setLastModifiedHeader(mockResponse, testCurrentMillis, DeviceType.NORMAL); */
     }
+
+    @Test
+    public void testCachedPageReturned() throws IOException {
+        initializeMocks();
+
+        SharedTheme testTheme = new SharedTheme();
+        testTheme.setSiteWide(false);
+        when(mockThemeManager.getSharedTheme(any())).thenReturn(testTheme);
+
+        // Confirm setLastModifiedHeader() called if respondIfNotModified is false
+        Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
+        weblog.setLastModified(twoDaysAgo);
+
+        processor = Mockito.spy(processor);
+        doReturn(false).when(processor).respondIfNotModified(any(), any(), any(), any());
+
+        CachedContent cachedContent = new CachedContent(10, ComponentType.WEBLOG.getContentType());
+        cachedContent.getCachedWriter().print("mytest1");
+        cachedContent.flush();
+        when(mockCache.get(any(), any())).thenReturn(cachedContent);
+
+        ServletOutputStream mockSOS = mock(ServletOutputStream.class);
+        when(mockResponse.getOutputStream()).thenReturn(mockSOS);
+
+        pageRequest.setWeblogPageHit(true);
+
+        processor.handleRequest(mockRequest, mockResponse);
+        verify(processor).setLastModifiedHeader(mockResponse, twoDaysAgo, DeviceType.NORMAL);
+
+        // testing AbstractProcessor's setLastModifiedHeader w/last modified time
+        verify(mockResponse).setHeader("ETag", "NORMAL");
+        verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
+        verify(mockResponse).setDateHeader("Expires", 0);
+
+        // verify cached content being returned
+        verify(mockWM).incrementHitCount(weblog);
+        verify(mockResponse).setContentType(ComponentType.WEBLOG.getContentType());
+        verify(mockResponse).setContentLength(7);
+        verify(mockSOS).write("mytest1".getBytes());
+
+        // testing AbstractProcessor's setLastModifiedHeader w/o last modified time
+        weblog.setLastModified(null);
+
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockSOS);
+        pageRequest.setWeblogPageHit(false);
+
+        processor.handleRequest(mockRequest, mockResponse);
+        verify(mockWM, never()).incrementHitCount(weblog);
+        verify(mockResponse).setHeader("ETag", "NORMAL");
+        verify(mockResponse).setDateHeader("Expires", 0);
+        verify(mockResponse, never()).setDateHeader(eq("Last-Modified"), anyLong());
+        verify(mockSOS).write(any());
+    }
+
+    @Test
+    public void testRenderingProcessing() throws IOException, WebloggerException {
+        initializeMocks();
+
+        SharedTheme testTheme = new SharedTheme();
+        testTheme.setSiteWide(false);
+        when(mockThemeManager.getSharedTheme(any())).thenReturn(testTheme);
+
+        processor = Mockito.spy(processor);
+        doReturn(false).when(processor).respondIfNotModified(any(), any(), any(), any());
+
+        // test null template returns 404
+        pageRequest.setWeblogTemplateName("mytemplate");
+        WeblogTheme mockTheme = mock(WeblogTheme.class);
+        when(mockThemeManager.getWeblogTheme(weblog)).thenReturn(mockTheme);
+        when(mockTheme.getTemplateByPath(any())).thenReturn(null);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertNull(pageRequest.getTemplate());
+        verify(mockResponse).sendError(SC_NOT_FOUND);
+
+        // test custom internal template returns 404
+        WeblogTemplate wt = new WeblogTemplate();
+        wt.setRole(ComponentType.CUSTOM_INTERNAL);
+        when(mockTheme.getTemplateByPath(any())).thenReturn(wt);
+
+        Mockito.clearInvocations(processor, mockResponse);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertNull(pageRequest.getTemplate());
+        verify(mockResponse).sendError(SC_NOT_FOUND);
+
+        // test page template & rendering called
+        wt.setRole(ComponentType.CUSTOM_EXTERNAL);
+        pageRequest.setWeblogPageHit(true);
+
+        Renderer mockRenderer = mock(Renderer.class);
+        when(mockRendererManager.getRenderer(any(), any())).thenReturn(mockRenderer);
+
+        ServletOutputStream mockSOS = mock(ServletOutputStream.class);
+        when(mockResponse.getOutputStream()).thenReturn(mockSOS);
+
+        ApplicationContext mockContext = mock(ApplicationContext.class);
+        when(mockContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
+        processor.setApplicationContext(mockContext);
+
+        Mockito.clearInvocations(processor, mockResponse, mockWM);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertEquals(pageRequest.getTemplate(), wt);
+        verify(mockWM).incrementHitCount(weblog);
+        verify(mockCache).put(anyString(), any());
+        verify(mockSWCache, never()).put(anyString(), any());
+        verify(mockRenderer).render(any(), any());
+        verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());
+        verify(mockResponse).setContentLength(anyInt());
+        verify(mockSOS).write(any());
+
+        // test permalink template using site cache, no weblog page hit
+        testTheme.setSiteWide(true);
+        pageRequest.setWeblogPageHit(false);
+        pageRequest.setWeblogTemplateName(null);
+        pageRequest.setWeblogEntryAnchor("myentry");
+
+        WeblogTemplate wt2 = new WeblogTemplate();
+        wt2.setRole(ComponentType.PERMALINK);
+        WeblogEntry entry = new WeblogEntry();
+        entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
+        when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(wt2);
+
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSWCache, mockSOS);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertEquals(entry, pageRequest.getWeblogEntry());
+        assertEquals(wt2, pageRequest.getTemplate());
+        verify(mockWM, never()).incrementHitCount(weblog);
+        verify(mockCache, never()).put(anyString(), any());
+        verify(mockSWCache).put(anyString(), any());
+        verify(mockSOS).write(any());
+
+        // test fallback to weblog template if no permalink one
+        WeblogTemplate wt3 = new WeblogTemplate();
+        wt3.setRole(ComponentType.WEBLOG);
+        when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(null);
+        when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(wt3);
+
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSWCache, mockSOS);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertEquals(wt3, pageRequest.getTemplate());
+
+        // test 404 if weblog entry not published
+        entry.setStatus(WeblogEntry.PubStatus.DRAFT);
+        pageRequest.setTemplate(null);
+
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSWCache, mockSOS);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertNull(pageRequest.getTemplate());
+        verify(mockResponse).sendError(SC_NOT_FOUND);
+
+        // test 404 if weblog entry null
+        when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(null);
+        pageRequest.setTemplate(null);
+
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSWCache, mockSOS);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertNull(pageRequest.getTemplate());
+        verify(mockResponse).sendError(SC_NOT_FOUND);
+
+        // test 404 if exception during rendering
+        when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
+        entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        when(mockRendererManager.getRenderer(any(), any())).thenThrow(new IllegalArgumentException());
+
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSWCache, mockSOS);
+        processor.handleRequest(mockRequest, mockResponse);
+        verify(mockResponse).sendError(SC_NOT_FOUND);
+    }
+
+    // TODO: other methods in abstractprocessor
+    // TODO: comment form handling
 
     @Test
     public void testGenerateKey() {
