@@ -15,7 +15,6 @@
  */
 package org.tightblog.rendering.processors;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.DeviceType;
@@ -33,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+// Note these methods are tested in PageProcessorTest
 public abstract class AbstractProcessor implements ApplicationContextAware {
 
     private static Logger log = LoggerFactory.getLogger(AbstractProcessor.class);
