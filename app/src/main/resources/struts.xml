@@ -287,6 +287,7 @@
             deleteConfirm,
             deleteFolder,
             deleteSelected,
+            disable,
             enable,
             entryAdd,
             entryEdit,
@@ -614,7 +615,7 @@
     <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring" >
 
         <global-allowed-methods>
-            execute,save,
+            execute,save
         </global-allowed-methods>
 
         <action name="mediaFileAdd"
