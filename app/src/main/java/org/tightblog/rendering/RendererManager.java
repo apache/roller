@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.tightblog.pojos.Template;
-import org.springframework.mobile.device.DeviceType;
 
 /**
  * Returns Renderer for Template via configured RendererFactories.
@@ -52,14 +51,14 @@ public class RendererManager {
      * instance and tries to find a Renderer for the content.  If no Renderer
      * can be found then we throw an exception.
      */
-    public Renderer getRenderer(Template template, DeviceType deviceType)
+    public Renderer getRenderer(Template template)
             throws WebloggerException {
 
         Renderer renderer;
 
         // iterate over our renderer factories and see if one of them wants to handle this content
         for (RendererFactory rendererFactory : rendererFactories) {
-            renderer = rendererFactory.getRenderer(template, deviceType);
+            renderer = rendererFactory.getRenderer(template);
             if (renderer != null) {
                 return renderer;
             }

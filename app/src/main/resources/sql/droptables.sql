@@ -32,7 +32,6 @@ drop table weblog_entry_tag;
 drop table weblog_entry;
 drop table weblog_category;
 drop table weblog_template;
-drop table weblog_template_rendition;
 
 -- core platform tables
 drop table user_weblog_role;

@@ -24,7 +24,6 @@ import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTemplate;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
-import org.tightblog.pojos.TemplateRendition;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.rendering.Renderer;
@@ -192,8 +191,8 @@ public class FeedProcessor extends AbstractProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            Template template = new SharedTemplate(pageId, TemplateRendition.Parser.VELOCITY);
-            renderer = rendererManager.getRenderer(template, DeviceType.NORMAL);
+            Template template = new SharedTemplate(pageId, Template.Parser.VELOCITY);
+            renderer = rendererManager.getRenderer(template);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find render feed for page {}", pageId, e);

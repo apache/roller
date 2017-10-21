@@ -212,7 +212,7 @@ public class PageProcessor extends AbstractProcessor {
 
         try {
             // lookup Renderer we are going to use
-            Renderer renderer = rendererManager.getRenderer(incomingRequest.getTemplate(), incomingRequest.getDeviceType());
+            Renderer renderer = rendererManager.getRenderer(incomingRequest.getTemplate());
 
             // populate the rendering model
             Map<String, Object> initData = new HashMap<>();

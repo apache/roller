@@ -63,7 +63,7 @@ public interface ThemeManager {
 
     /**
      * Create a weblog template (database-stored, weblog-specific)
-     * from a shared (file) template, including the latter's renditions
+     * from a shared (file) template
      *
      * @param weblog         The weblog to import the template into
      * @param sharedTemplate The sharedTemplate that should copied from

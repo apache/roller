@@ -20,13 +20,11 @@
  */
 package org.tightblog.rendering.velocity;
 
-import org.tightblog.pojos.TemplateRendition;
 import org.tightblog.pojos.Template;
 import org.tightblog.rendering.Renderer;
 import org.tightblog.rendering.RendererFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mobile.device.DeviceType;
 
 /**
  * RendererFactory for Velocity, creates VelocityRenderers.
@@ -34,30 +32,18 @@ import org.springframework.mobile.device.DeviceType;
 public class VelocityRendererFactory implements RendererFactory {
     private static Logger log = LoggerFactory.getLogger(VelocityRendererFactory.class);
 
-    public Renderer getRenderer(Template template, DeviceType deviceType) {
+    @Override
+    public Renderer getRenderer(Template template) {
         Renderer renderer = null;
-        TemplateRendition tr;
 
         if (template == null || template.getId() == null) {
             return null;
         }
 
-        tr = template.getTemplateRendition(TemplateRendition.RenditionType.valueOf(deviceType.name()));
-
-        // fallback to normal if template for requested device type not available
-        if (tr == null && !DeviceType.NORMAL.equals(deviceType)) {
-            tr = template.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
-        }
-
-        // nothing we can do with null values
-        if (tr == null) {
-            return null;
-        }
-
         // VelocityRenderer handles Velocity templates only
-        if (TemplateRendition.Parser.VELOCITY.equals(tr.getParser())) {
+        if (Template.Parser.VELOCITY.equals(template.getParser())) {
             try {
-                renderer = new VelocityRenderer(template, deviceType);
+                renderer = new VelocityRenderer(template);
             } catch (Exception ex) {
                 log.error("ERROR creating VelocityRenderer", ex);
                 return null;

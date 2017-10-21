@@ -14,89 +14,56 @@
     <!-- templates -->
     <template role="weblog">
         <name>Weblog</name>
-        <renditions>
-            <rendition>
-                <contentsFile>weblog.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>weblog.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="permalink">
         <name>Entry</name>
-        <renditions>
-            <rendition>
-                <contentsFile>entry.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>entry.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="search">
         <name>Search</name>
-        <renditions>
-            <rendition>
-                <contentsFile>search.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>search.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>_day</name>
         <description>One day's worth of entries</description>
-        <renditions>
-            <rendition>
-                <parser>velocity</parser>
-                <contentsFile>day.vm</contentsFile>
-            </rendition>
-        </renditions>
+        <parser>velocity</parser>
+        <contentsFile>day.vm</contentsFile>
     </template>
 
     <template role="customExternal">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
         <relativePath>archives</relativePath>
-        <renditions>
-            <rendition>
-                <contentsFile>archives.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>archives.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>standard_head</name>
         <description>Contents of HTML head</description>
-        <renditions>
-            <rendition>
-                <contentsFile>std_head.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>std_head.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>standard_header</name>
         <description>Displayed in header of each page</description>
-        <renditions>
-            <rendition>
-                <contentsFile>std_header.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>std_header.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>standard_footer</name>
         <description>For footer of each page</description>
-        <renditions>
-            <rendition>
-                <contentsFile>std_footer.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>std_footer.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
 </sharedtheme>
-

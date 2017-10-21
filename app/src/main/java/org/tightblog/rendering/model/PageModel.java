@@ -306,7 +306,7 @@ public class PageModel implements Model {
     }
 
     /**
-     * Access to device type, which is either 'mobile' or 'standard'
+     * Access to device type, which is NORMAL, MOBILE, or TABLET
      *
      * @return device type
      */

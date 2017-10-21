@@ -36,7 +36,6 @@ import org.tightblog.pojos.WeblogEntryTag;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
-import org.tightblog.pojos.WeblogTemplateRendition;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.util.Blacklist;
 import org.tightblog.rendering.cache.CacheManager;
@@ -212,14 +211,6 @@ public class WeblogManagerImpl implements WeblogManager {
 
         // update weblog last modified date.  date updated by saveWeblog()
         saveWeblog(template.getWeblog());
-    }
-
-    @Override
-    public void saveTemplateRendition(WeblogTemplateRendition rendition) {
-        this.strategy.store(rendition);
-
-        // update weblog last modified date.  date updated by saveWeblog()
-        saveWeblog(rendition.getWeblogTemplate().getWeblog());
     }
 
     @Override

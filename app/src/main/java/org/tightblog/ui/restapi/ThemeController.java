@@ -76,11 +76,10 @@ public class ThemeController {
                     return ResponseEntity.badRequest().body(maybeError);
                 }
 
-                // Remove old template overrides and their renditions
+                // Remove old template overrides
                 List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(weblog);
 
                 for (WeblogTemplate template : oldTemplates) {
-                    // Remove template overrides and their renditions
                     if (template.getDerivation() == Template.TemplateDerivation.OVERRIDDEN) {
                         weblogManager.removeTemplate(template);
                     }

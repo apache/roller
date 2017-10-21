@@ -47,7 +47,6 @@ public class VelocityRenderer implements Renderer {
 
     // the original template we are supposed to render
     private Template renderTemplate = null;
-    private DeviceType deviceType = null;
 
     // the velocity templates
     private org.apache.velocity.Template velocityTemplate = null;
@@ -56,16 +55,15 @@ public class VelocityRenderer implements Renderer {
     // a possible exception
     private Exception velocityException = null;
 
-    public VelocityRenderer(Template template, DeviceType deviceType) {
+    public VelocityRenderer(Template template) {
 
         // the Template we are supposed to render
         this.renderTemplate = template;
-        this.deviceType = deviceType;
 
         try {
             // make sure that we can locate the template
             // if we can't then this will throw an exception
-            velocityTemplate = VelocityEngineWrapper.getTemplate(template.getId(), deviceType);
+            velocityTemplate = VelocityEngineWrapper.getTemplate(template.getId());
 
         } catch (ResourceNotFoundException ex) {
             // velocity couldn't find the resource so lets log a warning
@@ -81,7 +79,7 @@ public class VelocityRenderer implements Renderer {
             velocityException = ex;
 
             // need to lookup error page template
-            velocityTemplate = VelocityEngineWrapper.getTemplate("templates/error-page.vm", deviceType);
+            velocityTemplate = VelocityEngineWrapper.getTemplate("templates/error-page.vm");
 
         }
     }
@@ -144,13 +142,12 @@ public class VelocityRenderer implements Renderer {
         try {
             if (template != null) {
                 // need to lookup error page template
-                velocityTemplate = VelocityEngineWrapper.getTemplate(template, deviceType);
+                velocityTemplate = VelocityEngineWrapper.getTemplate(template);
             }
 
             Context ctx = new VelocityContext(model);
             ctx.put("exception", velocityException);
             ctx.put("exceptionSource", renderTemplate.getId());
-            ctx.put("exceptionDevice", deviceType);
             ctx.put("utils", new UtilitiesModel());
 
             // render output to Writer

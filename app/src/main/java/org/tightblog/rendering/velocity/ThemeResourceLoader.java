@@ -25,7 +25,6 @@ import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.themes.SharedTheme;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
-import org.tightblog.pojos.TemplateRendition;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
@@ -40,10 +39,8 @@ import java.io.UnsupportedEncodingException;
  * The ThemeResourceLoader is a Velocity template loader which loads templates
  * that are part of themes.  Resources fitting this loader are of two formats:
  *
- * For templates from shared themes: <theme name>:<template name>[|<renditionType>]
- * For templates that are overridden or weblog-specific:
- *                                   <weblog template id>[|<renditionType>]
- * RenditionType.NORMAL is used if renditionType above is omitted.
+ * For templates from shared themes: <theme name>:<template name>
+ * For templates that are overridden or weblog-specific: <weblog template id>
  */
 public class ThemeResourceLoader extends ResourceLoader {
 
@@ -59,7 +56,7 @@ public class ThemeResourceLoader extends ResourceLoader {
     /**
      * Get an InputStream so that the Runtime can build a template with it.
      *
-     * @param resourceId resource identifier for template rendition
+     * @param resourceId resource identifier for template
      * @return InputStream containing template
      * @throws ResourceNotFoundException if the resourceId is invalid or no template can otherwise be found for it.
      */
@@ -73,15 +70,7 @@ public class ThemeResourceLoader extends ResourceLoader {
         }
 
         Template template;
-        TemplateRendition.RenditionType renditionType = TemplateRendition.RenditionType.NORMAL;
 
-        if (resourceId.contains("|")) {
-            String[] pair = resourceId.split("\\|");
-            resourceId = pair[0];
-            renditionType = TemplateRendition.RenditionType.valueOf(pair[1].toUpperCase());
-        }
-
-        // by here, resourceId will lack the "|renditionType"
         if (resourceId.contains(":")) {
             // shared theme, stored in a file
             String[] sharedThemeParts = resourceId.split(":", 2);
@@ -100,18 +89,7 @@ public class ThemeResourceLoader extends ResourceLoader {
             throw new ResourceNotFoundException("Template \"" + resourceId + "\" not found");
         }
 
-        final String contents;
-        TemplateRendition templateCode = template.getTemplateRendition(renditionType);
-        if (templateCode == null && renditionType != TemplateRendition.RenditionType.NORMAL) {
-            // fall back to standard rendition if mobile or other unavailable
-            templateCode = template.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
-        }
-        if (templateCode != null) {
-            contents = templateCode.getRendition();
-        } else {
-            throw new ResourceNotFoundException("Rendering [" + renditionType.name() +
-                    "] of Template [" + resourceId + "] not found.");
-        }
+        final String contents = template.getTemplate();
 
         logger.debug("Resource found!");
 

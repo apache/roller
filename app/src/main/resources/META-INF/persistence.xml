@@ -18,7 +18,6 @@
     <class>org.tightblog.pojos.WeblogEntryTagAggregate</class>
     <class>org.tightblog.pojos.UserWeblogRole</class>
     <class>org.tightblog.pojos.WeblogTemplate</class>
-    <class>org.tightblog.pojos.WeblogTemplateRendition</class>
     <class>org.tightblog.pojos.WebloggerProperties</class>
     <class>org.tightblog.util.InstantConverter</class>
   </persistence-unit>

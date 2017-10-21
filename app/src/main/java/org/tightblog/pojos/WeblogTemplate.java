@@ -26,7 +26,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,12 +35,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * POJO that represents a single user defined template page.
@@ -74,16 +70,14 @@ public class WeblogTemplate implements Template {
     private String relativePath = null;
     private Instant lastModified = null;
     private TemplateDerivation derivation = TemplateDerivation.SPECIFICBLOG;
+    private Parser parser = null;
+    private String template = "";
 
-    private String contentsStandard = null;
-    private String contentsMobile = null;
+    private String contents = null;
 
     // associations
     @JsonIgnore
     private Weblog weblog = null;
-
-    @JsonIgnore
-    private List<WeblogTemplateRendition> templateRenditions = new ArrayList<>();
 
     // temporary non-persisted fields used for form entry
     private String roleName = null;
@@ -155,58 +149,13 @@ public class WeblogTemplate implements Template {
         this.weblog = weblog;
     }
 
-    @OneToMany(targetEntity = WeblogTemplateRendition.class,
-            cascade = CascadeType.ALL, mappedBy = "weblogTemplate")
-    public List<WeblogTemplateRendition> getTemplateRenditions() {
-        return templateRenditions;
-    }
-
-    public void setTemplateRenditions(List<WeblogTemplateRendition> templateRenditions) {
-        this.templateRenditions = templateRenditions;
-    }
-
-    public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType) {
-        for (WeblogTemplateRendition rnd : templateRenditions) {
-            if (rnd.getRenditionType().equals(desiredType)) {
-                return rnd;
-            }
-        }
-        return null;
-    }
-
-    public void addTemplateRendition(WeblogTemplateRendition newRendition) {
-        if (hasTemplateRendition(newRendition)) {
-            throw new IllegalArgumentException("Rendition type '" + newRendition.getRenditionType() +
-                    " for template '" + this.getName() + "' already exists.");
-        }
-        templateRenditions.add(newRendition);
-    }
-
-    public boolean hasTemplateRendition(WeblogTemplateRendition proposed) {
-        for (WeblogTemplateRendition rnd : templateRenditions) {
-            if (rnd.getRenditionType().equals(proposed.getRenditionType())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Transient
-    public String getContentsStandard() {
-        return this.contentsStandard;
+    public String getContents() {
+        return this.contents;
     }
 
-    public void setContentsStandard(String contents) {
-        this.contentsStandard = contents;
-    }
-
-    @Transient
-    public String getContentsMobile() {
-        return this.contentsMobile;
-    }
-
-    public void setContentsMobile(String contents) {
-        this.contentsMobile = contents;
+    public void setContents(String contents) {
+        this.contents = contents;
     }
 
     @Override
@@ -227,6 +176,25 @@ public class WeblogTemplate implements Template {
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
+
+    @Basic(optional = false)
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
+
+    @Enumerated(EnumType.STRING)
+    public Parser getParser() {
+        return parser;
+    }
+
+    public void setParser(Parser templateLanguage) {
+        this.parser = templateLanguage;
+    }
+
 
     //------------------------------------------------------- Good citizenship
 
