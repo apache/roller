@@ -50,7 +50,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  *
  * @see org.apache.roller.weblogger.ui.struts2.core.Login
  */
-@AllowedMethods({"execute","save","activate"})
+// TODO: make this work @AllowedMethods({"execute","save","activate"})
 public class Register extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(Register.class);

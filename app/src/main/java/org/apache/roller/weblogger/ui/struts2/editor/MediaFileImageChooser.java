@@ -40,7 +40,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Browse media files action.
  */
 @SuppressWarnings("serial")
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class MediaFileImageChooser extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileImageChooser.class);
 

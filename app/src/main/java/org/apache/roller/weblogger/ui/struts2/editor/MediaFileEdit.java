@@ -36,7 +36,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Edits metadata for a media file.
  */
 @SuppressWarnings("serial")
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class MediaFileEdit extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileEdit.class);

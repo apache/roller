@@ -25,7 +25,7 @@ limitations under the License.
         <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>
-        <Logger name="org.apache.struts2" level="trace">
+        <Logger name="org.apache.struts2" level="warn">
             <AppenderRef ref="Console"/>
         </Logger>
     </Loggers>

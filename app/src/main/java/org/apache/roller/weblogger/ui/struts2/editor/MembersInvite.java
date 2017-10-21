@@ -38,7 +38,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
  *
  * TODO: handle 'disabled' result
  */
-@AllowedMethods({"execute","save","cancel"})
+// TODO: make this work @AllowedMethods({"execute","save","cancel"})
 public class MembersInvite extends UIAction {
     
     private static Log log = LogFactory.getLog(MembersInvite.class);

@@ -22,7 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 
@@ -30,7 +32,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Manage planet groups.
  */
-@AllowedMethods({"execute","save","delete"})
+// TODO: make this work @AllowedMethods({"execute","save","delete"})
 public class PlanetGroups extends PlanetUIAction {
     
     private static Log log = LogFactory.getLog(PlanetGroups.class);
@@ -81,42 +83,47 @@ public class PlanetGroups extends PlanetUIAction {
         
         return LIST;
     }
-    
-    
-    /** 
+
+
+    /**
      * Save group.
      */
     public String save() {
-        
+
         myValidate();
-        
+
         if (!hasActionErrors()) {
             try {
+                PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
+
+                Planet planet = getPlanet();
                 PlanetGroup planetGroup = getGroup();
-                if(planetGroup == null) {
-                    log.debug("Adding New Group");
+
+                if (planetGroup == null) {
                     planetGroup = new PlanetGroup();
-                    planetGroup.setPlanet(getPlanet());
+                    planetGroup.setPlanet(planet);
+                    getBean().copyTo(planetGroup);
+
+                    log.debug("Adding New Group: " + planetGroup.getHandle());
+                    planetManager.saveNewPlanetGroup(getPlanet(), planetGroup);
+
                 } else {
-                    log.debug("Updating Existing Group");
+                    log.debug("Updating Existing Group: " + planetGroup.getHandle());
+                    getBean().copyTo(planetGroup);
+                    planetManager.saveGroup(planetGroup);
                 }
 
-                // copy in submitted data
-                getBean().copyTo(planetGroup);
-
-                // save and flush
-                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                pmgr.saveGroup(planetGroup);
                 WebloggerFactory.getWeblogger().flush();
-
                 addMessage("planetGroups.success.saved");
 
-            } catch(Exception ex) {
+                setGroup(null);
+
+            } catch (Exception ex) {
                 log.error("Error saving planet group - " + getBean().getId(), ex);
                 addError("planetGroups.error.saved");
             }
         }
-        
+
         return LIST;
     }
 
@@ -133,6 +140,9 @@ public class PlanetGroups extends PlanetUIAction {
                 WebloggerFactory.getWeblogger().flush();
                 
                 addMessage("planetSubscription.success.deleted");
+
+                setGroup(null);
+
             } catch(Exception ex) {
                 log.error("Error deleting planet group - "+getBean().getId());
                 addError("Error deleting planet group");

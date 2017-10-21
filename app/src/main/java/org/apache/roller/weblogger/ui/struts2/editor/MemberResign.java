@@ -32,7 +32,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Action for resigning from a weblog.
  */
-@AllowedMethods({"execute","resign"})
+// TODO: make this work @AllowedMethods({"execute","resign"})
 public class MemberResign extends UIAction {
 
     private static Log log = LogFactory.getLog(MemberResign.class);

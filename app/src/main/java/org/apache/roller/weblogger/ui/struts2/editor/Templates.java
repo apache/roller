@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * Templates listing page.
  */
-@AllowedMethods({"execute","add"})
+// TODO: make this work @AllowedMethods({"execute","add"})
 public class Templates extends UIAction {
 
 	private static Log log = LogFactory.getLog(Templates.class);

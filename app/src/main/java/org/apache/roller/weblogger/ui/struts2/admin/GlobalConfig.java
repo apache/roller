@@ -46,7 +46,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 /**
  * Action which handles editing of global configuration.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
 
     private static Log log = LogFactory.getLog(GlobalConfig.class);

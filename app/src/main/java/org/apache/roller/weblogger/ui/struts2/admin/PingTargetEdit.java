@@ -31,7 +31,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Add or modify a common ping target.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class PingTargetEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(PingTargetEdit.class);

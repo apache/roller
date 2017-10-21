@@ -42,7 +42,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Action for controlling theme selection.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class ThemeEdit extends UIAction {
 
     private static final long serialVersionUID = 4644653507344432426L;

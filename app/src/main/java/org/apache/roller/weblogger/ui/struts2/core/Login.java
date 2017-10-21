@@ -34,7 +34,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
  *
  * @see org.apache.roller.weblogger.ui.struts2.core.Register
  */
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class Login extends UIAction {
     
     private String error = null;

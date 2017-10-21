@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Edit a new or existing folder.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class FolderEdit extends UIAction implements ServletResponseAware {
 
     private static Log log = LogFactory.getLog(FolderEdit.class);

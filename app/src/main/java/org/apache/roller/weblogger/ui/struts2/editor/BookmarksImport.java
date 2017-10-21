@@ -37,7 +37,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Import opml file into bookmarks folder.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public final class BookmarksImport extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarksImport.class);

@@ -78,11 +78,12 @@
         </global-results>
 
         <global-allowed-methods>
+            accept,
             activate,
             decline,
             execute
         </global-allowed-methods>
-        
+
         <!-- Simple actions which basically just replace the global-forwards from
              the old struts 1 config.  this is the only way to do it in struts 2 -->
         <action name="home">
@@ -281,21 +282,27 @@
         <global-allowed-methods>
             add,
             cancel,
+            createNewDirectory,
             execute,
             delete,
             deleteConfirm,
             deleteFolder,
             deleteSelected,
+            disable,
+            enable,
             entryAdd,
             entryEdit,
             firstSave,
             folderCreated,
+            flushCache,
             includeInGallery,
             moveSelected,
+            pingNow,
             publish,
             query,
             remove,
             revert,
+            reset,
             save,
             saveDraft,
             search,
@@ -571,7 +578,7 @@
         <action name="invite"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MembersInvite">
             <result name="input" type="tiles">.MembersInvite</result>
-            <result name="disabled" type="tiles">.disabled</result>
+            <!-- <result name="disabled" type="tiles">.disabled</result> -->
             <result name="success" type="chain">members</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">members</param>
@@ -609,7 +616,7 @@
     <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring" >
 
         <global-allowed-methods>
-            execute,save,
+            execute,save
         </global-allowed-methods>
 
         <action name="mediaFileAdd"

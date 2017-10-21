@@ -35,7 +35,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Allows user to edit his/her profile.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class Profile extends UIAction {
     private static Log log = LogFactory.getLog(Profile.class);
     

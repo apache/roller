@@ -46,7 +46,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Action that allows an admin to modify a users profile.
  */
-@AllowedMethods({"execute","save","firstSave"})
+// TODO: make this work @AllowedMethods({"execute","save","firstSave"})
 public class UserEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(UserEdit.class);

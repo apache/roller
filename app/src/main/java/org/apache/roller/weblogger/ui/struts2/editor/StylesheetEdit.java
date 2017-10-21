@@ -42,7 +42,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Action which handles editing for a weblog stylesheet override template.
  */
-@AllowedMethods({"execute","move","delete","revert"})
+// TODO: make this work @AllowedMethods({"execute","move","delete","revert"})
 public class StylesheetEdit extends UIAction {
 
     private static final long serialVersionUID = 4657591015852311907L;

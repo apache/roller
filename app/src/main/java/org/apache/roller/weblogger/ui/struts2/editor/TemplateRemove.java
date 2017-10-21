@@ -34,7 +34,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Remove a template.
  */
-@AllowedMethods({"execute","remove","cancel"})
+// TODO: make this work @AllowedMethods({"execute","remove","cancel"})
 public class TemplateRemove extends UIAction {
 
 	private static Log log = LogFactory.getLog(TemplateRemove.class);

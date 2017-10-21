@@ -37,7 +37,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Edit a new or existing weblog category.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class CategoryEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(CategoryEdit.class);

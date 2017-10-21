@@ -41,7 +41,7 @@ import org.apache.struts2.interceptor.ParameterAware;
  * TODO: fix bug in UserManager which doesn't remove permissions from the
  * website.permissions collection when a permission is deleted.
  */
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class Members extends UIAction implements ParameterAware {
     
     private static Log log = LogFactory.getLog(Members.class);

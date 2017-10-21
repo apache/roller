@@ -38,7 +38,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Remove a category.
  */
-@AllowedMethods({"execute","remove","cancel"})
+// TODO: make this work @AllowedMethods({"execute","remove","cancel"})
 public class CategoryRemove extends UIAction {
     
     private static Log log = LogFactory.getLog(CategoryRemove.class);

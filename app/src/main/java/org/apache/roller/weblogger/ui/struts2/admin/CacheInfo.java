@@ -30,7 +30,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Action for displaying rendering cache info.
  */
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class CacheInfo extends UIAction {
     
     // map of stats to display

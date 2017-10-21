@@ -34,7 +34,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
  * Allows user to perform maintenance operations such as flushing the page cache
  * or re-indexing the search index.
  */
-@AllowedMethods({"execute","index","flushCache","reset"})
+// TODO: make this work @AllowedMethods({"execute","index","flushCache","reset"})
 public class Maintenance extends UIAction {
 
     private static Log log = LogFactory.getLog(Maintenance.class);

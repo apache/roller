@@ -30,19 +30,25 @@
 			</outputDirectory>
 			<directory>${project.basedir}/../</directory>
 			<includes>
-				<include>**</include>
+				<include>app/**</include>
+				<include>assembly-release/**</include>
+				<include>docs/**</include>
+				<include>it-selenium/**</include>
+				<include>LICENSE.txt</include>
+				<include>NOTICE.txt</include>
+				<include>pom.xml</include>
+				<include>README.md</include>
 			</includes>
 			<excludes>
-				<exclude>it-selenium/**</exclude>
 				<exclude>**/target/**</exclude>
-				<exclude>**/derby.log</exclude>
 				<exclude>**/.idea/**</exclude>
-				<exclude>**/._*</exclude>
-				<exclude>**/._*/**</exclude>
+				<exclude>**/.settings/**</exclude>
 				<exclude>**/.repository/**</exclude>
+				<exclude>**/.git</exclude>
 				<exclude>**/.classpath</exclude>
 				<exclude>**/.project</exclude>
-				<exclude>**/.settings/**</exclude>
+				<exclude>**/*.log</exclude>
+				<exclude>**/*.iml</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>

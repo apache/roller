@@ -38,7 +38,7 @@ import org.springframework.beans.factory.access.BootstrapException;
 /**
  * Walk user through install process.
  */
-@AllowedMethods({"execute","create","update","bootstrap"})
+// TODO: make this work @AllowedMethods({"execute","create","update","bootstrap"})
 public class Install extends UIAction {
 
     private static Log log = LogFactory.getLog(Install.class);

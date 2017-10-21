@@ -31,7 +31,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Action which displays user admin search page.
  */
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class UserAdmin extends UIAction {
     
     public UserAdmin() {

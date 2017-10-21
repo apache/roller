@@ -44,7 +44,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * View media files.
  */
 @SuppressWarnings("serial")
-@AllowedMethods({"execute","view","search","delete","deleteSelected","deleteFolder","includeInGallery","moveSelected"})
+// TODO: make this work @AllowedMethods({"execute","view","search","delete","deleteSelected","deleteFolder","includeInGallery","moveSelected"})
 public class MediaFileView extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileView.class);

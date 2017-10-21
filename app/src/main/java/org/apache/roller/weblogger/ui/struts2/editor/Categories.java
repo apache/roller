@@ -33,7 +33,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * Manage weblog categories.
  */
-@AllowedMethods({"execute","move"})
+// TODO: make this work @AllowedMethods({"execute","move"})
 public class Categories extends UIAction {
 
 	private static Log log = LogFactory.getLog(Categories.class);

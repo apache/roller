@@ -43,7 +43,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Adds a new media file.
  */
 @SuppressWarnings("serial")
-@AllowedMethods({"execute","save"})
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class MediaFileAdd extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileAdd.class);

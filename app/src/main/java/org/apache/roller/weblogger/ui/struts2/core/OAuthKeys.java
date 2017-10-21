@@ -33,7 +33,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Allows user to view his/her OAuth consumer key and secret.
  */
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class OAuthKeys extends UIAction {
     private static Log log = LogFactory.getLog(OAuthKeys.class);
     private OAuthConsumer userConsumer;

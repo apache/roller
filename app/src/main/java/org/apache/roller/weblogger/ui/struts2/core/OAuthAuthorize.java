@@ -30,7 +30,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Allow user to authorized OAuth access to his/her account.
  */
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class OAuthAuthorize extends UIAction implements ServletRequestAware {
     private static Log log = LogFactory.getLog(OAuthAuthorize.class);
     private String appDesc = null;

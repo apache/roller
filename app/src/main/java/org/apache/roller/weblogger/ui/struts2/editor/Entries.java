@@ -42,7 +42,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 /**
  * A list view of entries in a weblog.
  */
-@AllowedMethods({"execute"})
+// TODO: make this work @AllowedMethods({"execute"})
 public class Entries extends UIAction {
     
     private static Log log = LogFactory.getLog(Entries.class);
