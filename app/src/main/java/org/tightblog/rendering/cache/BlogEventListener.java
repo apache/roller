@@ -29,7 +29,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogTemplate;
 
 /**
- * Represents someone that wants to receive notifications about changed
+ * Represents someone that` wants to receive notifications about changed
  * items.
  * <p>
  * A BlogEventListener can be registered with the CacheManager and then will

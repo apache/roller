@@ -189,7 +189,7 @@ public class PageProcessorTest {
         pageRequest.setWeblogPageHit(true);
 
         Renderer mockRenderer = mock(Renderer.class);
-        when(mockRendererManager.getRenderer(any(), any())).thenReturn(mockRenderer);
+        when(mockRendererManager.getRenderer(any())).thenReturn(mockRenderer);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
@@ -262,7 +262,7 @@ public class PageProcessorTest {
         // test 404 if exception during rendering
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-        when(mockRendererManager.getRenderer(any(), any())).thenThrow(new IllegalArgumentException());
+        when(mockRendererManager.getRenderer(any())).thenThrow(new IllegalArgumentException());
 
         Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSiteCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);

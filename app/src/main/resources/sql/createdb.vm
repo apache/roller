@@ -73,6 +73,8 @@ create table weblog_template (
     name            varchar(255) not null,
     relative_path   varchar(255),
     description     varchar(255),
+    template        $db.TEXT_SQL_TYPE not null,
+    parser          varchar(48),
     updatetime      $db.TIMESTAMP_SQL_TYPE not null
 );
 create index wt_name_idx on weblog_template(name);
@@ -86,17 +88,6 @@ alter table weblog_template add constraint wt_name_uq unique (weblogid, name);
 #if($db.FOREIGN_KEY_MAKES_INDEX == "false")
     create index wt_weblogid_idx on weblog_template(weblogid);
 #end
-
-create table weblog_template_rendition (
-    id          varchar(48)  not null primary key,
-    templateid  varchar(48) not null,
-    device_type varchar(16) not null,
-    rendition   $db.TEXT_SQL_TYPE not null,
-    parser      varchar(48)
-);
-
-alter table weblog_template_rendition add constraint wtr_templateid_fk
-    foreign key ( templateid ) references weblog_template( id ) ;
 
 create table blogroll_link (
     id               varchar(48) not null primary key,

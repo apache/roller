@@ -161,7 +161,7 @@ public class SearchProcessor extends AbstractProcessor {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page, searchRequest.getDeviceType());
+            renderer = rendererManager.getRenderer(page);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);

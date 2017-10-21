@@ -27,7 +27,6 @@ import org.tightblog.pojos.WeblogBookmark;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogTemplate;
-import org.tightblog.pojos.WeblogTemplateRendition;
 import org.tightblog.util.Blacklist;
 
 import java.util.List;
@@ -110,7 +109,7 @@ public interface WeblogManager {
     /**
      * Store a custom weblog template.
      */
-    void saveTemplate(WeblogTemplate data);
+    void saveTemplate(WeblogTemplate template);
 
     /**
      * Remove a custom template.
@@ -136,11 +135,6 @@ public interface WeblogManager {
      * Get a custom template by its relative path.
      */
     WeblogTemplate getTemplateByPath(Weblog w, String p);
-
-    /**
-     * Save a custom template rendition
-     */
-    void saveTemplateRendition(WeblogTemplateRendition templateCode);
 
     /**
      * Get all custom templates for a weblog

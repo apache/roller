@@ -100,17 +100,11 @@
 
 <div data-template-tabs>
     <ul>
-        <li><a href="#tabStandard"><em>Standard</em></a></li>
-        <li ng-show="ctrl.templateData.contentsMobile != null">
-            <a href="#tabMobile"><em>Mobile</em></a>
-        </li>
+        <li><a href="#tabStandard"><em>Template</em></a></li>
     </ul>
     <div>
         <div id="tabStandard">
-            <textarea ng-model="ctrl.templateData.contentsStandard" rows="30" style="width:100%"></textarea>
-        </div>
-        <div id="tabMobile" ng-show="ctrl.templateData.contentsMobile != null">
-            <textarea ng-model="ctrl.templateData.contentsMobile" rows="30" style="width:100%"></textarea>
+            <textarea ng-model="ctrl.templateData.contents" rows="30" style="width:100%"></textarea>
         </div>
     </div>
 </div>

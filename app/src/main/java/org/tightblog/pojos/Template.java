@@ -149,11 +149,6 @@ public interface Template {
     Instant getLastModified();
 
     /**
-     * get the Template rendition object for the given type.
-     */
-    TemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType type);
-
-    /**
      * The role this template performs.
      */
     ComponentType getRole();
@@ -170,4 +165,27 @@ public interface Template {
      */
     String getRelativePath();
 
+    String getTemplate();
+
+    void setTemplate(String template);
+
+    Template.Parser getParser();
+
+    void setParser(Template.Parser parser);
+
+    @XmlType
+    @XmlEnum
+    enum Parser {
+        @XmlEnumValue("velocity")VELOCITY("Velocity");
+
+        private final String readableName;
+
+        Parser(String readableName) {
+            this.readableName = readableName;
+        }
+
+        public String getReadableName() {
+            return readableName;
+        }
+    }
 }

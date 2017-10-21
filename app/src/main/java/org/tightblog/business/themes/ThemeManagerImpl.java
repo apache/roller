@@ -24,11 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Template.ComponentType;
-import org.tightblog.pojos.TemplateRendition;
-import org.tightblog.pojos.TemplateRendition.RenditionType;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogTemplate;
-import org.tightblog.pojos.WeblogTemplateRendition;
 import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
@@ -172,21 +169,8 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         weblogTemplate.setDescription(sharedTemplate.getDescription());
         weblogTemplate.setRelativePath(sharedTemplate.getRelativePath());
         weblogTemplate.setLastModified(Instant.now());
-
-        // create weblog template code objects and save them
-        for (RenditionType type : RenditionType.values()) {
-
-            // Get the template for the new theme
-            TemplateRendition templateCode = sharedTemplate.getTemplateRendition(type);
-            if (templateCode != null) {
-                // See if we already have some code for this template already (eg previous theme)
-                WeblogTemplateRendition weblogTemplateCode = new WeblogTemplateRendition(weblogTemplate, type);
-                weblogTemplateCode.setRenditionType(type);
-                weblogTemplateCode.setRendition(templateCode.getRendition());
-                weblogTemplateCode.setParser(templateCode.getParser());
-            }
-
-        }
+        weblogTemplate.setParser(sharedTemplate.getParser());
+        weblogTemplate.setTemplate(sharedTemplate.getTemplate());
 
         return weblogTemplate;
     }
@@ -258,29 +242,12 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
                 }
             }
 
-            // get the template's available renditions
-            SharedTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.NORMAL);
-
-            if (standardRendition == null) {
-                throw new IllegalStateException("Cannot retrieve required standard rendition for template " + template.getName());
-            } else {
-                if (!loadRenditionSource(sharedTheme.getThemeDir(), standardRendition)) {
-                    throw new IllegalStateException("Couldn't load template rendition [" + standardRendition.getContentsFile() + "]");
-                }
+            if (!loadTemplateSource(sharedTheme.getThemeDir(), template)) {
+                throw new IllegalStateException("Couldn't load template [" + template.getContentsFile() + "]");
             }
 
             // this template ID used by ThemeResourceLoader for template retrieval.
             template.setId(sharedTheme.getId() + ":" + template.getName());
-
-            // see if a mobile rendition needs adding
-            if (sharedTheme.isDualTheme()) {
-                SharedTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
-
-                if (mobileRendition != null) {
-                    loadRenditionSource(sharedTheme.getThemeDir(), mobileRendition);
-                    template.addTemplateRendition(mobileRendition);
-                }
-            }
 
             // add it to the theme
             sharedTheme.addTemplate(template);
@@ -294,14 +261,14 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         return sharedTheme;
     }
 
-    private boolean loadRenditionSource(String themeDir, SharedTemplateRendition rendition) {
-        File renditionFile = new File(themeDir + File.separator + rendition.getContentsFile());
-        String contents = loadTemplateRendition(renditionFile);
+    private boolean loadTemplateSource(String themeDir, SharedTemplate sharedTemplate) {
+        File templateFile = new File(themeDir + File.separator + sharedTemplate.getContentsFile());
+        String contents = loadTemplateSource(templateFile);
         if (contents == null) {
-            log.error("Couldn't load rendition file [{}]", renditionFile);
-            rendition.setRendition("");
+            log.error("Couldn't load template file [{}]", templateFile);
+            sharedTemplate.setTemplate("");
         } else {
-            rendition.setRendition(contents);
+            sharedTemplate.setTemplate(contents);
         }
         return contents != null;
     }
@@ -309,7 +276,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     /**
      * Load a single template file as a string, returns null if can't read file.
      */
-    private String loadTemplateRendition(File templateFile) {
+    private String loadTemplateSource(File templateFile) {
         // Continue reading theme even if problem encountered with one file
         if (!templateFile.exists() && !templateFile.canRead()) {
             return null;

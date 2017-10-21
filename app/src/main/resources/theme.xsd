@@ -31,7 +31,14 @@
                             <xs:element name="name" type="xs:string"/>
                             <xs:element name="description" type="xs:string" minOccurs="0"/>
                             <xs:element name="relativePath" type="xs:string" minOccurs="0"/>
-                            <xs:element name="renditions" type="renditionsType"/>
+                            <xs:element name="contentsFile" type="xs:string"/>
+                            <xs:element name="parser" default="velocity">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="velocity"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
                         </xs:all>
                         <xs:attribute name="role" use="required">
                             <xs:simpleType>
@@ -51,33 +58,5 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:complexType name="renditionsType">
-        <xs:sequence>
-            <xs:element name="rendition" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="contentsFile" type="xs:string"/>
-                        <xs:element name="parser" default="velocity">
-                            <xs:simpleType>
-                                <xs:restriction base="xs:string">
-                                    <xs:enumeration value="velocity"/>
-                                </xs:restriction>
-                            </xs:simpleType>
-                        </xs:element>
-                    </xs:all>
-                    <xs:attribute name="device" default="normal">
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="normal"/>
-                                <xs:enumeration value="tablet"/>
-                                <xs:enumeration value="mobile"/>
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:attribute>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
 
 </xs:schema>

@@ -15,84 +15,52 @@
     <!-- templates -->
     <template role="weblog">
         <name>Weblog</name>
-        <renditions>
-            <rendition>
-                <contentsFile>weblog.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>weblog.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>_blogdirectory</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_blogdirectory.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>_blogdirectory.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>_blogprofile</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_blogprofile.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>_blogprofile.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="stylesheet">
         <name>_css</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_css.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>_css.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>_entry</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_entry.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>_entry.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>_footer</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_footer.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>_footer.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>_header</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_header.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>_header.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customExternal">
         <name>directory</name>
         <description>weblog directory</description>
         <relativePath>directory</relativePath>
-        <renditions>
-            <rendition>
-                <contentsFile>directory.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>directory.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
 </sharedtheme>

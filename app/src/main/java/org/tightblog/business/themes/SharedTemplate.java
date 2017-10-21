@@ -21,18 +21,9 @@
 package org.tightblog.business.themes;
 
 import org.tightblog.pojos.Template;
-import org.tightblog.pojos.TemplateRendition;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A SharedTemplate represents a template which is part of a SharedTheme.
@@ -44,22 +35,37 @@ public class SharedTemplate implements Template {
     private String name = null;
     private String description = null;
     private String relativePath = null;
+    private Parser parser = Template.Parser.VELOCITY;
+    private String contentsFile = null;
+    private String template = null;
+
 
     @SuppressWarnings("unused")
     public SharedTemplate() {
         // used by Spring initialization
     }
 
-    public SharedTemplate(String id, TemplateRendition.Parser lang) {
-        this.id = id;
-        SharedTemplateRendition templateRendition = new SharedTemplateRendition();
-        templateRendition.setParser(lang);
-        templateRendition.setRenditionType(TemplateRendition.RenditionType.NORMAL);
-        addTemplateRendition(templateRendition);
+    // public scope needed by JAXB
+    public String getContentsFile() {
+        return contentsFile;
     }
 
-    //hash map to cache template Code objects parsed
-    private Map<TemplateRendition.RenditionType, SharedTemplateRendition> templateRenditionHashMap = new HashMap<>();
+    public void setContentsFile(String contentsFile) {
+        this.contentsFile = contentsFile;
+    }
+
+    public Parser getParser() {
+        return parser;
+    }
+
+    public void setParser(Parser templateLanguage) {
+        this.parser = templateLanguage;
+    }
+
+    public SharedTemplate(String id, Parser lang) {
+        this.id = id;
+        setParser(lang);
+    }
 
     public String getId() {
         return id;
@@ -93,50 +99,6 @@ public class SharedTemplate implements Template {
         this.relativePath = relativePath;
     }
 
-    void addTemplateRendition(SharedTemplateRendition rendition) {
-        this.templateRenditionHashMap.put(rendition.getRenditionType(), rendition);
-    }
-
-    @Override
-    public TemplateRendition getTemplateRendition(TemplateRendition.RenditionType type) {
-        return templateRenditionHashMap.get(type);
-    }
-
-    Map<TemplateRendition.RenditionType, SharedTemplateRendition> getRenditionMap() {
-        return templateRenditionHashMap;
-    }
-
-    @XmlJavaTypeAdapter(value = MapAdapter.class)
-    @XmlElements(@XmlElement(name = "renditions"))
-    @SuppressWarnings("unused")
-    public void setRenditionMap(Map<TemplateRendition.RenditionType, SharedTemplateRendition> renditionTable) {
-        // used by JAXB to create SharedTheme instances from theme XML definitions
-        this.templateRenditionHashMap = renditionTable;
-    }
-
-    static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<TemplateRendition.RenditionType, SharedTemplateRendition>> {
-
-        static class AdaptedMap {
-            @XmlElements(@XmlElement(name = "rendition"))
-            public List<SharedTemplateRendition> renditions = new ArrayList<>();
-        }
-
-        @Override
-        public Map<TemplateRendition.RenditionType, SharedTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
-            Map<TemplateRendition.RenditionType, SharedTemplateRendition> map = new HashMap<>();
-            for (SharedTemplateRendition item : list.renditions) {
-                map.put(item.getRenditionType(), item);
-            }
-            return map;
-        }
-
-        @Override
-        public AdaptedMap marshal(Map<TemplateRendition.RenditionType, SharedTemplateRendition> map) throws Exception {
-            // unused
-            return null;
-        }
-    }
-
     public Instant getLastModified() {
         return null;
     }
@@ -157,5 +119,15 @@ public class SharedTemplate implements Template {
     @Override
     public TemplateDerivation getDerivation() {
         return TemplateDerivation.SHARED;
+    }
+
+    @Override
+    public String getTemplate() {
+        return template;
+    }
+
+    @Override
+    public void setTemplate(String template) {
+        this.template = template;
     }
 }

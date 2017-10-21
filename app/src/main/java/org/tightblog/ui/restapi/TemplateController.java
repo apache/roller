@@ -31,7 +31,6 @@ import org.tightblog.pojos.Template;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.pojos.WeblogTemplateRendition;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.util.I18nMessages;
@@ -49,7 +48,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.tightblog.pojos.TemplateRendition;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -199,7 +197,7 @@ public class TemplateController {
             if (themeManager.getSharedTheme(template.getWeblog().getTheme()).getTemplateByName(template.getName()) != null) {
                 template.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
             }
-            attachRenditions(template);
+            template.setContents(template.getTemplate());
             return template;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -222,25 +220,11 @@ public class TemplateController {
                 userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST);
         if (permitted) {
             WeblogTemplate template = themeManager.createWeblogTemplate(weblog, sharedTemplate);
-            attachRenditions(template);
+            template.setContents(template.getTemplate());
             return template;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
-        }
-    }
-
-    private void attachRenditions(WeblogTemplate template) {
-        WeblogTemplateRendition maybeTemplate = template.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
-        if (maybeTemplate != null) {
-            template.setContentsStandard(maybeTemplate.getRendition());
-        } else {
-            template.setContentsStandard("");
-        }
-
-        maybeTemplate = template.getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
-        if (maybeTemplate != null) {
-            template.setContentsMobile(maybeTemplate.getRendition());
         }
     }
 
@@ -271,30 +255,10 @@ public class TemplateController {
                     } else {
                         templateToSave.setRole(Template.ComponentType.valueOf(templateData.getRoleName()));
                     }
-
-                    if (templateData.getContentsStandard() != null) {
-                        WeblogTemplateRendition wtr = new WeblogTemplateRendition(templateToSave, TemplateRendition.RenditionType.NORMAL);
-                        wtr.setParser(TemplateRendition.Parser.VELOCITY);
-                        wtr.setRendition(templateData.getContentsStandard());
-                    }
-
-                    if (templateData.getContentsMobile() != null) {
-                        WeblogTemplateRendition wtr = new WeblogTemplateRendition(templateToSave, TemplateRendition.RenditionType.MOBILE);
-                        wtr.setParser(TemplateRendition.Parser.VELOCITY);
-                        wtr.setRendition(templateData.getContentsMobile());
-                    }
-
+                    templateToSave.setParser(Template.Parser.VELOCITY);
+                    templateToSave.setTemplate(templateData.getContents());
                 } else {
-
-                    WeblogTemplateRendition maybeNormal = templateToSave.getTemplateRendition(TemplateRendition.RenditionType.NORMAL);
-                    if (maybeNormal != null) {
-                        maybeNormal.setRendition(templateData.getContentsStandard());
-                    }
-
-                    WeblogTemplateRendition maybeMobile = templateToSave.getTemplateRendition(TemplateRendition.RenditionType.MOBILE);
-                    if (maybeMobile != null) {
-                        maybeMobile.setRendition(templateData.getContentsMobile());
-                    }
+                    templateToSave.setTemplate(templateData.getContents());
                 }
 
                 // some properties relevant only for certain template roles
@@ -319,10 +283,6 @@ public class TemplateController {
 
                 // persist the template
                 weblogManager.saveTemplate(templateToSave);
-
-                for (WeblogTemplateRendition wtr : templateToSave.getTemplateRenditions()) {
-                    weblogManager.saveTemplateRendition(wtr);
-                }
 
                 // flush results to db
                 persistenceStrategy.flush();

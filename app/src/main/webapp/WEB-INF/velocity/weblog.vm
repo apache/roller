@@ -27,35 +27,20 @@ Macros defined in this file:
     #showAutodiscoveryLinks($weblog)
     #showMetaDescription()
     #showAnalyticsTrackingCode($weblog)
-
     #showWeblogEntriesPager($pager)
     #showNextPrevEntriesControl($pager)
-    #showMobileNextPrevEntriesControl($pager)
-
     #showWeblogEntryComments($entry)
-    #showMobileWeblogEntryComments($entry)
     #showWeblogEntryCommentForm($entry)
-
     #showWeblogEntryLinksList($entries)
     #showBookmarkLinksList($weblog)
     #showWeblogCategoryLinksList()
-    #showMobileCategoryLinksList()
     #showAtomFeedsList($weblog)
-
     #checkSuppressIndexing()
-
     #showWeblogEntryCalendar($big)
-
     #showPageMenu($addExternalPages)
-
     #showWeblogSearchForm($weblog $showCatChooser)
-    #showMobileSearchForm($weblog $showCatChooser)
     #showWeblogSearchAgainForm($weblog)
-    #showMobileSearchAgainForm($weblog)
     #showNextPrevSearchControl($pager)
-    #showMobileNextPrevSearchControl($pager)
-    
-    #showMobilePopupDialog($id $header $submitResponseMessage)
 *#
 
 
@@ -66,7 +51,7 @@ Parse and include page template from weblog.
     #set($pageArg = false)## This is required for such constructs; see Velocity docs and ROL-689
     #set($pageArg = $model.getTemplateByName($pageName))
     #if ($pageArg)
-       #set($pageId = $pageArg.id+'|'+$model.deviceType)
+       #set($pageId = $pageArg.id)
        #parse($pageId)
     #end
 #end
@@ -123,7 +108,7 @@ Shows weblog entries pager via default day template
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
         #set($entries = $map.get($day))
-        #set($pageId = $dayPage.id+'|'+$model.deviceType)
+        #set($pageId = $dayPage.id)
         #parse($pageId)
     #end
 #end
@@ -156,54 +141,6 @@ Shows weblog entries pager via default day template
     #if ($nextLink)
         | <a href="$nextLink">$nextName</a> &raquo;
     #end
-#end
-## Mobile Version
-#macro(showMobileNextPrevEntriesControl $pager)
-    #set($prevLink = false)
-    #set($nextLink = false)
-    #if ($pager.prevLink)
-        #set($prevLink = $pager.prevLink)
-        #set($prevName = $pager.prevName)
-    #elseif ($pager.prevCollectionLink)
-        #set($prevLink = $pager.prevCollectionLink)
-        #set($prevName = $pager.prevCollectionName)
-    #end
-    #if ($pager.nextLink)
-        #set($nextLink = $pager.nextLink)
-        #set($nextName = $pager.nextName)
-    #elseif ($pager.nextCollectionLink)
-        #set($nextLink = $pager.nextCollectionLink)
-        #set($nextName = $pager.nextCollectionName)
-    #end
-    #if ($prevLink || $nextLink)
-    <div data-role="navbar" data-iconpos="top">
-      <ul>
-        #if ($prevLink)
-          <li>
-            <a href="$prevLink" data-transition="fade" data-theme="a" data-icon="arrow-l">
-              $prevName
-            </a>
-          </li>
-        #end
-        ## If we do not want the home link on the first page remove >> || $nextLink
-        #if ($prevLink || $nextLink)
-          <li>
-            <a href="$pager.getHomeLink()" data-transition="fade" data-theme="a" data-icon="home">
-              $pager.getHomeName()
-            </a>
-          </li>
-        #end
-        #if ($nextLink)
-          <li>
-            <a href="$nextLink" data-transition="fade" data-theme="a" data-icon="arrow-r">
-              $nextName
-            </a>
-          </li>
-        #end
-      </ul>
-    </div>
-  #end
-    
 #end
 
 
@@ -253,52 +190,6 @@ Show comments for weblog entry according to TightBlog configuration.
         #end
     #end
     </div>
-#end
-## Mobile Version
-#macro(showMobileWeblogEntryComments $entry)
-    <!-- showMobileWeblogEntryComments -->
-    #if($model.commentForm.preview)
-      #set($comments = [$model.commentForm.previewComment])
-      #set( $heading = $utils.msg( "macro.weblog.preview" ))
-    #else
-      #set($comments = $entry.getComments())
-      #set( $heading = $utils.msg( "macro.weblog.comments" ))
-    #end
-    #if($comments.size() > 0)
-      <ul data-role="listview" data-divider-theme="b" data-inset="true">
-        <li data-role="list-divider">
-          $heading
-        </li>
-        #foreach( $comment in $comments )
-          #if($comment.approved || $model.commentForm.preview)
-            ##<li data-role="list-divider" data-theme="a">
-              ## TODO
-            ##<a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
-            ##</li>
-            <li data-theme="a">
-              <p class="ui-li-desc content-textbox">
-                 $comment.content
-              </p>
-              <p class="ui-li-desc content-textbox">
-                $utils.msg("macro.weblog.postedby")
-                #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
-                   <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
-                #elseif (!$utils.isEmpty($comment.name))
-                   <b>$comment.name</b>
-                #elseif ($comment.remoteHost)
-                   <b>$comment.remoteHost</b>
-                #else
-                   <b>$utils.msg("macro.weblog.comment.unknown")</b>
-                #end
-
-                $utils.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $utils.msg( "macro.weblog.datetimepattern" ))
-                ##<a href="$url.comment($entry, $comment.timestamp)" title="$utils.msg( "macro.weblog.commentpermalink.title" )" data-role="button" data-inline="true" data-mini="true">#</a>
-              </p>
-            </li>
-          #end
-        #end
-      </ul>
-    #end
 #end
 
 
@@ -472,36 +363,6 @@ Show weblog's categories in specified parent category.
 #end
 
 
-## Mobile version
-#macro(showMobileCategoryLinksList)
-    <div data-role="popup" id="categories">
-      <div data-role="collapsible-set" data-theme="a" data-content-theme="a" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
-        <div data-role="collapsible" data-collapsed="false" data-inset="false">
-          <h2>Categories</h2>
-          <ul data-role="listview">
-            #if ($model.category || $model.permalink)
-              <li><a href="$url.home" data-transition="fade">$utils.msg("generic.all")</a></li>
-            #else
-              <li data-icon="gear" class="ui-btn-active"><a href="$url.home" data-transition="fade">$utils.msg("generic.all")</a></li>
-            #end
-            #set($active = $utils.msg("generic.all"))
-            #set($cats = $model.weblog.getWeblogCategories())
-            #foreach($cat in $cats)
-              #if ($model.category && $model.category == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
-                <li data-icon="gear" class="ui-btn-active"><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>
-                #set($active = $cat.name)
-              #else
-                <li><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>
-              #end
-            #end
-          </ul>
-        </div>
-      </div>
-    </div>
-    <a href="#categories" data-rel="popup" data-role="button">Categories - $active</a>
-#end
-
-
 #**
  * Show list of all RSS feeds available for weblog.
  *#
@@ -615,38 +476,6 @@ Show search form for a weblog.
         }
     </script>
 #end
-## Mobile Version
-#macro(showMobileSearchForm $weblog $showCatChooser)
-    <form id="searchForm" method="get" action="$url.search" onsubmit="return validateSearch(this)">
-        <p>
-          <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="#if($model.term)$model.term#end" />
-          #if( $showCatChooser )
-            #set( $cats = $model.weblog.getWeblogCategories())
-            <select name="cat">
-              <option value="">- $utils.msg("mainPage.category") -</option>
-              #foreach( $cat in $cats )
-                <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
-              #end
-            </select>
-          #end
-          <input type="submit" id="searchbutton" data-role="button" data-theme="a" value="$utils.msg( "macro.weblog.searchbutton" )" />
-        </p>
-    </form>
-    <script>
-        function validateSearch(form) {
-            if (form.q.value == "") {
-                $("#searchDialog").popup('open').focus();
-                $("#searchDialog").popup({ afterclose: function( event, ui ) {
-                    form.q.focus();
-                    }
-                });
-                return false;
-            }
-            return true;
-        }
-    </script>
-    #showMobilePopupDialog('searchDialog','Search', $utils.msg("macro.weblog.searchalert"))
-#end
 
 
 #** 
@@ -672,27 +501,6 @@ Show search again form for a weblog.
         $utils.msg( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${weblog.handle}] )
     </div>
 #end
-## Mobile Version
-#macro(showMobileSearchAgainForm $weblog)
-    <div id="searchAgain">
-        $utils.msg( "macro.weblog.searchhits", [$model.term, $model.hits])
-        <form method="get" action="$url.search" style="margin: 5px">
-          <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="$model.term" />
-          #set($cats = $model.weblog.getWeblogCategories())
-          #if(!$site && $cats && $cats.size() > 1)
-            <select name="cat" class="select">
-              <option value="">$utils.msg( "macro.searchresults.incategory" )</option>
-              #foreach( $cat in $cats )
-                <option #if($cat.name == $model.category)selected="selected"#end>$cat.name</option>
-              #end
-            </select>
-          #end
-          <input type="submit" data-role="button" data-theme="a" value="$utils.msg( "macro.weblog.searchbutton" )" />
-        </form>
-
-    </div>
-#end
-
 
 #** 
 Show next/prev pager for search results.
@@ -725,69 +533,3 @@ Show next/prev pager for search results.
         | <a href="$nextLink">$nextName</a> &raquo;
     #end
 #end
-## Mobile Version
-#macro(showMobileNextPrevSearchControl $pager)
-    #set( $min = $model.offset + 1 )
-    #set( $max = $model.offset + $model.limit )
-    #if( $max > $model.hits )#set( $max = $model.hits )#end
-    <h3>
-       $utils.msg("searchSummary.text", [$min, $max, $model.hits])
-    </h3>
-    #set($prevLink = false)
-    #set($nextLink = false)
-    #if ($pager.prevLink)
-        #set($prevLink = $pager.prevLink)
-        #set($prevName = $pager.prevName)
-    #end
-    #if ($pager.nextLink)
-        #set($nextLink = $pager.nextLink)
-        #set($nextName = $pager.nextName)
-    #end
-
-    ## Show the pager
-    #if ($prevLink || $nextLink)
-      <div data-role="navbar" data-iconpos="top">
-        <ul>
-          #if ($prevLink)
-            <li>
-              <a href="$prevLink" data-transition="fade" data-theme="a" data-icon="arrow-l">
-                $prevName
-              </a>
-            </li>
-          #end
-          ## If we do not want the home link on the first page remove >> || $nextLink
-          #if ($prevLink || $nextLink)
-            <li>
-              <a href="$pager.getHomeLink()" data-transition="fade" data-theme="a" data-icon="home">
-                $pager.getHomeName()
-              </a>
-            </li>
-          #end
-          #if ($nextLink)
-            <li>
-              <a href="$nextLink" data-transition="fade" data-theme="a" data-icon="arrow-r">
-                $nextName
-              </a>
-            </li>
-          #end
-        </ul>
-      </div>
-    #end
-#end
-
-
-#** 
-Show mobile alert popup.
-*#
-#macro(showMobilePopupDialog $id $header $message)
- <div data-role="popup" id="$id" data-dismissible="false" style="white-space: normal" class="ui-corner-all">
-    <div data-role="footer" data-theme="b" class="ui-corner-top">
-      <h1>$header</h1>
-    </div>
-    <div data-role="content" data-theme="a" class="ui-corner-bottom ui-content">
-      <h3 class="wrap ui-title">$message</h3>
-      <a href="#" data-role="button" data-inline="true" data-rel="back" data-transition="fade" data-theme="a">OK</a>
-    </div>
-  </div>
-#end
-

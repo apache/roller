@@ -14,61 +14,37 @@
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic theme</description>
         <relativePath>basic-custom.css</relativePath>
-        <renditions>
-            <rendition>
-                <contentsFile>basic-custom.css</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>basic-custom.css</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="weblog">
         <name>Weblog</name>
-        <renditions>
-            <rendition>
-                <contentsFile>weblog.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>weblog.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="permalink">
         <name>permalink</name>
-        <renditions>
-            <rendition>
-                <contentsFile>permalink.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>permalink.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="search">
         <name>searchresults</name>
-        <renditions>
-            <rendition>
-                <contentsFile>searchresults.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>searchresults.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>_day</name>
-        <renditions>
-            <rendition>
-                <contentsFile>_day.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>_day.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 
     <template role="customInternal">
         <name>sidebar</name>
-        <renditions>
-            <rendition>
-                <contentsFile>sidebar.vm</contentsFile>
-                <parser>velocity</parser>
-            </rendition>
-        </renditions>
+        <contentsFile>sidebar.vm</contentsFile>
+        <parser>velocity</parser>
     </template>
 </sharedtheme>

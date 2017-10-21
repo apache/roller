@@ -38,10 +38,6 @@ import org.slf4j.LoggerFactory;
  * property value in that file) to obtain the Template to use for the
  * given template name.
  * <p>
- * Further, ThemeResourceLoader parses out the |xxxxx portion added in
- * the getTemplate() overrides to determine the proper device type's rendition
- * to use.
- * <p>
  * We construct our own instance of VelocityEngine, initialize it, and provide
  * access to the instance via the Singleton getEngine() method.
  */
@@ -92,8 +88,8 @@ public class VelocityEngineWrapper {
      *
      * @throws org.apache.velocity.exception.ResourceNotFoundException, org.apache.velocity.exception.ParseErrorException
      */
-    public static Template getTemplate(String name, DeviceType deviceType)
+    public static Template getTemplate(String name)
             throws ResourceNotFoundException, ParseErrorException {
-        return velocityEngine.getTemplate(name + "|" + deviceType, "UTF-8");
+        return velocityEngine.getTemplate(name, "UTF-8");
     }
 }

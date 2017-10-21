@@ -42,6 +42,6 @@ public interface RendererFactory {
      * while trying to find a renderer.  It is up to the factory itself to
      * report any relevant exceptions itself.
      */
-    Renderer getRenderer(Template template, DeviceType deviceType);
+    Renderer getRenderer(Template template);
 
 }
