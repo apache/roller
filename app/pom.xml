@@ -370,6 +370,13 @@ limitations under the License.
 
         <dependency>
             <groupId>com.rometools</groupId>
+            <artifactId>rome-fetcher</artifactId>
+            <version>${rome.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rometools</groupId>
             <artifactId>rome-propono</artifactId>
             <version>${rome.version}</version>
             <scope>compile</scope>
