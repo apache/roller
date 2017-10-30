@@ -18,6 +18,7 @@
 
 package org.tightblog.rendering;
 
+import org.tightblog.pojos.Template;
 import org.tightblog.util.WebloggerException;
 
 import java.io.Writer;
@@ -34,6 +35,6 @@ public interface Renderer {
      * <p>
      * Throws an exception if there is a problem during rendering.
      */
-    void render(Map<String, Object> model, Writer writer) throws WebloggerException;
+    void render(Template template, Map<String, Object> model, Writer writer) throws WebloggerException;
 
 }

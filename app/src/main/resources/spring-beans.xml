@@ -145,18 +145,7 @@
         <beans:constructor-arg ref="mailTemplateEngine"/>
     </beans:bean>
 
-    <!-- Renderer Manager -->
-    <beans:bean id="rendererManager" class="org.tightblog.rendering.RendererManager">
-        <beans:property name="rendererFactories" ref="rendererFactorySet"/>
-    </beans:bean>
-
-    <beans:bean id="rendererFactorySet" class="org.springframework.beans.factory.config.SetFactoryBean">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:bean class="org.tightblog.rendering.velocity.VelocityRendererFactory"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
+    <beans:bean id="velocityRenderer" class="org.tightblog.rendering.velocity.VelocityRenderer"/>
 
     <!-- page models, additional models can be added as shown here: http://stackoverflow.com/a/13160350/1207540 -->
     <beans:bean id="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">

@@ -29,9 +29,8 @@ import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.rendering.Renderer;
-import org.tightblog.rendering.RendererManager;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.slf4j.Logger;
@@ -71,10 +70,10 @@ public class PreviewProcessor extends AbstractProcessor {
     private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
 
     @Autowired
-    private RendererManager rendererManager = null;
+    private VelocityRenderer velocityRenderer = null;
 
-    public void setRendererManager(RendererManager rendererManager) {
-        this.rendererManager = rendererManager;
+    public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
+        this.velocityRenderer = velocityRenderer;
     }
 
     @Autowired
@@ -196,27 +195,11 @@ public class PreviewProcessor extends AbstractProcessor {
             model.putAll(getModelMap("siteModelSet", initData));
         }
 
-        // lookup Renderer we are going to use
-        Renderer renderer;
-        try {
-            log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page);
-        } catch (Exception e) {
-            // nobody wants to render my content :(
-            log.error("Couldn't find renderer for page {}", page.getId(), e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
         // render content
         CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
-            renderer.render(model, rendererOutput.getCachedWriter());
+            velocityRenderer.render(page, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close
             rendererOutput.flush();

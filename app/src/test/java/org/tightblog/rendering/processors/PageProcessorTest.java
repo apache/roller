@@ -14,12 +14,11 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
-import org.tightblog.rendering.Renderer;
-import org.tightblog.rendering.RendererManager;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.cache.SiteWideCache;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.WebloggerException;
 
 import javax.servlet.ServletOutputStream;
@@ -52,7 +51,7 @@ public class PageProcessorTest {
     private LazyExpiringCache mockCache;
     private SiteWideCache mockSiteCache;
     private WeblogManager mockWM;
-    private RendererManager mockRendererManager;
+    private VelocityRenderer mockVelocityRenderer;
     private ThemeManager mockThemeManager;
 
     // not done as a @before as not all tests need these mocks
@@ -74,8 +73,8 @@ public class PageProcessorTest {
         weblog = new Weblog();
         when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
         processor.setWeblogManager(mockWM);
-        mockRendererManager = mock(RendererManager.class);
-        processor.setRendererManager(mockRendererManager);
+        mockVelocityRenderer = mock(VelocityRenderer.class);
+        processor.setVelocityRenderer(mockVelocityRenderer);
         mockThemeManager = mock(ThemeManager.class);
         processor.setThemeManager(mockThemeManager);
         sharedTheme = new SharedTheme();
@@ -188,9 +187,6 @@ public class PageProcessorTest {
         wt.setRole(ComponentType.CUSTOM_EXTERNAL);
         pageRequest.setWeblogPageHit(true);
 
-        Renderer mockRenderer = mock(Renderer.class);
-        when(mockRendererManager.getRenderer(any())).thenReturn(mockRenderer);
-
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
@@ -204,7 +200,7 @@ public class PageProcessorTest {
         verify(mockWM).incrementHitCount(weblog);
         verify(mockCache).put(anyString(), any());
         verify(mockSiteCache, never()).put(anyString(), any());
-        verify(mockRenderer).render(any(), any());
+        verify(mockVelocityRenderer).render(eq(pageRequest.getTemplate()), any(), any());
         verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());
         verify(mockResponse).setContentLength(anyInt());
         verify(mockSOS).write(any());
@@ -262,7 +258,7 @@ public class PageProcessorTest {
         // test 404 if exception during rendering
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-        when(mockRendererManager.getRenderer(any())).thenThrow(new IllegalArgumentException());
+        doThrow(new IllegalArgumentException()).when(mockVelocityRenderer).render(any(), any(), any());
 
         Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSiteCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);

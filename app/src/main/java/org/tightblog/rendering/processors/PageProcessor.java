@@ -28,9 +28,8 @@ import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.rendering.Renderer;
-import org.tightblog.rendering.RendererManager;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -97,10 +96,10 @@ public class PageProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private RendererManager rendererManager = null;
+    private VelocityRenderer velocityRenderer = null;
 
-    public void setRendererManager(RendererManager rendererManager) {
-        this.rendererManager = rendererManager;
+    public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
+        this.velocityRenderer = velocityRenderer;
     }
 
     @Autowired
@@ -211,9 +210,6 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         try {
-            // lookup Renderer we are going to use
-            Renderer renderer = rendererManager.getRenderer(incomingRequest.getTemplate());
-
             // populate the rendering model
             Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", incomingRequest);
@@ -233,7 +229,7 @@ public class PageProcessor extends AbstractProcessor {
             // render content
             String contentType = incomingRequest.getTemplate().getRole().getContentType();
             CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
-            renderer.render(model, rendererOutput.getCachedWriter());
+            velocityRenderer.render(incomingRequest.getTemplate(), model, rendererOutput.getCachedWriter());
             rendererOutput.flush();
             rendererOutput.close();
 
