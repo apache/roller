@@ -24,10 +24,9 @@ import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.rendering.Renderer;
-import org.tightblog.rendering.RendererManager;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.requests.WeblogSearchRequest;
+import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.slf4j.Logger;
@@ -56,10 +55,10 @@ public class SearchProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/search";
 
     @Autowired
-    private RendererManager rendererManager = null;
+    private VelocityRenderer velocityRenderer = null;
 
-    public void setRendererManager(RendererManager rendererManager) {
-        this.rendererManager = rendererManager;
+    public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
+        this.velocityRenderer = velocityRenderer;
     }
 
     @Autowired
@@ -157,27 +156,11 @@ public class SearchProcessor extends AbstractProcessor {
             model.putAll(getModelMap("siteModelSet", initData));
         }
 
-        // lookup Renderer we are going to use
-        Renderer renderer;
-        try {
-            log.debug("Looking up renderer");
-            renderer = rendererManager.getRenderer(page);
-        } catch (Exception e) {
-            // nobody wants to render my content :(
-            log.error("Couldn't find renderer for rsd template", e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
         // render content
         CachedContent rendererOutput = new CachedContent(Utilities.EIGHT_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
-            renderer.render(model, rendererOutput.getCachedWriter());
+            velocityRenderer.render(page, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close
             rendererOutput.flush();

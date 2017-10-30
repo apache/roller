@@ -18,10 +18,8 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.tightblog.rendering.velocity;
 
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
@@ -36,7 +34,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mobile.device.DeviceType;
 
 /**
  * Renderer that renders using the Velocity template engine.
@@ -45,20 +42,17 @@ public class VelocityRenderer implements Renderer {
 
     private static Logger log = LoggerFactory.getLogger(VelocityRenderer.class);
 
-    // the original template we are supposed to render
-    private Template renderTemplate = null;
+    public VelocityRenderer() {}
 
-    // the velocity templates
-    private org.apache.velocity.Template velocityTemplate = null;
-    private org.apache.velocity.Template velocityDecorator = null;
+    @Override
+    public void render(Template template, Map<String, Object> model, Writer out) throws WebloggerException {
 
-    // a possible exception
-    private Exception velocityException = null;
+        if (!Template.Parser.VELOCITY.equals(template.getParser())) {
+            throw new IllegalArgumentException("Template " + template.getName()
+                    + " uses unsupported parser " + template.getParser());
+        }
 
-    public VelocityRenderer(Template template) {
-
-        // the Template we are supposed to render
-        this.renderTemplate = template;
+        org.apache.velocity.Template velocityTemplate;
 
         try {
             // make sure that we can locate the template
@@ -76,78 +70,45 @@ public class VelocityRenderer implements Renderer {
         } catch (VelocityException ex) {
             // in the case of a parsing error we want to render an
             // error page instead so the user knows what was wrong
-            velocityException = ex;
-
-            // need to lookup error page template
-            velocityTemplate = VelocityEngineWrapper.getTemplate("templates/error-page.vm");
-
+            renderException(ex, template, model, out, "templates/error-page.vm");
+            return;
         }
-    }
 
-    @Override
-    public void render(Map<String, Object> model, Writer out) throws WebloggerException {
         try {
-            if (velocityException != null) {
-                // Render exception
-                renderException(model, out, null);
-                // and we're done
-                return;
-            }
-
             long startTime = System.currentTimeMillis();
 
             // convert model to Velocity Context
             Context ctx = new VelocityContext(model);
-
-            if (velocityDecorator != null) {
-                /*
-                 * We only allow decorating once, so the process isn't fully
-                 * recursive. This is just to keep it simple.
-                 */
-                // render base template to a temporary StringWriter
-                StringWriter sw = new StringWriter();
-                velocityTemplate.merge(ctx, sw);
-
-                // put rendered template into context
-                ctx.put("decorator_body", sw.toString());
-
-                log.debug("Applying decorator {}", velocityDecorator.getName());
-
-                // now render decorator to our output writer
-                velocityDecorator.merge(ctx, out);
-            } else {
-                // no decorator, so just merge template to our output writer
-                velocityTemplate.merge(ctx, out);
-            }
+            velocityTemplate.merge(ctx, out);
 
             long endTime = System.currentTimeMillis();
             long renderTime = (endTime - startTime) / DateUtils.MILLIS_PER_SECOND;
 
-            log.debug("Rendered [{}] in {} secs", renderTemplate.getId(), renderTime);
+            log.debug("Rendered [{}] in {} secs", template.getId(), renderTime);
 
         } catch (VelocityException ex) {
             // in the case of a parsing error including a macro we want to
             // render an error page instead so the user knows what was wrong
-            velocityException = ex;
-
-            // need to lookup parse error template
-            renderException(model, out, "templates/error-parse.vm");
+            renderException(ex, template, model, out, "templates/error-parse.vm");
         } catch (Exception ex) {
             // wrap and rethrow so caller can deal with it
             throw new WebloggerException("Error during rendering", ex);
         }
     }
 
-    private void renderException(Map<String, Object> model, Writer out, String template) throws WebloggerException {
+    private void renderException(VelocityException ex, Template template, Map<String, Object> model, Writer out, String errorTemplate)
+            throws WebloggerException {
         try {
-            if (template != null) {
+            org.apache.velocity.Template velocityTemplate = null;
+
+            if (errorTemplate != null) {
                 // need to lookup error page template
-                velocityTemplate = VelocityEngineWrapper.getTemplate(template);
+                velocityTemplate = VelocityEngineWrapper.getTemplate(errorTemplate);
             }
 
             Context ctx = new VelocityContext(model);
-            ctx.put("exception", velocityException);
-            ctx.put("exceptionSource", renderTemplate.getId());
+            ctx.put("exception", ex);
+            ctx.put("exceptionSource", template.getId());
             ctx.put("utils", new UtilitiesModel());
 
             // render output to Writer

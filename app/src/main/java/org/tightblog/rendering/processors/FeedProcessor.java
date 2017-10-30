@@ -26,9 +26,8 @@ import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
-import org.tightblog.rendering.Renderer;
-import org.tightblog.rendering.RendererManager;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
+import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -36,7 +35,6 @@ import org.tightblog.rendering.cache.SiteWideCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mobile.device.DeviceType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,10 +79,10 @@ public class FeedProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private RendererManager rendererManager = null;
+    private VelocityRenderer velocityRenderer = null;
 
-    public void setRendererManager(RendererManager rendererManager) {
-        this.rendererManager = rendererManager;
+    public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
+        this.velocityRenderer = velocityRenderer;
     }
 
     @Autowired
@@ -187,28 +185,12 @@ public class FeedProcessor extends AbstractProcessor {
         model = getModelMap("feedModelSet", initData);
         pageId = "templates/feeds/" + feedRequest.getType() + "-atom.vm";
 
-        // lookup Renderer we are going to use
-        Renderer renderer;
-        try {
-            log.debug("Looking up renderer");
-            Template template = new SharedTemplate(pageId, Template.Parser.VELOCITY);
-            renderer = rendererManager.getRenderer(template);
-        } catch (Exception e) {
-            // nobody wants to render my content :(
-            log.error("Couldn't find render feed for page {}", pageId, e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
         // render content. use default size of 24K for a standard page
         CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Rendering...");
-            renderer.render(model, rendererOutput.getCachedWriter());
+            Template template = new SharedTemplate(pageId, Template.Parser.VELOCITY);
+            velocityRenderer.render(template, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close
             rendererOutput.flush();
