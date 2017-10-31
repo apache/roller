@@ -1,0 +1,61 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
+	<title th:utext="${model.weblog.name + ': Archives'}">xxx</title>
+</head>
+<body>
+
+	<header>
+    	<span th:replace="${model.getTemplateIdByName('standard_header')}"></span>
+	</header>
+
+	<div class="container">
+	
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header" th:utext="${model.weblog.name + ' '}">
+				    <small th:utext="${model.weblog.tagline}">xxx</small>
+				</h1>
+			</div>
+	  	</div>
+	  
+	  	<div class="row">
+	  
+	  		<!-- BODY MAIN-->
+		   	<div id="main_content" class="col-lg-8">
+				<h3 th:utext="${'Browse the ' + model.weblog.name + ' archives'}">xxx</h3>
+				<p th:utext="${'Browse the <b>' + model.weblog.name + '</b> archive in month view, search for specific keywords
+                   or jump to the most recent posts listed in the right sidebar.'}">xxx</p>
+				<br>
+				<div th:utext="${model.showWeblogEntryCalendar(true)}"></div>
+			</div>
+			
+			<!-- BODY SIDEBAR-->
+			<div id="sidebar_content" class="col-lg-4">
+				<div class="well">
+					<h3>Welcome</h3>
+
+					<p class="details" th:utext="${'You''re on the Archives page of the weblog <b>' + model.weblog.name + '</b>.'}"></p>
+
+					<p class="details">
+					From here you can browse via the calendar, follow the links below or
+					<a th:href="${url.home}">visit the main page</a> of the weblog.</p>
+				</div>
+				<div class="well">
+				  <h3>Most recent posts</h3>
+				  <ul th:each="recentEntry : ${model.getRecentWeblogEntries(null, 30)}">
+				      <li class="entryLink"><a th:href="${url.entry(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
+				  </ul>
+				</div>	
+			</div> <!-- close sidebar_content -->
+		</div> <!-- /.row -->
+	</div> <!-- /.container -->
+
+	<footer>
+    	<span th:replace="${model.getTemplateIdByName('standard_footer')}">xxx</span>
+	</footer>
+
+</body>
+</html>
+

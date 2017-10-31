@@ -4,7 +4,7 @@
     <th:block th:fragment="AutoDiscoveryLinks">
         <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.feed.entries.atom}" />
         <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" th:href="${url.feed.comments.atom}" />
-        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'"  th:href="${url.feed.entries.atomByTag(model.tag)}"/>
+        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.feed.entries.atomByTag(model.tag)}"/>
         <link th:if="${model.categoryName}" rel="alternate" type="application/atom+xml" title="${'Entries for category ' + model.categoryName + ' (Atom)'" th:href="${url.feed.entries.atom(model.categoryName)}"/>
     </th:block>
     <th:block th:fragment="MetaDescription">
@@ -22,7 +22,7 @@
 <body>
     <div th:fragment="WeblogCategoryBar" th:remove="tag">
         <ul class="rCategory">
-            <li th:class="${!(model.categoryName == null || model.permalink == null)}? 'selected'">
+            <li th:class="${(model.categoryName == null && model.permalink == null)}? 'selected'">
                 <a th:href="${url.home}" th:text="${utils.msg('generic.all')}">"all" category</a>
             </li>
             <li th:each="cat : ${model.weblog.weblogCategories}"
@@ -38,7 +38,7 @@
     </div>
     <div th:fragment="WeblogEntriesPager" th:remove="tag">
         <span th:each="day : ${model.weblogEntriesPager.getEntries().keySet()}"
-              th:include="${model.getTemplateIdByName('_day')}"
+              th:include="${model.getTemplateIdByName('day')}"
               th:remove="tag">xxx</span>
     </div>
     <div th:fragment="AtomFeedsList" th:remove="tag">
@@ -75,9 +75,9 @@
                 <a th:href="${url.home}"><span>Weblog</span></a>
             </li>
             <th:block th:if="${addExternalPages}">
-                <li th:each="page : ${model.templates}" th:if="${page.role == 'CUSTOM_EXTERNAL'}" class="rNavItem">
-                    <a th:remove="${model.weblogPage && page == model.weblogPage.Id} ? tag : none" th:href='${url.page(iPage.relativePath)}'>
-                        <span th:text="${iPage.name}">xxx</span>
+                <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" class="rNavItem">
+                    <a th:remove="${model.weblogPage != null && page.id == model.weblogPage.id ? 'tag' : 'none'}" th:href="${url.page(page.relativePath)}">
+                        <span th:text="${page.name}">xxx</span>
                     </a>
                 </li>
             </th:block>
@@ -136,11 +136,10 @@
 
             <th:block th:switch="${model.canSubmitNewComments(entry)}">
                 <th:block th:case="${true}">
-                    <span th:class="${cform.invalid ? 'error' : (!utils.isEmpty(cform.submitResponseMessage) ? 'status' : '')}"
+                    <span th:class="${cform.invalid ? 'error' : (!utils.isEmpty(cform.submitResponseMessage) ? 'status')}"
                           th:utext="${cform.submitResponseMessage}">xxx</span>
 
-                    <form method="post" focus="name" name="commentForm"
-                          onsubmit="saveUserInformation(this)">
+                    <form method="post" focus="name" name="commentForm" onsubmit="saveUserInformation(this)">
                         <input type="hidden" name="method" value="post" />
 
                         <ul>
@@ -154,8 +153,8 @@
                             <li><label class="desc" th:utext="${utils.msg('macro.weblog.url')}">xxx</label>
                                 <input type="text" name="url" class="text large" th:value="${cform.url}" size="50" maxlength="255" />
                             </li>
-                            <li th:if="${utils.commentEmailNotify}"><input type="checkbox" class="checkbox" id="notify"
-                                                                           name="notify" th:checked="${cform.notify}"/>
+                            <li th:if="${utils.commentEmailNotify}">
+                                <input type="checkbox" class="checkbox" id="notify" name="notify" th:checked="${cform.notify}"/>
                                 <label for="notify" class="choice" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
                             </li>
                             <li>
@@ -238,3 +237,4 @@
     </div>
 </body>
 </html>
+

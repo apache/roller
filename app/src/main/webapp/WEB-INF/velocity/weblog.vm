@@ -90,7 +90,7 @@ Shows weblog entries pager via default day template
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
         #set($entries = $map.get($day))
-        #parse($model.getTemplateIdByName("_day"))
+        #parse($model.getTemplateIdByName("day"))
     #end
 #end
 

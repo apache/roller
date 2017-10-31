@@ -25,8 +25,8 @@
     </template>
 
     <template role="customInternal">
-        <name>_day</name>
-        <contentsFile>_day.html</contentsFile>
+        <name>day</name>
+        <contentsFile>day.html</contentsFile>
         <parser>thymeleaf</parser>
     </template>
 
