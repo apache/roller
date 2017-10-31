@@ -35,6 +35,7 @@
                             <xs:element name="parser" default="velocity">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
+                                        <xs:enumeration value="thymeleaf"/>
                                         <xs:enumeration value="velocity"/>
                                     </xs:restriction>
                                 </xs:simpleType>
@@ -45,7 +46,7 @@
                                 <xs:restriction base="xs:string">
                                     <xs:enumeration value="weblog"/>
                                     <xs:enumeration value="permalink"/>
-                                    <xs:enumeration value="search"/>
+                                    <xs:enumeration value="searchResults"/>
                                     <xs:enumeration value="stylesheet"/>
                                     <xs:enumeration value="javascript"/>
                                     <xs:enumeration value="customInternal"/>

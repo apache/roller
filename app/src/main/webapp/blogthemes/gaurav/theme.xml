@@ -24,7 +24,7 @@
         <parser>velocity</parser>
     </template>
 
-    <template role="search">
+    <template role="searchResults">
         <name>Search</name>
         <contentsFile>search.vm</contentsFile>
         <parser>velocity</parser>

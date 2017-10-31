@@ -253,6 +253,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return (entry == null) ? null : weblogEntryPublishDateToLocalDate(entry).withDayOfMonth(1);
     }
 
+    @Override
     public List<WeblogEntry> getItems() {
         if (items == null) {
             items = entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
@@ -260,6 +261,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return items;
     }
 
+    @Override
     public Map<LocalDate, List<WeblogEntry>> getEntries() {
         return entries;
     }
@@ -313,45 +315,55 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return entries;
     }
 
+    @Override
     public String getHomeLink() {
         return createURL(0, 0, null);
     }
 
-    public String getHomeName() {
+    @Override
+    public String getHomeLabel() {
         return messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".home");
     }
 
+    @Override
     public String getNextLink() {
         if (more) {
             return createURL(page, 1, dateString);
+        } else {
+            return getNextCollectionLink();
         }
-        return null;
     }
 
-    public String getNextName() {
-        if (getNextLink() != null) {
+    @Override
+    public String getNextLabel() {
+        if (more) {
             return messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".next",
                     dateFormat != null ? new Object[]{dateFormat.format(timePeriod)} : null);
+        } else {
+            return getNextCollectionLabel();
         }
-        return null;
     }
 
+    @Override
     public String getPrevLink() {
         if (page > 0) {
             return createURL(page, -1, dateString);
+        } else {
+            return getPrevCollectionLink();
         }
-        return null;
     }
 
-    public String getPrevName() {
-        if (getPrevLink() != null) {
+    @Override
+    public String getPrevLabel() {
+        if (page > 0) {
             return messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".prev",
                     dateFormat != null ? new Object[]{dateFormat.format(timePeriod)} : null);
+        } else {
+            return getPrevCollectionLabel();
         }
-        return null;
     }
 
-    public String getNextCollectionLink() {
+    private String getNextCollectionLink() {
         if (nextTimePeriod != null) {
             String next = nextTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(), weblog.getLocaleInstance()));
             return createURL(0, 0, next);
@@ -359,7 +371,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return null;
     }
 
-    public String getNextCollectionName() {
+    private String getNextCollectionLabel() {
         if (nextTimePeriod != null) {
             return messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".nextCollection",
                     dateFormat != null ? new Object[]{dateFormat.format(nextTimePeriod)} : null);
@@ -367,7 +379,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return null;
     }
 
-    public String getPrevCollectionLink() {
+    private String getPrevCollectionLink() {
         if (prevTimePeriod != null) {
             String prev = prevTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(), weblog.getLocaleInstance()));
             return createURL(0, 0, prev);
@@ -375,7 +387,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return null;
     }
 
-    public String getPrevCollectionName() {
+    private String getPrevCollectionLabel() {
         if (prevTimePeriod != null) {
             return messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".prevCollection",
                     dateFormat != null ? new Object[]{dateFormat.format(prevTimePeriod)} : null);

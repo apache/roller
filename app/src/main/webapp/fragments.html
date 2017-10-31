@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:fragment="AutoDiscoveryLinks">
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.feed.entries.atom}" />
+        <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" th:href="${url.feed.comments.atom}" />
+        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'"  th:href="${url.feed.entries.atomByTag(model.tag)}"/>
+        <link th:if="${model.categoryName}" rel="alternate" type="application/atom+xml" title="${'Entries for category ' + model.categoryName + ' (Atom)'" th:href="${url.feed.entries.atom(model.categoryName)}"/>
+    </th:block>
+    <th:block th:fragment="MetaDescription">
+        <th:block th:switch="${model.weblogEntry != null && utils.isNotEmpty(model.weblogEntry.searchDescription)}">
+            <!-- need to test below line -->
+            <meta th:case="${true}" name="description" th:content="${model.weblogEntry.searchDescription}">
+            <th:block th:case="${false}">
+                <th:block th:if="${utils.isNotEmpty(model.weblog.about)}">
+                    <meta name="description" th:content="${model.weblog.about}">
+                </th:block>
+            </th:block>
+        </th:block>
+    </th:block>
+</head>
+<body>
+    <div th:fragment="WeblogCategoryBar" th:remove="tag">
+        <ul class="rCategory">
+            <li th:class="${!(model.categoryName == null || model.permalink == null)}? 'selected'">
+                <a th:href="${url.home}" th:text="${utils.msg('generic.all')}">"all" category</a>
+            </li>
+            <li th:each="cat : ${model.weblog.weblogCategories}"
+                th:class="${model.categoryName == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
+                <a th:href="${url.category(cat.name)}" th:text="${cat.name}">category name</a>
+            </li>
+        </ul>
+    </div>
+    <div th:fragment="PreviousNextPager" th:remove="tag" th:with="pager = ${model.weblogEntriesPager}">
+        <span th:if="${pager.prevLink != null}">&laquo; <a th:href="${pager.prevLink}" th:text="${pager.prevLabel}">xxx</a> |</span>
+        <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${pager.homeLink}" th:text="${pager.homeLabel}">xxx</a></span>
+        <span th:if="${pager.nextLink != null}">| <a th:href="${pager.nextLink}" th:text="${pager.nextLabel}">xxx</a> &raquo;</span>
+    </div>
+    <div th:fragment="WeblogEntriesPager" th:remove="tag">
+        <span th:each="day : ${model.weblogEntriesPager.getEntries().keySet()}"
+              th:include="${model.getTemplateIdByName('_day')}"
+              th:remove="tag">xxx</span>
+    </div>
+    <div th:fragment="AtomFeedsList" th:remove="tag">
+        <ul class="rFeeds">
+            <li><a th:href="${url.feed.entries.atom}" th:utext="${utils.msg('generic.all')}">xxx</a></li>
+            <li th:each="cat : ${model.weblog.weblogCategories}">
+                <a th:href="${url.feed.entries.atom(cat.name)}" th:utext="${cat.name}">xxx</a>
+            </li>
+            <li><a th:href="${url.feed.comments.atom}">Comments</a></li>
+        </ul>
+    </div>
+    <div th:fragment="WeblogSearchForm" th:remove="tag">
+        <form id="searchForm" method="get" th:action="${url.search}" style="margin: 0; padding: 0">
+            <p>
+                <input type="text" id="q" name="q" size="10" class="text small" maxlength="255"
+                       th:value="${model.searchResults ? model.searchTerm : ''}" pattern=".*\S+.*" required/>
+                <input type="submit" class="button" th:value="${utils.msg('macro.weblog.searchbutton')}" id="searchbutton" />
+            </p>
+        </form>
+    </div>
+    <div th:fragment="Blogroll" th:remove="tag">
+        <ul class="rFolder">
+            <li th:each="link : ${model.weblog.getBookmarks()}" class="rFolderItem">
+                <a th:href="${link.url}" th:title="${link.description}" th:utext="${link.name}">xxx</a>
+            </li>
+        </ul>
+    </div>
+    <div th:fragment="PageMenu(addExternalPages)" th:remove="tag">
+        <ul class="rNavigationBar">
+            <li class="rNavItem">
+                <a th:href="${url.site}"><span th:utext="${utils.msg('navigationBar.homePage')}"></span></a>
+            </li>
+            <li class="rNavItem">
+                <a th:href="${url.home}"><span>Weblog</span></a>
+            </li>
+            <th:block th:if="${addExternalPages}">
+                <li th:each="page : ${model.templates}" th:if="${page.role == 'CUSTOM_EXTERNAL'}" class="rNavItem">
+                    <a th:remove="${model.weblogPage && page == model.weblogPage.Id} ? tag : none" th:href='${url.page(iPage.relativePath)}'>
+                        <span th:text="${iPage.name}">xxx</span>
+                    </a>
+                </li>
+            </th:block>
+            <th:block th:if="${model.isUserBlogPublisher(model.weblog)}">
+                <li class="rNavItem">
+                    <a th:href="${url.createEntry}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
+                </li>
+                <li th:if="${model.isUserBlogOwner(model.weblog)}" class="rNavItem">
+                    <a th:href="${url.editSettings}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
+                </li>
+            </th:block>
+            <th:block th:switch="${model.isUserAuthenticated()}">
+                <li th:case="${true}" class="rNavItem">
+                    <a th:href="${url.logout}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
+                </li>
+                <li th:case="${false}" class="rNavItem">
+                    <a th:href="${url.login}"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
+                </li>
+            </th:block>
+        </ul>
+    </div>
+    <div th:fragment="WeblogEntryComments" th:remove="tag" th:with="entry=${model.weblogEntry}">
+        <div class="comments" id="comments">
+
+            <div class="comments-head" th:utext="${utils.msg(model.commentForm.preview ? 'macro.weblog.preview' : 'macro.weblog.comments')}">xxx</div>
+
+            <br/>
+
+            <th:block th:with="comments=${model.commentForm.preview ? model.commentForm : entry.getComments()}">
+                <th:block th:each="comment : ${comments}" th:if="${comment.approved || model.commentForm.preview}">
+                    <div th:id="${'comment-' + comment.timestamp}">
+
+                        <span th:utext="${comment.content}">xxx</span>
+
+                        <p class="comment-details">
+                            <span th:utext="${utils.msg('macro.weblog.postedby')}"></span>
+
+                            <a rel="nofollow" th:href="${comment.url}" th:remove="${utils.isEmpty(comment.url) ? 'tag' : 'none'}">
+                                <b th:text="${comment.name}">xxx</b>
+                            </a>
+
+                            <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatDateTime(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}"></span>
+
+                            <a th:href="${url.comment(entry, comment.timestamp)}"
+                               class="entrypermalink" title="${utils.msg('macro.weblog.commentpermalink.title')}">#</a>
+                        </p>
+
+                    </div>
+                </th:block>
+            </th:block>
+        </div>
+    </div>
+    <div th:fragment="WeblogEntryCommentForm" th:remove="tag">
+        <div class="comments-form" th:with="entry=${model.weblogEntry}, cform = ${model.getCommentForm()}">
+            <div class="comments-head"><span th:utext="${utils.msg('macro.weblog.postcommentHeader')}">xxx</span></div>
+
+            <th:block th:switch="${model.canSubmitNewComments(entry)}">
+                <th:block th:case="${true}">
+                    <span th:class="${cform.invalid ? 'error' : (!utils.isEmpty(cform.submitResponseMessage) ? 'status' : '')}"
+                          th:utext="${cform.submitResponseMessage}">xxx</span>
+
+                    <form method="post" focus="name" name="commentForm"
+                          onsubmit="saveUserInformation(this)">
+                        <input type="hidden" name="method" value="post" />
+
+                        <ul>
+                            <li>
+                                <label class="desc" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
+                                <input type="text" name="name" class="text large" th:value="${cform.name}" size="50" maxlength="255" required/>
+                            </li>
+                            <li><label class="desc" th:utext="${utils.msg('macro.weblog.email')}">xxx</label>
+                                <input type="text" name="email" class="text large" th:value="${cform.email}" size="50" maxlength="255" required/>
+                            </li>
+                            <li><label class="desc" th:utext="${utils.msg('macro.weblog.url')}">xxx</label>
+                                <input type="text" name="url" class="text large" th:value="${cform.url}" size="50" maxlength="255" />
+                            </li>
+                            <li th:if="${utils.commentEmailNotify}"><input type="checkbox" class="checkbox" id="notify"
+                                                                           name="notify" th:checked="${cform.notify}"/>
+                                <label for="notify" class="choice" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="rememberInfo" name="rememberInfo" />
+                                <label for="rememberInfo" class="choice" th:utext="${utils.msg('macro.weblog.rememberinfo')}">xxx</label>
+                            </li>
+                            <li>
+                                <label class="desc" th:utext="${utils.msg('macro.weblog.yourcomment')}">xxx</label>
+                                <textarea name="content" class="textarea large" cols="40" rows="10" maxlength="2000" th:utext="${cform.content}" required>xxx</textarea>
+                            </li>
+                            <li class="info">
+                                <script th:src="${url.site + '/scripts/clientSideInclude.js'}"></script>
+                                <div id="commentAuthenticator"></div>
+                            </li>
+                            <li>
+                                <input type="submit" th:formaction="${url.entryCommentPreview(entry.anchor)}" class="button"
+                                       name="post" th:value="${utils.msg('macro.weblog.postpreview')}">
+                                <input type="submit" th:formaction="${url.entryComment(entry.anchor)}" class="button"
+                                       name="post" th:value="${utils.msg('macro.weblog.post')}">
+                            </li>
+                        </ul>
+
+                    </form>
+
+                    <script th:src="${url.site + '/scripts/roller.js'}"></script>
+                    <script>
+                        clientSideInclude('commentAuthenticator', '[(${url.commentAuthenticator})]');
+
+                        var author = getCookie("commentAuthor");
+                        var email = getCookie("commentEmail");
+                        var url = getCookie("commentUrl");
+                        // check each field - IE will render "null"
+                        if (author) {
+                            document.forms['commentForm'].name.value = author;
+                        }
+                        if (email) {
+                            document.forms['commentForm'].email.value = email;
+                        }
+                        if (url) {
+                            document.forms['commentForm'].url.value = url;
+                        }
+
+                        if (author || email || url) {
+                            document.forms['commentForm'].rememberInfo.checked = true;
+                        }
+
+                        function saveUserInformation(theForm) {
+                            if (theForm.rememberInfo.checked) {
+                                rememberUser(theForm);
+                            } else {
+                                forgetUser(theForm);
+                            }
+                        }
+                    </script>
+                </th:block>
+                <span th:case="${false}" class="status" th:utext="${utils.msg('comments.disabled')}">xxx</span>
+            </th:block>
+        </div>
+    </div>
+    <div th:fragment="WeblogSearchAgainForm" id="searchAgain" th:with="entry=${model.weblogEntry}">
+        <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, model.resultCount)}">xxx</span>
+        <form method="get" th:action="${url.search}" style="margin: 5px">
+            <input type="text" id="q" name="q" class="text medium" maxlength="255" th:value="${model.searchTerm}"
+                   style="padding-left: 1px" required><br>
+            <select th:unless="${site != null || model.weblog.weblogCategories.size() <= 1}" name="cat" class="select">
+                <option value="" th:utext="${utils.msg('macro.searchresults.incategory')}">xxx</option>
+                <option th:each="cat : ${model.weblog.weblogCategories}"
+                        th:selected="${cat.name == model.categoryName}" th:utext="${cat.name}">xxx</option>
+            </select>
+            <input type="submit" th:value="${utils.msg('macro.weblog.searchbutton')}" class="button">
+        </form>
+    </div>
+    <div th:fragment="PreviousNextSearchPager" th:remove="tag" th:with="pager = ${model.weblogEntriesPager},
+            min=${model.offset + 1}, max=${T(Math).min(model.offset+model.limit, model.resultCount)}">
+        <h3 th:utext="${utils.msg('searchSummary.text', min, max, model.resultCount)}">xxx</h3>
+        <span th:if="${pager.prevLink != null}">&laquo; <a th:href="${pager.prevLink}" th:text="${pager.prevLabel}">xxx</a> |</span>
+        <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${pager.homeLink}"
+                                                                             th:text="${pager.homeLabel}">xxx</a></span>
+        <span th:if="${pager.nextLink != null}">| <a th:href="${pager.nextLink}" th:text="${pager.nextLabel}">xxx</a> &raquo;</span>
+    </div>
+</body>
+</html>

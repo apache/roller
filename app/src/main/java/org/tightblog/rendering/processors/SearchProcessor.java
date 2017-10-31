@@ -24,8 +24,10 @@ import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.rendering.Renderer;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.requests.WeblogSearchRequest;
+import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
@@ -59,6 +61,13 @@ public class SearchProcessor extends AbstractProcessor {
 
     public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
         this.velocityRenderer = velocityRenderer;
+    }
+
+    @Autowired
+    private ThymeleafRenderer thymeleafRenderer = null;
+
+    public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
+        this.thymeleafRenderer = thymeleafRenderer;
     }
 
     @Autowired
@@ -108,24 +117,18 @@ public class SearchProcessor extends AbstractProcessor {
             return;
         }
 
-        // lookup template to use for rendering
-        Template page = null;
-        try {
+        // lookup template to use for rendering, look for search results override first
+        // try looking for a specific search page
+        Template page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH_RESULTS);
 
-            // try looking for a specific search page
-            page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH);
+        // if not found then fall back on default page
+        if (page == null) {
+            page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
+        }
 
-            // if not found then fall back on default page
-            if (page == null) {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
-            }
-
-            // if still null then that's a problem
-            if (page == null) {
-                throw new IllegalStateException("Could not lookup default page for weblog " + weblog.getHandle());
-            }
-        } catch (Exception e) {
-            log.error("Error getting default page for weblog {}", weblog.getHandle(), e);
+        // if still null then that's a problem
+        if (page == null) {
+            throw new IllegalStateException("Could not lookup default page for weblog " + weblog.getHandle());
         }
 
         // set the content type
@@ -142,6 +145,7 @@ public class SearchProcessor extends AbstractProcessor {
         // needs its own custom initData property aside from the standard
         // weblogRequest.
         WeblogPageRequest pageRequest = new WeblogPageRequest();
+        pageRequest.setWeblog(searchRequest.getWeblog());
         pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
         pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
         pageRequest.setDeviceType(searchRequest.getDeviceType());
@@ -160,14 +164,17 @@ public class SearchProcessor extends AbstractProcessor {
         CachedContent rendererOutput = new CachedContent(Utilities.EIGHT_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
-            velocityRenderer.render(page, model, rendererOutput.getCachedWriter());
+            Renderer renderer = Template.Parser.THYMELEAF.equals(page.getParser()) ?
+                    thymeleafRenderer : velocityRenderer;
+
+            renderer.render(page, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
         } catch (Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for rsd template", e);
+            log.error("Error during rendering for search template", e);
 
             if (!response.isCommitted()) {
                 response.reset();

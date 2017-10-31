@@ -6,7 +6,7 @@
   #includeTemplate("standard_head")
   <title>$model.weblog.name: $model.weblogEntry.title</title>
   #checkSuppressIndexing()
-  #showAnalyticsTrackingCode($model.weblog)
+  $model.analyticsTrackingCode
   #showMetaDescription()
 </head>
 <body>
@@ -66,8 +66,6 @@
 										<b>$comment.name</b>
 									#elseif ($comment.remoteHost)
 										<b>$comment.remoteHost</b>
-									#else
-										<b>$utils.msg("macro.weblog.comment.unknown")</b>
 									#end
 									$utils.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $utils.msg( "macro.weblog.datetimepattern" ))
 									<a href="$url.comment($entry, $comment.timestamp)"

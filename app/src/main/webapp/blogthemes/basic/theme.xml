@@ -15,36 +15,24 @@
         <description>Stylesheet for Basic theme</description>
         <relativePath>basic-custom.css</relativePath>
         <contentsFile>basic-custom.css</contentsFile>
-        <parser>velocity</parser>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="weblog">
         <name>Weblog</name>
-        <contentsFile>weblog.vm</contentsFile>
-        <parser>velocity</parser>
-    </template>
-
-    <template role="permalink">
-        <name>permalink</name>
-        <contentsFile>permalink.vm</contentsFile>
-        <parser>velocity</parser>
-    </template>
-
-    <template role="search">
-        <name>searchresults</name>
-        <contentsFile>searchresults.vm</contentsFile>
-        <parser>velocity</parser>
+        <contentsFile>weblog.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
         <name>_day</name>
-        <contentsFile>_day.vm</contentsFile>
-        <parser>velocity</parser>
+        <contentsFile>_day.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
         <name>sidebar</name>
-        <contentsFile>sidebar.vm</contentsFile>
-        <parser>velocity</parser>
+        <contentsFile>sidebar.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 </sharedtheme>

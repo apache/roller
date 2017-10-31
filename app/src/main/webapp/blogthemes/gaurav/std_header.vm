@@ -8,8 +8,8 @@
 				<span class="icon-bar"></span>
 			</button>
       		<div class="visible-xs">
-				<form id="searchForm" method="get" action="$url.search" class="form-inline" onsubmit="return validateSearch(this)">
-					<input type="text" class="form-control input-sm" id="q" name="q" maxlength="255" placeholder="Search..." value="">
+				<form id="searchForm" method="get" action="$url.search" class="form-inline">
+					<input type="text" class="form-control input-sm" id="q" name="q" maxlength="255" pattern=".*\S+.*" required placeholder="Search..." value="">
 					<button type="submit" id="search-btn" class="btn"><i class="icon-search"></i></button>
 			  	</form>
       		</div>
@@ -76,19 +76,9 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right hidden-xs">
 				<li>
-					<form id="searchForm" method="get" action="$url.search" class="form-inline" onsubmit="return validateSearch(this)">
-						<input type="text" class="form-control input-sm" id="q" name="q" maxlength="255" placeholder="Search..." value="">	  		   <button type="submit" id="search-btn" class="btn"><i class="icon-search"></i></button>
+					<form id="searchForm" method="get" action="$url.search" class="form-inline">
+						<input type="text" class="form-control input-sm" id="q" name="q" maxlength="255" pattern=".*\S+.*" required placeholder="Search..." value="">	  		   <button type="submit" id="search-btn" class="btn"><i class="icon-search"></i></button>
 					</form>
-					<script>
-				    	function validateSearch(form) {
-				            if (form.q.value == "") {
-				                alert("$utils.msg("macro.weblog.searchalert")");
-				                form.q.focus();
-				                return false;
-				            }
-				            return true;
-				        }
-				    </script>
 				</li>
 			</ul>
     	</div><!-- /.navbar-collapse -->

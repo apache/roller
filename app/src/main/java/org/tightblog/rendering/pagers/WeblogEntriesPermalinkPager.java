@@ -85,10 +85,12 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         getEntries();
     }
 
+    @Override
     public List<WeblogEntry> getItems() {
         return entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
+    @Override
     public Map<LocalDate, List<WeblogEntry>> getEntries() {
         if (entries == null) {
             currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
@@ -124,14 +126,17 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         return entries;
     }
 
+    @Override
     public String getHomeLink() {
         return createURL(weblog, pageLink, null);
     }
 
-    public String getHomeName() {
+    @Override
+    public String getHomeLabel() {
         return messageUtils.getString("weblogEntriesPager.single.home");
     }
 
+    @Override
     public String getNextLink() {
         if (getNextEntry() != null) {
             return createURL(weblog, pageLink, nextEntry);
@@ -139,7 +144,8 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         return null;
     }
 
-    public String getNextName() {
+    @Override
+    public String getNextLabel() {
         if (getNextEntry() != null) {
             String title = Utilities.truncateText(getNextEntry().getTitle(), 15, 20, "...");
             return messageUtils.getString("weblogEntriesPager.single.next", new Object[]{title});
@@ -147,6 +153,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         return null;
     }
 
+    @Override
     public String getPrevLink() {
         if (getPrevEntry() != null) {
             return createURL(weblog, pageLink, prevEntry);
@@ -154,27 +161,12 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
         return null;
     }
 
-    public String getPrevName() {
+    @Override
+    public String getPrevLabel() {
         if (getPrevEntry() != null) {
             String title = Utilities.truncateText(getPrevEntry().getTitle(), 15, 20, "...");
             return messageUtils.getString("weblogEntriesPager.single.prev", new Object[]{title});
         }
-        return null;
-    }
-
-    public String getNextCollectionLink() {
-        return null;
-    }
-
-    public String getNextCollectionName() {
-        return null;
-    }
-
-    public String getPrevCollectionLink() {
-        return null;
-    }
-
-    public String getPrevCollectionName() {
         return null;
     }
 
@@ -205,7 +197,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     /**
      * Create URL that encodes pager state using most appropriate form of URL.
      */
-    protected String createURL(Weblog weblog, String pageLink, WeblogEntry entry) {
+    private String createURL(Weblog weblog, String pageLink, WeblogEntry entry) {
 
         if (pageLink != null) {
             return urlStrategy.getCustomPageURL(weblog, pageLink, false);

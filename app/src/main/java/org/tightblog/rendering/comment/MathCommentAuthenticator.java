@@ -64,7 +64,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         str += messages.getString("comments.mathAuthenticatorQuestion");
         str += "</p><p>" + value1o + " + " + value2o;
         str += " = <input name='answer' value='";
-        str += answer + "'></p>";
+        str += answer + "' required></p>";
         return str;
     }
 

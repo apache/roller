@@ -1,0 +1,24 @@
+<div class="dayBox" xmlns:th="http://www.thymeleaf.org">
+
+    <div class="dayTitle" th:utext="${utils.formatDate(day, utils.msg('macro.weblog.datepattern'))}">
+    </div>
+
+      <div class="entryBox" th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" th:id="${utils.encode(entry.anchor)}">
+        <p class="entryTitle" th:utext="${entry.title}">xxx</p>
+        <p class="entryContent" th:switch="${model.permalink || utils.isEmpty(entry.summary)}">
+            <span th:case="${true}" th:utext="${model.getTransformedText(entry)}"></span>
+            <span th:case="${false}" th:utext="${model.getTransformedSummary(entry) utils.msg('macro.weblog.readMoreLink', [url.entry(entry)])"></span>
+        </p>
+        <p class="entryInfo">
+            Posted at <a th:href="${url.entry(entry)}" th:utext="${utils.formatDateTime(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a>
+            by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
+            <span th:if="${model.isUserBlogPublisher(entry.weblog)}">
+                |&nbsp;<a th:href="${url.editEntry(entry.anchor)}" th:utext="${utils.msg('generic.edit')}">xxx</a>
+            </span>
+            <span th:if="${model.canSubmitNewComments(entry) || entry.commentCount > 0}">
+                |&nbsp;<a th:href="${url.comments(entry)}" class="commentsLink" th:utext="${utils.msg('macro.weblog.comments') + '[' + entry.commentCount + ']'}">xxx</a>
+            </span>
+        </p>
+      </div>
+
+</div>

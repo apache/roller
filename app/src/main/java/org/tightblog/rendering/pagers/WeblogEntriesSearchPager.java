@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,18 +79,22 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
         return entries;
     }
 
+    @Override
     public List<WeblogEntry> getItems() {
         return entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
+    @Override
     public String getHomeLink() {
         return urlStrategy.getWeblogURL(weblog, false);
     }
 
-    public String getHomeName() {
+    @Override
+    public String getHomeLabel() {
         return messageUtils.getString("weblogEntriesPager.search.home");
     }
 
+    @Override
     public String getNextLink() {
         if (moreResults) {
             return urlStrategy.getWeblogSearchURL(weblog, query, category, page + 1, false);
@@ -98,13 +102,15 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
         return null;
     }
 
-    public String getNextName() {
+    @Override
+    public String getNextLabel() {
         if (getNextLink() != null) {
             return messageUtils.getString("weblogEntriesPager.search.next");
         }
         return null;
     }
 
+    @Override
     public String getPrevLink() {
         if (page > 0) {
             return urlStrategy.getWeblogSearchURL(weblog, query, category, page - 1, false);
@@ -112,26 +118,11 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
         return null;
     }
 
-    public String getPrevName() {
+    @Override
+    public String getPrevLabel() {
         if (getPrevLink() != null) {
             return messageUtils.getString("weblogEntriesPager.search.prev");
         }
-        return null;
-    }
-
-    public String getNextCollectionLink() {
-        return null;
-    }
-
-    public String getNextCollectionName() {
-        return null;
-    }
-
-    public String getPrevCollectionLink() {
-        return null;
-    }
-
-    public String getPrevCollectionName() {
         return null;
     }
 

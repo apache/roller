@@ -24,21 +24,19 @@ Set of essential macros needed in weblogger velocity templates.
 Macros defined in this file:
 
     #includeTemplate($pageName)
-    #showAutodiscoveryLinks($weblog)
+    #showAutodiscoveryLinks()
     #showMetaDescription()
-    #showAnalyticsTrackingCode($weblog)
     #showWeblogEntriesPager($pager)
     #showNextPrevEntriesControl($pager)
     #showWeblogEntryComments($entry)
     #showWeblogEntryCommentForm($entry)
     #showWeblogEntryLinksList($entries)
-    #showBookmarkLinksList($weblog)
+    #showBlogroll($weblog)
     #showWeblogCategoryLinksList()
     #showAtomFeedsList($weblog)
     #checkSuppressIndexing()
-    #showWeblogEntryCalendar($big)
     #showPageMenu($addExternalPages)
-    #showWeblogSearchForm($weblog $showCatChooser)
+    #showWeblogSearchForm($weblog)
     #showWeblogSearchAgainForm($weblog)
     #showNextPrevSearchControl($pager)
 *#
@@ -48,19 +46,13 @@ Macros defined in this file:
 Parse and include page template from weblog.
 *#
 #macro(includeTemplate $pageName)
-    #set($pageArg = false)## This is required for such constructs; see Velocity docs and ROL-689
-    #set($pageArg = $model.getTemplateByName($pageName))
-    #if ($pageArg)
-       #set($pageId = $pageArg.id)
-       #parse($pageId)
-    #end
+    #parse($model.getTemplateIdByName($pageName))
 #end
-
 
 #** 
 Show Atom auto-discovery links as HTML link elements.
 *#
-#macro(showAutodiscoveryLinks $weblog)
+#macro(showAutodiscoveryLinks)
     ## main feed urls are always available
 
     <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
@@ -68,8 +60,8 @@ Show Atom auto-discovery links as HTML link elements.
 
     #if ($model.tag)
       <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tag (Atom)"  href="$url.feed.entries.atomByTag($model.tag)" />
-    #elseif ($model.category)
-      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.category (Atom)"  href="$url.feed.entries.atom($model.category)" />
+    #elseif ($model.categoryName)
+      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.categoryName (Atom)"  href="$url.feed.entries.atom($model.categoryName)" />
     #end
 #end
 
@@ -92,54 +84,27 @@ will be created.
 #end
 
 #**
-Adds a tracking code for website analytics (e.g. Google Analytics). Will use the blog-defined
-tracking code if defined and permitted by the installation, else the server-defined tracking
-code if defined will be used.
-*#
-#macro(showAnalyticsTrackingCode $weblog)
-    $model.analyticsTrackingCode
-#end
-
-#** 
 Shows weblog entries pager via default day template 
 *#
 #macro(showWeblogEntriesPager $pager)
-    #set($dayPage = $model.getTemplateByName("_day"))
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
         #set($entries = $map.get($day))
-        #set($pageId = $dayPage.id)
-        #parse($pageId)
+        #parse($model.getTemplateIdByName("_day"))
     #end
 #end
 
 
 #** Show next/prev control for specified pager *#
 #macro(showNextPrevEntriesControl $pager)
-    #set($prevLink = false)
-    #set($nextLink = false)
     #if ($pager.prevLink)
-        #set($prevLink = $pager.prevLink)
-        #set($prevName = $pager.prevName)
-    #elseif ($pager.prevCollectionLink)
-        #set($prevLink = $pager.prevCollectionLink)
-        #set($prevName = $pager.prevCollectionName)
+        &laquo; <a href="$pager.prevLink">$pager.prevLabel</a> |
+    #end
+    #if ($pager.prevLink || $pager.nextLink)
+        <a href="$pager.homeLink">$pager.homeLabel</a>
     #end
     #if ($pager.nextLink)
-        #set($nextLink = $pager.nextLink)
-        #set($nextName = $pager.nextName)
-    #elseif ($pager.nextCollectionLink)
-        #set($nextLink = $pager.nextCollectionLink)
-        #set($nextName = $pager.nextCollectionName)
-    #end
-    #if ($prevLink)
-        &laquo; <a href="$prevLink">$prevName</a> | 
-    #end
-    #if ($prevLink || $nextLink)
-        <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
-    #end
-    #if ($nextLink)
-        | <a href="$nextLink">$nextName</a> &raquo;
+        | <a href="$pager.nextLink">$pager.nextLabel</a> &raquo;
     #end
 #end
 
@@ -148,7 +113,6 @@ Shows weblog entries pager via default day template
 Show comments for weblog entry according to TightBlog configuration.
 *#
 #macro(showWeblogEntryComments $entry)
-    <a name="comments"></a>
     <div class="comments" id="comments">
 
     #if($model.commentForm.preview)
@@ -162,8 +126,7 @@ Show comments for weblog entry according to TightBlog configuration.
     <br/>
     #foreach( $comment in $comments )
         #if($comment.approved || $model.commentForm.preview)
-            <a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
-            <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
+            <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment-$comment.timestamp">
 
                 $comment.content
 
@@ -173,10 +136,6 @@ Show comments for weblog entry according to TightBlog configuration.
                     <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
                     <b>$comment.name</b>
-                #elseif ($comment.remoteHost)
-                    <b>$comment.remoteHost</b>
-                #else
-                    <b>$utils.msg("macro.weblog.comment.unknown")</b>
                 #end
 
                 $utils.msg("macro.weblog.on") $utils.formatDateTime($comment.postTime, $utils.msg( "macro.weblog.datetimepattern" ))
@@ -201,7 +160,6 @@ Show comments form for weblog entry.
 
     <div class="comments-form">
     <div class="comments-head">$utils.msg("macro.weblog.postcommentHeader")</div>
-    <a name="comment-form"></a>
 
 #if( $model.canSubmitNewComments($entry) )
 
@@ -247,8 +205,8 @@ Show comments form for weblog entry.
                <div id="commentAuthenticator"></div>
             </li>
             <li>
-               <input type="submit" formaction="$url.entryCommentPreview($entry.anchor)" class="button" name="post" value="&nbsp;$utils.msg("macro.weblog.postpreview" )&nbsp;">
-               <input type="submit" formaction="$url.entryComment($entry.anchor)" class="button" name="post" value="&nbsp;$utils.msg( "macro.weblog.post" )&nbsp;">
+               <input type="submit" formaction="$url.entryCommentPreview($entry.anchor)" class="button" name="post" value="$utils.msg("macro.weblog.postpreview" )">
+               <input type="submit" formaction="$url.entryComment($entry.anchor)" class="button" name="post" value="$utils.msg( "macro.weblog.post" )">
             </li>
         </ul>
 
@@ -256,7 +214,6 @@ Show comments form for weblog entry.
 
     <script src="$url.site/scripts/roller.js"></script>
     <script>
-    /* <![CDATA[ */
     clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');
 
     var author = getCookie("commentAuthor");
@@ -292,7 +249,6 @@ Show comments form for weblog entry.
             return false;
         }
     }
-    /* ]]> */
     </script>
 
 #else
@@ -317,24 +273,11 @@ Show entries as a HTML ul list.
 #** 
 Show bookmarks as a HTML ul list.
 *#
-#macro(showBookmarkLinksList $weblog)
+#macro(showBlogroll $weblog)
 <ul class="rFolder">
-    #set($bookmarks = $weblog.getBookmarks())
-    #foreach($bookmark in $bookmarks)
+    #foreach($bookmark in $weblog.getBookmarks())
         <li class="rFolderItem">
-        #if($utils.isNotEmpty($bookmark.Image))
-          #if( $bookmark.Image.startsWith("http://") )
-          <a href="$bookmark.url">
-             <img alt="$bookmark.description" border="0"
-                src="$bookmark.image" class="rBookmark" /></a>
-          #else
-          <a href="$bookmark.url">
-             <img alt="$bookmark.description" border="0"
-                src="$bookmark.image" class="rBookmark" /></a>
-          #end
-        #else
             <a href="$bookmark.url" title="$bookmark.description">$bookmark.name</a>
-        #end
         </li>
     #end
 </ul>
@@ -347,17 +290,19 @@ Show weblog's categories in specified parent category.
 #macro(showWeblogCategoryLinksList)
     <ul class="rCategory">
     #if ($model.categoryName || $model.permalink)
-        <li><a href="$url.home">$utils.msg("generic.all")</a></li>
+        <li>
     #else
-        <li class="selected"><a href="$url.home">$utils.msg("generic.all")</a></li>
+        <li class="selected">
     #end
+        <a href="$url.home">$utils.msg("generic.all")</a></li>
     #set($cats = $model.weblog.getWeblogCategories())
     #foreach($cat in $cats)
         #if ($model.categoryName == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
-            <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
+            <li class="selected">
         #else
-            <li><a href="$url.category($cat.name)">$cat.name</a></li>
+            <li>
         #end
+        <a href="$url.category($cat.name)">$cat.name</a></li>
     #end
     </ul>
 #end
@@ -369,8 +314,7 @@ Show weblog's categories in specified parent category.
 #macro(showAtomFeedsList $weblog)
     <ul class="rFeeds">
     <li><a href="$url.feed.entries.atom">$utils.msg("generic.all")</a></li>
-    #set($categories = $weblog.weblogCategories )
-    #foreach( $cat in $categories )
+    #foreach( $cat in $weblog.weblogCategories )
         <li><a href="$url.feed.entries.atom($cat.name)">$cat.name</a></li>
     #end
     <li><a href="$url.feed.comments.atom">Comments</a></li>
@@ -393,7 +337,7 @@ Show weblog's categories in specified parent category.
 #macro(showPageMenu $addExternalPages)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$url.site/"><span>$utils.msg("navigationBar.homePage")</span></a>
+            <a href="$url.site"><span>$utils.msg("navigationBar.homePage")</span></a>
         </li>
         <li class="rNavItem">
             <a href="$url.home"><span>Weblog</span></a>
@@ -401,12 +345,10 @@ Show weblog's categories in specified parent category.
         #if( $addExternalPages )
             #foreach($iPage in $model.templates)
                 #if ($iPage.role == 'CUSTOM_EXTERNAL')
-                    #set($isSelected = false)
-                    #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
-                    #if (!$isSelected)
-                        <li class="rNavItem"><a href='$url.page($iPage.relativePath)'><span>$iPage.name</span></a></li>
-                    #else
+                    #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id)
                         <li class="rNavItem"><span>$iPage.name</span></li>
+                    #else
+                        <li class="rNavItem"><a href='$url.page($iPage.relativePath)'><span>$iPage.name</span></a></li>
                     #end
                 #end
             #end
@@ -420,61 +362,30 @@ Show weblog's categories in specified parent category.
                    <a href="$url.editSettings"><span>$utils.msg("navigationBar.settings")</span></a>
                </li>
             #end
-                <li class="rNavItem">
-                    <a href="$url.logout"><span>$utils.msg("navigationBar.logout")</span></a>
-                </li>
+        #end
+        #if ($model.isUserAuthenticated())
+            <li class="rNavItem">
+                <a href="$url.logout"><span>$utils.msg("navigationBar.logout")</span></a>
+            </li>
         #else
-            #if ($model.isUserAuthenticated())
-                <li class="rNavItem">
-                    <a href="$url.logout"><span>$utils.msg("navigationBar.logout")</span></a>
-                </li>
-            #else
-                <li class="rNavItem">
-                    <a href="$url.login"><span>$utils.msg("navigationBar.login")</span></a>
-                </li>
-            #end
+            <li class="rNavItem">
+                <a href="$url.login"><span>$utils.msg("navigationBar.login")</span></a>
+            </li>
         #end
     </ul>
-#end
-
-
-#** 
-Show weblog entry calendar, either big ($big=true) or small (false).
-*#
-#macro(showWeblogEntryCalendar $big)
-$model.showWeblogEntryCalendar($big)
 #end
 
 
 #**
 Show search form for a weblog.
 *#
-#macro(showWeblogSearchForm $weblog $showCatChooser)
-    <form id="searchForm" method="get" action="$url.search" style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+#macro(showWeblogSearchForm $weblog)
+    <form id="searchForm" method="get" action="$url.search" style="margin: 0; padding: 0">
         <p>
-          <input type="text" id="q" name="q" size="10" class="text small" maxlength="255" value="#if($model.term)$model.term#end" />
-          #if( $showCatChooser )
-            #set( $cats = $model.weblog.getWeblogCategories())
-            <select name="cat">
-              <option value="">- $utils.msg("mainPage.category") -</option>
-              #foreach( $cat in $cats )
-                <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
-              #end
-            </select>
-          #end
-          <input type="submit" class="button" value="$utils.msg( "macro.weblog.searchbutton" )" id="searchbutton" />
+          <input type="text" id="q" name="q" size="10" class="text small" maxlength="255" value="#if($model.searchTerm)$model.searchTerm#end" pattern=".*\S+.*" required/>
+          <input type="submit" class="button" value="$utils.msg( "macro.weblog.searchbutton" )" id="searchbutton"/>
         </p>
     </form>
-    <script>
-        function validateSearch(form) {
-            if (form.q.value == "") {
-                alert("$utils.msg("macro.weblog.searchalert")");
-                form.q.focus();
-                return false;
-            }
-            return true;
-        }
-    </script>
 #end
 
 
@@ -483,9 +394,9 @@ Show search again form for a weblog.
 *#
 #macro(showWeblogSearchAgainForm $weblog)
     <div id="searchAgain">
-        $utils.msg( "macro.weblog.searchhits", [$model.term, $model.hits])
+        $utils.msg( "macro.weblog.searchhits", $model.searchTerm, $model.resultCount)
         <form method="get" action="$url.search" style="margin: 5px">
-          <input type="text" id="q" name="q" class="text medium" maxlength="255" value="$model.term" style="padding-left: 1px" /><br />
+          <input type="text" id="q" name="q" class="text medium" maxlength="255" value="$model.searchTerm" style="padding-left: 1px" /><br />
           #set( $cats = $model.weblog.getWeblogCategories())
           #if(!$site && $cats && $cats.size() > 1)
             <select name="cat" class="select">
@@ -497,8 +408,6 @@ Show search again form for a weblog.
           #end
           <input type="submit" value="$utils.msg( "macro.weblog.searchbutton" )" class="button" />
         </form>
-
-        $utils.msg( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${weblog.handle}] )
     </div>
 #end
 
@@ -508,9 +417,9 @@ Show next/prev pager for search results.
 #macro(showNextPrevSearchControl $pager)
     #set( $min = $model.offset + 1 )
     #set( $max = $model.offset + $model.limit )
-    #if( $max > $model.hits )#set( $max = $model.hits )#end
+    #if( $max > $model.resultCount )#set( $max = $model.resultCount )#end
     <h3>
-       $utils.msg("searchSummary.text", [$min, $max, $model.hits])
+       $utils.msg("searchSummary.text", $min, $max, $model.resultCount)
     </h3>
 
     #set($prevLink = false)

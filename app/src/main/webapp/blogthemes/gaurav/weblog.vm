@@ -4,9 +4,9 @@
 	#includeTemplate("standard_head")
 	<title>$model.weblog.name: $model.weblog.tagline</title>
     <link rel="shortcut icon" href="$url.absoluteSite/favicon.ico">
-	#showAutodiscoveryLinks($model.weblog)
+	#showAutodiscoveryLinks()
     #checkSuppressIndexing()
-    #showAnalyticsTrackingCode($model.weblog)
+    $model.analyticsTrackingCode
     #showMetaDescription()
 </head>
 <body>

@@ -28,7 +28,7 @@
 				<p>Browse the <b>$model.weblog.name</b> archive in month view, search for specific keywords
 					 or jump to the most recent posts listed in the right sidebar.</p>
 				<br />
-				#showWeblogEntryCalendar(true)
+				$model.showWeblogEntryCalendar(true)
 			</div>
 			
 			<!-- BODY SIDEBAR-->

@@ -129,29 +129,14 @@ public class SearchTask extends AbstractTask {
         // don't need to close the reader, since we didn't do any writing!
     }
 
-    /**
-     * Gets the searcher.
-     *
-     * @return the searcher
-     */
     public IndexSearcher getSearcher() {
         return searcher;
     }
 
-    /**
-     * Gets the results.
-     *
-     * @return the results
-     */
     public TopFieldDocs getResults() {
         return searchresults;
     }
 
-    /**
-     * Gets the results count.
-     *
-     * @return the results count
-     */
     public int getResultsCount() {
         if (searchresults == null) {
             return -1;
@@ -159,20 +144,10 @@ public class SearchTask extends AbstractTask {
         return searchresults.totalHits;
     }
 
-    /**
-     * Sets the website handle.
-     *
-     * @param websiteHandle the new website handle
-     */
     public void setWebsiteHandle(String websiteHandle) {
         this.websiteHandle = websiteHandle;
     }
 
-    /**
-     * Sets the category.
-     *
-     * @param category the new category
-     */
     public void setCategory(String category) {
         this.category = category;
     }
