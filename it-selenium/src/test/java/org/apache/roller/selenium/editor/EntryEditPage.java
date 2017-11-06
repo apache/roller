@@ -32,8 +32,7 @@ public class EntryEditPage extends AbstractEntryPage {
 
     public EntryEditPage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "blog entry edit page";
-        verifyPageTitle("Front Page: Edit Entry");
+        verifyPageTitle("messages", "Front Page: Edit Entry");
     }
 
     public SingleBlogEntryPage viewBlogEntry() {

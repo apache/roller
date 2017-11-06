@@ -36,12 +36,14 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Adds a new media file.
  */
 @SuppressWarnings("serial")
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class MediaFileAdd extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileAdd.class);

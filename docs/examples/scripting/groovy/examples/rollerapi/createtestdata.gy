@@ -133,19 +133,21 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
         try {
             def website = new org.apache.roller.weblogger.pojos.Weblog(
                 handle, 
-                user,
+                user.getUserName(),
                 name,
                 desc,
-                user.getEmailAddress(),
                 user.getEmailAddress(),
                 theme,
                 user.getLocale(),
                 user.getTimeZone());
+            roller.getWeblogManager().addWeblog(website)
+            roller.flush()
+
             def cat = new org.apache.roller.weblogger.pojos.WeblogCategory(
-                website, null, "cat1", "cat1", null);
-            roller.getWeblogManager().saveWeblogCategory(cat);
-            website.setDefaultCategory(cat);
-            roller.getUserManager().addWebsite(website);
+                website, "cat1", "cat1", null);
+            roller.getWeblogEntryManager().saveWeblogCategory(cat);
+            //website.setDefaultCategory(cat);
+            roller.getUserManager().grantWeblogPermission(website, user, ["post", "admin"]);
             roller.flush();
             return website
         } catch (Exception e) {
@@ -158,17 +160,17 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
         try {
             def entry = new org.apache.roller.weblogger.pojos.WeblogEntry();
             entry.setWebsite(blog);
-            entry.setCreator(blog.getCreator());
+            entry.setCreatorUserName(blog.getCreatorUserName());
             def catName = categories.get((int)(Math.random() * categories.size()))
-            def category = roller.getWeblogManager().getWeblogCategoryByPath(blog,catName)
+            def category = roller.getWeblogEntryManager().getWeblogCategoryByName(blog,catName)
             entry.setCategory(category);
-            entry.setPubTime(new java.sql.Timestamp(pubTime.getTime()));
-            entry.setUpdateTime(new java.sql.Timestamp(pubTime.getTime()));
-            entry.setStatus(org.apache.roller.weblogger.pojos.WeblogEntry.PUBLISHED);
+            entry.setPubTime( new java.sql.Timestamp(pubTime.getTime()));
+            entry.setUpdateTime( new java.sql.Timestamp(pubTime.getTime()));
+            entry.setStatus(org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus.PUBLISHED);
             entry.setText(text);
             entry.setTitle(title);
             entry.setLocale("en_US");
-            roller.getWeblogManager().saveWeblogEntry(entry);
+            roller.getWeblogEntryManager().saveWeblogEntry(entry);
             roller.flush();
             return entry
         } catch (Exception e) {
@@ -185,8 +187,8 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
             comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
             comment.setContent(content);
             comment.setNotify(Boolean.FALSE);
-            comment.setStatus(org.apache.roller.weblogger.pojos.WeblogEntryComment.APPROVED);
-            roller.getWeblogManager().saveComment(comment);
+            comment.setStatus(org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus.APPROVED);
+            roller.getWeblogEntryManager().saveComment(comment);
             roller.flush();
         } catch (Exception e) {
             e.printStackTrace()
@@ -205,12 +207,12 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
         // drop any existing Roller tables
         ant.sql(onerror:"continue", driver:jdbcClass, url:jdbcUrl, 
             userid:jdbcUser, password:jdbcPassword,
-            src:"../../../../../apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/droptables.sql")   
+            src:"../../../../../../app/target/roller/WEB-INF/classes/dbscripts/droptables.sql")
         
         // create fresh set of Roller tables
         ant.sql(onerror:"continue", driver:jdbcClass, url:jdbcUrl, 
             userid:jdbcUser, password:jdbcPassword,
-            src:"../../../../../apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/derby/createdb.sql") 
+            src:"../../../../../../app/target/roller/WEB-INF/classes/dbscripts/mysql/createdb.sql")
 
         bootstrap()
 

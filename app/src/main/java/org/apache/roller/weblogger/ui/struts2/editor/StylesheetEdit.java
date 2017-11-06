@@ -37,10 +37,12 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Action which handles editing for a weblog stylesheet override template.
  */
+// TODO: make this work @AllowedMethods({"execute","move","delete","revert"})
 public class StylesheetEdit extends UIAction {
 
     private static final long serialVersionUID = 4657591015852311907L;

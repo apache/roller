@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -49,6 +50,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  *
  * @see org.apache.roller.weblogger.ui.struts2.core.Login
  */
+// TODO: make this work @AllowedMethods({"execute","save","activate"})
 public class Register extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(Register.class);

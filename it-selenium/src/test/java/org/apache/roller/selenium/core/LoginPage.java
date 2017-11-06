@@ -30,8 +30,8 @@ public class LoginPage extends AbstractRollerPage {
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "Roller Login Page";
-        verifyPageTitle("Front Page: Welcome to Roller");
+        String pageTitle = "Front Page: Welcome to Roller";
+        verifyPageTitle("loginForm", pageTitle);
     }
 
     public MainMenuPage loginToRoller() {

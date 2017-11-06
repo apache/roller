@@ -20,7 +20,7 @@
 <%-- PROMPT: Welcome... you have no blog --%>
 <s:if test="existingPermissions.isEmpty && pendingPermissions.isEmpty"> 
     <p><s:text name="yourWebsites.prompt.noBlog" />
-    <a href="<s:url action="createWeblog"/>"><s:text name="yourWebsites.createOne" /></a></p>
+    <a id="createWeblogLink" href="<s:url action="createWeblog"/>"><s:text name="yourWebsites.createOne" /></a></p>
 </s:if>    
 
 <%-- PROMPT: You have invitation(s) --%>

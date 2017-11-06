@@ -27,10 +27,12 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Action for resigning from a weblog.
  */
+// TODO: make this work @AllowedMethods({"execute","resign"})
 public class MemberResign extends UIAction {
 
     private static Log log = LogFactory.getLog(MemberResign.class);

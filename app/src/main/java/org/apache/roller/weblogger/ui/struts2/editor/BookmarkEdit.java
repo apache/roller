@@ -27,12 +27,14 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
  * Edit a new or existing bookmark (blogroll item).
  */
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class BookmarkEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarkEdit.class);

@@ -34,8 +34,6 @@ if (cmaEnabled) {
 }
 %>
 
-<p>L'utilisateur a été invité avec succés</p>
-
 <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
     
     <p><s:text name="loginPage.openIdPrompt" /></p>

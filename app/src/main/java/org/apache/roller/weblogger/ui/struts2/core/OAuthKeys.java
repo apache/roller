@@ -26,12 +26,14 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
  * Allows user to view his/her OAuth consumer key and secret.
  */
+// TODO: make this work @AllowedMethods({"execute"})
 public class OAuthKeys extends UIAction {
     private static Log log = LogFactory.getLog(OAuthKeys.class);
     private OAuthConsumer userConsumer;

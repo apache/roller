@@ -1,3 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -7,7 +24,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
+        <version>5.2.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,12 +33,74 @@
     <packaging>war</packaging>
 
     <properties>
-        <lucene.version>4.10.3</lucene.version>
+        <angular.version>1.2.29</angular.version>
+        <ant.version>1.10.1</ant.version>
+        <commons-validator.version>1.6</commons-validator.version>
+        <commons-beanutils.version>1.9.3</commons-beanutils.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
+        <commons-codec.version>1.10</commons-codec.version>
+        <eclipse-link.version>2.5.2</eclipse-link.version>
+        <guice.version>4.1.0</guice.version>
+        <java-mail.version>1.4.7</java-mail.version>
+        <jsp-api.version>2.2</jsp-api.version>
+        <jstl.version>1.2</jstl.version>
+        <log4j.version>1.2.17</log4j.version>
+        <log4j2.version>2.8.2</log4j2.version>
+        <lucene.version>4.10.4</lucene.version>
+        <oauth-core.version>20100527</oauth-core.version>
+        <maven-war.version>3.1.0</maven-war.version>
+        <maven-surefire.version>2.17</maven-surefire.version>
+        <maven-antrun.version>1.0b3</maven-antrun.version>
+        <rome.version>1.7.4</rome.version>
+        <servlet.version>3.0.1</servlet.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <spring.version>4.1.4.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
+        <struts.version>2.5.12</struts.version>
+        <velocity.version>1.7</velocity.version>
+        <webjars.version>1.5</webjars.version>
+        <ws-commons-util.version>1.0.2</ws-commons-util.version>
+        <xml-security.version>1.3.0</xml-security.version>
+        <xmlrpc-version>3.1.3</xmlrpc-version>
     </properties>
 
     <dependencies>
+
+
+        <!-- Java EE deps -->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>${jsp-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${java-mail.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
              Roller, comment out this dependency and uncomment Hibernate's
@@ -34,7 +113,7 @@
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
-            <version>2.5.2</version>
+            <version>${eclipse-link.version}</version>
         </dependency>
 
         <!-- Alternative testing with Hibernate (used by default with JBoss)
@@ -72,16 +151,37 @@
              to this pom.xml.  Check the Roller source code repository for a copy of
              this pom.xml prior to July 2013 for the necessary OpenJPA configuration -->
 
+
+        <!-- Apache deps include Velocity, Struts, Lucene, HttpClient and XML-RPC -->
+
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${velocity.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>4.0</version>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-core</artifactId>
+            <version>${struts.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-spring-plugin</artifactId>
+            <version>${struts.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-convention-plugin</artifactId>
+            <version>${struts.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-tiles-plugin</artifactId>
+            <version>${struts.version}</version>
         </dependency>
 
         <dependency>
@@ -99,27 +199,64 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>${commons-validator.version}</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons-httpclient.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xml-security</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>${xml-security.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-common</artifactId>
-            <version>3.1.3</version>
+            <version>${xmlrpc-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-client</artifactId>
-            <version>3.1.3</version>
+            <version>${xmlrpc-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-server</artifactId>
-            <version>3.1.3</version>
+            <version>${xmlrpc-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
@@ -131,7 +268,7 @@
         <dependency>
             <groupId>org.apache.ws.commons.util</groupId>
             <artifactId>ws-commons-util</artifactId>
-            <version>1.0.2</version>
+            <version>${ws-commons-util.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>xml-apis</groupId>
@@ -140,54 +277,8 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>net.oauth.core</groupId>
-            <artifactId>oauth-provider</artifactId>
-            <scope>compile</scope>
-            <version>20100527</version>
-        </dependency>
 
-        <!-- web -->
-
-        <dependency>
-	        <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.rometools</groupId>
-            <artifactId>rome-fetcher</artifactId>
-            <version>1.5.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.rometools</groupId>
-            <artifactId>rome-propono</artifactId>
-            <version>1.5.0</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>xmlrpc</groupId>
-                    <artifactId>xmlrpc-common</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xmlrpc</groupId>
-                    <artifactId>xmlrpc-client</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.10</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- spring deps -->
+        <!-- Spring deps (needed only for Spring Security) -->
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -249,101 +340,85 @@
             </exclusions>
         </dependency>
 
+
+        <!-- Other deps include Guice and ROME -->
+
         <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.5.10.1</version>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-tiles-plugin</artifactId>
-            <version>2.5.10.1</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>xml-security</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>1.3.0</version>
-        </dependency>
-
-        <!-- Java EE deps -->
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <groupId>com.rometools</groupId>
+            <artifactId>rome-fetcher</artifactId>
+            <version>${rome.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.7</version>
-            <scope>provided</scope>
+            <groupId>com.rometools</groupId>
+            <artifactId>rome-propono</artifactId>
+            <version>${rome.version}</version>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
+                    <groupId>xmlrpc</groupId>
+                    <artifactId>xmlrpc-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xmlrpc</groupId>
+                    <artifactId>xmlrpc-client</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <version>2.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-            <version>1.4.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
-        </dependency>
-
-        <!-- WebJars deps -->
-
-        <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-servlet-2.x</artifactId>
-            <version>1.5</version>
+            <version>${webjars.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>angular</artifactId>
-            <version>1.2.29</version>
+            <version>${angular.version}</version>
         </dependency>
 
-        <!-- test deps -->
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth-provider</artifactId>
+            <scope>compile</scope>
+            <version>${oauth-core.version}</version>
+        </dependency>
+
+
+        <!-- Test deps -->
 
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbynet</artifactId>
-            <version>${derby.version}</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.4</version>
+            <version>${ant.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbynet</artifactId>
+            <version>${derby.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -354,11 +429,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -370,7 +440,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
+                <version>${maven-war.version}</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
                 </configuration>
@@ -406,7 +476,7 @@
                     <dependency>
 	                    <groupId>javax.mail</groupId>
 	                    <artifactId>mail</artifactId>
-	                    <version>1.4.7</version>
+	                    <version>${java-mail.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -463,7 +533,7 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
@@ -538,7 +608,7 @@
                     <dependency>
                         <groupId>ant-contrib</groupId>
                         <artifactId>ant-contrib</artifactId>
-                        <version>1.0b3</version>
+                        <version>${maven-antrun.version}</version>
                         <exclusions>
                             <exclusion>
                                 <groupId>ant</groupId>
@@ -632,7 +702,7 @@
             </resource>
             <resource>
                 <!-- ensure version gets substitution -->
-                <directory>${project.basedir}/src/main/resources</directory>
+                <directory>${project.basedir}/src/main/resources-filtered</directory>
                 <filtering>true</filtering>
                 <includes>
                     <include>roller-version.properties</include>

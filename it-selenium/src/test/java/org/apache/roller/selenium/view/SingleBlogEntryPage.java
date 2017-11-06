@@ -30,7 +30,7 @@ public class SingleBlogEntryPage extends AbstractRollerPage {
 
     public SingleBlogEntryPage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "Single blog entry view";
+        String pageTitle = "Single blog entry view";
         /* id_permalink added to basic template's permalink.vm only to distinguish
            this page from by-month or by-day views of blog entries */
         verifyIdOnPage("id_permalink");

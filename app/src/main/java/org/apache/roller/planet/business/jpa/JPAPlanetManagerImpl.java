@@ -85,6 +85,10 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public void deleteGroup(PlanetGroup group) throws RollerException {
+
+        group.getPlanet().getGroups().remove(group);
+        strategy.store(group.getPlanet());
+
         strategy.remove(group);
     }
     
@@ -251,7 +255,8 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         if (sub == null) {
             throw new WebloggerException("subscription cannot be null");
         }
-        TypedQuery<SubscriptionEntry> q = strategy.getNamedQuery("SubscriptionEntry.getBySubscription", SubscriptionEntry.class);
+        TypedQuery<SubscriptionEntry> q = strategy.getNamedQuery(
+                "SubscriptionEntry.getBySubscription", SubscriptionEntry.class);
         q.setParameter(1, sub);
         if (offset != 0) {
             q.setFirstResult(offset);
@@ -266,7 +271,8 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return getEntries(group, null, null, offset, len);
     }
 
-    public List<SubscriptionEntry> getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(
+            PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
 
         if (group == null) {
             throw new WebloggerException("group cannot be null or empty");
@@ -318,6 +324,16 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         }
         
         return ret;
+    }
+
+    @Override
+    public void saveNewPlanetGroup(Planet planet, PlanetGroup planetGroup) throws WebloggerException {
+
+        planetGroup.setPlanet( planet );
+        strategy.store( planetGroup );
+
+        planet.getGroups().add( planetGroup );
+        strategy.store( planet );
     }
 }
 
