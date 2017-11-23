@@ -21,6 +21,7 @@
 
 package org.tightblog.rendering.model;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.URLStrategyImpl;
 import org.tightblog.business.URLStrategy;
@@ -156,6 +157,13 @@ public class PageModel implements Model {
     }
 
     /**
+     * Is this page showing search results?
+     */
+    public boolean isSearchResults() {
+        return false;
+    }
+
+    /**
      * Whether a "noindex" directive should be added to the page to discourage
      * search engines from returning the page in search results
      *
@@ -221,8 +229,9 @@ public class PageModel implements Model {
         return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplates();
     }
 
-    public Template getTemplateByName(String name) {
-        return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByName(name);
+    public String getTemplateIdByName(String name) {
+        Template template = themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByName(name);
+        return template != null ? template.getId() : null;
     }
 
     /**

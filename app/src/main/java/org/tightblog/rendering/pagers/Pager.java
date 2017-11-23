@@ -18,45 +18,38 @@
 
 package org.tightblog.rendering.pagers;
 
-import java.util.List;
-
 /**
  * Common pager interface.
  */
 public interface Pager {
     /**
-     * Link value for returning to pager home
+     * URL to return to pager home.
      */
     String getHomeLink();
 
     /**
-     * Name of pager home.
+     * Label to use for pager home.
      */
-    String getHomeName();
+    String getHomeLabel();
 
     /**
-     * Link value for next page in current collection view
+     * URL for next sublist of items held by the pager, null if at end of list
      */
     String getNextLink();
 
     /**
-     * Name for next page in current collection view
+     * Label to use for next link.
      */
-    String getNextName();
+    String getNextLabel();
 
     /**
-     * Link value for prev page in current collection view
+     * URL for previous sublist of items held by the pager, null if at beginning of list
      */
     String getPrevLink();
 
     /**
-     * Link value for prev page in current collection view
+     * Label to use for previous link.
      */
-    String getPrevName();
-
-    /**
-     * Get current list of items available from the pager.
-     */
-    List getItems();
+    String getPrevLabel();
 
 }

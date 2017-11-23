@@ -67,7 +67,7 @@
                         <h2>Search results</h2>
                         <div class="next-previous">
                             #showWeblogSearchAgainForm($model.weblog)
-                            #if($model.hits > 0)
+                            #if($model.resultCount > 0)
                                 #showNextPrevSearchControl($pager)
                             #end
                         </div>
@@ -110,7 +110,7 @@
 
            <div class="searchSidebarBody">
                 <h3>Search all blogs</h3>
-                #showWeblogSearchForm($model.weblog false)
+                #showWeblogSearchForm($model.weblog)
             </div>
 
             <br />

@@ -69,7 +69,7 @@ public class SearchResultsModel extends PageModel {
 
     private WeblogEntriesSearchPager pager = null;
 
-    private int hits = 0;
+    private int resultCount = 0;
     private int offset = 0;
     private int limit = 0;
     private Set categories = new TreeSet();
@@ -126,7 +126,7 @@ public class SearchResultsModel extends PageModel {
 
             TopFieldDocs docs = search.getResults();
             ScoreDoc[] hitsArr = docs.scoreDocs;
-            this.hits = search.getResultsCount();
+            this.resultCount = search.getResultsCount();
 
             // Convert the Hits into WeblogEntry instances.
             convertHitsToEntries(hitsArr, search);
@@ -138,7 +138,7 @@ public class SearchResultsModel extends PageModel {
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> new ArrayList<>(e.getValue())));
 
         pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, listMap,
-                (hits > (offset + limit)));
+                (resultCount > (offset + limit)));
     }
 
     @Override
@@ -212,13 +212,18 @@ public class SearchResultsModel extends PageModel {
         this.results.get(pubDate).add(entry);
     }
 
-    public String getTerm() {
+    @Override
+    public boolean isSearchResults() {
+        return true;
+    }
+
+    public String getSearchTerm() {
         String query = searchRequest.getQuery();
         return (query == null) ? "" : StringEscapeUtils.escapeXml10(query);
     }
 
-    public int getHits() {
-        return hits;
+    public int getResultCount() {
+        return resultCount;
     }
 
     public int getOffset() {

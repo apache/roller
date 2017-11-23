@@ -57,7 +57,7 @@ public class MathCommentAuthenticatorTest {
         assertEquals((long) (firstValCaptor.getValue() + secondValCaptor.getValue()), (long) sumCaptor.getValue());
 
         // mocked session ignores setAttribute calls, so relying on "when" calls above for getAttribute calls
-        String expected = "<p>Please answer this simple math question</p><p>5 + 57 = <input name='answer' value=''></p>";
+        String expected = "<p>Please answer this simple math question</p><p>5 + 57 = <input name='answer' value='' required></p>";
         assertEquals(expected, actual);
     }
 
@@ -72,7 +72,7 @@ public class MathCommentAuthenticatorTest {
         when(mockRequest.getParameter("answer")).thenReturn("42");
         MathCommentAuthenticator mca = new MathCommentAuthenticator();
         String actual = mca.getHtml(mockRequest);
-        String expected = "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='42'></p>";
+        String expected = "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='42' required></p>";
         assertEquals(expected, actual);
     }
 

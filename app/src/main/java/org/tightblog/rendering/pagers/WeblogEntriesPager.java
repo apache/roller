@@ -27,39 +27,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Pager for weblog entries, handles latest, single-entry, month and day views.
- * Collection returned is a list of lists of entries, where each list of
- * entries represents one day.
+ * Pager for an ordered list of weblog entries.
  */
 public interface WeblogEntriesPager extends Pager {
 
     /**
-     * A map of entries representing this collection.
+     * A map of all entries provided by the Pager.
      * <p>
      * The collection is grouped by days of entries.  Each value is a list of
      * entry objects keyed by the date they were published.
      */
     Map<LocalDate, List<WeblogEntry>> getEntries();
 
-    /**
-     * Link value for next collection view
-     */
-    String getNextCollectionLink();
-
-    /**
-     * Name for next collection view
-     */
-    String getNextCollectionName();
-
-    /**
-     * Link value for prev collection view
-     */
-    String getPrevCollectionLink();
-
-    /**
-     * Name for prev collection view
-     */
-    String getPrevCollectionName();
-
+    List<WeblogEntry> getItems();
 }
-

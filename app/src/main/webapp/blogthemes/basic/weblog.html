@@ -1,0 +1,56 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" th:href="${url.absoluteSite + '/favicon.ico'}">
+    <meta th:if="${model.addNoIndexDirective}" name="robots" content="noindex">
+    <link rel="stylesheet" th:href='${url.page("basic-custom.css")}'/>
+    <th:block th:switch="${model.searchResults}">
+        <title th:case="${true}" th:utext="${'Search Results for ' + model.searchTerm + ': ' + model.weblog.name}">xxx</title>
+        <th:block th:case="${false}">
+            <title th:utext="${(model.permalink ? model.weblogEntry.title + ' | ' : '') + model.weblog.name}">Weblog Name - Title Bar</title>
+            <span th:replace="fragments :: AutoDiscoveryLinks"></span>
+            <span th:utext="${model.analyticsTrackingCode}" th:remove="tag"></span>
+            <span th:replace="fragments :: MetaDescription"></span>
+        </th:block>
+    </th:block>
+</head>
+
+<body>
+
+<div id="id_weblog" class="content_wrapper">
+    <div class="content">
+        <h1 class="weblogName" th:utext="${model.weblog.name}">xxx</h1>
+
+        <center>
+            <span th:replace="fragments :: WeblogCategoryBar"></span>
+        </center>
+
+        <div th:switch="${model.searchResults}" class="next-previous">
+            <span th:case="${false}" th:replace="fragments :: PreviousNextPager"></span>
+            <th:block th:case="${true}">
+                <div th:replace="fragments :: WeblogSearchAgainForm"></div>
+                <th:block th:if="${model.resultCount > 0}">
+                    <div th:replace="fragments :: PreviousNextSearchPager"></div>
+                </th:block>
+            </th:block>
+        </div>
+
+        <div th:replace="fragments :: WeblogEntriesPager"></div>
+
+        <div th:if="${model.permalink}" th:remove="tag">
+            <div th:replace="fragments :: WeblogEntryComments"></div>
+            <div th:replace="fragments :: WeblogEntryCommentForm"></div>
+        </div>
+    </div>
+</div>
+
+<div class="rightbar_wrapper">
+    <div class="rightbar">
+        <span th:replace="${model.getTemplateIdByName('sidebar')}"></span>
+    </div>
+</div>
+
+</body>
+</html>

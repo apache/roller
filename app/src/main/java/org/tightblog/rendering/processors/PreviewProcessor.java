@@ -29,7 +29,9 @@ import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.rendering.Renderer;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
@@ -74,6 +76,13 @@ public class PreviewProcessor extends AbstractProcessor {
 
     public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
         this.velocityRenderer = velocityRenderer;
+    }
+
+    @Autowired
+    private ThymeleafRenderer thymeleafRenderer = null;
+
+    public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
+        this.thymeleafRenderer = thymeleafRenderer;
     }
 
     @Autowired
@@ -199,7 +208,9 @@ public class PreviewProcessor extends AbstractProcessor {
         CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
-            velocityRenderer.render(page, model, rendererOutput.getCachedWriter());
+            Renderer renderer = Template.Parser.THYMELEAF.equals(page.getParser()) ?
+                    thymeleafRenderer : velocityRenderer;
+            renderer.render(page, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close
             rendererOutput.flush();

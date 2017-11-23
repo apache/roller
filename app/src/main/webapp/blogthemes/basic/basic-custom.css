@@ -70,7 +70,7 @@ ul.rNavigationBar, ul.rMenu, ul.rFolder, ul.rFeeds, ul.rEntriesList {
     font-size: 80%;
 }
 ul.rFeeds li {
-    background-image: url($url.absoluteSite/images/feed-icon-12x12.gif);
+    background-image: url([(${url.absoluteSite})]/images/feed-icon-12x12.gif);
     background-repeat: no-repeat;
     background-position: 0 .2em; 
     padding-left: 1.4em;

@@ -44,7 +44,7 @@ public interface Template {
     enum ComponentType {
         @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, "template.weblog.description"),
         @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, "template.permalink.description"),
-        @XmlEnumValue("search")SEARCH("Search", "text/html", true, "template.search.description"),
+        @XmlEnumValue("search")SEARCH_RESULTS("Search Results", "text/html", true, "template.search.description"),
         @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, "template.stylesheet.description"),
         @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false,
                 "template.javascript.description"),
@@ -176,6 +176,7 @@ public interface Template {
     @XmlType
     @XmlEnum
     enum Parser {
+        @XmlEnumValue("thymeleaf")THYMELEAF("Thymeleaf"),
         @XmlEnumValue("velocity")VELOCITY("Velocity");
 
         private final String readableName;

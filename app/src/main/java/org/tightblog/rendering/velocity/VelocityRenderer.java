@@ -99,12 +99,7 @@ public class VelocityRenderer implements Renderer {
     private void renderException(VelocityException ex, Template template, Map<String, Object> model, Writer out, String errorTemplate)
             throws WebloggerException {
         try {
-            org.apache.velocity.Template velocityTemplate = null;
-
-            if (errorTemplate != null) {
-                // need to lookup error page template
-                velocityTemplate = VelocityEngineWrapper.getTemplate(errorTemplate);
-            }
+            org.apache.velocity.Template velocityTemplate = VelocityEngineWrapper.getTemplate(errorTemplate);
 
             Context ctx = new VelocityContext(model);
             ctx.put("exception", ex);
@@ -118,5 +113,4 @@ public class VelocityRenderer implements Renderer {
             throw new WebloggerException("Error during rendering", e);
         }
     }
-
 }

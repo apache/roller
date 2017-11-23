@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>$model.weblog.name</title>
   <link rel="shortcut icon" href="$url.absoluteSite/favicon.ico">
-  #showAutodiscoveryLinks($model.weblog)
+  #showAutodiscoveryLinks()
   <style>
   #includeTemplate("_css")
   </style>

@@ -128,8 +128,8 @@
     </beans:bean>
 
     <beans:bean id="mailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <beans:property name="prefix" value="/mailtemplates/" />
         <beans:property name="templateMode" value="HTML5" />
+        <beans:property name="prefix" value="/mailtemplates/" />
     </beans:bean>
 
     <beans:bean id="mailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
@@ -143,6 +143,33 @@
         <beans:constructor-arg ref="urlStrategy"/>
         <beans:constructor-arg ref="mailSender"/>
         <beans:constructor-arg ref="mailTemplateEngine"/>
+    </beans:bean>
+
+    <beans:bean id="themeTemplateResolver" class="org.tightblog.rendering.thymeleaf.ThemeTemplateResolver">
+        <beans:property name="templateMode" value="HTML5"/>
+        <beans:property name="order" value="1"/>
+        <beans:property name="checkExistence" value="true"/>
+        <beans:property name="cacheable" value="false"/>
+    </beans:bean>
+
+    <beans:bean id="fragmentTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+        <beans:property name="templateMode" value="HTML5"/>
+        <beans:property name="suffix" value=".html" />
+        <beans:property name="order" value="2"/>
+        <beans:property name="cacheable" value="false"/>
+    </beans:bean>
+
+    <beans:bean id="pageTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <beans:property name="templateResolvers">
+            <beans:set>
+                <beans:ref bean="fragmentTemplateResolver"/>
+                <beans:ref bean="themeTemplateResolver"/>
+            </beans:set>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean id="thymeleafRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
+        <beans:property name="templateEngine" ref="pageTemplateEngine"/>
     </beans:bean>
 
     <beans:bean id="velocityRenderer" class="org.tightblog.rendering.velocity.VelocityRenderer"/>

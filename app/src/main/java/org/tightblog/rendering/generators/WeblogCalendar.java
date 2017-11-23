@@ -214,21 +214,20 @@ public class WeblogCalendar {
         }
 
         // create table of 5 weeks, 7 days per row
-        pw.print("<table cellspacing=\"0\" border=\"0\" ");
-        pw.print(" summary=\"" + bundle.getString("calendar.summary") + "\" class=\"hCalendarTable" + mClassSuffix + "\">");
-        pw.print("<tr><td colspan=\"7\" align=\"center\" " +
-                "class=\"hCalendarMonthYearRow" + mClassSuffix + "\">");
+        pw.print("<table cellspacing='0' border='0' class='hCalendarTable" + mClassSuffix + "'>");
+        pw.print("<tr><td colspan='7' align='center' " +
+                "class='hCalendarMonthYearRow" + mClassSuffix + "'>");
         if (prevMonth != null) {
-            pw.print("<a href=\"" + computePrevMonthUrl() + "\" title=\"" + bundle.getString("calendar.prev") +
-                    "\" class=\"hCalendarNavBar\">&laquo;</a> ");
+            pw.print("<a href='" + computePrevMonthUrl() + "' title='" + bundle.getString("calendar.prev") +
+                    "' class='hCalendarNavBar'>&laquo;</a> ");
         }
         pw.print(formatTitle.format(dayInMonth));
         if (nextMonth != null) {
-            pw.print(" <a href=\"" + computeNextMonthUrl() + "\" title=\"" + bundle.getString("calendar.next") +
-                    "\" class=\"hCalendarNavBar\">&raquo;</a>");
+            pw.print(" <a href='" + computeNextMonthUrl() + "' title='" + bundle.getString("calendar.next") +
+                    "' class='hCalendarNavBar'>&raquo;</a>");
         }
-        pw.print("</td></tr>");
 
+        pw.print("</td></tr>");
         // emit the HTML calendar
         for (int w = -1; w < 6; w++) {
             pw.print("<tr>");
