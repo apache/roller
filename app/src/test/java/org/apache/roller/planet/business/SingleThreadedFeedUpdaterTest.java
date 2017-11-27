@@ -24,11 +24,13 @@ import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.Ignore;
 
 
 /**
  * Test feed updater.
  */
+@Ignore("Until rollerweblogger.org sorts out SSL issues")
 public class SingleThreadedFeedUpdaterTest extends TestCase {
     
     public static Log log = LogFactory.getLog(SingleThreadedFeedUpdaterTest.class);
@@ -71,7 +73,7 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         sub = mgr.getSubscription(feed_url);
         assertNotNull(sub);
         assertEquals(feed_url, sub.getFeedURL());
-        assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
+        assertEquals("https://rollerweblogger.org/roller/", sub.getSiteURL());
         assertEquals("Blogging Roller", sub.getTitle());
         assertNotNull(sub.getLastUpdated());
         assertTrue(sub.getEntries().size() > 0);
