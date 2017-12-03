@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<p>Exception Processing template '<span th:utext="${templateName}"}></span>':</p>
-<p th:if="${firstMessage != null}" th:utext="${firstMessage}"></p>
-<p th:if="${secondMessage != null}" th:utext="${secondMessage}"></p>
+<p>Exception Processing template '<span th:text="${templateName}"}></span>':</p>
+<p th:if="${firstMessage != null}" th:text="${firstMessage}"></p>
+<p th:if="${secondMessage != null}" th:text="${secondMessage}"></p>
 <p>If above details are insufficient, system logs may provide more information.</p>
 </body>
 </html>

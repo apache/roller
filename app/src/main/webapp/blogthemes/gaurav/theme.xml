@@ -5,7 +5,7 @@
 
     <id>gaurav</id>
     <name>Gaurav</name>
-    <description>Responsive Bootstrap-based theme using modern HTML5 and CSS3 design by Gaurav Saini.</description>
+    <description>Responsive Bootstrap-based theme originally by Gaurav Saini.</description>
     <author>Gaurav Saini</author>
 
     <!-- theme preview image -->
@@ -14,56 +14,56 @@
     <!-- templates -->
     <template role="weblog">
         <name>Weblog</name>
-        <contentsFile>weblog.vm</contentsFile>
-        <parser>velocity</parser>
+        <contentsFile>weblog.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="permalink">
-        <name>Entry</name>
-        <contentsFile>entry.vm</contentsFile>
-        <parser>velocity</parser>
+        <name>Permalink</name>
+        <contentsFile>permalink.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="searchResults">
-        <name>Search</name>
-        <contentsFile>search.vm</contentsFile>
-        <parser>velocity</parser>
+        <name>SearchResults</name>
+        <contentsFile>searchResults.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
-        <name>_day</name>
+        <name>day</name>
         <description>One day's worth of entries</description>
-        <parser>velocity</parser>
-        <contentsFile>day.vm</contentsFile>
+        <contentsFile>day.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="customExternal">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
         <relativePath>archives</relativePath>
-        <contentsFile>archives.vm</contentsFile>
-        <parser>velocity</parser>
+        <contentsFile>archives.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
-        <name>standard_head</name>
-        <description>Contents of HTML head</description>
-        <contentsFile>std_head.vm</contentsFile>
-        <parser>velocity</parser>
+        <name>common_html_head</name>
+        <description>Common contents of HTML head section</description>
+        <contentsFile>common_html_head.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
         <name>standard_header</name>
         <description>Displayed in header of each page</description>
-        <contentsFile>std_header.vm</contentsFile>
-        <parser>velocity</parser>
+        <contentsFile>std_header.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
         <name>standard_footer</name>
         <description>For footer of each page</description>
-        <contentsFile>std_footer.vm</contentsFile>
-        <parser>velocity</parser>
+        <contentsFile>std_footer.html</contentsFile>
+        <parser>thymeleaf</parser>
     </template>
 
 </sharedtheme>
