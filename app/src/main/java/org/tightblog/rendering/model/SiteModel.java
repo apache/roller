@@ -137,8 +137,8 @@ public class SiteModel implements Model {
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    public Map getWeblogHandleLetterMap() {
-        Map results = new HashMap();
+    public Map<Character, Integer> getWeblogHandleLetterMap() {
+        Map<Character, Integer> results = new HashMap<>();
         try {
             results = weblogManager.getWeblogHandleLetterMap();
         } catch (Exception e) {

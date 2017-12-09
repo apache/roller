@@ -99,7 +99,7 @@ public interface WeblogManager {
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    Map<String, Long> getWeblogHandleLetterMap();
+    Map<Character, Integer> getWeblogHandleLetterMap();
 
     /**
      * Get collection of weblogs whose handles begin with specified letter

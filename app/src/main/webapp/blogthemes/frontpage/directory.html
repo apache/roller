@@ -1,0 +1,152 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:with="blogfrags = ${model.getTemplateIdByName('blogfrags')}">
+<head>
+    <span th:replace="${blogfrags} :: CommonHeadSection"></span>
+</head>
+
+<body class="view" bgcolor="#FFFFFF">
+
+<span th:replace="${blogfrags} :: CommonNavBanner"></span>
+
+<div id="wrapper">
+
+    <div id="leftcontent_wrap">
+        <div id="leftcontent">
+        </div>
+    </div>
+
+    <div id="centercontent_wrap" th:with="maxResults=25, since=365">
+        <div id="centercontent">  
+            <h1 th:utext="${model.weblog.name}">xxx</h1>
+            <p class="subtitle" th:utext="${model.weblog.tagline}">xxx</p>
+
+            <table class="menuTabTable" cellspacing="0"><tbody><tr>
+               <td class="menuTabUnselected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a th:href="${url.home}">Recent Entries</a>&nbsp;&nbsp;
+                     </div>
+                  </div>
+               </td>	
+               <td class="menuTabSeparator"></td>
+               <td class="menuTabSelected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a th:href="${url.page('directory')}">Weblog Directory</a>&nbsp;&nbsp;
+                     </div>
+                  </div>
+               </td>	    
+               <td class="menuTabSeparator"></td>
+            </tr></tbody></table>
+            <table class="menuItemTable" cellspacing="0"><tbody><tr>
+            <td class="padleft"></td></tr></tbody></table>
+
+            <div id="tabContent">
+                <div id="directory" >
+                    <th:block th:switch="${model.getRequestParameter('weblog') != null}">
+                        <th:block th:case="${true}" th:with="handle = ${model.getRequestParameter('weblog'), profileWeblog = ${site.getWeblog(handle)}">
+                        <a th:href="${'?letter=' + utils.left(handle,1)}">Back to blog directory</a>
+                            <!-- Show Blog Profile -->
+                            <h2 class="pageTitle">Weblog: $profileWeblog.name</h2>
+                            <table width="70%">
+                                <tr>
+                                    <td width="25%">Handle</td>
+                                    <td width="75%"><a th:href="${url.site + '/' + profileWeblog.handle}" th:utext="${profileWeblog.handle}">xxx</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Description</td>
+                                    <td th:text="${profileWeblog.about}">xxx</td>
+                                </tr>
+                                <tr>
+                                    <td>Created by</td>
+                                    <td th:text="${profileWeblog.creator.screenName}">xxx</td>
+                                </tr>
+                                <tr>
+                                    <td>Last modified</td>
+                                    <td th:text="${profileWeblog.lastModified}">xxx</td>
+                                </tr>
+                                <tr>
+                                    <td>Timezone</td>
+                                    <td th:text="${profileWeblog.timeZone}">xxx</td>
+                                </tr>
+                            </table>
+
+                            <h2 class="pageTitle" th:with="entriesPager = ${site.getWeblogEntriesPager(profileWeblog, null, 90, 5)}">Recent posts</h2>
+                            <th:block th:switch="${entriesPager.items.size() > 0}">
+                                <table th:case="${true}" class="rollertable" width="70%">
+                                    <tr>
+                                        <td width="25%">Pub. time</td>
+                                        <td width="75%">Title</td>
+                                    </tr>
+                                    <tr th:each="entry : ${entriesPager.items}">
+                                        <td th:utext="${utils.formatDate(entry.pubTime, utils.msg('macro.weblog.datepattern'))}">xxx</td>
+                                        <td><a th:href="${utils.escapeHTML(url.entry(entry))}" th:utext="${entry.title}">xxx</a></td>
+                                    </tr>
+                                </table>
+                                <span th:case="${false}">No posts in past 90 days</span>
+                            </th:block>
+                        </th:block>
+
+                        <th:block th:case="${false}">
+                            <!-- Show Blog Directory -->
+                            <th:block th:with="chosenLetter = ${model.getRequestParameter('letter')}">
+                                <div class="letterMap", th:with="weblogLetterMap = ${site.getWeblogHandleLetterMap()}">
+                                    <p>
+                                        <span th:each="letter,iter : ${weblogLetterMap.keySet()}">
+                                            <span th:text="${iter.index > 0} ? ' - '">xxx</span>
+                                            <span th:style="${letter == chosenLetter} ? 'font-size:120%; font-weight:bold'">
+                                               <a th:remove="${weblogLetterMap.get(letter) > 0} ? 'none' : 'tag'" th:href="${'?letter=' + letter}" th:text="${letter}">xxx</a>
+                                            </span>
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <h2 class="pageTitle" th:utext="${chosenLetter != null ? ('Weblogs starting with ' + chosenLetter) : 'All Weblogs'}">xxx</h2>
+
+                                <table class="blogdirectory data" th:with="weblogsPager = ${site.getWeblogsByLetterPager(chosenLetter, maxResults)}">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" class="name">Blog Name</th>
+                                        <th scope="col" class="description">Title</th>
+                                        <th scope="col" class="description">Description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="item : ${weblogsPager.items}">
+                                        <th scope="row" class="name">
+                                            <a th:href="${url.absoluteSite + '/' + item.handle}" th:utext="${item.handle}">xxx</a>
+                                        </th>
+                                        <td class="description" th:utext="${item.name}">xxx</td>
+                                        <td class="description" th:utext="${item.about}">xxx</td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr class="pagingcontrols">
+                                        <td class="paginglinks">
+                                            <a th:if="${weblogsPager.prevLink}" th:href="${weblogsPager.prevLink}" th:utext="${'&lt; ' + weblogsPager.prevName}">xxx</a>
+                                            <span th:if="${weblogsPager.nextLink != null && weblogsPager.prevLink() != null}" th:utext=" | "></span>
+                                            <a th:if="${weblogsPager.nextLink}" th:href="$weblogsPager.nextLink" th:utext="${weblogsPager.nextName + ' &gt;'}">xxx</a>
+                                        </td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+
+<div id="footer">
+</div>
+
+<div id="datetagdiv"
+     style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
+</div>
+</body>
+</html>

@@ -21,7 +21,6 @@
 
 package org.tightblog.rendering.model;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.URLStrategyImpl;
 import org.tightblog.business.URLStrategy;
@@ -415,6 +414,10 @@ public class PageModel implements Model {
             log.error("ERROR: initializing calendar tag", e);
         }
         return ret;
+    }
+
+    public String getRequestParameter(String paramName) {
+        return pageRequest.getRequestParameter(paramName);
     }
 
 }

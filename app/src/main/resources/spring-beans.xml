@@ -162,8 +162,9 @@
     <beans:bean id="pageTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <beans:property name="templateResolvers">
             <beans:set>
-                <beans:ref bean="fragmentTemplateResolver"/>
+                <!-- resolution order defined by resolver 'order' attributes -->
                 <beans:ref bean="themeTemplateResolver"/>
+                <beans:ref bean="fragmentTemplateResolver"/>
             </beans:set>
         </beans:property>
     </beans:bean>

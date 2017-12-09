@@ -91,10 +91,10 @@ public class WeblogStatsTest extends WebloggerTest {
 
     @Test
     public void testGetWeblogLetterMap() throws Exception {
-        Map map = weblogManager.getWeblogHandleLetterMap();
-        assertNotNull(map.get("A"));
-        assertNotNull(map.get("B"));
-        assertNotNull(map.get("C"));
+        Map<Character, Integer> map = weblogManager.getWeblogHandleLetterMap();
+        assertNotNull(map.get('A'));
+        assertNotNull(map.get('B'));
+        assertNotNull(map.get('C'));
     }
 
 }

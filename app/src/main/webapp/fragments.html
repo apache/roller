@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:fragment="AutoDiscoveryLinks">
+    <!--/* usage of th:block instead of div & remove tag did not work */-->
+    <div th:fragment="AutoDiscoveryLinks" th:remove="tag">
         <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.feed.entries.atom}" />
         <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" th:href="${url.feed.comments.atom}" />
         <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.feed.entries.atomByTag(model.tag)}"/>
         <link th:if="${model.categoryName}" rel="alternate" type="application/atom+xml" title="${'Entries for category ' + model.categoryName + ' (Atom)'" th:href="${url.feed.entries.atom(model.categoryName)}"/>
-    </th:block>
-    <th:block th:fragment="MetaDescription">
+    </div>
+    <div th:fragment="MetaDescription" th:remove="tag">
         <th:block th:switch="${model.weblogEntry != null && utils.isNotEmpty(model.weblogEntry.searchDescription)}">
             <!-- need to test below line -->
             <meta th:case="${true}" name="description" th:content="${model.weblogEntry.searchDescription}">
@@ -17,7 +18,7 @@
                 </th:block>
             </th:block>
         </th:block>
-    </th:block>
+    </div>
 </head>
 <body>
     <div th:fragment="WeblogCategoryBar" th:remove="tag">
@@ -36,11 +37,11 @@
         <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${pager.homeLink}" th:text="${pager.homeLabel}">xxx</a></span>
         <span th:if="${pager.nextLink != null}">| <a th:href="${pager.nextLink}" th:text="${pager.nextLabel}">xxx</a> &raquo;</span>
     </div>
-    <div th:fragment="WeblogEntriesPager" th:remove="tag">
-        <span th:each="day : ${model.weblogEntriesPager.getEntries().keySet()}"
-              th:include="${model.getTemplateIdByName('day')}"
-              th:remove="tag">xxx</span>
-    </div>
+    <!--/* replace/insert within a fragment seems to work only with th:block */-->
+    <th:block th:fragment="WeblogEntriesPager"
+              th:each="day : ${model.weblogEntriesPager.getEntries().keySet()}"
+              th:insert="${model.getTemplateIdByName('day')}">
+    </th:block>
     <div th:fragment="AtomFeedsList" th:remove="tag">
         <ul class="rFeeds">
             <li><a th:href="${url.feed.entries.atom}" th:utext="${utils.msg('generic.all')}">xxx</a></li>
@@ -214,7 +215,7 @@
             </th:block>
         </div>
     </div>
-    <div th:fragment="WeblogSearchAgainForm" id="searchAgain" th:with="entry=${model.weblogEntry}">
+    <div th:fragment="WeblogSearchAgainForm" id="searchAgain">
         <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, model.resultCount)}">xxx</span>
         <form method="get" th:action="${url.search}" style="margin: 5px">
             <input type="text" id="q" name="q" class="text medium" maxlength="255" th:value="${model.searchTerm}"
@@ -237,4 +238,3 @@
     </div>
 </body>
 </html>
-
