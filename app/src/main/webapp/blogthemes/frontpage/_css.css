@@ -183,7 +183,7 @@ input.searchButton {
 }
 .sidebarBody li {
    list-style-position: inside;
-   list-style-image: url($url.absoluteSite/images/dash.gif);
+   list-style-image: url([(${url.absoluteSite})]/images/dash.gif);
    margin-left: 0em;
    padding-left: 0.5em;  
    padding-top: 3px;
@@ -252,7 +252,7 @@ Colors
     background: #ad3431 !important; 
 }
 .bannerBox {
-    background: url("$url.themeResource('frontpage', "tan-banner.gif")") repeat-x top;
+    background: url([(${url.themeResource('frontpage', 'tan-banner.gif')})]) repeat-x top;
 }
 .bannerStatusBox {
     background: #ad3431;
@@ -314,10 +314,10 @@ input.searchButton {
 }
 
 td.menuTabSelected {
-    background: url("$url.absoluteSite/tb-ui/theme/tan/menutab-sel.gif") repeat-x;
+    background: url([(${url.absoluteSite})]/tb-ui/theme/tan/menutab-sel.gif) repeat-x;
 }
 td.menuTabUnselected {
-    background: url("$url.absoluteSite/tb-ui/theme/tan/menutab-unsel.gif") repeat-x;
+    background: url([(${url.absoluteSite})]/tb-ui/theme/tan/menutab-unsel.gif) repeat-x;
 }
 .menuItemTable {
     background-color: #c6ab74;
@@ -390,7 +390,7 @@ div.menu-tl {
     padding: 0px; 
     height: 100%;
     width: 100%;
-    background: url("$url.absoluteSite/images/menutab-tl.gif") no-repeat top left;
+    background: url([(${url.absoluteSite})]/images/menutab-tl.gif) no-repeat top left;
     background-repeat: no-repeat;
     vertical-align: middle;
     display: table;
@@ -400,7 +400,7 @@ div.menu-tr {
     padding: 0px; 
     height: 100%;
     width: 100%;
-    background: url("$url.absoluteSite/images/menutab-tr.gif") no-repeat top right;
+    background: url([(${url.absoluteSite})]/images/menutab-tr.gif) no-repeat top right;
     background-repeat: no-repeat;
 }
 

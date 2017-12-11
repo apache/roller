@@ -481,9 +481,9 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public Map<String, Long> getWeblogHandleLetterMap() {
+    public Map<Character, Integer> getWeblogHandleLetterMap() {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Map<String, Long> results = new TreeMap<>();
+        Map<Character, Integer> results = new TreeMap<>();
         TypedQuery<Long> query = strategy.getNamedQuery(
                 "Weblog.getCountByHandleLike", Long.class);
         for (int i = 0; i < 26; i++) {
@@ -491,7 +491,7 @@ public class WeblogManagerImpl implements WeblogManager {
             query.setParameter(1, currentChar + "%");
             List row = query.getResultList();
             Long count = (Long) row.get(0);
-            results.put(String.valueOf(currentChar), count);
+            results.put(currentChar, count.intValue());
         }
         return results;
     }

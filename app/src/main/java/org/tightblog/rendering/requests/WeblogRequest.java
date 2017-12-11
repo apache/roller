@@ -60,6 +60,7 @@ public class WeblogRequest {
     private String pathInfo = null;
     private String authenticatedUser = null;
     private DeviceType deviceType = DeviceType.NORMAL;
+    private HttpServletRequest request;
 
     // heavyweight attributes populated by processors
     private Weblog weblog = null;
@@ -68,6 +69,8 @@ public class WeblogRequest {
     }
 
     public WeblogRequest(HttpServletRequest request) {
+
+        this.request = request;
 
         // login status
         java.security.Principal principal = request.getUserPrincipal();
@@ -149,6 +152,11 @@ public class WeblogRequest {
 
     public void setDeviceType(DeviceType type) {
         this.deviceType = type;
+    }
+
+    /* Supports custom parameters often needed by custom external pages */
+    public String getRequestParameter(String paramName) {
+        return request.getParameter(paramName);
     }
 
 }

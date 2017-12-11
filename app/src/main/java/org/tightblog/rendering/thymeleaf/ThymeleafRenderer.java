@@ -27,6 +27,7 @@ import org.tightblog.pojos.Template;
 import org.tightblog.rendering.Renderer;
 import org.tightblog.util.WebloggerException;
 
+import java.io.FileNotFoundException;
 import java.io.Writer;
 import java.util.Map;
 
@@ -58,9 +59,10 @@ public class ThymeleafRenderer implements Renderer {
                 Throwable secondCause = firstCause.getCause();
                 if (secondCause instanceof TemplateProcessingException) {
                     Throwable thirdCause = secondCause.getCause();
-                    if (thirdCause instanceof SpelEvaluationException) {
+                    if (thirdCause instanceof SpelEvaluationException || thirdCause instanceof FileNotFoundException) {
                         // output commonly "unknown [method|property] XXX..."
-                        ctx.setVariable("secondMessage", thirdCause.getMessage());
+                        ctx.setVariable("secondMessage", thirdCause.getClass().getName() + ": " +
+                                thirdCause.getMessage());
                     }
                 }
                 templateEngine.process("error-page", ctx, writer);

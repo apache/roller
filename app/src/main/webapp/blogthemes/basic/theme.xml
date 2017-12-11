@@ -4,7 +4,6 @@
     <id>basic</id>
     <name>Basic</name>
     <description>Offers wide margins for blogging programming language source code.</description>
-    <author>TightBlog Weblogger</author>
 
     <!-- theme preview image -->
     <previewImagePath>basic-preview.png</previewImagePath>

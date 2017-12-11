@@ -1,0 +1,140 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:with="blogfrags = ${model.getTemplateIdByName('blogfrags')}">
+<head>
+    <span th:replace="${blogfrags} :: CommonHeadSection"></span>
+</head>
+
+<body class="view" bgcolor="#FFFFFF">
+
+<span th:replace="${blogfrags} :: CommonNavBanner"></span>
+
+<div id="wrapper" th:with="maxResults = 25">
+
+    <div id="leftcontent_wrap">
+        <div id="leftcontent">
+        </div>
+    </div>
+
+    <div id="centercontent_wrap">
+        <div id="centercontent">  
+            <h1 th:utext="${model.weblog.name}">xxx</h1>
+            <p class="subtitle" th:utext="${model.weblog.tagline}">xxx</p>
+
+            <table class="menuTabTable" cellspacing="0"><tbody><tr>
+               <td class="menuTabSelected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a th:href="${url.home}">Recent Entries</a>&nbsp;&nbsp;
+                     </div>
+                  </div>
+               </td>	
+               <td class="menuTabSeparator"></td>
+               <td class="menuTabUnselected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a th:href="${url.page('directory')}">Weblog Directory</a>&nbsp;&nbsp;
+                     </div>
+                  </div>
+               </td>	    
+               <td class="menuTabSeparator"></td>
+            </tr></tbody></table>
+            <table class="menuItemTable" cellspacing="0"><tbody><tr>
+            <td class="padleft"></td></tr></tbody></table>
+
+            <div id="tabContent">
+                <div id="recentEntries">
+                    <th:block th:switch="${model.searchResults}">
+                        <th:block th:case="${false}" th:with="pager = ${site.getWeblogEntriesPager(365, maxResults)}">
+                            <!-- List of site-wide entries -->
+                            <th:block th:each="entry,iter : ${pager.items}">
+                                <th:block th:if="${iter.count <= maxResults}">
+                                    <span th:replace="${blogfrags} :: EntryBlock"></span>
+                                </th:block>
+                            </th:block>
+
+                            <div class="pagingcontrols">
+                                <a th:if="${pager.nextLink != null}" th:href="${pager.nextLink}" th:text="${'&lt; ' + pager.nextLabel}">xxx</a>
+                                <span th:if="${pager.nextLink != null && pager.prevLink != null}">&nbsp;|&nbsp;</span>
+                                <a th:if="${pager.prevLink != null}" th:href="${pager.prevLink}" th:text="${pager.prevName + ' &gt;'}">xxx</a>
+                            </div>
+                        </th:block>
+                        <th:block th:case="${true}">
+                            <h2>Search results</h2>
+                            <div class="next-previous">
+                                <span th:replace="fragments :: WeblogSearchAgainForm"></span>
+                                <th:block th:if="${model.resultCount > 0}">
+                                    <span th:replace="fragments :: PreviousNextSearchPager"></span>
+                                </th:block>
+                            </div>
+                            <br />
+                            <br />
+
+                            <th:block th:with="map = ${model.getWeblogEntriesPager().getEntries()}">
+                                <th:block th:each="day : ${map.keySet()}">
+                                    <th:block th:each="entry : ${map.get(day)}">
+                                        <th:block th:replace="${blogfrags} :: EntryBlock"></th:block>
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+                                    
+            <br />
+            <a th:href="${url.feed.entries.atom}" title="Combined Atom feed for site.">
+            <img th:src="${url.absoluteSite + '/images/feed-icon-12x12.gif'}" border="0" alt="Combined Atom feed for site."/>
+            </a>
+            Right-click, copy link and paste into your newsfeed reader
+
+        </div> 
+    </div> 
+
+    <div id="rightcontent_wrap">
+        <div id="rightcontent"> 
+
+           <div class="searchSidebarHead">
+               <div class="menu-tr">
+                   <div class="menu-tl">
+                      <h3>&nbsp;</h3>
+                   </div>
+
+               </div>
+           </div>
+
+           <div class="searchSidebarBody">
+                <h3>Search all blogs</h3>
+                <span th:replace="fragments :: WeblogSearchForm"></span>
+            </div>
+
+            <br />
+            <div class="sidebarBodyHead">
+                <div class="menu-tr">
+                    <div class="menu-tl">
+                       <h3>Hot blogs (today's hits)</h3>		
+                    </div>
+                </div>
+            </div>	
+
+            <div class="sidebarBody">  
+                <ul>
+                   <li th:each="blog : ${site.getHotWeblogs(365, maxResults)}">
+                       <a th:href="${url.site + '/' + blog.handle}" th:utext="${blog.name}">xxx</a> | <span th:utext="${blog.hitsToday}">xxx</span>
+                   </li>
+                </ul>
+                <br />		
+            </div>
+            
+        </div>
+    </div>
+
+</div> <!-- wrapper -->
+
+<div id="footer">
+</div>
+
+<div id="datetagdiv"
+     style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
+</div>
+</body>
+</html>

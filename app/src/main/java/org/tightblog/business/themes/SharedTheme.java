@@ -43,7 +43,6 @@ public class SharedTheme {
     private String id = null;
     private String name = null;
     private String description = null;
-    private String author = null;
     // the preview image path is relative from the shared theme's base folder
     private String previewImagePath = null;
     private Boolean dualTheme = false;
@@ -100,14 +99,6 @@ public class SharedTheme {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public String getPreviewImagePath() {

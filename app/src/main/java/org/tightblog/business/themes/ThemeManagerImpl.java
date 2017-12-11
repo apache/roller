@@ -246,7 +246,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
                 throw new IllegalStateException("Couldn't load template [" + template.getContentsFile() + "]");
             }
 
-            // this template ID used by ThemeResourceLoader for template retrieval.
+            // this template ID used by template resolvers to retrieve the template.
             template.setId(sharedTheme.getId() + ":" + template.getName());
 
             // add it to the theme
