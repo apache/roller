@@ -35,7 +35,7 @@ public class SharedTemplate implements Template {
     private String name = null;
     private String description = null;
     private String relativePath = null;
-    private Parser parser = Template.Parser.VELOCITY;
+    private Parser parser = Parser.THYMELEAF;
     private String contentsFile = null;
     private String template = null;
 

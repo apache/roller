@@ -109,21 +109,23 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
-            <scope>compile</scope>
             <version>${lucene.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
-            <scope>compile</scope>
             <version>${lucene.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
+            <groupId>org.apache.texen</groupId>
+            <artifactId>texen</artifactId>
+            <version>1.0</version>
+            <!-- needed only during build -->
+            <scope>provided</scope>
         </dependency>
 
         <!-- web -->
@@ -531,7 +533,7 @@
                         <configuration>
                             <target>
                                 <taskdef name="texen"
-                                         classname="org.apache.velocity.texen.ant.TexenTask"
+                                         classname="org.apache.texen.ant.TexenTask"
                                          classpathref="maven.compile.classpath"/>
                                 <texen
                                     controlTemplate  ="control.vm"

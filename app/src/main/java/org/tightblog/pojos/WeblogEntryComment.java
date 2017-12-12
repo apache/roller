@@ -287,7 +287,6 @@ public class WeblogEntryComment {
     }
 
     public void initializeFormFields() {
-        // Velocity templates output the variable name if it is null.
         setName("");
         setEmail("");
         setUrl("");

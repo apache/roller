@@ -17,7 +17,5 @@
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="org.springframework" level="warn"/>
         <Logger name="org.hibernate" level="error"/>
-        <!-- Velocity talks *way* too much, so set it to log only FATAL problems -->
-        <Logger name="org.apache.velocity" level="fatal"/>
     </Loggers>
 </Configuration>

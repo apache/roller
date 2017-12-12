@@ -20,6 +20,7 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTemplate;
 import org.tightblog.business.themes.ThemeManager;
@@ -27,7 +28,7 @@ import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
-import org.tightblog.rendering.velocity.VelocityRenderer;
+import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -79,10 +80,11 @@ public class FeedProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private VelocityRenderer velocityRenderer = null;
+    @Qualifier("rssRenderer")
+    private ThymeleafRenderer thymeleafRenderer = null;
 
-    public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
-        this.velocityRenderer = velocityRenderer;
+    public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
+        this.thymeleafRenderer = thymeleafRenderer;
     }
 
     @Autowired
@@ -183,14 +185,14 @@ public class FeedProcessor extends AbstractProcessor {
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", feedRequest);
         model = getModelMap("feedModelSet", initData);
-        pageId = "templates/feeds/" + feedRequest.getType() + "-atom.vm";
+        pageId = feedRequest.getType() + "-atom";
 
         // render content. use default size of 24K for a standard page
         CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Rendering...");
-            Template template = new SharedTemplate(pageId, Template.Parser.VELOCITY);
-            velocityRenderer.render(template, model, rendererOutput.getCachedWriter());
+            Template template = new SharedTemplate(pageId, Template.Parser.THYMELEAF);
+            thymeleafRenderer.render(template, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close
             rendererOutput.flush();
