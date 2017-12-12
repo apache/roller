@@ -20,6 +20,7 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
@@ -96,6 +97,7 @@ public class PageProcessor extends AbstractProcessor {
     }
 
     @Autowired
+    @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
 
     public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {

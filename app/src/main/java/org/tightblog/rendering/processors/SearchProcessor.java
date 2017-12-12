@@ -20,15 +20,14 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.rendering.Renderer;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.requests.WeblogSearchRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.rendering.velocity.VelocityRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.slf4j.Logger;
@@ -57,13 +56,7 @@ public class SearchProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/search";
 
     @Autowired
-    private VelocityRenderer velocityRenderer = null;
-
-    public void setVelocityRenderer(VelocityRenderer velocityRenderer) {
-        this.velocityRenderer = velocityRenderer;
-    }
-
-    @Autowired
+    @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
 
     public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
@@ -164,10 +157,7 @@ public class SearchProcessor extends AbstractProcessor {
         CachedContent rendererOutput = new CachedContent(Utilities.EIGHT_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
-            Renderer renderer = Template.Parser.THYMELEAF.equals(page.getParser()) ?
-                    thymeleafRenderer : velocityRenderer;
-
-            renderer.render(page, model, rendererOutput.getCachedWriter());
+            thymeleafRenderer.render(page, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close
             rendererOutput.flush();

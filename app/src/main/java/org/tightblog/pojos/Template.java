@@ -33,8 +33,8 @@ import java.util.Map;
 /**
  * The Template interface represents the abstract concept of a single unit
  * of templated or non-rendered content.  For TightBlog we mainly think of
- * templates as Velocity templates which are meant to be fed into the
- * Velocity rendering engine.
+ * templates as Thymeleaf templates which are meant to be fed into the
+ * Thymeleaf rendering engine.
  */
 public interface Template {
 
@@ -176,8 +176,7 @@ public interface Template {
     @XmlType
     @XmlEnum
     enum Parser {
-        @XmlEnumValue("thymeleaf")THYMELEAF("Thymeleaf"),
-        @XmlEnumValue("velocity")VELOCITY("Velocity");
+        @XmlEnumValue("thymeleaf")THYMELEAF("Thymeleaf");
 
         private final String readableName;
 

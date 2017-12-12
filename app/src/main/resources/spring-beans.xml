@@ -127,15 +127,6 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="mailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <beans:property name="templateMode" value="HTML5" />
-        <beans:property name="prefix" value="/mailtemplates/" />
-    </beans:bean>
-
-    <beans:bean id="mailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
-        <beans:property name="templateResolver" ref="mailTemplateResolver" />
-    </beans:bean>
-
     <beans:bean id="mailManager" class="org.tightblog.business.MailManagerImpl">
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
@@ -145,35 +136,51 @@
         <beans:constructor-arg ref="mailTemplateEngine"/>
     </beans:bean>
 
-    <beans:bean id="themeTemplateResolver" class="org.tightblog.rendering.thymeleaf.ThemeTemplateResolver">
+    <beans:bean id="mailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <beans:property name="templateMode" value="HTML5" />
+        <beans:property name="prefix" value="/mailtemplates/" />
+    </beans:bean>
+
+    <beans:bean id="mailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <beans:property name="templateResolver" ref="mailTemplateResolver" />
+    </beans:bean>
+
+    <beans:bean id="blogTemplateResolver" class="org.tightblog.rendering.thymeleaf.ThemeTemplateResolver">
         <beans:property name="templateMode" value="HTML5"/>
         <beans:property name="order" value="1"/>
         <beans:property name="checkExistence" value="true"/>
         <beans:property name="cacheable" value="false"/>
     </beans:bean>
 
-    <beans:bean id="fragmentTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+    <beans:bean id="standardTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
         <beans:property name="templateMode" value="HTML5"/>
+        <beans:property name="prefix" value="/thymeleaf/" />
         <beans:property name="suffix" value=".html" />
         <beans:property name="order" value="2"/>
         <beans:property name="cacheable" value="false"/>
     </beans:bean>
 
-    <beans:bean id="pageTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+    <beans:bean id="blogTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <beans:property name="templateResolvers">
             <beans:set>
                 <!-- resolution order defined by resolver 'order' attributes -->
-                <beans:ref bean="themeTemplateResolver"/>
-                <beans:ref bean="fragmentTemplateResolver"/>
+                <beans:ref bean="blogTemplateResolver"/>
+                <beans:ref bean="standardTemplateResolver"/>
             </beans:set>
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="thymeleafRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
-        <beans:property name="templateEngine" ref="pageTemplateEngine"/>
+    <beans:bean id="rssTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <beans:property name="templateResolver" ref="standardTemplateResolver" />
     </beans:bean>
 
-    <beans:bean id="velocityRenderer" class="org.tightblog.rendering.velocity.VelocityRenderer"/>
+    <beans:bean id="blogRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
+        <beans:property name="templateEngine" ref="blogTemplateEngine"/>
+    </beans:bean>
+
+    <beans:bean id="rssRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
+        <beans:property name="templateEngine" ref="rssTemplateEngine"/>
+    </beans:bean>
 
     <!-- page models, additional models can be added as shown here: http://stackoverflow.com/a/13160350/1207540 -->
     <beans:bean id="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">

@@ -16,24 +16,19 @@
 package org.tightblog.rendering.thymeleaf;
 
 import org.attoparser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.tightblog.pojos.Template;
-import org.tightblog.rendering.Renderer;
 import org.tightblog.util.WebloggerException;
 
 import java.io.FileNotFoundException;
 import java.io.Writer;
 import java.util.Map;
 
-public class ThymeleafRenderer implements Renderer {
-
-    private static Logger logger = LoggerFactory.getLogger(ThemeTemplateResolver.class);
+public class ThymeleafRenderer {
 
     private SpringTemplateEngine templateEngine;
 
@@ -41,7 +36,6 @@ public class ThymeleafRenderer implements Renderer {
         this.templateEngine = templateEngine;
     }
 
-    @Override
     public void render(Template template, Map<String, Object> model, Writer writer) throws WebloggerException {
         try {
             Context ctx = new Context();
