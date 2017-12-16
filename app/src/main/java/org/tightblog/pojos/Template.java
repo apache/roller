@@ -169,23 +169,4 @@ public interface Template {
 
     void setTemplate(String template);
 
-    Template.Parser getParser();
-
-    void setParser(Template.Parser parser);
-
-    @XmlType
-    @XmlEnum
-    enum Parser {
-        @XmlEnumValue("thymeleaf")THYMELEAF("Thymeleaf");
-
-        private final String readableName;
-
-        Parser(String readableName) {
-            this.readableName = readableName;
-        }
-
-        public String getReadableName() {
-            return readableName;
-        }
-    }
 }

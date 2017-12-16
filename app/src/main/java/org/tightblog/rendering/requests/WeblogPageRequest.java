@@ -22,6 +22,7 @@ package org.tightblog.rendering.requests;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tightblog.pojos.Template;
+import org.tightblog.pojos.User;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
@@ -239,4 +240,5 @@ public class WeblogPageRequest extends WeblogRequest {
     public boolean isNoIndex() {
         return noIndex;
     }
+
 }

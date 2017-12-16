@@ -35,7 +35,6 @@ public class SharedTemplate implements Template {
     private String name = null;
     private String description = null;
     private String relativePath = null;
-    private Parser parser = Parser.THYMELEAF;
     private String contentsFile = null;
     private String template = null;
 
@@ -54,17 +53,8 @@ public class SharedTemplate implements Template {
         this.contentsFile = contentsFile;
     }
 
-    public Parser getParser() {
-        return parser;
-    }
-
-    public void setParser(Parser templateLanguage) {
-        this.parser = templateLanguage;
-    }
-
-    public SharedTemplate(String id, Parser lang) {
+    public SharedTemplate(String id) {
         this.id = id;
-        setParser(lang);
     }
 
     public String getId() {

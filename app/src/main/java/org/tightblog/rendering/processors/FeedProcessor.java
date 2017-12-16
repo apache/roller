@@ -191,7 +191,7 @@ public class FeedProcessor extends AbstractProcessor {
         CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Rendering...");
-            Template template = new SharedTemplate(pageId, Template.Parser.THYMELEAF);
+            Template template = new SharedTemplate(pageId);
             thymeleafRenderer.render(template, model, rendererOutput.getCachedWriter());
 
             // flush rendered output and close

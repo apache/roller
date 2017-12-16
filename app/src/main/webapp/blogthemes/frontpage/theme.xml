@@ -15,7 +15,6 @@
     <template role="weblog">
         <name>Weblog</name>
         <contentsFile>weblog.html</contentsFile>
-        <parser>thymeleaf</parser>
     </template>
 
     <template role="customExternal">
@@ -23,20 +22,17 @@
         <description>weblog directory</description>
         <relativePath>directory</relativePath>
         <contentsFile>directory.html</contentsFile>
-        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
         <name>blogfrags</name>
         <contentsFile>blogfrags.html</contentsFile>
-        <parser>thymeleaf</parser>
     </template>
 
     <template role="stylesheet">
         <name>_css</name>
         <contentsFile>_css.css</contentsFile>
         <relativePath>_css.css</relativePath>
-        <parser>thymeleaf</parser>
     </template>
 
 </sharedtheme>

@@ -31,13 +31,6 @@
                             <xs:element name="description" type="xs:string" minOccurs="0"/>
                             <xs:element name="relativePath" type="xs:string" minOccurs="0"/>
                             <xs:element name="contentsFile" type="xs:string"/>
-                            <xs:element name="parser" default="thymeleaf">
-                                <xs:simpleType>
-                                    <xs:restriction base="xs:string">
-                                        <xs:enumeration value="thymeleaf"/>
-                                    </xs:restriction>
-                                </xs:simpleType>
-                            </xs:element>
                         </xs:all>
                         <xs:attribute name="role" use="required">
                             <xs:simpleType>
