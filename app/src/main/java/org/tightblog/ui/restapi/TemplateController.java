@@ -255,7 +255,6 @@ public class TemplateController {
                     } else {
                         templateToSave.setRole(Template.ComponentType.valueOf(templateData.getRoleName()));
                     }
-                    templateToSave.setParser(templateData.getParser());
                     templateToSave.setTemplate(templateData.getContents());
                 } else {
                     templateToSave.setTemplate(templateData.getContents());

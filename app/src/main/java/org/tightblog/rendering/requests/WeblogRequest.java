@@ -22,6 +22,7 @@ package org.tightblog.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.util.Utilities;
 import org.springframework.mobile.device.DeviceType;
@@ -64,6 +65,7 @@ public class WeblogRequest {
 
     // heavyweight attributes populated by processors
     private Weblog weblog = null;
+    private User blogger = null;
 
     public WeblogRequest() {
     }
@@ -142,6 +144,10 @@ public class WeblogRequest {
         return this.authenticatedUser;
     }
 
+    public void setAuthenticatedUser(String authenticatedUser) {
+        this.authenticatedUser = authenticatedUser;
+    }
+
     public boolean isLoggedIn() {
         return (this.authenticatedUser != null);
     }
@@ -159,4 +165,11 @@ public class WeblogRequest {
         return request.getParameter(paramName);
     }
 
+    public User getBlogger() {
+        return blogger;
+    }
+
+    public void setBlogger(User blogger) {
+        this.blogger = blogger;
+    }
 }

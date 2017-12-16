@@ -25,6 +25,7 @@ import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.search.IndexManager;
+import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -70,6 +71,7 @@ public class CommentProcessorTest {
     private I18nMessages mockMessageUtils;
     private WeblogManager mockWM;
     private WeblogEntryManager mockWEM;
+    private UserManager mockUM;
 
     @Before
     public void initialize() {
@@ -86,11 +88,13 @@ public class CommentProcessorTest {
         when(wprCreator.create(any())).thenReturn(commentRequest);
         mockWM = mock(WeblogManager.class);
         mockWEM = mock(WeblogEntryManager.class);
+        mockUM = mock(UserManager.class);
         processor = new CommentProcessor();
         processor.setPersistenceStrategy(mockJPA);
         processor.setWeblogPageRequestCreator(wprCreator);
         processor.setWeblogManager(mockWM);
         processor.setWeblogEntryManager(mockWEM);
+        processor.setUserManager(mockUM);
         mockMessageUtils = mock(I18nMessages.class);
     }
 
@@ -153,7 +157,7 @@ public class CommentProcessorTest {
 
         WeblogEntryComment incomingComment = new WeblogEntryComment();
         // doReturn.when vs. when.theReturn wrt spies: https://stackoverflow.com/a/29394497/1207540
-        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(entry), any());
+        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(commentRequest), any());
         Mockito.doReturn(mockMessageUtils).when(processor).getI18nMessages(any(Locale.class));
 
         try {
@@ -198,11 +202,67 @@ public class CommentProcessorTest {
     }
 
     @Test
+    public void testUserAttachedToWeblogPageRequest()
+            throws ServletException, IOException {
+        Weblog weblog = new Weblog();
+        weblog.setLocale("en");
+        weblog.setHandle("myhandle");
+        commentRequest.setWeblog(weblog);
+
+        commentRequest.setWeblogHandle("myhandle");
+
+        WeblogEntry entry = new WeblogEntry();
+        entry.setAnchor("myblogentry");
+        entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        commentRequest.setWeblogEntry(entry);
+
+        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
+
+        commentRequest.setAuthenticatedUser("bob");
+
+        User user = new User();
+        when(mockUM.getEnabledUserByUserName("bob")).thenReturn(user);
+
+        // if authenticated user, weblog page request's User object should be populated
+        processor.postComment(mockRequest, mockResponse);
+        assertEquals(user, commentRequest.getBlogger());
+    }
+
+    @Test
+    public void testNoUserNotAttachedToWeblogPageRequest()
+            throws ServletException, IOException {
+        processor = Mockito.spy(processor);
+
+        Weblog weblog = new Weblog();
+        weblog.setLocale("en");
+        weblog.setHandle("myhandle");
+        commentRequest.setWeblog(weblog);
+
+        commentRequest.setWeblogHandle("myhandle");
+
+        WeblogEntry entry = new WeblogEntry();
+        entry.setAnchor("myblogentry");
+        entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        commentRequest.setWeblogEntry(entry);
+
+        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
+
+        // if no authenticated user, weblog page request's User object should not be populated
+        processor.postComment(mockRequest, mockResponse);
+        assertNull(commentRequest.getBlogger());
+    }
+
+    @Test
     public void testCommentSpamChecking() {
         processor = Mockito.spy(processor);
 
         // setup to ensure comment is at least valid so spam check can start
         commentRequest.setWeblogHandle("myhandle");
+
+        // authenticated user left comment
+        commentRequest.setBlogger(new User());
 
         WeblogEntry entry = new WeblogEntry();
         entry.setAnchor("myblogentry");
@@ -234,14 +294,14 @@ public class CommentProcessorTest {
 
         WeblogEntryComment incomingComment = new WeblogEntryComment();
         incomingComment.setPreview(false);
-        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(entry), any());
+        Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(commentRequest), any());
         Mockito.doReturn(mockMessageUtils).when(processor).getI18nMessages(any(Locale.class));
         Mockito.doReturn(null).when(processor).validateComment(incomingComment);
 
         try {
             // test that if it is the blogger's comment it is automatically not spam
             // make this a blogger's comment
-            when(mockUM.checkWeblogRole(any(), anyString(), eq(WeblogRole.POST))).thenReturn(true);
+            when(mockUM.checkWeblogRole(any(User.class), any(Weblog.class), eq(WeblogRole.POST))).thenReturn(true);
             // have it evaluate to spam
             Mockito.doReturn(ValidationResult.SPAM).when(processor).runSpamCheckers(eq(incomingComment), any());
             // still approved
@@ -252,7 +312,7 @@ public class CommentProcessorTest {
             assertEquals("", commentCaptor.getValue().getContent());
 
             // make subsequent tests a non-blogger comment
-            when(mockUM.checkWeblogRole(any(), anyString(), eq(WeblogRole.POST))).thenReturn(false);
+            when(mockUM.checkWeblogRole(any(User.class), any(Weblog.class), eq(WeblogRole.POST))).thenReturn(false);
 
             // check spam comment requires approval even if must moderate off
             properties.setCommentPolicy(CommentPolicy.YES);
@@ -335,9 +395,13 @@ public class CommentProcessorTest {
         when(mockRequest.getParameter("preview")).thenReturn(null);
         when(mockRequest.getRemoteHost()).thenReturn("http://www.bar.com");
 
+        WeblogPageRequest wpr = new WeblogPageRequest();
         WeblogEntry entry = new WeblogEntry();
+        User blogger = new User();
+        wpr.setWeblogEntry(entry);
+        wpr.setBlogger(blogger);
 
-        WeblogEntryComment wec = processor.createCommentFromRequest(mockRequest, entry, HTMLSanitizer.Level.LIMITED);
+        WeblogEntryComment wec = processor.createCommentFromRequest(mockRequest, wpr, HTMLSanitizer.Level.LIMITED);
 
         assertEquals("Content not processed correctly (text, whitelist filtering of tags, and adding paragraph tags)",
                 "<p>Enjoy My Link from Bob!</p>", wec.getContent());
@@ -348,18 +412,19 @@ public class CommentProcessorTest {
         assertEquals("bob@email.com", wec.getEmail());
         assertEquals("http://www.bar.com", wec.getRemoteHost());
         assertEquals(entry, wec.getWeblogEntry());
+        assertEquals(blogger, wec.getBlogger());
         assertNotNull(wec.getPostTime());
 
         when(mockRequest.getParameter("notify")).thenReturn(null);
         when(mockRequest.getParameter("preview")).thenReturn("true");
-        wec = processor.createCommentFromRequest(mockRequest, entry, HTMLSanitizer.Level.BASIC);
+        wec = processor.createCommentFromRequest(mockRequest, wpr, HTMLSanitizer.Level.BASIC);
         assertFalse(wec.getNotify());
         assertTrue(wec.isPreview());
         assertEquals("Content not processed correctly (text and whitelist filtering of tags)",
                 "<p>Enjoy <a href=\"http://www.abc.com\" rel=\"nofollow\">My Link</a> from Bob!</p>", wec.getContent());
 
         when(mockRequest.getParameter("preview")).thenReturn("false");
-        wec = processor.createCommentFromRequest(mockRequest, entry, HTMLSanitizer.Level.BASIC);
+        wec = processor.createCommentFromRequest(mockRequest, wpr, HTMLSanitizer.Level.BASIC);
         assertFalse(wec.isPreview());
     }
 

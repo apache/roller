@@ -137,7 +137,7 @@
 
             <th:block th:switch="${model.canSubmitNewComments(entry)}">
                 <th:block th:case="${true}">
-                    <span th:class="${cform.invalid ? 'error' : (!utils.isEmpty(cform.submitResponseMessage) ? 'status')}"
+                    <span th:class="${cform.invalid ? 'error' : (!utils.isEmpty(cform.submitResponseMessage) ? 'status' : null)}"
                           th:utext="${cform.submitResponseMessage}">xxx</span>
 
                     <form method="post" focus="name" name="commentForm" onsubmit="saveUserInformation(this)">

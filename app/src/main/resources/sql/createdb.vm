@@ -74,7 +74,6 @@ create table weblog_template (
     relative_path   varchar(255),
     description     varchar(255),
     template        $db.TEXT_SQL_TYPE not null,
-    parser          varchar(48),
     updatetime      $db.TIMESTAMP_SQL_TYPE not null
 );
 create index wt_name_idx on weblog_template(name);
@@ -193,6 +192,7 @@ create table weblog_entry_comment (
     id         varchar(48) not null primary key,
     entryid    varchar(48) not null,
     status     varchar(20) not null,
+    bloggerid  varchar(48),
     name       varchar(255) not null,
     email      varchar(255) not null,
     notify     $db.BOOLEAN_SQL_TYPE_FALSE not null,
@@ -210,6 +210,9 @@ alter table weblog_entry_comment add constraint co_entryid_fk
 #if($db.FOREIGN_KEY_MAKES_INDEX == "false")
     create index co_entryid_idx on weblog_entry_comment( entryid );
 #end
+
+alter table weblog_entry_comment add constraint co_userid_fk
+    foreign key ( bloggerid ) references weblogger_user( id ) ;
 
 create index co_status_idx on weblog_entry_comment( status );
 

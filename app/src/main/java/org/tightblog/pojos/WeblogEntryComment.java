@@ -71,6 +71,8 @@ public class WeblogEntryComment {
     // associations
     private WeblogEntry weblogEntry = null;
 
+    private User blogger = null;
+
     public WeblogEntryComment() {
     }
 
@@ -95,6 +97,16 @@ public class WeblogEntryComment {
 
     public void setWeblogEntry(WeblogEntry entry) {
         weblogEntry = entry;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "bloggerid")
+    public User getBlogger() {
+        return blogger;
+    }
+
+    public void setBlogger(User blogger) {
+        this.blogger = blogger;
     }
 
     @Basic(optional = false)

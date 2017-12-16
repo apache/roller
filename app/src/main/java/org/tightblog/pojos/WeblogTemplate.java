@@ -70,7 +70,6 @@ public class WeblogTemplate implements Template {
     private String relativePath = null;
     private Instant lastModified = null;
     private TemplateDerivation derivation = TemplateDerivation.SPECIFICBLOG;
-    private Parser parser = null;
     private String template = "";
 
     private String contents = null;
@@ -185,16 +184,6 @@ public class WeblogTemplate implements Template {
     public void setTemplate(String template) {
         this.template = template;
     }
-
-    @Enumerated(EnumType.STRING)
-    public Parser getParser() {
-        return parser;
-    }
-
-    public void setParser(Parser templateLanguage) {
-        this.parser = templateLanguage;
-    }
-
 
     //------------------------------------------------------- Good citizenship
 

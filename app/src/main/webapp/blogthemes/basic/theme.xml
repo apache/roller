@@ -14,24 +14,20 @@
         <description>Stylesheet for Basic theme</description>
         <relativePath>basic-custom.css</relativePath>
         <contentsFile>basic-custom.css</contentsFile>
-        <parser>thymeleaf</parser>
     </template>
 
     <template role="weblog">
         <name>Weblog</name>
         <contentsFile>weblog.html</contentsFile>
-        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
         <name>day</name>
         <contentsFile>day.html</contentsFile>
-        <parser>thymeleaf</parser>
     </template>
 
     <template role="customInternal">
         <name>sidebar</name>
         <contentsFile>sidebar.html</contentsFile>
-        <parser>thymeleaf</parser>
     </template>
 </sharedtheme>

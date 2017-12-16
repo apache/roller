@@ -169,7 +169,6 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         weblogTemplate.setDescription(sharedTemplate.getDescription());
         weblogTemplate.setRelativePath(sharedTemplate.getRelativePath());
         weblogTemplate.setLastModified(Instant.now());
-        weblogTemplate.setParser(sharedTemplate.getParser());
         weblogTemplate.setTemplate(sharedTemplate.getTemplate());
 
         return weblogTemplate;

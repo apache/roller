@@ -199,13 +199,14 @@ public class CommentProcessor extends AbstractProcessor {
             incomingRequest.setWeblogEntry(entry);
         }
 
-        // At this stage, CommentProcessor forwards to the PageProcessor with the comment processing results
-        String dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle() + "/entry/"
-                + Utilities.encode(incomingRequest.getWeblogEntry().getAnchor());
+        if (incomingRequest.getAuthenticatedUser() != null) {
+            incomingRequest.setBlogger(userManager.getEnabledUserByUserName(incomingRequest.getAuthenticatedUser()));
+        }
 
         I18nMessages messageUtils = getI18nMessages(weblog.getLocaleInstance());
 
-        WeblogEntryComment incomingComment = createCommentFromRequest(request, incomingRequest.getWeblogEntry(), props.getCommentHtmlPolicy());
+        WeblogEntryComment incomingComment = createCommentFromRequest(request, incomingRequest, props.getCommentHtmlPolicy());
+
         log.debug("Incoming comment: {}", incomingComment.toString());
 
         // First check comment for valid and authorized input
@@ -228,7 +229,7 @@ public class CommentProcessor extends AbstractProcessor {
             incomingComment.setSubmitResponseMessage(messageUtils.getString(errorProperty, errorValue));
         } else if (!incomingComment.isPreview()) {
             // Otherwise next check comment for spam
-            boolean ownComment = userManager.checkWeblogRole(incomingRequest.getAuthenticatedUser(), weblog.getHandle(),
+            boolean ownComment = userManager.checkWeblogRole(incomingRequest.getBlogger(), weblog,
                     WeblogRole.POST);
 
             boolean commentRequiresApproval = !ownComment && (CommentPolicy.MUSTMODERATE.equals(commentOption) ||
@@ -291,9 +292,12 @@ public class CommentProcessor extends AbstractProcessor {
             incomingComment.initializeFormFields();
         }
 
-        // now send the user back to the entry page
-        // provide comment to PageProcessor so latter can place it in the PageModel for rendering
+        // now send the user back to the weblog entry page via PageProcessor
+        String dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle() + "/entry/"
+                + Utilities.encode(incomingRequest.getWeblogEntry().getAnchor());
+
         log.debug("comment processed, forwarding to {}", dispatchUrl);
+        // add comment so PageProcessor can place it in the PageModel for rendering
         request.setAttribute("commentForm", incomingComment);
         RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
         dispatcher.forward(request, response);
@@ -321,7 +325,7 @@ public class CommentProcessor extends AbstractProcessor {
         return errorProperty;
     }
 
-    WeblogEntryComment createCommentFromRequest(HttpServletRequest request, WeblogEntry entry,
+    WeblogEntryComment createCommentFromRequest(HttpServletRequest request, WeblogPageRequest pageRequest,
                                                 HTMLSanitizer.Level sanitizerLevel) {
 
         /*
@@ -336,9 +340,10 @@ public class CommentProcessor extends AbstractProcessor {
         comment.setNotify(request.getParameter("notify") != null);
         comment.setName(Utilities.removeHTML(request.getParameter("name")));
         comment.setEmail(Utilities.removeHTML(request.getParameter("email")));
-        comment.setWeblogEntry(entry);
+        comment.setWeblogEntry(pageRequest.getWeblogEntry());
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(Instant.now());
+        comment.setBlogger(pageRequest.getBlogger());
 
         String previewCheck = request.getParameter("preview");
         comment.setPreview(previewCheck != null && !"false".equalsIgnoreCase(previewCheck));
@@ -356,13 +361,16 @@ public class CommentProcessor extends AbstractProcessor {
 
         // Validate content
         comment.setContent(StringUtils.left(request.getParameter("content"), 2000));
-        Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
 
-        // Need to insert paragraph breaks in case commenter didn't do so.
-        String commentTemp = Utilities.insertLineBreaksIfMissing(comment.getContent());
+        if (comment.getContent() != null) {
+            Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
 
-        // Remove HTML tags outside those permitted by the TightBlog admin
-        comment.setContent(Jsoup.clean(commentTemp, commentHTMLWhitelist));
+            // Need to insert paragraph breaks in case commenter didn't do so.
+            String commentTemp = Utilities.insertLineBreaksIfMissing(comment.getContent());
+
+            // Remove HTML tags outside those permitted by the TightBlog admin
+            comment.setContent(Jsoup.clean(commentTemp, commentHTMLWhitelist));
+        }
 
         return comment;
     }
