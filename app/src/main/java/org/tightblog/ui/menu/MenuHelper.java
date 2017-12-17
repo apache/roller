@@ -20,6 +20,9 @@
  */
 package org.tightblog.ui.menu;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.GlobalRole;
@@ -27,7 +30,6 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.ui.menu.Menu.MenuTab;
 import org.tightblog.ui.menu.Menu.MenuTabItem;
 import org.tightblog.util.Utilities;
-import org.tightblog.rendering.cache.ExpiringCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +42,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A helper class for dealing with UI menus.
  */
+@Component
 public final class MenuHelper {
 
     private static Logger log = LoggerFactory.getLogger(MenuHelper.class);
@@ -51,11 +55,7 @@ public final class MenuHelper {
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
     private static Map<String, String> actionToMenuIdMap = new HashMap<>(25);
 
-    private ExpiringCache menuCache;
-
-    public void setMenuCache(ExpiringCache menuCache) {
-        this.menuCache = menuCache;
-    }
+    private Cache<String, Menu> menuCache;
 
     @XmlRootElement(name = "menus")
     private static class MenuListHolder {
@@ -72,6 +72,10 @@ public final class MenuHelper {
     }
 
     public MenuHelper() {
+        menuCache = Caffeine.newBuilder()
+                .expireAfterWrite(2, TimeUnit.DAYS)
+                .maximumSize(100)
+                .build();
     }
 
     @PostConstruct
@@ -123,14 +127,7 @@ public final class MenuHelper {
         if (menuId != null) {
             String cacheKey = generateMenuCacheKey(menuId, userGlobalRole.name(),
                     userWeblogRole == null ? null : userWeblogRole.name(), currentAction);
-            menu = (Menu) menuCache.get(cacheKey);
-            if (menu == null) {
-                ParsedMenu menuConfig = menuMap.get(menuId);
-                if (menuConfig != null) {
-                    menu = buildMenu(menuConfig, userGlobalRole, userWeblogRole, currentAction);
-                    menuCache.put(cacheKey, menu);
-                }
-            }
+            menu = menuCache.get(cacheKey, v -> buildMenu(menuId, userGlobalRole, userWeblogRole, currentAction));
         }
         return menu;
     }
@@ -138,14 +135,21 @@ public final class MenuHelper {
     /**
      * Creates menu according to logged-in user's permissions
      *
-     * @param menuConfig     the menu config
+     * @param menuId         - ID of desired menu
      * @param userGlobalRole - user's global role
      * @param userWeblogRole - user's role within the weblog being displayed
      * @param currentAction  the current action
      * @return menu
      */
-    private Menu buildMenu(ParsedMenu menuConfig, GlobalRole userGlobalRole, WeblogRole userWeblogRole,
+    private Menu buildMenu(String menuId, GlobalRole userGlobalRole, WeblogRole userWeblogRole,
                            String currentAction) {
+
+        ParsedMenu menuConfig = menuMap.get(menuId);
+
+        if (menuConfig == null) {
+            log.error("Invalid menuId {} provided", menuId);
+            return null;
+        }
 
         Menu tabMenu = new Menu();
 

@@ -41,8 +41,8 @@ import java.time.Instant;
  */
 public class SiteWideCache extends ExpiringCache implements BlogEventListener {
 
-    // keep a cached version of cache last refresh time for 304 Not Modified calculations
-    private ExpiringCacheEntry lastUpdateTime = null;
+    // for 304 Not Modified calculations
+    private Instant lastUpdateTime = null;
 
     private ThemeManager themeManager;
 
@@ -56,34 +56,19 @@ public class SiteWideCache extends ExpiringCache implements BlogEventListener {
         cacheManager.registerHandler(this);
     }
 
-    public void clear() {
-        if (enabled) {
-            super.clear();
-            this.lastUpdateTime = null;
-        }
-    }
-
     public Instant getLastModified() {
-        Instant lastModified = null;
-
         // first try our cached version
-        if (this.lastUpdateTime != null) {
-            lastModified = (Instant) this.lastUpdateTime.getValue();
+        if (lastUpdateTime == null) {
+            lastUpdateTime = Instant.now();
         }
 
-        // still null, we need to get a fresh value
-        if (lastModified == null) {
-            lastModified = Instant.now();
-            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, timeoutInMS);
-        }
-
-        return lastModified;
+        return lastUpdateTime;
     }
 
     @Override
     public void weblogChanged(Weblog weblog) {
         if (enabled) {
-            this.contentCache.clear();
+            this.contentCache.invalidateAll();
             this.lastUpdateTime = null;
         }
     }

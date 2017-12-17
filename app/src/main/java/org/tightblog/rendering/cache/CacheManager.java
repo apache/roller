@@ -24,7 +24,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.tightblog.pojos.WeblogBookmark;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.User;
@@ -61,13 +65,17 @@ public class CacheManager {
     }
 
     // a map of all registered caches
-    private Map<String, Cache> caches = new HashMap<>();
+    private Map<String, Cache<String, Object>> caches = new HashMap<>();
 
     public CacheManager() {
     }
 
-    Cache constructCache(String id, int size, long timeoutInMS) {
-        Cache cache = new ExpiringLRUCacheImpl(size, timeoutInMS);
+    Cache<String, Object> constructCache(String id, int size, long timeoutInMS) {
+        Cache<String, Object> cache = Caffeine.newBuilder()
+                .expireAfterWrite(timeoutInMS, TimeUnit.MILLISECONDS)
+                .maximumSize(size)
+                .recordStats()
+                .build();
         caches.put(id, cache);
         return cache;
     }
@@ -152,7 +160,7 @@ public class CacheManager {
      */
     public void clear() {
         for (Cache cache : caches.values()) {
-            cache.clear();
+            cache.invalidateAll();
         }
     }
 
@@ -162,7 +170,7 @@ public class CacheManager {
     public void clear(String cacheId) {
         Cache cache = caches.get(cacheId);
         if (cache != null) {
-            cache.clear();
+            cache.invalidateAll();
         }
     }
 
@@ -171,15 +179,15 @@ public class CacheManager {
      */
     public Map<String, CacheStats> getStats() {
         Map<String, CacheStats> allStats = new HashMap<>();
-        for (Map.Entry<String, Cache> cache : caches.entrySet()) {
-            allStats.put(cache.getKey(), cache.getValue().getStats());
+        for (Map.Entry<String, Cache<String, Object>> cache : caches.entrySet()) {
+            allStats.put(cache.getKey(), cache.getValue().stats());
         }
         return allStats;
     }
 
     public CacheStats getStats(String cacheName) {
         Cache cache = caches.get(cacheName);
-        return cache.getStats();
+        return cache.stats();
     }
 
 }
