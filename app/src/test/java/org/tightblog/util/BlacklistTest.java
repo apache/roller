@@ -40,12 +40,14 @@ public class BlacklistTest extends WebloggerTest {
     @Test
     public void testIsNotBlacklisted() {
         Weblog weblog = new Weblog();
+        weblog.setHandle("myweblog");
         assertFalse(weblogManager.getWeblogBlacklist(weblog).isBlacklisted("four score and seven years ago.com"));
     }
 
     @Test
     public void testIsBlacklisted() {
         Weblog weblog = new Weblog();
+        weblog.setHandle("myweblog");
         weblog.setBlacklist("www.myblacklistedsite.com");
         assertTrue(weblogManager.getWeblogBlacklist(weblog).isBlacklisted("www.myblacklistedsite.com"));
     }

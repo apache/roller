@@ -16,7 +16,6 @@
 package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -29,8 +28,6 @@ import org.tightblog.pojos.UserSearchCriteria;
 import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.ui.menu.Menu;

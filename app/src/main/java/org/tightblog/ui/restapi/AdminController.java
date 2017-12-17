@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -41,7 +42,6 @@ import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CacheManager;
-import org.tightblog.rendering.cache.CacheStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

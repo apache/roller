@@ -13,7 +13,7 @@ This more realistic goal--along with adopting the Spring framework, REST, Angula
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
 |TightBlog 2.0.3|2 Sept 2017|13|146|37|42.9K|
-|TightBlog 3.0|in Development|12|136|37|35.4K|
+|TightBlog 3.0|in Development|12|133|37|35.4K|
 
 (Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test cases, however LOC do.
 LOC are expected to increase over time as more unit test cases are added.) 
@@ -27,6 +27,9 @@ In addition to the cleanout of old functionality some new features have been add
 * There is a new tag management screen allowing for renaming, merging, and deleting tags attached to blog entries, as well as adding a new tag to all articles already having a given tag.
 * A new "search.enabled" setting has been added to static configuration allowing for shutting off the Lucene indexer used for blog searching, useful in saving processing/space for when you're relying on third party indexing tools like Google Custom Search instead.
 * Commenters who request "notify me" to receive emails of future comments for a particular blog entry now receive a link at the bottom of the email to shut off future notifications
+* (TightBlog 3.0) Commenters who are logged-in bloggers now have their blogger ID stored with the comment, simplifying comment entry and allowing for different styling of comments (e.g., different background color for comments made by the blogger on his own blog).
+* (TightBlog 3.0) The blog template engine (used for customized themes) now uses latest Thymeleaf 3.0 instead of Apache Velocity. 
+
 
 Check <a href="https://glenmazza.net/blog">my blog</a> for recent status updates.
 

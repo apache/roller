@@ -21,13 +21,14 @@
 package org.tightblog.rendering.cache;
 
 import org.apache.commons.lang.time.DateUtils;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
-public class ExpiringCache {
+public abstract class ExpiringCache {
     private static Logger log = LoggerFactory.getLogger(ExpiringCache.class);
 
     protected String cacheHandlerId;
@@ -54,7 +55,7 @@ public class ExpiringCache {
         this.timeoutInMS = timeoutSec * DateUtils.MILLIS_PER_SECOND;
     }
 
-    protected Cache contentCache = null;
+    protected Cache<String, Object> contentCache = null;
 
     @Autowired
     protected CacheManager cacheManager;
@@ -75,7 +76,7 @@ public class ExpiringCache {
     public Object get(String key) {
         Object entry = null;
         if (enabled) {
-            entry = contentCache.get(key);
+            entry = contentCache.getIfPresent(key);
             if (entry == null) {
                 log.debug("MISS {}", key);
             } else {
@@ -92,17 +93,4 @@ public class ExpiringCache {
         }
     }
 
-    public void remove(String key) {
-        if (enabled) {
-            contentCache.remove(key);
-            log.debug("REMOVE {}", key);
-        }
-    }
-
-    public void clear() {
-        if (enabled) {
-            contentCache.clear();
-            log.debug("CLEAR");
-        }
-    }
 }

@@ -35,7 +35,7 @@ public class LazyExpiringCache extends ExpiringCache {
     public Object get(String key, Instant lastModified) {
         if (enabled) {
             Object entry = null;
-            LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.get(key);
+            LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.getIfPresent(key);
             if (lazyEntry != null) {
                 entry = lazyEntry.getValue(lastModified);
 

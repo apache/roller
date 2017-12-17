@@ -57,7 +57,7 @@
 <thead>
    <tr>
         <th style="width:20%"><fmt:message key="generic.name"/></th>
-        <th style="width:20%"><fmt:message key="cacheInfo.startTime"/></th>
+        <th style="width:20%"><fmt:message key="cacheInfo.requestCount"/></th>
         <th style="width:10%"><fmt:message key="cacheInfo.puts"/></th>
         <th style="width:10%"><fmt:message key="cacheInfo.removes"/></th>
         <th style="width:10%"><fmt:message key="cacheInfo.hits"/></th>
@@ -69,7 +69,7 @@
 <tbody id="tableBody" ng-cloak>
       <tr ng-repeat="(key,item) in ctrl.cacheData" ng-class-even="'altrow'">
         <td>{{key}}</td>
-        <td>{{item.startTime | date:'short'}}</td>
+        <td>{{item.requestCount}}</td>
         <td>{{item.puts}}</td>
         <td>{{item.removes}}</td>
         <td>{{item.hits}}</td>
