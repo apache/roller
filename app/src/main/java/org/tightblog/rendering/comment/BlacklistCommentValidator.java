@@ -18,50 +18,106 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.tightblog.rendering.comment;
 
-import org.tightblog.business.WeblogManager;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.util.Blacklist;
+import org.tightblog.pojos.WebloggerProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Validates comment if comment does not contain blacklisted words.
  */
 public class BlacklistCommentValidator implements CommentValidator {
 
-    private WeblogManager weblogManager;
+    private static Logger log = LoggerFactory.getLogger(BlacklistCommentValidator.class);
 
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
+    private JPAPersistenceStrategy strategy;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
+    private List<Pattern> globalRegexRules = new ArrayList<>();
+
+    // ensures site-wide rules have been retrieved
+    private boolean globalRulesLoaded = false;
+
+    /**
+     * Notify this validator that the site-wide filter has possibly changed
+     * @param globalCommentFilter new filter to use
+     */
+    public void setGlobalCommentFilter(String globalCommentFilter) {
+        globalRegexRules = populateSpamRules(globalCommentFilter);
+        globalRulesLoaded = true;
+    }
+
+    /**
+     * Test comment, applying weblog and site blacklists (if available)
+     * @return True if comment matches a blacklist term
+     */
     @Override
     public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        if (checkComment(comment)) {
+        if (!globalRulesLoaded) {
+            WebloggerProperties props = strategy.getWebloggerProperties();
+            setGlobalCommentFilter(props.getCommentSpamFilter());
+        }
+
+        List<Pattern> combinedRules = new ArrayList<>();
+        combinedRules.addAll(globalRegexRules);
+        combinedRules.addAll(comment.getWeblogEntry().getWeblog().getBlacklistRegexRules());
+
+        if (isBlacklisted(combinedRules, comment.getUrl()) || isBlacklisted(combinedRules, comment.getEmail()) ||
+            isBlacklisted(combinedRules, comment.getName()) || isBlacklisted(combinedRules, comment.getContent())) {
             messages.put("comment.validator.blacklistMessage", null);
             return ValidationResult.SPAM;
         }
         return ValidationResult.NOT_SPAM;
     }
 
-    /**
-     * Test comment, applying weblog's blacklist
-     *
-     * @return True if comment matches a blacklist term
-     */
-    private boolean checkComment(WeblogEntryComment comment) {
-        boolean isBlacklisted = false;
-
-        Blacklist bl = weblogManager.getWeblogBlacklist(comment.getWeblogEntry().getWeblog());
-
-        if (bl.isBlacklisted(comment.getUrl()) || bl.isBlacklisted(comment.getEmail()) ||
-                bl.isBlacklisted(comment.getName()) || bl.isBlacklisted(comment.getContent())) {
-            isBlacklisted = true;
+    private boolean isBlacklisted(List<Pattern> combinedRules, String textToCheck) {
+        if (!StringUtils.isEmpty(textToCheck)) {
+            for (Pattern testPattern : combinedRules) {
+                Matcher matcher = testPattern.matcher(textToCheck);
+                if (matcher.find()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} matched by {}", matcher.group(), testPattern.pattern());
+                    }
+                    return true;
+                }
+            }
         }
-        return isBlacklisted;
+        return false;
+    }
+
+    /**
+     * Create a list of regex Pattern elements from a line-delimited list
+     * @param blacklist String of regex rules, one per line delimited by \n
+     **/
+    public static List<Pattern> populateSpamRules(String blacklist) {
+        List<Pattern> regexRules = new ArrayList<>();
+
+        if (blacklist != null) {
+            StringTokenizer tokenizer = new StringTokenizer(blacklist, "\n");
+
+            while (tokenizer.hasMoreTokens()) {
+                String token = tokenizer.nextToken().trim();
+                if (token.startsWith("#")) {
+                    continue;
+                }
+                regexRules.add(Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
+            }
+        }
+
+        return regexRules;
     }
 }

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
 import org.tightblog.business.WebloggerContext;
+import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -101,6 +102,9 @@ public class Weblog {
     private String analyticsCode = null;
     private int hitsToday = 0;
     private boolean applyCommentDefaults = false;
+
+    // Transient, derived from and re-calculated each time blacklist property is set
+    private List<java.util.regex.Pattern> blacklistRegexRules = new ArrayList<>();
 
     // is this weblog instance used for previewing a theme?
     private boolean usedForThemePreview = false;
@@ -228,6 +232,13 @@ public class Weblog {
 
     public void setBlacklist(String blacklist) {
         this.blacklist = blacklist;
+        blacklistRegexRules = BlacklistCommentValidator.populateSpamRules(blacklist);
+    }
+
+    @Transient
+    @JsonIgnore
+    public List<java.util.regex.Pattern> getBlacklistRegexRules() {
+        return blacklistRegexRules;
     }
 
     @Basic(optional = false)

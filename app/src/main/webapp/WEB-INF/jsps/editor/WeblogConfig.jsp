@@ -217,7 +217,7 @@
     <tr>
         <td class="label"><fmt:message key="globalConfig.ignoreUrls"/></td>
         <td class="field"><textarea ng-model="ctrl.weblog.blacklist" rows="7" cols="40"></textarea></td>
-        <td class="description"><fmt:message key="globalConfig.tip.ignoreUrls"/></td>
+        <td class="description"><fmt:message key="weblogConfig.tip.ignoreUrls"/></td>
     </tr>
 
 </c:if>

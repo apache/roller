@@ -14,6 +14,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- Can override any bean here without needing to alter the tightblog WAR by defining
+     the override in a tightblog-custom.xml file in the runtime classpath,
+     e.g., CATALINA_HOME/lib/tightblog.xml for Tomcat -->
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -82,7 +85,6 @@
         <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
         <beans:property name="userManager" ref="userManager"/>
         <beans:property name="themeManager" ref="themeManager"/>
-        <beans:property name="weblogBlacklistCache" ref="weblogBlacklistCache"/>
     </beans:bean>
 
     <beans:bean id="weblogEntryManager" class="org.tightblog.business.WeblogEntryManagerImpl">
@@ -270,16 +272,18 @@
         </beans:property>
     </beans:bean>
 
+    <beans:bean id="blacklistCommentValidator" class="org.tightblog.rendering.comment.BlacklistCommentValidator">
+        <beans:property name="strategy" ref="persistenceStrategy"/>
+    </beans:bean>
+
     <!-- Comment Validators -->
     <beans:bean id="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
         <beans:property name="sourceList">
             <beans:list>
-                <beans:bean class="org.tightblog.rendering.comment.BlacklistCommentValidator">
-                    <beans:property name="weblogManager" ref="weblogManager"/>
-                </beans:bean>
+                <beans:ref bean="blacklistCommentValidator"/>
                 <beans:bean class="org.tightblog.rendering.comment.ExcessLinksCommentValidator"/>
                 <beans:bean class="org.tightblog.rendering.comment.ExcessSizeCommentValidator"/>
-                <!--Akismet requires configuration of user key below -->
+                <!--Akismet requires configuration of user key below, see top of this file for instructions -->
                 <!--beans:bean class="AkismetCommentValidator">
                     <beans:constructor-arg ref="urlStrategy"/>
                     <beans:constructor-arg name="apiKey" value="...your key here..."/>
@@ -312,7 +316,6 @@
                 <beans:value>favicon.ico</beans:value>
                 <beans:value>robots.txt</beans:value>
                 <beans:value>page</beans:value>
-                <beans:value>flavor</beans:value>
                 <beans:value>rss</beans:value>
                 <beans:value>atom</beans:value>
                 <beans:value>search</beans:value>
@@ -346,12 +349,6 @@
     <beans:bean id="weblogPageCache" parent="abstractCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogpage"/>
         <beans:property name="size" value="400"/>
-        <beans:property name="timeoutSec" value="3600"/>
-    </beans:bean>
-
-    <beans:bean id="weblogBlacklistCache" parent="abstractCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
-        <beans:property name="cacheHandlerId" value="cache.weblogblacklist"/>
-        <beans:property name="size" value="200"/>
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 

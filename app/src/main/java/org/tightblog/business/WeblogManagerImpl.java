@@ -20,7 +20,6 @@
  */
 package org.tightblog.business;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template.ComponentType;
@@ -37,9 +36,7 @@ import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.util.Blacklist;
 import org.tightblog.rendering.cache.CacheManager;
-import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,22 +58,16 @@ public class WeblogManagerImpl implements WeblogManager {
     private static Logger log = LoggerFactory.getLogger(WeblogManagerImpl.class);
 
     private UserManager userManager;
-    private LazyExpiringCache weblogBlacklistCache = null;
     private WeblogEntryManager weblogEntryManager;
     private IndexManager indexManager;
     private ThemeManager themeManager;
     private final MediaFileManager mediaFileManager;
     private final JPAPersistenceStrategy strategy;
     private final CacheManager cacheManager;
-    private Blacklist siteBlacklist = null;
 
     // Map of each weblog and its extra hit count that has had additional accesses since the
     // last scheduled updateHitCounters() call.
     private Map<String, Long> hitsTally = Collections.synchronizedMap(new HashMap<>());
-
-    public void setWeblogBlacklistCache(LazyExpiringCache weblogBlacklistCache) {
-        this.weblogBlacklistCache = weblogBlacklistCache;
-    }
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
@@ -730,23 +721,6 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public Blacklist getWeblogBlacklist(Weblog weblog) {
-        if (StringUtils.isEmpty(weblog.getBlacklist())) {
-            // just rely on the global blacklist if no overrides
-            return getSiteBlacklist();
-        } else {
-            Blacklist bl = (Blacklist) weblogBlacklistCache.get(weblog.getHandle(), weblog.getLastModified());
-
-            if (bl == null) {
-                bl = new Blacklist(weblog.getBlacklist(), getSiteBlacklist());
-                weblogBlacklistCache.put(weblog.getHandle(), bl);
-            }
-
-            return bl;
-        }
-    }
-
-    @Override
     public List<WeblogEntryTagAggregate> getPopularTags(Weblog weblog, int offset, int limit) {
 
         List<WeblogEntryTagAggregate> tagAggs = getTags(weblog, "name", null, offset, (limit >= 0) ? limit : 25);
@@ -915,18 +889,4 @@ public class WeblogManagerImpl implements WeblogManager {
         resultsMap.put("unchanged", unchangedEntries);
         return resultsMap;
     }
-
-    private Blacklist getSiteBlacklist() {
-        if (siteBlacklist == null) {
-            WebloggerProperties props = strategy.getWebloggerProperties();
-            siteBlacklist = new Blacklist(props.getCommentSpamFilter(), null);
-        }
-        return siteBlacklist;
-    }
-
-    @Override
-    public void setSiteBlacklist(Blacklist siteBlacklist) {
-        this.siteBlacklist = siteBlacklist;
-    }
-
 }
