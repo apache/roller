@@ -27,7 +27,6 @@ import org.tightblog.pojos.WeblogBookmark;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogTemplate;
-import org.tightblog.util.Blacklist;
 
 import java.util.List;
 import java.util.Map;
@@ -254,11 +253,6 @@ public interface WeblogManager {
     List<WeblogCategory> getWeblogCategories(Weblog weblog);
 
     /**
-     * Obtain the combined blacklist (global-defined & weblog-defined) for a given weblog.
-     */
-    Blacklist getWeblogBlacklist(Weblog weblog);
-
-    /**
      * Get list of WeblogEntryTagAggregate objects identifying the most used tags for a weblog.
      * There are no offset/length params just a limit.
      *
@@ -311,10 +305,4 @@ public interface WeblogManager {
      *         unchanged refers to entries having currentTag but already having newTag.
      */
     Map<String, Integer> addTag(Weblog weblog, String currentTag, String newTag);
-
-    /**
-     * Refresh the site-level (as opposed to blog-specific) blacklist, to be used
-     * when site-level blacklist rules have changed
-     */
-    void setSiteBlacklist(Blacklist siteBlacklist);
 }

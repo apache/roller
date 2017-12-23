@@ -16,25 +16,27 @@
 package org.tightblog.rendering.comment;
 
 import org.junit.Test;
-import org.tightblog.business.WeblogManager;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.util.Blacklist;
+import org.tightblog.pojos.WebloggerProperties;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
+import java.util.regex.Pattern;
 
+import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class BlacklistCommentValidatorTest {
 
-    private WeblogEntryComment generateWeblogEntryComment() {
+    private WeblogEntryComment generateWeblogEntryComment(String weblogBlacklistStr) {
         Weblog weblog = new Weblog();
+        weblog.setBlacklist(weblogBlacklistStr);
         WeblogEntry weblogEntry = new WeblogEntry();
         weblogEntry.setWeblog(weblog);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -42,19 +44,20 @@ public class BlacklistCommentValidatorTest {
         return wec;
     }
 
-    private BlacklistCommentValidator generateBlacklistValidator(String blacklistStr) {
-        Blacklist blacklist = new Blacklist(blacklistStr, null);
-        WeblogManager mockWeblogManager = mock(WeblogManager.class);
-        when(mockWeblogManager.getWeblogBlacklist(any())).thenReturn(blacklist);
+    private BlacklistCommentValidator generateBlacklistValidator(String siteBlacklistStr) {
+        WebloggerProperties properties = new WebloggerProperties();
+        properties.setCommentSpamFilter(siteBlacklistStr);
+        JPAPersistenceStrategy mockStrategy = mock(JPAPersistenceStrategy.class);
+        when(mockStrategy.getWebloggerProperties()).thenReturn(properties);
         BlacklistCommentValidator validator = new BlacklistCommentValidator();
-        validator.setWeblogManager(mockWeblogManager);
+        validator.setStrategy(mockStrategy);
         return validator;
     }
 
     @Test
     public void acceptNullComment() throws Exception {
-        BlacklistCommentValidator validator = generateBlacklistValidator("badword");
-        WeblogEntryComment wec = generateWeblogEntryComment();
+        BlacklistCommentValidator validator = generateBlacklistValidator("badsiteword");
+        WeblogEntryComment wec = generateWeblogEntryComment("badweblogword");
         wec.setContent(null);
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(wec, messageMap);
@@ -64,10 +67,9 @@ public class BlacklistCommentValidatorTest {
 
     @Test
     public void failBlacklistInCommentURL() throws Exception {
-        String badSite = "badword.com";
-        BlacklistCommentValidator validator = generateBlacklistValidator(badSite);
-        WeblogEntryComment wec = generateWeblogEntryComment();
-        wec.setUrl(badSite);
+        BlacklistCommentValidator validator = generateBlacklistValidator("badurl\\.com");
+        WeblogEntryComment wec = generateWeblogEntryComment("");
+        wec.setUrl("badurl.com");
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(wec, messageMap);
         String expectedKey = "comment.validator.blacklistMessage";
@@ -78,20 +80,19 @@ public class BlacklistCommentValidatorTest {
 
     @Test
     public void failBlacklistInCommentEmailAddress() throws Exception {
-        String badWord = "badword.com";
-        BlacklistCommentValidator validator = generateBlacklistValidator(badWord);
-        WeblogEntryComment wec = generateWeblogEntryComment();
-        wec.setEmail("abc@" + badWord);
+        BlacklistCommentValidator validator = generateBlacklistValidator("");
+        WeblogEntryComment wec = generateWeblogEntryComment("badorg\\.com");
+        wec.setEmail("abc@badorg.com");
         ValidationResult result = validator.validate(wec, new HashMap<>());
         assertEquals("Blacklisted term in email address wasn't failed", ValidationResult.SPAM, result);
     }
 
     @Test
     public void failBlacklistInCommentName() throws Exception {
-        String badWord = "badword";
-        BlacklistCommentValidator validator = generateBlacklistValidator(badWord);
-        WeblogEntryComment wec = generateWeblogEntryComment();
-        wec.setName("Bob " + badWord);
+        String badPerson = "Bad Person";
+        BlacklistCommentValidator validator = generateBlacklistValidator(badPerson);
+        WeblogEntryComment wec = generateWeblogEntryComment("");
+        wec.setName(badPerson);
         ValidationResult result = validator.validate(wec, new HashMap<>());
         assertEquals("Blacklisted term in commenter name wasn't failed", ValidationResult.SPAM, result);
     }
@@ -99,26 +100,35 @@ public class BlacklistCommentValidatorTest {
     @Test
     public void failBlacklistInCommentContent() throws Exception {
         String badWord = "badword";
-        BlacklistCommentValidator validator = generateBlacklistValidator(badWord);
-        WeblogEntryComment wec = generateWeblogEntryComment();
-        wec.setContent("hello " + badWord + " how are you");
+        BlacklistCommentValidator validator = generateBlacklistValidator("");
+        WeblogEntryComment wec = generateWeblogEntryComment(badWord);
+        // testing case-insensitive match
+        wec.setContent("hello " + badWord.toUpperCase() + " how are you");
         ValidationResult result = validator.validate(wec, new HashMap<>());
         assertEquals("Blacklisted term in comment content wasn't failed", ValidationResult.SPAM, result);
     }
 
     @Test
     public void acceptNoBlacklistedWordInComment() throws Exception {
-        String badWord = "badword";
-        BlacklistCommentValidator validator = generateBlacklistValidator(badWord);
-        WeblogEntryComment wec = generateWeblogEntryComment();
+        BlacklistCommentValidator validator = generateBlacklistValidator("badword");
+        WeblogEntryComment wec = generateWeblogEntryComment("verybadword");
         wec.setName("Bob");
         wec.setUrl("http://www.foo.com");
         wec.setEmail("bob@foo.com");
         wec.setContent("great blog article!");
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(wec, messageMap);
-        String expectedKey = "comment.validator.blacklistMessage";
         assertEquals("Clean comment wasn't accepted", ValidationResult.NOT_SPAM, result);
         assertEquals("Message Map hasn't zero entries",0, messageMap.size());
+    }
+
+    @Test
+    public void testPopulateSpamRules() {
+        String blacklistString = "badword\nbadUrl\\.com\n#comment to ignore\nbad phrase";
+        List<Pattern> patterns = BlacklistCommentValidator.populateSpamRules(blacklistString);
+        assertEquals(patterns.size(), 3);
+        assertEquals("badword", patterns.get(0).pattern());
+        assertEquals("badUrl\\.com", patterns.get(1).pattern());
+        assertEquals("bad phrase", patterns.get(2).pattern());
     }
 }

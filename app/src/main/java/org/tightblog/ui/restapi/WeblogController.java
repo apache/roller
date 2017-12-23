@@ -42,7 +42,6 @@ import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.util.Blacklist;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
@@ -250,16 +249,6 @@ public class WeblogController {
             if (weblogManager.getWeblogByHandle(data.getHandle()) != null) {
                 be.addError(new ObjectError("Weblog object", bundle.getString("weblogConfig.error.handleExists")));
             }
-        }
-
-        // check blacklist
-        try {
-            // just for testing/counting, this does not persist rules in any way
-            Blacklist testBlacklist = new Blacklist(data.getBlacklist(), null);
-        } catch (Exception e) {
-            be.addError(new ObjectError("Weblog object",
-                    bundle.getString("weblogConfig.error.processingBlacklist")));
-            be.addError(new ObjectError("Weblog object", e.getMessage()));
         }
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;

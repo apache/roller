@@ -37,7 +37,7 @@ import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.util.Blacklist;
+import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
@@ -93,6 +93,13 @@ public class AdminController {
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+    }
+
+    @Autowired
+    private BlacklistCommentValidator blacklistCommentValidator;
+
+    public void setBlacklistCommentValidator(BlacklistCommentValidator blacklistCommentValidator) {
+        this.blacklistCommentValidator = blacklistCommentValidator;
     }
 
     public AdminController() {
@@ -180,12 +187,9 @@ public class AdminController {
     public ResponseEntity updateProperties(Principal p, @Valid @RequestBody WebloggerProperties properties) {
         User user = userManager.getEnabledUserByUserName(p.getName());
         I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
-
         persistenceStrategy.merge(properties);
         persistenceStrategy.flush();
-
-        weblogManager.setSiteBlacklist(new Blacklist(properties.getCommentSpamFilter(), null));
-
+        blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
         return ResponseEntity.ok(messages.getString("generic.changes.saved"));
     }
 
