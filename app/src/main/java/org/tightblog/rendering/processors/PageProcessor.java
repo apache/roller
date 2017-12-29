@@ -151,12 +151,14 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         // generate cache key
-        String cacheKey = generateKey(incomingRequest);
+        String cacheKey = null;
 
         // Check cache for content except during comment feedback/preview (i.e., commentForm present)
         WeblogEntryComment commentForm = (WeblogEntryComment) request.getAttribute("commentForm");
 
         if (commentForm == null) {
+            cacheKey = generateKey(incomingRequest);
+
             CachedContent cachedContent = (CachedContent) (isSiteWide ? siteWideCache.get(cacheKey)
                     : weblogPageCache.get(cacheKey, lastModified));
 
@@ -241,13 +243,11 @@ public class PageProcessor extends AbstractProcessor {
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());
 
-            // keep cache clear of pages with comment data
-            if (commentForm == null) {
+            if (incomingRequest.isWeblogPageHit()) {
+                weblogManager.incrementHitCount(weblog);
+            }
 
-                if (incomingRequest.isWeblogPageHit()) {
-                    weblogManager.incrementHitCount(weblog);
-                }
-
+            if (cacheKey != null) {
                 log.debug("PUT {}", cacheKey);
 
                 if (isSiteWide) {

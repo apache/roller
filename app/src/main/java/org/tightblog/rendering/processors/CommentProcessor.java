@@ -287,9 +287,8 @@ public class CommentProcessor extends AbstractProcessor {
                 }
             }
 
-            // clear the comment form
-            incomingComment = new WeblogEntryComment();
-            incomingComment.initializeFormFields();
+            // clear content field while retaining others to facilitate another comment
+            incomingComment.setContent("");
         }
 
         // now send the user back to the weblog entry page via PageProcessor
