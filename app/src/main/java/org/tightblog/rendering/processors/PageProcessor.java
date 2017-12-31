@@ -20,6 +20,7 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
@@ -150,12 +151,13 @@ public class PageProcessor extends AbstractProcessor {
             setLastModifiedHeader(response, lastModified, incomingRequest.getDeviceType());
         }
 
-        // generate cache key
+        // cache key to retrieve earlier generated content
         String cacheKey = null;
 
         // Check cache for content except during comment feedback/preview (i.e., commentForm present)
         WeblogEntryComment commentForm = (WeblogEntryComment) request.getAttribute("commentForm");
 
+        // pages containing user-specific comment forms aren't cached
         if (commentForm == null) {
             cacheKey = generateKey(incomingRequest);
 
@@ -297,6 +299,10 @@ public class PageProcessor extends AbstractProcessor {
 
             if (request.getPageNum() > 0) {
                 key.append("/page=").append(request.getPageNum());
+            }
+
+            if (!StringUtils.isBlank(request.getQueryString())) {
+                key.append("/query=").append(request.getQueryString());
             }
         }
 

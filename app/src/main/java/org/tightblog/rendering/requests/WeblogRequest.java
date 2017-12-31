@@ -59,6 +59,7 @@ public class WeblogRequest {
     // lightweight attributes
     private String weblogHandle = null;
     private String pathInfo = null;
+    private String queryString = null;
     private String authenticatedUser = null;
     private DeviceType deviceType = DeviceType.NORMAL;
     private HttpServletRequest request;
@@ -73,6 +74,7 @@ public class WeblogRequest {
     public WeblogRequest(HttpServletRequest request) {
 
         this.request = request;
+        this.queryString = request.getQueryString();
 
         // login status
         java.security.Principal principal = request.getUserPrincipal();
@@ -171,5 +173,13 @@ public class WeblogRequest {
 
     public void setBlogger(User blogger) {
         this.blogger = blogger;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
     }
 }

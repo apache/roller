@@ -339,11 +339,12 @@ public class PageProcessorTest {
         when(request.getWeblogDate()).thenReturn("20171006");
         when(request.getWeblogCategoryName()).thenReturn("finance");
         when(request.getTag()).thenReturn("taxes");
+        when(request.getQueryString()).thenReturn("a=foo&b=123");
         when(request.getPageNum()).thenReturn(5);
 
         test1 = PageProcessor.generateKey(request);
         assertEquals("weblogpage.key:bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
-                "taxes/page=5/deviceType=MOBILE", test1);
+                "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE", test1);
     }
 
 }

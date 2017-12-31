@@ -56,7 +56,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private WeblogEntry weblogEntry = null;
 
     // Page hits
-    private boolean weblogPageHit = false;
+    private boolean weblogPageHit = true;
 
     public WeblogPageRequest() {
     }
@@ -80,8 +80,6 @@ public class WeblogPageRequest extends WeblogRequest {
 
         // parse the request object and figure out what we've got
         log.debug("parsing path {}", pathInfo);
-
-        weblogPageHit = true;
 
         /*
          * parse path info
