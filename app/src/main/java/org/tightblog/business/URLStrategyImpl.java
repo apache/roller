@@ -233,14 +233,19 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getCustomPageURL(Weblog weblog, String pageLink, boolean absolute) {
-
+    public String getCustomPageURL(Weblog weblog, String pageLink, String dateString, boolean absolute) {
         String url = getRootWeblogURL(weblog, absolute);
+        Map<String, String> params = new HashMap<>();
 
         if (pageLink != null && pageLink.length() > 0) {
             url += "page/" + pageLink;
+
+            if (dateString != null) {
+                params.put("date", dateString);
+            }
         }
-        return url;
+
+        return url + Utilities.getQueryString(params);
     }
 
     @Override

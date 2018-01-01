@@ -152,7 +152,7 @@ public class PreviewProcessor extends AbstractProcessor {
 
         Template page = null;
         if ("page".equals(incomingRequest.getContext())) {
-            page = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
+            page = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
 
             incomingRequest.setTemplate(page);
           // If this is a permalink then look for a permalink template

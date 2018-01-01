@@ -130,13 +130,16 @@ public interface URLStrategy {
      * "http://www.foo.com/myblog/page/MyPage.html."
      * @param weblog weblog containing the custom external page.
      * @param pageLink the page link (in the example above MyPage.html) defined by
-     *                 the blogger when creatuing the template that generates this
+     *                 the blogger when creating the template that generates this
      *                 page. For the example above, it would be MyPage.html.
+     * @param dateString Desired date (YYYYMM or YYYYMMDD format) parameter for the page,
+     *                   useful e.g. a calendar on a blog archive page where the YYYYMM
+     *                   indicates the calendar month to display
      * @param absolute if true, full URL, if false, URL relative to the blog's home
      *                 page.
      * @return URL, absolute or relative, for the given pageLink.
      */
-    String getCustomPageURL(Weblog weblog, String pageLink, boolean absolute);
+    String getCustomPageURL(Weblog weblog, String pageLink, String dateString, boolean absolute);
 
     /**
      * Get url for a feed on a given weblog.

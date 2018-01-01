@@ -165,7 +165,7 @@ public class PageProcessorTest {
         initializeMocks();
 
         // test null template returns 404
-        pageRequest.setWeblogTemplateName("mytemplate");
+        pageRequest.setCustomPageName("mytemplate");
         WeblogTheme mockTheme = mock(WeblogTheme.class);
         when(mockThemeManager.getWeblogTheme(weblog)).thenReturn(mockTheme);
         when(mockTheme.getTemplateByPath(any())).thenReturn(null);
@@ -208,7 +208,7 @@ public class PageProcessorTest {
         // test permalink template using site cache, no weblog page hit
         sharedTheme.setSiteWide(true);
         pageRequest.setWeblogPageHit(false);
-        pageRequest.setWeblogTemplateName(null);
+        pageRequest.setCustomPageName(null);
         pageRequest.setWeblogEntryAnchor("myentry");
 
         WeblogTemplate wt2 = new WeblogTemplate();
@@ -271,7 +271,7 @@ public class PageProcessorTest {
         WeblogEntryComment wec = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(wec);
 
-        pageRequest.setWeblogTemplateName("mytemplate");
+        pageRequest.setCustomPageName("mytemplate");
         WeblogTheme mockTheme = mock(WeblogTheme.class);
         when(mockThemeManager.getWeblogTheme(weblog)).thenReturn(mockTheme);
         when(mockTheme.getTemplateByPath(any())).thenReturn(null);
@@ -335,7 +335,7 @@ public class PageProcessorTest {
         when(request.getWeblogEntryAnchor()).thenReturn(null);
         when(request.getAuthenticatedUser()).thenReturn(null);
         when(request.getDeviceType()).thenReturn(DeviceType.MOBILE);
-        when(request.getWeblogTemplateName()).thenReturn("mytemplate");
+        when(request.getCustomPageName()).thenReturn("mytemplate");
         when(request.getWeblogDate()).thenReturn("20171006");
         when(request.getWeblogCategoryName()).thenReturn("finance");
         when(request.getTag()).thenReturn("taxes");

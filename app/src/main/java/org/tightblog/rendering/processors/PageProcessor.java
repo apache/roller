@@ -183,10 +183,10 @@ public class PageProcessor extends AbstractProcessor {
 
         // not using cache so need to generate page from scratch
         // figure out what template to use
-        if (incomingRequest.getWeblogTemplateName() != null) {
-            Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getWeblogTemplateName());
+        if (incomingRequest.getCustomPageName() != null) {
+            Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
 
-            // block internal custom pages from appearance
+            // block internal custom pages from appearing directly
             if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
                 incomingRequest.setTemplate(template);
             }
@@ -277,8 +277,8 @@ public class PageProcessor extends AbstractProcessor {
         if (request.getWeblogEntryAnchor() != null) {
             key.append("/entry/").append(request.getWeblogEntryAnchor());
         } else {
-            if (request.getWeblogTemplateName() != null) {
-                key.append("/page/").append(request.getWeblogTemplateName());
+            if (request.getCustomPageName() != null) {
+                key.append("/page/").append(request.getCustomPageName());
             }
 
             if (request.getWeblogDate() != null) {
