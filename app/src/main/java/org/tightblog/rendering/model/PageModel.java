@@ -335,7 +335,7 @@ public class PageModel implements Model {
                     weblogEntryManager,
                     urlStrategy,
                     pageRequest.getWeblog(),
-                    pageRequest.getWeblogTemplateName(),
+                    pageRequest.getCustomPageName(),
                     pageRequest.getWeblogEntryAnchor(),
                     // preview can show draft entries
                     preview);

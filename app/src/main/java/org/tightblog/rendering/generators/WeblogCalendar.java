@@ -120,7 +120,15 @@ public class WeblogCalendar {
     }
 
     /**
-     * Create URL for use on view-weblog page
+     * Create previous or next month URLs for the calendar, that normally appear to the left and right of the
+     * month name at the top of the calendar.
+     *
+     * The URL to return is commonly of two types:
+     * (1) Usually for the small calendar that is displayed along with the blog entries, a month
+     *     paginator that will show the blog entries of a different month, i.e., getWeblogCollectionURL.
+     * (2) For the large calendar that might sit on a custom "archive" page, the previous and next month links
+     *     should point to that same archive page, albeit giving the calendar for a different month, i.e.,
+     *     getCustomPageURL.
      *
      * @param day       Day for URL or null if no entries on that day
      * @param alwaysURL Always return a URL, never return null
@@ -135,7 +143,12 @@ public class WeblogCalendar {
                 return null;
             }
         }
-        return urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
+        if (pageRequest.getCustomPageName() != null) {
+            return urlStrategy.getCustomPageURL(weblog, pageRequest.getCustomPageName(), dateString, false);
+
+        } else {
+            return urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
+        }
     }
 
     protected void loadWeblogEntries(WeblogEntrySearchCriteria wesc) {

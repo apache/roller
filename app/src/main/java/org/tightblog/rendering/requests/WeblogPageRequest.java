@@ -22,7 +22,6 @@ package org.tightblog.rendering.requests;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tightblog.pojos.Template;
-import org.tightblog.pojos.User;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class WeblogPageRequest extends WeblogRequest {
     // lightweight attributes
     private String context = null;
     private String weblogEntryAnchor = null;
-    private String weblogTemplateName = null;
+    private String customPageName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
     private String tag = null;
@@ -86,7 +85,8 @@ public class WeblogPageRequest extends WeblogRequest {
          *
          * we expect one of the following forms of url ...
          *
-         * /entry/<anchor> - permalink /date/<YYYYMMDD> - date collection view
+         * /entry/<anchor> - permalink
+         * /date/<YYYYMMDD> - date collection view
          * /category/<category> - category collection view
          * /tag/<tag> - tag
          * /category/<category>/tag/<tag> - tag under a category
@@ -126,11 +126,19 @@ public class WeblogPageRequest extends WeblogRequest {
                         throw new IllegalArgumentException("Invalid date: " + request.getRequestURL());
                     }
                 } else if ("page".equals(this.context)) {
-                    this.weblogTemplateName = pathElements[1];
+                    this.customPageName = pathElements[1];
 
-                    // Other page, we do not want css etc stuff so filter out
+                    // css pages should not increment weblog page hits
                     if (pathElements[1].contains(".")) {
                         weblogPageHit = false;
+                    }
+
+                    // Custom pages may have a date parameter, e.g., the month to display on a blog archive page
+                    if (request.getParameter("date") != null) {
+                        String date = request.getParameter("date");
+                        if (this.isValidDateString(date)) {
+                            this.weblogDate = date;
+                        }
                     }
                 } else if ("tag".equals(this.context)) {
                     tag = pathElements[1];
@@ -160,7 +168,7 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("weblogDate = {}", weblogDate);
             log.debug("weblogCategory = {}", weblogCategoryName);
             log.debug("tag = {}", tag);
-            log.debug("template = {}", weblogTemplateName);
+            log.debug("template = {}", customPageName);
             log.debug("pageNum = {}", pageNum);
         }
     }
@@ -183,12 +191,12 @@ public class WeblogPageRequest extends WeblogRequest {
         this.weblogEntryAnchor = weblogEntryAnchor;
     }
 
-    public String getWeblogTemplateName() {
-        return weblogTemplateName;
+    public String getCustomPageName() {
+        return customPageName;
     }
 
-    public void setWeblogTemplateName(String weblogTemplateName) {
-        this.weblogTemplateName = weblogTemplateName;
+    public void setCustomPageName(String customPageName) {
+        this.customPageName = customPageName;
     }
 
     public String getWeblogCategoryName() {
