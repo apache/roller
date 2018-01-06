@@ -21,10 +21,12 @@ package org.apache.roller.weblogger.util;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.junit.Ignore;
 
 /**
  * Test linkback extractor.
  */
+@Ignore("Until rollerweblogger.org sorts out SSL issues")
 public class LinkbackExtractorTest extends TestCase {
     
     /**
@@ -58,11 +60,11 @@ public class LinkbackExtractorTest extends TestCase {
             // Second URL contains a link to the first
             {
                 "http://cassandra.apache.org/",
-                        "http://rollerweblogger.org/roller/entry/composite_keys_in_cassandra"
+                        "https://rollerweblogger.org/roller/entry/composite_keys_in_cassandra"
             },
             {
                 "http://roller.apache.org/downloads/downloads.html",
-                        "http://rollerweblogger.org/project/date/20140627"
+                        "https://rollerweblogger.org/project/date/20140627"
             }
         };
 
