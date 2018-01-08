@@ -21,7 +21,6 @@
 package org.tightblog.business;
 
 import org.tightblog.business.search.IndexManager;
-import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserStatus;
@@ -36,7 +35,6 @@ import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.rendering.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,10 +58,8 @@ public class WeblogManagerImpl implements WeblogManager {
     private UserManager userManager;
     private WeblogEntryManager weblogEntryManager;
     private IndexManager indexManager;
-    private ThemeManager themeManager;
     private final MediaFileManager mediaFileManager;
     private final JPAPersistenceStrategy strategy;
-    private final CacheManager cacheManager;
 
     // Map of each weblog and its extra hit count that has had additional accesses since the
     // last scheduled updateHitCounters() call.
@@ -81,42 +77,41 @@ public class WeblogManagerImpl implements WeblogManager {
         this.indexManager = indexManager;
     }
 
-    public void setThemeManager(ThemeManager themeManager) {
-        this.themeManager = themeManager;
-    }
-
     // cached mapping of weblogHandles -> weblogIds
     private Map<String, String> weblogHandleToIdMap = new Hashtable<>();
 
-    protected WeblogManagerImpl(MediaFileManager mfm, JPAPersistenceStrategy strat,
-                                CacheManager cacheManager) {
+    protected WeblogManagerImpl(MediaFileManager mfm, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA Weblog Manager");
         this.mediaFileManager = mfm;
         this.strategy = strat;
-        this.cacheManager = cacheManager;
     }
 
     @Override
     public void saveWeblog(Weblog weblog) {
         weblog.setLastModified(Instant.now());
         strategy.merge(weblog);
-        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
-            cacheManager.invalidate(weblog);
-        }
+
+        // update last weblog change so any site weblog knows it needs to update
+        WebloggerProperties props = strategy.getWebloggerProperties();
+        props.setLastWeblogChange(Instant.now());
+        strategy.store(props);
     }
 
     @Override
     public void removeWeblog(Weblog weblog) {
         // remove contents first, then remove weblog
-        this.removeWeblogContents(weblog);
-        this.strategy.remove(weblog);
-        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
-            cacheManager.invalidate(weblog);
-        }
-        this.strategy.flush();
+        removeWeblogContents(weblog);
+        strategy.remove(weblog);
+
+        // update last weblog change so any site weblog knows it needs to update
+        WebloggerProperties props = strategy.getWebloggerProperties();
+        props.setLastWeblogChange(Instant.now());
+        strategy.store(props);
+
+        strategy.flush();
 
         // remove entry from cache mapping
-        this.weblogHandleToIdMap.remove(weblog.getHandle());
+        weblogHandleToIdMap.remove(weblog.getHandle());
     }
 
     /**
@@ -207,11 +202,7 @@ public class WeblogManagerImpl implements WeblogManager {
     @Override
     public void removeTemplate(WeblogTemplate template) {
         this.strategy.remove(template);
-        // update weblog last modified date.  date updated by saveWeblog()
         saveWeblog(template.getWeblog());
-        if (themeManager.getSharedTheme(template.getWeblog().getTheme()).isSiteWide()) {
-            cacheManager.invalidate(template.getWeblog());
-        }
     }
 
     @Override
@@ -555,10 +546,6 @@ public class WeblogManagerImpl implements WeblogManager {
         weblog.getBookmarks().remove(bookmark);
         weblog.invalidateCache();
         this.strategy.remove(bookmark);
-
-        if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
-            cacheManager.invalidate(weblog);
-        }
     }
 
     @Override
@@ -581,17 +568,24 @@ public class WeblogManagerImpl implements WeblogManager {
                 weblogEntryManager.saveWeblogEntry(entry);
             }
 
+            if (scheduledEntries.size() > 0) {
+                // update last weblog change so any site weblog knows it needs to update
+                WebloggerProperties props = strategy.getWebloggerProperties();
+                props.setLastWeblogChange(Instant.now());
+                strategy.store(props);
+            }
+
             // commit the changes
             strategy.flush();
 
-            // take a second pass to trigger reindexing and cache invalidations
+            // take a second pass to trigger reindexing
             // this is because we need the updated entries flushed first
             for (WeblogEntry entry : scheduledEntries) {
-                // trigger a cache invalidation
-                cacheManager.invalidate(entry);
                 // trigger search index on entry
                 indexManager.updateIndex(entry, false);
             }
+
+
 
         } catch (Exception e) {
             log.error("Unexpected exception running task", e);

@@ -21,6 +21,7 @@
 package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTemplate;
 import org.tightblog.business.themes.ThemeManager;
@@ -32,7 +33,6 @@ import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.rendering.cache.SiteWideCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,13 +66,6 @@ public class FeedProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private SiteWideCache siteWideCache = null;
-
-    public void setSiteWideCache(SiteWideCache siteWideCache) {
-        this.siteWideCache = siteWideCache;
-    }
-
-    @Autowired
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
@@ -92,6 +85,13 @@ public class FeedProcessor extends AbstractProcessor {
 
     public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
+    }
+
+    @Autowired
+    protected JPAPersistenceStrategy strategy;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -124,7 +124,7 @@ public class FeedProcessor extends AbstractProcessor {
         }
 
         // determine the lastModified date for this content
-        Instant lastModified = (feedRequest.isSiteWideFeed()) ? siteWideCache.getLastModified()
+        Instant lastModified = (feedRequest.isSiteWideFeed()) ? strategy.getWebloggerProperties().getLastWeblogChange()
                 : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
@@ -139,9 +139,9 @@ public class FeedProcessor extends AbstractProcessor {
         response.setContentType("application/atom+xml; charset=utf-8");
 
         // cached content checking
-        String cacheKey = generateKey(feedRequest);
+        String cacheKey = generateKey(feedRequest, feedRequest.isSiteWideFeed());
         CachedContent cachedContent = (CachedContent) (feedRequest.isSiteWideFeed() ?
-                siteWideCache.get(cacheKey) : weblogFeedCache.get(cacheKey, lastModified));
+                strategy.getWebloggerProperties().getLastWeblogChange() : weblogFeedCache.get(cacheKey, lastModified));
 
         if (cachedContent != null) {
             log.debug("HIT {}", cacheKey);
@@ -217,13 +217,7 @@ public class FeedProcessor extends AbstractProcessor {
 
         // cache rendered content. only cache if user is not logged in?
         log.debug("PUT {}", cacheKey);
-        if (feedRequest.isSiteWideFeed()) {
-            siteWideCache.put(cacheKey, rendererOutput);
-        } else {
-            weblogFeedCache.put(cacheKey, rendererOutput);
-        }
-
-        log.debug("Exiting");
+        weblogFeedCache.put(cacheKey, rendererOutput);
     }
 
     /**
@@ -238,7 +232,7 @@ public class FeedProcessor extends AbstractProcessor {
      * foo/comments/cat/technology
      * foo/entries/tag/travel
      */
-    protected String generateKey(WeblogFeedRequest feedRequest) {
+    protected String generateKey(WeblogFeedRequest feedRequest, boolean isSiteWide) {
         StringBuilder key = new StringBuilder();
 
         key.append("weblogfeed.key").append(":");
@@ -254,6 +248,12 @@ public class FeedProcessor extends AbstractProcessor {
             String tag = feedRequest.getTag();
             tag = Utilities.encode(tag);
             key.append("/tag/").append(tag);
+        }
+
+        // site wide feeds must be cognizant of the last update date of any weblog or weblog entry
+        // as they get refreshed whenever another blog or blog entry does.
+        if (isSiteWide) {
+            key.append("/lastUpdate=").append(strategy.getWebloggerProperties().getLastWeblogChange());
         }
 
         return key.toString();

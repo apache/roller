@@ -237,7 +237,8 @@ create table weblogger_properties (
     allowed_file_extensions varchar(255),
     disallowed_file_extensions varchar(255) default 'exe',
     max_file_size_mb       integer default 3 not null,
-    max_file_uploads_size_mb integer default 20 not null
+    max_file_uploads_size_mb integer default 20 not null,
+    last_weblog_change     $db.TIMESTAMP_SQL_TYPE
 );
 
 alter table weblogger_properties add constraint wp_weblogid_fk

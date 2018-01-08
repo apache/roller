@@ -194,9 +194,9 @@ public class UIController {
         response.sendRedirect(request.getContextPath() + path);
     }
 
-    @RequestMapping(value = "/admin/cacheInfo")
-    public ModelAndView cacheInfo(Principal principal) {
-        return getAdminPage(principal, "cacheInfo");
+    @RequestMapping(value = "/admin/cachedData")
+    public ModelAndView cachedData(Principal principal) {
+        return getAdminPage(principal, "cachedData");
     }
 
     @RequestMapping(value = "/admin/globalConfig")

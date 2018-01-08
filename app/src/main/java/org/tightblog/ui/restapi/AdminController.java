@@ -28,8 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
-import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -37,11 +38,11 @@ import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
-import org.tightblog.rendering.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,10 +69,10 @@ public class AdminController {
     private I18nMessages messages = I18nMessages.getMessages(Locale.getDefault());
 
     @Autowired
-    private CacheManager cacheManager;
+    private Set<LazyExpiringCache> cacheSet;
 
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
+    public void setCacheSet(Set<LazyExpiringCache> cacheSet) {
+        this.cacheSet = cacheSet;
     }
 
     @Autowired
@@ -113,29 +114,25 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/caches", method = RequestMethod.GET)
-    public Map<String, CacheStats> getCacheData() throws ServletException {
-        return cacheManager.getStats();
+    public Map<String, LazyExpiringCache> getCacheData() throws ServletException {
+        Map<String, LazyExpiringCache> cacheMap = new HashMap<>();
+        cacheSet.forEach(c -> cacheMap.put(c.getCacheHandlerId(), c));
+        return cacheMap;
     }
 
     @RequestMapping(value = "/cache/{cacheName}/clear", method = RequestMethod.POST)
-    public Map<String, CacheStats> emptyOneCache(@PathVariable String cacheName) throws ServletException {
-        cacheManager.clear(cacheName);
-        Map<String, CacheStats> temp = new HashMap<>();
-        temp.put(cacheName, cacheManager.getStats(cacheName));
-        return temp;
-    }
-
-    @RequestMapping(value = "/caches/clear", method = RequestMethod.POST)
-    public Map<String, CacheStats> emptyAllCaches() throws ServletException {
-        cacheManager.clear();
-        return getCacheData();
+    public ResponseEntity<String> emptyOneCache(@PathVariable String cacheName) throws ServletException {
+        Optional<LazyExpiringCache> maybeCache = cacheSet.stream()
+                .filter(c -> c.getCacheHandlerId().equalsIgnoreCase(cacheName)).findFirst();
+        maybeCache.ifPresent(LazyExpiringCache::invalidateAll);
+        return ResponseEntity.ok(messages.getString("cachedData.message.cache.cleared", cacheName));
     }
 
     @RequestMapping(value = "/resethitcount", method = RequestMethod.POST)
     public ResponseEntity<String> resetHitCount() {
         try {
             weblogManager.resetAllHitCounts();
-            return ResponseEntity.ok(messages.getString("maintenance.message.reset"));
+            return ResponseEntity.ok(messages.getString("cachedData.message.reset"));
         } catch (Exception ex) {
             log.error("Error resetting weblog hit count - {}", ex);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
@@ -166,7 +163,7 @@ public class AdminController {
             Weblog weblog = weblogManager.getWeblogByHandle(handle);
             if (weblog != null) {
                 indexManager.updateIndex(weblog, false);
-                return ResponseEntity.ok(messages.getString("maintenance.message.indexed", handle));
+                return ResponseEntity.ok(messages.getString("cachedData.message.indexed", handle));
             } else {
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).
                         body(messages.getString("generic.error.check.logs"));

@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,7 @@ import java.time.Instant;
  * invalidation time, we can now be lazy and just invalidate them when we
  * actually try to retrieve the cached object.
  * <p>
- * This is useful for Roller because we will no longer have to iterate through
+ * This is useful for TightBlog because we will no longer have to iterate through
  * the list of cached objects and inspect the keys to figure out what items to
  * invalidate.  Instead we can just sit back and let the items be invalidated as
  * we try to use them.
@@ -60,18 +60,14 @@ class LazyExpiringCacheEntry {
      * If the value has expired then we return null.
      */
     public Object getValue(Instant lastInvalidated) {
-        if (this.isInvalid(lastInvalidated)) {
-            return null;
-        } else {
-            return this.value;
-        }
+        return isValid(lastInvalidated) ? value : null;
     }
 
     /**
      * Determine if this cache entry has expired.
      */
-    private boolean isInvalid(Instant lastInvalidated) {
-        return (lastInvalidated != null && this.timeCached.isBefore(lastInvalidated));
+    private boolean isValid(Instant lastInvalidated) {
+        return lastInvalidated == null || timeCached.isAfter(lastInvalidated);
     }
 
 }

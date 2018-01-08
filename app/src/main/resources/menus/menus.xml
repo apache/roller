@@ -10,9 +10,9 @@ Defines the menus provided with Weblogger
             <tabItem action="userAdmin"
                      actionPath="/tb-ui/app/admin/"
                      titleKey="userAdmin.title"/>
-            <tabItem action="cacheInfo"
+            <tabItem action="cachedData"
                      actionPath="/tb-ui/app/admin/"
-                     titleKey="cacheInfo.title"/>
+                     titleKey="cachedData.title"/>
         </tab>
     </menu>
     <menu id="editor">

@@ -42,7 +42,6 @@ import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
-import org.tightblog.rendering.cache.CacheManager;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
@@ -97,13 +96,6 @@ public class CommentProcessor extends AbstractProcessor {
 
     public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
         this.weblogPageRequestCreator = creator;
-    }
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
     }
 
     @Autowired(required = false)
@@ -271,6 +263,8 @@ public class CommentProcessor extends AbstractProcessor {
                 commentRequiresApproval |= ApprovalStatus.SPAM.equals(incomingComment.getStatus());
 
                 weblogEntryManager.saveComment(incomingComment, !commentRequiresApproval);
+                persistenceStrategy.getWebloggerProperties().setLastWeblogChange(Instant.now());
+                persistenceStrategy.store(persistenceStrategy.getWebloggerProperties());
                 persistenceStrategy.flush();
 
                 if (commentRequiresApproval) {
@@ -281,9 +275,6 @@ public class CommentProcessor extends AbstractProcessor {
                     if (indexManager.isIndexComments()) {
                         indexManager.updateIndex(incomingRequest.getWeblogEntry(), false);
                     }
-
-                    // Clear all caches associated with comment
-                    cacheManager.invalidate(incomingComment);
                 }
             }
 

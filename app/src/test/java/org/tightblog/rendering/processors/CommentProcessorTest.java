@@ -33,7 +33,6 @@ import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
-import org.tightblog.rendering.cache.CacheManager;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
@@ -63,10 +62,8 @@ public class CommentProcessorTest {
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private RequestDispatcher mockRequestDispatcher;
-    private JPAPersistenceStrategy mockJPA;
     private WebloggerProperties properties;
     private CommentProcessor processor;
-    private WeblogPageRequest.Creator wprCreator;
     private WeblogPageRequest commentRequest;
     private I18nMessages mockMessageUtils;
     private WeblogManager mockWM;
@@ -79,11 +76,11 @@ public class CommentProcessorTest {
         mockResponse = mock(HttpServletResponse.class);
         mockRequestDispatcher = mock(RequestDispatcher.class);
         when(mockRequest.getRequestDispatcher(anyString())).thenReturn(mockRequestDispatcher);
-        mockJPA = mock(JPAPersistenceStrategy.class);
+        JPAPersistenceStrategy mockJPA = mock(JPAPersistenceStrategy.class);
         properties = new WebloggerProperties();
         properties.setCommentHtmlPolicy(HTMLSanitizer.Level.LIMITED);
         when(mockJPA.getWebloggerProperties()).thenReturn(properties);
-        wprCreator = mock(WeblogPageRequest.Creator.class);
+        WeblogPageRequest.Creator wprCreator = mock(WeblogPageRequest.Creator.class);
         commentRequest = new WeblogPageRequest();
         when(wprCreator.create(any())).thenReturn(commentRequest);
         mockWM = mock(WeblogManager.class);
@@ -285,9 +282,6 @@ public class CommentProcessorTest {
         MailManager mockMM = mock(MailManager.class);
         processor.setMailManager(mockMM);
 
-        CacheManager mockCM = mock(CacheManager.class);
-        processor.setCacheManager(mockCM);
-
         IndexManager mockIM = mock(IndexManager.class);
         when(mockIM.isIndexComments()).thenReturn(true);
         processor.setIndexManager(mockIM);
@@ -319,7 +313,7 @@ public class CommentProcessorTest {
             weblog.setAllowComments(CommentPolicy.YES);
             verifyForwardAfterSpamChecking(incomingComment, ApprovalStatus.SPAM, "commentServlet.submittedToModerator");
 
-            Mockito.clearInvocations(mockWEM, mockMM, mockIM, mockCM);
+            Mockito.clearInvocations(mockWEM, mockMM, mockIM);
 
             // check non-spam comment doesn't require approval if must moderate off
             Mockito.doReturn(ValidationResult.NOT_SPAM).when(processor).runSpamCheckers(eq(incomingComment), any());
@@ -328,7 +322,6 @@ public class CommentProcessorTest {
             verifyForwardAfterSpamChecking(incomingComment, ApprovalStatus.APPROVED, "commentServlet.commentAccepted");
             verify(mockMM).sendNewPublishedCommentNotification(incomingComment);
             verify(mockIM).updateIndex(entry, false);
-            verify(mockCM).invalidate(incomingComment);
 
             // check non-spam comment requires approval if must moderate set globally
             properties.setCommentPolicy(CommentPolicy.MUSTMODERATE);
@@ -340,7 +333,7 @@ public class CommentProcessorTest {
             verifyForwardAfterSpamChecking(incomingComment, ApprovalStatus.PENDING, "commentServlet.submittedToModerator");
 
             // check no indexing if indexing shut off
-            Mockito.clearInvocations(mockWEM, mockMM, mockIM, mockCM);
+            Mockito.clearInvocations(mockWEM, mockMM, mockIM);
             weblog.setAllowComments(CommentPolicy.YES);
             when(mockIM.isIndexComments()).thenReturn(false);
             processor.postComment(mockRequest, mockResponse);
@@ -348,13 +341,12 @@ public class CommentProcessorTest {
             verify(mockIM, never()).updateIndex(entry, false);
 
             // check spam persisted to database with autodelete spam off
-            Mockito.clearInvocations(mockWEM, mockMM, mockIM, mockCM);
+            Mockito.clearInvocations(mockWEM, mockMM, mockIM);
             Mockito.doReturn(ValidationResult.SPAM).when(processor).runSpamCheckers(eq(incomingComment), any());
             properties.setAutodeleteSpam(false);
             processor.postComment(mockRequest, mockResponse);
             verify(mockWEM).saveComment(eq(incomingComment), anyBoolean());
             verify(mockMM).sendPendingCommentNotice(eq(incomingComment), any());
-            verify(mockCM, never()).invalidate(incomingComment);
             verify(mockIM, never()).updateIndex(any(WeblogEntry.class), anyBoolean());
 
             // check spam not persisted to database with autodelete spam on
@@ -484,7 +476,7 @@ public class CommentProcessorTest {
     @Test
     public void testValidateCommentViaValidators() {
         WeblogEntryComment testComment = new WeblogEntryComment();
-        Map<String, List<String>> testMessages = new HashMap<String, List<String>>();
+        Map<String, List<String>> testMessages = new HashMap<>();
 
         CommentValidator mockAlwaysBlatantValidator = mock(CommentValidator.class);
         when(mockAlwaysBlatantValidator.validate(any(WeblogEntryComment.class), anyMap()))
