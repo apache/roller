@@ -36,7 +36,6 @@ import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
-import org.tightblog.rendering.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,13 +94,6 @@ public class TemplateController {
 
     public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
-    }
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
@@ -280,14 +272,8 @@ public class TemplateController {
                     return ResponseEntity.badRequest().body(maybeError);
                 }
 
-                // persist the template
                 weblogManager.saveTemplate(templateToSave);
-
-                // flush results to db
                 persistenceStrategy.flush();
-
-                // notify caches
-                cacheManager.invalidate(templateToSave);
 
                 return ResponseEntity.ok(templateToSave.getId());
             } else {

@@ -1,28 +1,3 @@
-$(function() {
-   $("#confirm-clearall").dialog({
-      autoOpen: false,
-      resizable: true,
-      height: 200,
-      modal: true,
-      buttons: [
-         {
-            text: msg.confirmLabel,
-            click: function() {
-                angular.element('#ngapp-div').scope().ctrl.clearAllCaches();
-                angular.element('#ngapp-div').scope().$apply();
-                $( this ).dialog( "close" );
-            }
-         },
-         {
-            text: msg.cancelLabel,
-            click: function() {
-               $(this).dialog("close");
-            }
-         }
-      ]
-   });
-});
-
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
     this.urlRoot = contextPath + '/tb-ui/admin/rest/server/';
@@ -56,16 +31,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         this.messageClear();
         $http.post(this.urlRoot + 'cache/' + cacheItem + '/clear').then(
           function(response) {
-             self.loadItems();
-          },
-          self.commonErrorResponse
-        )
-    }
-
-    this.clearAllCaches = function() {
-        this.messageClear();
-        $http.post(this.urlRoot + 'caches/clear').then(
-          function(response) {
+             self.successMessage = response.data;
              self.loadItems();
           },
           self.commonErrorResponse
@@ -110,15 +76,3 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.loadMetadata();
     this.loadItems();
 }]);
-
-tightblogApp.directive('confirmClearAllDialog', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmClearAllDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).dialog('open');
-            });
-        }
-    };
-});

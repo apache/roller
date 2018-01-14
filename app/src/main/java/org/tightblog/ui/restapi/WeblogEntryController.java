@@ -38,7 +38,6 @@ import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
-import org.tightblog.rendering.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,13 +103,6 @@ public class WeblogEntryController {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
     }
 
     @Autowired
@@ -262,8 +254,10 @@ public class WeblogEntryController {
                         indexManager.updateIndex(itemToRemove, true);
                     }
 
-                    // flush caches
-                    cacheManager.invalidate(itemToRemove);
+                    // update last weblog change so any site weblog knows it needs to update
+                    WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+                    props.setLastWeblogChange(Instant.now());
+                    persistenceStrategy.store(props);
 
                     // remove entry itself
                     weblogEntryManager.removeWeblogEntry(itemToRemove);
@@ -559,6 +553,12 @@ public class WeblogEntryController {
                 }
 
                 weblogEntryManager.saveWeblogEntry(entry);
+
+                // update last weblog change so any site weblog knows it needs to update
+                WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+                props.setLastWeblogChange(Instant.now());
+                persistenceStrategy.store(props);
+
                 persistenceStrategy.flush();
 
                 // notify search of the new entry
@@ -567,9 +567,6 @@ public class WeblogEntryController {
                 } else if (!createNew) {
                     indexManager.updateIndex(entry, true);
                 }
-
-                // notify caches
-                cacheManager.invalidate(entry);
 
                 if (PubStatus.PENDING.equals(entry.getStatus())) {
                     mailManager.sendPendingEntryNotice(entry);

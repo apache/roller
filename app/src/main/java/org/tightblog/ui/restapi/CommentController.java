@@ -12,10 +12,10 @@ import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
-import org.tightblog.rendering.cache.CacheManager;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
@@ -32,6 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -75,13 +76,6 @@ public class CommentController {
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
-    }
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
     }
 
     @Autowired
@@ -209,7 +203,11 @@ public class CommentController {
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
                     weblogEntryManager.removeComment(itemToRemove);
                     indexManager.updateIndex(itemToRemove.getWeblogEntry(), false);
-                    cacheManager.invalidate(itemToRemove.getWeblogEntry());
+
+                    // update last weblog change so any site weblog knows it needs to update
+                    WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+                    props.setLastWeblogChange(Instant.now());
+                    persistenceStrategy.store(props);
                     persistenceStrategy.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {

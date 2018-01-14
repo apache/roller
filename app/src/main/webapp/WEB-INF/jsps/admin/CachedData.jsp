@@ -33,9 +33,9 @@
 </script>
 
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
-<script src="<c:url value='/tb-ui/scripts/cacheInfo.js'/>"></script>
+<script src="<c:url value='/tb-ui/scripts/cacheddata.js'/>"></script>
 
-<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/cacheInfo'/>"/>
+<input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/cachedData'/>"/>
 
 <div id="successMessageDiv" class="messages" ng-show="ctrl.successMessage" ng-cloak>
     <p>{{ctrl.successMessage}}</p>
@@ -46,10 +46,10 @@
 </div>
 
 <p class="subtitle">
-    <fmt:message key="cacheInfo.subtitle" />
+    <fmt:message key="cachedData.subtitle" />
 <p>
 
-<p><fmt:message key="cacheInfo.explanation"/></p>
+<p><fmt:message key="cachedData.explanation"/></p>
 
 <br style="clear:left"/>
 
@@ -57,26 +57,26 @@
 <thead>
    <tr>
         <th style="width:20%"><fmt:message key="generic.name"/></th>
-        <th style="width:20%"><fmt:message key="cacheInfo.requestCount"/></th>
-        <th style="width:10%"><fmt:message key="cacheInfo.puts"/></th>
-        <th style="width:10%"><fmt:message key="cacheInfo.removes"/></th>
-        <th style="width:10%"><fmt:message key="cacheInfo.hits"/></th>
-        <th style="width:10%"><fmt:message key="cacheInfo.misses"/></th>
-        <th style="width:10%"><fmt:message key="cacheInfo.efficiency"/></th>
-        <th style="width:10%"></th>
+        <th style="width:10%"><fmt:message key="cachedData.maxEntries"/></th>
+        <th style="width:10%"><fmt:message key="cachedData.currentSize"/></th>
+        <th style="width:12%"><fmt:message key="cachedData.requestCount"/></th>
+        <th style="width:12%"><fmt:message key="cachedData.hits"/></th>
+        <th style="width:12%"><fmt:message key="cachedData.misses"/></th>
+        <th style="width:12%"><fmt:message key="cachedData.efficiency"/></th>
+        <th style="width:12%"></th>
     </tr>
 </thead>
 <tbody id="tableBody" ng-cloak>
       <tr ng-repeat="(key,item) in ctrl.cacheData" ng-class-even="'altrow'">
         <td>{{key}}</td>
+        <td>{{item.maxEntries}}</td>
+        <td>{{item.estimatedSize}}</td>
         <td>{{item.requestCount}}</td>
-        <td>{{item.puts}}</td>
-        <td>{{item.removes}}</td>
-        <td>{{item.hits}}</td>
-        <td>{{item.misses}}</td>
-        <td>{{item.efficiency}}</td>
+        <td>{{item.hitCount}}</td>
+        <td>{{item.missCount}}</td>
+        <td>{{item.hitRate | number:3}}</td>
         <td align="center">
-            <input type="button" value="<fmt:message key='cacheInfo.clear'/>" ng-click="ctrl.clearCache(key)"/>
+            <input type="button" value="<fmt:message key='cachedData.clear'/>" ng-click="ctrl.clearCache(key)"/>
         </td>
        </tr>
 </tbody>
@@ -84,24 +84,18 @@
 
 <div class="control clearfix">
   <input ng-click="ctrl.loadItems()" type="button" value="<fmt:message key='generic.refresh'/>"/>
-  <input confirm-clear-all-dialog="confirm-clearall" type="button" value="<fmt:message key='cacheInfo.clearAll'/>"/>
 </div>
 
 <br><br>
-<fmt:message key="maintenance.prompt.reset"/>:
+<fmt:message key="cachedData.prompt.reset"/>:
 <br><br>
-<input ng-click="ctrl.resetHitCounts()" type="button" value="<fmt:message key='maintenance.button.reset'/>"/>
+<input ng-click="ctrl.resetHitCounts()" type="button" value="<fmt:message key='cachedData.button.reset'/>"/>
 
 <br><br>
-<fmt:message key="maintenance.prompt.index"/>:
+<fmt:message key="cachedData.prompt.index"/>:
 <br><br>
 <select ng-model="ctrl.weblogToReindex" size="1" required>
     <option ng-repeat="(key, value) in ctrl.metadata.weblogList" value="{{value}}">{{value}}</option>
 </select>
-<input ng-click="ctrl.reindexWeblog()" type="button" value="<fmt:message key='maintenance.button.index'/>"/>
+<input ng-click="ctrl.reindexWeblog()" type="button" value="<fmt:message key='cachedData.button.index'/>"/>
 <br><br>
-
-<div id="confirm-clearall" title="<fmt:message key='generic.confirm'/>" style="display:none">
-   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-   <fmt:message key='cacheInfo.confirmResetAll'/></p>
-</div>

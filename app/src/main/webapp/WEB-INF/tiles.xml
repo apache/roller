@@ -100,8 +100,8 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
     </definition>
 
-    <definition name=".cacheInfo" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
+    <definition name=".cachedData" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/CachedData.jsp" />
     </definition>
 
     <!-- weblog editor pages (and associates) -->

@@ -27,7 +27,6 @@ import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogBookmark;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.rendering.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,13 +72,6 @@ public class BlogrollController {
         this.userManager = userManager;
     }
 
-    @Autowired
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/bookmarks", method = RequestMethod.GET)
     public List<WeblogBookmark> getWeblogBookmarks(@PathVariable String id, HttpServletResponse response) {
         Weblog weblog = weblogManager.getWeblog(id);
@@ -106,7 +98,6 @@ public class BlogrollController {
 
                     weblogManager.removeBookmark(itemToRemove);
                     persistenceStrategy.flush();
-                    cacheManager.invalidate(itemToRemove);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -137,7 +128,6 @@ public class BlogrollController {
                         response.setStatus(HttpServletResponse.SC_CONFLICT);
                         return;
                     }
-                    cacheManager.invalidate(bookmark);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -166,7 +156,6 @@ public class BlogrollController {
                     return;
                 }
                 persistenceStrategy.refresh(weblog);
-                cacheManager.invalidate(bookmark);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);

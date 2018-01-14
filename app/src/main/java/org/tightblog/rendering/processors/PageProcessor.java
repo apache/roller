@@ -22,6 +22,7 @@ package org.tightblog.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.ThemeManager;
@@ -35,7 +36,6 @@ import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.rendering.cache.SiteWideCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,13 +77,6 @@ public class PageProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private SiteWideCache siteWideCache = null;
-
-    public void setSiteWideCache(SiteWideCache siteWideCache) {
-        this.siteWideCache = siteWideCache;
-    }
-
-    @Autowired
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
@@ -110,6 +103,13 @@ public class PageProcessor extends AbstractProcessor {
 
     public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
+    }
+
+    @Autowired
+    protected JPAPersistenceStrategy strategy;
+
+    public void setStrategy(JPAPersistenceStrategy strategy) {
+        this.strategy = strategy;
     }
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
@@ -142,7 +142,7 @@ public class PageProcessor extends AbstractProcessor {
         // is this the site-wide weblog?
         boolean isSiteWide = themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide();
 
-        Instant lastModified = (isSiteWide) ? siteWideCache.getLastModified() : weblog.getLastModified();
+        Instant lastModified = (isSiteWide) ? strategy.getWebloggerProperties().getLastWeblogChange() : weblog.getLastModified();
 
         if (respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
             return;
@@ -159,10 +159,9 @@ public class PageProcessor extends AbstractProcessor {
 
         // pages containing user-specific comment forms aren't cached
         if (commentForm == null) {
-            cacheKey = generateKey(incomingRequest);
+            cacheKey = generateKey(incomingRequest, isSiteWide);
 
-            CachedContent cachedContent = (CachedContent) (isSiteWide ? siteWideCache.get(cacheKey)
-                    : weblogPageCache.get(cacheKey, lastModified));
+            CachedContent cachedContent = (CachedContent) weblogPageCache.get(cacheKey, lastModified);
 
             if (cachedContent != null) {
                 log.debug("HIT {}", cacheKey);
@@ -251,12 +250,7 @@ public class PageProcessor extends AbstractProcessor {
 
             if (cacheKey != null) {
                 log.debug("PUT {}", cacheKey);
-
-                if (isSiteWide) {
-                    siteWideCache.put(cacheKey, rendererOutput);
-                } else {
-                    weblogPageCache.put(cacheKey, rendererOutput);
-                }
+                weblogPageCache.put(cacheKey, rendererOutput);
             }
 
         } catch (Exception e) {
@@ -268,7 +262,7 @@ public class PageProcessor extends AbstractProcessor {
     /**
      * Generate a cache key from a parsed weblog page request.
      */
-    static String generateKey(WeblogPageRequest request) {
+    String generateKey(WeblogPageRequest request, boolean isSiteWide) {
         StringBuilder key = new StringBuilder();
 
         key.append("weblogpage.key").append(":");
@@ -312,6 +306,15 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         key.append("/deviceType=").append(request.getDeviceType().toString());
+
+        // site wide blogs must be cognizant of the last update date of any weblog or weblog entry
+        // as they get refreshed whenever another blog or blog entry does.
+        if (isSiteWide) {
+            Instant lastUpdate = strategy.getWebloggerProperties().getLastWeblogChange();
+            if (lastUpdate != null) {
+                key.append("/lastUpdate=").append(lastUpdate.toEpochMilli());
+            }
+        }
 
         return key.toString();
     }

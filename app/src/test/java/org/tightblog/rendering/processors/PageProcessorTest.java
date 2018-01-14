@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mobile.device.DeviceType;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTheme;
@@ -14,9 +15,9 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
+import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.rendering.cache.SiteWideCache;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.util.WebloggerException;
@@ -47,15 +48,18 @@ public class PageProcessorTest {
     private WeblogEntryManager mockWEM;
     private Weblog weblog;
     private SharedTheme sharedTheme;
+    private WebloggerProperties webloggerProperties;
 
     private LazyExpiringCache mockCache;
-    private SiteWideCache mockSiteCache;
     private WeblogManager mockWM;
     private ThymeleafRenderer mockThymeleafRenderer;
     private ThemeManager mockThemeManager;
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
+        JPAPersistenceStrategy mockStrategy = mock(JPAPersistenceStrategy.class);
+        webloggerProperties = new WebloggerProperties();
+        when(mockStrategy.getWebloggerProperties()).thenReturn(webloggerProperties);
         mockRequest = mock(HttpServletRequest.class);
         mockResponse = mock(HttpServletResponse.class);
         WeblogPageRequest.Creator wprCreator = mock(WeblogPageRequest.Creator.class);
@@ -67,8 +71,6 @@ public class PageProcessorTest {
         processor.setWeblogEntryManager(mockWEM);
         mockCache = mock(LazyExpiringCache.class);
         processor.setWeblogPageCache(mockCache);
-        mockSiteCache = mock(SiteWideCache.class);
-        processor.setSiteWideCache(mockSiteCache);
         mockWM = mock(WeblogManager.class);
         weblog = new Weblog();
         when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
@@ -81,6 +83,7 @@ public class PageProcessorTest {
         sharedTheme.setSiteWide(false);
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         processor = Mockito.spy(processor);
+        processor.setStrategy(mockStrategy);
         doReturn(false).when(processor).respondIfNotModified(any(), any(), any(), any());
     }
 
@@ -106,10 +109,10 @@ public class PageProcessorTest {
         assertEquals(weblog, pageRequest.getWeblog());
         verify(processor).respondIfNotModified(mockRequest, mockResponse, yesterday, DeviceType.NORMAL);
 
-        // confirm respondIfNotModified called with site-wide cache's last modified date for site-wide weblog
+        // confirm respondIfNotModified called with system-wide last modified date for site-wide weblog
         sharedTheme.setSiteWide(true);
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
-        when(mockSiteCache.getLastModified()).thenReturn(twoDaysAgo);
+        webloggerProperties.setLastWeblogChange(twoDaysAgo);
 
         Mockito.clearInvocations(processor);
         processor.handleRequest(mockRequest, mockResponse);
@@ -199,13 +202,12 @@ public class PageProcessorTest {
         assertEquals(pageRequest.getTemplate(), wt);
         verify(mockWM).incrementHitCount(weblog);
         verify(mockCache).put(anyString(), any());
-        verify(mockSiteCache, never()).put(anyString(), any());
         verify(mockThymeleafRenderer).render(eq(pageRequest.getTemplate()), any(), any());
         verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());
         verify(mockResponse).setContentLength(anyInt());
         verify(mockSOS).write(any());
 
-        // test permalink template using site cache, no weblog page hit
+        // test permalink template, no weblog page hit
         sharedTheme.setSiteWide(true);
         pageRequest.setWeblogPageHit(false);
         pageRequest.setCustomPageName(null);
@@ -218,13 +220,12 @@ public class PageProcessorTest {
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
         when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(wt2);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSiteCache, mockSOS);
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertEquals(entry, pageRequest.getWeblogEntry());
         assertEquals(wt2, pageRequest.getTemplate());
         verify(mockWM, never()).incrementHitCount(weblog);
-        verify(mockCache, never()).put(anyString(), any());
-        verify(mockSiteCache).put(anyString(), any());
+        verify(mockCache).put(anyString(), any());
         verify(mockSOS).write(any());
 
         // test fallback to weblog template if no permalink one
@@ -233,7 +234,7 @@ public class PageProcessorTest {
         when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(null);
         when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(wt3);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSiteCache, mockSOS);
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertEquals(wt3, pageRequest.getTemplate());
 
@@ -241,7 +242,7 @@ public class PageProcessorTest {
         entry.setStatus(WeblogEntry.PubStatus.DRAFT);
         pageRequest.setTemplate(null);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSiteCache, mockSOS);
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertNull(pageRequest.getTemplate());
         verify(mockResponse).sendError(SC_NOT_FOUND);
@@ -250,7 +251,7 @@ public class PageProcessorTest {
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(null);
         pageRequest.setTemplate(null);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSiteCache, mockSOS);
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertNull(pageRequest.getTemplate());
         verify(mockResponse).sendError(SC_NOT_FOUND);
@@ -260,7 +261,7 @@ public class PageProcessorTest {
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         doThrow(new IllegalArgumentException()).when(mockThymeleafRenderer).render(any(), any(), any());
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSiteCache, mockSOS);
+        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
@@ -278,9 +279,7 @@ public class PageProcessorTest {
 
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockWM, never()).incrementHitCount(any());
-        verify(mockSiteCache, never()).get(any());
         verify(mockCache, never()).get(any(), any());
-        verify(mockSiteCache, never()).put(any(), any());
         verify(mockCache, never()).put(any(), any());
     }
 
@@ -323,13 +322,15 @@ public class PageProcessorTest {
 
     @Test
     public void testGenerateKey() {
+        initializeMocks();
+
         WeblogPageRequest request = mock(WeblogPageRequest.class);
         when(request.getWeblogHandle()).thenReturn("bobsblog");
         when(request.getWeblogEntryAnchor()).thenReturn("neatoentry");
         when(request.getAuthenticatedUser()).thenReturn("bob");
         when(request.getDeviceType()).thenReturn(DeviceType.TABLET);
 
-        String test1 = PageProcessor.generateKey(request);
+        String test1 = processor.generateKey(request, false);
         assertEquals("weblogpage.key:bobsblog/entry/neatoentry/user=bob/deviceType=TABLET", test1);
 
         when(request.getWeblogEntryAnchor()).thenReturn(null);
@@ -341,10 +342,12 @@ public class PageProcessorTest {
         when(request.getTag()).thenReturn("taxes");
         when(request.getQueryString()).thenReturn("a=foo&b=123");
         when(request.getPageNum()).thenReturn(5);
+        Instant testTime = Instant.now();
+        webloggerProperties.setLastWeblogChange(testTime);
 
-        test1 = PageProcessor.generateKey(request);
+        test1 = processor.generateKey(request, true);
         assertEquals("weblogpage.key:bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
-                "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE", test1);
+                "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE/lastUpdate=" + testTime.toEpochMilli(), test1);
     }
 
 }

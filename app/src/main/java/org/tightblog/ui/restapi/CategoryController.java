@@ -31,7 +31,6 @@ import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.rendering.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,13 +66,6 @@ public class CategoryController {
     }
 
     @Autowired
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
@@ -93,7 +85,6 @@ public class CategoryController {
                         try {
                             weblogManager.saveWeblogCategory(c);
                             persistenceStrategy.flush();
-                            cacheManager.invalidate(c);
                             response.setStatus(HttpServletResponse.SC_OK);
                         } catch (IllegalArgumentException e) {
                             response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -121,7 +112,6 @@ public class CategoryController {
                     weblogManager.saveWeblogCategory(wc);
                     weblog.addCategory(wc);
                     persistenceStrategy.flush();
-                    cacheManager.invalidate(wc);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (IllegalArgumentException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -165,7 +155,6 @@ public class CategoryController {
 
                     weblogManager.removeWeblogCategory(categoryToRemove);
                     persistenceStrategy.flush();
-                    cacheManager.invalidate(categoryToRemove);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
