@@ -24,7 +24,9 @@ import org.apache.commons.lang.time.DateUtils;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceType;
+import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.mobile.device.site.SitePreference;
 import org.springframework.mobile.device.site.SitePreferenceUtils;
 
@@ -348,8 +350,16 @@ public class Utilities {
     }
 
     public static DeviceType getDeviceType(HttpServletRequest request) {
-        SitePreference sitePreference = SitePreferenceUtils.getCurrentSitePreference(request);
-        return (sitePreference != null && sitePreference.isMobile()) ? DeviceType.MOBILE : DeviceType.NORMAL;
+        Device currentDevice = DeviceUtils.getCurrentDevice(request);
+        if (currentDevice != null) {
+            if (currentDevice.isMobile()) {
+                return DeviceType.MOBILE;
+            }
+            if (currentDevice.isTablet()) {
+                return DeviceType.TABLET;
+            }
+        }
+        return DeviceType.NORMAL;
     }
 
 }
