@@ -230,7 +230,7 @@ public class MediaFile {
      */
     @Transient
     public String getPermalink() {
-        return WebloggerContext.getWeblogger().getUrlStrategy()
+        return WebloggerContext.getUrlStrategy()
                 .getMediaFileURL(getDirectory().getWeblog(), this.getId());
     }
 
@@ -240,7 +240,7 @@ public class MediaFile {
      */
     @Transient
     public String getThumbnailURL() {
-        return WebloggerContext.getWeblogger().getUrlStrategy()
+        return WebloggerContext.getUrlStrategy()
                 .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId());
     }
 

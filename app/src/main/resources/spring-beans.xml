@@ -45,17 +45,10 @@
     <!-- Have JSR-250 annotations (PostConstruct, PreDestroy) honored by Spring -->
     <beans:bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 
-    <beans:bean id="webloggerBean" class="org.tightblog.business.Weblogger">
-        <beans:constructor-arg ref="themeManager"/>
-        <beans:constructor-arg ref="weblogManager"/>
-        <beans:constructor-arg ref="weblogEntryManager"/>
-        <beans:constructor-arg ref="urlStrategy"/>
-    </beans:bean>
-
     <beans:bean id="persistenceStrategy" class="org.tightblog.business.JPAPersistenceStrategy"/>
 
     <beans:bean id="indexManager" class="org.tightblog.business.search.IndexManagerImpl">
-        <beans:constructor-arg ref="weblogEntryManager"/>
+        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
     <beans:bean id="mediaFileManager" class="org.tightblog.business.MediaFileManagerImpl">
@@ -144,6 +137,8 @@
         <beans:property name="order" value="1"/>
         <beans:property name="checkExistence" value="true"/>
         <beans:property name="cacheable" value="false"/>
+        <beans:property name="themeManager" ref="themeManager"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
     <beans:bean id="standardTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">

@@ -402,13 +402,13 @@ public class Weblog {
     // Used in templates
     @Transient
     public String getURL() {
-        return WebloggerContext.getWeblogger().getUrlStrategy().getWeblogURL(this, false);
+        return WebloggerContext.getUrlStrategy().getWeblogURL(this, false);
     }
 
     // Used in a few JSP's
     @Transient
     public String getAbsoluteURL() {
-        return WebloggerContext.getWeblogger().getUrlStrategy().getWeblogURL(this, true);
+        return WebloggerContext.getUrlStrategy().getWeblogURL(this, true);
     }
 
     public String getAnalyticsCode() {

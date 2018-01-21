@@ -41,8 +41,9 @@ public class WebloggerContext extends ContextLoaderListener {
 
     private static Logger log = LoggerFactory.getLogger(WebloggerContext.class);
 
-    // maintain our own singleton instance of Weblogger
-    private static Weblogger webloggerInstance = null;
+    private static WeblogEntryManager weblogEntryManager = null;
+
+    private static URLStrategy urlStrategy = null;
 
     private static ServletContext servletContext = null;
 
@@ -55,24 +56,26 @@ public class WebloggerContext extends ContextLoaderListener {
     }
 
     /**
-     * True if bootstrap process has been completed, False otherwise.
+     * True if bootstrap process has been completed, false otherwise.
      */
     public static boolean isBootstrapped() {
         return strategy != null;
     }
 
-    /**
-     * Accessor to the Weblogger Weblogger business tier.
-     *
-     * @return Weblogger An instance of Weblogger.
-     * @throws IllegalStateException If the app has not been properly bootstrapped yet.
-     */
-    public static Weblogger getWeblogger() {
+    public static WeblogEntryManager getWeblogEntryManager() {
         if (!isBootstrapped()) {
             throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
         }
 
-        return webloggerInstance;
+        return weblogEntryManager;
+    }
+
+    public static URLStrategy getUrlStrategy() {
+        if (!isBootstrapped()) {
+            throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
+        }
+
+        return urlStrategy;
     }
 
     public static ServletContext getServletContext() {
@@ -97,9 +100,10 @@ public class WebloggerContext extends ContextLoaderListener {
      */
     public static void bootstrap(ApplicationContext context) {
         try {
-            webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
+            weblogEntryManager = context.getBean("weblogEntryManager", WeblogEntryManager.class);
+            urlStrategy = context.getBean("urlStrategy", URLStrategy.class);
         } catch (BeansException e) {
-            throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
+            throw new RuntimeException("Error bootstrapping, exception message: " + e.getMessage(), e);
         }
 
         strategy = context.getBean("persistenceStrategy", JPAPersistenceStrategy.class);
