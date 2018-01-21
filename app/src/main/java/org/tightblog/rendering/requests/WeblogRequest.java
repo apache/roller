@@ -81,6 +81,7 @@ public class WeblogRequest {
         if (principal != null) {
             this.authenticatedUser = principal.getName();
         }
+
         // set the detected type of the request
         deviceType = Utilities.getDeviceType(request);
 

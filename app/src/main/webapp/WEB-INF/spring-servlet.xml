@@ -36,7 +36,7 @@
 
     <mvc:interceptors>
         <!-- Spring Mobile: http://docs.spring.io/spring-mobile/docs/current/reference/html/device.html -->
-        <beans:bean class="org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor" />
+        <beans:bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor" />
     </mvc:interceptors>
 
     <beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
