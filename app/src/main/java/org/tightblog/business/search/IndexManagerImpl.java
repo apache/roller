@@ -67,13 +67,16 @@ public class IndexManagerImpl implements IndexManager {
     private boolean inconsistentAtStartup = false;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
 
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
     /**
      * Creates a new lucene index manager. This should only be created once.
      * Creating the index manager more than once will definitely result in
      * errors.
      */
-    protected IndexManagerImpl(WeblogEntryManager weManager) {
-        weblogEntryManager = weManager;
+    protected IndexManagerImpl() {
         searchEnabled = WebloggerStaticConfig.getBooleanProperty("search.enabled");
         if (searchEnabled) {
             indexComments = WebloggerStaticConfig.getBooleanProperty("search.include.comments");

@@ -21,7 +21,7 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 import org.thymeleaf.templateresource.StringTemplateResource;
-import org.tightblog.business.WebloggerContext;
+import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTheme;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -31,6 +31,18 @@ import java.util.Map;
 public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver {
 
     private static Logger logger = LoggerFactory.getLogger(ThemeTemplateResolver.class);
+
+    private ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
 
     @Override
     protected ITemplateResource computeTemplateResource(IEngineConfiguration configuration, String ownerTemplate,
@@ -52,12 +64,11 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
                 logger.error("Invalid Theme resource key {}", resourceId);
                 return null;
             }
-            ThemeManager themeMgr = WebloggerContext.getWeblogger().getThemeManager();
-            SharedTheme theme = themeMgr.getSharedTheme(sharedThemeParts[0]);
+            SharedTheme theme = themeManager.getSharedTheme(sharedThemeParts[0]);
             template = theme.getTemplateByName(sharedThemeParts[1]);
         } else {
             // weblog-only theme in database
-            template = WebloggerContext.getWeblogger().getWeblogManager().getTemplate(resourceId);
+            template = weblogManager.getTemplate(resourceId);
         }
 
         if (template == null) {
