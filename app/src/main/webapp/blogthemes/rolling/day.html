@@ -1,9 +1,16 @@
-<div class="dayBox" xmlns:th="http://www.thymeleaf.org">
+<div class="box" xmlns:th="http://www.thymeleaf.org">
 
-    <div class="dayTitle" th:utext="${utils.formatDate(day, utils.msg('macro.weblog.datepattern'))}">
-    </div>
+    <h2 class="box" th:with="entries=${model.weblogEntriesPager.getEntries().get(day)}">
+        <a th:href="${entries != null && entries.size() > 0 ? url.entry(entries[0])
+            : url.date($utils.formatDate($day, $utils.msg('macro.weblog.datelinkpattern')))}">
+            <img class="daypermalink" border="0"
+                 th:src="${url.site + '/images/permalink.gif'}"
+                 th:title="${utils.msg('macro.weblog.daypermalink.title')}"
+                 th:alt="${url.date(utils.formatDate(day, 'yyyyMMdd'))}"/></a>
+            <span th:text="${utils.formatDate(day, utils.msg('macro.weblog.datepattern'))}"></span>
+    </h2>
 
-      <div class="entryBox" th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" th:id="${utils.encode(entry.anchor)}">
+    <div class="entryBox" th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" th:id="${utils.encode(entry.anchor)}">
         <p class="entryTitle" th:utext="${entry.title}">xxx</p>
         <p class="entryContent" th:switch="${model.permalink || utils.isEmpty(entry.summary)}">
             <span th:case="${true}" th:utext="${model.getTransformedText(entry)}"></span>
@@ -19,6 +26,6 @@
                 |&nbsp;<a th:href="${url.comments(entry)}" class="commentsLink" th:utext="${utils.msg('macro.weblog.comments') + '[' + entry.commentCount + ']'}">xxx</a>
             </span>
         </p>
-      </div>
+    </div>
 
 </div>

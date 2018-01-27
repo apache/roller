@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" th:href="${url.absoluteSite + '/favicon.ico'}">
+    <meta th:if="${model.addNoIndexDirective}" name="robots" content="noindex">
+    <link rel="stylesheet" th:href='${url.page("basic-custom.css")}'/>
+    <link rel="stylesheet" th:href='${url.page("bigcalendar.css")}'/>
+    <title th:utext="${model.weblog.name + ':' + model.weblogPage.name}">Weblog Name - Title Bar</title>
+    <span th:replace="fragments :: AutoDiscoveryLinks"></span>
+    <span th:utext="${model.analyticsTrackingCode}" th:remove="tag"></span>
+    <span th:replace="fragments :: MetaDescription"></span>
+</head>
+<head>
+<body>
+
+<div id="ArchivesColumn">
+    <center>
+        <h2 th:utext="${model.weblog.name}"></h2>
+        <span th:replace="fragments :: PageMenu(false)"></span><br>
+    </center>
+    <div th:utext="${model.showWeblogEntryCalendar(true)}"></div>
+</div>
+
+</body>
+</html>

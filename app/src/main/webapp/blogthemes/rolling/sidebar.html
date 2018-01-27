@@ -1,0 +1,47 @@
+<div id="SideBar">
+
+    <div class="box">
+        <h2 class="box sidebox">calendar</h2>
+        <center th:utext="${model.showWeblogEntryCalendar(false)}"></center>
+    </div>
+
+    <div class="box"><h2 class="box sidebox">About Me</h2>
+        <center><em th:utext="${'Today''s Blog Hits: ' + model.weblog.hitsToday}"></em></center></p>
+    </div>
+
+    <div class="box"><h2 class="box sidebox">search</h2>
+        <div class="rNavigationBar">
+            <span th:replace="fragments :: WeblogSearchForm"></span>
+        </div>
+    </div>
+
+    <!--script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=cse-search-box&lang=en"></script-->
+
+    <div class="box"><h2 class="box sidebox">Links</h2><div>
+        <span th:replace="fragments :: Blogroll"></span>
+    </div></div>
+
+    <div class="box"><h2 class="box sidebox">last 20</h2>
+        <th:block th:each="recentEntry : ${model.getRecentWeblogEntries(null, 20)}">
+            <a th:href="${url.entry(recentEntry)}" th:utext="${recentEntry.title}">xxx</a><br>
+        </th:block>
+    </div>
+
+    <div class="box"><h2 class="box sidebox">recent $0.02</h2>
+        <ul class="rEntriesList">
+            <li th:each="comment : ${model.getRecentComments(10)}" class="recentcomments">
+                - <a th:href="${comment.url}" th:remove="${comment.url == '' ? 'tag' : ''}" th:utext="${comment.name}"></a>
+                on <a th:href="${url.site + '/' + comment.weblogEntry.anchor}"
+                      th:utext="${comment.weblogEntry.title}"></a><li/>
+        </ul>
+    </div>
+
+    <div class="box"><h2 class="box sidebox">feeds</h2>
+        <span th:replace="fragments :: AtomFeedsList"></span>
+    </div>
+
+    <div class="box"><h2 class="box sidebox">navigation</h2>
+        <span th:replace="fragments :: PageMenu(true)"></span>
+    </div>
+
+</div>

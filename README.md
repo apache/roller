@@ -1,5 +1,5 @@
 Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
-before deciding to go my own way due to increasingly differing architectural goals.  As of 2 September 2017, <a href="https://github.com/gmazza/tightblog/releases">Release 2.0.3</a> is available.
+before deciding to go my own way due to differing architectural goals.  As of 2 September 2017, <a href="https://github.com/gmazza/tightblog/releases">Release 2.0.3</a> is available.
 
 TightBlog strives to be the mathematically cleanest and simplest implementation of a Java based blog server, suitable either for direct use or
 incorporation, as an Apache-licensed open source project, into larger projects.  Specifically, its goal is to satisfy all the needs of 80% of bloggers while
@@ -28,7 +28,7 @@ In addition to the cleanout of old functionality some new features have been add
 * A new "search.enabled" setting has been added to static configuration allowing for shutting off the Lucene indexer used for blog searching, useful in saving processing/space for when you're relying on third party indexing tools like Google Custom Search instead.
 * Commenters who request "notify me" to receive emails of future comments for a particular blog entry now receive a link at the bottom of the email to shut off future notifications
 * (TightBlog 3.0) Commenters who are logged-in bloggers now have their blogger ID stored with the comment, simplifying comment entry and allowing for different styling of comments (e.g., different background color for comments made by the blogger on his own blog).
-* (TightBlog 3.0) The blog template engine (used for customized themes) now uses latest Thymeleaf 3.0 instead of Apache Velocity. 
+* (TightBlog 3.0) The blog template engine (used for customized themes) now uses modern Thymeleaf 3.0 instead of Apache Velocity. 
 
 
 Check <a href="https://glenmazza.net/blog">my blog</a> for recent status updates.

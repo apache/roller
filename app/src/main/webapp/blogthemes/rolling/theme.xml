@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sharedtheme>
 
-    <id>basic</id>
-    <name>Basic</name>
+    <id>rolling</id>
+    <name>Rolling</name>
     <description>Offers wide margins for blogging programming language source code.</description>
 
-    <!-- theme preview image -->
-    <previewImagePath>basic-preview.png</previewImagePath>
+    <previewImagePath>rolling-sample.png</previewImagePath>
 
     <!-- templates -->
     <template role="stylesheet">
@@ -30,4 +29,19 @@
         <name>sidebar</name>
         <contentsFile>sidebar.html</contentsFile>
     </template>
+
+    <template role="stylesheet">
+        <name>bigcalendar.css</name>
+        <description>Stylesheet for Archives calendar</description>
+        <relativePath>bigcalendar.css</relativePath>
+        <contentsFile>bigcalendar.css</contentsFile>
+    </template>
+
+    <template role="customExternal">
+        <name>Archives</name>
+        <description>Calendar browser and links to latest entries</description>
+        <relativePath>archives</relativePath>
+        <contentsFile>archives.html</contentsFile>
+    </template>
+
 </sharedtheme>
