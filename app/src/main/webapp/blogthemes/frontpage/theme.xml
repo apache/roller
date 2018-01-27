@@ -9,7 +9,7 @@
     <siteWide>true</siteWide>
 
     <!-- theme preview image -->
-    <previewImagePath>sm-theme-frontpage.png</previewImagePath>
+    <previewImagePath>frontpage-sample.png</previewImagePath>
 
     <!-- templates -->
     <template role="weblog">

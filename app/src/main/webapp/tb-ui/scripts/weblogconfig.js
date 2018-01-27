@@ -29,7 +29,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     function PageController($http, $interpolate, $sce, $filter) {
         var self = this;
         this.weblog = {
-           "theme" : "basic",
+           "theme" : "rolling",
            "locale" : "en",
            "timeZone" : "America/New_York",
            "editFormat" : "HTML",
