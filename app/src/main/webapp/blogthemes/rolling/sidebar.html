@@ -30,7 +30,7 @@
     <div class="box"><h2 class="box sidebox">recent $0.02</h2>
         <ul class="rEntriesList">
             <li th:each="comment : ${model.getRecentComments(10)}" class="recentcomments">
-                - <a th:href="${comment.url}" th:remove="${comment.url == '' ? 'tag' : ''}" th:utext="${comment.name}"></a>
+                - <a th:href="${comment.url}" th:remove="${comment.url == '' ? 'tag' : 'none'}" th:utext="${comment.name}"></a>
                 on <a th:href="${url.site + '/' + comment.weblogEntry.anchor}"
                       th:utext="${comment.weblogEntry.title}"></a><li/>
         </ul>

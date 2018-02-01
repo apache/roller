@@ -278,8 +278,11 @@ public class CommentProcessor extends AbstractProcessor {
                 }
             }
 
-            // clear content field while retaining others to facilitate another comment
-            incomingComment.setContent("");
+            // detach comment object in case of comment approvals, allows for comment to appear in comment list
+            // (as a new JPA managed copy) and also provide status feedback (detached copy) on the comment entry form.
+            persistenceStrategy.detach(incomingComment);
+            // clear comment fields while retaining status field for rendering
+            incomingComment.initializeFormFields();
         }
 
         // now send the user back to the weblog entry page via PageProcessor

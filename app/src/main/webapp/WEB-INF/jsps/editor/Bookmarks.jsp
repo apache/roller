@@ -34,6 +34,15 @@
         addTitle: '<fmt:message key="bookmarks.add.title"/>'
     };
     var actionWeblogId = "<c:out value='${param.weblogId}'/>";
+
+    function toggleCheckboxes(toggle, name) {;
+        var inputs = document.getElementsByName(name);
+        for(var i = 0; i < inputs.length ; i++) {
+            if(inputs[i].type == 'checkbox' && inputs[i].disabled == false) {
+               inputs[i].checked = toggle;
+            }
+        }
+    };
 </script>
 
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
@@ -54,7 +63,7 @@
 <table class="rollertable">
     <thead>
       <tr>
-          <th width="5%"><input name="control" type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"
+          <th width="5%"><input name="control" type="checkbox" onclick="toggleCheckboxes(this.checked,'idSelections');"
               title="<fmt:message key='bookmarks.selectAllLabel'/>"/></th>
           <th width="25%"><fmt:message key="generic.name" /></th>
           <th width="25%"><fmt:message key="bookmarks.url" /></th>
