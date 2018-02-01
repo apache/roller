@@ -23,11 +23,20 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
 <script>
-var contextPath = "${pageContext.request.contextPath}";
-var msg= {
-    deleteLabel: '<fmt:message key="generic.delete"/>',
-    cancelLabel: '<fmt:message key="generic.cancel"/>'
-};
+    var contextPath = "${pageContext.request.contextPath}";
+    var msg= {
+        deleteLabel: '<fmt:message key="generic.delete"/>',
+        cancelLabel: '<fmt:message key="generic.cancel"/>'
+    };
+
+    function toggleCheckboxes(toggle, name) {;
+        var inputs = document.getElementsByName(name);
+        for(var i = 0; i < inputs.length ; i++) {
+            if(inputs[i].type == 'checkbox' && inputs[i].disabled == false) {
+               inputs[i].checked = toggle;
+            }
+        }
+    };
 var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 </script>
 
@@ -71,7 +80,7 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 
       <thead>
         <tr>
-          <th width="4%"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"
+          <th width="4%"><input type="checkbox" onclick="toggleCheckboxes(this.checked,'idSelections');"
             title="<fmt:message key="templates.selectAllLabel"/>"/></th>
           <th width="17%"><fmt:message key="generic.name"/></th>
           <th width="20%"><fmt:message key="templates.path"/></th>

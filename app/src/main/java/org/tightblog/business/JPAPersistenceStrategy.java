@@ -207,6 +207,16 @@ public class JPAPersistenceStrategy {
     }
 
     /**
+     * Detach object, so changes to it are no longer stored in DB
+     *
+     * @param po the persistence object to detach
+     */
+    public void detach(Object po) {
+        EntityManager em = getEntityManager(true);
+        em.detach(po);
+    }
+
+    /**
      * Remove object from persistence storage.
      *
      * @param objsToRemove the persistent objects to remove

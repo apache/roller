@@ -140,7 +140,7 @@
                     <span th:class="${cform.invalid ? 'error' : (!utils.isEmpty(cform.submitResponseMessage) ? 'status' : null)}"
                           th:utext="${cform.submitResponseMessage}">xxx</span>
 
-                    <form method="post" focus="name" name="commentForm" onsubmit="saveUserInformation(this)">
+                    <form method="post" focus="name" name="commentForm">
                         <input type="hidden" name="method" value="post" />
 
                         <ul>
@@ -159,10 +159,6 @@
                                 <label for="notify" class="choice" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
                             </li>
                             <li>
-                                <input type="checkbox" class="checkbox" id="rememberInfo" name="rememberInfo" />
-                                <label for="rememberInfo" class="choice" th:utext="${utils.msg('macro.weblog.rememberinfo')}">xxx</label>
-                            </li>
-                            <li>
                                 <label class="desc" th:utext="${utils.msg('macro.weblog.yourcomment')}">xxx</label>
                                 <textarea name="content" class="textarea large" cols="40" rows="10" maxlength="2000" th:utext="${cform.content}" required>xxx</textarea>
                             </li>
@@ -179,36 +175,8 @@
                         </ul>
 
                     </form>
-
-                    <script th:src="${url.site + '/scripts/roller.js'}"></script>
                     <script>
                         clientSideInclude('commentAuthenticator', '[(${url.commentAuthenticator})]');
-
-                        var author = getCookie("commentAuthor");
-                        var email = getCookie("commentEmail");
-                        var url = getCookie("commentUrl");
-                        // check each field - IE will render "null"
-                        if (author) {
-                            document.forms['commentForm'].name.value = author;
-                        }
-                        if (email) {
-                            document.forms['commentForm'].email.value = email;
-                        }
-                        if (url) {
-                            document.forms['commentForm'].url.value = url;
-                        }
-
-                        if (author || email || url) {
-                            document.forms['commentForm'].rememberInfo.checked = true;
-                        }
-
-                        function saveUserInformation(theForm) {
-                            if (theForm.rememberInfo.checked) {
-                                rememberUser(theForm);
-                            } else {
-                                forgetUser(theForm);
-                            }
-                        }
                     </script>
                 </th:block>
                 <span th:case="${false}" class="status" th:utext="${utils.msg('comments.disabled')}">xxx</span>

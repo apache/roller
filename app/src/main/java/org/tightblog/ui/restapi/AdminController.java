@@ -21,6 +21,7 @@
 package org.tightblog.ui.restapi;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -184,6 +185,10 @@ public class AdminController {
     public ResponseEntity updateProperties(Principal p, @Valid @RequestBody WebloggerProperties properties) {
         User user = userManager.getEnabledUserByUserName(p.getName());
         I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
+
+        // maintain last weblog change
+        WebloggerProperties oldProperties = persistenceStrategy.load(WebloggerProperties.class, "1");
+        properties.setLastWeblogChange(oldProperties.getLastWeblogChange());
         persistenceStrategy.merge(properties);
         persistenceStrategy.flush();
         blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
