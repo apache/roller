@@ -5,6 +5,7 @@ tightblogApp.controller('PageController', ['$http', '$window', function PageCont
       $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/mediadirectories').then(
          function(response) {
             self.directories = response.data;
+            self.selectedDirectory = self.directories[0].id;
          },
          self.commonErrorResponse
       );
