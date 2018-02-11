@@ -30,7 +30,7 @@ function onSelectMediaFile(name, url, alt, title, anchor, isImage) {
         '<img src="' + url + '"' +
         ' alt="' + (alt ? alt : name) + '"' +
          (title ? ' title="' + title + '"' : '') +
-         '/>' +
+         '>' +
         (anchor ? '</a>' : '');
     } else {
         anchorTag = '<a href="' + url + '"' +

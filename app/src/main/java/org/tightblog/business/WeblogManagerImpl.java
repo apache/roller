@@ -521,15 +521,6 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public void resetAllHitCounts() {
-        log.info("daily hit counts getting reset...");
-        Query q = strategy.getNamedUpdate("Weblog.updateDailyHitCountZero");
-        q.executeUpdate();
-        strategy.flush();
-        log.info("finished resetting hit count");
-    }
-
-    @Override
     public void saveBookmark(WeblogBookmark bookmark) {
         bookmark.getWeblog().invalidateCache();
         this.strategy.store(bookmark);
@@ -596,44 +587,46 @@ public class WeblogManagerImpl implements WeblogManager {
     @Override
     public void incrementHitCount(Weblog weblog) {
         if (weblog != null) {
-            Long count = hitsTally.get(weblog.getId());
-            if (count == null) {
-                count = 1L;
-            } else {
-                count = count + 1;
-            }
-            hitsTally.put(weblog.getId(), count);
+            Long count = hitsTally.getOrDefault(weblog.getId(), 0L);
+            hitsTally.put(weblog.getId(), count + 1);
         }
     }
 
     @Override
-    public void updateHitCounters() {
-        log.debug("updating blog hit counters...");
-
-        // Make a reference to the current queue
-        Map<String, Long> hitsTallyCopy = hitsTally;
-
-        // reset queue for next execution
-        hitsTally = Collections.synchronizedMap(new HashMap<>());
-
-        // iterate over the tallied hits and store them in the db
-        long totalHitsProcessed = 0;
-        Weblog weblog;
-        for (Map.Entry<String, Long> entry : hitsTallyCopy.entrySet()) {
-            weblog = getWeblog(entry.getKey());
-            updateHitCount(weblog, entry.getValue().intValue());
-            totalHitsProcessed += entry.getValue();
-        }
-
-        // flush the results to the db
+    public void resetAllHitCounts() {
+        hitsTally.clear();
+        Query q = strategy.getNamedUpdate("Weblog.updateDailyHitCountZero");
+        q.executeUpdate();
         strategy.flush();
-
-        log.debug("Added {} hits to {} blogs", totalHitsProcessed, hitsTallyCopy.size());
+        log.info("daily hit counts reset");
     }
 
-    private void updateHitCount(Weblog weblog, int amount) {
-        weblog.setHitsToday(getHitCount(weblog) + amount);
-        strategy.store(weblog);
+    @Override
+    public void updateHitCounters() {
+        if (hitsTally.size() > 0) {
+            // Make a reference to the current queue
+            Map<String, Long> hitsTallyCopy = hitsTally;
+
+            // reset queue for next execution
+            hitsTally = Collections.synchronizedMap(new HashMap<>());
+
+            // iterate over the tallied hits and store them in the db
+            long totalHitsProcessed = 0;
+            Weblog weblog;
+            for (Map.Entry<String, Long> entry : hitsTallyCopy.entrySet()) {
+                weblog = getWeblog(entry.getKey());
+                if (weblog != null) {
+                    weblog.setHitsToday(getHitCount(weblog) + entry.getValue().intValue());
+                    strategy.store(weblog);
+                    totalHitsProcessed += entry.getValue();
+                }
+            }
+
+            // flush the results to the db
+            strategy.flush();
+
+            log.info("Updated blog hits, {} total extra hits from {} blogs", totalHitsProcessed, hitsTallyCopy.size());
+        }
     }
 
     @Override
