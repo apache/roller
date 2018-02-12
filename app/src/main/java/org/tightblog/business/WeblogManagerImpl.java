@@ -500,12 +500,6 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public int getHitCount(Weblog weblog) {
-        Weblog copy = getWeblog(weblog.getId());
-        return copy.getHitsToday();
-    }
-
-    @Override
     public List<Weblog> getHotWeblogs(int sinceDays, int offset, int length) {
 
         TypedQuery<Weblog> query = strategy.getNamedQuery(
@@ -615,8 +609,10 @@ public class WeblogManagerImpl implements WeblogManager {
             Weblog weblog;
             for (Map.Entry<String, Long> entry : hitsTallyCopy.entrySet()) {
                 weblog = getWeblog(entry.getKey());
+                strategy.refresh(weblog);
+
                 if (weblog != null) {
-                    weblog.setHitsToday(getHitCount(weblog) + entry.getValue().intValue());
+                    weblog.setHitsToday(weblog.getHitsToday() + entry.getValue().intValue());
                     strategy.store(weblog);
                     totalHitsProcessed += entry.getValue();
                 }
