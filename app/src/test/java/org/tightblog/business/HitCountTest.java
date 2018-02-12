@@ -75,10 +75,6 @@ public class HitCountTest extends WebloggerTest {
         assertNotNull(aWeblog);
         assertEquals(aWeblog, testWeblog);
         assertEquals(oldHits + 10, aWeblog.getHitsToday());
-
-        // test lookup by weblog
-        int hitCount = weblogManager.getHitCount(testWeblog);
-        assertEquals(oldHits + 10, hitCount);
     }
 
     @Test
@@ -100,8 +96,8 @@ public class HitCountTest extends WebloggerTest {
         weblogManager.updateHitCounters();
 
         // make sure it was incremented properly
-        int hitCount = weblogManager.getHitCount(testWeblog);
-        assertEquals(15, hitCount);
+        aWeblog = getManagedWeblog(testWeblog);
+        assertEquals(15, aWeblog.getHitsToday());
     }
 
     @Test
@@ -109,41 +105,33 @@ public class HitCountTest extends WebloggerTest {
         testUser = getManagedUser(testUser);
         Weblog blog1 = setupWeblog("hitCntTest1", testUser);
         Weblog blog2 = setupWeblog("hitCntTest2", testUser);
-        Weblog blog3 = setupWeblog("hitCntTest3", testUser);
-        
+
         blog1.setHitsToday(10);
         blog2.setHitsToday(20);
-        blog3.setHitsToday(30);
 
         endSession(true);
         
         try {
             // make sure data was properly initialized
             int testCount;
-            testCount = weblogManager.getHitCount(blog1);
-            assertEquals(10, testCount);
-            testCount = weblogManager.getHitCount(blog2);
-            assertEquals(20, testCount);
-            testCount = weblogManager.getHitCount(blog3);
-            assertEquals(30, testCount);
+            assertEquals(10, blog1.getHitsToday());
+            assertEquals(20, blog2.getHitsToday());
 
             // reset all counts
             weblogManager.resetAllHitCounts();
             endSession(true);
 
+            blog1 = getManagedWeblog(blog1);
+            blog2 = getManagedWeblog(blog2);
+
             // make sure it reset all counts
-            testCount = weblogManager.getHitCount(blog1);
-            assertEquals(0, testCount);
-            testCount = weblogManager.getHitCount(blog2);
-            assertEquals(0, testCount);
-            testCount = weblogManager.getHitCount(blog3);
-            assertEquals(0, testCount);
-        
+            assertEquals(0, blog1.getHitsToday());
+            assertEquals(0, blog2.getHitsToday());
+
         } finally {
             // cleanup
             teardownWeblog(blog1.getId());
             teardownWeblog(blog2.getId());
-            teardownWeblog(blog3.getId());
         }
     }
 
@@ -161,13 +149,9 @@ public class HitCountTest extends WebloggerTest {
         endSession(true);
         
         // make sure data was properly initialized
-        int testCount;
-        testCount = weblogManager.getHitCount(blog1);
-        assertEquals(10, testCount);
-        testCount = weblogManager.getHitCount(blog2);
-        assertEquals(20, testCount);
-        testCount = weblogManager.getHitCount(blog3);
-        assertEquals(30, testCount);
+        assertEquals(10, blog1.getHitsToday());
+        assertEquals(20, blog2.getHitsToday());
+        assertEquals(30, blog3.getHitsToday());
         
         // get hot weblogs
         List<Weblog> hotBlogs = weblogManager.getHotWeblogs(1, 0, 5);

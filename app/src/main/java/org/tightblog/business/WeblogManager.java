@@ -147,14 +147,6 @@ public interface WeblogManager {
     long getWeblogCount();
 
     /**
-     * Get a HitCountData by weblog.
-     *
-     * @param weblog The Weblog that you want the hit count for.
-     * @return The number of hits today stored for the weblog.
-     */
-    int getHitCount(Weblog weblog);
-
-    /**
      * Get HitCountData objects for the hotest weblogs.
      * <p>
      * The results may be constrained to a certain number of days back from the
