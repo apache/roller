@@ -1,5 +1,5 @@
 Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
-before deciding to go my own way due to differing architectural goals.  As of 2 September 2017, <a href="https://github.com/gmazza/tightblog/releases">Release 2.0.3</a> is available.
+before deciding to go my own way due to differing architectural goals.  As of 12 February 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 2.0.4</a> is available.
 
 TightBlog strives to be the mathematically cleanest and simplest implementation of a Java based blog server, suitable either for direct use or
 incorporation, as an Apache-licensed open source project, into larger projects.  Specifically, its goal is to satisfy all the needs of 80% of bloggers while
@@ -12,13 +12,11 @@ This more realistic goal--along with adopting the Spring framework, REST, Angula
 |Apache Roller 5.1.2|1 Mar 2015|33|493|96|95.7K|
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
-|TightBlog 2.0.3|2 Sept 2017|13|146|37|42.9K|
+|TightBlog 2.0.4|12 Febuary 2018|13|146|37|42.9K|
 |TightBlog 3.0|in Development|12|126|37|35.1K|
 
 (Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test cases, however LOC do.
 LOC are expected to increase over time as more unit test cases are added.) 
-
-However, TightBlog has more JavaScript files due to its emphasis on browser-side processing.
 
 In addition to the cleanout of old functionality some new features have been added:
 
@@ -40,8 +38,8 @@ The top-level TightBlog directory consists of the following folders:
 * etc:                    Utility scripts and screenshots for documentation
 
 To obtain the source code:
-* latest (2.0 branch):  git clone git@github.com:gmazza/tightblog.git
-* 1.0 branch: https://github.com/gmazza/tightblog/tree/tb10branch
+* latest (3.0 branch):  git clone git@github.com:gmazza/tightblog.git
+* Release 2.0.x branch: https://github.com/gmazza/tightblog/tree/release2.0.4
 * source for a specific release: https://github.com/gmazza/tightblog/releases
 
 To build the application (app/target/tightblog.war) with Maven and Java 8:
