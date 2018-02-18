@@ -50,16 +50,16 @@ i
                         </a>
                     </li> --%> 
 
-                    <s:set name="tabMenu" value="menu"/>
+                    <s:set var="tabMenu" value="menu"/>
                     <s:if test="#tabMenu != null">
-                        <s:iterator id="tab" value="#tabMenu.tabs">
+                        <s:iterator var="tab" value="#tabMenu.tabs">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-haspopup="true" aria-expanded="false">
                                     <s:text name="%{#tab.key}"/> <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <s:iterator id="tabItem" value="#tab.items" status="stat">
+                                    <s:iterator var="tabItem" value="#tab.items" status="stat">
                                         <li>
                                             <a href="<s:url action="%{#tabItem.action}">
                                                 <s:param name="weblog" value="actionWeblog.handle"/></s:url>">
