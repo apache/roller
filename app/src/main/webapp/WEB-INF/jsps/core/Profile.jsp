@@ -86,7 +86,7 @@
 
 </s:form>
 
-<script>
+<script type="text/javascript">
 
     var saveButton;
 
@@ -114,7 +114,7 @@
         }
 
         if ( (password && password.trim().length) || (passwordConfirm && passwordConfirm.trim().length > 0 )) {
-            if ( password != passwordConfirm ) {
+            if ( password !== passwordConfirm ) {
                 valid = false;
             }
         }
@@ -134,7 +134,4 @@
         return re.test(email);
     }
 
-
 </script>
-
-
