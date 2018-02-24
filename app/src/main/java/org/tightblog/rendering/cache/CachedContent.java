@@ -49,14 +49,9 @@ public class CachedContent {
     // The PrintWriter that users will be writing to
     private transient PrintWriter cachedWriter = null;
 
-    public CachedContent(int size) {
-
-        // construct output stream
-        if (size > 0) {
-            this.outstream = new ByteArrayOutputStream(size);
-        } else {
-            this.outstream = new ByteArrayOutputStream(Utilities.EIGHT_KB_IN_BYTES);
-        }
+    public CachedContent(int size, String contentType) {
+        this.contentType = contentType;
+        this.outstream = new ByteArrayOutputStream(size > 0 ? size : Utilities.EIGHT_KB_IN_BYTES);
 
         // construct writer from output stream
         try {
@@ -65,11 +60,6 @@ public class CachedContent {
             // shouldn't be possible, java always supports utf-8
             throw new RuntimeException("Encoding problem", e);
         }
-    }
-
-    public CachedContent(int size, String contentType) {
-        this(size);
-        this.contentType = contentType;
     }
 
     /**
@@ -128,5 +118,4 @@ public class CachedContent {
 
         log.debug("CLOSED");
     }
-
 }

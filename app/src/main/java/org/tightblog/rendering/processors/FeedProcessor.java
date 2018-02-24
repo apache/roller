@@ -96,9 +96,6 @@ public class FeedProcessor extends AbstractProcessor {
 
     @RequestMapping(method = RequestMethod.GET)
     public void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        log.debug("Entering");
-
         Weblog weblog;
 
         WeblogFeedRequest feedRequest;
@@ -187,37 +184,20 @@ public class FeedProcessor extends AbstractProcessor {
         model = getModelMap("feedModelSet", initData);
         pageId = feedRequest.getType() + "-atom";
 
-        // render content. use default size of 24K for a standard page
-        CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES);
         try {
-            log.debug("Rendering...");
             Template template = new SharedTemplate(pageId);
-            thymeleafRenderer.render(template, model, rendererOutput.getCachedWriter());
+            CachedContent rendererOutput = thymeleafRenderer.render(template, model, "application/atom+xml");
+            response.setContentType(rendererOutput.getContentType());
+            response.setContentLength(rendererOutput.getContent().length);
+            response.getOutputStream().write(rendererOutput.getContent());
 
-            // flush rendered output and close
-            rendererOutput.flush();
-            rendererOutput.close();
+            // cache rendered content.
+            log.debug("PUT {}", cacheKey);
+            weblogFeedCache.put(cacheKey, rendererOutput);
         } catch (Exception e) {
-            // bummer, error during rendering
             log.error("Error during rendering for page {}", pageId, e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
         }
-
-        // post rendering process
-
-        // flush rendered content to response
-        log.debug("Flushing response output");
-        response.setContentLength(rendererOutput.getContent().length);
-        response.getOutputStream().write(rendererOutput.getContent());
-
-        // cache rendered content. only cache if user is not logged in?
-        log.debug("PUT {}", cacheKey);
-        weblogFeedCache.put(cacheKey, rendererOutput);
     }
 
     /**

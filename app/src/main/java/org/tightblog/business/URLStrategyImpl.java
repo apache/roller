@@ -245,6 +245,7 @@ public class URLStrategyImpl implements URLStrategy {
             }
         }
 
+        addThemeOverrideIfPresent(params);
         return url + Utilities.getQueryString(params);
     }
 

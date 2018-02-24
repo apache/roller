@@ -28,7 +28,6 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.requests.WeblogSearchRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,33 +153,14 @@ public class SearchProcessor extends AbstractProcessor {
         }
 
         // render content
-        CachedContent rendererOutput = new CachedContent(Utilities.EIGHT_KB_IN_BYTES);
         try {
-            log.debug("Doing rendering");
-            thymeleafRenderer.render(page, model, rendererOutput.getCachedWriter());
-
-            // flush rendered output and close
-            rendererOutput.flush();
-            rendererOutput.close();
+            CachedContent rendererOutput = thymeleafRenderer.render(page, model, "text/html");
+            response.setContentType(rendererOutput.getContentType());
+            response.setContentLength(rendererOutput.getContent().length);
+            response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {
-            // bummer, error during rendering
             log.error("Error during rendering for search template", e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
         }
-
-        // post rendering process
-
-        // flush rendered content to response
-        log.debug("Flushing response output");
-        response.setContentLength(rendererOutput.getContent().length);
-        response.getOutputStream().write(rendererOutput.getContent());
-
-        log.debug("Exiting");
     }
-
 }
