@@ -22,17 +22,17 @@ package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.UserManager;
+import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.themes.SharedTheme;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Template.ComponentType;
-import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -99,32 +98,28 @@ public class PreviewProcessor extends AbstractProcessor {
         this.weblogManager = weblogManager;
     }
 
-    @PostConstruct
-    public void init() {
-        log.info("Initializing PreviewProcessor...");
+    @Autowired
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public void getPreviewPage(HttpServletRequest request, HttpServletResponse response, Principal p) throws IOException {
-        log.debug("Entering");
-
-        Weblog weblog;
         WeblogPageRequest incomingRequest = new WeblogPageRequest(request);
 
-        User user = userManager.getEnabledUserByUserName(p.getName());
-
-        weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
         if (weblog == null) {
-            log.debug("error creating preview request: {}", incomingRequest);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         } else {
             incomingRequest.setWeblog(weblog);
         }
 
-        if (!userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
-            // user must have access rights on blog being previewed
-            log.warn("User {} attempting to preview blog {} without access rights, blocking", user != null ? user.getUserName() : "(missing)",
+        // User must have access rights on blog being previewed
+        if (!userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
+            log.warn("User {} attempting to preview blog {} without access rights, blocking", p.getName(),
                     weblog.getHandle());
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
@@ -150,81 +145,60 @@ public class PreviewProcessor extends AbstractProcessor {
             }
         }
 
-        Template page = null;
-        if ("page".equals(incomingRequest.getContext())) {
-            page = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
+        // figure out what template to use
+        if (incomingRequest.getCustomPageName() != null) {
+            Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
 
-            incomingRequest.setTemplate(page);
-          // If this is a permalink then look for a permalink template
-        } else if (incomingRequest.getWeblogEntryAnchor() != null) {
-            try {
-                page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK);
-            } catch (Exception e) {
-                log.error("Error getting weblog page for action 'permalink'", e);
+            // block internal custom pages from appearing directly
+            if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
+                incomingRequest.setTemplate(template);
+            }
+        } else {
+            boolean invalid = false;
+
+            if (incomingRequest.getWeblogEntryAnchor() != null) {
+                WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
+
+                if (entry == null) {
+                    invalid = true;
+                } else {
+                    incomingRequest.setWeblogEntry(entry);
+                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
+                }
+            }
+
+            // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
+            if (!invalid && incomingRequest.getTemplate() == null) {
+                incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
             }
         }
 
-        if (page == null) {
-            page = themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG);
-        }
-
-        // Still no page?  Then that is a 404
-        if (page == null) {
-            if (!response.isCommitted()) {
-                response.reset();
-            }
+        if (incomingRequest.getTemplate() == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        log.debug("preview page found, dealing with it");
-
-        // set the content type
-        String contentType = page.getRole().getContentType();
-
-        // looks like we need to render content
-        Map<String, Object> model;
-
-        // populate the rendering model
+        // Need to render content, populate the rendering model
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", incomingRequest);
 
         // Load models for page previewing
-        model = getModelMap("previewModelSet", initData);
+        Map<String, Object> model = getModelMap("previewModelSet", initData);
 
         // Load special models for site-wide blog
         if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
             model.putAll(getModelMap("siteModelSet", initData));
         }
 
-        // render content
-        CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES);
         try {
-            log.debug("Doing rendering");
-            thymeleafRenderer.render(page, model, rendererOutput.getCachedWriter());
-
-            // flush rendered output and close
-            rendererOutput.flush();
-            rendererOutput.close();
+            String contentType = incomingRequest.getTemplate().getRole().getContentType();
+            CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model, contentType);
+            response.setContentType(rendererOutput.getContentType());
+            response.setContentLength(rendererOutput.getContent().length);
+            response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {
-            // bummer, error during rendering
-            log.error("Error during rendering for page {}", page.getId(), e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
+            log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
         }
-
-        // post rendering process
-
-        // flush rendered content to response
-        log.debug("Flushing response output");
-        response.setContentType(contentType);
-        response.setContentLength(rendererOutput.getContent().length);
-        response.getOutputStream().write(rendererOutput.getContent());
-        log.debug("Exiting");
     }
-
 }

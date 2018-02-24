@@ -22,9 +22,12 @@ import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.tightblog.pojos.Template;
+import org.tightblog.rendering.cache.CachedContent;
+import org.tightblog.util.Utilities;
 import org.tightblog.util.WebloggerException;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
@@ -36,7 +39,9 @@ public class ThymeleafRenderer {
         this.templateEngine = templateEngine;
     }
 
-    public void render(Template template, Map<String, Object> model, Writer writer) throws WebloggerException {
+    public CachedContent render(Template template, Map<String, Object> model, String contentType) throws IOException, WebloggerException {
+        CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
+        Writer writer = rendererOutput.getCachedWriter();
         try {
             Context ctx = new Context();
             ctx.setVariables(model);
@@ -64,5 +69,8 @@ public class ThymeleafRenderer {
                 throw e;
             }
         }
+        rendererOutput.flush();
+        rendererOutput.close();
+        return rendererOutput;
     }
 }

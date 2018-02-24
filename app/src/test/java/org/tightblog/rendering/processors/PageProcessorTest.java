@@ -197,14 +197,20 @@ public class PageProcessorTest {
         when(mockContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
         processor.setApplicationContext(mockContext);
 
+        CachedContent cachedContent = new CachedContent(10, ComponentType.CUSTOM_EXTERNAL.getContentType());
+        cachedContent.getCachedWriter().print("mytest1");
+        cachedContent.flush();
+        when(mockThymeleafRenderer.render(any(), any(), any())).thenReturn(cachedContent);
+
         Mockito.clearInvocations(processor, mockResponse, mockWM);
         processor.handleRequest(mockRequest, mockResponse);
         assertEquals(pageRequest.getTemplate(), wt);
         verify(mockWM).incrementHitCount(weblog);
         verify(mockCache).put(anyString(), any());
-        verify(mockThymeleafRenderer).render(eq(pageRequest.getTemplate()), any(), any());
+        verify(mockThymeleafRenderer).render(eq(pageRequest.getTemplate()), any(),
+                eq(ComponentType.CUSTOM_EXTERNAL.getContentType()));
         verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());
-        verify(mockResponse).setContentLength(anyInt());
+        verify(mockResponse).setContentLength("mytest1".length());
         verify(mockSOS).write(any());
 
         // test permalink template, no weblog page hit
