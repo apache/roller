@@ -20,7 +20,8 @@
         <spring.version>4.3.10.RELEASE</spring.version>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <jackson.version>2.8.4</jackson.version>
-        <log4j2.version>2.9.0</log4j2.version>
+        <!-- versions higher than 2.8.2 problematic with Jetty and Java8: https://stackoverflow.com/a/46878196 -->
+        <log4j2.version>2.8.2</log4j2.version>
         <thymeleaf.version>3.0.7.RELEASE</thymeleaf.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
     </properties>
