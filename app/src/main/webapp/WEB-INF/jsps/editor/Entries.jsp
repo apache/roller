@@ -103,8 +103,8 @@
     </td>
 
     <td>
-        <s:set name="postId" value="#post.id" />
-        <s:set name="postTitle" value="#post.title" />
+        <s:set var="postId" value="#post.id" />
+        <s:set var="postTitle" value="#post.title" />
         <a href="#" 
             onclick="showDeleteModal('<s:property value="postId" />', '<s:property value="postTitle"/>' )"> 
             <span class="glyphicon glyphicon-trash"></span></a>
