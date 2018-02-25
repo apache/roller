@@ -54,7 +54,7 @@
     </s:text>
 </p>
 
-<s:form id="entry" theme="bootstrap" cssClass="form-horizontal">
+<s:form id="entry" theme="bootstrap" cssClass="form-vertical">
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
     <s:hidden name="bean.status"/>
@@ -115,6 +115,7 @@
         <label class="col-sm-3 control-label" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
 
         <div class="col-sm-9 controls">
+
             <p class="form-control-static">
                 <s:if test="bean.published">
                     <span class="label label-success">
@@ -148,6 +149,7 @@
                     <span class="label label-danger"><s:text name="weblogEdit.unsaved"/></span>
                 </s:else>
             </p>
+
         </div>
 
     </div>
