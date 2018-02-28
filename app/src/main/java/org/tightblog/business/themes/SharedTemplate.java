@@ -53,8 +53,9 @@ public class SharedTemplate implements Template {
         this.contentsFile = contentsFile;
     }
 
-    public SharedTemplate(String id) {
+    public SharedTemplate(String id, ComponentType role) {
         this.id = id;
+        this.role = role;
     }
 
     public String getId() {

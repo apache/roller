@@ -87,33 +87,20 @@ public class SearchProcessor extends AbstractProcessor {
         log.debug("Entering");
 
         Weblog weblog;
-        WeblogSearchRequest searchRequest;
+        WeblogSearchRequest searchRequest = new WeblogSearchRequest(request);
 
-        // first off lets parse the incoming request and validate it
-        try {
-            searchRequest = new WeblogSearchRequest(request);
-
-            weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);
-            if (weblog == null) {
-                log.info("Weblog not found: {}", searchRequest.getWeblogHandle());
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            } else {
-                searchRequest.setWeblog(weblog);
-            }
-
-        } catch (Exception e) {
-            // invalid search request format or weblog doesn't exist
-            log.debug("Error creating weblog search request", e);
+        weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);
+        if (weblog == null) {
+            log.info("Weblog not found: {}", searchRequest.getWeblogHandle());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        } else {
+            searchRequest.setWeblog(weblog);
         }
 
         // lookup template to use for rendering, look for search results override first
-        // try looking for a specific search page
         Template page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH_RESULTS);
 
-        // if not found then fall back on default page
         if (page == null) {
             page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
         }
@@ -123,11 +110,6 @@ public class SearchProcessor extends AbstractProcessor {
             throw new IllegalStateException("Could not lookup default page for weblog " + weblog.getHandle());
         }
 
-        // set the content type
-        response.setContentType("text/html; charset=utf-8");
-
-        // looks like we need to render content
-        Map<String, Object> model;
         // populate the rendering model
         Map<String, Object> initData = new HashMap<>();
         initData.put("request", request);
@@ -145,7 +127,7 @@ public class SearchProcessor extends AbstractProcessor {
         initData.put("searchRequest", searchRequest);
 
         // Load models for pages
-        model = getModelMap("searchModelSet", initData);
+        Map<String, Object> model = getModelMap("searchModelSet", initData);
 
         // Load special models for site-wide blog
         if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
@@ -154,7 +136,7 @@ public class SearchProcessor extends AbstractProcessor {
 
         // render content
         try {
-            CachedContent rendererOutput = thymeleafRenderer.render(page, model, "text/html");
+            CachedContent rendererOutput = thymeleafRenderer.render(page, model);
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());

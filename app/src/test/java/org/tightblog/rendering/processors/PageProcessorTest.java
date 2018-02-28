@@ -200,15 +200,14 @@ public class PageProcessorTest {
         CachedContent cachedContent = new CachedContent(10, ComponentType.CUSTOM_EXTERNAL.getContentType());
         cachedContent.getCachedWriter().print("mytest1");
         cachedContent.flush();
-        when(mockThymeleafRenderer.render(any(), any(), any())).thenReturn(cachedContent);
+        when(mockThymeleafRenderer.render(any(), any())).thenReturn(cachedContent);
 
         Mockito.clearInvocations(processor, mockResponse, mockWM);
         processor.handleRequest(mockRequest, mockResponse);
         assertEquals(pageRequest.getTemplate(), wt);
         verify(mockWM).incrementHitCount(weblog);
         verify(mockCache).put(anyString(), any());
-        verify(mockThymeleafRenderer).render(eq(pageRequest.getTemplate()), any(),
-                eq(ComponentType.CUSTOM_EXTERNAL.getContentType()));
+        verify(mockThymeleafRenderer).render(eq(pageRequest.getTemplate()), any());
         verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());
         verify(mockResponse).setContentLength("mytest1".length());
         verify(mockSOS).write(any());
@@ -265,7 +264,7 @@ public class PageProcessorTest {
         // test 404 if exception during rendering
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-        doThrow(new IllegalArgumentException()).when(mockThymeleafRenderer).render(any(), any(), any());
+        doThrow(new IllegalArgumentException()).when(mockThymeleafRenderer).render(any(), any());
 
         Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);

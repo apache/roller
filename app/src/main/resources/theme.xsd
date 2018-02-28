@@ -40,6 +40,7 @@
                                     <xs:enumeration value="searchResults"/>
                                     <xs:enumeration value="stylesheet"/>
                                     <xs:enumeration value="javascript"/>
+                                    <xs:enumeration value="atomFeed"/>
                                     <xs:enumeration value="customInternal"/>
                                     <xs:enumeration value="customExternal"/>
                                 </xs:restriction>
