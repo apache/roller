@@ -185,8 +185,8 @@ public class FeedProcessor extends AbstractProcessor {
         pageId = feedRequest.getType() + "-atom";
 
         try {
-            Template template = new SharedTemplate(pageId);
-            CachedContent rendererOutput = thymeleafRenderer.render(template, model, "application/atom+xml");
+            Template template = new SharedTemplate(pageId, Template.ComponentType.ATOMFEED);
+            CachedContent rendererOutput = thymeleafRenderer.render(template, model);
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());

@@ -191,8 +191,7 @@ public class PreviewProcessor extends AbstractProcessor {
         }
 
         try {
-            String contentType = incomingRequest.getTemplate().getRole().getContentType();
-            CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model, contentType);
+            CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());

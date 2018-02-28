@@ -39,7 +39,8 @@ public class ThymeleafRenderer {
         this.templateEngine = templateEngine;
     }
 
-    public CachedContent render(Template template, Map<String, Object> model, String contentType) throws IOException, WebloggerException {
+    public CachedContent render(Template template, Map<String, Object> model) throws IOException, WebloggerException {
+        String contentType = template.getRole().getContentType();
         CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
         Writer writer = rendererOutput.getCachedWriter();
         try {

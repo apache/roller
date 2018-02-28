@@ -232,8 +232,7 @@ public class PageProcessor extends AbstractProcessor {
             }
 
             // render content
-            String contentType = incomingRequest.getTemplate().getRole().getContentType();
-            CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model, contentType);
+            CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
 
             // write rendered content to response
             log.debug("Writing response output");
