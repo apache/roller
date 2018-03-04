@@ -29,6 +29,7 @@ import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.themes.ThemeManager;
+import org.tightblog.pojos.CalendarData;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
@@ -38,7 +39,6 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.rendering.generators.BigWeblogCalendar;
 import org.tightblog.rendering.generators.WeblogCalendar;
 import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
@@ -404,16 +404,9 @@ public class PageModel implements Model {
         return false;
     }
 
-    public String showWeblogEntryCalendar(boolean big) {
-        String ret = null;
-        try {
-            WeblogCalendar calendar = big ? new BigWeblogCalendar(pageRequest, weblogEntryManager, urlStrategy) :
-                    new WeblogCalendar(weblogEntryManager, urlStrategy, pageRequest);
-            ret = calendar.generateHTML();
-        } catch (Exception e) {
-            log.error("ERROR: initializing calendar tag", e);
-        }
-        return ret;
+    public CalendarData getCalendarData(boolean includeBlogEntryData) {
+        WeblogCalendar calendar = new WeblogCalendar(weblogEntryManager, urlStrategy, pageRequest, includeBlogEntryData);
+        return calendar.getCalendarData();
     }
 
     public String getRequestParameter(String paramName) {

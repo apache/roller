@@ -1,4 +1,4 @@
-.hCalendarMonthYearRowBig {
+.hCalendarTableBig .hCalendarMonthYearRow {
   font-size: x-large;
   font-weight: bold;
 }
@@ -10,27 +10,19 @@
   padding: 5px;
 }
 
-.hCalendarMonthYearRowBig {
+.hCalendarTableBig .hCalendarMonthYearRow {
   color: white;
   background-color : #0074D9;
   border: dashed 1px #aaaaaa;
   width: 12%;
 }
 
-.hCalendarDayNameRowBig {
-  border: dashed 1px #aaaaaa;
-  background-color: #ffffff;
-  margin: 2px;
-  width: 12%;
-  font-weight: bold;
-}
-
-.bCalendarDayContentBig {
+.hCalendarTableBig .bCalendarDayContent {
   font-size: x-small;
   padding: 3px 0px 3px 0px;
 }
 
-.hCalendarDayTitleBig {
+.hCalendarTableBig .hCalendarDayTitle {
   position: relative;
   left: 0;
   top: 0;
@@ -45,7 +37,7 @@
   font-size: small;
 }
 
-.hCalendarDayBig {
+.hCalendarTableBig .hCalendarDay {
   vertical-align: top;
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
@@ -53,7 +45,7 @@
   width: 12%;
 }
 
-TD.hCalendarDayCurrentBig {
+.hCalendarTableBig TD.hCalendarDayCurrent {
   vertical-align: top;
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
@@ -61,17 +53,7 @@ TD.hCalendarDayCurrentBig {
   width: 12%;
 }
 
-TD.hCalendarDayLinkedBig {
-  vertical-align: top;
-  border-color: #8facc5;
-  border-width: 1px;
-  border-style: solid;
-  background-color: #ffffff;
-  margin: 2px;
-  width: 12%;
-}
-
-TD.hCalendarDayNotInMonthBig {
+.hCalendarTableBig TD.hCalendarDayNotInMonth {
   vertical-align: top;
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
@@ -79,7 +61,7 @@ TD.hCalendarDayNotInMonthBig {
   width: 12%;
 }
 
-.hCalendarDayNameRowBig {
+.hCalendarTableBig .hCalendarDayNameRow {
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
   margin: 2px;
@@ -87,7 +69,7 @@ TD.hCalendarDayNotInMonthBig {
   font-weight: bold;
 }
 
-.hCalendarNextPrevBig {
+.hCalendarTableBig .hCalendarNextPrev {
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
   margin: 2px;
