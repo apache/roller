@@ -146,15 +146,13 @@ public class InstallerController {
         map.put("messages", messages);
 
         String script = "/createdb.sql";
-        Connection con = null;
         SQLScriptRunner runner = null;
 
-        try {
-            con = tbDataSource.getConnection();
-            String scriptPath = con.getMetaData().getDatabaseProductName().toLowerCase() + script;
+        try (Connection conn = tbDataSource.getConnection()) {
+            String scriptPath = conn.getMetaData().getDatabaseProductName().toLowerCase() + script;
             messages.add("Running database script: " + scriptPath);
             runner = new SQLScriptRunner(scriptPath, true);
-            runner.runScript(con, true);
+            runner.runScript(conn, true);
             messages.addAll(runner.getMessages());
             map.put("status", StartupStatus.needsBootstrapping);
         } catch (Exception ex) {
@@ -163,13 +161,6 @@ public class InstallerController {
                 messages.addAll(runner.getMessages());
             }
             map.put("status", StartupStatus.databaseCreateError);
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception ignored) {
-            }
         }
 
         return new ModelAndView(".install", map);
@@ -213,19 +204,18 @@ public class InstallerController {
      * Determine if database schema needs to be created.
      */
     private StartupStatus checkDatabase(Map<String, Object> map) {
-        Connection con = null;
-        try {
-            con = tbDataSource.getConnection();
+
+        try (Connection conn = tbDataSource.getConnection()) {
 
             // does the schema already exist?  -- check a couple of tables to find out
-            if (!tableExists(con, "weblog") || !tableExists(con, "weblogger_user")) {
+            if (!tableExists(conn, "weblog") || !tableExists(conn, "weblogger_user")) {
                 return StartupStatus.tablesMissing;
             }
 
             // OK, exists -- does the database schema match that used by the application?
             int applicationVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version", 0);
             int dbversion = -1;
-            Statement stmt = con.createStatement();
+            Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(
                     "select database_version from weblogger_properties where id = '1'");
 
@@ -243,13 +233,6 @@ public class InstallerController {
             map.put("rootCauseException", e);
             map.put("rootCauseStackTrace", getRootCauseStackTrace(e));
             return StartupStatus.bootstrapError;
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception ignored) {
-            }
         }
 
         return null;

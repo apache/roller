@@ -71,9 +71,7 @@ public class IndexWeblogTask extends AbstractIndexTask {
             log.info("Starting reindex of all weblogs...");
         }
 
-        IndexWriter writer = beginWriting();
-
-        try {
+        try (IndexWriter writer = beginWriting()) {
             if (writer != null) {
 
                 // Delete all entries from given weblog(s)
@@ -105,8 +103,6 @@ public class IndexWeblogTask extends AbstractIndexTask {
             }
         } catch (Exception e) {
             log.error("ERROR adding/deleting doc to index", e);
-        } finally {
-            endWriting(writer);
         }
 
         Instant end = Instant.now();

@@ -123,7 +123,6 @@ public class MediaResourceProcessor extends AbstractProcessor {
         }
 
         Instant resourceLastMod;
-        InputStream resourceStream = null;
         MediaFile mediaFile;
 
         try {
@@ -144,31 +143,12 @@ public class MediaResourceProcessor extends AbstractProcessor {
             setLastModifiedHeader(response, resourceLastMod, resourceRequest.getDeviceType());
         }
 
-        // set the content type based on whatever is in our web.xml mime defs
-        if (thumbnail) {
-            response.setContentType("image/png");
-            try {
-                resourceStream = mediaFile.getThumbnailInputStream();
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ERROR loading thumbnail for {}", mediaFile.getId(), e);
-                } else {
-                    log.warn("ERROR loading thumbnail for {}", mediaFile.getId());
-                }
-            }
-        }
+        try (InputStream resourceStream = getInputStream(mediaFile, thumbnail)) {
+            response.setContentType(thumbnail ? "image/png" : mediaFile.getContentType());
 
-        if (resourceStream == null) {
-            response.setContentType(mediaFile.getContentType());
-            resourceStream = mediaFile.getInputStream();
-        }
-
-        OutputStream out;
-        try {
-            // ok, lets serve up the file
             byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];
             int length;
-            out = response.getOutputStream();
+            OutputStream out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
@@ -182,11 +162,26 @@ public class MediaResourceProcessor extends AbstractProcessor {
                 response.reset();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        } finally {
-            // make sure stream to resource file is closed
-            resourceStream.close();
+        }
+    }
+
+    private InputStream getInputStream(MediaFile mediaFile, boolean thumbnail) {
+        InputStream resourceStream = null;
+
+        // set the content type based on whatever is in our web.xml mime defs
+        if (thumbnail) {
+            try {
+                resourceStream = mediaFile.getThumbnailInputStream();
+            } catch (Exception e) {
+                log.warn("ERROR loading thumbnail for {}", mediaFile.getId());
+            }
         }
 
+        if (resourceStream == null) {
+            resourceStream = mediaFile.getInputStream();
+        }
+
+        return resourceStream;
     }
 
 }

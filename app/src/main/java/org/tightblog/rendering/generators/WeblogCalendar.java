@@ -61,8 +61,8 @@ public class WeblogCalendar {
     private LocalDate dayInMonth = null;
     private LocalDate prevMonth = null;
     private LocalDate nextMonth = null;
-    private DateTimeFormatter sixCharDateFormat;
-    private DateTimeFormatter eightCharDateFormat;
+    private static final DateTimeFormatter sixCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
+    private static final DateTimeFormatter eightCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
 
     protected WeblogEntryManager weblogEntryManager;
     protected URLStrategy urlStrategy;
@@ -74,15 +74,11 @@ public class WeblogCalendar {
         this.urlStrategy = urlStrategy;
         this.pageRequest = pRequest;
         this.includeBlogEntryData = includeBlogEntryData;
-
         weblog = pageRequest.getWeblog();
-        eightCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
-        sixCharDateFormat = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
 
         if (pageRequest.getWeblogCategoryName() != null) {
             cat = pageRequest.getWeblogCategoryName();
         }
-
         dayInMonth = parseWeblogURLDateString(pageRequest.getWeblogDate());
         initModel();
     }
@@ -136,7 +132,6 @@ public class WeblogCalendar {
         }
         if (pageRequest.getCustomPageName() != null) {
             return urlStrategy.getCustomPageURL(weblog, pageRequest.getCustomPageName(), dateString, false);
-
         } else {
             return urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
         }
@@ -164,10 +159,6 @@ public class WeblogCalendar {
         }
 
         return ret;
-    }
-
-    private String computeTodayMonthUrl() {
-        return urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false);
     }
 
     private Calendar newCalendarInstance() {
@@ -201,7 +192,7 @@ public class WeblogCalendar {
             data.setNextMonthLink(computeUrl(nextMonth));
         }
 
-        data.setHomeLink(computeTodayMonthUrl());
+        data.setHomeLink(urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false));
 
         Calendar monthToDisplay = newCalendarInstance();
         // dayPointer will serve as the iterator, going through not just the days of the

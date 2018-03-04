@@ -264,23 +264,16 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     private void createIndex(Directory dir) {
-        IndexWriter writer = null;
         int maxTokenCount = 100;
 
-        try {
-            IndexWriterConfig config = new IndexWriterConfig(new LimitTokenCountAnalyzer(
+        IndexWriterConfig config = new IndexWriterConfig(new LimitTokenCountAnalyzer(
                 IndexManagerImpl.getAnalyzer(), maxTokenCount));
 
-            writer = new IndexWriter(dir, config);
+        // constructor makes directory available for indexing
+        try (IndexWriter writer = new IndexWriter(dir, config)) {
+            writer.close();
         } catch (IOException e) {
             log.error("Error creating index", e);
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException ignored) {
-            }
         }
     }
 

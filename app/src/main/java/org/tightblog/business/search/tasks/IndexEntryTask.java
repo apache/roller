@@ -55,8 +55,7 @@ public class IndexEntryTask extends AbstractIndexTask {
     }
 
     public void doRun() {
-        IndexWriter writer = beginWriting();
-        try {
+        try (IndexWriter writer = beginWriting()) {
             if (writer != null) {
                 // Delete Doc
                 Term term = new Term(FieldConstants.ID, weblogEntry.getId());
@@ -74,8 +73,6 @@ public class IndexEntryTask extends AbstractIndexTask {
             }
         } catch (IOException e) {
             log.error("Problems adding/deleting doc to index", e);
-        } finally {
-            endWriting(writer);
         }
     }
 }

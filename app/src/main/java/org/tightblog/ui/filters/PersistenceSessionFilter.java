@@ -77,4 +77,3 @@ public class PersistenceSessionFilter implements Filter {
     }
 
 }
-
