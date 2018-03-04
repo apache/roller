@@ -87,7 +87,7 @@ public final class WebloggerStaticConfig {
                 System.out.println("TightBlog Weblogger: No custom properties file found in classpath");
             }
 
-            // finally, check for an external config file
+            // last check for an external config file
             String envFile = System.getProperty(customJvmParam);
             if (envFile != null && envFile.length() > 0) {
                 customConfigFile = new File(envFile);

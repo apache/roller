@@ -91,26 +91,17 @@ public class FileContentManagerImpl implements FileContentManager {
 
         byte[] buffer = new byte[Utilities.EIGHT_KB_IN_BYTES];
         int bytesRead;
-        OutputStream bos = null;
-        try {
-            bos = new FileOutputStream(saveFile);
+
+        try (OutputStream bos = new FileOutputStream(saveFile)) {
             while ((bytesRead = is.read(buffer, 0,
                     Utilities.EIGHT_KB_IN_BYTES)) != -1) {
                 bos.write(buffer, 0, bytesRead);
             }
+            bos.flush();
             log.debug("The file has been written to [{}]", saveFile.getAbsolutePath());
         } catch (Exception e) {
             throw new IOException("ERROR uploading file", e);
-        } finally {
-            try {
-                if (bos != null) {
-                    bos.flush();
-                    bos.close();
-                }
-            } catch (Exception ignored) {
-            }
         }
-
     }
 
     @Override

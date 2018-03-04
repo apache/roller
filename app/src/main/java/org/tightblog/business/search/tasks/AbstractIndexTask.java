@@ -84,16 +84,6 @@ public abstract class AbstractIndexTask extends AbstractTask {
         return writer;
     }
 
-    void endWriting(IndexWriter writer) {
-        if (writer != null) {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                log.error("ERROR closing writer", e);
-            }
-        }
-    }
-
     Document getDocument(WeblogEntry data) {
         Document doc = new Document();
 
