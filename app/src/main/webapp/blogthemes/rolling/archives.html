@@ -20,7 +20,7 @@
         <h2 th:utext="${model.weblog.name}"></h2>
         <span th:replace="fragments :: PageMenu(false)"></span><br>
     </center>
-    <div th:utext="${model.showWeblogEntryCalendar(true)}"></div>
+    <div th:replace="fragments :: Calendar(true)"></div>
 </div>
 
 </body>

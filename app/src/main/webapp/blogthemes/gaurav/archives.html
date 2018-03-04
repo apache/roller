@@ -28,7 +28,7 @@
 				<p th:utext="${'Browse the <b>' + model.weblog.name + '</b> archive in month view, search for specific keywords
                    or jump to the most recent posts listed in the right sidebar.'}">xxx</p>
 				<br>
-				<div th:utext="${model.showWeblogEntryCalendar(true)}"></div>
+				<div th:replace="fragments :: Calendar(true)"></div>
 			</div>
 			
 			<!-- BODY SIDEBAR-->

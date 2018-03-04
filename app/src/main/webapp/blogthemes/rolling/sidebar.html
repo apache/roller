@@ -2,7 +2,7 @@
 
     <div class="box">
         <h2 class="box sidebox">calendar</h2>
-        <center th:utext="${model.showWeblogEntryCalendar(false)}"></center>
+        <center><span th:replace="fragments :: Calendar(false)"></span></center>
     </div>
 
     <div class="box"><h2 class="box sidebox">About Me</h2>

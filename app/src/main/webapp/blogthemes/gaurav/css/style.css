@@ -48,7 +48,7 @@ ul.presentationLinks li {
     padding:8px;
     border: 1px solid #dddddd;
 }
-.hCalendarMonthYearRowBig{
+.hCalendarTableBig .hCalendarMonthYearRow {
     font-size: 16px;
     font-weight: bold;
 }
