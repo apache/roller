@@ -31,22 +31,19 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.Utilities;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
 
 /**
  * Data generator for a blog calendar containing links to days with blog entries,
@@ -161,25 +158,17 @@ public class WeblogCalendar {
         return ret;
     }
 
-    private Calendar newCalendarInstance() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(weblog.getZoneId()), weblog.getLocaleInstance());
-        cal.setTime(new Timestamp(dayInMonth.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC).toEpochMilli()));
-        return cal;
-    }
-
     public CalendarData getCalendarData() {
-
-        // for today's date, allows for different formatting.
-        Calendar todayCal = new GregorianCalendar();
-
         Locale locale = pageRequest.getWeblog().getLocaleInstance();
+
+        // Allows for different formatting for today's date
+        LocalDate todaysDate = LocalDate.now(weblog.getZoneId());
 
         // get Resource Bundle
         ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", locale);
         // formatter for Month-Year title of calendar
         DateTimeFormatter formatTitle = DateTimeFormatter.ofPattern(bundle.getString("calendar.dateFormat"), locale)
-                .withZone(todayCal.getTimeZone().toZoneId());
-
+                .withZone(weblog.getZoneId());
 
         CalendarData data = new CalendarData();
         data.setCalendarTitle(formatTitle.format(dayInMonth));
@@ -194,16 +183,15 @@ public class WeblogCalendar {
 
         data.setHomeLink(urlStrategy.getWeblogCollectionURL(weblog, cat, null, null, -1, false));
 
-        Calendar monthToDisplay = newCalendarInstance();
+        YearMonth monthToDisplay = YearMonth.from(dayInMonth);
+
+        // Weeks start on different days depending on locale (Sat, Sun, Mon)
+        DayOfWeek firstDayOfWeek = WeekFields.of(locale).getFirstDayOfWeek();
+
         // dayPointer will serve as the iterator, going through not just the days of the
         // desired month but the few days before and/or after it to fill a 6 week grid.
-        Calendar dayPointer = newCalendarInstance();
-
         // start with the first day of the week containing the first day of the month
-        dayPointer.set(Calendar.DAY_OF_MONTH, dayPointer.getMinimum(Calendar.DAY_OF_MONTH));
-        while (dayPointer.get(Calendar.DAY_OF_WEEK) != dayPointer.getFirstDayOfWeek()) {
-            dayPointer.add(Calendar.DATE, -1);
-        }
+        LocalDate dayPointer = dayInMonth.withDayOfMonth(1).with(TemporalAdjusters.previousOrSame(firstDayOfWeek));
 
         for (int w = 0; w < 6; w++) {
             CalendarData.Week weekIter = new CalendarData.Week();
@@ -213,30 +201,26 @@ public class WeblogCalendar {
                 CalendarData.Day dayIter = new CalendarData.Day();
                 weekIter.getDays()[d] = dayIter;
 
-                // is day in calendar month?
-                if ((dayPointer.get(Calendar.MONTH) == monthToDisplay.get(Calendar.MONTH)) &&
-                        (dayPointer.get(Calendar.YEAR) == monthToDisplay.get(Calendar.YEAR))) {
+                // don't store info if dayPointer outside monthToDisplay
+                if (YearMonth.from(dayPointer).equals(monthToDisplay)) {
                     // is day today?
-                    if ((dayPointer.get(Calendar.DAY_OF_MONTH) == todayCal.get(Calendar.DAY_OF_MONTH)) &&
-                            (dayPointer.get(Calendar.MONTH) == todayCal.get(Calendar.MONTH)) &&
-                            (dayPointer.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR))) {
+                    if (dayPointer.equals(todaysDate)) {
                         data.getWeeks()[w].getDays()[d].setToday(true);
                     }
-                    dayIter.setDayNum(Integer.toString(dayPointer.get(Calendar.DAY_OF_MONTH)));
-                    // determine URL for this calendar day
-                    LocalDate tddate = LocalDate.from(new Timestamp(dayPointer.getTimeInMillis()).toLocalDateTime());
-                    String dateString = monthMap.get(tddate);
+                    dayIter.setDayNum(Integer.toString(dayPointer.getDayOfMonth()));
+
+                    String dateString = monthMap.get(dayPointer);
                     if (dateString != null) {
                         String link = urlStrategy.getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
                         dayIter.setLink(link);
                         if (includeBlogEntryData) {
-                            dayIter.setEntries(getCalendarEntries(tddate));
+                            dayIter.setEntries(getCalendarEntries(dayPointer));
                         }
                     }
                 }
 
                 // increment calendar by one day
-                dayPointer.add(Calendar.DATE, 1);
+                dayPointer = dayPointer.plusDays(1);
             }
         }
 
@@ -264,17 +248,18 @@ public class WeblogCalendar {
     }
 
     /**
-     * Helper method to build the names of the weekdays (Sun, Mon, Tue, etc.).
+     * Helper method to build the names of the weekdays (Sun, Mon, Tue, etc.), with locale-specific
+     * names and ordering
      */
     private String[] buildDayNames(Locale locale) {
-        // build array of names of days of week
         String[] dayNames = new String[7];
-        Calendar dayNameCal = Calendar.getInstance(locale);
-        SimpleDateFormat dayFormatter = new SimpleDateFormat("EEE", locale);
-        dayNameCal.set(Calendar.DAY_OF_WEEK, dayNameCal.getFirstDayOfWeek());
+        DayOfWeek dayOfWeek = WeekFields.of(locale).getFirstDayOfWeek();
+        LocalDate localDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(dayOfWeek));
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE", locale);
+
         for (int dnum = 0; dnum < 7; dnum++) {
-            dayNames[dnum] = dayFormatter.format(dayNameCal.getTime());
-            dayNameCal.add(Calendar.DATE, 1);
+            dayNames[dnum] = dayFormatter.format(localDate.getDayOfWeek());
+            localDate = localDate.plusDays(1);
         }
         return dayNames;
     }
