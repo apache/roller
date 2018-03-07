@@ -31,7 +31,7 @@ import org.tightblog.business.search.tasks.SearchTask;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesSearchPager;
-import org.tightblog.rendering.requests.WeblogSearchRequest;
+import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.I18nMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class SearchResultsModel extends PageModel {
     private static final int RESULTS_PER_PAGE = 10;
 
     // the original search request
-    private WeblogSearchRequest searchRequest = null;
+    private WeblogPageRequest searchRequest = null;
 
     // the actual search results mapped by Day -> Set of entries
     private Map<LocalDate, TreeSet<WeblogEntry>> results = new TreeMap<>(Collections.reverseOrder());
@@ -87,7 +87,7 @@ public class SearchResultsModel extends PageModel {
      */
     @Override
     public void init(Map initData) {
-        searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
+        searchRequest = (WeblogPageRequest) initData.get("parsedRequest");
         if (searchRequest == null) {
             throw new IllegalStateException("expected searchRequest from init data");
         }

@@ -137,12 +137,12 @@ public class RequestMappingFilter implements Filter {
 
         // parse the rest of the url and build forward url
         if (pathInfo != null) {
-            // parse the next portion of the url, we expect <context>/<extra>/<info>
+            // parse the next portion of the url, we expect <context>[/<extra>]
+            // examples:  entry/my-blog-article, page/mycss.css, category/sports, date/201802, search
             String[] urlPath = pathInfo.split("/", 2);
 
             weblogRequestContext = urlPath[0];
 
-            // last part of request is extra path info
             if (urlPath.length == 2) {
                 weblogRequestData = urlPath[1];
             }
@@ -207,7 +207,7 @@ public class RequestMappingFilter implements Filter {
             } else if (context.equals("mediaresource")) {
                 forwardUrl = generateForwardUrl(MediaResourceProcessor.PATH, handle, null, data);
             } else if (context.equals("search")) {
-                forwardUrl = generateForwardUrl(SearchProcessor.PATH, handle, null, null);
+                forwardUrl = generateForwardUrl(SearchProcessor.PATH, handle, context, null);
             }
         }
 

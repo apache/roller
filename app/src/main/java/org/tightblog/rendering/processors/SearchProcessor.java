@@ -26,7 +26,6 @@ import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.rendering.requests.WeblogSearchRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.rendering.cache.CachedContent;
 import org.slf4j.Logger;
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -76,57 +74,34 @@ public class SearchProcessor extends AbstractProcessor {
         this.themeManager = themeManager;
     }
 
-    @PostConstruct
-    public void init() {
-        log.info("Initializing SearchProcessor...");
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        WeblogPageRequest searchRequest = new WeblogPageRequest(request);
 
-        log.debug("Entering");
-
-        Weblog weblog;
-        WeblogSearchRequest searchRequest = new WeblogSearchRequest(request);
-
-        weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);
         if (weblog == null) {
-            log.info("Weblog not found: {}", searchRequest.getWeblogHandle());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         } else {
             searchRequest.setWeblog(weblog);
         }
 
-        // lookup template to use for rendering, look for search results override first
+        // determine template to use for rendering, look for search results override first
         Template page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH_RESULTS);
 
         if (page == null) {
             page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
         }
 
-        // if still null then that's a problem
         if (page == null) {
-            throw new IllegalStateException("Could not lookup default page for weblog " + weblog.getHandle());
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
         // populate the rendering model
         Map<String, Object> initData = new HashMap<>();
-        initData.put("request", request);
+        initData.put("parsedRequest", searchRequest);
 
-        // We need the 'parsedRequest' to be a WeblogPageRequest so other models
-        // used in a search are properly loaded, which means that searchRequest
-        // needs its own custom initData property aside from the standard
-        // weblogRequest.
-        WeblogPageRequest pageRequest = new WeblogPageRequest();
-        pageRequest.setWeblog(searchRequest.getWeblog());
-        pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
-        pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
-        pageRequest.setDeviceType(searchRequest.getDeviceType());
-        initData.put("parsedRequest", pageRequest);
-        initData.put("searchRequest", searchRequest);
-
-        // Load models for pages
         Map<String, Object> model = getModelMap("searchModelSet", initData);
 
         // Load special models for site-wide blog
@@ -141,7 +116,7 @@ public class SearchProcessor extends AbstractProcessor {
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {
-            log.error("Error during rendering for search template", e);
+            log.error("Error during rendering of template {}", page.getId(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }

@@ -24,7 +24,7 @@ package org.tightblog.rendering.pagers;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.rendering.requests.WeblogSearchRequest;
+import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.I18nMessages;
 
 import java.time.LocalDate;
@@ -52,7 +52,7 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     private int page = 0;
     private boolean moreResults = false;
 
-    public WeblogEntriesSearchPager(URLStrategy strat, WeblogSearchRequest searchRequest,
+    public WeblogEntriesSearchPager(URLStrategy strat, WeblogPageRequest searchRequest,
                                     Map<LocalDate, List<WeblogEntry>> entries, boolean more) {
 
         // url strategy for building urls
