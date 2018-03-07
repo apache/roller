@@ -46,6 +46,8 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogCategoryName = null;
     private String weblogDate = null;
     private String tag = null;
+    private String query = null;
+
     private int pageNum = 0;
     // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
     private boolean noIndex = false;
@@ -91,6 +93,7 @@ public class WeblogPageRequest extends WeblogRequest {
          * /tag/<tag> - tag
          * /category/<category>/tag/<tag> - tag under a category
          * /page/<pagelink> - custom page
+         * /search?q=xyz[&cat=Sports] - search on xyz (optionally under single category)
          *
          * path info may be null, which indicates the weblog homepage
          */
@@ -102,7 +105,22 @@ public class WeblogPageRequest extends WeblogRequest {
             this.context = pathElements[0];
 
             // now check the rest of the path and extract other details
-            if ("category".equals(this.context) && (pathElements.length == 2 || pathElements.length == 4)) {
+            if ("search".equals(this.context)) {
+                 if (pathElements.length == 1) {
+                     // get the query parameter
+                     if (request.getParameter("q") != null &&
+                             request.getParameter("q").trim().length() > 0) {
+                         this.query = request.getParameter("q");
+                     }
+
+                     // further filter on category parameter, if any
+                     if (request.getParameter("cat") != null && request.getParameter("cat").trim().length() > 0) {
+                         this.weblogCategoryName = Utilities.decode(request.getParameter("cat"));
+                     }
+                 } else {
+                     throw new IllegalArgumentException("Invalid path for search: " + pathInfo);
+                 }
+            } else if ("category".equals(this.context) && (pathElements.length == 2 || pathElements.length == 4)) {
                 this.weblogCategoryName = Utilities.decode(pathElements[1]);
 
                 if (pathElements.length == 4) {
@@ -170,6 +188,7 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("tag = {}", tag);
             log.debug("template = {}", customPageName);
             log.debug("pageNum = {}", pageNum);
+            log.debug("search query = {}", query);
         }
     }
 
@@ -247,4 +266,11 @@ public class WeblogPageRequest extends WeblogRequest {
         return noIndex;
     }
 
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
 }
