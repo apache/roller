@@ -55,8 +55,7 @@ create table user_weblog_role (
    userid          varchar(48) not null,
    weblogid        varchar(48) not null,
    weblog_role     varchar(48) not null,
-   pending         $db.BOOLEAN_SQL_TYPE_TRUE not null,
-   datecreated     $db.TIMESTAMP_SQL_TYPE not null
+   pending         $db.BOOLEAN_SQL_TYPE_TRUE not null
 );
 
 alter table user_weblog_role add constraint uwr_userid_fk

@@ -35,7 +35,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import java.time.Instant;
 
 /**
  * WeblogRole that a user has for a specific weblog
@@ -64,7 +63,6 @@ public class UserWeblogRole {
     private User user;
     private Weblog weblog;
     private boolean pending = false;
-    private Instant dateCreated = Instant.now();
     private WeblogRole weblogRole;
 
     public UserWeblogRole() {
@@ -117,14 +115,6 @@ public class UserWeblogRole {
 
     public void setWeblogRole(WeblogRole weblogRole) {
         this.weblogRole = weblogRole;
-    }
-
-    public Instant getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Instant dateCreated) {
-        this.dateCreated = dateCreated;
     }
 
     @Basic(optional = false)
