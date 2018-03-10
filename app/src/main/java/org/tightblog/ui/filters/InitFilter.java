@@ -32,8 +32,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * A special initialization filter which ensures that we have an opportunity to
@@ -87,11 +85,7 @@ public class InitFilter implements Filter {
      *
      * Algorithm:
      * 1.) If site.absoluteurl property defined in tightblog-custom.properties, return that.
-     * 2.) Check if a port number explicitly given in the URL such as foo:8080 or bar:8443,
-     *     making use of protocol-relative URLs largely unusable for switching between http and https
-     *     so create an absolute URL based on requestURLString.
-     * 3.) If no port number in URL, use protocol-relative URLs ("//foo") allowing for either
-     *     http or https usage as configured in the web.xml.
+     * 2.) Otherwise, create an absolute URL based on requestURLString.
      */
     static String getAbsoluteUrl(String serverName, String contextPath, String requestURI, String requestURLString) {
 
@@ -102,37 +96,22 @@ public class InitFilter implements Filter {
             return definedAbsoluteURL;
         }
 
-        String fullUrl = requestURLString;
-
-        // See if port number present
-        try {
-            URL urlPortTest = new URL(requestURLString);
-
-            if (urlPortTest.getPort() < 0) {
-                // no port provided, so strip out the http: or https: to switch to a protocol-relative URL (//)
-                int schemeDelimiter = fullUrl.indexOf("//");
-                fullUrl = fullUrl.substring(schemeDelimiter);
-            }
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Cannot derive URL from request URL string: " + requestURLString);
-        }
-
         // if the uri is only "/" then we are basically done
         if ("/".equals(requestURI)) {
-            log.debug("requestURI is only '/'. fullUrl: {}", fullUrl);
-            return removeTrailingSlash(fullUrl);
+            log.debug("requestURI is only '/'. fullUrl: {}", requestURLString);
+            return removeTrailingSlash(requestURLString);
         }
 
         String url;
 
         // find first "/" starting after hostname is specified
-        int index = fullUrl.indexOf('/', fullUrl.indexOf(serverName));
+        int index = requestURLString.indexOf('/', requestURLString.indexOf(serverName));
 
         if (index != -1) {
             // extract just the part leading up to uri
-            url = fullUrl.substring(0, index);
+            url = requestURLString.substring(0, index);
         } else {
-            url = fullUrl.trim();
+            url = requestURLString.trim();
         }
 
         // then just add on the context path
