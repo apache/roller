@@ -52,6 +52,16 @@ public class SearchProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/search";
 
+    private WeblogPageRequest.Creator weblogPageRequestCreator;
+
+    public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
+        this.weblogPageRequestCreator = creator;
+    }
+
+    public SearchProcessor() {
+        this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+    }
+
     @Autowired
     @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
@@ -76,7 +86,7 @@ public class SearchProcessor extends AbstractProcessor {
 
     @RequestMapping(method = RequestMethod.GET)
     public void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogPageRequest searchRequest = new WeblogPageRequest(request);
+        WeblogPageRequest searchRequest = weblogPageRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);
         if (weblog == null) {
@@ -87,13 +97,13 @@ public class SearchProcessor extends AbstractProcessor {
         }
 
         // determine template to use for rendering, look for search results override first
-        Template page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH_RESULTS);
+        searchRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH_RESULTS));
 
-        if (page == null) {
-            page = themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG);
+        if (searchRequest.getTemplate() == null) {
+            searchRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG));
         }
 
-        if (page == null) {
+        if (searchRequest.getTemplate() == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -111,12 +121,12 @@ public class SearchProcessor extends AbstractProcessor {
 
         // render content
         try {
-            CachedContent rendererOutput = thymeleafRenderer.render(page, model);
+            CachedContent rendererOutput = thymeleafRenderer.render(searchRequest.getTemplate(), model);
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {
-            log.error("Error during rendering of template {}", page.getId(), e);
+            log.error("Error during rendering of template {}", searchRequest.getTemplate().getId(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
