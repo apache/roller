@@ -52,18 +52,8 @@ public class SQLScriptRunnerTest extends WebloggerTest {
 
     @Test
     public void testParseOnly() throws Exception {
-        Connection con = tbDataSource.getConnection();
-        
-        // normally tests run against Derby
-        String databaseProductName = con.getMetaData().getDatabaseProductName();
-        String dbname = "derby";
-        if (databaseProductName.toLowerCase().indexOf("mysql") > 0) {
-            // but some folks test against MySQL
-            dbname = "mysql";
-        }
-        
         String scriptPath = System.getProperty("project.build.directory")
-                + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql";
+                + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-derby.sql";
         SQLScriptRunner runner = new SQLScriptRunner(scriptPath, false);
         assertTrue(runner.getCommandCount() == 5);
     }
@@ -72,18 +62,10 @@ public class SQLScriptRunnerTest extends WebloggerTest {
     public void testSimpleRun() throws Exception {
         Connection con = tbDataSource.getConnection();
 
-        // normaly tests run against Derby
-        String databaseProductName = con.getMetaData().getDatabaseProductName();
-        String dbname = "derby";
-        if (databaseProductName.toLowerCase().indexOf("mysql") > 0) {
-            // but some folks test against MySQL
-            dbname = "mysql";
-        }
-        
         // run script to create tables
         SQLScriptRunner create = 
             new SQLScriptRunner(System.getProperty("project.build.directory")
-                    + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql", false);
+                    + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-derby.sql", false);
         create.runScript(con, true);
         
         // check to ensure tables were created
@@ -92,7 +74,8 @@ public class SQLScriptRunnerTest extends WebloggerTest {
         
         // drop tables
         SQLScriptRunner drop = 
-            new SQLScriptRunner(System.getProperty("project.build.directory") + "/test-classes/WEB-INF/dbscripts/dummydb/droptables.sql", false);
+            new SQLScriptRunner(System.getProperty("project.build.directory")
+                    + "/test-classes/WEB-INF/dbscripts/dummydb/droptables.sql", false);
         drop.runScript(con, false);
 
         // check to ensure tables were dropped

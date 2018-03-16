@@ -125,12 +125,10 @@ public class FeedProcessor extends AbstractProcessor {
                 : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
-        if (respondIfNotModified(request, response, lastModified, feedRequest.getDeviceType())) {
+        if (lastModified.toEpochMilli() <= getBrowserCacheExpireDate(request)) {
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
-
-        // set last-modified date
-        setLastModifiedHeader(response, lastModified, feedRequest.getDeviceType());
 
         // set content type
         response.setContentType("application/atom+xml; charset=utf-8");
@@ -190,6 +188,8 @@ public class FeedProcessor extends AbstractProcessor {
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());
+            response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
+            response.setHeader("Cache-Control","no-cache");
 
             // cache rendered content.
             log.debug("PUT {}", cacheKey);

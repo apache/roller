@@ -33,7 +33,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -61,6 +62,8 @@ public class PageProcessorTest {
         webloggerProperties = new WebloggerProperties();
         when(mockStrategy.getWebloggerProperties()).thenReturn(webloggerProperties);
         mockRequest = mock(HttpServletRequest.class);
+        // default is page always needs refreshing
+        when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
         mockResponse = mock(HttpServletResponse.class);
         WeblogPageRequest.Creator wprCreator = mock(WeblogPageRequest.Creator.class);
         pageRequest = new WeblogPageRequest();
@@ -84,7 +87,6 @@ public class PageProcessorTest {
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         processor = Mockito.spy(processor);
         processor.setStrategy(mockStrategy);
-        doReturn(false).when(processor).respondIfNotModified(any(), any(), any(), any());
     }
 
     @Test
@@ -97,33 +99,26 @@ public class PageProcessorTest {
     }
 
     @Test
-    public void test304NotModifiedContent() throws IOException {
+    public void testReceive304NotModifiedContent() throws IOException {
         initializeMocks();
 
-        // confirm respondIfNotModified called with last modified date of weblog if latter non-site
-        doReturn(true).when(processor).respondIfNotModified(any(), any(), any(Instant.class), any());
-        Instant yesterday = Instant.now().minus(1, ChronoUnit.DAYS);
-        weblog.setLastModified(yesterday);
-
-        processor.handleRequest(mockRequest, mockResponse);
-        assertEquals(weblog, pageRequest.getWeblog());
-        verify(processor).respondIfNotModified(mockRequest, mockResponse, yesterday, DeviceType.NORMAL);
-
-        // confirm respondIfNotModified called with system-wide last modified date for site-wide weblog
         sharedTheme.setSiteWide(true);
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         webloggerProperties.setLastWeblogChange(twoDaysAgo);
 
-        Mockito.clearInvocations(processor);
+        // date header more recent than last change, so should return 304
+        when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().toEpochMilli());
+
+        Mockito.clearInvocations(processor, mockRequest);
         processor.handleRequest(mockRequest, mockResponse);
-        verify(processor).respondIfNotModified(mockRequest, mockResponse, twoDaysAgo, DeviceType.NORMAL);
+        verify(mockRequest).getDateHeader(any());
+        verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
     }
 
     @Test
     public void testCachedPageReturned() throws IOException {
         initializeMocks();
 
-        // Confirm setLastModifiedHeader() called if respondIfNotModified is false
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
         pageRequest.setWeblogPageHit(true);
@@ -137,35 +132,23 @@ public class PageProcessorTest {
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
         processor.handleRequest(mockRequest, mockResponse);
-        verify(processor).setLastModifiedHeader(mockResponse, twoDaysAgo, DeviceType.NORMAL);
 
         // testing AbstractProcessor's setLastModifiedHeader w/last modified time
-        verify(mockResponse).setHeader("ETag", "NORMAL");
         verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
-        verify(mockResponse).setDateHeader("Expires", 0);
+        verify(mockResponse).setHeader("Cache-Control", "no-cache");
 
         // verify cached content being returned
         verify(mockWM).incrementHitCount(weblog);
         verify(mockResponse).setContentType(ComponentType.WEBLOG.getContentType());
         verify(mockResponse).setContentLength(7);
         verify(mockSOS).write("mytest1".getBytes());
-
-        // testing AbstractProcessor's setLastModifiedHeader w/o last modified time
-        weblog.setLastModified(null);
-        pageRequest.setWeblogPageHit(false);
-
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockSOS);
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockWM, never()).incrementHitCount(weblog);
-        verify(mockResponse).setHeader("ETag", "NORMAL");
-        verify(mockResponse).setDateHeader("Expires", 0);
-        verify(mockResponse, never()).setDateHeader(eq("Last-Modified"), anyLong());
-        verify(mockSOS).write(any());
     }
 
     @Test
     public void testRenderingProcessing() throws IOException, WebloggerException {
         initializeMocks();
+
+        weblog.setLastModified(Instant.now());
 
         // test null template returns 404
         pageRequest.setCustomPageName("mytemplate");
@@ -214,6 +197,7 @@ public class PageProcessorTest {
 
         // test permalink template, no weblog page hit
         sharedTheme.setSiteWide(true);
+        webloggerProperties.setLastWeblogChange(Instant.now());
         pageRequest.setWeblogPageHit(false);
         pageRequest.setCustomPageName(null);
         pageRequest.setWeblogEntryAnchor("myentry");
@@ -286,43 +270,6 @@ public class PageProcessorTest {
         verify(mockWM, never()).incrementHitCount(any());
         verify(mockCache, never()).get(any(), any());
         verify(mockCache, never()).put(any(), any());
-    }
-
-    @Test
-    public void testRespondIfNotModified() throws IOException {
-        initializeMocks();
-        doCallRealMethod().when(processor).respondIfNotModified(any(), any(), any(), any());
-
-        // test return false on invalid date
-        when(mockRequest.getDateHeader("If-Modified-Since")).thenThrow(new IllegalArgumentException());
-        boolean val = processor.respondIfNotModified(mockRequest, mockResponse, Instant.now(), DeviceType.NORMAL);
-        assertFalse(val);
-
-        // remove thenThrow from previous mock (thenReturn does not override it)
-        Mockito.reset(mockRequest);
-        // test return false if eTag different from one in header
-        long time = Instant.now().getEpochSecond();
-        when(mockRequest.getDateHeader("If-Modified-Since")).thenReturn(time);
-        when(mockRequest.getHeader("If-None-Match")).thenReturn("1" + DeviceType.NORMAL.name());
-        val = processor.respondIfNotModified(mockRequest, mockResponse, Instant.ofEpochMilli(0L), DeviceType.NORMAL);
-        assertFalse(val);
-
-        // test return true if eTag same from one in header
-        when(mockRequest.getHeader("If-Modified-Since")).thenReturn(Long.toString(time));
-        when(mockRequest.getHeader("If-None-Match")).thenReturn(DeviceType.NORMAL.name());
-        Mockito.clearInvocations(mockResponse);
-        val = processor.respondIfNotModified(mockRequest, mockResponse, Instant.ofEpochMilli(0L), DeviceType.NORMAL);
-        verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        verify(mockResponse).setHeader("Last-Modified", Long.toString(time));
-        assertTrue(val);
-
-        // test return false if last modified after since date
-        when(mockRequest.getHeader("If-Modified-Since")).thenReturn(Long.toString(time-10));
-        Mockito.clearInvocations(mockResponse);
-        val = processor.respondIfNotModified(mockRequest, mockResponse, Instant.ofEpochSecond(time), DeviceType.NORMAL);
-        assertFalse(val);
-        verify(mockResponse, never()).setStatus(anyInt());
-        verify(mockResponse, never()).setHeader(any(), any());
     }
 
     @Test

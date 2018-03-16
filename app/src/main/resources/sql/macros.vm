@@ -3,11 +3,7 @@
 Special macro to add table column with default null
 **#
 #macro(addColumnNull $table $column $type)
-#if ($db.DBTYPE == "ORACLE")
-    alter table $table add $column $type default null;
-#else
     alter table $table add column $column $type default null;
-#end
 #end
 
 
@@ -17,17 +13,15 @@ Special macro to add table column with not-null restriction and default value
 #macro(addColumnNotNull $table $column $type $default)
 #if($db.DBTYPE == "MYSQL" || $db.DBTYPE=="HSQL")
     alter table $table add column $column $type default $default not null;  
-#elseif ($db.DBTYPE == "POSTGRES")
+#elseif ($db.DBTYPE == "POSTGRESQL")
     alter table $table add column $column $type;
     alter table $table alter $column set default $default;
     update $table set $column=$default;
     alter table $table alter $column set not null;
 #elseif ($db.DBTYPE == "HSQL")
-    alter table $table add column $column $type default $default not null; 
+    alter table $table add column $column $type default $default not null;
 #elseif ($db.DBTYPE == "DERBY")
     alter table $table add column $column $type with default $default not null;
-#elseif ($db.DBTYPE == "ORACLE")
-    alter table $table add $column $type default $default not null;  
 #end
 #end
 
@@ -39,7 +33,7 @@ Special macro to drop NOT NULL requirement from an 'id' column.
 #if($db.DBTYPE == "MYSQL")
     alter table $table drop primary key;
     alter table $table modify id varchar(48) null;
-#elseif ($db.DBTYPE == "POSTGRES")
+#elseif ($db.DBTYPE == "POSTGRESQL")
     alter table $table drop constraint "${table}_pkey";
     alter table $table  alter column id drop not null;
 #elseif ($db.DBTYPE == "HSQL")
@@ -47,8 +41,6 @@ Special macro to drop NOT NULL requirement from an 'id' column.
 #elseif ($db.DBTYPE == "DERBY")
     alter table $table drop primary key;
     alter table $table alter column id null;
-#elseif ($db.DBTYPE == "ORACLE")
-    alter table $table drop primary key; 
 #end
 #end
 
@@ -59,14 +51,12 @@ Special macro to drop NOT NULL requirement from a column.
 #macro(dropNotNullFromColumn $table $colname $coltype)
 #if($db.DBTYPE == "MYSQL")
     alter table $table modify $colname $coltype null;
-#elseif ($db.DBTYPE == "POSTGRES")
+#elseif ($db.DBTYPE == "POSTGRESQL")
     alter table $table  alter column $colname drop not null;
 #elseif ($db.DBTYPE == "HSQL")
     alter table $table alter column $colname $coltype null;
 #elseif ($db.DBTYPE == "DERBY")
     alter table $table alter column $colname null;
-#elseif ($db.DBTYPE == "ORACLE")
-    alter table $table alter column $colname null; 
 #end
 #end
 
@@ -75,7 +65,7 @@ Special macro to drop NOT NULL requirement from a column.
 Define non-null column with default value
 **#
 #macro(columnNotNullWithDefault $columnName $columnType $defaultValue)
-#if($db.DBTYPE == "ORACLE" || $db.DBTYPE == "HSQL")
+#if($db.DBTYPE == "HSQL")
    $columnName      $columnType default '$defaultValue' not null
 #else 
    $columnName      $columnType not null default '$defaultValue'
@@ -86,7 +76,7 @@ Define non-null column with default value
 Rename a table.
 **#
 #macro(renameTable $oldTableName $newTableName)
-#if ($db.DBTYPE == 'POSTGRES' || $db.DBTYPE == 'HSQL')
+#if ($db.DBTYPE == 'POSTGRESQL' || $db.DBTYPE == 'HSQL')
 alter table $oldTableName rename to $newTableName;
 #else
 rename table $oldTableName TO $newTableName;
@@ -97,7 +87,7 @@ rename table $oldTableName TO $newTableName;
 Rename a table.
 **#
 #macro(renameColumn $tableName $oldColumnName $newColumnName $dataType)
-#if ($db.DBTYPE == 'POSTGRES')
+#if ($db.DBTYPE == 'POSTGRESQL')
 alter table $tableName rename column $oldColumnName TO $newColumnName;
 #elseif ($db.DBTYPE == 'HSQL')
 alter table $tableName alter column $oldColumnName RENAME TO $newColumnName;
@@ -115,7 +105,7 @@ Macro to account for lack of comparable long varchar in MySQL
 
 
 #macro(dropForeignKey $tableName $indexName)
-#if ($db.DBTYPE == 'POSTGRES')
+#if ($db.DBTYPE == 'POSTGRESQL')
 drop index $indexName;
 #elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "MYSQL")
 alter table $tableName drop foreign key $indexName;
@@ -125,7 +115,7 @@ drop index $indexName on $tableName;
 #end
 
 #macro(dropIndex $tableName $indexName)
-#if ($db.DBTYPE == 'POSTGRES')
+#if ($db.DBTYPE == 'POSTGRESQL')
 drop index $indexName;
 #elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "MYSQL")
 alter table $tableName drop index $indexName;
@@ -159,9 +149,9 @@ drop table if exists $tableName;
 
 
 #macro(alterColumnType $tableName $columnName $columnType)
-#if($db.DBTYPE == "MYSQL" || $db.DBTYPE == "ORACLE")
+#if($db.DBTYPE == "MYSQL")
 alter table $tableName modify $columnName $columnType;
-#elseif ($db.DBTYPE == "POSTGRES")
+#elseif ($db.DBTYPE == "POSTGRESQL")
 alter table $tableName alter column $columnName type $columnType;
 #else
 -- You should alter type of column $columnName of table $tableName to $columnType
