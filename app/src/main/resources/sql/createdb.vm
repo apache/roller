@@ -36,7 +36,7 @@ create table weblog (
     editformat        varchar(20) not null,
     creatorid         varchar(48) not null,
     datecreated       $db.TIMESTAMP_SQL_TYPE not null,
-    lastmodified      $db.TIMESTAMP_SQL_TYPE,
+    lastmodified      $db.TIMESTAMP_SQL_TYPE not null,
     allowcomments     varchar(20) not null,
     emailcomments     $db.BOOLEAN_SQL_TYPE_TRUE not null,
     commentdays       integer default 7 not null,
@@ -127,7 +127,7 @@ create table weblog_entry (
     creatorid       varchar(48) not null,
     title           varchar(255)  not null,
     text            $db.TEXT_SQL_TYPE not null,
-    pubtime         $db.TIMESTAMP_SQL_TYPE_NULL,
+    pubtime         $db.TIMESTAMP_SQL_TYPE,
     updatetime      $db.TIMESTAMP_SQL_TYPE not null,
     weblogid        varchar(48)  not null,
     categoryid      varchar(48)  not null,
@@ -237,7 +237,7 @@ create table weblogger_properties (
     disallowed_file_extensions varchar(255) default 'exe',
     max_file_size_mb       integer default 3 not null,
     max_file_uploads_size_mb integer default 20 not null,
-    last_weblog_change     $db.TIMESTAMP_SQL_TYPE
+    last_weblog_change     $db.TIMESTAMP_SQL_TYPE_DEFNOW not null
 );
 
 alter table weblogger_properties add constraint wp_weblogid_fk
@@ -272,7 +272,7 @@ create table media_file (
     size_in_bytes   integer,
     creatorid       varchar(48) not null,
     date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
-    last_updated    $db.TIMESTAMP_SQL_TYPE
+    last_updated    $db.TIMESTAMP_SQL_TYPE not null
 );
 
 alter table media_file add constraint mf_directoryid_fk

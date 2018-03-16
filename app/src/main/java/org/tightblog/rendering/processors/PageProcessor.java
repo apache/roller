@@ -144,11 +144,10 @@ public class PageProcessor extends AbstractProcessor {
 
         Instant lastModified = (isSiteWide) ? strategy.getWebloggerProperties().getLastWeblogChange() : weblog.getLastModified();
 
-        if (respondIfNotModified(request, response, lastModified, incomingRequest.getDeviceType())) {
+        // Respond with 304 Not Modified if it is not modified.
+        if (lastModified.toEpochMilli() <= getBrowserCacheExpireDate(request)) {
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
-        } else {
-            // set last-modified date
-            setLastModifiedHeader(response, lastModified, incomingRequest.getDeviceType());
         }
 
         // cache key to retrieve earlier generated content
@@ -174,6 +173,8 @@ public class PageProcessor extends AbstractProcessor {
                 response.setContentType(cachedContent.getContentType());
                 response.setContentLength(cachedContent.getContent().length);
                 response.getOutputStream().write(cachedContent.getContent());
+                response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
+                response.setHeader("Cache-Control","no-cache");
                 return;
             } else {
                 log.debug("MISS {}", cacheKey);

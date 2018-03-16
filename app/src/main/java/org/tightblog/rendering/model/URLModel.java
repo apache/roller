@@ -76,7 +76,7 @@ public class URLModel implements Model {
     public void init(Map initData) {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if (weblogRequest == null) {
-            throw new IllegalStateException("Expected 'weblogRequest' init param!");
+            throw new IllegalStateException("Expected 'parsedRequest' init param!");
         }
 
         this.weblog = weblogRequest.getWeblog();

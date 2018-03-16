@@ -149,6 +149,7 @@ abstract public class WebloggerTest {
     protected Weblog setupWeblog(String handle, User creator)
             throws Exception {
 
+        Instant now = Instant.now();
         Weblog testWeblog = new Weblog();
         testWeblog.setName("Test Weblog");
         testWeblog.setTagline("Test Weblog");
@@ -158,8 +159,9 @@ abstract public class WebloggerTest {
         testWeblog.setTheme("basic");
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
-        testWeblog.setDateCreated(Instant.now());
+        testWeblog.setDateCreated(now);
         testWeblog.setCreator(creator);
+        testWeblog.setLastModified(now);
 
         // add weblog
         weblogManager.addWeblog(testWeblog);

@@ -122,12 +122,10 @@ public class MediaResourceProcessor extends AbstractProcessor {
             return;
         }
 
-        Instant resourceLastMod;
         MediaFile mediaFile;
 
         try {
             mediaFile = mediaFileManager.getMediaFile(resourceId, true);
-            resourceLastMod = mediaFile.getLastUpdated();
         } catch (Exception ex) {
             // Not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);
@@ -136,11 +134,9 @@ public class MediaResourceProcessor extends AbstractProcessor {
         }
 
         // Respond with 304 Not Modified if it is not modified.
-        if (respondIfNotModified(request, response, resourceLastMod, resourceRequest.getDeviceType())) {
+        if (mediaFile.getLastUpdated().toEpochMilli() <= getBrowserCacheExpireDate(request)) {
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
-        } else {
-            // set last-modified date
-            setLastModifiedHeader(response, resourceLastMod, resourceRequest.getDeviceType());
         }
 
         try (InputStream resourceStream = getInputStream(mediaFile, thumbnail)) {
@@ -148,6 +144,8 @@ public class MediaResourceProcessor extends AbstractProcessor {
 
             byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];
             int length;
+            response.setHeader("Cache-Control","no-cache");
+            response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
             OutputStream out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
