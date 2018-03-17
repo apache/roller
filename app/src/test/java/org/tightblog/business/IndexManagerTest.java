@@ -32,7 +32,6 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntry.PubStatus;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
-import org.tightblog.util.Utilities;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -80,7 +79,6 @@ public class IndexManagerTest extends WebloggerTest {
     @Test
     public void testSearch() throws Exception {
         WeblogEntry wd1 = new WeblogEntry();
-        wd1.setId(Utilities.generateUUID());
         wd1.setTitle("The Tholian Web");
         wd1.setText(
          "When the Enterprise attempts to ascertain the fate of the  "
@@ -104,7 +102,6 @@ public class IndexManagerTest extends WebloggerTest {
                 new IndexEntryTask(weblogEntryManager, indexManager, wd1, false));
 
         WeblogEntry wd2 = new WeblogEntry();
-        wd2.setId(Utilities.generateUUID());
         wd2.setTitle("A Piece of the Action");
         wd2.setText(
           "The crew of the Enterprise attempts to make contact with "

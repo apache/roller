@@ -87,7 +87,6 @@ public class WeblogEntryTest extends WebloggerTest {
         WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
-        testEntry.setId(Utilities.generateUUID());
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
@@ -309,7 +308,6 @@ public class WeblogEntryTest extends WebloggerTest {
             testUser = getManagedUser(testUser);
 
             WeblogEntry testEntry = new WeblogEntry();
-            testEntry.setId(Utilities.generateUUID());
             testEntry.setTitle("entryTestEntry");
             testEntry.setText("blah blah entry");
             testEntry.setAnchor("testEntryAnchor");
@@ -806,7 +804,6 @@ public class WeblogEntryTest extends WebloggerTest {
         WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
-        testEntry.setId(Utilities.generateUUID());
         testEntry.setTitle("entryTestEntry");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");

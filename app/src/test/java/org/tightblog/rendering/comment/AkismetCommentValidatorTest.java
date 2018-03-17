@@ -2,7 +2,6 @@ package org.tightblog.rendering.comment;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;

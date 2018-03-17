@@ -21,8 +21,6 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
@@ -33,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "weblog_entry_tag")
@@ -111,31 +110,17 @@ public class WeblogEntryTag {
         this.name = name;
     }
 
-    //------------------------------------------------------- Good citizenship
-
     public String toString() {
         return ("{" + getId() + ", " + getName() + "}");
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof WeblogEntryTag)) {
-            return false;
-        }
-        WeblogEntryTag o = (WeblogEntryTag) other;
-        return new EqualsBuilder()
-                .append(getName(), o.getName())
-                .append(getWeblogEntry(), o.getWeblogEntry())
-                .isEquals();
+        return other == this || (other instanceof WeblogEntryTag && Objects.equals(id, ((WeblogEntryTag) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getName())
-                .append(getWeblogEntry())
-                .toHashCode();
+        return Objects.hash(id);
     }
 
 }

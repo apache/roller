@@ -30,7 +30,6 @@ import org.tightblog.pojos.MediaDirectory;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -182,7 +181,6 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setName("test4.jpg");
         mediaFile.setNotes("This is a test image 4");
@@ -221,7 +219,6 @@ public class MediaFileTest extends WebloggerTest {
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setName("test.jpg");
         mediaFile.setNotes("This is a test image");
@@ -252,7 +249,6 @@ public class MediaFileTest extends WebloggerTest {
         rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setName("test5.jpg");
         mediaFile.setNotes("This is a test image 5");
@@ -297,7 +293,6 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setName("test6_1.jpg");
@@ -308,7 +303,6 @@ public class MediaFileTest extends WebloggerTest {
         mediaFileManager.storeMediaFile(mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
-        mediaFile2.setId(Utilities.generateUUID());
         mediaFile2.setCreator(testUser);
         mediaFile2.setDirectory(rootDirectory);
         mediaFile2.setName("test6_2.jpg");
@@ -356,7 +350,6 @@ public class MediaFileTest extends WebloggerTest {
         MediaDirectory rootDirectory = mediaFileManager.getMediaDirectoryByName(testWeblog, "default");
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setId(Utilities.generateUUID());
         mediaFile.setCreator(testUser);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setName("test7_1.jpg");
@@ -367,7 +360,6 @@ public class MediaFileTest extends WebloggerTest {
         mediaFileManager.storeMediaFile(mediaFile, null);
 
         MediaFile mediaFile2 = new MediaFile();
-        mediaFile2.setId(Utilities.generateUUID());
         mediaFile2.setCreator(testUser);
         mediaFile2.setDirectory(rootDirectory);
         mediaFile2.setName("test7_2.jpg");

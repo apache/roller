@@ -22,8 +22,6 @@ package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.util.Utilities;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -40,6 +38,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -54,7 +53,7 @@ import java.util.Set;
 public class MediaDirectory {
 
     @NotBlank
-    private String id;
+    private String id = Utilities.generateUUID();
     @NotBlank(message = "{mediaFile.error.view.dirNameEmpty}")
     @Pattern(regexp = "[a-zA-Z0-9\\-]+", message = "{mediaFile.error.view.dirNameInvalid}")
     String name;
@@ -66,7 +65,6 @@ public class MediaDirectory {
     }
 
     public MediaDirectory(Weblog weblog, String name) {
-        this.id = Utilities.generateUUID();
         this.name = name;
         this.weblog = weblog;
     }
@@ -151,18 +149,11 @@ public class MediaDirectory {
 
     @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof MediaDirectory)) {
-            return false;
-        }
-        MediaDirectory o = (MediaDirectory) other;
-        return new EqualsBuilder().append(getId(), o.getId()).isEquals();
+        return other == this || (other instanceof MediaDirectory && Objects.equals(id, ((MediaDirectory) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder().append(getId()).toHashCode();
+        return Objects.hash(id);
     }
 
 }

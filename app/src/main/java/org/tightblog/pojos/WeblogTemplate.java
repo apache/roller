@@ -21,9 +21,8 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.NotBlank;
+import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -38,6 +37,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * POJO that represents a single user defined template page.
@@ -62,7 +62,7 @@ import java.time.Instant;
 public class WeblogTemplate implements Template {
 
     // attributes
-    private String id = null;
+    private String id = Utilities.generateUUID();
     private ComponentType role = null;
     @NotBlank(message = "{templates.error.nameNull}")
     private String name = null;
@@ -185,31 +185,17 @@ public class WeblogTemplate implements Template {
         this.template = template;
     }
 
-    //------------------------------------------------------- Good citizenship
-
     public String toString() {
         return "{" + getId() + ", " + getName() + ", " + getRelativePath() + "}";
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof WeblogTemplate)) {
-            return false;
-        }
-        WeblogTemplate o = (WeblogTemplate) other;
-        return new EqualsBuilder()
-                .append(getName(), o.getName())
-                .append(getWeblog(), o.getWeblog())
-                .isEquals();
+        return other == this || (other instanceof WeblogTemplate && Objects.equals(id, ((WeblogTemplate) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getName())
-                .append(getWeblog())
-                .toHashCode();
+        return Objects.hash(id);
     }
 
 }

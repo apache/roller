@@ -21,8 +21,6 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.util.Utilities;
@@ -47,6 +45,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,7 +97,7 @@ public class WeblogEntry {
     }
 
     // Simple properties
-    private String id;
+    private String id = Utilities.generateUUID();
     @NotBlank(message = "{Entry.error.titleNull}")
     private String title;
     @NotBlank(message = "{Entry.error.textNull}")
@@ -173,37 +172,6 @@ public class WeblogEntry {
         this.setEnclosureType(other.getEnclosureType());
         this.setEnclosureLength(other.getEnclosureLength());
         this.setTags(other.getTags());
-    }
-
-    //------------------------------------------------------- Good citizenship
-
-    public String toString() {
-        String result = "{" + getId() + ", ";
-        result += this.getAnchor() + ", ";
-        result += this.getTitle() + ", ";
-        result += this.getPubTime() + "}";
-        return result;
-    }
-
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof WeblogEntry)) {
-            return false;
-        }
-        WeblogEntry o = (WeblogEntry) other;
-        return new EqualsBuilder()
-                .append(getAnchor(), o.getAnchor())
-                .append(getWeblog(), o.getWeblog())
-                .isEquals();
-    }
-
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getAnchor())
-                .append(getWeblog())
-                .toHashCode();
     }
 
     @Id
@@ -547,5 +515,22 @@ public class WeblogEntry {
 
     public void setPreviewUrl(String previewUrl) {
         this.previewUrl = previewUrl;
+    }
+
+    public String toString() {
+        String result = "{" + getId() + ", ";
+        result += this.getAnchor() + ", ";
+        result += this.getTitle() + ", ";
+        result += this.getPubTime() + "}";
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other == this || (other instanceof WeblogEntry && Objects.equals(id, ((WeblogEntry) other).id));
+    }
+
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

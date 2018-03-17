@@ -22,8 +22,6 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -35,7 +33,7 @@ import javax.persistence.Transient;
 import java.util.Comparator;
 
 /**
- * Tag aggregate data.
+ * Tag aggregate data, "stored" as a view.
  */
 @Entity
 @Table(name = "weblog_entry_tag_agg")
@@ -94,31 +92,17 @@ public class WeblogEntryTagAggregate {
         this.intensity = intensity;
     }
 
-    //------------------------------------------------------- Good citizenship
+    @Transient
+    public String getViewUrl() {
+        return viewUrl;
+    }
+
+    public void setViewUrl(String viewUrl) {
+        this.viewUrl = viewUrl;
+    }
 
     public String toString() {
         return "{" + (getWeblog() != null ? getWeblog().getHandle() + ", " : "") + getName() + ", " + getTotal() + "}";
-    }
-
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof WeblogEntryTagAggregate)) {
-            return false;
-        }
-        WeblogEntryTagAggregate o = (WeblogEntryTagAggregate) other;
-        return new EqualsBuilder()
-                .append(getName(), o.getName())
-                .append(getWeblog(), o.getWeblog())
-                .isEquals();
-    }
-
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getName())
-                .append(getWeblog())
-                .toHashCode();
     }
 
     public static java.util.Comparator<WeblogEntryTagAggregate> nameComparator = (weta1, weta2) ->
@@ -135,12 +119,4 @@ public class WeblogEntryTagAggregate {
         return compVal;
     };
 
-    @Transient
-    public String getViewUrl() {
-        return viewUrl;
-    }
-
-    public void setViewUrl(String viewUrl) {
-        this.viewUrl = viewUrl;
-    }
 }
