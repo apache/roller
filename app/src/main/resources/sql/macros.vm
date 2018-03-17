@@ -1,12 +1,3 @@
-
-#**
-Special macro to add table column with default null
-**#
-#macro(addColumnNull $table $column $type)
-    alter table $table add column $column $type default null;
-#end
-
-
 #**
 Special macro to add table column with not-null restriction and default value
 **#
@@ -122,11 +113,6 @@ alter table $tableName drop index $indexName;
 #else
 drop index $indexName on $tableName;
 #end
-#end
-
-
-#macro(dropColumn $tableName $columnName)
-alter table $tableName drop column $columnName;
 #end
 
 

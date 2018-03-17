@@ -28,13 +28,11 @@ import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
 
 /**
  * Test Weblog Page related business operations.
@@ -56,7 +54,6 @@ public class WeblogPageTest extends WebloggerTest {
         endSession(true);
 
         testPage = new WeblogTemplate();
-        testPage.setId(Utilities.generateUUID());
         testPage.setRole(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");

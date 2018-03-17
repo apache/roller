@@ -20,8 +20,6 @@
  */
 package org.tightblog.pojos;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
@@ -35,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.util.Objects;
 
 /**
  * WeblogRole that a user has for a specific weblog
@@ -134,26 +133,12 @@ public class UserWeblogRole {
         return sb;
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof UserWeblogRole)) {
-            return false;
-        }
-        UserWeblogRole o = (UserWeblogRole) other;
-        return new EqualsBuilder()
-                .append(getUser().getId(), o.getUser().getId())
-                .append(getWeblog().getId(), o.getWeblog().getId())
-                .append(getWeblogRole(), o.getWeblogRole())
-                .isEquals();
+        return other == this || (other instanceof UserWeblogRole && Objects.equals(id, ((UserWeblogRole) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getUser().getId())
-                .append(getWeblog().getId())
-                .append(getWeblogRole())
-                .toHashCode();
+        return Objects.hash(id);
     }
 }

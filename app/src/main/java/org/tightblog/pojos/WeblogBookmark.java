@@ -20,8 +20,6 @@
  */
 package org.tightblog.pojos;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
@@ -32,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.util.Objects;
 
 /**
  * Represents a single blogroll link for a weblog.
@@ -46,20 +45,16 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
 
     private Weblog weblog;
 
-    private String id;
+    private String id = Utilities.generateUUID();
     private String name;
     private String description;
     private String url;
     private Integer position;
 
-    /**
-     * Default constructor, for use in form beans only.
-     */
     public WeblogBookmark() {
     }
 
     public WeblogBookmark(Weblog parent, String name, String url, String desc) {
-        this.id = Utilities.generateUUID();
         this.weblog = parent;
         this.name = name;
         this.description = desc;
@@ -134,33 +129,17 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
         this.weblog = weblog;
     }
 
-    //------------------------------------------------------- Good citizenship
-
     public String toString() {
         return "{" + getId() + ", " + getName() + ", " + getUrl() + "}";
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof WeblogBookmark)) {
-            return false;
-        }
-        WeblogBookmark o = (WeblogBookmark) other;
-        return new EqualsBuilder()
-                .append(getName(), o.getName())
-                .append(getWeblog(), o.getWeblog())
-                .append(getUrl(), o.getUrl())
-                .isEquals();
+        return other == this || (other instanceof WeblogBookmark && Objects.equals(id, ((WeblogBookmark) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getName())
-                .append(getWeblog())
-                .append(getUrl())
-                .toHashCode();
+        return Objects.hash(id);
     }
 
     /**

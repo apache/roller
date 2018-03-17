@@ -120,7 +120,6 @@ abstract public class WebloggerTest {
 
     protected User setupUser(String userName) throws Exception {
         User testUser = new User();
-        testUser.setId(Utilities.generateUUID());
         testUser.setUserName(userName.toLowerCase());
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         testUser.setScreenName(userName);
@@ -200,7 +199,6 @@ abstract public class WebloggerTest {
             throws Exception {
 
         WeblogEntry testEntry = new WeblogEntry();
-        testEntry.setId(Utilities.generateUUID());
         testEntry.setTitle(anchor);
         testEntry.setText("blah blah entry");
         testEntry.setEditFormat(Weblog.EditFormat.HTML);

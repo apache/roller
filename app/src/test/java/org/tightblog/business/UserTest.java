@@ -28,7 +28,6 @@ import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserSearchCriteria;
 import org.tightblog.pojos.UserStatus;
-import org.tightblog.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,7 +52,6 @@ public class UserTest extends WebloggerTest {
         User user;
         
         User testUser = new User();
-        testUser.setId(Utilities.generateUUID());
         testUser.setUserName("testuser");
         testUser.setScreenName("Test User Screen Name");
         testUser.setEmailAddress("TestUser@dev.null");

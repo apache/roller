@@ -22,11 +22,10 @@ package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.util.I18nMessages;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -41,6 +40,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import java.time.Instant;
 import java.util.Locale;
+import java.util.Objects;
 
 @Entity
 @Table(name = "weblogger_user")
@@ -60,7 +60,7 @@ import java.util.Locale;
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
-    private String id;
+    private String id = Utilities.generateUUID();
 
     @NotBlank(message = "{error.add.user.missingUserName}")
     @Pattern(regexp = "[a-z0-9]*", message = "{error.add.user.badUserName}")
@@ -187,8 +187,6 @@ public class User {
         return i18NMessages;
     }
 
-    //------------------------------------------------------- Good citizenship
-
     public String toString() {
         String stringVal = "{" + getId();
         stringVal += ", " + getUserName();
@@ -200,19 +198,13 @@ public class User {
         return stringVal;
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof User)) {
-            return false;
-        }
-        User o = (User) other;
-        return new EqualsBuilder().append(getId(), o.getId()).isEquals();
+        return other == this || (other instanceof User && Objects.equals(id, ((User) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder().append(getId()).toHashCode();
+        return Objects.hash(id);
     }
 
 }

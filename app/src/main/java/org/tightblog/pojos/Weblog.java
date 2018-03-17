@@ -51,6 +51,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -564,29 +565,17 @@ public class Weblog {
         this.applyCommentDefaults = applyCommentDefaults;
     }
 
-    //------------------------------------------------------- Good citizenship
-
     public String toString() {
         return "{" + getId() + ", " + getHandle() + ", " + getName() + "}";
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof Weblog)) {
-            return false;
-        }
-        Weblog o = (Weblog) other;
-        return new EqualsBuilder()
-                .append(getHandle(), o.getHandle())
-                .isEquals();
+        return other == this || (other instanceof Weblog && Objects.equals(id, ((Weblog) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getHandle())
-                .toHashCode();
+        return Objects.hash(id);
     }
 
 }

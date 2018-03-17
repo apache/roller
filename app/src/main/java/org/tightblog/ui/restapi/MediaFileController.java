@@ -11,7 +11,6 @@ import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.util.I18nMessages;
-import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +135,6 @@ public class MediaFileController {
             }
 
             mf = new MediaFile();
-            mf.setId(Utilities.generateUUID());
             mf.setCreator(user);
 
             if (mediaFileData.getDirectory() == null) {

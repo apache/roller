@@ -161,7 +161,6 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     @Override
     public WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) {
         WeblogTemplate weblogTemplate = new WeblogTemplate();
-        weblogTemplate.setId(Utilities.generateUUID());
         weblogTemplate.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
         weblogTemplate.setWeblog(weblog);
         weblogTemplate.setRole(sharedTemplate.getRole());

@@ -21,8 +21,6 @@
 package org.tightblog.pojos;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
@@ -35,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "weblog_entry_comment")
@@ -241,27 +240,13 @@ public class WeblogEntryComment {
                 + ", name = " + name + ", email = " + email + ", postTime = " + postTime + ", notify = " + notify + "}";
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof WeblogEntryComment)) {
-            return false;
-        }
-        WeblogEntryComment o = (WeblogEntryComment) other;
-        return new EqualsBuilder()
-                .append(getName(), o.getName())
-                .append(getPostTime(), o.getPostTime())
-                .append(getWeblogEntry(), o.getWeblogEntry())
-                .isEquals();
+        return other == this || (other instanceof WeblogEntryComment && Objects.equals(id, ((WeblogEntryComment) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getName())
-                .append(getPostTime())
-                .append(getWeblogEntry())
-                .toHashCode();
+        return Objects.hash(id);
     }
 
     public void setData(WeblogEntryComment other) {

@@ -34,7 +34,6 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.util.I18nMessages;
-import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,7 +239,6 @@ public class TemplateController {
                 if (templateToSave == null) {
                     createNew = true;
                     templateToSave = new WeblogTemplate();
-                    templateToSave.setId(Utilities.generateUUID());
                     templateToSave.setWeblog(weblog);
                     if (templateData.getRole() != null) {
                         templateToSave.setRole(templateData.getRole());

@@ -21,8 +21,6 @@
 
 package org.tightblog.pojos;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
@@ -33,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "weblog_category")
@@ -49,7 +48,7 @@ import javax.persistence.Table;
 public class WeblogCategory implements Comparable<WeblogCategory> {
 
     // unique internal ID of object
-    private String id = null;
+    private String id = Utilities.generateUUID();
     // category name
     private String name = null;
     // left-to-right comparative ordering of category, higher numbers go to the right
@@ -63,7 +62,6 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
     public WeblogCategory(
             Weblog weblog,
             String name) {
-        this.id = Utilities.generateUUID();
         this.name = name;
         this.weblog = weblog;
         calculatePosition();
@@ -129,26 +127,10 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
 
     @Override
     public boolean equals(Object other) {
-
-        if (other == null) {
-            return false;
-        }
-
-        if (other instanceof WeblogCategory) {
-            WeblogCategory o = (WeblogCategory) other;
-            return new EqualsBuilder()
-                    .append(getName(), o.getName())
-                    .append(getWeblog(), o.getWeblog())
-                    .isEquals();
-        }
-        return false;
+        return other == this || (other instanceof WeblogCategory && Objects.equals(id, ((WeblogCategory) other).id));
     }
 
-    @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getName())
-                .append(getWeblog())
-                .toHashCode();
+        return Objects.hash(id);
     }
 }

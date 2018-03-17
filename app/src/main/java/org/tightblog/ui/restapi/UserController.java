@@ -268,7 +268,6 @@ public class UserController {
             }
 
             User user = new User();
-            user.setId(Utilities.generateUUID());
             user.setUserName(newData.user.getUserName());
             user.setDateCreated(Instant.now());
 

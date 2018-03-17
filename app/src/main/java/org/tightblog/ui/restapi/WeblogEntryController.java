@@ -501,7 +501,6 @@ public class WeblogEntryController {
                 if (entry == null) {
                     createNew = true;
                     entry = new WeblogEntry();
-                    entry.setId(Utilities.generateUUID());
                     entry.setCreator(user);
                     entry.setWeblog(weblog);
                     entry.setEditFormat(entryData.getEditFormat());

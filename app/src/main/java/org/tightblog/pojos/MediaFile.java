@@ -22,11 +22,10 @@ package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.WebloggerContext;
 import org.hibernate.validator.constraints.NotBlank;
+import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -41,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * Represents a media file
@@ -50,7 +50,7 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaFile {
 
-    private String id;
+    private String id = Utilities.generateUUID();
 
     @NotBlank(message = "{mediaFile.error.nameNull}")
     private String name;
@@ -335,26 +335,18 @@ public class MediaFile {
         thumbnailWidth = newWidth;
     }
 
-    // ------------------------------------------------------- Good citizenship
-
     public String toString() {
         return "MediaFile [name=" + getName() + ", directory=" + getDirectory() + ", weblog=" +
                 getDirectory().getWeblog() + "]";
     }
 
+    @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof MediaFile)) {
-            return false;
-        }
-        MediaFile o = (MediaFile) other;
-        return new EqualsBuilder().append(getId(), o.getId()).isEquals();
+        return other == this || (other instanceof MediaFile && Objects.equals(id, ((MediaFile) other).id));
     }
 
     public int hashCode() {
-        return new HashCodeBuilder().append(getId()).toHashCode();
+        return Objects.hash(id);
     }
 
 }
