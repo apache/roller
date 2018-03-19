@@ -48,7 +48,7 @@ public interface Template {
         @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, "template.stylesheet.description"),
         @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false,
                 "template.javascript.description"),
-        @XmlEnumValue("atomFeed")ATOMFEED("Atom Feed", "application/atom+xml", false,
+        @XmlEnumValue("atomFeed")ATOMFEED("Atom Feed", "application/atom+xml; charset=utf-8", false,
                 "template.atomFeed.description"),
         @XmlEnumValue("customInternal")CUSTOM_INTERNAL("Custom internal", "text/html", false,
                 "template.customInternal.description"),

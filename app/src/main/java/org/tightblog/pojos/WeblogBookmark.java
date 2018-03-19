@@ -43,9 +43,10 @@ import java.util.Objects;
 })
 public class WeblogBookmark implements Comparable<WeblogBookmark> {
 
-    private Weblog weblog;
-
     private String id = Utilities.generateUUID();
+    private int hashCode;
+
+    private Weblog weblog;
     private String name;
     private String description;
     private String url;
@@ -138,13 +139,15 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
         return other == this || (other instanceof WeblogBookmark && Objects.equals(id, ((WeblogBookmark) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
+    @Override
     public int compareTo(WeblogBookmark o) {
         return position.compareTo(o.getPosition());
     }

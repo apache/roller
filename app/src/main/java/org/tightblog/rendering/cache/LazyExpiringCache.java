@@ -113,9 +113,9 @@ public class LazyExpiringCache {
         }
     }
 
-    public Object get(String key, Instant lastModified) {
+    public CachedContent get(String key, Instant lastModified) {
         if (enabled) {
-            Object entry = null;
+            CachedContent entry = null;
             LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.getIfPresent(key);
             if (lazyEntry != null) {
                 entry = lazyEntry.getValue(lastModified);
@@ -134,7 +134,7 @@ public class LazyExpiringCache {
         }
     }
 
-    public void put(String key, Object value) {
+    public void put(String key, CachedContent value) {
         if (enabled) {
             contentCache.put(key, new LazyExpiringCacheEntry(value));
             log.debug("PUT {}", key);

@@ -98,6 +98,7 @@ public class WeblogEntry {
 
     // Simple properties
     private String id = Utilities.generateUUID();
+    private int hashCode;
     @NotBlank(message = "{Entry.error.titleNull}")
     private String title;
     @NotBlank(message = "{Entry.error.textNull}")
@@ -530,7 +531,11 @@ public class WeblogEntry {
         return other == this || (other instanceof WeblogEntry && Objects.equals(id, ((WeblogEntry) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 }
