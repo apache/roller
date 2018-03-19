@@ -79,6 +79,7 @@ import java.util.TimeZone;
 public class Weblog {
 
     private String id = Utilities.generateUUID();
+    private int hashCode;
     @NotBlank(message = "{weblogConfig.error.handleNull}")
     @Pattern(regexp = "[a-z0-9\\-]*", message = "{weblogConfig.error.invalidHandle}")
     private String handle = null;
@@ -574,8 +575,12 @@ public class Weblog {
         return other == this || (other instanceof Weblog && Objects.equals(id, ((Weblog) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 
 }

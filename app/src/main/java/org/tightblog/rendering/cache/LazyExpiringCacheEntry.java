@@ -46,10 +46,10 @@ import java.time.Instant;
  */
 class LazyExpiringCacheEntry {
 
-    private Object value = null;
+    private CachedContent value = null;
     private Instant timeCached = null;
 
-    LazyExpiringCacheEntry(Object item) {
+    LazyExpiringCacheEntry(CachedContent item) {
         this.value = item;
         this.timeCached = Clock.systemDefaultZone().instant();
     }
@@ -59,7 +59,7 @@ class LazyExpiringCacheEntry {
      * <p>
      * If the value has expired then we return null.
      */
-    public Object getValue(Instant lastInvalidated) {
+    public CachedContent getValue(Instant lastInvalidated) {
         return isValid(lastInvalidated) ? value : null;
     }
 

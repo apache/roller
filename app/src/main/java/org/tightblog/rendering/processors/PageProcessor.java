@@ -157,95 +157,85 @@ public class PageProcessor extends AbstractProcessor {
         WeblogEntryComment commentForm = (WeblogEntryComment) request.getAttribute("commentForm");
 
         // pages containing user-specific comment forms aren't cached
+        CachedContent rendererOutput = null;
+        boolean newContent = false;
         if (commentForm == null) {
             cacheKey = generateKey(incomingRequest, isSiteWide);
-
-            CachedContent cachedContent = (CachedContent) weblogPageCache.get(cacheKey, lastModified);
-
-            if (cachedContent != null) {
-                log.debug("HIT {}", cacheKey);
-
-                // allow for hit counting
-                if (incomingRequest.isWeblogPageHit()) {
-                    weblogManager.incrementHitCount(weblog);
-                }
-
-                response.setContentType(cachedContent.getContentType());
-                response.setContentLength(cachedContent.getContent().length);
-                response.getOutputStream().write(cachedContent.getContent());
-                response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
-                response.setHeader("Cache-Control","no-cache");
-                return;
-            } else {
-                log.debug("MISS {}", cacheKey);
-            }
-        }
-
-        // not using cache so need to generate page from scratch
-        // figure out what template to use
-        if (incomingRequest.getCustomPageName() != null) {
-            Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
-
-            // block internal custom pages from appearing directly
-            if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
-                incomingRequest.setTemplate(template);
-            }
-        } else {
-            boolean invalid = false;
-
-            if (incomingRequest.getWeblogEntryAnchor() != null) {
-                WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
-
-                if (entry == null || !entry.isPublished()) {
-                    invalid = true;
-                } else {
-                    incomingRequest.setWeblogEntry(entry);
-                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
-                }
-            }
-
-            // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
-            if (!invalid && incomingRequest.getTemplate() == null) {
-                incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
-            }
-        }
-
-        if (incomingRequest.getTemplate() == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            rendererOutput = weblogPageCache.get(cacheKey, lastModified);
+            log.debug((rendererOutput != null ? "HIT" : "MISS") + " {}", cacheKey);
         }
 
         try {
-            // populate the rendering model
-            Map<String, Object> initData = new HashMap<>();
-            initData.put("parsedRequest", incomingRequest);
+            if (rendererOutput == null) {
+                newContent = true;
 
-            // if we're handling comments, add the comment form
-            if (commentForm != null) {
-                initData.put("commentForm", commentForm);
+                // not using cache so need to generate page from scratch
+                // figure out what template to use
+                if (incomingRequest.getCustomPageName() != null) {
+                    Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
+
+                    // block internal custom pages from appearing directly
+                    if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
+                        incomingRequest.setTemplate(template);
+                    }
+                } else {
+                    boolean invalid = false;
+
+                    if (incomingRequest.getWeblogEntryAnchor() != null) {
+                        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
+
+                        if (entry == null || !entry.isPublished()) {
+                            invalid = true;
+                        } else {
+                            incomingRequest.setWeblogEntry(entry);
+                            incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
+                        }
+                    }
+
+                    // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
+                    if (!invalid && incomingRequest.getTemplate() == null) {
+                        incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
+                    }
+                }
+
+                if (incomingRequest.getTemplate() == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+
+                // populate the rendering model
+                Map<String, Object> initData = new HashMap<>();
+                initData.put("parsedRequest", incomingRequest);
+
+                // if we're handling comments, add the comment form
+                if (commentForm != null) {
+                    initData.put("commentForm", commentForm);
+                }
+
+                Map<String, Object> model = getModelMap("pageModelSet", initData);
+
+                // Load special models for site-wide blog
+                if (isSiteWide) {
+                    model.putAll(getModelMap("siteModelSet", initData));
+                }
+
+                // render content
+                rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
             }
-
-            Map<String, Object> model = getModelMap("pageModelSet", initData);
-
-            // Load special models for site-wide blog
-            if (isSiteWide) {
-                model.putAll(getModelMap("siteModelSet", initData));
-            }
-
-            // render content
-            CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
 
             // write rendered content to response
             log.debug("Writing response output");
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
+            response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
+            response.setHeader("Cache-Control","no-cache");
             response.getOutputStream().write(rendererOutput.getContent());
 
             if (incomingRequest.isWeblogPageHit()) {
                 weblogManager.incrementHitCount(weblog);
             }
 
-            if (cacheKey != null) {
+            if (newContent && cacheKey != null) {
                 log.debug("PUT {}", cacheKey);
                 weblogPageCache.put(cacheKey, rendererOutput);
             }

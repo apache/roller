@@ -56,6 +56,7 @@ public class WeblogEntryComment {
 
     // attributes
     private String id = Utilities.generateUUID();
+    private int hashCode;
     private String name = null;
     private String email = null;
     private String url = null;
@@ -233,37 +234,6 @@ public class WeblogEntryComment {
         return null;
     }
 
-    public String toString() {
-        return "{ id = " + id + ", weblog = "
-                + (weblogEntry != null && weblogEntry.getWeblog() != null ? weblogEntry.getWeblog().getHandle() : "(no weblog)")
-                + ", entry = " + (weblogEntry != null && weblogEntry.getAnchor() != null ? weblogEntry.getAnchor() : "(no weblog entry)")
-                + ", name = " + name + ", email = " + email + ", postTime = " + postTime + ", notify = " + notify + "}";
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return other == this || (other instanceof WeblogEntryComment && Objects.equals(id, ((WeblogEntryComment) other).id));
-    }
-
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    public void setData(WeblogEntryComment other) {
-        this.id = other.getId();
-        this.name = other.getName();
-        this.email = other.getEmail();
-        this.url = other.getUrl();
-        this.content = other.getContent();
-        this.notify = other.getNotify();
-        this.postTime = other.getPostTime();
-        this.status = other.getStatus();
-        this.remoteHost = other.getRemoteHost();
-        this.referrer = other.getReferrer();
-        this.userAgent = other.getUserAgent();
-        this.weblogEntry = other.getWeblogEntry();
-    }
-
     // fields involved with rendering comments on blogs
     @Transient
     public String getSubmitResponseMessage() {
@@ -288,5 +258,41 @@ public class WeblogEntryComment {
         setEmail("");
         setUrl("");
         setContent("");
+    }
+
+    public void setData(WeblogEntryComment other) {
+        this.id = other.getId();
+        this.name = other.getName();
+        this.email = other.getEmail();
+        this.url = other.getUrl();
+        this.content = other.getContent();
+        this.notify = other.getNotify();
+        this.postTime = other.getPostTime();
+        this.status = other.getStatus();
+        this.remoteHost = other.getRemoteHost();
+        this.referrer = other.getReferrer();
+        this.userAgent = other.getUserAgent();
+        this.weblogEntry = other.getWeblogEntry();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other == this || (other instanceof WeblogEntryComment && Objects.equals(id, ((WeblogEntryComment) other).id));
+    }
+
+    @Override
+    public int hashCode() {
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
+    }
+
+    @Override
+    public String toString() {
+        return "{ id = " + id + ", weblog = "
+                + (weblogEntry != null && weblogEntry.getWeblog() != null ? weblogEntry.getWeblog().getHandle() : "(no weblog)")
+                + ", entry = " + (weblogEntry != null && weblogEntry.getAnchor() != null ? weblogEntry.getAnchor() : "(no weblog entry)")
+                + ", name = " + name + ", email = " + email + ", postTime = " + postTime + ", notify = " + notify + "}";
     }
 }

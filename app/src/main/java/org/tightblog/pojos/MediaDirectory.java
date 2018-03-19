@@ -54,6 +54,7 @@ public class MediaDirectory {
 
     @NotBlank
     private String id = Utilities.generateUUID();
+    private int hashCode;
     @NotBlank(message = "{mediaFile.error.view.dirNameEmpty}")
     @Pattern(regexp = "[a-zA-Z0-9\\-]+", message = "{mediaFile.error.view.dirNameInvalid}")
     String name;
@@ -152,8 +153,12 @@ public class MediaDirectory {
         return other == this || (other instanceof MediaDirectory && Objects.equals(id, ((MediaDirectory) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 
 }

@@ -27,7 +27,6 @@ import org.tightblog.business.themes.SharedTemplate;
 import org.tightblog.business.themes.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.util.Utilities;
@@ -73,7 +72,7 @@ public class FeedProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    @Qualifier("rssRenderer")
+    @Qualifier("atomRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
 
     public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
@@ -96,29 +95,24 @@ public class FeedProcessor extends AbstractProcessor {
 
     @RequestMapping(method = RequestMethod.GET)
     public void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Weblog weblog;
+        WeblogFeedRequest feedRequest = new WeblogFeedRequest(request);
 
-        WeblogFeedRequest feedRequest;
-        try {
-            // parse the incoming request and extract the relevant data
-            feedRequest = new WeblogFeedRequest(request);
-
-            weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);
-            if (weblog == null) {
-                throw new IllegalStateException("unable to lookup weblog: " + feedRequest.getWeblogHandle());
-            } else {
-                feedRequest.setWeblog(weblog);
-            }
-
-            // Is this the site-wide weblog? If so, make a combined feed using all blogs...
-            feedRequest.setSiteWideFeed(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
-
-        } catch (Exception e) {
-            // invalid feed request format or weblog doesn't exist
-            log.debug("error creating weblog feed request", e);
+        if (!"entries".equals(feedRequest.getType()) && !"comments".equals(feedRequest.getType())) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+
+        Weblog weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);
+
+        if (weblog == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        } else {
+            feedRequest.setWeblog(weblog);
+        }
+
+        // Is this the site-wide weblog? If so, make a combined feed using all blogs...
+        feedRequest.setSiteWideFeed(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
 
         // determine the lastModified date for this content
         Instant lastModified = (feedRequest.isSiteWideFeed()) ? strategy.getWebloggerProperties().getLastWeblogChange()
@@ -130,72 +124,41 @@ public class FeedProcessor extends AbstractProcessor {
             return;
         }
 
-        // set content type
-        response.setContentType("application/atom+xml; charset=utf-8");
-
-        // cached content checking
+        // check cache before manually generating
         String cacheKey = generateKey(feedRequest, feedRequest.isSiteWideFeed());
-        CachedContent cachedContent = (CachedContent) (feedRequest.isSiteWideFeed() ?
-                strategy.getWebloggerProperties().getLastWeblogChange() : weblogFeedCache.get(cacheKey, lastModified));
+        CachedContent rendererOutput = weblogFeedCache.get(cacheKey, lastModified);
 
-        if (cachedContent != null) {
-            log.debug("HIT {}", cacheKey);
-            response.setContentLength(cachedContent.getContent().length);
-            response.getOutputStream().write(cachedContent.getContent());
-            return;
-        } else {
-            log.debug("MISS {}", cacheKey);
-        }
-
-        // Validation. To save DB processing time, detect some of the common queries that would return no rows.
-        boolean invalid = false;
-
-        if (!feedRequest.isSiteWideFeed() && feedRequest.getCategoryName() != null) {
-            // for single-weblog search, category must be defined for the weblog
-            WeblogCategory test = weblogManager.getWeblogCategoryByName(feedRequest.getWeblog(),
-                    feedRequest.getCategoryName());
-            if (test == null) {
-                invalid = true;
-            }
-        } else if (feedRequest.getTag() != null) {
-            // tags specified. make sure they exist.
-            invalid = !weblogManager.getTagExists((feedRequest.isSiteWideFeed()) ? null : weblog, feedRequest.getTag());
-        } else if (!"entries".equals(feedRequest.getType()) && !"comments".equals(feedRequest.getType())) {
-            invalid = true;
-        }
-
-        if (invalid) {
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
-        // looks like we need to render content
-        Map<String, Object> model;
-        String pageId;
-
-        // populate the rendering model
-        Map<String, Object> initData = new HashMap<>();
-        initData.put("parsedRequest", feedRequest);
-        model = getModelMap("feedModelSet", initData);
-        pageId = feedRequest.getType() + "-atom";
-
+        boolean newContent = false;
         try {
-            Template template = new SharedTemplate(pageId, Template.ComponentType.ATOMFEED);
-            CachedContent rendererOutput = thymeleafRenderer.render(template, model);
+            if (rendererOutput != null) {
+                log.debug("HIT {}", cacheKey);
+            } else {
+                log.debug("MISS {}", cacheKey);
+                newContent = true;
+
+                // not in cache so need to generate content
+                Map<String, Object> initData = new HashMap<>();
+                initData.put("parsedRequest", feedRequest);
+                Map<String, Object> model = getModelMap("feedModelSet", initData);
+                String pageId = feedRequest.getType() + "-atom";
+
+                Template template = new SharedTemplate(pageId, Template.ComponentType.ATOMFEED);
+                rendererOutput = thymeleafRenderer.render(template, model);
+            }
+
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
-            response.getOutputStream().write(rendererOutput.getContent());
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.setHeader("Cache-Control","no-cache");
+            response.getOutputStream().write(rendererOutput.getContent());
 
-            // cache rendered content.
-            log.debug("PUT {}", cacheKey);
-            weblogFeedCache.put(cacheKey, rendererOutput);
+            if (newContent) {
+                log.debug("PUT {}", cacheKey);
+                weblogFeedCache.put(cacheKey, rendererOutput);
+            }
+
         } catch (Exception e) {
-            log.error("Error during rendering for page {}", pageId, e);
+            log.error("Error rendering Atom feed for {}", feedRequest.getType(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
@@ -203,11 +166,8 @@ public class FeedProcessor extends AbstractProcessor {
     /**
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
-     * <p>
      * <handle>/<type>[[/cat/{category}]|[/tag/{tag}]]
-     * <p>
-     * examples ...
-     * <p>
+     * Examples:
      * foo/entries
      * foo/comments/cat/technology
      * foo/entries/tag/travel

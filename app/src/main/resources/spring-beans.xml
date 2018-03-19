@@ -167,7 +167,7 @@
         <beans:property name="templateEngine" ref="blogTemplateEngine"/>
     </beans:bean>
 
-    <beans:bean id="rssRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
+    <beans:bean id="atomRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
         <beans:property name="templateEngine" ref="rssTemplateEngine"/>
     </beans:bean>
 

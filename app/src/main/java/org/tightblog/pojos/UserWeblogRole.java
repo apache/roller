@@ -59,6 +59,7 @@ import java.util.Objects;
 public class UserWeblogRole {
 
     private String id = Utilities.generateUUID();
+    private int hashCode;
     private User user;
     private Weblog weblog;
     private boolean pending = false;
@@ -138,7 +139,11 @@ public class UserWeblogRole {
         return other == this || (other instanceof UserWeblogRole && Objects.equals(id, ((UserWeblogRole) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 }

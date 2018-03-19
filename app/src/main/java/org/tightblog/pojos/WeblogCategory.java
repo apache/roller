@@ -49,6 +49,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
 
     // unique internal ID of object
     private String id = Utilities.generateUUID();
+    private int hashCode;
     // category name
     private String name = null;
     // left-to-right comparative ordering of category, higher numbers go to the right
@@ -130,7 +131,11 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
         return other == this || (other instanceof WeblogCategory && Objects.equals(id, ((WeblogCategory) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 }

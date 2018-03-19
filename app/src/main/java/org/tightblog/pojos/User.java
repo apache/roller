@@ -61,6 +61,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     private String id = Utilities.generateUUID();
+    private int hashCode;
 
     @NotBlank(message = "{error.add.user.missingUserName}")
     @Pattern(regexp = "[a-z0-9]*", message = "{error.add.user.badUserName}")
@@ -203,8 +204,12 @@ public class User {
         return other == this || (other instanceof User && Objects.equals(id, ((User) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 
 }

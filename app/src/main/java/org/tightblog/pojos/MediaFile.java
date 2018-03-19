@@ -51,6 +51,7 @@ import java.util.Objects;
 public class MediaFile {
 
     private String id = Utilities.generateUUID();
+    private int hashCode;
 
     @NotBlank(message = "{mediaFile.error.nameNull}")
     private String name;
@@ -345,8 +346,12 @@ public class MediaFile {
         return other == this || (other instanceof MediaFile && Objects.equals(id, ((MediaFile) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 
 }

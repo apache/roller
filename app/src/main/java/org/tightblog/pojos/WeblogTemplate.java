@@ -63,6 +63,7 @@ public class WeblogTemplate implements Template {
 
     // attributes
     private String id = Utilities.generateUUID();
+    private int hashCode;
     private ComponentType role = null;
     @NotBlank(message = "{templates.error.nameNull}")
     private String name = null;
@@ -194,8 +195,12 @@ public class WeblogTemplate implements Template {
         return other == this || (other instanceof WeblogTemplate && Objects.equals(id, ((WeblogTemplate) other).id));
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (hashCode == 0) {
+            hashCode = Objects.hashCode(id);
+        }
+        return hashCode;
     }
 
 }
