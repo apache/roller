@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tightblog.rendering.processors;
 
 import org.junit.Test;
@@ -133,14 +148,12 @@ public class PageProcessorTest {
 
         processor.handleRequest(mockRequest, mockResponse);
 
-        // testing AbstractProcessor's setLastModifiedHeader w/last modified time
-        verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
-        verify(mockResponse).setHeader("Cache-Control", "no-cache");
-
         // verify cached content being returned
         verify(mockWM).incrementHitCount(weblog);
         verify(mockResponse).setContentType(ComponentType.WEBLOG.getContentType());
         verify(mockResponse).setContentLength(7);
+        verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
+        verify(mockResponse).setHeader("Cache-Control", "no-cache");
         verify(mockSOS).write("mytest1".getBytes());
     }
 
@@ -283,7 +296,7 @@ public class PageProcessorTest {
         when(request.getDeviceType()).thenReturn(DeviceType.TABLET);
 
         String test1 = processor.generateKey(request, false);
-        assertEquals("weblogpage.key:bobsblog/entry/neatoentry/user=bob/deviceType=TABLET", test1);
+        assertEquals("bobsblog/entry/neatoentry/user=bob/deviceType=TABLET", test1);
 
         when(request.getWeblogEntryAnchor()).thenReturn(null);
         when(request.getAuthenticatedUser()).thenReturn(null);
@@ -298,7 +311,7 @@ public class PageProcessorTest {
         webloggerProperties.setLastWeblogChange(testTime);
 
         test1 = processor.generateKey(request, true);
-        assertEquals("weblogpage.key:bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
+        assertEquals("bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
                 "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE/lastUpdate=" + testTime.toEpochMilli(), test1);
     }
 

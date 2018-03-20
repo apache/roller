@@ -112,7 +112,8 @@ public class WeblogEntryTag {
     }
 
     public String toString() {
-        return ("{" + getId() + ", " + getName() + "}");
+        return "WeblogEntryTag: id=" + id + ", name=" + name + ", weblog=" + weblog.getHandle()
+                + ", entry=" + weblogEntry.getAnchor();
     }
 
     @Override

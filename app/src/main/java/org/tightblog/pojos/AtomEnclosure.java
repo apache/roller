@@ -60,6 +60,6 @@ public class AtomEnclosure {
     }
 
     public String toString() {
-        return "{url=" + url + "; contentType=" + contentType + "; length=" + length + "}";
+        return "AtomEnclosure: url=" + url + ", contentType=" + contentType + ", length=" + length;
     }
 }

@@ -178,7 +178,7 @@ public class PreviewProcessor extends AbstractProcessor {
             return;
         }
 
-        // Need to render content, populate the rendering model
+        // populate the rendering model
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", incomingRequest);
 
@@ -194,6 +194,7 @@ public class PreviewProcessor extends AbstractProcessor {
             CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
+            response.setHeader("Cache-Control","no-cache");
             response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {
             log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);

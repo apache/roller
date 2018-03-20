@@ -27,10 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a request for a Roller weblog feed.
- * <p>
- * /tb-ui/rendering/feeds/*
- * <p>
+ * Represents a request for a TightBlog weblog feed.
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
@@ -44,6 +41,15 @@ public class WeblogFeedRequest extends WeblogRequest {
     private String tag = null;
     private boolean siteWideFeed = false;
     private int page = 0;
+
+    public WeblogFeedRequest() {
+    }
+
+    static public class Creator {
+        public WeblogFeedRequest create(HttpServletRequest request) {
+            return new WeblogFeedRequest(request);
+        }
+    }
 
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
@@ -66,7 +72,9 @@ public class WeblogFeedRequest extends WeblogRequest {
          */
         if (pathInfo != null && pathInfo.trim().length() > 1) {
             type = pathInfo.startsWith("/") ? pathInfo.substring(1) : pathInfo;
-        } else {
+        }
+
+        if (!"comments".equals(type)) {
             type = "entries";
         }
 
@@ -74,19 +82,15 @@ public class WeblogFeedRequest extends WeblogRequest {
         if (request.getParameter("cat") != null) {
             // replacing any plus signs with their encoded equivalent (http://stackoverflow.com/a/6926987)
             categoryName = Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
+        } else {
+            tag = request.getParameter("tag");
         }
-
-        tag = request.getParameter("tag");
 
         if (request.getParameter("page") != null) {
             try {
                 page = Integer.parseInt(request.getParameter("page"));
             } catch (NumberFormatException ignored) {
             }
-        }
-
-        if (tag != null && categoryName != null) {
-            throw new IllegalArgumentException("Please specify either category or tag but not both: " + request.getRequestURL());
         }
 
         if (log.isDebugEnabled()) {
@@ -101,16 +105,32 @@ public class WeblogFeedRequest extends WeblogRequest {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getCategoryName() {
         return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getTag() {
         return tag;
     }
 
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public int getPage() {
         return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public boolean isSiteWideFeed() {

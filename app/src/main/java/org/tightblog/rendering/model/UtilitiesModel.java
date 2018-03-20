@@ -20,8 +20,8 @@
  */
 package org.tightblog.rendering.model;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.WebloggerProperties;
@@ -33,7 +33,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 

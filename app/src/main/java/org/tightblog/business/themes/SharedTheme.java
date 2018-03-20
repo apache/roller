@@ -45,7 +45,6 @@ public class SharedTheme {
     private String description = null;
     // the preview image path is relative from the shared theme's base folder
     private String previewImagePath = null;
-    private Boolean dualTheme = false;
 
     // Site-wide blogs provide aggregated data from all weblogs to this weblog
     // For better caching performance don't use a siteWide blog unless using this
@@ -111,14 +110,6 @@ public class SharedTheme {
 
     public void setPreviewImagePath(String previewImagePath) {
         this.previewImagePath = previewImagePath;
-    }
-
-    public Boolean isDualTheme() {
-        return dualTheme;
-    }
-
-    public void setDualTheme(Boolean dualTheme) {
-        this.dualTheme = dualTheme;
     }
 
     public Boolean isSiteWide() {
@@ -202,16 +193,8 @@ public class SharedTheme {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(name);
-        sb.append("\n");
-
-        for (Template template : templatesByName.values()) {
-            sb.append(template);
-            sb.append("\n");
-        }
-
-        return sb.toString();
+        return "SharedTheme: id=" + id + ", name=" + name + ", isSiteWide=" + isSiteWide() + ", # templates="
+                + templatesByName.size();
     }
 
 }

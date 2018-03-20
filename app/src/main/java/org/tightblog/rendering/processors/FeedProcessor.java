@@ -93,17 +93,17 @@ public class FeedProcessor extends AbstractProcessor {
         this.strategy = strategy;
     }
 
+    private WeblogFeedRequest.Creator weblogFeedRequestCreator;
+
+    public void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator weblogFeedRequestCreator) {
+        this.weblogFeedRequestCreator = weblogFeedRequestCreator;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogFeedRequest feedRequest = new WeblogFeedRequest(request);
-
-        if (!"entries".equals(feedRequest.getType()) && !"comments".equals(feedRequest.getType())) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
+        WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);
-
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -174,10 +174,7 @@ public class FeedProcessor extends AbstractProcessor {
      */
     protected String generateKey(WeblogFeedRequest feedRequest, boolean isSiteWide) {
         StringBuilder key = new StringBuilder();
-
-        key.append("weblogfeed.key").append(":");
         key.append(feedRequest.getWeblogHandle());
-
         key.append("/").append(feedRequest.getType());
 
         if (feedRequest.getCategoryName() != null) {
@@ -190,10 +187,10 @@ public class FeedProcessor extends AbstractProcessor {
             key.append("/tag/").append(tag);
         }
 
-        // site wide feeds must be cognizant of the last update date of any weblog or weblog entry
-        // as they get refreshed whenever another blog or blog entry does.
+        // site wide feeds must be aware of the last update date of any weblog
+        // as they get refreshed whenever any of blogs do.
         if (isSiteWide) {
-            key.append("/lastUpdate=").append(strategy.getWebloggerProperties().getLastWeblogChange());
+            key.append("/lastUpdate=").append(strategy.getWebloggerProperties().getLastWeblogChange().toEpochMilli());
         }
 
         return key.toString();

@@ -20,7 +20,7 @@
  */
 package org.tightblog.pojos;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
@@ -290,9 +290,9 @@ public class WeblogEntryComment {
 
     @Override
     public String toString() {
-        return "{ id = " + id + ", weblog = "
+        return "WeblogEntryComment: id=" + id + ", weblog="
                 + (weblogEntry != null && weblogEntry.getWeblog() != null ? weblogEntry.getWeblog().getHandle() : "(no weblog)")
-                + ", entry = " + (weblogEntry != null && weblogEntry.getAnchor() != null ? weblogEntry.getAnchor() : "(no weblog entry)")
-                + ", name = " + name + ", email = " + email + ", postTime = " + postTime + ", notify = " + notify + "}";
+                + ", entry=" + (weblogEntry != null && weblogEntry.getAnchor() != null ? weblogEntry.getAnchor() : "(no weblog entry)")
+                + ", name=" + name + ", email=" + email + ", postTime=" + postTime;
     }
 }

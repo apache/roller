@@ -187,7 +187,7 @@ public class WeblogTemplate implements Template {
     }
 
     public String toString() {
-        return "{" + getId() + ", " + getName() + ", " + getRelativePath() + "}";
+        return "WeblogTemplate: id=" + id + ", name=" + name + ", role=" + role + ", relativePath=" + relativePath;
     }
 
     @Override
