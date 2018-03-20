@@ -519,11 +519,7 @@ public class WeblogEntry {
     }
 
     public String toString() {
-        String result = "{" + getId() + ", ";
-        result += this.getAnchor() + ", ";
-        result += this.getTitle() + ", ";
-        result += this.getPubTime() + "}";
-        return result;
+        return "WeblogEntry: id=" + id + ", weblog=" + weblog.getHandle() + ", anchor=" + anchor + ", pub time=" + pubTime;
     }
 
     @Override

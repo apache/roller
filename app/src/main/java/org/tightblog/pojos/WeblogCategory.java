@@ -123,7 +123,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
     }
 
     public String toString() {
-        return "{" + getId() + ", " + getName() + "}";
+        return "WeblogCategory: id=" + id + ", weblog=" + weblog.getHandle() + ", name=" + name;
     }
 
     @Override

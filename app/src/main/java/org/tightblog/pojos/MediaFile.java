@@ -337,8 +337,8 @@ public class MediaFile {
     }
 
     public String toString() {
-        return "MediaFile [name=" + getName() + ", directory=" + getDirectory() + ", weblog=" +
-                getDirectory().getWeblog() + "]";
+        return "MediaFile: id=" + id + ", name=" + name + ", directory=" + directory + ", weblog="
+                + directory.getWeblog().getHandle();
     }
 
     @Override

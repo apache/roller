@@ -567,7 +567,7 @@ public class Weblog {
     }
 
     public String toString() {
-        return "{" + getId() + ", " + getHandle() + ", " + getName() + "}";
+        return "Weblog: id=" + id + ", handle=" + handle + ", name=" + name;
     }
 
     @Override

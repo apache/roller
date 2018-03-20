@@ -189,14 +189,7 @@ public class User {
     }
 
     public String toString() {
-        String stringVal = "{" + getId();
-        stringVal += ", " + getUserName();
-        stringVal += ", " + getScreenName();
-        stringVal += ", " + getGlobalRole();
-        stringVal += ", " + getDateCreated();
-        stringVal += ", " + status;
-        stringVal += "}";
-        return stringVal;
+        return "User: id=" + id + ", userName=" + userName + ", status=" + status;
     }
 
     @Override

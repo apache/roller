@@ -102,7 +102,7 @@ public class WeblogEntryTagAggregate {
     }
 
     public String toString() {
-        return "{" + (getWeblog() != null ? getWeblog().getHandle() + ", " : "") + getName() + ", " + getTotal() + "}";
+        return "WeblogEntryTagAggregate: weblog=" + weblog.getHandle() + ", name=" + name + ", count=" + getTotal();
     }
 
     public static java.util.Comparator<WeblogEntryTagAggregate> nameComparator = (weta1, weta2) ->

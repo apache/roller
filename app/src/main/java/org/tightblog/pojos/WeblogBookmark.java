@@ -131,7 +131,7 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
     }
 
     public String toString() {
-        return "{" + getId() + ", " + getName() + ", " + getUrl() + "}";
+        return "WeblogBookmark: id=" + id + ", weblog=" + weblog.getHandle() + ", name=" + name + ", url=" + url;
     }
 
     @Override

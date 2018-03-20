@@ -252,7 +252,6 @@ public class PageProcessor extends AbstractProcessor {
     String generateKey(WeblogPageRequest request, boolean isSiteWide) {
         StringBuilder key = new StringBuilder();
 
-        key.append("weblogpage.key").append(":");
         key.append(request.getWeblogHandle());
 
         if (request.getWeblogEntryAnchor() != null) {
@@ -294,13 +293,11 @@ public class PageProcessor extends AbstractProcessor {
 
         key.append("/deviceType=").append(request.getDeviceType().toString());
 
-        // site wide blogs must be cognizant of the last update date of any weblog or weblog entry
-        // as they get refreshed whenever another blog or blog entry does.
+        // site wide feeds must be aware of the last update date of any weblog
+        // as they get refreshed whenever any of blogs do.
         if (isSiteWide) {
-            Instant lastUpdate = strategy.getWebloggerProperties().getLastWeblogChange();
-            if (lastUpdate != null) {
-                key.append("/lastUpdate=").append(lastUpdate.toEpochMilli());
-            }
+            key.append("/lastUpdate=").append(
+                    strategy.getWebloggerProperties().getLastWeblogChange().toEpochMilli());
         }
 
         return key.toString();

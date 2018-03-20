@@ -127,11 +127,7 @@ public class UserWeblogRole {
     }
 
     public String toString() {
-        String sb = "UserWeblogRole: ";
-        sb += "Weblog Handle = " + getWeblog().getHandle();
-        sb += "; User Name = " + getUser().getUserName();
-        sb += "; WeblogRole = " + getWeblogRole().name();
-        return sb;
+        return "UserWeblogRole: user=" + user.getUserName() + ", weblog=" + weblog.getHandle() + ", role=" + weblogRole;
     }
 
     @Override

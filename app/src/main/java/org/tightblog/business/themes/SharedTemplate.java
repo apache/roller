@@ -95,7 +95,7 @@ public class SharedTemplate implements Template {
     }
 
     public String toString() {
-        return id + "," + role + "," + name + "," + relativePath;
+        return "SharedTemplate: id=" + id + ", role=" + role + ", name=" + name + ", relativePath=" + relativePath;
     }
 
     public ComponentType getRole() {
