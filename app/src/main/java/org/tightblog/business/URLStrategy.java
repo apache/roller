@@ -92,7 +92,9 @@ public interface URLStrategy {
 
     /**
      * Get the POST url for a weblog entry comment.
-     * @param preview true if commenter wishes to preview (not yet submit) comment
+     * @param weblog weblog where comment is being placed
+     * @param entryAnchor weblog entry anchor where comment is being placed
+     * @param isPreview true if commenter wishes to preview (not yet submit) comment
      */
     String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean isPreview);
 
@@ -144,7 +146,7 @@ public interface URLStrategy {
     /**
      * Get url for a feed on a given weblog.
      */
-    String getWeblogFeedURL(Weblog weblog, String type, String category, String tag);
+    String getWeblogFeedURL(Weblog weblog, String category, String tag);
 
     /**
      * Get url to search endpoint on a given weblog.

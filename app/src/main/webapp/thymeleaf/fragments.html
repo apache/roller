@@ -3,10 +3,9 @@
 <head>
     <!--/* usage of th:block instead of div & remove tag did not work */-->
     <div th:fragment="AutoDiscoveryLinks" th:remove="tag">
-        <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.feed.entries.atom}" />
-        <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" th:href="${url.feed.comments.atom}" />
-        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.feed.entries.atomByTag(model.tag)}"/>
-        <link th:if="${model.categoryName}" rel="alternate" type="application/atom+xml" title="${'Entries for category ' + model.categoryName + ' (Atom)'" th:href="${url.feed.entries.atom(model.categoryName)}"/>
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.atomFeed}" />
+        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.getAtomFeedByTag(model.tag)}"/>
+        <link th:if="${model.categoryName}" rel="alternate" type="application/atom+xml" th:title="${'Entries for category ' + model.categoryName + ' (Atom)'}" th:href="${url.getAtomFeedByCategory(model.categoryName)}"/>
     </div>
     <div th:fragment="MetaDescription" th:remove="tag">
         <th:block th:switch="${model.weblogEntry != null && utils.isNotEmpty(model.weblogEntry.searchDescription)}">
@@ -73,11 +72,10 @@
     </th:block>
     <div th:fragment="AtomFeedsList" th:remove="tag">
         <ul class="rFeeds">
-            <li><a th:href="${url.feed.entries.atom}" th:utext="${utils.msg('generic.all')}">xxx</a></li>
+            <li><a th:href="${url.atomFeed}" th:utext="${utils.msg('generic.all')}">xxx</a></li>
             <li th:each="cat : ${model.weblog.weblogCategories}">
-                <a th:href="${url.feed.entries.atom(cat.name)}" th:utext="${cat.name}">xxx</a>
+                <a th:href="${url.getAtomFeedByCategory(cat.name)}" th:utext="${cat.name}">xxx</a>
             </li>
-            <li><a th:href="${url.feed.comments.atom}">Comments</a></li>
         </ul>
     </div>
     <div th:fragment="WeblogSearchForm" th:remove="tag">

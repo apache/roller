@@ -174,9 +174,18 @@ public class URLModel implements Model {
         return urlStrategy.getCustomPageURL(weblog, pageLink, null, true);
     }
 
-    public FeedURLS getFeed() {
-        return new FeedURLS();
+    public String getAtomFeed() {
+        return urlStrategy.getWeblogFeedURL(weblog, null, null);
     }
+
+    public String getAtomFeedByCategory(String category) {
+        return urlStrategy.getWeblogFeedURL(weblog, category, null);
+    }
+
+    public String getAtomFeedByTag(String tag) {
+        return urlStrategy.getWeblogFeedURL(weblog, null, tag);
+    }
+
 
     /**
      * URL for editing a weblog entry
@@ -202,44 +211,6 @@ public class URLModel implements Model {
      */
     public String getEditSettings() {
         return urlStrategy.getWeblogConfigURL(weblog.getId(), false);
-    }
-
-    ///////  Inner Classes  ///////
-    public class FeedURLS {
-        public EntryFeedURLS getEntries() {
-            return new EntryFeedURLS();
-        }
-
-        public CommentFeedURLS getComments() {
-            return new CommentFeedURLS();
-        }
-    }
-
-    public class EntryFeedURLS {
-
-        public String getAtom() {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", null, null);
-        }
-
-        public String atom(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", catName, null);
-        }
-
-        public String atomByTag(String tag) {
-            return urlStrategy.getWeblogFeedURL(weblog, "entries", null, tag);
-        }
-    }
-
-    public class CommentFeedURLS {
-
-        public String getAtom() {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", null, null);
-        }
-
-        public String atom(String catName) {
-            return urlStrategy.getWeblogFeedURL(weblog, "comments", catName, null);
-        }
-
     }
 
 }

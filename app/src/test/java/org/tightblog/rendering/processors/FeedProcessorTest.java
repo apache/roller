@@ -59,10 +59,8 @@ public class FeedProcessorTest {
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private LazyExpiringCache mockCache;
-    private ThemeManager mockThemeManager;
     private WeblogManager mockWM;
     private ThymeleafRenderer mockThymeleafRenderer;
-    private ApplicationContext mockApplicationContext;
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
@@ -83,13 +81,13 @@ public class FeedProcessorTest {
         mockWM = mock(WeblogManager.class);
         weblog = new Weblog();
         when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
-        mockApplicationContext = mock(ApplicationContext.class);
+        ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(eq("feedModelSet"), eq(Set.class)))
                 .thenReturn(new HashSet<>());
         processor.setApplicationContext(mockApplicationContext);
         mockThymeleafRenderer = mock(ThymeleafRenderer.class);
         processor.setThymeleafRenderer(mockThymeleafRenderer);
-        mockThemeManager = mock(ThemeManager.class);
+        ThemeManager mockThemeManager = mock(ThemeManager.class);
         sharedTheme = new SharedTheme();
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         processor.setThemeManager(mockThemeManager);
@@ -179,23 +177,23 @@ public class FeedProcessorTest {
         // comment & category test
         WeblogFeedRequest request = new WeblogFeedRequest();
         request.setWeblogHandle("bobsblog");
-        request.setType("comments");
         request.setCategoryName("sports");
+        request.setPage(14);
 
         String test1 = processor.generateKey(request, false);
-        assertEquals("bobsblog/comments/cat/sports", test1);
+        assertEquals("bobsblog/cat/sports/page=14", test1);
 
         // entry & tag test, site-wide
-        request.setType("entries");
         request.setCategoryName(null);
         request.setTag("skiing");
         request.setSiteWideFeed(true);
+        request.setPage(0);
 
         Instant testTime = Instant.now();
         webloggerProperties.setLastWeblogChange(testTime);
 
         test1 = processor.generateKey(request, true);
-        assertEquals("bobsblog/entries/tag/skiing/lastUpdate=" + testTime.toEpochMilli(), test1);
+        assertEquals("bobsblog/tag/skiing/lastUpdate=" + testTime.toEpochMilli(), test1);
     }
 
 }

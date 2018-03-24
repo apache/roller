@@ -95,7 +95,7 @@ public class FeedProcessor extends AbstractProcessor {
 
     private WeblogFeedRequest.Creator weblogFeedRequestCreator;
 
-    public void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator weblogFeedRequestCreator) {
+    void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator weblogFeedRequestCreator) {
         this.weblogFeedRequestCreator = weblogFeedRequestCreator;
     }
 
@@ -144,9 +144,7 @@ public class FeedProcessor extends AbstractProcessor {
                 Map<String, Object> initData = new HashMap<>();
                 initData.put("parsedRequest", feedRequest);
                 Map<String, Object> model = getModelMap("feedModelSet", initData);
-                String pageId = feedRequest.getType() + "-atom";
-
-                Template template = new SharedTemplate(pageId, Template.ComponentType.ATOMFEED);
+                Template template = new SharedTemplate("entries-atom", Template.ComponentType.ATOMFEED);
                 rendererOutput = thymeleafRenderer.render(template, model);
             }
 
@@ -162,7 +160,7 @@ public class FeedProcessor extends AbstractProcessor {
             }
 
         } catch (Exception e) {
-            log.error("Error rendering Atom feed for {}", feedRequest.getType(), e);
+            log.error("Error rendering Atom feed for {}", feedRequest.getWeblog().getHandle(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
@@ -170,16 +168,15 @@ public class FeedProcessor extends AbstractProcessor {
     /**
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
-     * <handle>/<type>[[/cat/{category}]|[/tag/{tag}]]
+     * <handle>/[[/cat/{category}]|[/tag/{tag}]]
      * Examples:
-     * foo/entries
-     * foo/comments/cat/technology
-     * foo/entries/tag/travel
+     * foo
+     * foo/cat/technology
+     * foo/tag/travel
      */
-    protected String generateKey(WeblogFeedRequest feedRequest, boolean isSiteWide) {
+    String generateKey(WeblogFeedRequest feedRequest, boolean isSiteWide) {
         StringBuilder key = new StringBuilder();
         key.append(feedRequest.getWeblogHandle());
-        key.append("/").append(feedRequest.getType());
 
         if (feedRequest.getCategoryName() != null) {
             String cat = feedRequest.getCategoryName();
@@ -189,6 +186,10 @@ public class FeedProcessor extends AbstractProcessor {
             String tag = feedRequest.getTag();
             tag = Utilities.encode(tag);
             key.append("/tag/").append(tag);
+        }
+
+        if (feedRequest.getPage() > 0) {
+            key.append("/page=").append(feedRequest.getPage());
         }
 
         // site wide feeds must be aware of the last update date of any weblog
