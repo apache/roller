@@ -42,19 +42,19 @@ function handlePreview(handle) {
 <table class="formtable">
 
 <tr>
-    <td class="label"><label for="name" /><s:text name="generic.name" /></label></td>
+    <td class="label"><label for="name"><s:text name="generic.name" /></label></td>
     <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" /></td>
     <td class="description"><s:text name="createWebsite.tip.name" /></td>
 </tr>
 
 <tr>
-        <td class="label"><label for="description" /><s:text name="generic.tagline" /></td>
+        <td class="label"><label for="description"><s:text name="generic.tagline" /></td>
     <td class="field"><s:textfield name="bean.description" size="40" maxlength="255" /></td>
     <td class="description"><s:text name="createWebsite.tip.description" /></td>
 </tr>
 
 <tr>
-    <td class="label"><label for="handle" /><s:text name="createWebsite.handle" /></label></td>
+    <td class="label"><label for="handle"><s:text name="createWebsite.handle" /></label></td>
     <td class="field">
         <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" /><br />
         <span style="text-size:70%">
@@ -66,7 +66,7 @@ function handlePreview(handle) {
 </tr>
 
 <tr>
-    <td class="label"><label for="emailAddress" /><s:text name="createWebsite.emailAddress" /></label></td>
+    <td class="label"><label for="emailAddress"><s:text name="createWebsite.emailAddress" /></label></td>
     <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="50" /></td>
     <td class="description"><s:text name="createWebsite.tip.email" /></td>
 </tr>
@@ -80,7 +80,7 @@ function handlePreview(handle) {
 </tr>
 
 <tr>
-    <td class="label"><label for="timeZone" /><s:text name="createWebsite.timeZone" /></label></td>
+    <td class="label"><label for="timeZone"><s:text name="createWebsite.timeZone" /></label></td>
     <td class="field">
        <s:select name="bean.timeZone" size="1" list="timeZonesList" />
     </td>
@@ -88,7 +88,7 @@ function handlePreview(handle) {
 </tr>
 
 <tr>
-    <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
+    <td class="label"><label for="theme"><s:text name="createWebsite.theme" /></label></td>
     <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
         <select id="themeSelector" name="bean.theme" size="1"
         ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>

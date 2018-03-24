@@ -29,12 +29,14 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Edits metadata for a media file.
  */
 @SuppressWarnings("serial")
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class MediaFileEdit extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileEdit.class);

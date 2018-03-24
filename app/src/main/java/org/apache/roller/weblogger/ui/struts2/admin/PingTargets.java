@@ -29,10 +29,12 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Admin action for managing global ping targets.
  */
+// TODO: make this work @AllowedMethods({"execute","enable","disable","delete","deleteConfirm"})
 public class PingTargets extends UIAction {
     
     private static Log log = LogFactory.getLog(PingTargets.class);

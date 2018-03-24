@@ -32,7 +32,7 @@
             <outputDirectory>${artifact.artifactId}-${artifact.version}/webapp</outputDirectory>
         </file> 
         <file> 
-            <source>../README.txt</source>
+            <source>../README.md</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
         </file> 
         <file> 

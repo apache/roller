@@ -20,26 +20,26 @@
 <%-- PROMPT: Welcome... you have no blog --%>
 <s:if test="existingPermissions.isEmpty && pendingPermissions.isEmpty"> 
     <p><s:text name="yourWebsites.prompt.noBlog" />
-    <a href="<s:url action="createWeblog"/>"><s:text name="yourWebsites.createOne" /></a></p>
+    <a id="createWeblogLink" href="<s:url action="createWeblog"/>"><s:text name="yourWebsites.createOne" /></a></p>
 </s:if>    
 
 <%-- PROMPT: You have invitation(s) --%>
 <s:elseif test="! pendingPermissions.isEmpty">
     <p><s:text name="yourWebsites.invitationsPrompt" /></p>
     
-    <s:iterator id="invite" value="pendingPermissions">
+    <s:iterator var="invite" value="pendingPermissions">
         <s:text name="yourWebsites.youAreInvited" >
             <s:param value="#invite.weblog.handle" />
         </s:text>
         
-        <s:url action="menu!accept" id="acceptInvite">
+        <s:url action="menu!accept" var="acceptInvite">
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="acceptInvite" />'>
             <s:text name="yourWebsites.accept" />
         </a> 
         &nbsp;|&nbsp;
-        <s:url action="menu!decline" id="declineInvite">
+        <s:url action="menu!decline" var="declineInvite">
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="declineInvite" />'>
@@ -57,7 +57,7 @@
 <%-- if we have weblogs, then loop through and list them --%>
 <s:if test="! existingPermissions.isEmpty">
     
-    <s:iterator id="perms" value="existingPermissions">
+    <s:iterator var="perms" value="existingPermissions">
 
         <div class="yourWeblogBox">  
 
@@ -85,7 +85,7 @@
                        
                        <tr>
                            <td class="mm_subtable_label"><s:text name='generic.description' /></td>
-                           <td><s:property value="#perms.weblog.about" escape="false" /></td>
+                           <td><s:property value="#perms.weblog.about" escapeHtml="false" /></td>
                        </tr>
 
                        <tr>
@@ -104,7 +104,7 @@
                
                <td class="mm_table_actions" width="20%" align="left" >
 
-                       <s:url action="entryAdd" namespace="/roller-ui/authoring" id="newEntry">
+                       <s:url action="entryAdd" namespace="/roller-ui/authoring" var="newEntry">
                            <s:param name="weblog" value="#perms.weblog.handle" />
                        </s:url>
                        <img src='<s:url value="/images/table_edit.png"/>' />
@@ -113,7 +113,7 @@
 
                        <%-- Show Entries link with count for users above LIMITED permission --%>
                        <s:if test='!(#perms.hasAction("edit_draft"))'>
-                           <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
+                           <s:url action="entries" namespace="/roller-ui/authoring" var="editEntries">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/table_multiple.png"/>' />
@@ -123,7 +123,7 @@
 
                        <%-- Show Comments link with count for users above LIMITED permission --%>
                        <s:if test='!(#perms.hasAction("edit_draft"))'>
-                           <s:url action="comments" namespace="/roller-ui/authoring" id="manageComments">
+                           <s:url action="comments" namespace="/roller-ui/authoring" var="manageComments">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/page_white_edit.png"/>' />
@@ -137,12 +137,12 @@
                            <%-- And only show theme option if custom themes are enabled --%>
                            <s:if test="getProp('themes.customtheme.allowed')">
                                <s:if test="#perms.weblog.editorTheme == 'custom'">
-                                   <s:url action="templates" namespace="/roller-ui/authoring" id="weblogTheme">
+                                   <s:url action="templates" namespace="/roller-ui/authoring" var="weblogTheme">
                                        <s:param name="weblog" value="#perms.weblog.handle" />
                                    </s:url>
                                </s:if>
                                <s:else>
-                                   <s:url action="themeEdit" namespace="/roller-ui/authoring" id="weblogTheme">
+                                   <s:url action="themeEdit" namespace="/roller-ui/authoring" var="weblogTheme">
                                        <s:param name="weblog" value="#perms.weblog.handle" />
                                    </s:url>
                                </s:else>
@@ -152,7 +152,7 @@
                                <br />
                            </s:if>
                            
-                           <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
+                           <s:url action="weblogConfig" namespace="/roller-ui/authoring" var="manageWeblog">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
                            <img src='<s:url value="/images/cog.png"/>' />
@@ -164,7 +164,7 @@
                        <%-- don't allow last admin to resign from blog --%>
                        <s:if test='!(#perms.hasAction("admin") && #perms.weblog.adminUserCount == 1)'>
                           <img src='<c:url value="/images/delete.png"/>' />
-                          <s:url action="memberResign" namespace="/roller-ui/authoring" id="resignWeblog">
+                          <s:url action="memberResign" namespace="/roller-ui/authoring" var="resignWeblog">
                               <s:param name="weblog" value="#perms.weblog.handle" />
                           </s:url>
                           <a href='<s:property value="resignWeblog" />'>

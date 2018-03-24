@@ -32,11 +32,13 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 
 /**
  * Remove a category.
  */
+// TODO: make this work @AllowedMethods({"execute","remove","cancel"})
 public class CategoryRemove extends UIAction {
     
     private static Log log = LogFactory.getLog(CategoryRemove.class);

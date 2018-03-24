@@ -67,7 +67,7 @@
 
     <p class="subtitle">
         <s:text name="mediaFileView.folderName"/> /
-        <s:iterator id="directory" value="currentDirectoryHierarchy">
+        <s:iterator var="directory" value="currentDirectoryHierarchy">
             <s:url var="getDirectoryByPathUrl" action="mediaFileImageChooser">
                 <s:param name="directoryName" value="#directory.key" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -117,7 +117,7 @@
 
             <%-- List media directories first --%>
 
-            <s:iterator id="directory" value="allDirectories">
+            <s:iterator var="directory" value="allDirectories">
                 <li class="align-images"
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
                     <div class="mediaObject">
@@ -136,7 +136,7 @@
             <%-- List media files next --%>
             <s:if test="childFiles.size() > 0">
 
-                <s:iterator id="mediaFile" value="childFiles">
+                <s:iterator var="mediaFile" value="childFiles">
 
                     <li class="align-images"
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">

@@ -26,7 +26,7 @@
                 <h3><s:text name="weblogEdit.comments" /></h3>
 
                 <s:if test="bean.commentCount > 0">
-                    <s:url action="comments" id="commentsURL">
+                    <s:url action="comments" var="commentsURL">
                        <s:param name="bean.entryId" value="bean.id" />
                        <s:param name="weblog" value="weblog" />
                     </s:url>
@@ -42,11 +42,11 @@
                 <hr size="1" noshade="noshade" />  
                 <h3><s:text name="weblogEdit.pendingEntries" /></h3>
                 
-                <s:set name="pendingEntries" value="recentPendingEntries" />
+                <s:set var="pendingEntries" value="recentPendingEntries" />
                 <s:if test="#pendingEntries.isEmpty">
                     <span><s:text name="generic.none" /></span>
                 </s:if>
-                <s:iterator id="post" value="#pendingEntries">
+                <s:iterator var="post" value="#pendingEntries">
                     <span class="entryEditSidebarLink">
                         <s:url var="editUrl" action="entryEdit">
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -62,11 +62,11 @@
                 <hr size="1" noshade="noshade" />            
                 <h3><s:text name="weblogEdit.draftEntries" /></h3>
                 
-                <s:set name="draftEntries" value="recentDraftEntries" />
+                <s:set var="draftEntries" value="recentDraftEntries" />
                 <s:if test="#draftEntries.isEmpty">
                     <span><s:text name="generic.none" /></span>
                 </s:if>
-                <s:iterator id="post" value="#draftEntries">
+                <s:iterator var="post" value="#draftEntries">
                     <span class="entryEditSidebarLink">
                         <s:url var="editUrl" action="entryEdit">
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -84,11 +84,11 @@
                     <hr size="1" noshade="noshade" />
                     <h3><s:text name="weblogEdit.publishedEntries" /></h3>
                     
-                    <s:set name="pubEntries" value="recentPublishedEntries" />
+                    <s:set var="pubEntries" value="recentPublishedEntries" />
                     <s:if test="#pubEntries.isEmpty">
                         <span><s:text name="generic.none" /></span>
                     </s:if>
-                    <s:iterator id="post" value="#pubEntries">
+                    <s:iterator var="post" value="#pubEntries">
                         <span class="entryEditSidebarLink">
                             <s:url var="editUrl" action="entryEdit">
                                 <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -104,11 +104,11 @@
                     <hr size="1" noshade="noshade" />            
                     <h3><s:text name="weblogEdit.scheduledEntries" /></h3>
                     
-                    <s:set name="schedEntries" value="recentScheduledEntries" />
+                    <s:set var="schedEntries" value="recentScheduledEntries" />
                     <s:if test="#schedEntries.isEmpty">
                         <span><s:text name="generic.none" /></span>
                     </s:if>
-                    <s:iterator id="post" value="#schedEntries">
+                    <s:iterator var="post" value="#schedEntries">
                         <span class="entryEditSidebarLink">
                             <s:url var="editUrl" action="entryEdit">
                                 <s:param name="weblog" value="%{actionWeblog.handle}" />

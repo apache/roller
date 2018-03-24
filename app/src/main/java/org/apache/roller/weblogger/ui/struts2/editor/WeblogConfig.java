@@ -36,12 +36,14 @@ import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
  * Action for modifying weblog configuration.
  */
+// TODO: make this work @AllowedMethods({"execute","save"})
 public class WeblogConfig extends UIAction {
     
     private static Log log = LogFactory.getLog(WeblogConfig.class);

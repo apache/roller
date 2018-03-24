@@ -43,7 +43,7 @@
 <s:if test="authMethod != 'LDAP'">
     <p class="subtitle"><s:text name="userAdmin.subtitle.userCreation" /></p>
     <s:text name="userAdmin.prompt.orYouCan" />
-    <s:url action="createUser" id="createUser" />
+    <s:url action="createUser" var="createUser" />
     <a href="<s:property value="createUser" />">
         <s:text name="userAdmin.prompt.createANewUser" />
     </a>

@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -29,6 +30,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Allow user to authorized OAuth access to his/her account.
  */
+// TODO: make this work @AllowedMethods({"execute"})
 public class OAuthAuthorize extends UIAction implements ServletRequestAware {
     private static Log log = LogFactory.getLog(OAuthAuthorize.class);
     private String appDesc = null;

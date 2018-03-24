@@ -47,10 +47,12 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Action for managing weblog comments.
  */
+// TODO: make this work @AllowedMethods({"execute","query","delete","update"})
 public class Comments extends UIAction {
 
     private static final long serialVersionUID = -104973988372024709L;

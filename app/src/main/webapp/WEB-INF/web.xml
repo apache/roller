@@ -18,7 +18,7 @@
 
     <filter>
         <filter-name>struts2</filter-name>
-        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+        <filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter</filter-class>
     </filter>
 
     <filter>
@@ -481,6 +481,13 @@
         <res-auth>Container</res-auth>
         <mapped-name>Session</mapped-name>
     </resource-ref>
+
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
 
     <!--
          Uncomment below to use SSL on sensitive pages.  Alternatively,

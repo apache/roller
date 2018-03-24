@@ -25,13 +25,13 @@
 
     <table class="formtableNoDesc">
     
-    <s:iterator id="dg" value="globalConfigDef.displayGroups">
+    <s:iterator var="dg" value="globalConfigDef.displayGroups">
     
         <tr>
             <td colspan="3"><h2><s:text name="%{#dg.key}" /></h2></td>
         </tr>
     
-        <s:iterator id="pd" value="#dg.propertyDefs">
+        <s:iterator var="pd" value="#dg.propertyDefs">
             
             <tr>
                 <td class="label"><s:text name="%{#pd.key}" /></td>
@@ -48,7 +48,7 @@
                           <select name='<s:property value="#pd.name"/>'>
                                 <option value=''>
                                     <s:text name="configForm.none" />
-                                </option>                              <s:iterator id="weblog" value="weblogs">
+                                </option>                              <s:iterator var="weblog" value="weblogs">
                                 <option value='<s:property value="#weblog.handle"/>'
                                     <s:if test='properties[#pd.name].value == #weblog.handle'>selected='true'</s:if> >
                                     <s:property value="#weblog.name"/>

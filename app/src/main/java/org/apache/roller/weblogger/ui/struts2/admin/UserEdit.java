@@ -39,12 +39,14 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
  * Action that allows an admin to modify a users profile.
  */
+// TODO: make this work @AllowedMethods({"execute","save","firstSave"})
 public class UserEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(UserEdit.class);

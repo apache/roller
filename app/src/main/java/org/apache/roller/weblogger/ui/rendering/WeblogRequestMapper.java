@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -133,12 +134,19 @@ public class WeblogRequestMapper implements RequestMapper {
             return false;
         }
 
-        String weblogAbsoluteURL =
-            WebloggerConfig.getProperty("weblog.absoluteurl." + weblogHandle);
-        // If an absolute URL is specified for this weblog, make sure request URL matches
-        if (weblogAbsoluteURL != null && !request.getRequestURL().toString().startsWith(weblogAbsoluteURL)) {
-            log.debug("SKIPPED " + weblogHandle);
-            return false;
+        // is there a special hostname for the specified hostname?
+        String multiHostNameURL =  WebloggerConfig.getProperty("weblog.absoluteurl." + weblogHandle);
+        if ( multiHostNameURL != null ) {
+
+            // there is, so check that configured hostname matches the one in the request
+            URL weblogAbsoluteURL = new URL( multiHostNameURL );
+            String headerHost = request.getHeader("Host");
+            String configHost = weblogAbsoluteURL.getHost();
+
+            if (headerHost != null && configHost != null && !headerHost.equals(configHost)) {
+                log.debug("SKIPPED " + weblogHandle);
+                return false;
+            }
         }
         
         log.debug("WEBLOG_URL "+request.getServletPath());

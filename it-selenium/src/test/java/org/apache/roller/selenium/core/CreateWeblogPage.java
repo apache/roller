@@ -31,8 +31,8 @@ public class CreateWeblogPage extends AbstractRollerPage {
 
     public CreateWeblogPage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "Create Weblog Page";
-        verifyPageTitle("Front Page: Create Weblog");
+        String pageTitle = "Front Page: Create Weblog";
+        verifyPageTitle("createWeblog", pageTitle);
     }
 
     public MainMenuPage createWeblog() {

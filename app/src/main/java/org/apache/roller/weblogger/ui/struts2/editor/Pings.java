@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.business.pings.WeblogUpdatePinger;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.xmlrpc.XmlRpcException;
 import java.io.IOException;
 import java.net.SocketException;
@@ -43,6 +44,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 /**
  * Actions for setting up automatic ping configuration for a weblog.
  */
+// TODO: make this work @AllowedMethods({"execute","enable","disable","pingNow"})
 public class Pings extends UIAction {
     
     private static Log log = LogFactory.getLog(Pings.class);

@@ -36,11 +36,13 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 
 /**
  * A list view of entries in a weblog.
  */
+// TODO: make this work @AllowedMethods({"execute"})
 public class Entries extends UIAction {
     
     private static Log log = LogFactory.getLog(Entries.class);

@@ -25,11 +25,13 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 
 /**
  * Action which displays user admin search page.
  */
+// TODO: make this work @AllowedMethods({"execute"})
 public class UserAdmin extends UIAction {
     
     public UserAdmin() {

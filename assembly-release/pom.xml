@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
+        <version>5.2.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,7 +33,7 @@
     <description>Assembles Roller into a distribution package</description>
 
     <!--
-         Check the README.txt in the Roller base folder for 
+         Check the README.md in the Roller base folder for
          information on creating the Roller distribution files.
     -->
     <build>

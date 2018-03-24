@@ -62,10 +62,12 @@ public class InitialLoginTestIT {
         LoginPage lp = wp.doRollerLogin();
         MainMenuPage mmp = lp.loginToRoller("bsmith", "roller123");
         CreateWeblogPage cwp = mmp.createWeblog();
-        mmp = cwp.createWeblog("Bob's Blog", "bobsblog", "bsmith@email.com");
+        cwp.createWeblog("Bob's Blog", "bobsblog", "bsmith@email.com");
 
         // set bobsblog as the front page blog
         driver.get(baseUrl);
+        sp = new SetupPage(driver);
+        driver.navigate().refresh();
         BlogHomePage bhp = sp.chooseFrontPageBlog();
 
         // create and read first blog entry
@@ -84,7 +86,6 @@ public class InitialLoginTestIT {
 
     @After
     public void tearDown() throws Exception {
-        driver.quit();
         String verificationErrorString = verificationErrors.toString();
         if (!"".equals(verificationErrorString)) {
             fail(verificationErrorString);

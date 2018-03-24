@@ -30,11 +30,13 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 
 
 /**
  * Manage planet group subscriptions, default group is "all".
  */
+// TODO: make this work @AllowedMethods({"execute","save","delete"})
 public class PlanetSubscriptions extends PlanetUIAction {
     
     private static final Log LOGGER = LogFactory.getLog(PlanetSubscriptions.class);

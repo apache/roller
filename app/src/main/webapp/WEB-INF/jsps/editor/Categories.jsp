@@ -58,7 +58,7 @@ function onMove()
         <s:if test="AllCategories != null && !AllCategories.isEmpty">
         
         <%-- Categories --%>
-        <s:iterator id="category" value="AllCategories" status="rowstatus">
+        <s:iterator var="category" value="AllCategories" status="rowstatus">
             <s:if test="#rowstatus.odd == true">
                 <tr class="rollertable_odd">
             </s:if>

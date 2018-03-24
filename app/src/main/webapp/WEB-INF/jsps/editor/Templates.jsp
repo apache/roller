@@ -46,7 +46,7 @@
         <th width="10"><s:text name="pagesForm.remove" /></th>
         <th width="5"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
     </tr>
-    <s:iterator id="p" value="templates" status="rowstatus">
+    <s:iterator var="p" value="templates" status="rowstatus">
         <s:if test="#rowstatus.odd == true">
             <tr class="rollertable_odd">
         </s:if>

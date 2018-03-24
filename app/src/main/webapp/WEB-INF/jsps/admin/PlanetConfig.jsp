@@ -27,13 +27,13 @@
 
     <table class="formtableNoDesc">
     
-    <s:iterator id="dg" value="globalConfigDef.displayGroups">
+    <s:iterator var="dg" value="globalConfigDef.displayGroups">
     
         <tr>
             <td colspan="3"><h2><s:text name="%{#dg.key}" /></h2></td>
         </tr>
     
-        <s:iterator id="pd" value="#dg.propertyDefs">
+        <s:iterator var="pd" value="#dg.propertyDefs">
             
             <tr>
                 <td class="label"><s:text name="%{#pd.key}" /></td>

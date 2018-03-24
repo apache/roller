@@ -41,12 +41,14 @@ import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
 
 /**
  * Action for managing global set of comments.
  */
+// TODO: make this work @AllowedMethods({"query","delete","update"})
 public class GlobalCommentManagement extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(GlobalCommentManagement.class);

@@ -31,12 +31,14 @@ import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.springframework.beans.factory.access.BootstrapException;
 
 
 /**
  * Walk user through install process.
  */
+// TODO: make this work @AllowedMethods({"execute","create","update","bootstrap"})
 public class Install extends UIAction {
 
     private static Log log = LogFactory.getLog(Install.class);
