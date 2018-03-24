@@ -34,9 +34,6 @@ import org.slf4j.LoggerFactory;
 public class WeblogFeedRequest extends WeblogRequest {
 
     private static Logger log = LoggerFactory.getLogger(WeblogFeedRequest.class);
-
-    // type is "entries" or "comments"
-    private String type = null;
     private String categoryName = null;
     private String tag = null;
     private boolean siteWideFeed = false;
@@ -60,30 +57,12 @@ public class WeblogFeedRequest extends WeblogRequest {
         // parent determines weblog handle and locale if specified
         super(request);
 
-        // we only want the path info left over from after our parents parsing
-        String pathInfo = getPathInfo();
-
-        // parse the request object and figure out what we've got
-        log.debug("parsing path {}", pathInfo);
-
-        /*
-         * parse the path info.  Format:
-         * /<type>
-         */
-        if (pathInfo != null && pathInfo.trim().length() > 1) {
-            type = pathInfo.startsWith("/") ? pathInfo.substring(1) : pathInfo;
-        }
-
-        if (!"comments".equals(type)) {
-            type = "entries";
-        }
-
         // parse request parameters
         if (request.getParameter("cat") != null) {
             // replacing any plus signs with their encoded equivalent (http://stackoverflow.com/a/6926987)
             categoryName = Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
-        } else {
-            tag = request.getParameter("tag");
+        } else if (request.getParameter("tag") != null) {
+            tag = request.getParameter("tag").toLowerCase();
         }
 
         if (request.getParameter("page") != null) {
@@ -94,19 +73,10 @@ public class WeblogFeedRequest extends WeblogRequest {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("type = " + type);
-            log.debug("page = " + type);
+            log.debug("page = " + page);
             log.debug("category = " + categoryName);
             log.debug("tag = " + tag);
         }
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getCategoryName() {
@@ -140,5 +110,4 @@ public class WeblogFeedRequest extends WeblogRequest {
     public void setSiteWideFeed(boolean siteWideFeed) {
         this.siteWideFeed = siteWideFeed;
     }
-
 }

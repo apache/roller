@@ -167,9 +167,8 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogFeedURL(Weblog weblog, String type, String category, String tag) {
-
-        String url = getWeblogURL(weblog, true) + "feed/" + type;
+    public String getWeblogFeedURL(Weblog weblog, String category, String tag) {
+        String url = getWeblogURL(weblog, true) + "feed";
 
         Map<String, String> params = new HashMap<>();
         if (category != null && category.trim().length() > 0) {

@@ -25,13 +25,9 @@ import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.rendering.pagers.CommentsPager;
 import org.tightblog.rendering.pagers.Pager;
 import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
-import org.tightblog.util.Utilities;
-
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -97,14 +93,6 @@ public class FeedModel implements Model {
     }
 
     /**
-     * Gets most recent comments limited by: weblog specified in request and
-     * the weblog.entryDisplayCount.
-     */
-    public Pager getCommentsPager() {
-        return new FeedCommentsPager(feedRequest);
-    }
-
-    /**
      * Returns the tag specified in the request /?tag=foo
      */
     public String getTag() {
@@ -142,36 +130,8 @@ public class FeedModel implements Model {
 
         @Override
         public String getHomeLink() {
-            return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), feedRequest.getType(), null, null);
+            return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), null, null);
         }
 
     }
-
-    public class FeedCommentsPager extends CommentsPager {
-
-        private WeblogFeedRequest feedRequest;
-
-        public FeedCommentsPager(WeblogFeedRequest feedRequest) {
-            super(weblogEntryManager, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
-                    feedRequest.getType(), null, null),
-                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
-                    feedRequest.getCategoryName(), -1, feedRequest.getPage(),
-                    WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage());
-
-            this.feedRequest = feedRequest;
-        }
-
-        protected String createURL(String url, Map<String, String> params) {
-            String category = feedRequest.getCategoryName();
-            if (category != null) {
-                params.put("cat", Utilities.encode(category));
-            }
-            return super.createURL(url, params);
-        }
-
-        public String getUrl() {
-            return createURL(super.getUrl(), new HashMap<>());
-        }
-    }
-
 }
