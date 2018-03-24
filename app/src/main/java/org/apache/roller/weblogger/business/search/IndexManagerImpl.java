@@ -21,8 +21,11 @@ package org.apache.roller.weblogger.business.search;
 import java.io.File;
 import java.io.IOException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -36,6 +39,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -236,7 +240,25 @@ public class IndexManagerImpl implements IndexManager {
      * @return Analyzer to be used in manipulating the database.
      */
     public static final Analyzer getAnalyzer() {
-        return new StandardAnalyzer(FieldConstants.LUCENE_VERSION);
+        return instantiateAnalyzer(FieldConstants.LUCENE_VERSION);
+    }
+
+    private static Analyzer instantiateAnalyzer(final Version luceneVersion) {
+        final String className = WebloggerConfig.getProperty("lucene.analyzer.class");
+        try {
+            final Class<?> clazz = Class.forName(className);
+            return (Analyzer) ConstructorUtils.invokeConstructor(clazz, luceneVersion);
+        } catch (final ClassNotFoundException e) {
+            mLogger.error("failed to lookup analyzer class: " + className, e);
+            return instantiateDefaultAnalyzer(luceneVersion);
+        } catch (final NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            mLogger.error("failed to instantiate analyzer: " + className, e);
+            return instantiateDefaultAnalyzer(luceneVersion);
+        }
+    }
+
+    private static Analyzer instantiateDefaultAnalyzer(final Version luceneVersion) {
+        return new StandardAnalyzer(luceneVersion);
     }
 
     private void scheduleIndexOperation(final IndexOperation op) {
