@@ -224,11 +224,10 @@ public class PageProcessor extends AbstractProcessor {
             }
 
             // write rendered content to response
-            log.debug("Writing response output");
             response.setContentType(rendererOutput.getContentType());
             response.setContentLength(rendererOutput.getContent().length);
-            response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.setHeader("Cache-Control","no-cache");
+            response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.getOutputStream().write(rendererOutput.getContent());
 
             if (incomingRequest.isWeblogPageHit()) {

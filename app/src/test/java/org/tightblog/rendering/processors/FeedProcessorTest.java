@@ -51,6 +51,11 @@ import static org.mockito.Mockito.when;
 public class FeedProcessorTest {
 
     private FeedProcessor processor;
+    private WeblogFeedRequest feedRequest;
+    private Weblog weblog;
+    private WebloggerProperties webloggerProperties;
+    private SharedTheme sharedTheme;
+
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private LazyExpiringCache mockCache;
@@ -58,11 +63,6 @@ public class FeedProcessorTest {
     private WeblogManager mockWM;
     private ThymeleafRenderer mockThymeleafRenderer;
     private ApplicationContext mockApplicationContext;
-
-    private WeblogFeedRequest feedRequest;
-    private Weblog weblog;
-    private WebloggerProperties webloggerProperties;
-    private SharedTheme sharedTheme;
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
