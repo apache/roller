@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,9 +106,19 @@ public class PreviewProcessor extends AbstractProcessor {
         this.weblogEntryManager = weblogEntryManager;
     }
 
+    private WeblogPageRequest.Creator weblogPageRequestCreator;
+
+    public PreviewProcessor() {
+        this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+    }
+
+    public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
+        this.weblogPageRequestCreator = creator;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public void getPreviewPage(HttpServletRequest request, HttpServletResponse response, Principal p) throws IOException {
-        WeblogPageRequest incomingRequest = new WeblogPageRequest(request);
+        WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
         if (weblog == null) {

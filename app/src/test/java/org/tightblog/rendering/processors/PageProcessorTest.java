@@ -16,14 +16,17 @@
 package org.tightblog.rendering.processors;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mobile.device.DeviceType;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
+import org.tightblog.business.themes.SharedTemplate;
 import org.tightblog.business.themes.SharedTheme;
 import org.tightblog.business.themes.ThemeManager;
+import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -33,6 +36,9 @@ import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
+import org.tightblog.rendering.model.Model;
+import org.tightblog.rendering.model.PageModel;
+import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.util.WebloggerException;
@@ -45,11 +51,14 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -68,14 +77,16 @@ public class PageProcessorTest {
 
     private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
-    private ThymeleafRenderer mockThymeleafRenderer;
+    private ThymeleafRenderer mockRenderer;
     private ThemeManager mockThemeManager;
+    private ApplicationContext mockApplicationContext;
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
         JPAPersistenceStrategy mockStrategy = mock(JPAPersistenceStrategy.class);
         webloggerProperties = new WebloggerProperties();
         when(mockStrategy.getWebloggerProperties()).thenReturn(webloggerProperties);
+        webloggerProperties.setLastWeblogChange(Instant.now().minus(2, ChronoUnit.DAYS));
         mockRequest = mock(HttpServletRequest.class);
         // default is page always needs refreshing
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
@@ -88,13 +99,17 @@ public class PageProcessorTest {
         processor.setWeblogPageRequestCreator(wprCreator);
         processor.setWeblogEntryManager(mockWEM);
         mockCache = mock(LazyExpiringCache.class);
+        mockApplicationContext = mock(ApplicationContext.class);
+        when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
+        processor.setApplicationContext(mockApplicationContext);
         processor.setWeblogPageCache(mockCache);
         mockWM = mock(WeblogManager.class);
         weblog = new Weblog();
+        weblog.setLastModified(Instant.now().minus(2, ChronoUnit.DAYS));
         when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
         processor.setWeblogManager(mockWM);
-        mockThymeleafRenderer = mock(ThymeleafRenderer.class);
-        processor.setThymeleafRenderer(mockThymeleafRenderer);
+        mockRenderer = mock(ThymeleafRenderer.class);
+        processor.setThymeleafRenderer(mockRenderer);
         mockThemeManager = mock(ThemeManager.class);
         processor.setThemeManager(mockThemeManager);
         sharedTheme = new SharedTheme();
@@ -118,8 +133,6 @@ public class PageProcessorTest {
         initializeMocks();
 
         sharedTheme.setSiteWide(true);
-        Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
-        webloggerProperties.setLastWeblogChange(twoDaysAgo);
 
         // date header more recent than last change, so should return 304
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().toEpochMilli());
@@ -161,8 +174,6 @@ public class PageProcessorTest {
     public void testRenderingProcessing() throws IOException, WebloggerException {
         initializeMocks();
 
-        weblog.setLastModified(Instant.now());
-
         // test null template returns 404
         pageRequest.setCustomPageName("mytemplate");
         WeblogTheme mockTheme = mock(WeblogTheme.class);
@@ -189,21 +200,17 @@ public class PageProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
-        ApplicationContext mockContext = mock(ApplicationContext.class);
-        when(mockContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
-        processor.setApplicationContext(mockContext);
-
         CachedContent cachedContent = new CachedContent(10, ComponentType.CUSTOM_EXTERNAL.getContentType());
         cachedContent.getCachedWriter().print("mytest1");
         cachedContent.flush();
-        when(mockThymeleafRenderer.render(any(), any())).thenReturn(cachedContent);
+        when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
         Mockito.clearInvocations(processor, mockResponse, mockWM);
         processor.handleRequest(mockRequest, mockResponse);
         assertEquals(pageRequest.getTemplate(), wt);
         verify(mockWM).incrementHitCount(weblog);
         verify(mockCache).put(anyString(), any());
-        verify(mockThymeleafRenderer).render(eq(pageRequest.getTemplate()), any());
+        verify(mockRenderer).render(eq(pageRequest.getTemplate()), any());
         verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());
         verify(mockResponse).setContentLength("mytest1".length());
         verify(mockSOS).write(any());
@@ -261,12 +268,53 @@ public class PageProcessorTest {
         // test 404 if exception during rendering
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-        doThrow(new IllegalArgumentException()).when(mockThymeleafRenderer).render(any(), any());
+        doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
 
         Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
+
+    @Test
+    public void testModelSetCorrectlyFilled() throws IOException, WebloggerException {
+        initializeMocks();
+        Set<Model> pageModelSet = new HashSet<>();
+        pageModelSet.add(new PageModel());
+        when(mockApplicationContext.getBean(eq("pageModelSet"), eq(Set.class))).thenReturn(pageModelSet);
+        Set<Model> siteModelSet = new HashSet<>();
+        siteModelSet.add(new SiteModel());
+        when(mockApplicationContext.getBean(eq("siteModelSet"), eq(Set.class))).thenReturn(siteModelSet);
+        // setting custom page name to allow for a template to be chosen and hence the rendering to occur
+        pageRequest.setCustomPageName("mycustompage");
+        WeblogTheme mockTheme = mock(WeblogTheme.class);
+        when(mockThemeManager.getWeblogTheme(any())).thenReturn(mockTheme);
+        SharedTemplate sharedTemplate = new SharedTemplate();
+        sharedTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
+
+        when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
+        // testing that sitewide themes get the "site" & (page) "model" added to the rendering map.
+        sharedTheme.setSiteWide(true);
+        when(mockTheme.getTemplateByPath("mycustompage")).thenReturn(sharedTemplate);
+        processor.handleRequest(mockRequest, mockResponse);
+
+        // set up captors on thymeleafRenderer.render()
+        ArgumentCaptor<Map<String,Object>> modelCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(mockRenderer).render(eq(sharedTemplate), modelCaptor.capture());
+        Map<String,Object> results = modelCaptor.getValue();
+        assertTrue(results.containsKey("model"));
+        assertTrue(results.containsKey("site"));
+
+        Mockito.clearInvocations(processor, mockResponse, mockRenderer);
+        // testing that non-sitewide themes just get "model" added to the rendering map.
+        sharedTheme.setSiteWide(false);
+        processor.handleRequest(mockRequest, mockResponse);
+        verify(mockRenderer).render(eq(sharedTemplate), modelCaptor.capture());
+
+        results = modelCaptor.getValue();
+        assertTrue(results.containsKey("model"));
+        assertFalse(results.containsKey("site"));
+    }
+
 
     @Test
     public void testCommentFormsSkipCache() throws IOException, WebloggerException {

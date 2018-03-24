@@ -99,6 +99,10 @@ public class FeedProcessor extends AbstractProcessor {
         this.weblogFeedRequestCreator = weblogFeedRequestCreator;
     }
 
+    public FeedProcessor() {
+        this.weblogFeedRequestCreator = new WeblogFeedRequest.Creator();
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request);
