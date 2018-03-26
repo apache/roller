@@ -144,16 +144,7 @@ public class WeblogEntry {
         this.editUrl = editUrl;
     }
 
-    public WeblogEntry(WeblogEntry otherData) {
-        this.setData(otherData);
-    }
-
-    //---------------------------------------------------------- Initialization
-
-    /**
-     * Set bean properties based on other bean.
-     */
-    public void setData(WeblogEntry other) {
+    public WeblogEntry(WeblogEntry other) {
         this.setId(other.getId());
         this.setCreator(other.getCreator());
         this.setCategory(other.getCategory());
@@ -174,6 +165,8 @@ public class WeblogEntry {
         this.setEnclosureLength(other.getEnclosureLength());
         this.setTags(other.getTags());
     }
+
+    //---------------------------------------------------------- Initialization
 
     @Id
     public String getId() {

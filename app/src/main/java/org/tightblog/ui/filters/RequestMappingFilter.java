@@ -24,7 +24,7 @@ import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.processors.CommentProcessor;
 import org.tightblog.rendering.processors.FeedProcessor;
-import org.tightblog.rendering.processors.MediaResourceProcessor;
+import org.tightblog.rendering.processors.MediaFileProcessor;
 import org.tightblog.rendering.processors.PageProcessor;
 import org.tightblog.rendering.processors.SearchProcessor;
 import org.slf4j.Logger;
@@ -205,7 +205,7 @@ public class RequestMappingFilter implements Filter {
             } else if (context.equals("feed")) {
                 forwardUrl = generateForwardUrl(FeedProcessor.PATH, handle, null, data);
             } else if (context.equals("mediaresource")) {
-                forwardUrl = generateForwardUrl(MediaResourceProcessor.PATH, handle, null, data);
+                forwardUrl = generateForwardUrl(MediaFileProcessor.PATH, handle, null, data);
             } else if (context.equals("search")) {
                 forwardUrl = generateForwardUrl(SearchProcessor.PATH, handle, context, null);
             }

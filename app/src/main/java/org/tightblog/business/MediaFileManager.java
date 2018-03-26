@@ -51,8 +51,9 @@ public interface MediaFileManager {
 
     /**
      * Get media file metadata optionally including the actual content
+     * @return MediaFile object or null if unavailable/inaccessible.
      */
-    MediaFile getMediaFile(String id, boolean includeContent) throws IOException;
+    MediaFile getMediaFile(String id, boolean includeContent);
 
     /**
      * Delete a media file

@@ -137,7 +137,7 @@
         <url-pattern>/tb-ui/rendering/page/*</url-pattern>
         <url-pattern>/tb-ui/rendering/comment/*</url-pattern>
         <url-pattern>/tb-ui/rendering/feed/*</url-pattern>
-        <url-pattern>/tb-ui/rendering/media-resources/*</url-pattern>
+        <url-pattern>/tb-ui/rendering/mediafile/*</url-pattern>
         <url-pattern>/tb-ui/rendering/search/*</url-pattern>
         <url-pattern>/tb-ui/register/rest/*</url-pattern>
     </servlet-mapping>

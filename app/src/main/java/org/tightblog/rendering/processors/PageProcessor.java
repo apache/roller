@@ -250,7 +250,6 @@ public class PageProcessor extends AbstractProcessor {
      */
     String generateKey(WeblogPageRequest request, boolean isSiteWide) {
         StringBuilder key = new StringBuilder();
-
         key.append(request.getWeblogHandle());
 
         if (request.getWeblogEntryAnchor() != null) {

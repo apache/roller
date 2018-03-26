@@ -154,6 +154,29 @@ public class Weblog {
         this.theme = theme;
     }
 
+    public Weblog (Weblog other) {
+        this.setId(other.getId());
+        this.setName(other.getName());
+        this.setHandle(other.getHandle());
+        this.setTagline(other.getTagline());
+        this.setCreator(other.getCreator());
+        this.setEditFormat(other.getEditFormat());
+        this.setBlacklist(other.getBlacklist());
+        this.setAllowComments(other.getAllowComments());
+        this.setEmailComments(other.getEmailComments());
+        this.setTheme(other.getTheme());
+        this.setLocale(other.getLocale());
+        this.setTimeZone(other.getTimeZone());
+        this.setVisible(other.getVisible());
+        this.setDateCreated(other.getDateCreated());
+        this.setEntriesPerPage(other.getEntriesPerPage());
+        this.setLastModified(other.getLastModified());
+        this.setWeblogCategories(other.getWeblogCategories());
+        this.setAnalyticsCode(other.getAnalyticsCode());
+        this.setUsedForThemePreview(other.isUsedForThemePreview());
+        this.setBookmarks(other.getBookmarks());
+    }
+
     @Id
     public String getId() {
         return this.id;
@@ -302,32 +325,6 @@ public class Weblog {
 
     public void setDateCreated(Instant date) {
         dateCreated = date;
-    }
-
-    /**
-     * Set bean properties based on other bean.
-     */
-    public void setData(Weblog other) {
-        this.setId(other.getId());
-        this.setName(other.getName());
-        this.setHandle(other.getHandle());
-        this.setTagline(other.getTagline());
-        this.setCreator(other.getCreator());
-        this.setEditFormat(other.getEditFormat());
-        this.setBlacklist(other.getBlacklist());
-        this.setAllowComments(other.getAllowComments());
-        this.setEmailComments(other.getEmailComments());
-        this.setTheme(other.getTheme());
-        this.setLocale(other.getLocale());
-        this.setTimeZone(other.getTimeZone());
-        this.setVisible(other.getVisible());
-        this.setDateCreated(other.getDateCreated());
-        this.setEntriesPerPage(other.getEntriesPerPage());
-        this.setLastModified(other.getLastModified());
-        this.setWeblogCategories(other.getWeblogCategories());
-        this.setAnalyticsCode(other.getAnalyticsCode());
-        this.setUsedForThemePreview(other.isUsedForThemePreview());
-        this.setBookmarks(other.getBookmarks());
     }
 
     /**

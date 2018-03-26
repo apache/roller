@@ -210,31 +210,19 @@ public class MediaFileManagerImpl implements MediaFileManager {
 
     @Override
     public MediaFile getMediaFile(String id) {
-        try {
-            return getMediaFile(id, false);
-        } catch (IOException e) {
-            return null;
-        }
+        return getMediaFile(id, false);
     }
 
     @Override
-    public MediaFile getMediaFile(String id, boolean includeContent) throws IOException {
+    public MediaFile getMediaFile(String id, boolean includeContent) {
         MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
-        if (includeContent) {
+        if (mediaFile != null && includeContent) {
             File content = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), id);
             mediaFile.setContent(content);
 
-            try {
-                File thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
-                        id + "_sm");
-                mediaFile.setThumbnailContent(thumbnail);
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Cannot load thumbnail for image {}", id, e);
-                } else {
-                    log.warn("Cannot load thumbnail for image {}", id);
-                }
-            }
+            File thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
+                    id + "_sm");
+            mediaFile.setThumbnailContent(thumbnail);
         }
         return mediaFile;
     }

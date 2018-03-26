@@ -107,8 +107,7 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
                 if (currEntry != null) {
 
                     // clone the entry since we don't want to work with the real pojo
-                    WeblogEntry tmpEntry = new WeblogEntry();
-                    tmpEntry.setData(currEntry);
+                    WeblogEntry tmpEntry = new WeblogEntry(currEntry);
 
                     // for display, set the pubtime to the current time if it is not set
                     if (tmpEntry.getPubTime() == null) {

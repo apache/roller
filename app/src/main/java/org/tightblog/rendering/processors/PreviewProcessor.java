@@ -143,8 +143,7 @@ public class PreviewProcessor extends AbstractProcessor {
                 SharedTheme previewTheme = themeManager.getSharedTheme(previewThemeName);
 
                 if (previewTheme.isEnabled()) {
-                    Weblog previewWeblog = new Weblog();
-                    previewWeblog.setData(weblog);
+                    Weblog previewWeblog = new Weblog(weblog);
                     previewWeblog.setTheme(previewTheme.getId());
                     previewWeblog.setUsedForThemePreview(true);
                     incomingRequest.setWeblog(previewWeblog);
