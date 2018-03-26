@@ -260,21 +260,6 @@ public class WeblogEntryComment {
         setContent("");
     }
 
-    public void setData(WeblogEntryComment other) {
-        this.id = other.getId();
-        this.name = other.getName();
-        this.email = other.getEmail();
-        this.url = other.getUrl();
-        this.content = other.getContent();
-        this.notify = other.getNotify();
-        this.postTime = other.getPostTime();
-        this.status = other.getStatus();
-        this.remoteHost = other.getRemoteHost();
-        this.referrer = other.getReferrer();
-        this.userAgent = other.getUserAgent();
-        this.weblogEntry = other.getWeblogEntry();
-    }
-
     @Override
     public boolean equals(Object other) {
         return other == this || (other instanceof WeblogEntryComment && Objects.equals(id, ((WeblogEntryComment) other).id));

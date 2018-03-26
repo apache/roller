@@ -37,15 +37,14 @@ public interface FileContentManager {
     /**
      * Get a reference to the content of a specific file in a weblog's uploads area.
      * <p>
-     * This method always returns a valid file content object or will throw an exception
-     * if the specified path doesn't exist, or can't be read.
+     * This method returns a valid file content object or null if object does not exist or
+     * is otherwise inaccessible.
      *
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
-     * @throws FileNotFoundException If file does not exist.
-     * @throws IOException           Some other problem accessing or reading file.
+     * @return File object if retrievable, null otherwise.
      */
-    File getFileContent(Weblog weblog, String fileId) throws IOException;
+    File getFileContent(Weblog weblog, String fileId);
 
     /**
      * Save a file's content to weblog's uploads area.

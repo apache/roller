@@ -64,15 +64,20 @@ public class FileContentManagerImpl implements FileContentManager {
     }
 
     @Override
-    public File getFileContent(Weblog weblog, String fileId)
-            throws IOException {
+    public File getFileContent(Weblog weblog, String fileId) {
+        File resourceFile = null;
 
-        // get a reference to the file, checks that file exists & is readable
-        File resourceFile = this.getRealFile(weblog, fileId);
+        try {
+            // get a reference to the file, checks that file exists & is readable
+            resourceFile = this.getRealFile(weblog, fileId);
 
-        // make sure file is not a directory
-        if (resourceFile.isDirectory()) {
-            throw new IOException("Invalid file id [" + fileId + "], path is a directory.");
+            // make sure file is not a directory
+            if (resourceFile.isDirectory()) {
+                log.warn("Invalid file id [" + fileId + "], path is a directory.");
+                resourceFile = null;
+            }
+        } catch (IOException e) {
+            log.warn("Problem retrieving file id [" + fileId + "]", e);
         }
 
         // everything looks good, return resource
@@ -80,8 +85,7 @@ public class FileContentManagerImpl implements FileContentManager {
     }
 
     @Override
-    public void saveFileContent(Weblog weblog, String fileId, InputStream is)
-            throws IOException {
+    public void saveFileContent(Weblog weblog, String fileId, InputStream is) throws IOException {
 
         // make sure uploads area exists for this weblog
         File dirPath = this.getRealFile(weblog, null);
@@ -206,7 +210,7 @@ public class FileContentManagerImpl implements FileContentManager {
     }
 
     /**
-     * Return true if file is allowed to be uplaoded given specified allowed and
+     * Return true if file is allowed to be uploaded given specified allowed and
      * forbidden file types.
      */
     private boolean checkFileType(String[] allowFiles, String[] forbidFiles,

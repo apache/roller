@@ -68,7 +68,13 @@ public class WeblogRequest {
     private Weblog weblog = null;
     private User blogger = null;
 
-    public WeblogRequest() {
+    WeblogRequest() {
+    }
+
+    static public class Creator {
+        public WeblogRequest create(HttpServletRequest request) {
+            return new WeblogRequest(request);
+        }
     }
 
     public WeblogRequest(HttpServletRequest request) {

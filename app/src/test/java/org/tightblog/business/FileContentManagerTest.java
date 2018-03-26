@@ -21,7 +21,6 @@
 package org.tightblog.business;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.tightblog.WebloggerTest;
@@ -87,12 +86,8 @@ public class FileContentManagerTest extends WebloggerTest {
         /* NOTE: upload dir for unit tests is set in tightblog-custom.properties */
 
         // File should not exist initially
-        try {
-            fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
-            fail("Non-existent file retrieved without any exception");
-        } catch (FileNotFoundException e) {
-            assertTrue("Exception thrown for non-existent file as expected", true);
-        }
+        File test = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
+        assertNull("Non-existent file retrieved", test);
 
         // store a file
         InputStream is = getClass().getResourceAsStream("/jetty.xml");
@@ -106,12 +101,8 @@ public class FileContentManagerTest extends WebloggerTest {
         fileContentManager.deleteFile(testWeblog, "bookmarks-file-id");
 
         // File should not exist after delete
-        try {
-            fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
-            fail("Non-existent file retrieved without any exception");
-        } catch (FileNotFoundException e) {
-            assertTrue("Exception thrown for non-existant file as expected", true);
-        }
+        test = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
+        assertNull("Non-existent file retrieved", test);
     }
 
     /**

@@ -32,14 +32,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.time.Instant;
 
 /**
  * Serves media files uploaded by users.
@@ -48,12 +45,12 @@ import java.time.Instant;
  * way to serve them up.
  */
 @RestController
-@RequestMapping(path = "/tb-ui/rendering/media-resources/**")
-public class MediaResourceProcessor extends AbstractProcessor {
+@RequestMapping(path = "/tb-ui/rendering/mediafile/**")
+public class MediaFileProcessor extends AbstractProcessor {
 
-    private static Logger log = LoggerFactory.getLogger(MediaResourceProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(MediaFileProcessor.class);
 
-    public static final String PATH = "/tb-ui/rendering/media-resources";
+    public static final String PATH = "/tb-ui/rendering/mediafile";
 
     @Autowired
     private WeblogManager weblogManager;
@@ -69,66 +66,41 @@ public class MediaResourceProcessor extends AbstractProcessor {
         this.mediaFileManager = mediaFileManager;
     }
 
-    @PostConstruct
-    public void init() {
-        log.info("Initializing MediaResourceProcessor...");
+    private WeblogRequest.Creator weblogRequestCreator;
+
+    public MediaFileProcessor() {
+        this.weblogRequestCreator = new WeblogRequest.Creator();
+    }
+
+    public void setWeblogRequestCreator(WeblogRequest.Creator creator) {
+        this.weblogRequestCreator = creator;
     }
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
-    public void getMediaResource(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getMediaFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        WeblogRequest incomingRequest = weblogRequestCreator.create(request);
 
-        Weblog weblog;
-
-        WeblogRequest resourceRequest;
-        String resourceId;
-        boolean thumbnail = false;
-
-        try {
-            // parse the incoming request and extract the relevant data
-            resourceRequest = new WeblogRequest(request);
-
-            weblog = weblogManager.getWeblogByHandle(resourceRequest.getWeblogHandle(), true);
-            if (weblog == null) {
-                throw new IllegalArgumentException("unable to lookup weblog: " + resourceRequest.getWeblogHandle());
-            } else {
-                resourceRequest.setWeblog(weblog);
-            }
-
-            // we want only the path info left over from after the weblog parsing
-            String pathInfo = resourceRequest.getPathInfo();
-
-            // parse the request object and figure out what we've got
-            log.debug("parsing path {}", pathInfo);
-
-            // any id is okay...
-            if (pathInfo != null && pathInfo.trim().length() > 1) {
-                resourceId = pathInfo;
-                if (pathInfo.startsWith("/")) {
-                    resourceId = pathInfo.substring(1);
-                }
-            } else {
-                throw new IllegalArgumentException("Invalid resource path info: " + request.getRequestURL());
-            }
-
-            if ("true".equals(request.getParameter("t"))) {
-                thumbnail = true;
-            }
-
-            log.debug("resourceId = {}, thumbnail = {}", resourceId, thumbnail);
-        } catch (Exception e) {
-            // invalid resource request or weblog doesn't exist
-            log.debug("error creating weblog resource request", e);
+        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        } else {
+            incomingRequest.setWeblog(weblog);
         }
 
-        MediaFile mediaFile;
-
-        try {
+        MediaFile mediaFile = null;
+        // we want only the path info left over from after the weblog parsing
+        String pathInfo = incomingRequest.getPathInfo();
+        if (pathInfo != null && pathInfo.trim().length() > 1) {
+            String resourceId = pathInfo;
+            if (pathInfo.startsWith("/")) {
+                resourceId = pathInfo.substring(1);
+            }
             mediaFile = mediaFileManager.getMediaFile(resourceId, true);
-        } catch (Exception ex) {
-            // Not found? then we don't have it, 404.
-            log.debug("Unable to get resource", ex);
+        }
+
+        if (mediaFile == null) {
+            log.info("Could not obtain media file for resource path: ", request.getRequestURL());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -139,8 +111,13 @@ public class MediaResourceProcessor extends AbstractProcessor {
             return;
         }
 
-        try (InputStream resourceStream = getInputStream(mediaFile, thumbnail)) {
-            response.setContentType(thumbnail ? "image/png" : mediaFile.getContentType());
+        boolean useThumbnail = false;
+        if ("true".equals(request.getParameter("t"))) {
+            useThumbnail = true;
+        }
+
+        try (InputStream resourceStream = getInputStream(mediaFile, useThumbnail)) {
+            response.setContentType(useThumbnail ? "image/png" : mediaFile.getContentType());
 
             byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];
             int length;
@@ -181,5 +158,4 @@ public class MediaResourceProcessor extends AbstractProcessor {
 
         return resourceStream;
     }
-
 }
