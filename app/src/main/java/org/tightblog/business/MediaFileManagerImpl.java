@@ -176,7 +176,7 @@ public class MediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void storeMediaFile(MediaFile mediaFile, Map<String, List<String>> errors) throws IOException {
+    public void storeMediaFile(MediaFile mediaFile, InputStream updatedStream, Map<String, List<String>> errors) throws IOException {
         Weblog weblog = mediaFile.getDirectory().getWeblog();
 
         if (!fileContentManager.canSave(weblog, mediaFile.getName(),
@@ -193,14 +193,13 @@ public class MediaFileManagerImpl implements MediaFileManager {
 
         updateWeblogLastModifiedDate(weblog);
 
-        InputStream updatedFileStream = mediaFile.getInputStream();
-        if (updatedFileStream != null) {
+        if (updatedStream != null) {
             Map<String, List<String>> msgs = new HashMap<>();
             if (!fileContentManager.canSave(weblog, mediaFile.getName(),
                     mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
                 throw new IOException(msgs.toString());
             }
-            fileContentManager.saveFileContent(weblog, mediaFile.getId(), updatedFileStream);
+            fileContentManager.saveFileContent(weblog, mediaFile.getId(), updatedStream);
 
             if (mediaFile.isImageFile()) {
                 updateThumbnail(mediaFile);
@@ -222,7 +221,7 @@ public class MediaFileManagerImpl implements MediaFileManager {
 
             File thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
                     id + "_sm");
-            mediaFile.setThumbnailContent(thumbnail);
+            mediaFile.setThumbnail(thumbnail);
         }
         return mediaFile;
     }

@@ -20,7 +20,6 @@
  */
 package org.tightblog.pojos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.WebloggerContext;
@@ -36,9 +35,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -68,8 +64,6 @@ public class MediaFile {
     private Instant dateUploaded = Instant.now();
     private Instant lastUpdated = Instant.now();
     private User creator = null;
-
-    private InputStream is;
 
     private MediaDirectory directory;
 
@@ -193,6 +187,7 @@ public class MediaFile {
      *
      * @return input stream of file
      */
+/*
     @Transient
     @JsonIgnore
     public InputStream getInputStream() {
@@ -206,16 +201,26 @@ public class MediaFile {
                 throw new RuntimeException("Error constructing input stream", ex);
             }
         }
-
         return null;
     }
+*/
 
-    public void setInputStream(InputStream is) {
-        this.is = is;
+    @Transient
+    public File getContent() {
+        return content;
     }
 
     public void setContent(File content) {
         this.content = content;
+    }
+
+    public void setThumbnail(File thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    @Transient
+    public File getThumbnail() {
+        return thumbnail;
     }
 
     /**
@@ -269,28 +274,6 @@ public class MediaFile {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    /**
-     * Returns underlying thumbnail file in the file system.
-     *
-     * @return input stream of thumbnail
-     */
-    @Transient
-    public InputStream getThumbnailInputStream() {
-        if (thumbnail != null) {
-            try {
-                return new FileInputStream(thumbnail);
-            } catch (FileNotFoundException ex) {
-                // should never happen, rethrow as runtime exception
-                throw new RuntimeException("Error constructing input stream", ex);
-            }
-        }
-        return null;
-    }
-
-    public void setThumbnailContent(File thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     /**

@@ -173,13 +173,12 @@ public class MediaFileController {
         try {
             // check if uploadedFile provided, update if so
             if (uploadedFile != null) {
-                mf.setInputStream(uploadedFile.getInputStream());
                 mf.setLength(uploadedFile.getSize());
                 mf.setContentType(uploadedFile.getContentType());
                 mf.setCreator(user);
             }
 
-            mediaFileManager.storeMediaFile(mf, errors);
+            mediaFileManager.storeMediaFile(mf, uploadedFile.getInputStream(), errors);
 
             if (errors.size() > 0) {
                 Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();

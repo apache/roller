@@ -25,6 +25,7 @@ import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.Weblog;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +40,11 @@ public interface MediaFileManager {
 
     /**
      * Update metadata for a media file and content.
-     * @param mf - Media File to update (if its inputStream is non-null file will be uploaded as well)
+     * @param mf - Media File to update
+     * @param is - if non-null, file's contents will be replaced with the contents of this InputStream.
      * @param errors object to receive message bundle keys and argument values or null if not desired to receive them
      */
-    void storeMediaFile(MediaFile mf, Map<String, List<String>> errors) throws IOException;
+    void storeMediaFile(MediaFile mf, InputStream is, Map<String, List<String>> errors) throws IOException;
 
     /**
      * Get media file metadata by file id, null if does not exist

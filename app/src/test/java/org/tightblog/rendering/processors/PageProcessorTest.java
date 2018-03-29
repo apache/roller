@@ -131,13 +131,11 @@ public class PageProcessorTest {
     @Test
     public void testReceive304NotModifiedContent() throws IOException {
         initializeMocks();
-
         sharedTheme.setSiteWide(true);
 
         // date header more recent than last change, so should return 304
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().toEpochMilli());
 
-        Mockito.clearInvocations(processor, mockRequest);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockRequest).getDateHeader(any());
         verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);

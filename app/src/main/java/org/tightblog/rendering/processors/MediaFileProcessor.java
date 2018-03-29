@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -91,12 +93,14 @@ public class MediaFileProcessor extends AbstractProcessor {
         MediaFile mediaFile = null;
         // we want only the path info left over from after the weblog parsing
         String pathInfo = incomingRequest.getPathInfo();
-        if (pathInfo != null && pathInfo.trim().length() > 1) {
-            String resourceId = pathInfo;
+        if (pathInfo != null) {
             if (pathInfo.startsWith("/")) {
-                resourceId = pathInfo.substring(1);
+                pathInfo = pathInfo.substring(1);
             }
-            mediaFile = mediaFileManager.getMediaFile(resourceId, true);
+            if (pathInfo.length() > 0) {
+                // at this stage, pathInfo is the resourceId
+                mediaFile = mediaFileManager.getMediaFile(pathInfo, true);
+            }
         }
 
         if (mediaFile == null) {
@@ -112,50 +116,35 @@ public class MediaFileProcessor extends AbstractProcessor {
         }
 
         boolean useThumbnail = false;
-        if ("true".equals(request.getParameter("t"))) {
+        if (mediaFile.isImageFile() && "true".equals(request.getParameter("tn"))) {
             useThumbnail = true;
         }
 
-        try (InputStream resourceStream = getInputStream(mediaFile, useThumbnail)) {
+        File desiredFile = (useThumbnail) ? mediaFile.getThumbnail() : mediaFile.getContent();
+        if (desiredFile == null) {
+            log.info("Could not obtain {} file content for resource path: ", useThumbnail ? "thumbnail" : "",
+                    request.getRequestURL());
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        try (InputStream resourceStream = new FileInputStream(desiredFile);
+             OutputStream out = response.getOutputStream()) {
             response.setContentType(useThumbnail ? "image/png" : mediaFile.getContentType());
+            response.setHeader("Cache-Control","no-cache");
+            response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
 
             byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];
             int length;
-            response.setHeader("Cache-Control","no-cache");
-            response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
-            OutputStream out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-
-            // close output stream
-            out.close();
-
         } catch (Exception ex) {
-            log.error("ERROR", ex);
+            log.error("Error obtaining media file {}", desiredFile.getAbsolutePath(), ex);
             if (!response.isCommitted()) {
                 response.reset();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         }
-    }
-
-    private InputStream getInputStream(MediaFile mediaFile, boolean thumbnail) {
-        InputStream resourceStream = null;
-
-        // set the content type based on whatever is in our web.xml mime defs
-        if (thumbnail) {
-            try {
-                resourceStream = mediaFile.getThumbnailInputStream();
-            } catch (Exception e) {
-                log.warn("ERROR loading thumbnail for {}", mediaFile.getId());
-            }
-        }
-
-        if (resourceStream == null) {
-            resourceStream = mediaFile.getInputStream();
-        }
-
-        return resourceStream;
     }
 }

@@ -15,6 +15,7 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -79,8 +80,8 @@ public class PreviewProcessorTest {
     private Principal mockPrincipal;
     private ApplicationContext mockApplicationContext;
 
-    // not done as a @before as not all tests need these mocks
-    private void initializeMocks() {
+    @Before
+    public void initializeMocks() {
         try {
             mockPrincipal = mock(Principal.class);
             when(mockPrincipal.getName()).thenReturn("bob");
@@ -127,7 +128,6 @@ public class PreviewProcessorTest {
 
     @Test
     public void test404OnMissingWeblog() throws IOException {
-        initializeMocks();
         pageRequest.setWeblogHandle("myhandle");
         when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(null);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
@@ -136,7 +136,6 @@ public class PreviewProcessorTest {
 
     @Test
     public void test403WithUnauthorizedUser() throws IOException {
-        initializeMocks();
         when(mockUM.checkWeblogRole("bob", "bobsblog", WeblogRole.EDIT_DRAFT)).thenReturn(false);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
         verify(mockResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -144,7 +143,6 @@ public class PreviewProcessorTest {
 
     @Test
     public void test404OnUnknownTheme() throws IOException {
-        initializeMocks();
         when(mockRequest.getParameter("theme")).thenReturn("testTheme");
         when(mockThemeManager.getSharedTheme(any())).thenThrow(new IllegalArgumentException());
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
@@ -154,7 +152,6 @@ public class PreviewProcessorTest {
     @Test
     public void testThemePreviewCausesThemeSwitch() throws IOException {
         String previewThemeName = "previewThemeName";
-        initializeMocks();
         weblog.setTheme("currentThemeId");
         SharedTheme themeToPreview = new SharedTheme();
         themeToPreview.setId("previewThemeId");
@@ -179,7 +176,6 @@ public class PreviewProcessorTest {
 
     @Test
     public void testCorrectTemplatesChosen() throws IOException, WebloggerException {
-        initializeMocks();
         // Custom External retrieved
         pageRequest.setCustomPageName("mycustompage");
         SharedTemplate sharedTemplate = new SharedTemplate();
@@ -260,7 +256,6 @@ public class PreviewProcessorTest {
 
     @Test
     public void testModelSetCorrectlyFilled() throws IOException, WebloggerException {
-        initializeMocks();
         Set<Model> previewModelSet = new HashSet<>();
         previewModelSet.add(new PageModel());
         when(mockApplicationContext.getBean(eq("previewModelSet"), eq(Set.class))).thenReturn(previewModelSet);

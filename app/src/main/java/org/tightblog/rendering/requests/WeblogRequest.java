@@ -68,7 +68,7 @@ public class WeblogRequest {
     private Weblog weblog = null;
     private User blogger = null;
 
-    WeblogRequest() {
+    public WeblogRequest() {
     }
 
     static public class Creator {
@@ -139,6 +139,10 @@ public class WeblogRequest {
 
     public String getPathInfo() {
         return pathInfo;
+    }
+
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
     }
 
     public Weblog getWeblog() {
