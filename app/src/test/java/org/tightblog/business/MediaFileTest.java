@@ -187,9 +187,8 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setContentType("image/jpeg");
-        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 
-        mediaFileManager.storeMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
         String id = mediaFile.getId();
         endSession(true);
         assertNotNull(id);
@@ -224,11 +223,10 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setNotes("This is a test image");
         mediaFile.setLength(2000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        mediaFileManager.storeMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
         endSession(true);
         assertNotNull(mediaFile.getId());
         assertNotNull(mediaFile.getId().length() > 0);
@@ -254,9 +252,8 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setNotes("This is a test image 5");
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
@@ -269,7 +266,7 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile1.setName("updated.gif");
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
-        mediaFileManager.storeMediaFile(mediaFile1, null);
+        mediaFileManager.storeMediaFile(mediaFile1, null, null);
         endSession(true);
 
         MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
@@ -298,9 +295,8 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setName("test6_1.jpg");
         mediaFile.setNotes("This is a test image 6.1");
         mediaFile.setLength(4000);
-        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -308,9 +304,8 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setName("test6_2.jpg");
         mediaFile2.setNotes("This is a test image 6.2");
         mediaFile2.setLength(4000);
-        mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile2, null);
+        mediaFileManager.storeMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         endSession(true);
 
@@ -355,9 +350,8 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile.setName("test7_1.jpg");
         mediaFile.setNotes("This is a test image 7.1");
         mediaFile.setLength(4000);
-        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile, null);
+        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -365,10 +359,8 @@ public class MediaFileTest extends WebloggerTest {
         mediaFile2.setName("test7_2.jpg");
         mediaFile2.setNotes("This is a test image 7.2");
         mediaFile2.setLength(4000);
-        mediaFile2.setInputStream(getClass()
-                .getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile2, null);
+        mediaFileManager.storeMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         endSession(true);
 

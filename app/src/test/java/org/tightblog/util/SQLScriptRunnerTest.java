@@ -18,13 +18,12 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business;
+package org.tightblog.util;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.tightblog.WebloggerTest;
-import org.tightblog.util.SQLScriptRunner;
 import org.junit.Before;
 import org.junit.Test;
 
