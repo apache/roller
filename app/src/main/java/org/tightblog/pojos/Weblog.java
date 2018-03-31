@@ -49,6 +49,7 @@ import javax.validation.constraints.Pattern;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -580,4 +581,5 @@ public class Weblog {
         return hashCode;
     }
 
+    public static final Comparator<Weblog> handleComparator = Comparator.comparing(Weblog::getHandle);
 }

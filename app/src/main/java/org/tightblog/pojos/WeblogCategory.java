@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.util.Comparator;
 import java.util.Objects;
 
 @Entity
@@ -115,11 +116,13 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
         this.weblog = weblog;
     }
 
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(WeblogCategory other) {
-        return getName().compareTo(other.getName());
+    private static final Comparator<WeblogCategory> COMPARATOR =
+            Comparator.comparing(WeblogCategory::getWeblog, Weblog.handleComparator)
+                        .thenComparingInt(WeblogCategory::getPosition);
+
+    @Override
+    public int compareTo(WeblogCategory o) {
+        return COMPARATOR.compare(this, o);
     }
 
     public String toString() {

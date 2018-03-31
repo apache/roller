@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -147,9 +148,13 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
         return hashCode;
     }
 
+    private static final Comparator<WeblogBookmark> COMPARATOR =
+            Comparator.comparing(WeblogBookmark::getWeblog, Weblog.handleComparator)
+                    .thenComparingInt(WeblogBookmark::getPosition);
+
     @Override
-    public int compareTo(WeblogBookmark o) {
-        return position.compareTo(o.getPosition());
+    public int compareTo(WeblogBookmark other) {
+        return COMPARATOR.compare(this, other);
     }
 
 }

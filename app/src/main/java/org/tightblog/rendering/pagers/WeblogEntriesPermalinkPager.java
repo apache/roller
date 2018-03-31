@@ -105,20 +105,11 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
             } else {
                 // for weblog entry previews, here we allow unpublished entries to be shown
                 if (currEntry != null) {
-
-                    // clone the entry since we don't want to work with the real pojo
-                    WeblogEntry tmpEntry = new WeblogEntry(currEntry);
-
-                    // for display, set the pubtime to the current time if it is not set
-                    if (tmpEntry.getPubTime() == null) {
-                        tmpEntry.setPubTime(Instant.now());
-                    }
-
                     // store the entry in the collection
                     entries = new TreeMap<>();
-                    entries.put(tmpEntry.getPubTime()
+                    entries.put((currEntry.getPubTime() == null ? Instant.now() : currEntry.getPubTime())
                             .atZone(currEntry.getWeblog().getZoneId())
-                            .toLocalDate(), Collections.singletonList(tmpEntry));
+                            .toLocalDate(), Collections.singletonList(currEntry));
                 }
             }
         }

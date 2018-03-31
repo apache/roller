@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.util.Comparator;
 import java.util.Objects;
 
 @Entity
@@ -45,7 +46,7 @@ import java.util.Objects;
         @NamedQuery(name = "WeblogEntryTag.removeByWeblogAndTagName",
                 query = "DELETE FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2")
 })
-public class WeblogEntryTag {
+public class WeblogEntryTag implements Comparable<WeblogEntryTag> {
 
     private String id = Utilities.generateUUID();
     private int hashCode;
@@ -129,4 +130,13 @@ public class WeblogEntryTag {
         return hashCode;
     }
 
+    private static final Comparator<WeblogEntryTag> COMPARATOR =
+            Comparator.comparing(WeblogEntryTag::getWeblog, Weblog.handleComparator)
+                    .thenComparing(WeblogEntryTag::getName);
+
+
+    @Override
+    public int compareTo(WeblogEntryTag o) {
+        return COMPARATOR.compare(this, o);
+    }
 }

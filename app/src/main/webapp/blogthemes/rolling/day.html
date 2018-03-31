@@ -17,7 +17,7 @@
             <span th:case="${false}" th:utext="${model.getTransformedSummary(entry) utils.msg('macro.weblog.readMoreLink', [url.entry(entry)])"></span>
         </p>
         <p class="entryInfo">
-            Posted at <a th:href="${url.entry(entry)}" th:utext="${utils.formatDateTime(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a>
+            Posted <span th:if="${entry.pubTime != null}">at <a th:href="${url.entry(entry)}" th:utext="${utils.formatDateTime(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
             by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
             <span th:if="${model.isUserBlogPublisher(entry.weblog)}">
                 |&nbsp;<a th:href="${url.editEntry(entry.anchor)}" th:utext="${utils.msg('generic.edit')}">xxx</a>

@@ -37,6 +37,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -50,7 +51,7 @@ import java.util.Set;
                 query = "SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MediaDirectory {
+public class MediaDirectory implements Comparable<MediaDirectory> {
 
     @NotBlank
     private String id = Utilities.generateUUID();
@@ -161,4 +162,12 @@ public class MediaDirectory {
         return hashCode;
     }
 
+    private static final Comparator<MediaDirectory> COMPARATOR =
+            Comparator.comparing(MediaDirectory::getWeblog, Weblog.handleComparator)
+                    .thenComparing(MediaDirectory::getName);
+
+    @Override
+    public int compareTo(MediaDirectory o) {
+        return COMPARATOR.compare(this, o);
+    }
 }

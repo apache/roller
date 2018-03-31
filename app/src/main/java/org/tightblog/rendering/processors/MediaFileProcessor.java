@@ -130,7 +130,7 @@ public class MediaFileProcessor extends AbstractProcessor {
 
         try (InputStream resourceStream = new FileInputStream(desiredFile);
              OutputStream out = response.getOutputStream()) {
-            response.setContentType(useThumbnail ? "image/png" : mediaFile.getContentType());
+            response.setContentType(useThumbnail ? MediaFile.THUMBNAIL_CONTENT_TYPE : mediaFile.getContentType());
             response.setHeader("Cache-Control","no-cache");
             response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
 
