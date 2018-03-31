@@ -20,7 +20,6 @@
  */
 package org.tightblog.business;
 
-import javafx.collections.transformation.SortedList;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
