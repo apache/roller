@@ -153,8 +153,7 @@ public class RequestMappingFilter implements Filter {
         // supposed to be considered different, so we must enforce that
         if (weblogRequestContext == null && !trailingSlash) {
             // this means someone referred to a weblog index page with the
-            // shortest form of url /<weblog> or /<weblog>/<locale> and we need
-            // to do a redirect to /<weblog>/ or /<weblog>/<locale>/
+            // shortest form of url /<weblog> and we need to redirect to /<weblog>/
             String redirectUrl = request.getRequestURI() + "/";
             if (request.getQueryString() != null) {
                 redirectUrl += "?" + request.getQueryString();

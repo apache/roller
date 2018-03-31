@@ -105,7 +105,7 @@ public class WeblogEntryTagAggregate {
         return "WeblogEntryTagAggregate: weblog=" + weblog.getHandle() + ", name=" + name + ", count=" + getTotal();
     }
 
-    public static java.util.Comparator<WeblogEntryTagAggregate> nameComparator = (weta1, weta2) ->
+    public static Comparator<WeblogEntryTagAggregate> nameComparator = (weta1, weta2) ->
             weta1.getName().compareToIgnoreCase(weta2.getName());
 
     public static Comparator<WeblogEntryTagAggregate> countComparator = (weta1, weta2) -> {

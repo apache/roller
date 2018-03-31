@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,4 +119,6 @@ public class CachedContent {
 
         log.debug("CLOSED");
     }
+
+
 }

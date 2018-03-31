@@ -36,6 +36,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.File;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -44,7 +45,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "media_file")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MediaFile {
+public class MediaFile implements Comparable<MediaFile> {
+
+    public static final String THUMBNAIL_CONTENT_TYPE = "image/png";
 
     private String id = Utilities.generateUUID();
     private int hashCode;
@@ -337,4 +340,12 @@ public class MediaFile {
         return hashCode;
     }
 
+    private static final Comparator<MediaFile> COMPARATOR =
+            Comparator.comparing(MediaFile::getDirectory)
+                    .thenComparing(MediaFile::getName);
+
+    @Override
+    public int compareTo(MediaFile o) {
+        return COMPARATOR.compare(this, o);
+    }
 }

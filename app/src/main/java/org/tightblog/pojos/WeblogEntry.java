@@ -134,8 +134,6 @@ public class WeblogEntry {
     private String previewUrl;
     private String tagsAsString;
 
-    //----------------------------------------------------------- Construction
-
     public WeblogEntry() {
     }
 
@@ -143,30 +141,6 @@ public class WeblogEntry {
         this.title = title;
         this.editUrl = editUrl;
     }
-
-    public WeblogEntry(WeblogEntry other) {
-        this.setId(other.getId());
-        this.setCreator(other.getCreator());
-        this.setCategory(other.getCategory());
-        this.setWeblog(other.getWeblog());
-        this.setEditFormat(other.getEditFormat());
-        this.setTitle(other.getTitle());
-        this.setText(other.getText());
-        this.setSummary(other.getSummary());
-        this.setNotes(other.getNotes());
-        this.setSearchDescription(other.getSearchDescription());
-        this.setAnchor(other.getAnchor());
-        this.setPubTime(other.getPubTime());
-        this.setUpdateTime(other.getUpdateTime());
-        this.setStatus(other.getStatus());
-        this.setCommentDays(other.getCommentDays());
-        this.setEnclosureUrl(other.getEnclosureUrl());
-        this.setEnclosureType(other.getEnclosureType());
-        this.setEnclosureLength(other.getEnclosureLength());
-        this.setTags(other.getTags());
-    }
-
-    //---------------------------------------------------------- Initialization
 
     @Id
     public String getId() {
@@ -307,8 +281,6 @@ public class WeblogEntry {
     public void setAnchor(String anchor) {
         this.anchor = anchor;
     }
-
-    //-------------------------------------------------------------------------
 
     /**
      * <p>Publish time is the time that an entry is to be (or was) made available
