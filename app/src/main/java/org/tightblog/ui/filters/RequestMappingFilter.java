@@ -101,8 +101,9 @@ public class RequestMappingFilter implements Filter {
         String pathInfo = null;
 
         if (servlet != null && servlet.trim().length() > 1) {
-            if (request.getContextPath() != null) {
-                servlet = servlet.substring(request.getContextPath().length());
+            String contextPath = request.getContextPath();
+            if (contextPath != null) {
+                servlet = servlet.substring(contextPath.length());
             }
 
             if (servlet.length() == 0) {
