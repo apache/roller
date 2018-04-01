@@ -129,6 +129,7 @@
 
     <servlet-mapping>
         <servlet-name>SpringDispatcherServlet</servlet-name>
+        <url-pattern>/tb-ui/app/get-default-blog</url-pattern>
         <url-pattern>/tb-ui/authoring/rest/*</url-pattern>
         <url-pattern>/tb-ui/authoring/preview/*</url-pattern>
         <url-pattern>/tb-ui/admin/rest/*</url-pattern>
@@ -147,7 +148,7 @@
     </session-config>
 
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>tb-ui/app/get-default-blog</welcome-file>
     </welcome-file-list>
 
     <error-page>
