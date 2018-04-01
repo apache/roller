@@ -48,10 +48,7 @@ public class InitFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
 
         if (!initialized) {
-
-            // first request, lets do our initialization
             HttpServletRequest request = (HttpServletRequest) req;
-            // HttpServletResponse response = (HttpServletResponse) res;
 
             // determine absolute and relative url paths to the app
             String relPath = request.getContextPath();

@@ -182,7 +182,8 @@ public class InstallerController {
 
             WebloggerContext.bootstrap(ac);
             log.info("EXITING - Bootstrap successful, forwarding to weblogger");
-            response.sendRedirect(request.getContextPath());
+            String redirectPath = request.getContextPath();
+            response.sendRedirect(redirectPath);
             return null;
         } catch (Exception e) {
             log.error("Exception", e);

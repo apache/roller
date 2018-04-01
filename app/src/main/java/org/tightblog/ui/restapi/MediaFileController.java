@@ -122,13 +122,13 @@ public class MediaFileController {
                                           @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
             throws ServletException {
 
-        boolean newMediaFile = (mediaFileData.getId() == null);
+        MediaFile mf = mediaFileManager.getMediaFile(mediaFileData.getId());
+        boolean newMediaFile = (mf == null);
 
         // Check user permissions
         User user = userManager.getEnabledUserByUserName(p.getName());
         I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
-        MediaFile mf;
         if (newMediaFile) {
             if (uploadedFile == null) {
                 return ResponseEntity.badRequest().body("Upload File must be provided.");
@@ -145,11 +145,6 @@ public class MediaFileController {
                 return ResponseEntity.badRequest().body("Specified media directory could not be found.");
             }
             mf.setDirectory(dir);
-        } else {
-            mf = mediaFileManager.getMediaFile(mediaFileData.getId());
-            if (mf == null) {
-                return ResponseEntity.badRequest().body("Media file could not be found.");
-            }
         }
 
         if (user == null || mf.getDirectory() == null || !userManager.checkWeblogRole(user, mf.getDirectory().getWeblog(), WeblogRole.POST)) {
