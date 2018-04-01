@@ -21,6 +21,8 @@
 package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
@@ -55,31 +57,30 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+@Component("mailManager")
 public class MailManagerImpl implements MailManager {
 
     private static Logger log = LoggerFactory.getLogger(MailManagerImpl.class);
 
+    @Autowired
     private UserManager userManager;
 
+    @Autowired
     private WeblogManager weblogManager;
 
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
+    @Autowired
     private URLStrategy urlStrategy;
 
+    @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
     private SpringTemplateEngine mailTemplateEngine;
 
-    public MailManagerImpl(UserManager umgr, WeblogManager wmgr, WeblogEntryManager wemgr,
-                           URLStrategy strategy, JavaMailSender sender,
-                           SpringTemplateEngine mailTemplateEngine) {
-        userManager = umgr;
-        weblogManager = wmgr;
-        weblogEntryManager = wemgr;
-        urlStrategy = strategy;
-        mailSender = sender;
-        this.mailTemplateEngine = mailTemplateEngine;
+    public MailManagerImpl() {
     }
 
     private boolean isMailEnabled() {

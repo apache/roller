@@ -22,6 +22,8 @@ package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.AtomEnclosure;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Weblog;
@@ -60,30 +62,24 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+@Component("weblogEntryManager")
 public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntryManagerImpl.class);
 
-    private final JPAPersistenceStrategy strategy;
+    @Autowired
+    private JPAPersistenceStrategy strategy;
 
+    @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
+    @Autowired
     private URLStrategy urlStrategy;
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
 
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<>());
 
-    protected WeblogEntryManagerImpl(JPAPersistenceStrategy strategy) {
-        log.debug("Instantiating JPA Weblog Manager");
-        this.strategy = strategy;
+    protected WeblogEntryManagerImpl() {
     }
 
     @Override

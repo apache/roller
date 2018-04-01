@@ -20,6 +20,7 @@
  */
 package org.tightblog.business;
 
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.util.Utilities;
@@ -30,6 +31,7 @@ import java.util.Map;
 /**
  * Standard implementation of the URLStrategy interface.
  */
+@Component("urlStrategy")
 public class URLStrategyImpl implements URLStrategy {
 
     private final String previewTheme;

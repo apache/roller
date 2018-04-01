@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.themes.ThemeManager;
+import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;

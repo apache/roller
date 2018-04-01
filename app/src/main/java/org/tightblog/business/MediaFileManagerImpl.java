@@ -20,6 +20,8 @@
  */
 package org.tightblog.business;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.MediaDirectory;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.Weblog;
@@ -51,20 +53,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Component("mediaFileManager")
 public class MediaFileManagerImpl implements MediaFileManager {
 
-    private final JPAPersistenceStrategy strategy;
-    private final FileContentManager fileContentManager;
+    @Autowired
+    private JPAPersistenceStrategy strategy;
+
+    @Autowired
+    private FileContentManager fileContentManager;
 
     private static Logger log = LoggerFactory.getLogger(MediaFileManagerImpl.class);
 
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
-    protected MediaFileManagerImpl(FileContentManager fcm, JPAPersistenceStrategy persistenceStrategy) {
-        this.fileContentManager = fcm;
-        this.strategy = persistenceStrategy;
-    }
+    protected MediaFileManagerImpl() {}
 
     @Override
     public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaDirectory targetDirectory) {

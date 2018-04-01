@@ -29,6 +29,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.search.tasks.AbstractTask;
@@ -52,11 +54,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Lucene implementation of IndexManager. This is the central entry point into
  * the Lucene searching API.
  */
+@Component("indexManager")
 public class IndexManagerImpl implements IndexManager {
 
     private static Logger log = LoggerFactory.getLogger(IndexManagerImpl.class);
 
     private DirectoryReader reader;
+
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
     private ExecutorService serviceScheduler;
 
@@ -66,10 +71,6 @@ public class IndexManagerImpl implements IndexManager {
     private String indexDir = null;
     private boolean inconsistentAtStartup = false;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
 
     /**
      * Creates a new lucene index manager. This should only be created once.

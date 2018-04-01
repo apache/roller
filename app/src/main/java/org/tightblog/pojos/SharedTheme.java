@@ -18,9 +18,8 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.themes;
+package org.tightblog.pojos;
 
-import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Template.ComponentType;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -57,7 +56,7 @@ public class SharedTheme {
     @XmlElements(@XmlElement(name = "template"))
     private Set<SharedTemplate> tempTemplates = new HashSet<>();
 
-    Set<SharedTemplate> getTempTemplates() {
+    public Set<SharedTemplate> getTempTemplates() {
         return tempTemplates;
     }
 
@@ -184,7 +183,7 @@ public class SharedTheme {
     /**
      * Set the value for a given template name.
      */
-    void addTemplate(SharedTemplate template) {
+    public void addTemplate(SharedTemplate template) {
         this.templatesByName.put(template.getName(), template);
         this.templatesByLink.put(template.getRelativePath(), template);
         if (template.getRole().isSingleton()) {

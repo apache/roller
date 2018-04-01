@@ -20,6 +20,8 @@
  */
 package org.tightblog.business;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
@@ -51,39 +53,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Component("weblogManager")
 public class WeblogManagerImpl implements WeblogManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogManagerImpl.class);
 
+    @Autowired
     private UserManager userManager;
+
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
+
+    @Autowired
     private IndexManager indexManager;
-    private final MediaFileManager mediaFileManager;
-    private final JPAPersistenceStrategy strategy;
+
+    @Autowired
+    private MediaFileManager mediaFileManager;
+
+    @Autowired
+    private JPAPersistenceStrategy strategy;
 
     // Map of each weblog and its extra hit count that has had additional accesses since the
     // last scheduled updateHitCounters() call.
     private Map<String, Long> hitsTally = Collections.synchronizedMap(new HashMap<>());
 
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    public void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
-    }
-
     // cached mapping of weblogHandles -> weblogIds
     private Map<String, String> weblogHandleToIdMap = new Hashtable<>();
 
-    protected WeblogManagerImpl(MediaFileManager mfm, JPAPersistenceStrategy strat) {
-        log.debug("Instantiating JPA Weblog Manager");
-        this.mediaFileManager = mfm;
-        this.strategy = strat;
+    protected WeblogManagerImpl() {
     }
 
     @Override

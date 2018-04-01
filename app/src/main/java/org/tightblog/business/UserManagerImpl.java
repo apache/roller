@@ -21,6 +21,8 @@
 package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserCredentials;
@@ -43,23 +45,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component("userManager")
 public class UserManagerImpl implements UserManager {
 
     private static Logger log = LoggerFactory.getLogger(UserManagerImpl.class);
 
-    private final JPAPersistenceStrategy strategy;
+    @Autowired
+    private JPAPersistenceStrategy strategy;
 
+    @Autowired
     private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
 
     // cached mapping of userNames -> userIds
     private Map<String, String> userNameToIdMap = Collections.synchronizedMap(new HashMap<>());
 
-    protected UserManagerImpl(JPAPersistenceStrategy strat) {
-        this.strategy = strat;
+    protected UserManagerImpl() {
     }
 
     @Override

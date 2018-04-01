@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.themes;
+package org.tightblog.pojos;
 
 import org.tightblog.pojos.Template;
 

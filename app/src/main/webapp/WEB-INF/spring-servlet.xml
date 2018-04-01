@@ -44,9 +44,8 @@
     </beans:bean>
 
     <!-- Scan components in given packages marked @Component, @Controller, etc. and register them as beans -->
-    <context:component-scan base-package="org.tightblog.ui.restapi,
-                                          org.tightblog.rendering.processors,
-                                          org.tightblog.ui.menu">
+    <context:component-scan base-package="org.tightblog.rendering.processors,
+                                          org.tightblog.ui.restapi">
     </context:component-scan>
 
     <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>

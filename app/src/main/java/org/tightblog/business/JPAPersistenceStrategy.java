@@ -20,6 +20,7 @@
  */
 package org.tightblog.business;
 
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,7 @@ import java.util.Properties;
 /**
  * Responsible for the lowest-level interaction with the JPA API.
  */
+@Component("persistenceStrategy")
 public class JPAPersistenceStrategy {
 
     private static Logger log = LoggerFactory.getLogger(JPAPersistenceStrategy.class);
