@@ -23,6 +23,8 @@ package org.tightblog.rendering.comment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WebloggerProperties;
@@ -37,10 +39,12 @@ import java.util.regex.Pattern;
 /**
  * Validates comment if comment does not contain blacklisted words.
  */
+@Component
 public class BlacklistCommentValidator implements CommentValidator {
 
     private static Logger log = LoggerFactory.getLogger(BlacklistCommentValidator.class);
 
+    @Autowired
     private JPAPersistenceStrategy strategy;
 
     public void setStrategy(JPAPersistenceStrategy strategy) {

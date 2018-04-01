@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.themes.SharedTheme;
-import org.tightblog.business.themes.ThemeManager;
+import org.tightblog.pojos.SharedTheme;
+import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;
@@ -45,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 

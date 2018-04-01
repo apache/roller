@@ -20,6 +20,7 @@
  */
 package org.tightblog.rendering.comment;
 
+import org.springframework.stereotype.Component;
 import org.tightblog.util.I18nMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

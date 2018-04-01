@@ -22,7 +22,7 @@ package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.themes.ThemeManager;
+import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.requests.WeblogPageRequest;

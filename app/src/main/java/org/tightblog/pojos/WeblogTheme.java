@@ -22,7 +22,6 @@
 package org.tightblog.pojos;
 
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.themes.SharedTheme;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Template.TemplateDerivation;
 

@@ -28,7 +28,7 @@ import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.WebloggerContext;
-import org.tightblog.business.themes.ThemeManager;
+import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.CalendarData;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Template;

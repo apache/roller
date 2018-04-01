@@ -29,9 +29,12 @@
           http://www.springframework.org/schema/util
           http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
-    <!-- Component-scan defined for most packages in spring-servlet.xml but done here for servlet filters because they
-         are instantiated in web.xml prior to the spring-servlet config -->
-    <context:component-scan base-package="org.tightblog.ui.filters">
+    <!-- Scan components in given packages marked @Component, @Controller, etc. and register them as beans -->
+    <context:component-scan base-package="org.tightblog.business,
+                                          org.tightblog.business.search,
+                                          org.tightblog.rendering.comment,
+                                          org.tightblog.ui.filters
+                                          org.tightblog.ui.menu">
     </context:component-scan>
 
     <beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -52,45 +55,6 @@
 
     <!-- Have JSR-250 annotations (PostConstruct, PreDestroy) honored by Spring -->
     <beans:bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
-
-    <beans:bean id="persistenceStrategy" class="org.tightblog.business.JPAPersistenceStrategy"/>
-
-    <beans:bean id="indexManager" class="org.tightblog.business.search.IndexManagerImpl">
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-    </beans:bean>
-
-    <beans:bean id="mediaFileManager" class="org.tightblog.business.MediaFileManagerImpl">
-        <beans:constructor-arg ref="fileContentManager"/>
-        <beans:constructor-arg ref="persistenceStrategy"/>
-    </beans:bean>
-
-    <beans:bean id="fileContentManager" class="org.tightblog.business.FileContentManagerImpl"/>
-
-    <beans:bean id="themeManager" class="org.tightblog.business.themes.ThemeManagerImpl">
-        <beans:constructor-arg name="themeDirOverride" value="${themes.dir:#{null}}"/>
-        <beans:property name="weblogManager" ref="weblogManager"/>
-    </beans:bean>
-
-    <beans:bean id="userManager" class="org.tightblog.business.UserManagerImpl">
-        <beans:constructor-arg ref="persistenceStrategy"/>
-        <beans:property name="weblogManager" ref="weblogManager"/>
-    </beans:bean>
-
-    <beans:bean id="weblogManager" class="org.tightblog.business.WeblogManagerImpl">
-        <beans:constructor-arg ref="mediaFileManager"/>
-        <beans:constructor-arg ref="persistenceStrategy"/>
-        <beans:property name="indexManager" ref="indexManager"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-        <beans:property name="userManager" ref="userManager"/>
-    </beans:bean>
-
-    <beans:bean id="weblogEntryManager" class="org.tightblog.business.WeblogEntryManagerImpl">
-        <beans:constructor-arg ref="persistenceStrategy"/>
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogManager" ref="weblogManager"/>
-    </beans:bean>
-
-    <beans:bean id="urlStrategy" class="org.tightblog.business.URLStrategyImpl"/>
 
     <beans:bean id="jdbc" abstract="true" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <beans:property name="driverClassName" value="${database.jdbc.driverClass:#{null}}" />
@@ -120,15 +84,6 @@
                 <beans:prop key="mail.smtp.socketFactory.fallback">${mail.smtp.socketFactory.fallback}</beans:prop>
             </beans:props>
         </beans:property>
-    </beans:bean>
-
-    <beans:bean id="mailManager" class="org.tightblog.business.MailManagerImpl">
-        <beans:constructor-arg ref="userManager"/>
-        <beans:constructor-arg ref="weblogManager"/>
-        <beans:constructor-arg ref="weblogEntryManager"/>
-        <beans:constructor-arg ref="urlStrategy"/>
-        <beans:constructor-arg ref="mailSender"/>
-        <beans:constructor-arg ref="mailTemplateEngine"/>
     </beans:bean>
 
     <beans:bean id="mailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
@@ -269,10 +224,6 @@
                 <beans:ref bean="siteModel"/>
             </beans:set>
         </beans:property>
-    </beans:bean>
-
-    <beans:bean id="blacklistCommentValidator" class="org.tightblog.rendering.comment.BlacklistCommentValidator">
-        <beans:property name="strategy" ref="persistenceStrategy"/>
     </beans:bean>
 
     <!-- Comment Validators -->

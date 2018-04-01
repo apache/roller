@@ -21,6 +21,7 @@
 package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.util.Utilities;
@@ -43,6 +44,7 @@ import java.util.Map;
  * <p>
  * This base implementation writes file content to a file system.
  */
+@Component("fileContentManager")
 public class FileContentManagerImpl implements FileContentManager {
 
     private static Logger log = LoggerFactory.getLogger(FileContentManagerImpl.class);

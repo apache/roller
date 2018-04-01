@@ -18,10 +18,14 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.themes;
+package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tightblog.business.WeblogManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.tightblog.pojos.SharedTemplate;
+import org.tightblog.pojos.SharedTheme;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;
@@ -53,6 +57,7 @@ import java.util.Map;
  * This particular implementation reads theme data off the filesystem and
  * assumes that those themes are not changeable at runtime.
  */
+@Component("themeManager")
 public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
     private static Logger log = LoggerFactory.getLogger(ThemeManagerImpl.class);
@@ -70,13 +75,11 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         }
     }
 
+    @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    // directory where themes are kept
+    // directory where themes are kept, override required when running tests (no servlet then)
+    @Value("${themes.dir:#{null}}")
     private String themeDir = null;
 
     // map of themes in format (theme id, Theme)
@@ -90,10 +93,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         this.servletContext = servletContext;
     }
 
-    protected ThemeManagerImpl(String themeDirOverride) {
-
-        // themeDirOverride required when running tests (no servlet).
-        themeDir = themeDirOverride;
+    public ThemeManagerImpl() {
     }
 
     @Override
