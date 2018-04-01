@@ -13,7 +13,7 @@ This more realistic goal--along with adopting the Spring framework, REST, Angula
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
 |TightBlog 2.0.4|12 Febuary 2018|13|146|37|42.9K|
-|TightBlog 3.0|in Development|12|125|36|35.1K|
+|TightBlog 3.0|in Development|12|124|36|35.1K|
 
 (Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test cases, however LOC do.
 LOC are expected to increase over time as more unit test cases are added.) 
