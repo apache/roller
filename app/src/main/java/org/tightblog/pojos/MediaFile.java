@@ -322,9 +322,9 @@ public class MediaFile implements Comparable<MediaFile> {
         thumbnailWidth = newWidth;
     }
 
+    @Override
     public String toString() {
-        return "MediaFile: id=" + id + ", name=" + name + ", directory=" + directory + ", weblog="
-                + directory.getWeblog().getHandle();
+        return "MediaFile: id=" + id + ", name=" + name + ", directory=" + directory;
     }
 
     @Override

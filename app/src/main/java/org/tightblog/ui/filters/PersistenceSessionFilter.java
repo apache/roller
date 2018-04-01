@@ -18,6 +18,8 @@
 
 package org.tightblog.ui.filters;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.slf4j.Logger;
@@ -37,10 +39,12 @@ import java.io.IOException;
  * Sole responsibility is to ensure that each request's database
  * persistence session is released at end of the request.
  */
+@Component("persistenceSessionFilter")
 public class PersistenceSessionFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(PersistenceSessionFilter.class);
 
+    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {

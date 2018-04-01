@@ -564,6 +564,7 @@ public class Weblog {
         this.applyCommentDefaults = applyCommentDefaults;
     }
 
+    @Override
     public String toString() {
         return "Weblog: id=" + id + ", handle=" + handle + ", name=" + name;
     }

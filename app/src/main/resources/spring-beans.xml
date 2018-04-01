@@ -21,10 +21,18 @@
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:util="http://www.springframework.org/schema/util"
+             xmlns:context="http://www.springframework.org/schema/context"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-4.3.xsd
           http://www.springframework.org/schema/util
           http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+    <!-- Component-scan defined for most packages in spring-servlet.xml but done here for servlet filters because they
+         are instantiated in web.xml prior to the spring-servlet config -->
+    <context:component-scan base-package="org.tightblog.ui.filters">
+    </context:component-scan>
 
     <beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <beans:property name="locations">
@@ -293,43 +301,21 @@
     -->
     <beans:bean id="commentAuthenticator" class="org.tightblog.rendering.comment.MathCommentAuthenticator"/>
 
-    <!-- Restricted URLs that may not represent blogs:  Used by the RequestMappingFilter to quickly toss-out non-blog URLs.
-         Should be kept as-is.  To add items to this list, override and add to the subsequent customProtectedUrls element
-         which merges in this one. -->
-    <beans:bean id="tightblogProtectedUrls" class="org.springframework.beans.factory.config.SetFactoryBean">
+    <!-- Restricted handles that may not represent blogs:  Used by the RequestMappingFilter to quickly toss-out non-blog URLs.
+        These will correspond to the top folder names in the webapp folder, except the already blocked META- and WEB-INF folders.
+    -->
+    <beans:bean id="invalidWeblogHandles" class="org.springframework.beans.factory.config.SetFactoryBean">
         <beans:property name="sourceSet">
             <beans:set>
-                <beans:value>tb-ui</beans:value>
+                <beans:value>blogthemes</beans:value>
                 <beans:value>images</beans:value>
-                <beans:value>theme</beans:value>
-                <beans:value>themes</beans:value>
-                <beans:value>index.jsp</beans:value>
+                <beans:value>scripts</beans:value>
+                <beans:value>tb-ui</beans:value>
+                <beans:value>thymeleaf</beans:value>
                 <beans:value>favicon.ico</beans:value>
                 <beans:value>robots.txt</beans:value>
-                <beans:value>page</beans:value>
-                <beans:value>rss</beans:value>
-                <beans:value>atom</beans:value>
-                <beans:value>search</beans:value>
-                <beans:value>entrycomment</beans:value>
-                <beans:value>comments</beans:value>
-                <beans:value>resource</beans:value>
             </beans:set>
         </beans:property>
-    </beans:bean>
-
-    <beans:bean id="customProtectedUrls" parent="tightblogProtectedUrls" class="org.springframework.beans.factory.config.SetFactoryBean">
-        <beans:property name="sourceSet">
-            <beans:set merge="true"/>
-        </beans:property>
-    </beans:bean>
-
-    <beans:bean id="RequestMappingFilter" class="org.tightblog.ui.filters.RequestMappingFilter">
-        <beans:property name="weblogManager" ref="weblogManager"/>
-        <beans:property name="restrictedUrls" ref="customProtectedUrls"/>
-    </beans:bean>
-
-    <beans:bean id="PersistenceSessionFilter" class="org.tightblog.ui.filters.PersistenceSessionFilter">
-        <beans:property name="persistenceStrategy" ref="persistenceStrategy"/>
     </beans:bean>
 
     <!-- Caches -->

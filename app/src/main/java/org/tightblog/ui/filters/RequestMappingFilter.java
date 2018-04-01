@@ -20,8 +20,7 @@
  */
 package org.tightblog.ui.filters;
 
-import org.tightblog.business.WeblogManager;
-import org.tightblog.pojos.Weblog;
+import org.springframework.stereotype.Component;
 import org.tightblog.rendering.processors.CommentProcessor;
 import org.tightblog.rendering.processors.FeedProcessor;
 import org.tightblog.rendering.processors.MediaFileProcessor;
@@ -30,6 +29,7 @@ import org.tightblog.rendering.processors.SearchProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -46,21 +46,16 @@ import java.util.Set;
  * Handles weblog specific URLs for the form /<weblog handle>/*
  * Re-forwards requests to the appropriate processor based on the URL.
  */
+@Component("requestMappingFilter")
 public class RequestMappingFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(RequestMappingFilter.class);
 
-    // url patterns that are not allowed to be considered weblog handles
-    Set<String> restrictedUrls;
+    @Resource
+    private Set<String> invalidWeblogHandles;
 
-    private WeblogManager weblogManager;
-
-    public void setRestrictedUrls(Set<String> restrictedUrls) {
-        this.restrictedUrls = restrictedUrls;
-    }
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
+    public void setInvalidWeblogHandles(Set<String> invalidWeblogHandles) {
+        this.invalidWeblogHandles = invalidWeblogHandles;
     }
 
     public void init(FilterConfig filterConfig) {
@@ -94,10 +89,10 @@ public class RequestMappingFilter implements Filter {
         String weblogRequestContext = null;
         String weblogRequestData = null;
 
-        log.debug("evaluating [{}]", request.getRequestURI());
+        String servlet = request.getRequestURI();
+        log.debug("evaluating [{}]", servlet);
 
         // figure out potential weblog handle
-        String servlet = request.getRequestURI();
         String pathInfo = null;
 
         if (servlet != null && servlet.trim().length() > 1) {
@@ -106,7 +101,7 @@ public class RequestMappingFilter implements Filter {
                 servlet = servlet.substring(contextPath.length());
             }
 
-            if (servlet.length() == 0) {
+            if (servlet.replace("/", "").length() == 0) {
                 // rely on defined front-page blog
                 return false;
             } else {
@@ -130,8 +125,8 @@ public class RequestMappingFilter implements Filter {
 
         log.debug("potential weblog handle = {}", weblogHandle);
 
-        // check if it's a valid weblog handle
-        if (restrictedUrls.contains(weblogHandle) || !this.isWeblog(weblogHandle)) {
+        // Skip if weblog handle is actually referring to a static folder under webapp (i.e., not a weblog request)
+        if (invalidWeblogHandles.contains(weblogHandle)) {
             log.debug("SKIPPED {}", weblogHandle);
             return false;
         }
@@ -224,21 +219,4 @@ public class RequestMappingFilter implements Filter {
         }
         return forwardUrl;
     }
-
-    /**
-     * Convenience method which determines if the given string is a valid weblog handle.
-     */
-    protected boolean isWeblog(String potentialHandle) {
-        boolean isWeblog = false;
-        try {
-            Weblog weblog = weblogManager.getWeblogByHandle(potentialHandle);
-            if (weblog != null) {
-                isWeblog = true;
-            }
-        } catch (Exception ex) {
-            // doesn't really matter to us why it's not a valid website
-        }
-        return isWeblog;
-    }
-
 }

@@ -162,6 +162,11 @@ public class MediaDirectory implements Comparable<MediaDirectory> {
         return hashCode;
     }
 
+    @Override
+    public String toString() {
+        return "MediaDirectory: id=" + id + ", name=" + name + ", weblog=" + weblog;
+    }
+
     private static final Comparator<MediaDirectory> COMPARATOR =
             Comparator.comparing(MediaDirectory::getWeblog, Weblog.handleComparator)
                     .thenComparing(MediaDirectory::getName);
