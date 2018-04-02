@@ -122,7 +122,7 @@ public class FeedModel implements Model {
             super(weblogEntryManager, urlStrategy,
                     feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
                     feedRequest.getCategoryName(), feedRequest.getTag(),
-                    feedRequest.getPage(),
+                    feedRequest.getPageNum(),
                     WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage(),
                     -1, feedRequest.getWeblog());
             this.feedRequest = feedRequest;

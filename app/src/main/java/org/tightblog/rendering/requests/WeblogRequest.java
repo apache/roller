@@ -63,6 +63,7 @@ public class WeblogRequest {
     private String authenticatedUser = null;
     private DeviceType deviceType = DeviceType.NORMAL;
     private HttpServletRequest request;
+    private int pageNum = 0;
 
     // heavyweight attributes populated by processors
     private Weblog weblog = null;
@@ -122,11 +123,18 @@ public class WeblogRequest {
             }
         }
 
+        if (request.getParameter("page") != null) {
+            try {
+                pageNum = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
         if (path != null && path.trim().length() > 0) {
             this.pathInfo = path;
         }
 
-        log.debug("handle = {}, pathInfo = {}", weblogHandle, pathInfo);
+        log.debug("handle = {}, pathInfo = {}, pageNum = {}", weblogHandle, pathInfo, pageNum);
     }
 
     public String getWeblogHandle() {
@@ -192,5 +200,13 @@ public class WeblogRequest {
 
     public void setQueryString(String queryString) {
         this.queryString = queryString;
+    }
+
+    public int getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
     }
 }

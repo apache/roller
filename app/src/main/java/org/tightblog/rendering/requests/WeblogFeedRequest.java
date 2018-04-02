@@ -37,7 +37,6 @@ public class WeblogFeedRequest extends WeblogRequest {
     private String categoryName = null;
     private String tag = null;
     private boolean siteWideFeed = false;
-    private int page = 0;
 
     public WeblogFeedRequest() {
     }
@@ -57,23 +56,22 @@ public class WeblogFeedRequest extends WeblogRequest {
         // parent determines weblog handle and locale if specified
         super(request);
 
-        // parse request parameters
-        if (request.getParameter("cat") != null) {
-            // replacing any plus signs with their encoded equivalent (http://stackoverflow.com/a/6926987)
-            categoryName = Utilities.decode(request.getParameter("cat").replace("+", "%2B"));
-        } else if (request.getParameter("tag") != null) {
-            tag = request.getParameter("tag").toLowerCase();
-        }
+        // we only want the path info left over from after our parents parsing
+        String pathInfo = this.getPathInfo();
 
-        if (request.getParameter("page") != null) {
-            try {
-                page = Integer.parseInt(request.getParameter("page"));
-            } catch (NumberFormatException ignored) {
+        if (pathInfo != null && pathInfo.trim().length() > 0) {
+            String[] pathElements = pathInfo.split("/", 2);
+
+            if (pathElements.length == 2) {
+                if ("category".equals(pathElements[0])) {
+                    categoryName = Utilities.decode(pathElements[1].replace("+", "%2B"));
+                } else if ("tag".equals(pathElements[0])) {
+                    tag = Utilities.decode(pathElements[1].toLowerCase().replace("+", "%2B"));
+                }
             }
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("page = " + page);
             log.debug("category = " + categoryName);
             log.debug("tag = " + tag);
         }
@@ -93,14 +91,6 @@ public class WeblogFeedRequest extends WeblogRequest {
 
     public void setTag(String tag) {
         this.tag = tag;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
     }
 
     public boolean isSiteWideFeed() {
