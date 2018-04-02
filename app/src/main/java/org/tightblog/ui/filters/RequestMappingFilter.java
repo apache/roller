@@ -81,15 +81,12 @@ public class RequestMappingFilter implements Filter {
     protected boolean handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // kinda silly, but we need to keep track of whether or not the url had
-        // a trailing slash so that we can act accordingly
-        boolean trailingSlash = false;
-
         String weblogHandle = null;
         String weblogRequestContext = null;
         String weblogRequestData = null;
 
-        String servlet = request.getRequestURI();
+        // remove all training slashes from URI
+        String servlet = request.getRequestURI().replaceAll("/+$", "");
         log.debug("evaluating [{}]", servlet);
 
         // figure out potential weblog handle
@@ -101,18 +98,12 @@ public class RequestMappingFilter implements Filter {
                 servlet = servlet.substring(contextPath.length());
             }
 
-            if (servlet.replace("/", "").length() == 0) {
+            if (servlet.length() == 0) {
                 // rely on defined front-page blog
                 return false;
             } else {
                 // strip off the leading slash
                 servlet = servlet.substring(1);
-            }
-
-            // strip off trailing slash if needed
-            if (servlet.endsWith("/")) {
-                servlet = servlet.substring(0, servlet.length() - 1);
-                trailingSlash = true;
             }
 
             if (servlet.indexOf('/') != -1) {
@@ -122,8 +113,6 @@ public class RequestMappingFilter implements Filter {
                 weblogHandle = servlet;
             }
         }
-
-        log.debug("potential weblog handle = {}", weblogHandle);
 
         // Skip if weblog handle is actually referring to a static folder under webapp (i.e., not a weblog request)
         if (invalidWeblogHandles.contains(weblogHandle)) {
@@ -142,26 +131,6 @@ public class RequestMappingFilter implements Filter {
             if (urlPath.length == 2) {
                 weblogRequestData = urlPath[1];
             }
-        }
-
-        // special handling for trailing slash issue
-        // we need this because by http standards the urls /foo and /foo/ are
-        // supposed to be considered different, so we must enforce that
-        if (weblogRequestContext == null && !trailingSlash) {
-            // this means someone referred to a weblog index page with the
-            // shortest form of url /<weblog> and we need to redirect to /<weblog>/
-            String redirectUrl = request.getRequestURI() + "/";
-            if (request.getQueryString() != null) {
-                redirectUrl += "?" + request.getQueryString();
-            }
-            response.sendRedirect(redirectUrl);
-            return true;
-        } else if (weblogRequestContext != null && trailingSlash) {
-            // this means that someone has accessed a weblog url and included
-            // a trailing slash, like /<weblog>/entry/<anchor>/ which is not
-            // supported, so we need to offer up a 404 Not Found
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return true;
         }
 
         // calculate forward url
