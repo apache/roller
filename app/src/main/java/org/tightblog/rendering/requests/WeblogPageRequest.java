@@ -48,7 +48,6 @@ public class WeblogPageRequest extends WeblogRequest {
     private String tag = null;
     private String query = null;
 
-    private int pageNum = 0;
     // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
     private boolean noIndex = false;
 
@@ -169,15 +168,9 @@ public class WeblogPageRequest extends WeblogRequest {
         }
 
         // page request param is supported in all views
-        if (request.getParameter("page") != null) {
-            String pageInt = request.getParameter("page");
+        if (getPageNum() > 0) {
             // only index first pages (i.e., those without this parameter)
             noIndex = true;
-            try {
-                this.pageNum = Integer.parseInt(pageInt);
-            } catch (NumberFormatException e) {
-                // ignored, bad input
-            }
         }
 
         if (log.isDebugEnabled()) {
@@ -187,7 +180,6 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("weblogCategory = {}", weblogCategoryName);
             log.debug("tag = {}", tag);
             log.debug("template = {}", customPageName);
-            log.debug("pageNum = {}", pageNum);
             log.debug("search query = {}", query);
         }
     }
@@ -228,10 +220,6 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public String getWeblogDate() {
         return weblogDate;
-    }
-
-    public int getPageNum() {
-        return pageNum;
     }
 
     public String getTag() {

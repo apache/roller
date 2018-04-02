@@ -188,8 +188,8 @@ public class FeedProcessor extends AbstractProcessor {
             key.append("/tag/").append(tag);
         }
 
-        if (feedRequest.getPage() > 0) {
-            key.append("/page=").append(feedRequest.getPage());
+        if (feedRequest.getPageNum() > 0) {
+            key.append("/page=").append(feedRequest.getPageNum());
         }
 
         // site wide feeds must be aware of the last update date of any weblog

@@ -178,7 +178,7 @@ public class FeedProcessorTest {
         WeblogFeedRequest request = new WeblogFeedRequest();
         request.setWeblogHandle("bobsblog");
         request.setCategoryName("sports");
-        request.setPage(14);
+        request.setPageNum(14);
 
         String test1 = processor.generateKey(request, false);
         assertEquals("bobsblog/cat/sports/page=14", test1);
@@ -187,7 +187,7 @@ public class FeedProcessorTest {
         request.setCategoryName(null);
         request.setTag("skiing");
         request.setSiteWideFeed(true);
-        request.setPage(0);
+        request.setPageNum(0);
 
         Instant testTime = Instant.now();
         webloggerProperties.setLastWeblogChange(testTime);

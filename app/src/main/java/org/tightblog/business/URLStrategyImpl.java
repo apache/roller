@@ -172,15 +172,13 @@ public class URLStrategyImpl implements URLStrategy {
     public String getWeblogFeedURL(Weblog weblog, String category, String tag) {
         String url = getWeblogURL(weblog, true) + "feed";
 
-        Map<String, String> params = new HashMap<>();
         if (category != null && category.trim().length() > 0) {
-            params.put("cat", Utilities.encode(category));
-        }
-        if (tag != null && tag.trim().length() > 0) {
-            params.put("tag", Utilities.encode(tag));
+            url += "/category/" + Utilities.encode(category);
+        } else if (tag != null && tag.trim().length() > 0) {
+            url += "/tag/" + Utilities.encode(tag);
         }
 
-        return url + Utilities.getQueryString(params);
+        return url;
     }
 
     /* Weblog URL before any params added */
