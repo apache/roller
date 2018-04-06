@@ -178,7 +178,7 @@ public class RequestMappingFilter implements Filter {
         return forwardUrl;
     }
 
-    protected String generateForwardUrl(String processor, String handle, String context, String data) {
+    String generateForwardUrl(String processor, String handle, String context, String data) {
         String forwardUrl = processor + "/" + handle;
         if (context != null) {
             forwardUrl += "/" + context;
