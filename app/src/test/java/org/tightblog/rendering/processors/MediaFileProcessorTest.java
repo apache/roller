@@ -65,7 +65,7 @@ public class MediaFileProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
         mediaFileRequest = new WeblogRequest();
-        mediaFileRequest.setPathInfo("abc");
+        mediaFileRequest.setExtraPathInfo("abc");
         processor = new MediaFileProcessor();
         WeblogRequest.Creator wprCreator = mock(WeblogRequest.Creator.class);
         when(wprCreator.create(mockRequest)).thenReturn(mediaFileRequest);
@@ -89,13 +89,13 @@ public class MediaFileProcessorTest {
 
     @Test
     public void test404OnNoPathInfo() throws IOException {
-        mediaFileRequest.setPathInfo(null);
+        mediaFileRequest.setExtraPathInfo(null);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockMFM, never()).getMediaFile(anyString(), anyBoolean());
         verify(mockResponse).sendError(SC_NOT_FOUND);
 
         Mockito.clearInvocations(mockResponse, mockMFM);
-        mediaFileRequest.setPathInfo("/");
+        mediaFileRequest.setExtraPathInfo("/");
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockMFM, never()).getMediaFile(anyString(), anyBoolean());
         verify(mockResponse).sendError(SC_NOT_FOUND);

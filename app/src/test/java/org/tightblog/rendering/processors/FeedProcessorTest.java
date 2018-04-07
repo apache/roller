@@ -127,7 +127,7 @@ public class FeedProcessorTest {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
 
-        CachedContent cachedContent = new CachedContent(10, Template.ComponentType.ATOMFEED.getContentType());
+        CachedContent cachedContent = new CachedContent(10, Template.ComponentType.ATOMFEED);
         cachedContent.getCachedWriter().print("mytest1");
         cachedContent.flush();
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
@@ -154,7 +154,7 @@ public class FeedProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
-        CachedContent renderedContent = new CachedContent(10, Template.ComponentType.ATOMFEED.getContentType());
+        CachedContent renderedContent = new CachedContent(10, Template.ComponentType.ATOMFEED);
         renderedContent.getCachedWriter().print("mytest24");
         renderedContent.flush();
 
@@ -177,16 +177,16 @@ public class FeedProcessorTest {
         // comment & category test
         WeblogFeedRequest request = new WeblogFeedRequest();
         request.setWeblogHandle("bobsblog");
-        request.setCategoryName("sports");
+        request.setWeblogCategoryName("sports");
         request.setPageNum(14);
 
         String test1 = processor.generateKey(request, false);
         assertEquals("bobsblog/cat/sports/page=14", test1);
 
         // entry & tag test, site-wide
-        request.setCategoryName(null);
+        request.setWeblogCategoryName(null);
         request.setTag("skiing");
-        request.setSiteWideFeed(true);
+        request.setSiteWide(true);
         request.setPageNum(0);
 
         Instant testTime = Instant.now();

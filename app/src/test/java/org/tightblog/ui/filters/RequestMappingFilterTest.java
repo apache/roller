@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tightblog.ui.filters;
 
 import org.junit.Before;
@@ -159,7 +174,7 @@ public class RequestMappingFilterTest {
 
         String feedTest = filter.calculateForwardUrl(mockRequest, "handle", "feed", "data");
         assertEquals(filter.generateForwardUrl(FeedProcessor.PATH, "handle", null, "data"), feedTest);
-        String mediaTest = filter.calculateForwardUrl(mockRequest, "handle", "mediaresource", "data");
+        String mediaTest = filter.calculateForwardUrl(mockRequest, "handle", "mediafile", "data");
         assertEquals(filter.generateForwardUrl(MediaFileProcessor.PATH, "handle", null, "data"), mediaTest);
         String searchTest = filter.calculateForwardUrl(mockRequest, "handle", "search", "data");
         assertEquals(filter.generateForwardUrl(SearchProcessor.PATH, "handle", "search", null), searchTest);

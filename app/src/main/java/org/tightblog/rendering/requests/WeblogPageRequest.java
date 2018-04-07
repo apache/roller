@@ -51,86 +51,54 @@ public class WeblogPageRequest extends WeblogRequest {
     // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
     private boolean noIndex = false;
 
-    // heavyweight attributes, populated by processors where appropriate
+    // attributes populated by processors where appropriate
     private Template template = null;
     private WeblogEntry weblogEntry = null;
-
-    // Page hits
-    private boolean weblogPageHit = true;
 
     public WeblogPageRequest() {
     }
 
     static public class Creator {
-        public WeblogPageRequest create(HttpServletRequest request) {
-            return new WeblogPageRequest(request);
+        public WeblogPageRequest create(HttpServletRequest servletRequest) {
+            WeblogPageRequest weblogPageRequest = new WeblogPageRequest();
+            WeblogRequest.parseRequest(weblogPageRequest, servletRequest);
+            weblogPageRequest.parseExtraPathInfo();
+            return weblogPageRequest;
         }
     }
 
-    /**
-     * Construct the WeblogPageRequest by parsing the incoming url
-     */
-    public WeblogPageRequest(HttpServletRequest request) {
-        // let our parent take care of their business first
-        // parent determines weblog handle
-        super(request);
-
-        // we only want the path info left over from after our parents parsing
-        String pathInfo = this.getPathInfo();
-
-        // parse the request object and figure out what we've got
-        log.debug("parsing path {}", pathInfo);
-
+    private void parseExtraPathInfo() {
         /*
-         * parse path info
-         *
-         * we expect one of the following forms of url ...
+         * This subclass handles the following forms of url:
          *
          * /entry/<anchor> - permalink
          * /date/<YYYYMMDD> - date collection view
-         * /category/<category> - category collection view
          * /tag/<tag> - tag
+         * /category/<category> - category collection view
          * /category/<category>/tag/<tag> - tag under a category
+         * /search?q=xyz[&cat=Sports] - search on xyz (optionally under given category)
          * /page/<pagelink> - custom page
-         * /search?q=xyz[&cat=Sports] - search on xyz (optionally under single category)
-         *
          * path info may be null, which indicates the weblog homepage
          */
-        if (pathInfo != null && pathInfo.trim().length() > 0) {
+        if (extraPathInfo != null && extraPathInfo.trim().length() > 0) {
 
-            String[] pathElements = pathInfo.split("/", 4);
+            String[] pathElements = extraPathInfo.split("/", 4);
 
             // the first part of the path always represents the context
             this.context = pathElements[0];
 
             // now check the rest of the path and extract other details
-            if ("search".equals(this.context)) {
-                 if (pathElements.length == 1) {
-                     // get the query parameter
-                     if (request.getParameter("q") != null &&
-                             request.getParameter("q").trim().length() > 0) {
-                         this.query = request.getParameter("q");
-                     }
-
-                     // further filter on category parameter, if any
-                     if (request.getParameter("cat") != null && request.getParameter("cat").trim().length() > 0) {
-                         this.weblogCategoryName = Utilities.decode(request.getParameter("cat"));
-                     }
-                 } else {
-                     throw new IllegalArgumentException("Invalid path for search: " + pathInfo);
-                 }
-            } else if ("category".equals(this.context) && (pathElements.length == 2 || pathElements.length == 4)) {
+            if ("category".equals(this.context) && (pathElements.length == 2 || pathElements.length == 4)) {
                 this.weblogCategoryName = Utilities.decode(pathElements[1]);
 
                 if (pathElements.length == 4) {
                     if ("tag".equals(pathElements[2])) {
                         tag = pathElements[3];
                     } else {
-                        throw new IllegalArgumentException("Invalid path: " + pathInfo);
+                        throw new IllegalArgumentException("Invalid path: " + extraPathInfo);
                     }
                 }
             } else if (pathElements.length == 2) {
-
                 if ("entry".equals(this.context)) {
                     this.weblogEntryAnchor = Utilities.decode(pathElements[1]);
                 } else if ("date".equals(this.context)) {
@@ -140,34 +108,30 @@ public class WeblogPageRequest extends WeblogRequest {
                         // (encourages appearance of blog home URL or permalinks instead)
                         noIndex = true;
                     } else {
-                        throw new IllegalArgumentException("Invalid date: " + request.getRequestURL());
+                        throw new IllegalArgumentException("Invalid date found for request: "
+                                + extraPathInfo);
                     }
                 } else if ("page".equals(this.context)) {
                     this.customPageName = pathElements[1];
 
-                    // css pages should not increment weblog page hits
-                    if (pathElements[1].contains(".")) {
-                        weblogPageHit = false;
-                    }
-
                     // Custom pages may have a date parameter, e.g., the month to display on a blog archive page
-                    if (request.getParameter("date") != null) {
-                        String date = request.getParameter("date");
-                        if (this.isValidDateString(date)) {
-                            this.weblogDate = date;
-                        }
+                    String date = getRequestParameter("date");
+                    if (this.isValidDateString(date)) {
+                        this.weblogDate = date;
                     }
                 } else if ("tag".equals(this.context)) {
                     tag = pathElements[1];
                 } else {
-                    throw new IllegalArgumentException("Context \"" + this.context + "\" not supported, " + request.getRequestURL());
+                    throw new IllegalArgumentException("Context \"" + this.context + "\" not supported");
                 }
+            } else if ("search".equals(this.context) && pathElements.length == 1) {
+                this.query = getRequestParameter("q");
+                this.weblogCategoryName = Utilities.decode(getRequestParameter("cat"));
             } else {
-                throw new IllegalArgumentException("invalid page request: " + request.getRequestURL());
+                throw new IllegalArgumentException("Invalid page request: " + extraPathInfo);
             }
         }
 
-        // page request param is supported in all views
         if (getPageNum() > 0) {
             // only index first pages (i.e., those without this parameter)
             noIndex = true;
@@ -226,6 +190,10 @@ public class WeblogPageRequest extends WeblogRequest {
         return tag;
     }
 
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public Template getTemplate() {
         return template;
     }
@@ -242,14 +210,6 @@ public class WeblogPageRequest extends WeblogRequest {
         this.weblogEntry = weblogEntry;
     }
 
-    public boolean isWeblogPageHit() {
-        return weblogPageHit;
-    }
-
-    public void setWeblogPageHit(boolean weblogPageHit) {
-        this.weblogPageHit = weblogPageHit;
-    }
-
     public boolean isNoIndex() {
         return noIndex;
     }
@@ -261,4 +221,5 @@ public class WeblogPageRequest extends WeblogRequest {
     public void setQuery(String query) {
         this.query = query;
     }
+
 }
