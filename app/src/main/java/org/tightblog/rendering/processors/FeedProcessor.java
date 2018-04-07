@@ -93,19 +93,19 @@ public class FeedProcessor extends AbstractProcessor {
         this.strategy = strategy;
     }
 
-    private WeblogFeedRequest.Creator weblogFeedRequestCreator;
+    private WeblogFeedRequest.Creator WeblogFeedRequestCreator;
 
-    void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator weblogFeedRequestCreator) {
-        this.weblogFeedRequestCreator = weblogFeedRequestCreator;
+    void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator WeblogFeedRequestCreator) {
+        this.WeblogFeedRequestCreator = WeblogFeedRequestCreator;
     }
 
     public FeedProcessor() {
-        this.weblogFeedRequestCreator = new WeblogFeedRequest.Creator();
+        this.WeblogFeedRequestCreator = new WeblogFeedRequest.Creator();
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request);
+        WeblogFeedRequest feedRequest = WeblogFeedRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);
         if (weblog == null) {
@@ -116,10 +116,10 @@ public class FeedProcessor extends AbstractProcessor {
         }
 
         // Is this the site-wide weblog? If so, make a combined feed using all blogs...
-        feedRequest.setSiteWideFeed(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
+        feedRequest.setSiteWide(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
 
         // determine the lastModified date for this content
-        Instant lastModified = (feedRequest.isSiteWideFeed()) ? strategy.getWebloggerProperties().getLastWeblogChange()
+        Instant lastModified = (feedRequest.isSiteWide()) ? strategy.getWebloggerProperties().getLastWeblogChange()
                 : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
@@ -129,7 +129,7 @@ public class FeedProcessor extends AbstractProcessor {
         }
 
         // check cache before manually generating
-        String cacheKey = generateKey(feedRequest, feedRequest.isSiteWideFeed());
+        String cacheKey = generateKey(feedRequest, feedRequest.isSiteWide());
         CachedContent rendererOutput = weblogFeedCache.get(cacheKey, lastModified);
 
         boolean newContent = false;
@@ -148,7 +148,7 @@ public class FeedProcessor extends AbstractProcessor {
                 rendererOutput = thymeleafRenderer.render(template, model);
             }
 
-            response.setContentType(rendererOutput.getContentType());
+            response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.setHeader("Cache-Control","no-cache");
@@ -178,14 +178,10 @@ public class FeedProcessor extends AbstractProcessor {
         StringBuilder key = new StringBuilder();
         key.append(feedRequest.getWeblogHandle());
 
-        if (feedRequest.getCategoryName() != null) {
-            String cat = feedRequest.getCategoryName();
-            cat = Utilities.encode(cat);
-            key.append("/cat/").append(cat);
+        if (feedRequest.getWeblogCategoryName() != null) {
+            key.append("/cat/").append(Utilities.encode(feedRequest.getWeblogCategoryName()));
         } else if (feedRequest.getTag() != null) {
-            String tag = feedRequest.getTag();
-            tag = Utilities.encode(tag);
-            key.append("/tag/").append(tag);
+            key.append("/tag/").append(Utilities.encode(feedRequest.getTag()));
         }
 
         if (feedRequest.getPageNum() > 0) {

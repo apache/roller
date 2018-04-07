@@ -122,7 +122,7 @@ public class SearchProcessor extends AbstractProcessor {
         // render content
         try {
             CachedContent rendererOutput = thymeleafRenderer.render(searchRequest.getTemplate(), model);
-            response.setContentType(rendererOutput.getContentType());
+            response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {

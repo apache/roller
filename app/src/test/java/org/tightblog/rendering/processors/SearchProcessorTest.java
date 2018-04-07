@@ -79,7 +79,7 @@ public class SearchProcessorTest {
 
         ThymeleafRenderer mockThymeleafRenderer = mock(ThymeleafRenderer.class);
         when(mockThymeleafRenderer.render(any(), any()))
-                .thenReturn(new CachedContent(10, "text/html"));
+                .thenReturn(new CachedContent(10, Template.ComponentType.WEBLOG));
 
         processor = new SearchProcessor();
         processor.setApplicationContext(mockApplicationContext);
@@ -123,13 +123,13 @@ public class SearchProcessorTest {
         assertEquals(wtWL, pageRequest.getTemplate());
         // should complete with no error
         verify(mockResponse, never()).sendError(SC_NOT_FOUND);
+        verify(mockResponse).setContentType("text/html");
 
         Mockito.clearInvocations(mockResponse, mockSOS);
         when(mockWeblogTheme.getTemplateByAction(Template.ComponentType.SEARCH_RESULTS)).thenReturn(wtSR);
         processor.getSearchResults(mockRequest, mockResponse);
         assertEquals(wtSR, pageRequest.getTemplate());
         // test calls on Response object made
-        verify(mockResponse).setContentType("text/html");
         verify(mockResponse).setContentLength(0);
         verify(mockSOS).write(any());
         // should complete with no error

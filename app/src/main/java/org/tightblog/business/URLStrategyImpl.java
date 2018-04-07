@@ -150,7 +150,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getMediaFileURL(Weblog weblog, String fileAnchor) {
-        return getWeblogURL(weblog, true) + "mediaresource/" + Utilities.encode(fileAnchor);
+        return getWeblogURL(weblog, true) + "mediafile/" + Utilities.encode(fileAnchor);
     }
 
     @Override

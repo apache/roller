@@ -277,9 +277,10 @@ public class Utilities {
     public static String encode(String str) {
         String encodedStr = str;
         try {
-            encodedStr = URLEncoder.encode(str, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            // ignored
+            if (encodedStr != null) {
+                encodedStr = URLEncoder.encode(str, "UTF-8");
+            }
+        } catch (UnsupportedEncodingException ignored) {
         }
         return encodedStr;
     }
@@ -290,9 +291,10 @@ public class Utilities {
     public static String decode(String str) {
         String decodedStr = str;
         try {
-            decodedStr = URLDecoder.decode(str, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            // ignored
+            if (decodedStr != null) {
+                decodedStr = URLDecoder.decode(str, "UTF-8");
+            }
+        } catch (UnsupportedEncodingException ignored) {
         }
         return decodedStr;
     }

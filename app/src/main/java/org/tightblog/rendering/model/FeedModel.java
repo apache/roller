@@ -77,7 +77,7 @@ public class FeedModel implements Model {
      * Get category path or name specified by request.
      */
     public String getCategoryName() {
-        return feedRequest.getCategoryName();
+        return feedRequest.getWeblogCategoryName();
     }
 
     /**
@@ -89,7 +89,7 @@ public class FeedModel implements Model {
     }
 
     public boolean isSiteWideFeed() {
-        return feedRequest.isSiteWideFeed();
+        return feedRequest.isSiteWide();
     }
 
     /**
@@ -120,8 +120,8 @@ public class FeedModel implements Model {
 
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(weblogEntryManager, urlStrategy,
-                    feedRequest.isSiteWideFeed() ? null : feedRequest.getWeblog(),
-                    feedRequest.getCategoryName(), feedRequest.getTag(),
+                    feedRequest.isSiteWide() ? null : feedRequest.getWeblog(),
+                    feedRequest.getWeblogCategoryName(), feedRequest.getTag(),
                     feedRequest.getPageNum(),
                     WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage(),
                     -1, feedRequest.getWeblog());

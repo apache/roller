@@ -23,66 +23,53 @@ package org.tightblog.rendering.requests;
 import javax.servlet.http.HttpServletRequest;
 
 import org.tightblog.util.Utilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a request for a TightBlog weblog feed.
- * We use this class as a helper to parse an incoming url and sort out the
- * information embedded in the url for later use.
  */
 public class WeblogFeedRequest extends WeblogRequest {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogFeedRequest.class);
-    private String categoryName = null;
+    private String weblogCategoryName = null;
     private String tag = null;
-    private boolean siteWideFeed = false;
 
     public WeblogFeedRequest() {
     }
 
     static public class Creator {
-        public WeblogFeedRequest create(HttpServletRequest request) {
-            return new WeblogFeedRequest(request);
+        public WeblogFeedRequest create(HttpServletRequest servletRequest) {
+            WeblogFeedRequest feedRequest = new WeblogFeedRequest();
+            WeblogRequest.parseRequest(feedRequest, servletRequest);
+            feedRequest.parseFeedRequestInfo();
+            return feedRequest;
         }
     }
 
     /**
-     * Construct the WeblogFeedRequest by parsing the incoming url
+     * Handles:
+     * /feed - Atom feed
+     * /feed/category/<category> - Atom feed of category
+     * /feed/tag/<tag> - Atom feed of tag
      */
-    public WeblogFeedRequest(HttpServletRequest request) {
+    private void parseFeedRequestInfo() {
+        if (extraPathInfo != null && extraPathInfo.trim().length() > 0) {
+            String[] pathElements = extraPathInfo.split("/", 3);
 
-        // let our parent take care of their business first
-        // parent determines weblog handle and locale if specified
-        super(request);
-
-        // we only want the path info left over from after our parents parsing
-        String pathInfo = this.getPathInfo();
-
-        if (pathInfo != null && pathInfo.trim().length() > 0) {
-            String[] pathElements = pathInfo.split("/", 2);
-
-            if (pathElements.length == 2) {
-                if ("category".equals(pathElements[0])) {
-                    categoryName = Utilities.decode(pathElements[1].replace("+", "%2B"));
-                } else if ("tag".equals(pathElements[0])) {
-                    tag = Utilities.decode(pathElements[1].toLowerCase().replace("+", "%2B"));
+            if (pathElements.length == 3) {
+                if ("category".equals(pathElements[1])) {
+                    weblogCategoryName = Utilities.decode(pathElements[2].replace("+", "%2B"));
+                } else if ("tag".equals(pathElements[1])) {
+                    tag = Utilities.decode(pathElements[2].toLowerCase().replace("+", "%2B"));
                 }
             }
         }
-
-        if (log.isDebugEnabled()) {
-            log.debug("category = " + categoryName);
-            log.debug("tag = " + tag);
-        }
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public String getWeblogCategoryName() {
+        return weblogCategoryName;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setWeblogCategoryName(String weblogCategoryName) {
+        this.weblogCategoryName = weblogCategoryName;
     }
 
     public String getTag() {
@@ -91,13 +78,5 @@ public class WeblogFeedRequest extends WeblogRequest {
 
     public void setTag(String tag) {
         this.tag = tag;
-    }
-
-    public boolean isSiteWideFeed() {
-        return siteWideFeed;
-    }
-
-    public void setSiteWideFeed(boolean siteWideFeed) {
-        this.siteWideFeed = siteWideFeed;
     }
 }

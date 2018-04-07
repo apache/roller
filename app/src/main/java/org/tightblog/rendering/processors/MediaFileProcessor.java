@@ -57,14 +57,14 @@ public class MediaFileProcessor extends AbstractProcessor {
     @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
     @Autowired
     private MediaFileManager mediaFileManager;
 
-    public void setMediaFileManager(MediaFileManager mediaFileManager) {
+    void setMediaFileManager(MediaFileManager mediaFileManager) {
         this.mediaFileManager = mediaFileManager;
     }
 
@@ -74,7 +74,7 @@ public class MediaFileProcessor extends AbstractProcessor {
         this.weblogRequestCreator = new WeblogRequest.Creator();
     }
 
-    public void setWeblogRequestCreator(WeblogRequest.Creator creator) {
+    void setWeblogRequestCreator(WeblogRequest.Creator creator) {
         this.weblogRequestCreator = creator;
     }
 
@@ -92,7 +92,7 @@ public class MediaFileProcessor extends AbstractProcessor {
 
         MediaFile mediaFile = null;
         // we want only the path info left over from after the weblog parsing
-        String pathInfo = incomingRequest.getPathInfo();
+        String pathInfo = incomingRequest.getExtraPathInfo();
         if (pathInfo != null) {
             if (pathInfo.startsWith("/")) {
                 pathInfo = pathInfo.substring(1);

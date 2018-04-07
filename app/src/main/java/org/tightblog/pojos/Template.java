@@ -42,17 +42,17 @@ public interface Template {
     @XmlEnum
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum ComponentType {
-        @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, "template.weblog.description"),
-        @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, "template.permalink.description"),
-        @XmlEnumValue("searchResults")SEARCH_RESULTS("Search Results", "text/html", true, "template.search.description"),
-        @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, "template.stylesheet.description"),
-        @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false,
+        @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, true, "template.weblog.description"),
+        @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, true, "template.permalink.description"),
+        @XmlEnumValue("searchResults")SEARCH_RESULTS("Search Results", "text/html", true, true, "template.search.description"),
+        @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, false, "template.stylesheet.description"),
+        @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false, false,
                 "template.javascript.description"),
-        @XmlEnumValue("atomFeed")ATOMFEED("Atom Feed", "application/atom+xml; charset=utf-8", false,
+        @XmlEnumValue("atomFeed")ATOMFEED("Atom Feed", "application/atom+xml; charset=utf-8", false, true,
                 "template.atomFeed.description"),
-        @XmlEnumValue("customInternal")CUSTOM_INTERNAL("Custom internal", "text/html", false,
+        @XmlEnumValue("customInternal")CUSTOM_INTERNAL("Custom internal", "text/html", false, false,
                 "template.customInternal.description"),
-        @XmlEnumValue("customExternal")CUSTOM_EXTERNAL("Custom external", "text/html", false,
+        @XmlEnumValue("customExternal")CUSTOM_EXTERNAL("Custom external", "text/html", false, true,
                 "template.customExternal.description");
 
         // fromObject() allows for enum deserialization (used with front-end template saves)
@@ -70,10 +70,14 @@ public interface Template {
 
         private final String descriptionProperty;
 
-        ComponentType(String readableName, String contentType, boolean singleton, String descriptionProperty) {
+        private final boolean incrementsHitCount;
+
+        ComponentType(String readableName, String contentType, boolean singleton, boolean incrementsHitCount,
+                      String descriptionProperty) {
             this.readableName = readableName;
             this.contentType = contentType;
             this.singleton = singleton;
+            this.incrementsHitCount = incrementsHitCount;
             this.descriptionProperty = descriptionProperty;
         }
 
@@ -82,7 +86,7 @@ public interface Template {
         }
 
         public String getContentType() {
-            return contentType + "; charset=utf-8";
+            return contentType;
         }
 
         public boolean isSingleton() {
@@ -95,6 +99,10 @@ public interface Template {
 
         public String getDescriptionProperty() {
             return descriptionProperty;
+        }
+
+        public boolean isIncrementsHitCount() {
+            return incrementsHitCount;
         }
 
         // so JSON will serialize name

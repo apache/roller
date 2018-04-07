@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Represents a request to a weblog.
  * <p>
  * This is a fairly generic parsed request which is only trying to figure out
- * the elements of a weblog request which apply to all weblogs.  We try to
+ * the elements of a weblog request which apply to all requests.  We try to
  * determine the weblogHandle, and then what extra path info remains.  The basic
  * format is like this ...
  * <p>
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * All weblog urls require a weblogHandle, so we ensure that part of the url is
  * properly specified, and path info is always optional.
  * <p>
- * NOTE: this class purposely exposes a getPathInfo() method which provides the
+ * NOTE: this class purposely exposes a getExtraPathInfo() method which provides the
  * path info specified by the request that has not been parsed by this
  * particular class.  this makes it relatively easy for subclasses to extend
  * this class and simply pick up where it left off in the parsing process.
@@ -58,45 +58,44 @@ public class WeblogRequest {
 
     // lightweight attributes
     private String weblogHandle = null;
-    private String pathInfo = null;
     private String queryString = null;
     private String authenticatedUser = null;
     private DeviceType deviceType = DeviceType.NORMAL;
     private HttpServletRequest request;
     private int pageNum = 0;
+    String extraPathInfo = null;
 
-    // heavyweight attributes populated by processors
+    // attributes populated by processors where appropriate
     private Weblog weblog = null;
     private User blogger = null;
+    private boolean siteWide = false;
 
     public WeblogRequest() {
     }
 
     static public class Creator {
-        public WeblogRequest create(HttpServletRequest request) {
-            return new WeblogRequest(request);
+        public WeblogRequest create(HttpServletRequest servletRequest) {
+            WeblogRequest weblogRequest = new WeblogRequest();
+            WeblogRequest.parseRequest(weblogRequest, servletRequest);
+            return weblogRequest;
         }
     }
 
-    public WeblogRequest(HttpServletRequest request) {
-
-        this.request = request;
-        this.queryString = request.getQueryString();
+    static void parseRequest(WeblogRequest wreq, HttpServletRequest sreq) {
+        wreq.request = sreq;
+        wreq.queryString = sreq.getQueryString();
+        wreq.deviceType = Utilities.getDeviceType(sreq);
 
         // login status
-        java.security.Principal principal = request.getUserPrincipal();
+        java.security.Principal principal = sreq.getUserPrincipal();
         if (principal != null) {
-            this.authenticatedUser = principal.getName();
+            wreq.authenticatedUser = principal.getName();
         }
 
-        // set the detected type of the request
-        deviceType = Utilities.getDeviceType(request);
-
-        String path = request.getPathInfo();
-
+        String path = sreq.getPathInfo();
         log.debug("parsing path {}", path);
 
-        // first, cleanup extra slashes and extract the weblog weblogHandle
+        // first, cleanup extra slashes and extract the weblog handle
         if (path != null && path.trim().length() > 1) {
 
             // strip off the leading slash
@@ -109,32 +108,27 @@ public class WeblogRequest {
 
             String[] pathElements = path.split("/", 2);
             if (pathElements[0].trim().length() > 0) {
-                this.weblogHandle = pathElements[0];
+                wreq.weblogHandle = pathElements[0];
             } else {
                 // no weblogHandle in path info
-                throw new IllegalArgumentException("Not a weblog request, " + request.getRequestURL());
+                throw new IllegalArgumentException("Not a weblog request, " + sreq.getRequestURL());
             }
 
             // if there is more left of the path info then hold onto it
             if (pathElements.length == 2) {
-                path = pathElements[1];
-            } else {
-                path = null;
+                wreq.extraPathInfo = pathElements[1];
             }
         }
 
-        if (request.getParameter("page") != null) {
+        // Page number for a specific window of results (e.g., Atom feed or entries under a category)
+        if (sreq.getParameter("page") != null) {
             try {
-                pageNum = Integer.parseInt(request.getParameter("page"));
+                wreq.pageNum = Integer.parseInt(sreq.getParameter("page"));
             } catch (NumberFormatException ignored) {
             }
         }
 
-        if (path != null && path.trim().length() > 0) {
-            this.pathInfo = path;
-        }
-
-        log.debug("handle = {}, pathInfo = {}, pageNum = {}", weblogHandle, pathInfo, pageNum);
+        log.debug("handle = {}, extraPathInfo = {}, pageNum = {}", wreq.weblogHandle, wreq.extraPathInfo, wreq.pageNum);
     }
 
     public String getWeblogHandle() {
@@ -145,12 +139,12 @@ public class WeblogRequest {
         this.weblogHandle = weblogHandle;
     }
 
-    public String getPathInfo() {
-        return pathInfo;
+    public String getExtraPathInfo() {
+        return extraPathInfo;
     }
 
-    public void setPathInfo(String pathInfo) {
-        this.pathInfo = pathInfo;
+    public void setExtraPathInfo(String extraPathInfo) {
+        this.extraPathInfo = extraPathInfo;
     }
 
     public Weblog getWeblog() {
@@ -208,5 +202,13 @@ public class WeblogRequest {
 
     public void setPageNum(int pageNum) {
         this.pageNum = pageNum;
+    }
+
+    public boolean isSiteWide() {
+        return siteWide;
+    }
+
+    public void setSiteWide(boolean siteWide) {
+        this.siteWide = siteWide;
     }
 }

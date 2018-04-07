@@ -140,9 +140,10 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         // is this the site-wide weblog?
-        boolean isSiteWide = themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide();
+        incomingRequest.setSiteWide(themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide());
 
-        Instant lastModified = (isSiteWide) ? strategy.getWebloggerProperties().getLastWeblogChange() : weblog.getLastModified();
+        Instant lastModified = (incomingRequest.isSiteWide()) ? strategy.getWebloggerProperties().getLastWeblogChange()
+                : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
         if (lastModified.toEpochMilli() <= getBrowserCacheExpireDate(request)) {
@@ -160,7 +161,7 @@ public class PageProcessor extends AbstractProcessor {
         CachedContent rendererOutput = null;
         boolean newContent = false;
         if (commentForm == null) {
-            cacheKey = generateKey(incomingRequest, isSiteWide);
+            cacheKey = generateKey(incomingRequest);
             rendererOutput = weblogPageCache.get(cacheKey, lastModified);
             log.debug((rendererOutput != null ? "HIT" : "MISS") + " {}", cacheKey);
         }
@@ -215,7 +216,7 @@ public class PageProcessor extends AbstractProcessor {
                 Map<String, Object> model = getModelMap("pageModelSet", initData);
 
                 // Load special models for site-wide blog
-                if (isSiteWide) {
+                if (incomingRequest.isSiteWide()) {
                     model.putAll(getModelMap("siteModelSet", initData));
                 }
 
@@ -224,13 +225,13 @@ public class PageProcessor extends AbstractProcessor {
             }
 
             // write rendered content to response
-            response.setContentType(rendererOutput.getContentType());
+            response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.setHeader("Cache-Control","no-cache");
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.getOutputStream().write(rendererOutput.getContent());
 
-            if (incomingRequest.isWeblogPageHit()) {
+            if (rendererOutput.getComponentType().isIncrementsHitCount()) {
                 weblogManager.incrementHitCount(weblog);
             }
 
@@ -248,7 +249,7 @@ public class PageProcessor extends AbstractProcessor {
     /**
      * Generate a cache key from a parsed weblog page request.
      */
-    String generateKey(WeblogPageRequest request, boolean isSiteWide) {
+    String generateKey(WeblogPageRequest request) {
         StringBuilder key = new StringBuilder();
         key.append(request.getWeblogHandle());
 
@@ -293,7 +294,7 @@ public class PageProcessor extends AbstractProcessor {
 
         // site wide feeds must be aware of the last update date of any weblog
         // as they get refreshed whenever any of blogs do.
-        if (isSiteWide) {
+        if (request.isSiteWide()) {
             key.append("/lastUpdate=").append(
                     strategy.getWebloggerProperties().getLastWeblogChange().toEpochMilli());
         }

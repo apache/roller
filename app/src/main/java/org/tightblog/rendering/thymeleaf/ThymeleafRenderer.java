@@ -40,8 +40,7 @@ public class ThymeleafRenderer {
     }
 
     public CachedContent render(Template template, Map<String, Object> model) throws IOException, WebloggerException {
-        String contentType = template.getRole().getContentType();
-        CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, contentType);
+        CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, template.getRole());
         Writer writer = rendererOutput.getCachedWriter();
         try {
             Context ctx = new Context();

@@ -26,7 +26,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import org.tightblog.pojos.WeblogCategory;
+import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class CachedContent {
     private byte[] content = new byte[0];
 
     // content-type of data in byte array
-    private String contentType = null;
+    private ComponentType componentType = null;
 
     // Use a byte array output stream to cache the output bytes
     private transient ByteArrayOutputStream outstream = null;
@@ -50,8 +50,8 @@ public class CachedContent {
     // The PrintWriter that users will be writing to
     private transient PrintWriter cachedWriter = null;
 
-    public CachedContent(int size, String contentType) {
-        this.contentType = contentType;
+    public CachedContent(int size, ComponentType componentType) {
+        this.componentType = componentType;
         this.outstream = new ByteArrayOutputStream(size > 0 ? size : Utilities.EIGHT_KB_IN_BYTES);
 
         // construct writer from output stream
@@ -78,8 +78,8 @@ public class CachedContent {
         return cachedWriter;
     }
 
-    public String getContentType() {
-        return contentType;
+    public ComponentType getComponentType() {
+        return componentType;
     }
 
     /**

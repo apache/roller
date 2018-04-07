@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Handles weblog specific URLs for the form /<weblog handle>/*
@@ -49,24 +50,29 @@ import java.util.Set;
 @Component("requestMappingFilter")
 public class RequestMappingFilter implements Filter {
 
-    private static Logger log = LoggerFactory.getLogger(RequestMappingFilter.class);
+    private final static Logger log = LoggerFactory.getLogger(RequestMappingFilter.class);
+
+    private final static Pattern TRAILING_SLASHES = Pattern.compile("/+$");
 
     @Resource
     private Set<String> invalidWeblogHandles;
 
-    public void setInvalidWeblogHandles(Set<String> invalidWeblogHandles) {
+    void setInvalidWeblogHandles(Set<String> invalidWeblogHandles) {
         this.invalidWeblogHandles = invalidWeblogHandles;
     }
 
+    @Override
     public void init(FilterConfig filterConfig) {
     }
 
+    @Override
     public void destroy() {
     }
 
     /**
      * Inspect incoming urls and see if they should be routed.
      */
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
@@ -78,7 +84,7 @@ public class RequestMappingFilter implements Filter {
         }
     }
 
-    protected boolean handleRequest(HttpServletRequest request, HttpServletResponse response)
+    boolean handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String weblogHandle = null;
@@ -86,7 +92,7 @@ public class RequestMappingFilter implements Filter {
         String weblogRequestData = null;
 
         // remove all training slashes from URI
-        String servlet = request.getRequestURI().replaceAll("/+$", "");
+        String servlet = TRAILING_SLASHES.matcher(request.getRequestURI()).replaceAll("");
         log.debug("evaluating [{}]", servlet);
 
         // figure out potential weblog handle
@@ -152,7 +158,7 @@ public class RequestMappingFilter implements Filter {
      * <p>
      * handle is always assumed valid, all other params may be null.
      */
-    protected String calculateForwardUrl(HttpServletRequest request, String handle, String context, String data) {
+    String calculateForwardUrl(HttpServletRequest request, String handle, String context, String data) {
         String forwardUrl = null;
 
         // POST url is presently just for commenting
@@ -168,7 +174,7 @@ public class RequestMappingFilter implements Filter {
                 forwardUrl = generateForwardUrl(PageProcessor.PATH, handle, context, data);
             } else if (context.equals("feed")) {
                 forwardUrl = generateForwardUrl(FeedProcessor.PATH, handle, null, data);
-            } else if (context.equals("mediaresource")) {
+            } else if (context.equals("mediafile")) {
                 forwardUrl = generateForwardUrl(MediaFileProcessor.PATH, handle, null, data);
             } else if (context.equals("search")) {
                 forwardUrl = generateForwardUrl(SearchProcessor.PATH, handle, context, null);
