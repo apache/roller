@@ -127,9 +127,8 @@ public class FeedProcessorTest {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
 
-        CachedContent cachedContent = new CachedContent(10, Template.ComponentType.ATOMFEED);
-        cachedContent.getCachedWriter().print("mytest1");
-        cachedContent.flush();
+        CachedContent cachedContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        cachedContent.setContent("mytest1".getBytes("UTF-8"));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
@@ -154,9 +153,8 @@ public class FeedProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
-        CachedContent renderedContent = new CachedContent(10, Template.ComponentType.ATOMFEED);
-        renderedContent.getCachedWriter().print("mytest24");
-        renderedContent.flush();
+        CachedContent renderedContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        renderedContent.setContent("mytest24".getBytes("UTF-8"));
 
         when(mockThymeleafRenderer.render(any(), any())).thenReturn(renderedContent);
 

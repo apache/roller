@@ -79,7 +79,7 @@ public class SearchProcessorTest {
 
         ThymeleafRenderer mockThymeleafRenderer = mock(ThymeleafRenderer.class);
         when(mockThymeleafRenderer.render(any(), any()))
-                .thenReturn(new CachedContent(10, Template.ComponentType.WEBLOG));
+                .thenReturn(new CachedContent(Template.ComponentType.WEBLOG));
 
         processor = new SearchProcessor();
         processor.setApplicationContext(mockApplicationContext);

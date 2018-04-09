@@ -148,9 +148,8 @@ public class PageProcessorTest {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
 
-        CachedContent cachedContent = new CachedContent(10, ComponentType.WEBLOG);
-        cachedContent.getCachedWriter().print("mytest1");
-        cachedContent.flush();
+        CachedContent cachedContent = new CachedContent(ComponentType.WEBLOG);
+        cachedContent.setContent("mytest1".getBytes("UTF-8"));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
@@ -198,9 +197,8 @@ public class PageProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
-        CachedContent cachedContent = new CachedContent(10, ComponentType.CUSTOM_EXTERNAL);
-        cachedContent.getCachedWriter().print("mytest1");
-        cachedContent.flush();
+        CachedContent cachedContent = new CachedContent(ComponentType.CUSTOM_EXTERNAL);
+        cachedContent.setContent("mytest1".getBytes("UTF-8"));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
         Mockito.clearInvocations(processor, mockResponse, mockWM);

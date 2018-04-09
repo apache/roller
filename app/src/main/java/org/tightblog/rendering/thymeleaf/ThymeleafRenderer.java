@@ -26,8 +26,11 @@ import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.WebloggerException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Map;
 
@@ -40,37 +43,40 @@ public class ThymeleafRenderer {
     }
 
     public CachedContent render(Template template, Map<String, Object> model) throws IOException, WebloggerException {
-        CachedContent rendererOutput = new CachedContent(Utilities.TWENTYFOUR_KB_IN_BYTES, template.getRole());
-        Writer writer = rendererOutput.getCachedWriter();
-        try {
-            Context ctx = new Context();
-            ctx.setVariables(model);
-            templateEngine.process(template.getId(), ctx, writer);
-        } catch (TemplateInputException e) {
-            // Provide end-user friendly error messages for at least two common errors:
-            // unknown method call and unknown property name
-            Throwable firstCause = e.getCause();
-            if (firstCause instanceof ParseException) {
+        CachedContent rendererOutput = new CachedContent(template.getRole());
+
+        try (ByteArrayOutputStream outStream = new ByteArrayOutputStream(Utilities.TWENTYFOUR_KB_IN_BYTES);
+             Writer writer = new PrintWriter(new OutputStreamWriter(outStream, "UTF-8"))) {
+            try {
                 Context ctx = new Context();
-                ctx.setVariable("templateName", template.getName());
-                // output commonly "Exception evaluating Spring EL expression..."
-                ctx.setVariable("firstMessage", firstCause.getMessage());
-                Throwable secondCause = firstCause.getCause();
-                if (secondCause instanceof TemplateProcessingException) {
-                    Throwable thirdCause = secondCause.getCause();
-                    if (thirdCause instanceof SpelEvaluationException || thirdCause instanceof FileNotFoundException) {
-                        // output commonly "unknown [method|property] XXX..."
-                        ctx.setVariable("secondMessage", thirdCause.getClass().getName() + ": " +
-                                thirdCause.getMessage());
+                ctx.setVariables(model);
+                templateEngine.process(template.getId(), ctx, writer);
+            } catch (TemplateInputException e) {
+                // Provide end-user friendly error messages for at least two common errors:
+                // unknown method call and unknown property name
+                Throwable firstCause = e.getCause();
+                if (firstCause instanceof ParseException) {
+                    Context ctx = new Context();
+                    ctx.setVariable("templateName", template.getName());
+                    // output commonly "Exception evaluating Spring EL expression..."
+                    ctx.setVariable("firstMessage", firstCause.getMessage());
+                    Throwable secondCause = firstCause.getCause();
+                    if (secondCause instanceof TemplateProcessingException) {
+                        Throwable thirdCause = secondCause.getCause();
+                        if (thirdCause instanceof SpelEvaluationException || thirdCause instanceof FileNotFoundException) {
+                            // output commonly "unknown [method|property] XXX..."
+                            ctx.setVariable("secondMessage", thirdCause.getClass().getName() + ": " +
+                                    thirdCause.getMessage());
+                        }
                     }
+                    templateEngine.process("error-page", ctx, writer);
+                } else {
+                    throw e;
                 }
-                templateEngine.process("error-page", ctx, writer);
-            } else {
-                throw e;
             }
+            writer.flush();
+            rendererOutput.setContent(outStream.toByteArray());
         }
-        rendererOutput.flush();
-        rendererOutput.close();
         return rendererOutput;
     }
 }
