@@ -107,7 +107,7 @@ public class PreviewProcessorTest {
             when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
             processor.setWeblogManager(mockWM);
             mockRenderer = mock(ThymeleafRenderer.class);
-            cachedContent = new CachedContent(0, Template.ComponentType.JAVASCRIPT);
+            cachedContent = new CachedContent(Template.ComponentType.JAVASCRIPT);
             when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
             processor.setThymeleafRenderer(mockRenderer);
             mockApplicationContext = mock(ApplicationContext.class);
