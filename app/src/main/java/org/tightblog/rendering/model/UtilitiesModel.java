@@ -22,6 +22,9 @@ package org.tightblog.rendering.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.WebloggerProperties;
@@ -40,6 +43,8 @@ import java.util.Map;
  * Model which provides access to system messages and certain properties
  * as well as general utilities.
  */
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class UtilitiesModel implements Model {
     private ZoneId zoneId;
     private I18nMessages messages = null;

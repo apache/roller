@@ -33,6 +33,7 @@
     <context:component-scan base-package="org.tightblog.business,
                                           org.tightblog.business.search,
                                           org.tightblog.rendering.comment,
+                                          org.tightblog.rendering.model,
                                           org.tightblog.ui.filters
                                           org.tightblog.ui.menu">
     </context:component-scan>
@@ -134,47 +135,16 @@
         <beans:property name="templateEngine" ref="rssTemplateEngine"/>
     </beans:bean>
 
-    <!-- page models, additional models can be added as shown here: http://stackoverflow.com/a/13160350/1207540 -->
-    <beans:bean id="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogManager" ref="weblogManager"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-        <beans:property name="userManager" ref="userManager"/>
-        <beans:property name="themeManager" ref="themeManager"/>
-    </beans:bean>
-
     <beans:bean id="previewPageModel" parent="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">
         <beans:property name="preview" value="true"/>
         <!-- urlStrategy is manually constructed with the shared theme being previewed -->
         <beans:property name="urlStrategy"><beans:null/></beans:property>
     </beans:bean>
 
-    <beans:bean id="utilitiesModel" class="org.tightblog.rendering.model.UtilitiesModel" scope="prototype"/>
-
-    <beans:bean id="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-    </beans:bean>
-
     <beans:bean id="previewUrlModel" parent="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">
         <beans:property name="preview" value="true"/>
         <!-- urlStrategy is manually constructed with the shared theme being previewed -->
         <beans:property name="urlStrategy"><beans:null/></beans:property>
-    </beans:bean>
-
-    <beans:bean id="feedModel" class="org.tightblog.rendering.model.FeedModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
-    </beans:bean>
-
-    <beans:bean id="searchResultsModel" parent="pageModel" class="org.tightblog.rendering.model.SearchResultsModel" scope="prototype">
-        <beans:property name="indexManager" ref="indexManager"/>
-    </beans:bean>
-
-    <beans:bean id="siteModel" class="org.tightblog.rendering.model.SiteModel" scope="prototype">
-        <beans:property name="urlStrategy" ref="urlStrategy"/>
-        <beans:property name="weblogManager" ref="weblogManager"/>
-        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
     <beans:bean id="pageModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">

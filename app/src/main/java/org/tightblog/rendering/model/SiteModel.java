@@ -21,6 +21,10 @@
 package org.tightblog.rendering.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
@@ -41,24 +45,30 @@ import java.util.Map;
 /**
  * Page model that provides access to site-wide users, weblogs and entries.
  */
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SiteModel implements Model {
 
     private static Logger log = LoggerFactory.getLogger(SiteModel.class);
 
     private WeblogPageRequest pageRequest = null;
     private String pageLink = null;
+
+    @Autowired
     private URLStrategy urlStrategy;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
     }
 
+    @Autowired
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
