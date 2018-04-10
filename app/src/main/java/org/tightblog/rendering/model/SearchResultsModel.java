@@ -25,6 +25,10 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.search.FieldConstants;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.business.search.tasks.SearchTask;
@@ -55,6 +59,8 @@ import java.util.stream.Collectors;
  * <p>
  * Also adds some methods which are specific only to search results.
  */
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SearchResultsModel extends PageModel {
 
     private static Logger log = LoggerFactory.getLogger(SearchResultsModel.class);
@@ -76,6 +82,7 @@ public class SearchResultsModel extends PageModel {
     private boolean websiteSpecificSearch = true;
     private String errorMessage = null;
 
+    @Autowired
     private IndexManager indexManager;
 
     public void setIndexManager(IndexManager indexManager) {

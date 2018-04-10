@@ -20,6 +20,10 @@
  */
 package org.tightblog.rendering.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategyImpl;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
@@ -39,12 +43,16 @@ import java.util.Map;
  * <p>
  * $url.category("foo") instead of $url.getCategory("foo")
  */
+@Component("urlModel")
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class URLModel implements Model {
 
     protected Weblog weblog;
 
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
+    @Autowired
     protected URLStrategy urlStrategy;
 
     private boolean preview = false;

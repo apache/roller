@@ -20,6 +20,10 @@
  */
 package org.tightblog.rendering.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerContext;
@@ -33,16 +37,20 @@ import java.util.Map;
 /**
  * Model which provides information needed to render a feed.
  */
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FeedModel implements Model {
 
     private WeblogFeedRequest feedRequest = null;
 
+    @Autowired
     private URLStrategy urlStrategy = null;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
     }
 
+    @Autowired
     protected WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {

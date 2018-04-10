@@ -22,6 +22,10 @@
 package org.tightblog.rendering.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategyImpl;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
@@ -55,6 +59,8 @@ import java.util.Map;
 /**
  * Model which provides information needed to render a weblog page.
  */
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PageModel implements Model {
 
     private static Logger log = LoggerFactory.getLogger(PageModel.class);
@@ -65,30 +71,35 @@ public class PageModel implements Model {
     private WeblogEntryComment commentForm = null;
     private boolean preview = false;
 
+    @Autowired
     protected URLStrategy urlStrategy = null;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
     }
 
+    @Autowired
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
+    @Autowired
     protected WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
 
+    @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
 
+    @Autowired
     protected ThemeManager themeManager;
 
     public void setThemeManager(ThemeManager themeManager) {
