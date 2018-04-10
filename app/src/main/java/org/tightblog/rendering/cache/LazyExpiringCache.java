@@ -59,11 +59,6 @@ public class LazyExpiringCache {
         return maxEntries;
     }
 
-    private long requestCount;
-    private long hitCount;
-    private long missCount;
-    private double hitRate;
-
     public void invalidateAll() {
         contentCache.invalidateAll();
     }
@@ -109,6 +104,7 @@ public class LazyExpiringCache {
                     .recordStats()
                     .build();
         } else {
+            contentCache = null;
             log.warn("Cache {} has been DISABLED", cacheHandlerId);
         }
     }
