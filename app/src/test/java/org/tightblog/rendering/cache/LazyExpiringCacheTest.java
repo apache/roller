@@ -45,7 +45,7 @@ public class LazyExpiringCacheTest {
 
     @Test
     public void testReturnNullIfCacheDisabled() {
-        cache.setEnabled(false);
+        cache.setMaxEntries(0);
         cache.init();
         CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
         Instant twentySecondsAgo = Instant.now().minusSeconds(20);
