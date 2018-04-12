@@ -22,6 +22,7 @@ import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Weblog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,12 +32,14 @@ import java.util.Map;
 /**
  * Paging through a collection of weblogs.
  */
-public class WeblogsPager extends AbstractPager {
+public class WeblogsPager implements Pager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogsPager.class);
 
     private String letter = null;
     private int length = 0;
+    private String url = null;
+    private int page = 0;
 
     // collection for the pager
     private List<Weblog> weblogs;
@@ -53,7 +56,10 @@ public class WeblogsPager extends AbstractPager {
             int page,
             int length) {
 
-        super(baseUrl, page);
+        this.url = baseUrl;
+        if (page > 0) {
+            this.page = page;
+        }
 
         this.weblogManager = weblogManager;
         this.letter = letter;
@@ -63,6 +69,18 @@ public class WeblogsPager extends AbstractPager {
         getItems();
     }
 
+    @Override
+    public String getHomeLink() {
+        return url;
+    }
+
+    @Override
+    public String getHomeLabel() {
+        return "Home";
+    }
+
+
+    @Override
     public String getNextLink() {
         // need to add letter param if it exists
         if (letter != null) {
@@ -75,10 +93,37 @@ public class WeblogsPager extends AbstractPager {
             }
             return null;
         } else {
-            return super.getNextLink();
+            if (hasMoreItems()) {
+                int nextPage = page + 1;
+                Map<String, String> params = new HashMap<>();
+                params.put("page", "" + nextPage);
+                return createURL(url, params);
+            }
+            return null;
         }
     }
 
+    private String createURL(String url, Map<String, String> params) {
+        return url + Utilities.getQueryString(params);
+    }
+
+    @Override
+    public String getPrevLabel() {
+        if (page > 0) {
+            return "Previous";
+        }
+        return null;
+    }
+
+    @Override
+    public String getNextLabel() {
+        if (hasMoreItems()) {
+            return "Next";
+        }
+        return null;
+    }
+
+    @Override
     public String getPrevLink() {
         // need to add letter param if it exists
         if (letter != null) {
@@ -91,7 +136,13 @@ public class WeblogsPager extends AbstractPager {
             }
             return null;
         } else {
-            return super.getPrevLink();
+            if (page > 0) {
+                int prevPage = page - 1;
+                Map<String, String> params = new HashMap<>();
+                params.put("page", "" + prevPage);
+                return createURL(url, params);
+            }
+            return null;
         }
     }
 
@@ -131,8 +182,23 @@ public class WeblogsPager extends AbstractPager {
         return weblogs;
     }
 
-    public boolean hasMoreItems() {
+    private boolean hasMoreItems() {
         return more;
     }
 
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
