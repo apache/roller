@@ -43,12 +43,6 @@ public class LazyExpiringCache {
         this.cacheHandlerId = cacheHandlerId;
     }
 
-    protected boolean enabled = true;
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     private int maxEntries;
 
     public void setMaxEntries(int maxEntries) {
@@ -97,7 +91,7 @@ public class LazyExpiringCache {
 
     @PostConstruct
     public void init() {
-        if (enabled) {
+        if (maxEntries > 0) {
             contentCache = Caffeine.newBuilder()
                     .expireAfterWrite(timeoutInMS, TimeUnit.MILLISECONDS)
                     .maximumSize(maxEntries)
@@ -110,7 +104,7 @@ public class LazyExpiringCache {
     }
 
     public CachedContent get(String key, Instant lastModified) {
-        if (enabled) {
+        if (maxEntries > 0) {
             CachedContent entry = null;
             LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.getIfPresent(key);
             if (lazyEntry != null) {
@@ -131,7 +125,7 @@ public class LazyExpiringCache {
     }
 
     public void put(String key, CachedContent value) {
-        if (enabled) {
+        if (maxEntries > 0) {
             contentCache.put(key, new LazyExpiringCacheEntry(value));
             log.debug("PUT {}", key);
         }
