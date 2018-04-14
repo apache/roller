@@ -72,21 +72,21 @@ public class PageProcessor extends AbstractProcessor {
     @Autowired
     private LazyExpiringCache weblogPageCache = null;
 
-    public void setWeblogPageCache(LazyExpiringCache weblogPageCache) {
+    void setWeblogPageCache(LazyExpiringCache weblogPageCache) {
         this.weblogPageCache = weblogPageCache;
     }
 
     @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
 
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+    void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
 
@@ -94,14 +94,14 @@ public class PageProcessor extends AbstractProcessor {
     @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
 
-    public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
+    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
     }
 
     @Autowired
     protected ThemeManager themeManager;
 
-    public void setThemeManager(ThemeManager themeManager) {
+    void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
     }
 
@@ -114,11 +114,11 @@ public class PageProcessor extends AbstractProcessor {
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    public PageProcessor() {
+    PageProcessor() {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
     }
 
-    public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
+    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
         this.weblogPageRequestCreator = creator;
     }
 
@@ -128,7 +128,7 @@ public class PageProcessor extends AbstractProcessor {
      * attribute that translates to a WeblogEntryComment instance containing the comment.
      */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);

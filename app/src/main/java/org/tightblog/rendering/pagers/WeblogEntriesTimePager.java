@@ -20,7 +20,6 @@
  */
 package org.tightblog.rendering.pagers;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerStaticConfig;
@@ -35,9 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -217,7 +214,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                     messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".dateFormat"),
                     weblog.getLocaleInstance());
 
-            timePeriod = parseDate(dateString);
+            timePeriod = Utilities.parseURLDate(dateString);
 
             if (interval == PagingInterval.DAY) {
                 startTime = timePeriod.atStartOfDay();
@@ -287,7 +284,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(maxEntries + 1);
-                Map<LocalDate, List<WeblogEntry>> mmap = weblogEntryManager.getWeblogEntryObjectMap(wesc);
+                Map<LocalDate, List<WeblogEntry>> mmap = weblogEntryManager.getDateToWeblogEntryMap(wesc);
 
                 // need to wrap pojos
                 int count = 0;
@@ -393,42 +390,6 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                     dateFormat != null ? new Object[]{dateFormat.format(prevTimePeriod)} : null);
         }
         return null;
-    }
-
-    /**
-     * Return today based on current blog's timezone/locale.
-     */
-    protected ZonedDateTime getToday() {
-        return ZonedDateTime.now(weblog.getZoneId());
-    }
-
-    /**
-     * Parse data as either 6-char or 8-char format.
-     */
-    private LocalDate parseDate(String dateString) {
-        DateTimeFormatter dtf;
-        LocalDate ldt;
-        if (dateString != null && StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
-            if (dateString.length() == 8) {
-                dtf = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS, weblog.getLocaleInstance());
-                ldt = LocalDate.parse(dateString, dtf);
-            } else {
-                dtf = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS, weblog.getLocaleInstance());
-                YearMonth tmp = YearMonth.parse(dateString, dtf);
-                ldt = tmp.atDay(1);
-            }
-        } else {
-            return null;
-        }
-
-        // make sure the requested date is not in the future
-        ZonedDateTime today = getToday();
-        ZonedDateTime requested = ZonedDateTime.of(ldt.atStartOfDay(), weblog.getZoneId());
-
-        if (requested.isAfter(today)) {
-            requested = today;
-        }
-        return requested.toLocalDate();
     }
 
     /**

@@ -94,63 +94,63 @@ public class CommentProcessor extends AbstractProcessor {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
     }
 
-    public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
+    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
         this.weblogPageRequestCreator = creator;
     }
 
     @Autowired(required = false)
     private CommentAuthenticator commentAuthenticator = null;
 
-    public void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
+    void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
         this.commentAuthenticator = commentAuthenticator;
     }
 
     @Autowired
     private IndexManager indexManager;
 
-    public void setIndexManager(IndexManager indexManager) {
+    void setIndexManager(IndexManager indexManager) {
         this.indexManager = indexManager;
     }
 
     @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
 
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+    void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
 
     @Autowired
     private UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
+    void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
 
     @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
+    void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
     }
 
     @Autowired
     private MailManager mailManager;
 
-    public void setMailManager(MailManager manager) {
+    void setMailManager(MailManager manager) {
         mailManager = manager;
     }
 
     @Resource(name = "commentValidatorList")
     private List<CommentValidator> commentValidators;
 
-    public void setCommentValidators(List<CommentValidator> commentValidators) {
+    void setCommentValidators(List<CommentValidator> commentValidators) {
         this.commentValidators = commentValidators;
     }
 
@@ -158,7 +158,7 @@ public class CommentProcessor extends AbstractProcessor {
      * Here we handle incoming comment postings.
      */
     @RequestMapping(path = "/**", method = RequestMethod.POST)
-    public void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
         WebloggerProperties.CommentPolicy commentOption = props.getCommentPolicy();

@@ -73,50 +73,50 @@ public class PreviewProcessor extends AbstractProcessor {
     @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
 
-    public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
+    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
     }
 
     @Autowired
     protected ThemeManager themeManager;
 
-    public void setThemeManager(ThemeManager themeManager) {
+    void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
     }
 
     @Autowired
     protected UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
+    void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
 
     @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
 
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+    void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
     }
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    public PreviewProcessor() {
+    PreviewProcessor() {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
     }
 
-    public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
+    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
         this.weblogPageRequestCreator = creator;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void getPreviewPage(HttpServletRequest request, HttpServletResponse response, Principal p) throws IOException {
+    void getPreviewPage(HttpServletRequest request, HttpServletResponse response, Principal p) throws IOException {
         WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);

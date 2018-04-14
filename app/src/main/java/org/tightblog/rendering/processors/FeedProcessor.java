@@ -60,14 +60,14 @@ public class FeedProcessor extends AbstractProcessor {
     @Autowired
     private LazyExpiringCache weblogFeedCache = null;
 
-    public void setWeblogFeedCache(LazyExpiringCache weblogFeedCache) {
+    void setWeblogFeedCache(LazyExpiringCache weblogFeedCache) {
         this.weblogFeedCache = weblogFeedCache;
     }
 
     @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
@@ -75,21 +75,21 @@ public class FeedProcessor extends AbstractProcessor {
     @Qualifier("atomRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
 
-    public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
+    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
     }
 
     @Autowired
     private ThemeManager themeManager;
 
-    public void setThemeManager(ThemeManager themeManager) {
+    void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
     }
 
     @Autowired
     protected JPAPersistenceStrategy strategy;
 
-    public void setStrategy(JPAPersistenceStrategy strategy) {
+    void setStrategy(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
     }
 
@@ -99,12 +99,12 @@ public class FeedProcessor extends AbstractProcessor {
         this.WeblogFeedRequestCreator = WeblogFeedRequestCreator;
     }
 
-    public FeedProcessor() {
+    FeedProcessor() {
         this.WeblogFeedRequestCreator = new WeblogFeedRequest.Creator();
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogFeedRequest feedRequest = WeblogFeedRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);

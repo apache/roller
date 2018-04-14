@@ -51,7 +51,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -563,7 +562,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public Map<LocalDate, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc) {
+    public Map<LocalDate, List<WeblogEntry>> getDateToWeblogEntryMap(WeblogEntrySearchCriteria wesc) {
         TreeMap<LocalDate, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
@@ -573,21 +572,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
                     entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
             List<WeblogEntry> dayEntries = map.computeIfAbsent(tmp, k -> new ArrayList<>());
             dayEntries.add(entry);
-        }
-        return map;
-    }
-
-    @Override
-    public Map<LocalDate, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc) {
-        TreeMap<LocalDate, String> map = new TreeMap<>(Collections.reverseOrder());
-
-        List<WeblogEntry> entries = getWeblogEntries(wesc);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
-
-        for (WeblogEntry entry : entries) {
-            LocalDate maybeDate = entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
-            map.putIfAbsent(maybeDate, formatter.format(maybeDate));
         }
         return map;
     }
