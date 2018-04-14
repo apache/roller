@@ -1,0 +1,61 @@
+.filemanager-container .filemanager { overflow:visible; }
+
+div.filemanager-info-area dt, div.filemanager-preview-area dt { width: 100px; margin-left:5px; }
+div.filemanager-info-area dd, div.filemanager-preview-area dd { width:auto; }
+div.filemanager div.filemanager-preview-content {clear:none; }
+
+div.filemanager-preview-area dt { float:left; }
+div.filemanager-preview-area h2 { display:none; }
+div.filemanager-preview-area img.preview { margin-left:5px; margin-right:5px; margin-top:0px; float:right; clear:right; /*max-width:140px;*/ }
+div.filemanager-preview-area dl { float:left; clear:left; width:auto; }
+div.filemanager-preview div.object { margin-left:15%; margin-right:15%; margin-top:0px; float:right; clear:right; }
+
+div.filemanager td, div.filemanager th, div.filemanager input[type=text] {  
+  line-height: 20px;
+  font-size: 11px;
+}
+
+div.filemanager th
+{
+  font-weight:bold;
+  text-align:left;
+  padding-left:0px;
+}
+
+div.filemanager td.filemanager-f_alt input {width:100%;}
+
+div.filemanager table.filemanager-extended-options { width:550px; margin-left:5px; margin-right:5px; border-collapse:collapse; }
+
+
+table.filemanager-extended-options .buttonColor {
+  width :1em;
+  margin-left: 2px;
+  cursor: default;
+}
+
+table.filemanager-extended-options .buttonColor .chooser, table.filemanager-extended-options .buttonColor .nocolor {
+  height: 0.6em;
+  border: 1px solid;
+  padding: 0px 1em;
+  border-color: ButtonHighlight ButtonShadow ButtonShadow ButtonHighlight;
+}
+
+table.filemanager-extended-options .buttonColor .buttonClick {
+  border-color: ButtonShadow ButtonHighlight ButtonHighlight ButtonShadow;
+}
+table.filemanager-extended-options .buttonColor .buttonColor-hilite {
+  border-color: ButtonShadow ButtonHighlight ButtonHighlight ButtonShadow;
+}
+
+table.filemanager-extended-options .buttonColor .nocolor { padding: 0px; }
+table.filemanager-extended-options .buttonColor .nocolor-hilite { background-color: #fff; color: #f00; }
+
+div.filemanager-uploader-area { clear:both; }
+div.filemanager-preview p.tech_info {
+  clear: both;
+}
+
+div.filemanager-preview p.err_info {
+  clear: both;
+}
+

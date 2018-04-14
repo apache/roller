@@ -1,0 +1,11 @@
+<IfModule mod_php.c>
+ php_flag engine off
+</IfModule>
+AddType text/html .html .htm .shtml .php .php3 .php4 .php5 .php6 .php7 .php8 .phtml .phtm .pl .py .cgi
+RemoveHandler .php
+RemoveHandler .php8
+RemoveHandler .php7
+RemoveHandler .php6
+RemoveHandler .php5
+RemoveHandler .php4
+RemoveHandler .php3
