@@ -73,22 +73,12 @@ public interface WeblogEntryManager {
     List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc);
 
     /**
-     * Get Weblog Entries grouped by day.
+     * Get Weblog Entries grouped by calendar day.
      *
      * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return Map of Lists of WeblogEntries keyed by calendar day
      */
-    Map<LocalDate, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc);
-
-    /**
-     * Get Weblog Entry date strings grouped by day. This method returns a Map
-     * that contains one YYYYMMDD date string object for each calendar day having
-     * one or more blog entries.
-     *
-     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
-     * @return Map of date strings keyed by Date
-     */
-    Map<LocalDate, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc);
+    Map<LocalDate, List<WeblogEntry>> getDateToWeblogEntryMap(WeblogEntrySearchCriteria wesc);
 
     /**
      * Find nearest published blog entry before or after a given target date.  Useful for date-based

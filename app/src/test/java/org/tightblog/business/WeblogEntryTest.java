@@ -257,15 +257,10 @@ public class WeblogEntryTest extends WebloggerTest {
         // get object map
         WeblogEntrySearchCriteria wesc8 = new WeblogEntrySearchCriteria();
         wesc8.setWeblog(testWeblog);
-        entryMap = weblogEntryManager.getWeblogEntryObjectMap(wesc8);
+        entryMap = weblogEntryManager.getDateToWeblogEntryMap(wesc8);
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
         
-        // get string map
-        entryMap = weblogEntryManager.getWeblogEntryStringMap(wesc8);
-        assertNotNull(entryMap);
-        assertTrue(entryMap.keySet().size() > 1);
-                
         // teardown our test entries
         teardownWeblogEntry(entry1.getId());
         teardownWeblogEntry(entry2.getId());

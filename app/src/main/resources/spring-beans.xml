@@ -32,8 +32,7 @@
     <!-- Scan components in given packages marked @Component, @Controller, etc. and register them as beans -->
     <context:component-scan base-package="org.tightblog.business,
                                           org.tightblog.business.search,
-                                          org.tightblog.rendering.comment,
-                                          org.tightblog.rendering.model,
+                                          org.tightblog.rendering.*,
                                           org.tightblog.ui.filters
                                           org.tightblog.ui.menu">
     </context:component-scan>

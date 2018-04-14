@@ -186,6 +186,10 @@ public class WeblogPageRequest extends WeblogRequest {
         return weblogDate;
     }
 
+    public void setWeblogDate(String weblogDate) {
+        this.weblogDate = weblogDate;
+    }
+
     public String getTag() {
         return tag;
     }

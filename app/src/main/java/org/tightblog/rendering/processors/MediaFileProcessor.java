@@ -70,7 +70,7 @@ public class MediaFileProcessor extends AbstractProcessor {
 
     private WeblogRequest.Creator weblogRequestCreator;
 
-    public MediaFileProcessor() {
+    MediaFileProcessor() {
         this.weblogRequestCreator = new WeblogRequest.Creator();
     }
 
@@ -79,7 +79,7 @@ public class MediaFileProcessor extends AbstractProcessor {
     }
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
-    public void getMediaFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    void getMediaFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogRequest incomingRequest = weblogRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);

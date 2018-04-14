@@ -43,7 +43,7 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.rendering.generators.WeblogCalendar;
+import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
@@ -101,6 +101,9 @@ public class PageModel implements Model {
 
     @Autowired
     protected ThemeManager themeManager;
+
+    @Autowired
+    private CalendarGenerator weblogCalendar;
 
     public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
@@ -416,8 +419,7 @@ public class PageModel implements Model {
     }
 
     public CalendarData getCalendarData(boolean includeBlogEntryData) {
-        WeblogCalendar calendar = new WeblogCalendar(weblogEntryManager, urlStrategy, pageRequest, includeBlogEntryData);
-        return calendar.getCalendarData();
+        return weblogCalendar.getCalendarData(pageRequest, includeBlogEntryData);
     }
 
     public String getRequestParameter(String paramName) {

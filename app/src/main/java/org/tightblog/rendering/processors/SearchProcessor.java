@@ -54,11 +54,11 @@ public class SearchProcessor extends AbstractProcessor {
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    public void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
+    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
         this.weblogPageRequestCreator = creator;
     }
 
-    public SearchProcessor() {
+    SearchProcessor() {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
     }
 
@@ -66,26 +66,26 @@ public class SearchProcessor extends AbstractProcessor {
     @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer = null;
 
-    public void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
+    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
     }
 
     @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
     }
 
     @Autowired
-    protected ThemeManager themeManager;
+    private ThemeManager themeManager;
 
-    public void setThemeManager(ThemeManager themeManager) {
+    void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest searchRequest = weblogPageRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);

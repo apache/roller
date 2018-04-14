@@ -20,6 +20,7 @@
  */
 package org.tightblog.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,9 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -58,6 +62,8 @@ public class Utilities {
 
     private static Logger log = LoggerFactory.getLogger(Utilities.class);
 
+    public static final DateTimeFormatter YMFormatter = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
+    public static final DateTimeFormatter YMDFormatter = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
     public static final String FORMAT_6CHARS = "yyyyMM";
     public static final String FORMAT_8CHARS = "yyyyMMdd";
     public static final int EIGHT_KB_IN_BYTES = 8192;
@@ -357,4 +363,28 @@ public class Utilities {
         return DeviceType.NORMAL;
     }
 
+    /**
+     * Parse date as either 6-char or 8-char format.  Use current date if date not provided
+     * in URL (e.g., a permalink), or more than 30 days in the future
+     */
+    public static LocalDate parseURLDate(String dateString) {
+        LocalDate ret = null;
+
+        if (dateString != null && StringUtils.isNumeric(dateString)) {
+            if (dateString.length() == 8) {
+                ret = LocalDate.parse(dateString, Utilities.YMDFormatter);
+            } else if (dateString.length() == 6) {
+                YearMonth tmp = YearMonth.parse(dateString, Utilities.YMFormatter);
+                ret = tmp.atDay(1);
+            }
+        }
+
+        // make sure the requested date is not more than a month in the future
+        LocalDate maxDate = LocalDate.now().plusDays(30);
+        if (ret == null || ret.isAfter(maxDate)) {
+            ret = LocalDate.now();
+        }
+
+        return ret;
+    }
 }
