@@ -41,6 +41,10 @@ public class CachedContent {
         return componentType;
     }
 
+    public void setComponentType(ComponentType componentType) {
+        this.componentType = componentType;
+    }
+
     /**
      * Get the content cached in this object as a byte array.  If you convert
      * this back to a string yourself, be sure to re-encode in "UTF-8".

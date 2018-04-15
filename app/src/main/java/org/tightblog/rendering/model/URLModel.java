@@ -81,7 +81,7 @@ public class URLModel implements Model {
      * Init page model, requires a WeblogRequest object.
      */
     @Override
-    public void init(Map initData) {
+    public void init(Map<String, Object> initData) {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if (weblogRequest == null) {
             throw new IllegalStateException("Expected 'parsedRequest' init param!");

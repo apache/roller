@@ -61,7 +61,7 @@ public class UtilitiesModel implements Model {
      * Init page model, will take but does not require a WeblogRequest object.
      */
     @Override
-    public void init(Map initData) {
+    public void init(Map<String, Object> initData) {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         zoneId = (weblogRequest == null) ? ZoneId.systemDefault() : weblogRequest.getWeblog().getZoneId();
         messages = I18nMessages.getMessages(

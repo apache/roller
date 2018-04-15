@@ -35,10 +35,11 @@ public interface Model {
     String getModelName();
 
     /**
-     * Initialize.
+     * Initialize by providing whatever needed parsed items from the weblog request into the object.
      *
+     * @param params Data objects made available to the model.
      * @throws IllegalArgumentException if the model is not fed the specific objects it is expecting
      */
-    void init(Map params) throws IllegalStateException;
+    void init(Map<String, Object> params) throws IllegalStateException;
 
 }
