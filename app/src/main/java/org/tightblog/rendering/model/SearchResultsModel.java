@@ -93,10 +93,10 @@ public class SearchResultsModel extends PageModel {
      * Init page model, requires a WeblogSearchRequest object.
      */
     @Override
-    public void init(Map initData) {
+    public void init(Map<String, Object> initData) {
         searchRequest = (WeblogPageRequest) initData.get("parsedRequest");
         if (searchRequest == null) {
-            throw new IllegalStateException("expected searchRequest from init data");
+            throw new IllegalStateException("expected WeblogPageRequest from init data");
         }
 
         // let parent initialize

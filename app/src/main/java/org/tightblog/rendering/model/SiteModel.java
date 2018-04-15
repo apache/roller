@@ -84,7 +84,7 @@ public class SiteModel implements Model {
      * Init page model, requires a WeblogPageRequest object.
      */
     @Override
-    public void init(Map initData) {
+    public void init(Map<String, Object> initData) {
         this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
 
         if (pageRequest == null) {

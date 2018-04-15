@@ -18,6 +18,7 @@ package org.tightblog.rendering.thymeleaf;
 import org.attoparser.ParseException;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.context.IContext;
 import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -50,7 +51,7 @@ public class ThymeleafRenderer {
             try {
                 Context ctx = new Context();
                 ctx.setVariables(model);
-                templateEngine.process(template.getId(), ctx, writer);
+                runTemplateEngine(template.getId(), ctx, writer);
             } catch (TemplateInputException e) {
                 // Provide end-user friendly error messages for at least two common errors:
                 // unknown method call and unknown property name
@@ -69,7 +70,8 @@ public class ThymeleafRenderer {
                                     thirdCause.getMessage());
                         }
                     }
-                    templateEngine.process("error-page", ctx, writer);
+                    rendererOutput.setComponentType(Template.ComponentType.CUSTOM_EXTERNAL);
+                    runTemplateEngine("error-page", ctx, writer);
                 } else {
                     throw e;
                 }
@@ -78,5 +80,13 @@ public class ThymeleafRenderer {
             rendererOutput.setContent(outStream.toByteArray());
         }
         return rendererOutput;
+    }
+
+    /*
+     * templateEngine.process(...) is a final method and hence can't normally be mocked by testing frameworks
+     * factoring out here to allow for spying/mocking.
+     */
+    void runTemplateEngine(String template, IContext context, Writer writer) {
+        templateEngine.process(template, context, writer);
     }
 }

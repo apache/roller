@@ -66,7 +66,7 @@ public class FeedModel implements Model {
     }
 
     @Override
-    public void init(Map initData) {
+    public void init(Map<String, Object> initData) {
         this.feedRequest = (WeblogFeedRequest) initData.get("parsedRequest");
 
         if (feedRequest == null) {
