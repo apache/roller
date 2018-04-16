@@ -47,7 +47,6 @@ import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
-import org.tightblog.rendering.pagers.WeblogEntriesTimePager.PagingInterval;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ public class PageModel implements Model {
 
     private static Logger log = LoggerFactory.getLogger(PageModel.class);
 
-    private static final int MAX_ENTRIES = 100;
+    static final int MAX_ENTRIES = 100;
 
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryComment commentForm = null;
@@ -311,17 +310,11 @@ public class PageModel implements Model {
      * @return Collection of WeblogEntryTag objects
      */
     public List<WeblogEntryTagAggregate> getPopularTags(int length) {
-        List<WeblogEntryTagAggregate> results = new ArrayList<>();
-        try {
-            results = weblogManager.getPopularTags(pageRequest.getWeblog(), 0, length);
-        } catch (Exception e) {
-            log.error("ERROR: fetching popular tags for weblog {}", pageRequest.getWeblog().getName(), e);
-        }
-        return results;
+        return weblogManager.getPopularTags(pageRequest.getWeblog(), 0, length);
     }
 
     /**
-     * Returns the list of tags specified in the request /tags/foo+bar
+     * Returns the tag specified in the request. if any /tag/foo
      */
     public String getTag() {
         return pageRequest.getTag();
@@ -354,19 +347,7 @@ public class PageModel implements Model {
                     // preview can show draft entries
                     preview);
         } else {
-            PagingInterval interval = PagingInterval.LATEST;
-
-            if (pageRequest.getWeblogDate() != null) {
-                int len = pageRequest.getWeblogDate().length();
-                if (len == 8) {
-                    interval = PagingInterval.DAY;
-                } else if (len == 6) {
-                    interval = PagingInterval.MONTH;
-                }
-            }
-
             return new WeblogEntriesTimePager(
-                    interval,
                     weblogEntryManager,
                     urlStrategy,
                     pageRequest.getWeblog(),
