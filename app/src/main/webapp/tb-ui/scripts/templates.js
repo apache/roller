@@ -61,7 +61,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       var newData = {
         "name" : this.newTemplateName,
         "roleName" : this.selectedRole,
-        "contents" : ""
+        "template" : ""
       };
       $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/templates', JSON.stringify(newData)).then(
         function(response) {

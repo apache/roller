@@ -104,7 +104,7 @@
     </ul>
     <div>
         <div id="tabStandard">
-            <textarea ng-model="ctrl.templateData.contents" rows="30" style="width:100%"></textarea>
+            <textarea ng-model="ctrl.templateData.template" rows="30" style="width:100%"></textarea>
         </div>
     </div>
 </div>

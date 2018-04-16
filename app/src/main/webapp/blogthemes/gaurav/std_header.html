@@ -37,11 +37,11 @@
                 <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" th:class="${model.weblogPage != null && page.id == model.weblogPage.id} ? 'active'">
                     <a th:href='${url.page(page.relativePath)}' th:text="${page.name}">xxx</a>
                 </li>
-                <th:block th:if="${model.isUserBlogPublisher(model.weblog)}">
+                <th:block th:if="${model.isUserBlogPublisher()}">
                     <li>
                         <a th:href="${url.createEntry}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
                     </li>
-                    <li th:if="${model.isUserBlogOwner(model.weblog)}">
+                    <li th:if="${model.isUserBlogOwner()}">
                         <a th:href="${url.editSettings}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                     </li>
                 </th:block>
