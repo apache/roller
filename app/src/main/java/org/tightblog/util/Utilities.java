@@ -47,6 +47,7 @@ import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -365,23 +366,26 @@ public class Utilities {
 
     /**
      * Parse date as either 6-char or 8-char format.  Use current date if date not provided
-     * in URL (e.g., a permalink), or more than 30 days in the future
+     * in URL (e.g., a permalink), more than 30 days in the future, or not valid
      */
     public static LocalDate parseURLDate(String dateString) {
         LocalDate ret = null;
 
-        if (dateString != null && StringUtils.isNumeric(dateString)) {
-            if (dateString.length() == 8) {
-                ret = LocalDate.parse(dateString, Utilities.YMDFormatter);
-            } else if (dateString.length() == 6) {
-                YearMonth tmp = YearMonth.parse(dateString, Utilities.YMFormatter);
-                ret = tmp.atDay(1);
+        try {
+            if (dateString != null && StringUtils.isNumeric(dateString)) {
+                if (dateString.length() == 8) {
+                    ret = LocalDate.parse(dateString, Utilities.YMDFormatter);
+                } else if (dateString.length() == 6) {
+                    YearMonth tmp = YearMonth.parse(dateString, Utilities.YMFormatter);
+                    ret = tmp.atDay(1);
+                }
             }
+        } catch (DateTimeParseException ignored) {
+            ret = null;
         }
 
         // make sure the requested date is not more than a month in the future
-        LocalDate maxDate = LocalDate.now().plusDays(30);
-        if (ret == null || ret.isAfter(maxDate)) {
+        if (ret == null || ret.isAfter(LocalDate.now().plusDays(30))) {
             ret = LocalDate.now();
         }
 

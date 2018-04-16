@@ -208,8 +208,6 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         LocalDateTime endTime = null;
 
         if (interval == PagingInterval.DAY || interval == PagingInterval.MONTH) {
-            ZoneId zoneId = weblog.getZoneId();
-
             dateFormat = DateTimeFormatter.ofPattern(
                     messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".dateFormat"),
                     weblog.getLocaleInstance());
@@ -263,7 +261,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         return entries;
     }
 
-    private Map<LocalDate, List<WeblogEntry>> loadEntries(LocalDateTime startTime, LocalDateTime endTime) {
+    private void loadEntries(LocalDateTime startTime, LocalDateTime endTime) {
 
         if (entries == null) {
             entries = new TreeMap<>(Collections.reverseOrder());
@@ -309,7 +307,6 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
                 log.error("ERROR: getting entry month map", e);
             }
         }
-        return entries;
     }
 
     @Override
@@ -397,7 +394,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
      *
      * @param pageAdd To be added to page number, or 0 for no page number
      */
-    protected String createURL(
+    private String createURL(
             int page,
             int pageAdd,
             String dateString) {

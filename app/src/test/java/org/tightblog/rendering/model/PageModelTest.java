@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
@@ -36,6 +37,7 @@ public class PageModelTest {
     private WeblogManager mockWeblogManager;
     private PageModel pageModel;
     private WeblogPageRequest pageRequest;
+    private Map<String, Object> initData;
 
     @Before
     public void initialize() {
@@ -49,9 +51,36 @@ public class PageModelTest {
         pageRequest = new WeblogPageRequest();
         pageRequest.setWeblog(weblog);
         pageRequest.setWeblogHandle(weblog.getHandle());
-        Map<String, Object> initData = new HashMap<>();
+        initData = new HashMap<>();
         initData.put("parsedRequest", pageRequest);
         pageModel.init(initData);
+    }
+
+    @Test
+    public void testGetCommentForm() {
+        // no comment form provided at request time
+        WeblogEntryComment comment = pageModel.getCommentForm();
+        assertNotNull(comment);
+        assertEquals("", comment.getName());
+        assertEquals("", comment.getEmail());
+        assertEquals("", comment.getUrl());
+        assertEquals("", comment.getContent());
+
+        // comment form at request time
+        WeblogEntryComment comment2 = new WeblogEntryComment();
+        comment2.setName("Bob");
+        comment2.setEmail("bob@email.com");
+        comment2.setUrl("https://www.google.com");
+        comment2.setContent("This is my comment.");
+        initData.put("commentForm", comment2);
+        pageModel.init(initData);
+
+        comment = pageModel.getCommentForm();
+        assertNotNull(comment);
+        assertEquals("Bob", comment.getName());
+        assertEquals("bob@email.com", comment.getEmail());
+        assertEquals("https://www.google.com", comment.getUrl());
+        assertEquals("This is my comment.", comment.getContent());
     }
 
     @Test
