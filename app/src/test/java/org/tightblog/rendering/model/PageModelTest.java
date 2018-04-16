@@ -17,24 +17,33 @@ package org.tightblog.rendering.model;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.tightblog.business.UserManager;
+import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
+import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.rendering.pagers.WeblogEntriesPager;
+import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
+import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PageModelTest {
 
     private UserManager mockUserManager;
-    private WeblogManager mockWeblogManager;
+    private WeblogEntryManager mockWeblogEntryManager;
     private PageModel pageModel;
     private WeblogPageRequest pageRequest;
     private Map<String, Object> initData;
@@ -42,18 +51,53 @@ public class PageModelTest {
     @Before
     public void initialize() {
         mockUserManager = mock(UserManager.class);
-        mockWeblogManager = mock(WeblogManager.class);
+        WeblogManager mockWeblogManager = mock(WeblogManager.class);
+        mockWeblogEntryManager = mock(WeblogEntryManager.class);
         pageModel = new PageModel();
         pageModel.setUserManager(mockUserManager);
         pageModel.setWeblogManager(mockWeblogManager);
+        pageModel.setWeblogEntryManager(mockWeblogEntryManager);
         Weblog weblog = new Weblog();
         weblog.setHandle("testblog");
+        weblog.setLocale("EN_US");
         pageRequest = new WeblogPageRequest();
         pageRequest.setWeblog(weblog);
         pageRequest.setWeblogHandle(weblog.getHandle());
         initData = new HashMap<>();
         initData.put("parsedRequest", pageRequest);
         pageModel.init(initData);
+    }
+
+    @Test
+    public void testGetRecentComments() {
+        // test length < 1 returns empty set
+        List<WeblogEntryComment> commentList = pageModel.getRecentComments(-5);
+        assertEquals(0, commentList.size());
+        pageModel.getRecentComments(50);
+
+        // test CommentSearchCriteria object correctly populated
+        ArgumentCaptor<CommentSearchCriteria> cscCaptor = ArgumentCaptor.forClass(CommentSearchCriteria.class);
+        verify(mockWeblogEntryManager).getComments(cscCaptor.capture());
+        CommentSearchCriteria csc = cscCaptor.getValue();
+        assertEquals(pageRequest.getWeblog(), csc.getWeblog());
+        assertEquals(WeblogEntryComment.ApprovalStatus.APPROVED, csc.getStatus());
+        assertEquals(50, csc.getMaxResults());
+
+        // test comment limit of MAX_ENTRIES
+        Mockito.clearInvocations(mockWeblogEntryManager);
+        pageModel.getRecentComments(PageModel.MAX_ENTRIES + 20);
+        verify(mockWeblogEntryManager).getComments(cscCaptor.capture());
+        csc = cscCaptor.getValue();
+        assertEquals(PageModel.MAX_ENTRIES, csc.getMaxResults());
+    }
+
+    @Test
+    public void testCorrectPagerReturned() {
+        WeblogEntriesPager pager = pageModel.getWeblogEntriesPager();
+        assertTrue(pager instanceof WeblogEntriesTimePager);
+        pageRequest.setWeblogEntryAnchor("blog-entry");
+        pager = pageModel.getWeblogEntriesPager();
+        assertTrue(pager instanceof WeblogEntriesPermalinkPager);
     }
 
     @Test

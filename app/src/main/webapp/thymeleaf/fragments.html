@@ -122,7 +122,7 @@
                     <a th:href="${url.logout}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
                 </li>
                 <li th:case="${false}" class="rNavItem">
-                    <a th:href="${url.login}"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
+                    <a th:href="${url.login}" target="_blank"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
                 </li>
             </th:block>
         </ul>

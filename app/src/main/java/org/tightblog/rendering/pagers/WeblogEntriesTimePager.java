@@ -71,7 +71,7 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
     private WeblogEntryManager weblogEntryManager;
 
-    public enum PagingInterval {
+    private enum PagingInterval {
         // For day-by-day paging
         DAY("day", Utilities.FORMAT_8CHARS),
         // month-by-month paging
@@ -155,7 +155,6 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     }
 
     public WeblogEntriesTimePager(
-            PagingInterval interval,
             WeblogEntryManager weblogEntryManager,
             URLStrategy strat,
             Weblog weblog,
@@ -163,6 +162,17 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
             String catName,
             String tag,
             int page) {
+
+        PagingInterval interval = PagingInterval.LATEST;
+
+        if (dateString != null) {
+            int len = dateString.length();
+            if (len == 8) {
+                interval = PagingInterval.DAY;
+            } else if (len == 6) {
+                interval = PagingInterval.MONTH;
+            }
+        }
 
         this.viewLocale = weblog.getLocaleInstance();
 
