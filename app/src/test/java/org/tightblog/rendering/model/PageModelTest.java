@@ -19,13 +19,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.tightblog.business.ThemeManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.CommentSearchCriteria;
+import org.tightblog.pojos.SharedTemplate;
+import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
@@ -36,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,6 +51,7 @@ public class PageModelTest {
 
     private UserManager mockUserManager;
     private WeblogEntryManager mockWeblogEntryManager;
+    private ThemeManager mockThemeManager;
     private PageModel pageModel;
     private WeblogPageRequest pageRequest;
     private Map<String, Object> initData;
@@ -53,10 +61,12 @@ public class PageModelTest {
         mockUserManager = mock(UserManager.class);
         WeblogManager mockWeblogManager = mock(WeblogManager.class);
         mockWeblogEntryManager = mock(WeblogEntryManager.class);
+        mockThemeManager = mock(ThemeManager.class);
         pageModel = new PageModel();
         pageModel.setUserManager(mockUserManager);
         pageModel.setWeblogManager(mockWeblogManager);
         pageModel.setWeblogEntryManager(mockWeblogEntryManager);
+        pageModel.setThemeManager(mockThemeManager);
         Weblog weblog = new Weblog();
         weblog.setHandle("testblog");
         weblog.setLocale("EN_US");
@@ -69,13 +79,52 @@ public class PageModelTest {
     }
 
     @Test
+    public void testGetTemplateIdByName() {
+        WeblogTheme mockTheme = mock(WeblogTheme.class);
+        when(mockThemeManager.getWeblogTheme(pageRequest.getWeblog())).thenReturn(mockTheme);
+        when(mockTheme.getTemplateByName(any())).thenReturn(null);
+        assertNull(pageModel.getTemplateIdByName("abc"));
+
+        SharedTemplate abc = new SharedTemplate();
+        abc.setId("abcId");
+        abc.setName("abcTemplate");
+        when(mockTheme.getTemplateByName("abcTemplate")).thenReturn(abc);
+        assertEquals("abcId", pageModel.getTemplateIdByName("abcTemplate"));
+    }
+
+    @Test
+    public void testGetRecentWeblogEntries() {
+        List<WeblogEntry> weblogEntryList = pageModel.getRecentWeblogEntries(null, -5);
+        assertEquals(0, weblogEntryList.size());
+
+        // testWeblogEntrySearchCriteria object correctly populated
+        pageModel.getRecentWeblogEntries("stamps", 50);
+        ArgumentCaptor<WeblogEntrySearchCriteria> captor = ArgumentCaptor.forClass(WeblogEntrySearchCriteria.class);
+        verify(mockWeblogEntryManager).getWeblogEntries(captor.capture());
+        WeblogEntrySearchCriteria wesc = captor.getValue();
+        assertEquals(pageRequest.getWeblog(), wesc.getWeblog());
+        assertEquals("stamps", wesc.getCategoryName());
+        assertEquals(WeblogEntry.PubStatus.PUBLISHED, wesc.getStatus());
+        assertEquals(50, wesc.getMaxResults());
+        assertTrue(wesc.isCalculatePermalinks());
+
+        // test limit of MAX_ENTRIES
+        Mockito.clearInvocations(mockWeblogEntryManager);
+        pageModel.getRecentWeblogEntries(null, PageModel.MAX_ENTRIES + 20);
+        verify(mockWeblogEntryManager).getWeblogEntries(captor.capture());
+        wesc = captor.getValue();
+        assertEquals(PageModel.MAX_ENTRIES, wesc.getMaxResults());
+    }
+
+
+    @Test
     public void testGetRecentComments() {
         // test length < 1 returns empty set
         List<WeblogEntryComment> commentList = pageModel.getRecentComments(-5);
         assertEquals(0, commentList.size());
-        pageModel.getRecentComments(50);
 
         // test CommentSearchCriteria object correctly populated
+        pageModel.getRecentComments(50);
         ArgumentCaptor<CommentSearchCriteria> cscCaptor = ArgumentCaptor.forClass(CommentSearchCriteria.class);
         verify(mockWeblogEntryManager).getComments(cscCaptor.capture());
         CommentSearchCriteria csc = cscCaptor.getValue();

@@ -48,8 +48,6 @@ import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,8 +59,6 @@ import java.util.Map;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PageModel implements Model {
-
-    private static Logger log = LoggerFactory.getLogger(PageModel.class);
 
     static final int MAX_ENTRIES = 100;
 
@@ -256,14 +252,11 @@ public class PageModel implements Model {
     /**
      * Get up to 100 most recent published entries in weblog.
      *
-     * @param cat    Category name or null for no category restriction
+     * @param category    Category name or null for no category restriction
      * @param length Max entries to return (1-100)
      * @return List of weblog entry objects.
      */
-    public List<WeblogEntry> getRecentWeblogEntries(String cat, int length) {
-        if (cat != null && "nil".equals(cat)) {
-            cat = null;
-        }
+    public List<WeblogEntry> getRecentWeblogEntries(String category, int length) {
         if (length > MAX_ENTRIES) {
             length = MAX_ENTRIES;
         }
@@ -273,7 +266,7 @@ public class PageModel implements Model {
         }
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(pageRequest.getWeblog());
-        wesc.setCategoryName(cat);
+        wesc.setCategoryName(category);
         wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         wesc.setMaxResults(length);
         wesc.setCalculatePermalinks(true);
