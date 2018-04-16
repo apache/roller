@@ -36,7 +36,7 @@
                 <a th:href="${url.comments(entry)}" class="commentslink" th:utext="${utils.msg('macro.weblog.comments') + '[' + commentCount + ']'}">xxx</a>
             </th:block>
 
-            <th:block th:if="${model.isUserBlogPublisher(entry.weblog)}">
+            <th:block th:if="${model.isUserBlogPublisher()}">
                 &nbsp;|&nbsp;
                 <a th:href="${url.editEntry(entry.anchor)}" th:utext="${utils.msg('generic.edit')}">xxx</a>
             </th:block>

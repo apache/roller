@@ -109,11 +109,11 @@
                     </a>
                 </li>
             </th:block>
-            <th:block th:if="${model.isUserBlogPublisher(model.weblog)}">
+            <th:block th:if="${model.isUserBlogPublisher()}">
                 <li class="rNavItem">
                     <a th:href="${url.createEntry}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
                 </li>
-                <li th:if="${model.isUserBlogOwner(model.weblog)}" class="rNavItem">
+                <li th:if="${model.isUserBlogOwner()}" class="rNavItem">
                     <a th:href="${url.editSettings}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                 </li>
             </th:block>

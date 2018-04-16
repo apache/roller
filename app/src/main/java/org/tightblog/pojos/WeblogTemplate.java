@@ -73,8 +73,6 @@ public class WeblogTemplate implements Template {
     private TemplateDerivation derivation = TemplateDerivation.SPECIFICBLOG;
     private String template = "";
 
-    private String contents = null;
-
     // associations
     @JsonIgnore
     private Weblog weblog = null;
@@ -147,15 +145,6 @@ public class WeblogTemplate implements Template {
 
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
-    }
-
-    @Transient
-    public String getContents() {
-        return this.contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     @Override

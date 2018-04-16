@@ -394,28 +394,16 @@ public class PageModel implements Model {
         return (pageRequest.getAuthenticatedUser() != null);
     }
 
-    public boolean isUserBlogPublisher(Weblog weblog) {
-        try {
-            if (!preview && pageRequest.getAuthenticatedUser() != null) {
-                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
-                return userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.POST);
-            }
-        } catch (Exception e) {
-            log.warn("ERROR: checking user authorization", e);
-        }
-        return false;
+    public boolean isUserBlogPublisher() {
+        return checkUserRights(WeblogRole.POST);
     }
 
-    public boolean isUserBlogOwner(Weblog weblog) {
-        try {
-            if (!preview && pageRequest.getAuthenticatedUser() != null) {
-                // using handle variant of checkWeblogRole as id is presently nulled out in the templates
-                return userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), weblog.getHandle(), WeblogRole.OWNER);
-            }
-        } catch (Exception e) {
-            log.warn("ERROR: checking user authorization", e);
-        }
-        return false;
+    public boolean isUserBlogOwner() {
+        return checkUserRights(WeblogRole.OWNER);
+    }
+
+    private boolean checkUserRights(WeblogRole role) {
+        return !preview && userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), getWeblog().getHandle(), role);
     }
 
     public CalendarData getCalendarData(boolean includeBlogEntryData) {

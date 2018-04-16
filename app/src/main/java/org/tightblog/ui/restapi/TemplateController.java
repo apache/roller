@@ -188,7 +188,6 @@ public class TemplateController {
             if (themeManager.getSharedTheme(template.getWeblog().getTheme()).getTemplateByName(template.getName()) != null) {
                 template.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
             }
-            template.setContents(template.getTemplate());
             return template;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -210,9 +209,7 @@ public class TemplateController {
         boolean permitted = sharedTemplate != null &&
                 userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST);
         if (permitted) {
-            WeblogTemplate template = themeManager.createWeblogTemplate(weblog, sharedTemplate);
-            template.setContents(template.getTemplate());
-            return template;
+            return themeManager.createWeblogTemplate(weblog, sharedTemplate);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
@@ -245,9 +242,9 @@ public class TemplateController {
                     } else {
                         templateToSave.setRole(Template.ComponentType.valueOf(templateData.getRoleName()));
                     }
-                    templateToSave.setTemplate(templateData.getContents());
+                    templateToSave.setTemplate(templateData.getTemplate());
                 } else {
-                    templateToSave.setTemplate(templateData.getContents());
+                    templateToSave.setTemplate(templateData.getTemplate());
                 }
 
                 // some properties relevant only for certain template roles
@@ -312,5 +309,4 @@ public class TemplateController {
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
     }
-
 }
