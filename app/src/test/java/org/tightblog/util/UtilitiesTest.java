@@ -20,20 +20,16 @@
  */
 package org.tightblog.util;
 
-import org.tightblog.WebloggerTest;
-import org.junit.Before;
 import org.junit.Test;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.junit.Assert.*;
 
-/**
- * Test utilities.
- */
-public class UtilitiesTest extends WebloggerTest {
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
+public class UtilitiesTest {
 
     @Test
     public void testRemoveHTML() {
@@ -55,4 +51,31 @@ public class UtilitiesTest extends WebloggerTest {
         assertEquals(convertLinesFormatted, output);
     }
 
+    @Test
+    public void testParseURLDate() {
+
+        // parse 6 digit YYYYMM
+        assertEquals(LocalDate.of(1858, 10, 1), Utilities.parseURLDate("185810"));
+        assertEquals(LocalDate.of(1858, 4, 1), Utilities.parseURLDate("185804"));
+
+        // parse 8 digit YYYYMMDD
+        assertEquals(LocalDate.of(1858, 10, 4), Utilities.parseURLDate("18581004"));
+        assertEquals(LocalDate.of(1858, 4, 12), Utilities.parseURLDate("18580412"));
+        assertEquals(LocalDate.of(1858, 4, 5), Utilities.parseURLDate("18580405"));
+
+        // invalid cases return today's date, skip tests around midnight as value of "now" will change
+        ZonedDateTime zdt = ZonedDateTime.now();
+        long seconds = Duration.between(zdt, zdt.plusDays(1).truncatedTo(ChronoUnit.DAYS)).getSeconds();
+        if (seconds > 60) {
+            LocalDate now = LocalDate.now();
+            assertEquals(now, Utilities.parseURLDate(null));
+            assertEquals(now, Utilities.parseURLDate(""));
+            assertEquals(now, Utilities.parseURLDate("abcd"));
+            assertEquals(now, Utilities.parseURLDate("20181"));
+            assertEquals(now, Utilities.parseURLDate("201815"));
+            assertEquals(now, Utilities.parseURLDate("2018041"));
+            assertEquals(now, Utilities.parseURLDate("201804247"));
+            assertEquals(now, Utilities.parseURLDate("2018a0424"));
+        }
+    }
 }
