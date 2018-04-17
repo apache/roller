@@ -70,7 +70,7 @@ public class PageProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/page";
 
     @Autowired
-    private LazyExpiringCache weblogPageCache = null;
+    private LazyExpiringCache weblogPageCache;
 
     void setWeblogPageCache(LazyExpiringCache weblogPageCache) {
         this.weblogPageCache = weblogPageCache;
@@ -92,7 +92,7 @@ public class PageProcessor extends AbstractProcessor {
 
     @Autowired
     @Qualifier("blogRenderer")
-    private ThymeleafRenderer thymeleafRenderer = null;
+    private ThymeleafRenderer thymeleafRenderer;
 
     void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
@@ -173,7 +173,8 @@ public class PageProcessor extends AbstractProcessor {
                 // not using cache so need to generate page from scratch
                 // figure out what template to use
                 if (incomingRequest.getCustomPageName() != null) {
-                    Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
+                    Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(
+                            incomingRequest.getCustomPageName());
 
                     // block internal custom pages from appearing directly
                     if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
@@ -183,19 +184,22 @@ public class PageProcessor extends AbstractProcessor {
                     boolean invalid = false;
 
                     if (incomingRequest.getWeblogEntryAnchor() != null) {
-                        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
+                        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog,
+                                incomingRequest.getWeblogEntryAnchor());
 
                         if (entry == null || !entry.isPublished()) {
                             invalid = true;
                         } else {
                             incomingRequest.setWeblogEntry(entry);
-                            incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
+                            incomingRequest.setTemplate(
+                                    themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
                         }
                     }
 
                     // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
                     if (!invalid && incomingRequest.getTemplate() == null) {
-                        incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
+                        incomingRequest.setTemplate(
+                                themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
                     }
                 }
 
@@ -227,7 +231,7 @@ public class PageProcessor extends AbstractProcessor {
             // write rendered content to response
             response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
-            response.setHeader("Cache-Control","no-cache");
+            response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.getOutputStream().write(rendererOutput.getContent());
 

@@ -44,24 +44,24 @@ import java.util.stream.Collectors;
 public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
 
     // message utils for doing i18n messages
-    private I18nMessages messageUtils = null;
+    private I18nMessages messageUtils;
 
     // url strategy for building urls
-    private URLStrategy urlStrategy = null;
+    private URLStrategy urlStrategy;
 
     protected WeblogEntryManager weblogEntryManager;
 
-    private Weblog weblog = null;
-    private String pageLink = null;
-    private String entryAnchor = null;
-    private Boolean canShowDraftEntries = false;
+    private Weblog weblog;
+    private String pageLink;
+    private String entryAnchor;
+    private Boolean canShowDraftEntries;
 
-    private WeblogEntry currEntry = null;
-    private WeblogEntry nextEntry = null;
-    private WeblogEntry prevEntry = null;
+    private WeblogEntry currEntry;
+    private WeblogEntry nextEntry;
+    private WeblogEntry prevEntry;
 
     // collection for the pager
-    private Map<LocalDate, List<WeblogEntry>> entries = null;
+    private Map<LocalDate, List<WeblogEntry>> entries;
 
     public WeblogEntriesPermalinkPager(
             WeblogEntryManager weblogEntryManager,
@@ -187,14 +187,14 @@ public class WeblogEntriesPermalinkPager implements WeblogEntriesPager {
     /**
      * Create URL that encodes pager state using most appropriate form of URL.
      */
-    private String createURL(Weblog weblog, String pageLink, WeblogEntry entry) {
+    private String createURL(Weblog blog, String linkToPage, WeblogEntry entry) {
 
-        if (pageLink != null) {
-            return urlStrategy.getCustomPageURL(weblog, pageLink, null, false);
+        if (linkToPage != null) {
+            return urlStrategy.getCustomPageURL(blog, linkToPage, null, false);
         } else if (entry != null) {
             return urlStrategy.getWeblogEntryURL(entry, true);
         }
         // home page URL
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, 0, false);
+        return urlStrategy.getWeblogCollectionURL(blog, null, null, null, 0, false);
     }
 }

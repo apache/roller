@@ -99,7 +99,7 @@ public class CommentProcessor extends AbstractProcessor {
     }
 
     @Autowired(required = false)
-    private CommentAuthenticator commentAuthenticator = null;
+    private CommentAuthenticator commentAuthenticator;
 
     void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
         this.commentAuthenticator = commentAuthenticator;
@@ -183,7 +183,8 @@ public class CommentProcessor extends AbstractProcessor {
 
         WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
         if (entry == null || !entry.isPublished()) {
-            log.info("Commenter attempted to leave comment for weblog {}'s entry with unknown or unpublished anchor: {}, returning 404",
+            log.info("Commenter attempted to leave comment for weblog {}'s entry with unknown or " +
+                            "unpublished anchor: {}, returning 404",
                     incomingRequest.getWeblogHandle(), incomingRequest.getWeblogEntryAnchor());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

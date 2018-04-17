@@ -52,11 +52,11 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
     private String id = Utilities.generateUUID();
     private int hashCode;
     // category name
-    private String name = null;
+    private String name;
     // left-to-right comparative ordering of category, higher numbers go to the right
     private int position;
     // parent weblog of category
-    private Weblog weblog = null;
+    private Weblog weblog;
 
     public WeblogCategory() {
     }
@@ -117,7 +117,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
     }
 
     private static final Comparator<WeblogCategory> COMPARATOR =
-            Comparator.comparing(WeblogCategory::getWeblog, Weblog.handleComparator)
+            Comparator.comparing(WeblogCategory::getWeblog, Weblog.HANDLE_COMPARATOR)
                         .thenComparingInt(WeblogCategory::getPosition);
 
     @Override

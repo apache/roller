@@ -39,17 +39,17 @@ import java.util.Set;
 @XmlRootElement(name = "sharedtheme")
 public class SharedTheme {
 
-    private String id = null;
-    private String name = null;
-    private String description = null;
+    private String id;
+    private String name;
+    private String description;
     // the preview image path is relative from the shared theme's base folder
-    private String previewImagePath = null;
+    private String previewImagePath;
 
     // Site-wide blogs provide aggregated data from all weblogs to this weblog
     // For better caching performance don't use a siteWide blog unless using this
     // extra data.
     private Boolean siteWide = false;
-    private Instant lastModified = null;
+    private Instant lastModified;
     private boolean enabled = true;
 
     // JAXB loads here; ThemeManagerImpl moves them to the three maps.
@@ -61,7 +61,7 @@ public class SharedTheme {
     }
 
     // the filesystem directory where we should read this theme from
-    private String themeDir = null;
+    private String themeDir;
 
     // we keep templates in a Map for faster lookups by name
     private Map<String, Template> templatesByName = new HashMap<>();
@@ -160,8 +160,8 @@ public class SharedTheme {
      * Lookup the specified template by name. Returns null if the template
      * cannot be found.
      */
-    public Template getTemplateByName(String name) {
-        return this.templatesByName.get(name);
+    public Template getTemplateByName(String templateName) {
+        return this.templatesByName.get(templateName);
     }
 
     /**

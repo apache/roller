@@ -31,19 +31,19 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
+import static org.junit.Assert.*;
 
 /**
  * Test Weblog Category related business operations.
  */
 public class WeblogCategoryFunctionalityTest extends WebloggerTest {
 
-    private User testUser = null;
-    private Weblog testWeblog = null;
-    private WeblogCategory cat1 = null;
-    private WeblogCategory cat2 = null;
-    private WeblogCategory testCat = null;
+    private User testUser;
+    private Weblog testWeblog;
+    private WeblogCategory cat1;
+    private WeblogCategory cat2;
+    private WeblogCategory testCat;
 
     /**
      * All tests in this suite require a user and a weblog.
@@ -172,13 +172,13 @@ public class WeblogCategoryFunctionalityTest extends WebloggerTest {
     }
 
     private WeblogCategory setupWeblogCategory(Weblog weblog, String name) throws Exception {
-        WeblogCategory testCat = new WeblogCategory(weblog, name);
-        weblog.addCategory(testCat);
-        weblogManager.saveWeblogCategory(testCat);
+        WeblogCategory testCategory = new WeblogCategory(weblog, name);
+        weblog.addCategory(testCategory);
+        weblogManager.saveWeblogCategory(testCategory);
         strategy.flush();
 
         // query for object
-        WeblogCategory cat = weblogManager.getWeblogCategory(testCat.getId());
+        WeblogCategory cat = weblogManager.getWeblogCategory(testCategory.getId());
         if (cat == null) {
             throw new IllegalStateException("error setting up weblog category");
         }

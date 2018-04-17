@@ -62,7 +62,7 @@ public class UserWeblogRole {
     private int hashCode;
     private User user;
     private Weblog weblog;
-    private boolean pending = false;
+    private boolean pending;
     private WeblogRole weblogRole;
 
     public UserWeblogRole() {

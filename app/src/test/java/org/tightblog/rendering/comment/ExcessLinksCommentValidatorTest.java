@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +29,11 @@ public class ExcessLinksCommentValidatorTest {
 
     private String generateCommentWithLinks(int numLinks) {
         StringBuilder commentBuilder = new StringBuilder();
-        for (int i = 0 ; i < numLinks ; i++) {
+        for (int i = 0; i < numLinks; i++) {
             char delim = (i % 2 == 0) ? '\'' : '"';
             commentBuilder.append("hi <a href=").append(delim)
                 .append("http://www.aa.com").append(delim)
-                .append(">link ").append(i+1).append("</a>");
+                .append(">link ").append(i + 1).append("</a>");
         }
         return commentBuilder.toString();
     }
@@ -81,7 +80,7 @@ public class ExcessLinksCommentValidatorTest {
         ValidationResult result = validator.validate(wec, messageMap);
         String expectedKey = "comment.validator.excessLinksMessage";
         assertEquals("Comment above limit was accepted", ValidationResult.SPAM, result);
-        assertEquals("Message Map hasn't one entry",1, messageMap.size());
+        assertEquals("Message Map hasn't one entry", 1, messageMap.size());
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
         assertEquals("Message Map value hasn't one element", 1,
                 messageMap.get(expectedKey).size());

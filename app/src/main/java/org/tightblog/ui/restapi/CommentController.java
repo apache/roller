@@ -11,6 +11,7 @@ import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.util.HTMLSanitizer;
@@ -101,7 +102,8 @@ public class CommentController {
 
     @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
     public CommentData getWeblogComments(@PathVariable String weblogId, @PathVariable int page,
-                                         @RequestParam(required = false) String entryId, @RequestBody CommentSearchCriteria criteria,
+                                         @RequestParam(required = false) String entryId,
+                                         @RequestBody CommentSearchCriteria criteria,
                                          Principal principal, HttpServletResponse response) {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
@@ -138,7 +140,7 @@ public class CommentController {
 
     public class CommentData {
         List<WeblogEntryComment> comments;
-        boolean hasMore = false;
+        boolean hasMore;
         String entryTitle;
 
         public List<WeblogEntryComment> getComments() {
@@ -248,8 +250,8 @@ public class CommentController {
                     WeblogEntryComment.ApprovalStatus oldStatus = comment.getStatus();
                     comment.setStatus(status);
                     // send approval notification only first time, not after any subsequent hide and approves.
-                    if ((oldStatus == WeblogEntryComment.ApprovalStatus.PENDING || oldStatus == WeblogEntryComment.ApprovalStatus.SPAM) &&
-                            status == WeblogEntryComment.ApprovalStatus.APPROVED) {
+                    if ((oldStatus == ApprovalStatus.PENDING || oldStatus == ApprovalStatus.SPAM) &&
+                            status == ApprovalStatus.APPROVED) {
                         mailManager.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
                     }
                     weblogEntryManager.saveComment(comment, true);
@@ -281,7 +283,7 @@ public class CommentController {
                 User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
                 Weblog weblog = wec.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
-                    String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream()); // IOUtils.toString(request.getInputStream(), "UTF-8"); //
+                    String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream());
 
                     // Validate content
                     HTMLSanitizer.Level sanitizerLevel = persistenceStrategy.getWebloggerProperties().getCommentHtmlPolicy();

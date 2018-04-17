@@ -74,7 +74,7 @@ public class BlacklistCommentValidatorTest {
         ValidationResult result = validator.validate(wec, messageMap);
         String expectedKey = "comment.validator.blacklistMessage";
         assertEquals("Blacklisted term in URL wasn't failed", ValidationResult.SPAM, result);
-        assertEquals("Message Map hasn't one entry",1, messageMap.size());
+        assertEquals("Message Map hasn't one entry", 1, messageMap.size());
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
     }
 
@@ -119,7 +119,7 @@ public class BlacklistCommentValidatorTest {
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(wec, messageMap);
         assertEquals("Clean comment wasn't accepted", ValidationResult.NOT_SPAM, result);
-        assertEquals("Message Map hasn't zero entries",0, messageMap.size());
+        assertEquals("Message Map hasn't zero entries", 0, messageMap.size());
     }
 
     @Test

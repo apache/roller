@@ -24,7 +24,7 @@ public class UserSearchCriteria {
     private String screenName;
 
     // Offset into results for paging
-    private int offset = 0;
+    private int offset;
 
     // Max elements to return (or null for no limit)
     private Integer maxResults;

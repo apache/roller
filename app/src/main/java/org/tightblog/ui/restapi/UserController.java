@@ -101,7 +101,7 @@ public class UserController {
     }
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy = null;
+    private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.persistenceStrategy = strategy;
@@ -249,7 +249,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
-    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, HttpServletResponse response) throws ServletException {
+    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, HttpServletResponse response)
+            throws ServletException {
         ValidationError maybeError = advancedValidate(null, newData, true);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
@@ -321,7 +322,7 @@ public class UserController {
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         UserCredentials credentials;
 
-        public UserData() {
+        UserData() {
         }
 
         public User getUser() {
@@ -356,7 +357,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate", method = RequestMethod.POST)
-    public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, @RequestBody List<UserWeblogRole> roles)
+    public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p,
+                                                 @RequestBody List<UserWeblogRole> roles)
             throws ServletException {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
@@ -389,7 +391,8 @@ public class UserController {
         }
     }
 
-    private ResponseEntity saveUser(User user, UserData newData, Principal p, HttpServletResponse response, boolean add) throws ServletException {
+    private ResponseEntity saveUser(User user, UserData newData, Principal p, HttpServletResponse response, boolean add)
+            throws ServletException {
         try {
             if (user != null) {
                 user.setScreenName(newData.user.getScreenName().trim());
@@ -459,18 +462,21 @@ public class UserController {
                 switch (currentStatus) {
                     case ENABLED:
                         if (data.getUser().getStatus() != UserStatus.DISABLED) {
-                            be.addError(new ObjectError("User object", bundle.getString("error.useradmin.enabled.only.disabled")));
+                            be.addError(new ObjectError("User object",
+                                    bundle.getString("error.useradmin.enabled.only.disabled")));
                         }
                         break;
                     case DISABLED:
                         if (data.getUser().getStatus() != UserStatus.ENABLED) {
-                            be.addError(new ObjectError("User object", bundle.getString("error.useradmin.disabled.only.enabled")));
+                            be.addError(new ObjectError("User object",
+                                    bundle.getString("error.useradmin.disabled.only.enabled")));
                         }
                         break;
                     case REGISTERED:
                     case EMAILVERIFIED:
                         if (data.getUser().getStatus() != UserStatus.ENABLED) {
-                            be.addError(new ObjectError("User object", bundle.getString("error.useradmin.nonenabled.only.enabled")));
+                            be.addError(new ObjectError("User object",
+                                    bundle.getString("error.useradmin.nonenabled.only.enabled")));
                         }
                         break;
                     default:

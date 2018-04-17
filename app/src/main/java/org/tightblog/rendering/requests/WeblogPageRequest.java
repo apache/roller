@@ -40,25 +40,25 @@ public class WeblogPageRequest extends WeblogRequest {
     private static Logger log = LoggerFactory.getLogger(WeblogPageRequest.class);
 
     // lightweight attributes
-    private String context = null;
-    private String weblogEntryAnchor = null;
-    private String customPageName = null;
-    private String weblogCategoryName = null;
-    private String weblogDate = null;
-    private String tag = null;
-    private String query = null;
+    private String context;
+    private String weblogEntryAnchor;
+    private String customPageName;
+    private String weblogCategoryName;
+    private String weblogDate;
+    private String tag;
+    private String query;
 
     // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
-    private boolean noIndex = false;
+    private boolean noIndex;
 
     // attributes populated by processors where appropriate
-    private Template template = null;
-    private WeblogEntry weblogEntry = null;
+    private Template template;
+    private WeblogEntry weblogEntry;
 
     public WeblogPageRequest() {
     }
 
-    static public class Creator {
+    public static class Creator {
         public WeblogPageRequest create(HttpServletRequest servletRequest) {
             WeblogPageRequest weblogPageRequest = new WeblogPageRequest();
             WeblogRequest.parseRequest(weblogPageRequest, servletRequest);
@@ -150,8 +150,8 @@ public class WeblogPageRequest extends WeblogRequest {
 
     private boolean isValidDateString(String dateString) {
         // string must be all numeric and 6 or 8 characters
-        return (dateString != null && StringUtils.isNumeric(dateString) && (dateString
-                .length() == 6 || dateString.length() == 8));
+        return dateString != null && StringUtils.isNumeric(dateString) && (dateString
+                .length() == 6 || dateString.length() == 8);
     }
 
     public String getContext() {

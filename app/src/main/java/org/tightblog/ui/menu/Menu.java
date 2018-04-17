@@ -43,8 +43,8 @@ public class Menu {
     }
 
     public static class MenuTab {
-        private String key = null;
-        private boolean selected = false;
+        private String key;
+        private boolean selected;
         private List<MenuTabItem> items = new ArrayList<>();
 
         void addItem(MenuTabItem item) {
@@ -77,11 +77,11 @@ public class Menu {
     }
 
     public static class MenuTabItem {
-        private String key = null;
-        private String action = null;
-        private String actionPath = null;
-        private boolean selected = false;
-        private boolean hasWeblogId = false;
+        private String key;
+        private String action;
+        private String actionPath;
+        private boolean selected;
+        private boolean hasWeblogId;
 
         public String getKey() {
             return key;

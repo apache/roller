@@ -106,6 +106,13 @@ public interface WeblogManager {
     List<Weblog> getWeblogsByLetter(char letter, int offset, int length);
 
     /**
+     * Get the analytics tracking code to be used for the provided Weblog
+     * @param weblog weblog to determine tracking code for
+     * @return analytics tracking code, empty string if none.
+     */
+    String getAnalyticsTrackingCode(Weblog weblog);
+
+    /**
      * Store a custom weblog template.
      */
     void saveTemplate(WeblogTemplate template);

@@ -39,9 +39,9 @@ import static org.junit.Assert.*;
  */
 public class WeblogPageTest extends WebloggerTest {
 
-    private User testUser = null;
-    private Weblog testWeblog = null;
-    private WeblogTemplate testPage = null;
+    private User testUser;
+    private Weblog testWeblog;
+    private WeblogTemplate testPage;
 
     /**
      * All tests in this suite require a user and a weblog.

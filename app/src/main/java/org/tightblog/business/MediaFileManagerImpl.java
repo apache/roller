@@ -67,7 +67,8 @@ public class MediaFileManagerImpl implements MediaFileManager {
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
-    protected MediaFileManagerImpl() {}
+    protected MediaFileManagerImpl() {
+    }
 
     @Override
     public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaDirectory targetDirectory) {
@@ -179,7 +180,8 @@ public class MediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void storeMediaFile(MediaFile mediaFile, InputStream updatedStream, Map<String, List<String>> errors) throws IOException {
+    public void storeMediaFile(MediaFile mediaFile, InputStream updatedStream, Map<String, List<String>> errors)
+            throws IOException {
         Weblog weblog = mediaFile.getDirectory().getWeblog();
 
         if (!fileContentManager.canSave(weblog, mediaFile.getName(),

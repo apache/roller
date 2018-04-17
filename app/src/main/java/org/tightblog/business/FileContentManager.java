@@ -20,14 +20,14 @@
  */
 package org.tightblog.business;
 
-import org.tightblog.pojos.Weblog;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+import org.tightblog.pojos.Weblog;
 
 /**
  * Interface for managing contents of the files uploaded to the weblogger.

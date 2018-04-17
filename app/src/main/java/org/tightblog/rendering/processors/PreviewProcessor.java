@@ -71,7 +71,7 @@ public class PreviewProcessor extends AbstractProcessor {
 
     @Autowired
     @Qualifier("blogRenderer")
-    private ThymeleafRenderer thymeleafRenderer = null;
+    private ThymeleafRenderer thymeleafRenderer;
 
     void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
@@ -203,7 +203,7 @@ public class PreviewProcessor extends AbstractProcessor {
             CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
             response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
-            response.setHeader("Cache-Control","no-cache");
+            response.setHeader("Cache-Control", "no-cache");
             response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {
             log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);

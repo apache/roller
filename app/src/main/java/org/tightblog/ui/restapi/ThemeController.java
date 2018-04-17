@@ -55,7 +55,7 @@ public class ThemeController {
     }
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy = null;
+    private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
@@ -113,19 +113,19 @@ public class ThemeController {
 
         oldTheme.getTemplates().stream().filter(
                 old -> old.getDerivation() == Template.TemplateDerivation.SPECIFICBLOG).forEach(old -> {
-            if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
-                be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.singleton.role",
-                        old.getRole().getReadableName())));
-            } else if (newTheme.getTemplateByName(old.getName()) != null) {
-                be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.name",
-                        old.getName())));
-            } else {
-                String maybePath = old.getRelativePath();
-                if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
-                    be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.link",
-                            old.getRelativePath())));
-                }
-            }
+                    if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
+                        be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.singleton.role",
+                                old.getRole().getReadableName())));
+                    } else if (newTheme.getTemplateByName(old.getName()) != null) {
+                        be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.name",
+                                old.getName())));
+                    } else {
+                        String maybePath = old.getRelativePath();
+                        if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
+                            be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.link",
+                                    old.getRelativePath())));
+                        }
+                    }
         });
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;

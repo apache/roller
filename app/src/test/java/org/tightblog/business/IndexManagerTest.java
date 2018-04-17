@@ -47,8 +47,8 @@ import static org.junit.Assert.*;
  */
 public class IndexManagerTest extends WebloggerTest {
 
-    private User testUser = null;
-    private Weblog testWeblog = null;
+    private User testUser;
+    private Weblog testWeblog;
 
     @Resource
     private IndexManager indexManager;
@@ -82,8 +82,8 @@ public class IndexManagerTest extends WebloggerTest {
         wd1.setTitle("The Tholian Web");
         wd1.setText(
          "When the Enterprise attempts to ascertain the fate of the  "
-        +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
-        +"begin to lose power, and Spock reports strange sensor readings.");
+        + "U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
+        + "begin to lose power, and Spock reports strange sensor readings.");
         wd1.setAnchor("dummy1");
         wd1.setCreator(testUser);
         wd1.setStatus(PubStatus.PUBLISHED);
@@ -105,8 +105,8 @@ public class IndexManagerTest extends WebloggerTest {
         wd2.setTitle("A Piece of the Action");
         wd2.setText(
           "The crew of the Enterprise attempts to make contact with "
-          +"the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
-          +"in communication with Boss Oxmyx.");
+          + "the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
+          + "in communication with Boss Oxmyx.");
         wd2.setAnchor("dummy2");
         wd2.setStatus(PubStatus.PUBLISHED);
         wd2.setCreator(testUser);

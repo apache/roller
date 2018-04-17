@@ -29,13 +29,13 @@ import org.tightblog.util.Utilities;
  */
 public class WeblogFeedRequest extends WeblogRequest {
 
-    private String weblogCategoryName = null;
-    private String tag = null;
+    private String weblogCategoryName;
+    private String tag;
 
     public WeblogFeedRequest() {
     }
 
-    static public class Creator {
+    public static class Creator {
         public WeblogFeedRequest create(HttpServletRequest servletRequest) {
             WeblogFeedRequest feedRequest = new WeblogFeedRequest();
             WeblogRequest.parseRequest(feedRequest, servletRequest);

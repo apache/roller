@@ -64,7 +64,7 @@ public class SearchProcessor extends AbstractProcessor {
 
     @Autowired
     @Qualifier("blogRenderer")
-    private ThymeleafRenderer thymeleafRenderer = null;
+    private ThymeleafRenderer thymeleafRenderer;
 
     void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;

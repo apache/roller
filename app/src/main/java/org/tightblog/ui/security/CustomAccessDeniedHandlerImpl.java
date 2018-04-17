@@ -37,9 +37,9 @@ import java.io.IOException;
 public class CustomAccessDeniedHandlerImpl extends AccessDeniedHandlerImpl {
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException adEx)
             throws IOException, ServletException {
-        if (accessDeniedException instanceof MissingCsrfTokenException || accessDeniedException instanceof InvalidCsrfTokenException) {
+        if (adEx instanceof MissingCsrfTokenException || adEx instanceof InvalidCsrfTokenException) {
             String ajaxHeader = request.getHeader("X-Requested-With");
             if ("XMLHttpRequest".equals(ajaxHeader)) {
                 // Ajax call detected, return TIMEOUT (408), a signal used by the JavaScript
@@ -51,7 +51,7 @@ public class CustomAccessDeniedHandlerImpl extends AccessDeniedHandlerImpl {
                 dispatcher.forward(request, response);
             }
         } else {
-            super.handle(request, response, accessDeniedException);
+            super.handle(request, response, adEx);
         }
     }
 }

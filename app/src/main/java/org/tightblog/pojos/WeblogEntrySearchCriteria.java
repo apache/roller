@@ -51,7 +51,7 @@ public class WeblogEntrySearchCriteria {
     private boolean calculatePermalinks;
 
     // Offset into results for paging
-    private int offset = 0;
+    private int offset;
 
     private int maxResults = -1;
 

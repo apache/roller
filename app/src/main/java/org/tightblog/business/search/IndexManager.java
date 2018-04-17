@@ -55,7 +55,7 @@ public interface IndexManager {
     /**
      * Execute task immediately
      */
-    void executeIndexOperationNow(final AbstractTask op);
+    void executeIndexOperationNow(AbstractTask op);
 
     /**
      * Retrieve common ReadWriteLock for indexing and searching

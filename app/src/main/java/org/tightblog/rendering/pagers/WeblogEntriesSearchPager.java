@@ -39,18 +39,18 @@ import java.util.stream.Collectors;
 public class WeblogEntriesSearchPager implements WeblogEntriesPager {
 
     // message utils for doing i18n messages
-    private I18nMessages messageUtils = null;
+    private I18nMessages messageUtils;
 
     // url strategy
-    private URLStrategy urlStrategy = null;
+    private URLStrategy urlStrategy;
 
-    private Map<LocalDate, List<WeblogEntry>> entries = null;
+    private Map<LocalDate, List<WeblogEntry>> entries;
 
-    private Weblog weblog = null;
-    private String query = null;
-    private String category = null;
-    private int page = 0;
-    private boolean moreResults = false;
+    private Weblog weblog;
+    private String query;
+    private String category;
+    private int page;
+    private boolean moreResults;
 
     public WeblogEntriesSearchPager(URLStrategy strat, WeblogPageRequest searchRequest,
                                     Map<LocalDate, List<WeblogEntry>> entries, boolean more) {

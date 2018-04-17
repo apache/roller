@@ -149,7 +149,7 @@ public class WeblogBookmark implements Comparable<WeblogBookmark> {
     }
 
     private static final Comparator<WeblogBookmark> COMPARATOR =
-            Comparator.comparing(WeblogBookmark::getWeblog, Weblog.handleComparator)
+            Comparator.comparing(WeblogBookmark::getWeblog, Weblog.HANDLE_COMPARATOR)
                     .thenComparingInt(WeblogBookmark::getPosition);
 
     @Override

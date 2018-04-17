@@ -114,16 +114,16 @@ public class MediaDirectory implements Comparable<MediaDirectory> {
     /**
      * Indicates whether this directory contains the specified file.
      *
-     * @param name file name
+     * @param nameToCheck file name
      * @return true if the file is present in the directory, false otherwise.
      */
-    public boolean hasMediaFile(String name) {
+    public boolean hasMediaFile(String nameToCheck) {
         Set<MediaFile> fileSet = this.getMediaFiles();
         if (fileSet == null) {
             return false;
         }
         for (MediaFile mediaFile : fileSet) {
-            if (mediaFile.getName().equals(name)) {
+            if (mediaFile.getName().equals(nameToCheck)) {
                 return true;
             }
         }
@@ -133,16 +133,16 @@ public class MediaDirectory implements Comparable<MediaDirectory> {
     /**
      * Returns file with the given name, if present in this directory
      *
-     * @param name file name
+     * @param fileName file name
      * @return media file object
      */
-    public MediaFile getMediaFile(String name) {
+    public MediaFile getMediaFile(String fileName) {
         Set<MediaFile> fileSet = this.getMediaFiles();
         if (fileSet == null) {
             return null;
         }
         for (MediaFile mediaFile : fileSet) {
-            if (mediaFile.getName().equals(name)) {
+            if (mediaFile.getName().equals(fileName)) {
                 return mediaFile;
             }
         }
@@ -168,7 +168,7 @@ public class MediaDirectory implements Comparable<MediaDirectory> {
     }
 
     private static final Comparator<MediaDirectory> COMPARATOR =
-            Comparator.comparing(MediaDirectory::getWeblog, Weblog.handleComparator)
+            Comparator.comparing(MediaDirectory::getWeblog, Weblog.HANDLE_COMPARATOR)
                     .thenComparing(MediaDirectory::getName);
 
     @Override

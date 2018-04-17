@@ -55,7 +55,7 @@ public class URLModel implements Model {
     @Autowired
     protected URLStrategy urlStrategy;
 
-    private boolean preview = false;
+    private boolean preview;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;

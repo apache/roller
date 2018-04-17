@@ -20,7 +20,6 @@
  */
 package org.tightblog.ui.filters;
 
-import org.tightblog.WebloggerTest;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -28,7 +27,7 @@ import static org.junit.Assert.*;
 /**
  * @author Kohei Nozaki
  */
-public class InitFilterTest extends WebloggerTest {
+public class InitFilterTest {
 
     private static final String SERVER_NAME = "tightblog.example.com";
 

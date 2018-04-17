@@ -122,13 +122,13 @@ public class ParsedMenu {
      * An individual clickable menu item underneath a ParsedTab.
      */
     protected static class ParsedTabItem {
-        private String titleKey = null;
-        private String action = null;
-        private String actionPath = null;
-        private Set<String> subActions = null;
+        private String titleKey;
+        private String action;
+        private String actionPath;
+        private Set<String> subActions;
         private GlobalRole requiredGlobalRole;
         private WeblogRole requiredWeblogRole;
-        private String enabledProperty = null;
+        private String enabledProperty;
 
         @XmlAttribute
         public String getTitleKey() {

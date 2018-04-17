@@ -21,13 +21,20 @@
 package org.tightblog.util;
 
 import org.junit.Test;
+import org.springframework.mobile.device.Device;
+import org.springframework.mobile.device.DevicePlatform;
+import org.springframework.mobile.device.DeviceType;
+import org.springframework.mobile.device.DeviceUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class UtilitiesTest {
 
@@ -49,6 +56,69 @@ public class UtilitiesTest {
 
         // make sure it turned out how we planned
         assertEquals(convertLinesFormatted, output);
+    }
+
+    private abstract static class TestDevice implements Device {
+        @Override
+        public boolean isNormal() {
+            return false;
+        }
+
+        @Override
+        public boolean isMobile() {
+            return false;
+        }
+
+        @Override
+        public boolean isTablet() {
+            return false;
+        }
+
+        @Override
+        public DevicePlatform getDevicePlatform() {
+            return null;
+        }
+    }
+
+    @Test
+    public void testGetDeviceType() {
+        Device normalDevice = new TestDevice() {
+            @Override
+            public boolean isNormal() {
+                return true;
+            }
+        };
+
+        Device mobileDevice = new TestDevice() {
+            @Override
+            public boolean isMobile() {
+                return true;
+            }
+        };
+
+        Device tabletDevice = new TestDevice() {
+            @Override
+            public boolean isTablet() {
+                return true;
+            }
+        };
+
+        // normal device
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        when(mockRequest.getAttribute(DeviceUtils.CURRENT_DEVICE_ATTRIBUTE)).thenReturn(normalDevice);
+        assertEquals(DeviceType.NORMAL, Utilities.getDeviceType(mockRequest));
+
+        // tablet device
+        when(mockRequest.getAttribute(DeviceUtils.CURRENT_DEVICE_ATTRIBUTE)).thenReturn(tabletDevice);
+        assertEquals(DeviceType.TABLET, Utilities.getDeviceType(mockRequest));
+
+        // mobile device
+        when(mockRequest.getAttribute(DeviceUtils.CURRENT_DEVICE_ATTRIBUTE)).thenReturn(mobileDevice);
+        assertEquals(DeviceType.MOBILE, Utilities.getDeviceType(mockRequest));
+
+        // null = normal device
+        when(mockRequest.getAttribute(DeviceUtils.CURRENT_DEVICE_ATTRIBUTE)).thenReturn(null);
+        assertEquals(DeviceType.NORMAL, Utilities.getDeviceType(mockRequest));
     }
 
     @Test

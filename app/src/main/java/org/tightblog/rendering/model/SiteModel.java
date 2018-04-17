@@ -51,8 +51,8 @@ public class SiteModel implements Model {
 
     private static Logger log = LoggerFactory.getLogger(SiteModel.class);
 
-    private WeblogPageRequest pageRequest = null;
-    private String pageLink = null;
+    private WeblogPageRequest pageRequest;
+    private String pageLink;
 
     @Autowired
     private URLStrategy urlStrategy;

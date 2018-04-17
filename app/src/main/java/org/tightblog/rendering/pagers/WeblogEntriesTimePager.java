@@ -55,19 +55,19 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     private static Logger log = LoggerFactory.getLogger(WeblogEntriesTimePager.class);
 
     // url strategy for building urls
-    private URLStrategy urlStrategy = null;
+    private URLStrategy urlStrategy;
 
     // message utils for doing i18n messages
-    private I18nMessages messageUtils = null;
+    private I18nMessages messageUtils;
 
-    private Weblog weblog = null;
-    private String dateString = null;
-    private String catName = null;
-    private String tag = null;
-    private int offset = 0;
-    private int page = 0;
-    private int maxEntries = 0;
-    private Locale viewLocale = null;
+    private Weblog weblog;
+    private String dateString;
+    private String catName;
+    private String tag;
+    private int offset;
+    private int page;
+    private int maxEntries;
+    private Locale viewLocale;
 
     private WeblogEntryManager weblogEntryManager;
 
@@ -110,21 +110,21 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     private LocalDate prevTimePeriod;
 
     // collection for the pager
-    private Map<LocalDate, List<WeblogEntry>> entries = null;
+    private Map<LocalDate, List<WeblogEntry>> entries;
 
     // for site blog
-    private List<WeblogEntry> items = null;
+    private List<WeblogEntry> items;
 
     // are there more pages?
-    private boolean more = false;
+    private boolean more;
 
     // PagingInterval.SITE_LATEST allows for initializing these fields
     private int siteMaxEntries = -1;
-    private LocalDate fixedStartDate = null;
-    private Weblog siteWeblog = null;
+    private LocalDate fixedStartDate;
+    private Weblog siteWeblog;
 
     // most recent update time of current set of entries
-    private Instant lastUpdated = null;
+    private Instant lastUpdated;
 
     /**
      * This constructor is to create site-wide (frontpage) weblog pagers, which allow more
@@ -163,51 +163,51 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
             String tag,
             int page) {
 
-        PagingInterval interval = PagingInterval.LATEST;
+        PagingInterval pagingInterval = PagingInterval.LATEST;
 
         if (dateString != null) {
             int len = dateString.length();
             if (len == 8) {
-                interval = PagingInterval.DAY;
+                pagingInterval = PagingInterval.DAY;
             } else if (len == 6) {
-                interval = PagingInterval.MONTH;
+                pagingInterval = PagingInterval.MONTH;
             }
         }
 
         this.viewLocale = weblog.getLocaleInstance();
 
-        setup(interval, weblogEntryManager, strat, weblog, dateString,
+        setup(pagingInterval, weblogEntryManager, strat, weblog, dateString,
                 catName, tag, page);
     }
 
-    private void setup(PagingInterval interval,
-                       WeblogEntryManager weblogEntryManager,
+    private void setup(PagingInterval pagingInterval,
+                       WeblogEntryManager wem,
                        URLStrategy strat,
-                       Weblog weblog,
-                       String dateString,
-                       String catName,
-                       String tag,
+                       Weblog blog,
+                       String dateStr,
+                       String categoryName,
+                       String tagName,
                        int pageNum) {
 
-        this.interval = interval;
+        this.interval = pagingInterval;
         this.urlStrategy = strat;
-        this.weblogEntryManager = weblogEntryManager;
-        this.weblog = weblog;
-        this.dateString = dateString;
-        this.catName = catName;
+        this.weblogEntryManager = wem;
+        this.weblog = blog;
+        this.dateString = dateStr;
+        this.catName = categoryName;
         this.messageUtils = I18nMessages.getMessages(viewLocale);
-        this.tag = tag;
+        this.tag = tagName;
 
         if (pageNum > 0) {
             this.page = pageNum;
         }
 
-        if (interval == PagingInterval.SITE_LATEST) {
+        if (pagingInterval == PagingInterval.SITE_LATEST) {
             maxEntries = siteMaxEntries;
         } else {
             // make sure offset, maxEntries, and page are valid
             int maxLength = WebloggerStaticConfig.getIntProperty("site.pages.maxEntries", 30);
-            maxEntries = weblog.getEntriesPerPage();
+            maxEntries = blog.getEntriesPerPage();
             if (maxEntries > maxLength) {
                 maxEntries = maxLength;
             }
@@ -217,32 +217,32 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
         LocalDateTime startTime = fixedStartDate == null ? null : fixedStartDate.atStartOfDay();
         LocalDateTime endTime = null;
 
-        if (interval == PagingInterval.DAY || interval == PagingInterval.MONTH) {
+        if (pagingInterval == PagingInterval.DAY || pagingInterval == PagingInterval.MONTH) {
             dateFormat = DateTimeFormatter.ofPattern(
-                    messageUtils.getString("weblogEntriesPager." + interval.getMessageIndex() + ".dateFormat"),
-                    weblog.getLocaleInstance());
+                    messageUtils.getString("weblogEntriesPager." + pagingInterval.getMessageIndex() + ".dateFormat"),
+                    blog.getLocaleInstance());
 
-            timePeriod = Utilities.parseURLDate(dateString);
+            timePeriod = Utilities.parseURLDate(dateStr);
 
-            if (interval == PagingInterval.DAY) {
+            if (pagingInterval == PagingInterval.DAY) {
                 startTime = timePeriod.atStartOfDay();
                 endTime = timePeriod.atStartOfDay().plusDays(1).minusNanos(1);
 
                 // determine if we should have next and prev month links, and if so, the months for them to point to
-                WeblogEntry temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, startTime.minusNanos(1), false);
+                WeblogEntry temp = wem.findNearestWeblogEntry(blog, categoryName, startTime.minusNanos(1), false);
                 prevTimePeriod = weblogEntryPublishDateToLocalDate(temp);
 
-                temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, endTime.plusNanos(1), true);
+                temp = wem.findNearestWeblogEntry(blog, categoryName, endTime.plusNanos(1), true);
                 nextTimePeriod = weblogEntryPublishDateToLocalDate(temp);
             } else {
                 startTime = timePeriod.withDayOfMonth(1).atStartOfDay();
                 endTime = startTime.plusMonths(1).minusNanos(1);
 
                 // determine if we should have next and prev month links, and if so, the months for them to point to
-                WeblogEntry temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, startTime.minusNanos(1), false);
+                WeblogEntry temp = wem.findNearestWeblogEntry(blog, categoryName, startTime.minusNanos(1), false);
                 prevTimePeriod = firstDayOfMonthOfWeblogEntry(temp);
 
-                temp = weblogEntryManager.findNearestWeblogEntry(weblog, catName, endTime.plusNanos(1), true);
+                temp = wem.findNearestWeblogEntry(blog, categoryName, endTime.plusNanos(1), true);
                 nextTimePeriod = firstDayOfMonthOfWeblogEntry(temp);
             }
         }
@@ -369,7 +369,8 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
     private String getNextCollectionLink() {
         if (nextTimePeriod != null) {
-            String next = nextTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(), weblog.getLocaleInstance()));
+            String next = nextTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(),
+                    weblog.getLocaleInstance()));
             return createURL(0, 0, next);
         }
         return null;
@@ -385,7 +386,8 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
 
     private String getPrevCollectionLink() {
         if (prevTimePeriod != null) {
-            String prev = prevTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(), weblog.getLocaleInstance()));
+            String prev = prevTimePeriod.format(DateTimeFormatter.ofPattern(interval.getDateFormat(),
+                    weblog.getLocaleInstance()));
             return createURL(0, 0, prev);
         }
         return null;
@@ -405,13 +407,13 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
      * @param pageAdd To be added to page number, or 0 for no page number
      */
     private String createURL(
-            int page,
+            int pageIndex,
             int pageAdd,
-            String dateString) {
+            String dateStr) {
 
-        int pageNum = page + pageAdd;
+        int pageNum = pageIndex + pageAdd;
         return urlStrategy.getWeblogCollectionURL((interval == PagingInterval.SITE_LATEST) ? siteWeblog : weblog,
-                catName, dateString, tag, pageNum, false);
+                catName, dateStr, tag, pageNum, false);
     }
 
     /**
@@ -421,10 +423,10 @@ public class WeblogEntriesTimePager implements WeblogEntriesPager {
     public Instant getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
-            List<WeblogEntry> items = getItems();
-            if (items != null && items.size() > 0) {
-                Instant newest = items.get(0).getUpdateTime();
-                for (WeblogEntry e : items) {
+            List<WeblogEntry> weblogEntries = getItems();
+            if (weblogEntries != null && weblogEntries.size() > 0) {
+                Instant newest = weblogEntries.get(0).getUpdateTime();
+                for (WeblogEntry e : weblogEntries) {
                     if (e.getUpdateTime().isAfter(newest)) {
                         newest = e.getUpdateTime();
                     }

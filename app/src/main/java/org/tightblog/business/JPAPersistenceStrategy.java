@@ -20,10 +20,10 @@
  */
 package org.tightblog.business;
 
-import org.springframework.stereotype.Component;
-import org.tightblog.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.tightblog.pojos.WebloggerProperties;
 
 import javax.annotation.PreDestroy;
 import javax.naming.NamingException;
@@ -58,7 +58,7 @@ public class JPAPersistenceStrategy {
     /**
      * The EntityManagerFactory for this Roller instance.
      */
-    private EntityManagerFactory emf = null;
+    private EntityManagerFactory emf;
 
     /**
      * Construct by finding JPA EntityManagerFactory.

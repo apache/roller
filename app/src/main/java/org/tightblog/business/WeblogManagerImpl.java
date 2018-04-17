@@ -20,6 +20,7 @@
  */
 package org.tightblog.business;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.search.IndexManager;
@@ -207,6 +208,18 @@ public class WeblogManagerImpl implements WeblogManager {
         this.strategy.store(newWeblog);
         this.strategy.flush();
         this.addWeblogContents(newWeblog);
+    }
+
+    @Override
+    public String getAnalyticsTrackingCode(Weblog weblog) {
+        WebloggerProperties props = strategy.getWebloggerProperties();
+
+        if (props.isUsersOverrideAnalyticsCode() &&
+                !StringUtils.isBlank(weblog.getAnalyticsCode())) {
+            return weblog.getAnalyticsCode();
+        } else {
+            return StringUtils.defaultIfEmpty(props.getDefaultAnalyticsCode(), "");
+        }
     }
 
     private void addWeblogContents(Weblog newWeblog) {
@@ -567,8 +580,6 @@ public class WeblogManagerImpl implements WeblogManager {
                 indexManager.updateIndex(entry, false);
             }
 
-
-
         } catch (Exception e) {
             log.error("Unexpected exception running task", e);
         }
@@ -778,9 +789,9 @@ public class WeblogManagerImpl implements WeblogManager {
         }
 
         if (sortByName) {
-            results.sort(WeblogEntryTagAggregate.nameComparator);
+            results.sort(WeblogEntryTagAggregate.NAME_COMPARATOR);
         } else {
-            results.sort(WeblogEntryTagAggregate.countComparator);
+            results.sort(WeblogEntryTagAggregate.COUNT_COMPARATOR);
         }
 
         return results;
@@ -810,7 +821,7 @@ public class WeblogManagerImpl implements WeblogManager {
         List<String> results = q.getResultList();
 
         // OK if at least one article matches the tag
-        return (results != null && results.size() > 0);
+        return results != null && results.size() > 0;
     }
 
     @Override

@@ -102,8 +102,8 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.PUT)
-    public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogCategory newCategory, Principal p,
-                            HttpServletResponse response) throws ServletException {
+    public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogCategory newCategory,
+                            Principal p, HttpServletResponse response) throws ServletException {
         try {
             Weblog weblog = weblogManager.getWeblog(weblogId);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {

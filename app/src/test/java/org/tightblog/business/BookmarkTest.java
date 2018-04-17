@@ -36,8 +36,8 @@ import static org.junit.Assert.*;
  * Test Weblogger Bookmark Management.
  */
 public class BookmarkTest extends WebloggerTest {
-    User testUser = null;
-    Weblog testWeblog = null;
+    User testUser;
+    Weblog testWeblog;
 
     /**
      * All tests in this suite require a user and a weblog.
@@ -90,7 +90,8 @@ public class BookmarkTest extends WebloggerTest {
 
         endSession(true);
         testWeblog = getManagedWeblog(testWeblog);
-        WeblogBookmark bookmarkb, bookmarka;
+        WeblogBookmark bookmarka;
+        WeblogBookmark bookmarkb;
 
         // See that two bookmarks were stored
         List<WeblogBookmark> bookmarks = testWeblog.getBookmarks();

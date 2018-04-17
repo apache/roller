@@ -24,6 +24,10 @@ package org.tightblog.business.search;
  * Field constants for indexing blog entries and comments.
  */
 public final class FieldConstants {
+
+    private FieldConstants() {
+    }
+
     public static final String UPDATED = "updated";
     public static final String ID = "id";
     public static final String USERNAME = "username";

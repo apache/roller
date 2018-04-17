@@ -120,7 +120,7 @@ public class MediaFileProcessor extends AbstractProcessor {
             useThumbnail = true;
         }
 
-        File desiredFile = (useThumbnail) ? mediaFile.getThumbnail() : mediaFile.getContent();
+        File desiredFile = useThumbnail ? mediaFile.getThumbnail() : mediaFile.getContent();
         if (desiredFile == null) {
             log.info("Could not obtain {} file content for resource path: ", useThumbnail ? "thumbnail" : "",
                     request.getRequestURL());
@@ -131,7 +131,7 @@ public class MediaFileProcessor extends AbstractProcessor {
         try (InputStream resourceStream = new FileInputStream(desiredFile);
              OutputStream out = response.getOutputStream()) {
             response.setContentType(useThumbnail ? MediaFile.THUMBNAIL_CONTENT_TYPE : mediaFile.getContentType());
-            response.setHeader("Cache-Control","no-cache");
+            response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
 
             byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];

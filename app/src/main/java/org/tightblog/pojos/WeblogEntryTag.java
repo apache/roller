@@ -50,9 +50,9 @@ public class WeblogEntryTag implements Comparable<WeblogEntryTag> {
 
     private String id = Utilities.generateUUID();
     private int hashCode;
-    private Weblog weblog = null;
-    private WeblogEntry weblogEntry = null;
-    private String name = null;
+    private Weblog weblog;
+    private WeblogEntry weblogEntry;
+    private String name;
 
     public WeblogEntryTag() {
     }
@@ -131,9 +131,8 @@ public class WeblogEntryTag implements Comparable<WeblogEntryTag> {
     }
 
     private static final Comparator<WeblogEntryTag> COMPARATOR =
-            Comparator.comparing(WeblogEntryTag::getWeblog, Weblog.handleComparator)
+            Comparator.comparing(WeblogEntryTag::getWeblog, Weblog.HANDLE_COMPARATOR)
                     .thenComparing(WeblogEntryTag::getName);
-
 
     @Override
     public int compareTo(WeblogEntryTag o) {

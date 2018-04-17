@@ -114,7 +114,7 @@ public class WeblogEntry {
     private Instant updateTime;
     private Integer commentDays = CommentDayOption.SEVEN.getDays();
     private PubStatus status;
-    private User creator = null;
+    private User creator;
     private String searchDescription;
 
     // Associated objects
@@ -124,8 +124,8 @@ public class WeblogEntry {
     private Set<WeblogEntryTag> tagSet = new HashSet<>();
 
     // temporary non-persisted fields used for form entry
-    private int hours = 0;
-    private int minutes = 0;
+    private int hours;
+    private int minutes;
 
     private String dateString;
     private String editUrl;
@@ -344,8 +344,8 @@ public class WeblogEntry {
         return tagSet;
     }
 
-    public void setTags(Set<WeblogEntryTag> tagSet) {
-        this.tagSet = tagSet;
+    public void setTags(Set<WeblogEntryTag> tags) {
+        this.tagSet = tags;
     }
 
     /**

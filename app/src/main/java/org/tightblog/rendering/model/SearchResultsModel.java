@@ -68,19 +68,19 @@ public class SearchResultsModel extends PageModel {
     private static final int RESULTS_PER_PAGE = 10;
 
     // the original search request
-    private WeblogPageRequest searchRequest = null;
+    private WeblogPageRequest searchRequest;
 
     // the actual search results mapped by Day -> Set of entries
     private Map<LocalDate, TreeSet<WeblogEntry>> results = new TreeMap<>(Collections.reverseOrder());
 
-    private WeblogEntriesSearchPager pager = null;
+    private WeblogEntriesSearchPager pager;
 
-    private int resultCount = 0;
-    private int offset = 0;
-    private int limit = 0;
+    private int resultCount;
+    private int offset;
+    private int limit;
     private Set categories = new TreeSet();
     private boolean websiteSpecificSearch = true;
-    private String errorMessage = null;
+    private String errorMessage;
 
     @Autowired
     private IndexManager indexManager;
@@ -145,7 +145,7 @@ public class SearchResultsModel extends PageModel {
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> new ArrayList<>(e.getValue())));
 
         pager = new WeblogEntriesSearchPager(urlStrategy, searchRequest, listMap,
-                (resultCount > (offset + limit)));
+                resultCount > (offset + limit));
     }
 
     @Override
@@ -175,7 +175,7 @@ public class SearchResultsModel extends PageModel {
             this.limit = hits.length - this.offset;
         }
 
-        TreeSet<String> categorySet = new TreeSet<>();
+        Set<String> categorySet = new TreeSet<>();
 
         WeblogEntry entry;
         Document doc;
@@ -224,6 +224,7 @@ public class SearchResultsModel extends PageModel {
         return true;
     }
 
+    // TODO: handle no search terms
     public String getSearchTerm() {
         String query = searchRequest.getQuery();
         return (query == null) ? "" : StringEscapeUtils.escapeXml10(query);
@@ -256,5 +257,4 @@ public class SearchResultsModel extends PageModel {
     public String getCategoryName() {
         return searchRequest.getWeblogCategoryName();
     }
-
 }

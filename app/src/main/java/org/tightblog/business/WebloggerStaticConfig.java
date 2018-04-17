@@ -42,8 +42,8 @@ public final class WebloggerStaticConfig {
     private static Properties config;
 
     // special case for our context urls
-    private static String relativeContextURL = null;
-    private static String absoluteContextURL = null;
+    private static String relativeContextURL;
+    private static String absoluteContextURL;
 
     // no, you may not instantiate this class :p
     private WebloggerStaticConfig() {
@@ -96,9 +96,11 @@ public final class WebloggerStaticConfig {
                 if (customConfigFile.exists()) {
                     is = new FileInputStream(customConfigFile);
                     config.load(is);
-                    System.out.println("WebloggerStaticConfig: Successfully loaded custom properties from " + customConfigFile.getAbsolutePath());
+                    System.out.println("WebloggerStaticConfig: Successfully loaded custom properties from " +
+                            customConfigFile.getAbsolutePath());
                 } else {
-                    System.out.println("WebloggerStaticConfig: Failed to load custom properties from " + customConfigFile.getAbsolutePath());
+                    System.out.println("WebloggerStaticConfig: Failed to load custom properties from " +
+                            customConfigFile.getAbsolutePath());
                 }
 
             }

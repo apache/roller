@@ -40,8 +40,8 @@ import java.util.TreeMap;
 public class WeblogTheme {
 
     protected WeblogManager weblogManager;
-    protected Weblog weblog = null;
-    private SharedTheme sharedTheme = null;
+    protected Weblog weblog;
+    private SharedTheme sharedTheme;
 
     public WeblogTheme(WeblogManager manager, Weblog weblog, SharedTheme sharedTheme) {
         this.weblogManager = manager;

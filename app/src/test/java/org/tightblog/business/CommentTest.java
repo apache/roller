@@ -43,9 +43,9 @@ import static org.junit.Assert.*;
  * Test Comment related business operations.
  */
 public class CommentTest extends WebloggerTest {
-    private User testUser = null;
-    private Weblog testWeblog = null;
-    private WeblogEntry testEntry = null;
+    private User testUser;
+    private Weblog testWeblog;
+    private WeblogEntry testEntry;
 
     /**
      * All tests in this suite require a user, weblog, and an entry.

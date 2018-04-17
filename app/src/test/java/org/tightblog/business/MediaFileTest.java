@@ -46,10 +46,10 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MediaFileTest extends WebloggerTest {
 
-    private User testUser = null;
-    private Weblog testWeblog = null;
+    private User testUser;
+    private Weblog testWeblog;
 
-    private final static String TEST_IMAGE = "/hawk.jpg";
+    private static final String TEST_IMAGE = "/hawk.jpg";
 
     @Resource
     private MediaFileManager mediaFileManager;

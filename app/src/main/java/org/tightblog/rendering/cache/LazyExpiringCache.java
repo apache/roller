@@ -87,7 +87,7 @@ public class LazyExpiringCache {
         this.timeoutInMS = timeoutSec * DateUtils.MILLIS_PER_SECOND;
     }
 
-    private Cache<String, Object> contentCache = null;
+    private Cache<String, Object> contentCache;
 
     @PostConstruct
     public void init() {

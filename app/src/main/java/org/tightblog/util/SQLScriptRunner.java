@@ -44,8 +44,8 @@ public class SQLScriptRunner {
 
     private List<String> commands = new ArrayList<>();
     private List<String> messages = new ArrayList<>();
-    private boolean failed = false;
-    private boolean errors = false;
+    private boolean failed;
+    private boolean errors;
 
     /**
      * Creates a new instance of SQLScriptRunner from a file-based reference

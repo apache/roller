@@ -46,11 +46,11 @@ import java.util.List;
  */
 public abstract class AbstractIndexTask extends AbstractTask {
 
+    private static Logger log = LoggerFactory.getLogger(AbstractIndexTask.class);
+
     AbstractIndexTask(IndexManager mgr) {
         super(mgr);
     }
-
-    private static Logger log = LoggerFactory.getLogger(AbstractIndexTask.class);
 
     public void run() {
         try {

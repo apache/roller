@@ -39,10 +39,10 @@ import java.util.Comparator;
 @Table(name = "weblog_entry_tag_agg")
 public class WeblogEntryTagAggregate {
 
-    private String name = null;
-    private Weblog weblog = null;
-    private int total = 0;
-    private int intensity = 0;
+    private String name;
+    private Weblog weblog;
+    private int total;
+    private int intensity;
 
     // temporary non-persisted fields used for forms
     private String viewUrl;
@@ -105,10 +105,10 @@ public class WeblogEntryTagAggregate {
         return "WeblogEntryTagAggregate: weblog=" + weblog.getHandle() + ", name=" + name + ", count=" + getTotal();
     }
 
-    public static Comparator<WeblogEntryTagAggregate> nameComparator = (weta1, weta2) ->
+    public static final Comparator<WeblogEntryTagAggregate> NAME_COMPARATOR = (weta1, weta2) ->
             weta1.getName().compareToIgnoreCase(weta2.getName());
 
-    public static Comparator<WeblogEntryTagAggregate> countComparator = (weta1, weta2) -> {
+    public static final Comparator<WeblogEntryTagAggregate> COUNT_COMPARATOR = (weta1, weta2) -> {
         // higher numbers first for counts
         int compVal = Integer.valueOf(weta2.getTotal()).compareTo(weta1.getTotal());
 

@@ -68,7 +68,7 @@ public class TemplateController {
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy = null;
+    private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
@@ -123,7 +123,8 @@ public class TemplateController {
                     availableRoles.removeIf(r -> r.name().equals(p.getRole().name())));
 
             availableRoles.forEach(role -> wtd.availableTemplateRoles.put(role.getName(), role.getReadableName()));
-            availableRoles.forEach(role -> wtd.templateRoleDescriptions.put(role.getName(), messages.getString(role.getDescriptionProperty())));
+            availableRoles.forEach(role -> wtd.templateRoleDescriptions.put(role.getName(),
+                    messages.getString(role.getDescriptionProperty())));
             return wtd;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -199,7 +200,8 @@ public class TemplateController {
     // none of other solutions (http://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-truncated)
     // seemed to work.
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templatename/{templateName}/", method = RequestMethod.GET)
-    public WeblogTemplate getWeblogTemplateByName(@PathVariable String weblogId, @PathVariable String templateName, Principal p, HttpServletResponse response) {
+    public WeblogTemplate getWeblogTemplateByName(@PathVariable String weblogId, @PathVariable String templateName, Principal p,
+                                                  HttpServletResponse response) {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
         // First-time override of a shared template
@@ -287,7 +289,8 @@ public class TemplateController {
             if (StringUtils.isEmpty(templateToCheck.getRelativePath())) {
                 be.addError(new ObjectError("WeblogTemplate", bundle.getString("templateEdit.error.relativePathRequired")));
             } else {
-                WeblogTemplate test = weblogManager.getTemplateByPath(templateToCheck.getWeblog(), templateToCheck.getRelativePath());
+                WeblogTemplate test = weblogManager.getTemplateByPath(templateToCheck.getWeblog(),
+                        templateToCheck.getRelativePath());
                 if (test != null && !test.getId().equals(templateToCheck.getId())) {
                     be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.pathAlreadyExists")));
                 }

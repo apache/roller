@@ -53,7 +53,7 @@ public class MediaFileProcessorTest {
     private WeblogManager mockWM;
     private MediaFileManager mockMFM;
 
-    private final static String TEST_IMAGE = "/hawk.jpg";
+    private static final String TEST_IMAGE = "/hawk.jpg";
 
     @Before
     public void initializeMocks() throws IOException {
@@ -149,7 +149,7 @@ public class MediaFileProcessorTest {
         // image/png: thumbnail image sent
         verify(mockResponse).setContentType("image/png");
 
-        verify(mockResponse).setHeader("Cache-Control","no-cache");
+        verify(mockResponse).setHeader("Cache-Control", "no-cache");
         verify(mockResponse).setDateHeader("Last-Modified", now.toEpochMilli());
     }
 

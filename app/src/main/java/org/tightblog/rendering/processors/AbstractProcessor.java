@@ -35,7 +35,7 @@ public abstract class AbstractProcessor implements ApplicationContextAware {
     }
 
     Map<String, Object> getModelMap(String modelBean, Map<String, Object> initData) {
-        HashMap<String, Object> modelMap = new HashMap<>();
+        Map<String, Object> modelMap = new HashMap<>();
         Set modelSet = appContext.getBean(modelBean, Set.class);
         for (Object obj : modelSet) {
             Model m = (Model) obj;

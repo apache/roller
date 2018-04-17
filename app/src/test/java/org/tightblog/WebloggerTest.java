@@ -29,7 +29,6 @@ import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.util.Utilities;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +39,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.time.Instant;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring-beans.xml")
-abstract public class WebloggerTest {
+public abstract class WebloggerTest {
 
     @Autowired
     private ApplicationContext appContext;
@@ -72,8 +70,8 @@ abstract public class WebloggerTest {
     @Resource
     protected JPAPersistenceStrategy strategy;
 
-    public void setJPAPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
+    public void setJPAPersistenceStrategy(JPAPersistenceStrategy jpaStrategy) {
+        this.strategy = jpaStrategy;
     }
 
     @Resource
@@ -187,7 +185,6 @@ abstract public class WebloggerTest {
         weblogManager.removeWeblog(weblog);
         strategy.flush();
     }
-
 
     protected WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {
         return setupWeblogEntry(anchor, weblog.getWeblogCategories()

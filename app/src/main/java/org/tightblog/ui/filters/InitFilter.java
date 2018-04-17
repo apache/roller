@@ -42,7 +42,7 @@ public class InitFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(InitFilter.class);
 
-    private boolean initialized = false;
+    private boolean initialized;
 
     public void doFilter(ServletRequest req, ServletResponse res,
                          FilterChain chain) throws IOException, ServletException {

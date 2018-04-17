@@ -274,9 +274,9 @@ public class PreviewProcessorTest {
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
 
         // set up captors on thymeleafRenderer.render()
-        ArgumentCaptor<Map<String,Object>> modelCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map<String, Object>> modelCaptor = ArgumentCaptor.forClass(Map.class);
         verify(mockRenderer).render(eq(sharedTemplate), modelCaptor.capture());
-        Map<String,Object> results = modelCaptor.getValue();
+        Map<String, Object> results = modelCaptor.getValue();
         assertTrue(results.containsKey("model"));
         assertTrue(results.containsKey("site"));
 

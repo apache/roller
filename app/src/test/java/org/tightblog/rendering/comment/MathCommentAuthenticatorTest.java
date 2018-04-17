@@ -72,7 +72,8 @@ public class MathCommentAuthenticatorTest {
         when(mockRequest.getParameter("answer")).thenReturn("42");
         MathCommentAuthenticator mca = new MathCommentAuthenticator();
         String actual = mca.getHtml(mockRequest);
-        String expected = "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='42' required></p>";
+        String expected =
+                "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='42' required></p>";
         assertEquals(expected, actual);
     }
 

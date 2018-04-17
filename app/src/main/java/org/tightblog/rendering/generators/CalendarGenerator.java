@@ -132,7 +132,7 @@ public class CalendarGenerator {
                     dayIter.setDayNum(Integer.toString(dayPointer.getDayOfMonth()));
 
                     if (dateToEntryMap.containsKey(dayPointer)) {
-                        String dateString = Utilities.YMDFormatter.format(dayPointer);
+                        String dateString = Utilities.YMD_FORMATTER.format(dayPointer);
                         String link = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(),
                                 pageRequest.getWeblogCategoryName(), dateString, null, -1, false);
                         dayIter.setLink(link);
@@ -168,7 +168,7 @@ public class CalendarGenerator {
         String result = null;
 
         if (day != null) {
-            String dateString = Utilities.YMFormatter.format(day);
+            String dateString = Utilities.YM_FORMATTER.format(day);
 
             if (pageRequest.getCustomPageName() == null) {
                 result = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getWeblogCategoryName(),

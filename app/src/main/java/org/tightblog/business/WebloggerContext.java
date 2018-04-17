@@ -41,13 +41,13 @@ public class WebloggerContext extends ContextLoaderListener {
 
     private static Logger log = LoggerFactory.getLogger(WebloggerContext.class);
 
-    private static WeblogEntryManager weblogEntryManager = null;
+    private static WeblogEntryManager weblogEntryManager;
 
-    private static URLStrategy urlStrategy = null;
+    private static URLStrategy urlStrategy;
 
-    private static ServletContext servletContext = null;
+    private static ServletContext servletContext;
 
-    private static JPAPersistenceStrategy strategy = null;
+    private static JPAPersistenceStrategy strategy;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {

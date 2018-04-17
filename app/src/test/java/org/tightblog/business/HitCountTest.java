@@ -38,8 +38,8 @@ import static org.junit.Assert.*;
  */
 public class HitCountTest extends WebloggerTest {
     
-    User testUser = null;
-    Weblog testWeblog = null;
+    User testUser;
+    Weblog testWeblog;
     
     /**
      * All tests in this suite require a user and a weblog.
@@ -161,9 +161,9 @@ public class HitCountTest extends WebloggerTest {
         // also check ordering and values
         int hitCount;
         Iterator<Weblog> it = hotBlogs.iterator();
-        for (int i=3; it.hasNext(); i--) {
+        for (int i = 3; it.hasNext(); i--) {
             hitCount = it.next().getHitsToday();
-            assertEquals(i*10, hitCount);
+            assertEquals(i * 10, hitCount);
         }
         
         // cleanup

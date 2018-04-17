@@ -75,7 +75,6 @@ public class CalendarGeneratorTest {
         dateToWeblogEntryMap.put(localDate2, Collections.singletonList(weblogEntry2));
     }
 
-
     @Test
     public void testGetCalendarData() {
         initializeDateToWeblogEntryMap();
@@ -91,7 +90,7 @@ public class CalendarGeneratorTest {
 
         CalendarData data = calendarGenerator.getCalendarData(wpr, false);
         assertEquals("October 1858", data.getCalendarTitle());
-        assertArrayEquals(new String[]{"Sun","Mon","Tue","Wed","Thu","Fri","Sat"}, data.getDayOfWeekNames());
+        assertArrayEquals(new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}, data.getDayOfWeekNames());
         assertEquals(6, data.getWeeks().length);
         // October 1st 1858 was on a Friday, 14th on a Thursday, 31st on a Sunday
         assertEquals("1", data.getWeeks()[0].getDays()[5].getDayNum());
@@ -107,7 +106,8 @@ public class CalendarGeneratorTest {
         assertEquals(2, data.getWeeks()[2].getDays()[4].getEntries().size());
         assertEquals("A short title", data.getWeeks()[2].getDays()[4].getEntries().get(0).getTitle());
         assertEquals("my url 1a", data.getWeeks()[2].getDays()[4].getEntries().get(0).getLink());
-        assertEquals("A very long title to ensure it is longer...", data.getWeeks()[2].getDays()[4].getEntries().get(1).getTitle());
+        assertEquals("A very long title to ensure it is longer...",
+                data.getWeeks()[2].getDays()[4].getEntries().get(1).getTitle());
         assertEquals("my url 1b", data.getWeeks()[2].getDays()[4].getEntries().get(1).getLink());
     }
 
@@ -120,13 +120,14 @@ public class CalendarGeneratorTest {
         wpr.setWeblog(weblog);
         wpr.setWeblogCategoryName("stamps");
 
-        LocalDate todaysDatePre, todaysDatePost;
+        LocalDate todaysDatePre;
+        LocalDate todaysDatePost;
         CalendarData data;
 
         // ensure test isn't running when day changes
         do {
             todaysDatePre = LocalDate.now(wpr.getWeblog().getZoneId());
-            wpr.setWeblogDate(todaysDatePre.format(Utilities.YMDFormatter));
+            wpr.setWeblogDate(todaysDatePre.format(Utilities.YMD_FORMATTER));
             data = calendarGenerator.getCalendarData(wpr, false);
             todaysDatePost = LocalDate.now(wpr.getWeblog().getZoneId());
         } while (!todaysDatePre.equals(todaysDatePost));
@@ -196,11 +197,11 @@ public class CalendarGeneratorTest {
     @Test
     public void testBuildDayNames() {
         String[] dayNames = CalendarGenerator.buildDayNames(Locale.US);
-        String[] dayNamesActual = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+        String[] dayNamesActual = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         assertArrayEquals(dayNamesActual, dayNames);
 
         dayNames = CalendarGenerator.buildDayNames(Locale.FRANCE);
-        dayNamesActual = new String[]{"lun.","mar.","mer.","jeu.","ven.","sam.","dim."};
+        dayNamesActual = new String[]{"lun.", "mar.", "mer.", "jeu.", "ven.", "sam.", "dim."};
         assertArrayEquals(dayNamesActual, dayNames);
     }
 

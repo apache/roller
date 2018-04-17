@@ -37,16 +37,15 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-
 public class WeblogStatsTest extends WebloggerTest {
-    private User user1, user2;
+    private User user1;
+    private User user2;
     private Weblog website1;
     private WeblogEntryComment comment11;
     private WeblogEntryComment comment12;
     private WeblogEntryComment comment13;
     private Weblog website2;
     private WeblogEntryComment comment21;
-
 
     @Before
     public void setUp() throws Exception {

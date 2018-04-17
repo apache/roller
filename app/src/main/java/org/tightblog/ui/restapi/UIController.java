@@ -316,11 +316,13 @@ public class UIController {
         return getBlogPage(principal, map, weblogId, actionName, WeblogRole.POST);
     }
 
-    private ModelAndView getBlogContributorPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
+    private ModelAndView getBlogContributorPage(Principal principal, Map<String, Object> map, String weblogId,
+                                                String actionName) {
         return getBlogPage(principal, map, weblogId, actionName, WeblogRole.EDIT_DRAFT);
     }
 
-    private ModelAndView getBlogPage(Principal principal, Map<String, Object> map, String weblogId, String actionName, WeblogRole requiredRole) {
+    private ModelAndView getBlogPage(Principal principal, Map<String, Object> map, String weblogId, String actionName,
+                                     WeblogRole requiredRole) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
         Weblog weblog = weblogManager.getWeblog(weblogId);
 

@@ -42,7 +42,7 @@ public class BootstrapFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(BootstrapFilter.class);
 
-    private ServletContext context = null;
+    private ServletContext context;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
@@ -64,9 +64,9 @@ public class BootstrapFilter implements Filter {
     }
 
     private boolean isInstallUrl(String uri) {
-        return (uri != null && (
+        return uri != null && (
                 uri.endsWith("/install/bootstrap") || uri.endsWith("/install/create") ||
-                        uri.endsWith(".js") || uri.endsWith(".css")));
+                        uri.endsWith(".js") || uri.endsWith(".css"));
     }
 
     public void destroy() {

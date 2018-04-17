@@ -481,7 +481,6 @@ public class MailManagerImpl implements MailManager {
         return ctx;
     }
 
-
     @Override
     public void sendYourCommentWasApprovedNotifications(List<WeblogEntryComment> comments) {
 

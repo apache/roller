@@ -93,7 +93,7 @@ public class WeblogController {
     }
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy = null;
+    private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.persistenceStrategy = strategy;
@@ -126,7 +126,8 @@ public class WeblogController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblogs", method = RequestMethod.POST)
-    public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response) throws ServletException {
+    public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response)
+            throws ServletException {
 
         User user = userManager.getEnabledUserByUserName(p.getName());
 
@@ -163,7 +164,8 @@ public class WeblogController {
         return saveWeblog(weblog, newData, response, false);
     }
 
-    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, HttpServletResponse response, boolean newWeblog) throws ServletException {
+    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, HttpServletResponse response, boolean newWeblog)
+            throws ServletException {
         try {
             if (weblog != null) {
 
@@ -325,8 +327,8 @@ public class WeblogController {
 
         String relativeSiteURL;
         String absoluteSiteURL;
-        boolean usersOverrideAnalyticsCode = false;
-        boolean usersCommentNotifications = false;
+        boolean usersOverrideAnalyticsCode;
+        boolean usersCommentNotifications;
 
         public Map<String, String> getEditFormats() {
             return editFormats;

@@ -310,7 +310,8 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
         if (!countOnly) {
             qd.queryString += " ORDER BY ";
-            qd.queryString += WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.equals(criteria.getSortBy()) ? " e.updateTime " : " e.pubTime ";
+            qd.queryString += WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.equals(criteria.getSortBy()) ?
+                    " e.updateTime " : " e.pubTime ";
             String sortOrder = WeblogEntrySearchCriteria.SortOrder.ASCENDING.equals(criteria.getSortOrder()) ? " ASC " : " DESC ";
             qd.queryString += sortOrder + ", e.id " + sortOrder;
         }
@@ -563,7 +564,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
     @Override
     public Map<LocalDate, List<WeblogEntry>> getDateToWeblogEntryMap(WeblogEntrySearchCriteria wesc) {
-        TreeMap<LocalDate, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
+        Map<LocalDate, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 

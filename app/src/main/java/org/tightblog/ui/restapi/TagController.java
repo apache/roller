@@ -100,7 +100,7 @@ public class TagController {
 
     public class TagData {
         List<WeblogEntryTagAggregate> tags;
-        boolean hasMore = false;
+        boolean hasMore;
 
         public List<WeblogEntryTagAggregate> getTags() {
             return tags;

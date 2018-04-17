@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * Test Weblog related business operations.
  */
 public class WeblogTest extends WebloggerTest {
-    User testUser = null;
+    User testUser;
     
     /**
      * All tests in this suite require a user.

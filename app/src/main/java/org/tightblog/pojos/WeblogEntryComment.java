@@ -57,28 +57,28 @@ public class WeblogEntryComment {
     // attributes
     private String id = Utilities.generateUUID();
     private int hashCode;
-    private String name = null;
-    private String email = null;
-    private String url = null;
-    private String content = null;
-    private Instant postTime = null;
+    private String name;
+    private String email;
+    private String url;
+    private String content;
+    private Instant postTime;
     private ApprovalStatus status = ApprovalStatus.DISAPPROVED;
     private Boolean notify = Boolean.FALSE;
-    private String remoteHost = null;
-    private String referrer = null;
-    private String userAgent = null;
+    private String remoteHost;
+    private String referrer;
+    private String userAgent;
 
     // associations
-    private WeblogEntry weblogEntry = null;
+    private WeblogEntry weblogEntry;
 
-    private User blogger = null;
+    private User blogger;
 
     public WeblogEntryComment() {
     }
 
     // transient fields involved during comment submittal
-    private boolean preview = false;
-    private String submitResponseMessage = null;
+    private boolean preview;
+    private String submitResponseMessage;
 
     @Id
     public String getId() {
@@ -277,7 +277,8 @@ public class WeblogEntryComment {
     public String toString() {
         return "WeblogEntryComment: id=" + id + ", weblog="
                 + (weblogEntry != null && weblogEntry.getWeblog() != null ? weblogEntry.getWeblog().getHandle() : "(no weblog)")
-                + ", entry=" + (weblogEntry != null && weblogEntry.getAnchor() != null ? weblogEntry.getAnchor() : "(no weblog entry)")
+                + ", entry=" + (weblogEntry != null && weblogEntry.getAnchor() != null ?
+                    weblogEntry.getAnchor() : "(no weblog entry)")
                 + ", name=" + name + ", email=" + email + ", postTime=" + postTime;
     }
 }

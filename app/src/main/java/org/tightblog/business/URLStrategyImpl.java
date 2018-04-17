@@ -38,7 +38,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     private static final String PREVIEW_URL_SEGMENT = "/tb-ui/authoring/preview/";
 
-    private boolean isThemePreview = false;
+    private boolean isThemePreview;
 
     public URLStrategyImpl() {
         previewTheme = null;

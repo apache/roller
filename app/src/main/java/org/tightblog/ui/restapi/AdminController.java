@@ -21,7 +21,6 @@
 package org.tightblog.ui.restapi;
 
 import java.security.Principal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -108,7 +107,7 @@ public class AdminController {
     }
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy = null;
+    private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.persistenceStrategy = strategy;
@@ -184,7 +183,7 @@ public class AdminController {
     @RequestMapping(value = "/webloggerproperties", method = RequestMethod.POST)
     public ResponseEntity updateProperties(Principal p, @Valid @RequestBody WebloggerProperties properties) {
         User user = userManager.getEnabledUserByUserName(p.getName());
-        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
+        I18nMessages userMessages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         // maintain last weblog change
         WebloggerProperties oldProperties = persistenceStrategy.load(WebloggerProperties.class, "1");
@@ -192,14 +191,14 @@ public class AdminController {
         persistenceStrategy.merge(properties);
         persistenceStrategy.flush();
         blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
-        return ResponseEntity.ok(messages.getString("generic.changes.saved"));
+        return ResponseEntity.ok(userMessages.getString("generic.changes.saved"));
     }
 
     @RequestMapping(value = "/globalconfigmetadata", method = RequestMethod.GET)
     public GlobalConfigMetadata getGlobalConfigMetadata(Principal principal, HttpServletResponse response) {
 
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
+        I18nMessages userMessages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         GlobalConfigMetadata gcm = new GlobalConfigMetadata();
 
@@ -211,22 +210,22 @@ public class AdminController {
 
         gcm.registrationOptions = Arrays.stream(WebloggerProperties.RegistrationPolicy.values())
                 .collect(Utilities.toLinkedHashMap(WebloggerProperties.RegistrationPolicy::name,
-                         e -> messages.getString(e.getDescription())));
+                    e -> userMessages.getString(e.getDescription())));
 
         gcm.blogHtmlLevels = Arrays.stream(HTMLSanitizer.Level.values())
-                .filter(r -> (!r.equals(HTMLSanitizer.Level.NONE)))
+                .filter(r -> !r.equals(HTMLSanitizer.Level.NONE))
                 .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
-                        e -> messages.getString(e.getDescription())));
+                    e -> userMessages.getString(e.getDescription())));
 
         gcm.commentHtmlLevels = Arrays.stream(HTMLSanitizer.Level.values())
-                .filter(r -> (!r.equals(HTMLSanitizer.Level.NONE)))
-                .filter(r -> (r.getSanitizingLevel() <= HTMLSanitizer.Level.BASIC_IMAGES.getSanitizingLevel()))
+                .filter(r -> !r.equals(HTMLSanitizer.Level.NONE))
+                .filter(r -> r.getSanitizingLevel() <= HTMLSanitizer.Level.BASIC_IMAGES.getSanitizingLevel())
                 .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
-                        e -> messages.getString(e.getDescription())));
+                    e -> userMessages.getString(e.getDescription())));
 
         gcm.commentOptions = Arrays.stream(WebloggerProperties.CommentPolicy.values())
                 .collect(Utilities.toLinkedHashMap(WebloggerProperties.CommentPolicy::name,
-                        e -> messages.getString(e.getSiteDescription())));
+                    e -> userMessages.getString(e.getSiteDescription())));
 
         return gcm;
     }

@@ -66,7 +66,7 @@ public class MediaFile implements Comparable<MediaFile> {
     private String contentType;
     private Instant dateUploaded = Instant.now();
     private Instant lastUpdated = Instant.now();
-    private User creator = null;
+    private User creator;
 
     private MediaDirectory directory;
 

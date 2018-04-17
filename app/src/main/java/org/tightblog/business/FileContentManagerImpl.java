@@ -20,14 +20,6 @@
  */
 package org.tightblog.business;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.util.Utilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,6 +31,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.tightblog.pojos.Weblog;
+import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.util.Utilities;
+
 /**
  * Manages contents of the file uploaded to TightBlog.
  * <p>
@@ -49,7 +49,7 @@ public class FileContentManagerImpl implements FileContentManager {
 
     private static Logger log = LoggerFactory.getLogger(FileContentManagerImpl.class);
 
-    private String storageDir = null;
+    private String storageDir;
 
     public FileContentManagerImpl() {
 

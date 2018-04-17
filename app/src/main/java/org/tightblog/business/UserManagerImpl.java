@@ -257,8 +257,8 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public UserWeblogRole getWeblogRole(User user, Weblog weblog) {
-        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogId"
-                , UserWeblogRole.class);
+        TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserId&WeblogId",
+                UserWeblogRole.class);
         q.setParameter(1, user.getId());
         q.setParameter(2, weblog.getId());
         try {

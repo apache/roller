@@ -20,8 +20,6 @@
  */
 package org.tightblog.pojos;
 
-import org.tightblog.pojos.Template;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import java.time.Instant;
 
@@ -30,14 +28,13 @@ import java.time.Instant;
  */
 public class SharedTemplate implements Template {
 
-    private String id = null;
-    private ComponentType role = null;
-    private String name = null;
-    private String description = null;
-    private String relativePath = null;
-    private String contentsFile = null;
-    private String template = null;
-
+    private String id;
+    private ComponentType role;
+    private String name;
+    private String description;
+    private String relativePath;
+    private String contentsFile;
+    private String template;
 
     @SuppressWarnings("unused")
     public SharedTemplate() {

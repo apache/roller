@@ -67,7 +67,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User info not available yet.");
         }
 
-        boolean usingDBAuth = (WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB);
+        boolean usingDBAuth = WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB;
         UserCredentials creds = userManager.getCredentialsByUserName(userName);
         GlobalRole targetGlobalRole;
         String targetPassword;

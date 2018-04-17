@@ -47,7 +47,7 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class UtilitiesModel implements Model {
     private ZoneId zoneId;
-    private I18nMessages messages = null;
+    private I18nMessages messages;
 
     /**
      * Template context name to be used for model

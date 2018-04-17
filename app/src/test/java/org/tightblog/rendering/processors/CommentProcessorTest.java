@@ -276,9 +276,6 @@ public class CommentProcessorTest {
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
         when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
 
-        UserManager mockUM = mock(UserManager.class);
-        processor.setUserManager(mockUM);
-
         MailManager mockMM = mock(MailManager.class);
         processor.setMailManager(mockMM);
 

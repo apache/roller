@@ -22,8 +22,6 @@ package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
@@ -72,7 +70,8 @@ import java.util.TimeZone;
         @NamedQuery(name = "Weblog.getCountByHandleLike",
                 query = "SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
         @NamedQuery(name = "Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                query = "SELECT w FROM Weblog w WHERE w.visible = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
+                query = "SELECT w FROM Weblog w WHERE w.visible = true AND w.lastModified > ?1 AND w.hitsToday > 0 " +
+                        "ORDER BY w.hitsToday DESC"),
         @NamedQuery(name = "Weblog.updateDailyHitCountZero",
                 query = "UPDATE Weblog w SET w.hitsToday = 0, w.lastModified = CURRENT_TIMESTAMP")
 })
@@ -83,35 +82,35 @@ public class Weblog {
     private int hashCode;
     @NotBlank(message = "{weblogConfig.error.handleNull}")
     @Pattern(regexp = "[a-z0-9\\-]*", message = "{weblogConfig.error.invalidHandle}")
-    private String handle = null;
+    private String handle;
     @NotBlank(message = "{weblogConfig.error.nameNull}")
-    private String name = null;
-    private String tagline = null;
+    private String name;
+    private String tagline;
     private EditFormat editFormat = EditFormat.HTML;
-    private String blacklist = null;
+    private String blacklist;
     private CommentPolicy allowComments = CommentPolicy.MUSTMODERATE;
     private Boolean emailComments = Boolean.FALSE;
     @NotBlank(message = "{weblogConfig.error.themeNull}")
-    private String theme = null;
-    private String locale = null;
-    private String timeZone = null;
+    private String theme;
+    private String locale;
+    private String timeZone;
     private Boolean visible = Boolean.TRUE;
     private Instant dateCreated = Instant.now();
     private int defaultCommentDays = -1;
     private int entriesPerPage = 12;
     private Instant lastModified = Instant.now();
-    private String about = null;
-    private User creator = null;
-    private String analyticsCode = null;
-    private int hitsToday = 0;
-    private boolean applyCommentDefaults = false;
+    private String about;
+    private User creator;
+    private String analyticsCode;
+    private int hitsToday;
+    private boolean applyCommentDefaults;
 
     // Transient, derived from and re-calculated each time blacklist property is set
     private List<java.util.regex.Pattern> blacklistRegexRules = new ArrayList<>();
 
     // is this weblog instance used for previewing a theme?
-    private boolean usedForThemePreview = false;
-    private Locale localeInstance = null;
+    private boolean usedForThemePreview;
+    private Locale localeInstance;
 
     public enum EditFormat {
         HTML("weblogConfig.editFormat.html", true),
@@ -155,7 +154,7 @@ public class Weblog {
         this.theme = theme;
     }
 
-    public Weblog (Weblog other) {
+    public Weblog(Weblog other) {
         this.setId(other.getId());
         this.setName(other.getName());
         this.setHandle(other.getHandle());
@@ -459,9 +458,9 @@ public class Weblog {
         this.weblogCategories = cats;
     }
 
-    public boolean hasCategory(String name) {
+    public boolean hasCategory(String categoryName) {
         for (WeblogCategory cat : getWeblogCategories()) {
-            if (name.equals(cat.getName())) {
+            if (categoryName.equals(cat.getName())) {
                 return true;
             }
         }
@@ -508,12 +507,12 @@ public class Weblog {
     /**
      * Does this Weblog have a bookmark with the same name?
      *
-     * @param name The name of the bookmark to check for.
+     * @param bookmarkName The name of the bookmark to check for.
      * @return boolean true if exists, false otherwise.
      */
-    public boolean hasBookmark(String name) {
+    public boolean hasBookmark(String bookmarkName) {
         for (WeblogBookmark bookmark : this.getBookmarks()) {
-            if (name.toLowerCase().equals(bookmark.getName().toLowerCase())) {
+            if (bookmarkName.toLowerCase().equals(bookmark.getName().toLowerCase())) {
                 return true;
             }
         }
@@ -523,21 +522,21 @@ public class Weblog {
     /**
      * Indicates whether this weblog contains the specified media file directory
      *
-     * @param name directory name
+     * @param directoryName directory name
      * @return true if directory is present, false otherwise.
      */
-    public boolean hasMediaDirectory(String name) {
+    public boolean hasMediaDirectory(String directoryName) {
         for (MediaDirectory directory : this.getMediaDirectories()) {
-            if (directory.getName().equals(name)) {
+            if (directory.getName().equals(directoryName)) {
                 return true;
             }
         }
         return false;
     }
 
-    public MediaDirectory getMediaDirectory(String name) {
+    public MediaDirectory getMediaDirectory(String directoryName) {
         for (MediaDirectory dir : this.getMediaDirectories()) {
-            if (name.equals(dir.getName())) {
+            if (directoryName.equals(dir.getName())) {
                 return dir;
             }
         }
@@ -582,5 +581,5 @@ public class Weblog {
         return hashCode;
     }
 
-    public static final Comparator<Weblog> handleComparator = Comparator.comparing(Weblog::getHandle);
+    public static final Comparator<Weblog> HANDLE_COMPARATOR = Comparator.comparing(Weblog::getHandle);
 }

@@ -25,9 +25,9 @@ package org.tightblog.pojos;
  * Enclosures are usually URLs to podcasts and other multimedia targets.
  */
 public class AtomEnclosure {
-    private String url = null;
-    private String contentType = null;
-    private long length = 0;
+    private String url;
+    private String contentType;
+    private long length;
 
     public AtomEnclosure(String u, String c, long l) {
         this.setUrl(u);

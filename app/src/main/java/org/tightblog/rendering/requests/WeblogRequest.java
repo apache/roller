@@ -57,23 +57,23 @@ public class WeblogRequest {
     private static Logger log = LoggerFactory.getLogger(WeblogRequest.class);
 
     // lightweight attributes
-    private String weblogHandle = null;
-    private String queryString = null;
-    private String authenticatedUser = null;
+    private String weblogHandle;
+    private String queryString;
+    private String authenticatedUser;
     private DeviceType deviceType = DeviceType.NORMAL;
     private HttpServletRequest request;
-    private int pageNum = 0;
-    String extraPathInfo = null;
+    private int pageNum;
+    String extraPathInfo;
 
     // attributes populated by processors where appropriate
-    private Weblog weblog = null;
-    private User blogger = null;
-    private boolean siteWide = false;
+    private Weblog weblog;
+    private User blogger;
+    private boolean siteWide;
 
     public WeblogRequest() {
     }
 
-    static public class Creator {
+    public static class Creator {
         public WeblogRequest create(HttpServletRequest servletRequest) {
             WeblogRequest weblogRequest = new WeblogRequest();
             WeblogRequest.parseRequest(weblogRequest, servletRequest);
@@ -164,7 +164,7 @@ public class WeblogRequest {
     }
 
     public boolean isLoggedIn() {
-        return (this.authenticatedUser != null);
+        return this.authenticatedUser != null;
     }
 
     public DeviceType getDeviceType() {

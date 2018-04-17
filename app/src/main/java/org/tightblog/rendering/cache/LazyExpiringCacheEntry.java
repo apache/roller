@@ -46,8 +46,8 @@ import java.time.Instant;
  */
 class LazyExpiringCacheEntry {
 
-    private CachedContent value = null;
-    private Instant timeCached = null;
+    private CachedContent value;
+    private Instant timeCached;
 
     LazyExpiringCacheEntry(CachedContent item) {
         this.value = item;

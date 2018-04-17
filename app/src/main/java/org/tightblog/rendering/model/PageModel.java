@@ -21,7 +21,6 @@
 
 package org.tightblog.rendering.model;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -31,7 +30,6 @@ import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.CalendarData;
 import org.tightblog.pojos.CommentSearchCriteria;
@@ -42,7 +40,6 @@ import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
@@ -62,12 +59,12 @@ public class PageModel implements Model {
 
     static final int MAX_ENTRIES = 100;
 
-    private WeblogPageRequest pageRequest = null;
-    private WeblogEntryComment commentForm = null;
-    private boolean preview = false;
+    private WeblogPageRequest pageRequest;
+    private WeblogEntryComment commentForm;
+    private boolean preview;
 
     @Autowired
-    protected URLStrategy urlStrategy = null;
+    protected URLStrategy urlStrategy;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
@@ -161,7 +158,7 @@ public class PageModel implements Model {
      * Is this page considered a permalink?
      */
     public boolean isPermalink() {
-        return (pageRequest.getWeblogEntryAnchor() != null);
+        return pageRequest.getWeblogEntryAnchor() != null;
     }
 
     /**
@@ -190,13 +187,7 @@ public class PageModel implements Model {
         if (preview) {
             return "";
         } else {
-            WebloggerProperties props = WebloggerContext.getWebloggerProperties();
-            if (props.isUsersOverrideAnalyticsCode() &&
-                    !StringUtils.isBlank(pageRequest.getWeblog().getAnalyticsCode())) {
-                return pageRequest.getWeblog().getAnalyticsCode();
-            } else {
-                return StringUtils.defaultIfEmpty(props.getDefaultAnalyticsCode(), "");
-            }
+            return weblogManager.getAnalyticsTrackingCode(pageRequest.getWeblog());
         }
     }
 
@@ -365,7 +356,7 @@ public class PageModel implements Model {
     }
 
     public boolean isUserAuthenticated() {
-        return (pageRequest.getAuthenticatedUser() != null);
+        return pageRequest.getAuthenticatedUser() != null;
     }
 
     public boolean isUserBlogPublisher() {

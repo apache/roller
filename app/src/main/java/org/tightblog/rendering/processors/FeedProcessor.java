@@ -58,7 +58,7 @@ public class FeedProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/feed";
 
     @Autowired
-    private LazyExpiringCache weblogFeedCache = null;
+    private LazyExpiringCache weblogFeedCache;
 
     void setWeblogFeedCache(LazyExpiringCache weblogFeedCache) {
         this.weblogFeedCache = weblogFeedCache;
@@ -73,7 +73,7 @@ public class FeedProcessor extends AbstractProcessor {
 
     @Autowired
     @Qualifier("atomRenderer")
-    private ThymeleafRenderer thymeleafRenderer = null;
+    private ThymeleafRenderer thymeleafRenderer;
 
     void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
@@ -93,19 +93,19 @@ public class FeedProcessor extends AbstractProcessor {
         this.strategy = strategy;
     }
 
-    private WeblogFeedRequest.Creator WeblogFeedRequestCreator;
+    private WeblogFeedRequest.Creator weblogFeedRequestCreator;
 
-    void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator WeblogFeedRequestCreator) {
-        this.WeblogFeedRequestCreator = WeblogFeedRequestCreator;
+    void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator creator) {
+        this.weblogFeedRequestCreator = creator;
     }
 
     FeedProcessor() {
-        this.WeblogFeedRequestCreator = new WeblogFeedRequest.Creator();
+        this.weblogFeedRequestCreator = new WeblogFeedRequest.Creator();
     }
 
     @RequestMapping(method = RequestMethod.GET)
     void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogFeedRequest feedRequest = WeblogFeedRequestCreator.create(request);
+        WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request);
 
         Weblog weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);
         if (weblog == null) {
@@ -151,7 +151,7 @@ public class FeedProcessor extends AbstractProcessor {
             response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
-            response.setHeader("Cache-Control","no-cache");
+            response.setHeader("Cache-Control", "no-cache");
             response.getOutputStream().write(rendererOutput.getContent());
 
             if (newContent) {

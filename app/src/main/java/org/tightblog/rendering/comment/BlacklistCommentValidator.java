@@ -54,7 +54,7 @@ public class BlacklistCommentValidator implements CommentValidator {
     private List<Pattern> globalRegexRules = new ArrayList<>();
 
     // ensures site-wide rules have been retrieved
-    private boolean globalRulesLoaded = false;
+    private boolean globalRulesLoaded;
 
     /**
      * Notify this validator that the site-wide filter has possibly changed
@@ -81,7 +81,7 @@ public class BlacklistCommentValidator implements CommentValidator {
         combinedRules.addAll(comment.getWeblogEntry().getWeblog().getBlacklistRegexRules());
 
         if (isBlacklisted(combinedRules, comment.getUrl()) || isBlacklisted(combinedRules, comment.getEmail()) ||
-            isBlacklisted(combinedRules, comment.getName()) || isBlacklisted(combinedRules, comment.getContent())) {
+                isBlacklisted(combinedRules, comment.getName()) || isBlacklisted(combinedRules, comment.getContent())) {
             messages.put("comment.validator.blacklistMessage", null);
             return ValidationResult.SPAM;
         }

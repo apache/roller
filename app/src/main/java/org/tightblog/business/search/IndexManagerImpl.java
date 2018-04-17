@@ -66,10 +66,10 @@ public class IndexManagerImpl implements IndexManager {
     private ExecutorService serviceScheduler;
 
     private boolean searchEnabled = true;
-    private boolean indexComments = false;
+    private boolean indexComments;
     private File indexConsistencyMarker;
-    private String indexDir = null;
-    private boolean inconsistentAtStartup = false;
+    private String indexDir;
+    private boolean inconsistentAtStartup;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
 
     /**
@@ -208,7 +208,7 @@ public class IndexManagerImpl implements IndexManager {
         }
     }
 
-    private synchronized void closeReader(DirectoryReader reader) {
+    private synchronized void closeReader() {
         try {
             if (reader != null) {
                 reader.close();
@@ -222,7 +222,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
             if (newReader != null) {
-                closeReader(reader);
+                closeReader();
                 reader = newReader;
             }
         } catch (IOException ignored) {
@@ -293,7 +293,7 @@ public class IndexManagerImpl implements IndexManager {
                 log.warn("Expected index consistency marker {} not present or otherwise could not be deleted",
                         indexConsistencyMarker.getAbsolutePath());
             }
-            closeReader(reader);
+            closeReader();
         }
     }
 }

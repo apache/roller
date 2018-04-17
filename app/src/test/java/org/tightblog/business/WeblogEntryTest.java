@@ -62,8 +62,8 @@ public class WeblogEntryTest extends WebloggerTest {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntryTest.class);
     
-    User testUser = null;
-    Weblog testWeblog = null;
+    User testUser;
+    Weblog testWeblog;
     /**
      * All tests in this suite require a user and a weblog.
      */
@@ -617,7 +617,7 @@ public class WeblogEntryTest extends WebloggerTest {
             tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
             assertEquals(3, tags.size());
 
-            HashMap<String,Integer> expectedWeblogTags = new HashMap<>();
+            Map<String, Integer> expectedWeblogTags = new HashMap<>();
             expectedWeblogTags.put("one", 2);
             expectedWeblogTags.put("two", 2);
             expectedWeblogTags.put("three", 1);
@@ -645,16 +645,16 @@ public class WeblogEntryTest extends WebloggerTest {
             tags = weblogManager.getTags(null, null, null, 0, -1);
             assertEquals(4, tags.size());
 
-            HashMap<String, Integer> expectedSiteTags = new HashMap<>();
+            Map<String, Integer> expectedSiteTags = new HashMap<>();
             expectedSiteTags.put("one", 3);
             expectedSiteTags.put("two", 2);
             expectedSiteTags.put("three", 2);
             expectedSiteTags.put("four", 1);
 
             for (WeblogEntryTagAggregate stat : tags) {
-                if (!expectedSiteTags.containsKey(stat.getName()))
+                if (!expectedSiteTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
-
+                }
                 Integer expectedCount = expectedSiteTags.get(stat.getName());
                 assertEquals(expectedCount.intValue(), stat.getTotal());
             }
@@ -750,14 +750,14 @@ public class WeblogEntryTest extends WebloggerTest {
         tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
         assertEquals(2, tags.size());
 
-        HashMap<String, Integer> expectedWeblogTags = new HashMap<>();
+        Map<String, Integer> expectedWeblogTags = new HashMap<>();
         expectedWeblogTags.put("one", 1);
         expectedWeblogTags.put("two", 1);
 
         for (WeblogEntryTagAggregate stat : tags) {
-            if (!expectedWeblogTags.containsKey(stat.getName()))
+            if (!expectedWeblogTags.containsKey(stat.getName())) {
                 fail("Unexpected tagName.");
-
+            }
             Integer expectedCount = expectedWeblogTags.get(stat.getName());
             assertEquals(expectedCount.intValue(), stat.getTotal());
         }
@@ -774,15 +774,15 @@ public class WeblogEntryTest extends WebloggerTest {
         tags = weblogManager.getTags(null, null, null, 0, -1);
         assertEquals(3, tags.size());
 
-        HashMap<String, Integer> expectedSiteTags = new HashMap<>();
+        Map<String, Integer> expectedSiteTags = new HashMap<>();
         expectedSiteTags.put("one", 2);
         expectedSiteTags.put("two", 1);
         expectedSiteTags.put("three", 1);
 
         for (WeblogEntryTagAggregate stat : tags) {
-            if (!expectedSiteTags.containsKey(stat.getName()))
+            if (!expectedSiteTags.containsKey(stat.getName())) {
                 fail("Unexpected tagName.");
-
+            }
             Integer expectedCount = expectedSiteTags.get(stat.getName());
             assertEquals(expectedCount.intValue(), stat.getTotal());
         }

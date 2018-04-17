@@ -64,21 +64,21 @@ public class WeblogTemplate implements Template {
     // attributes
     private String id = Utilities.generateUUID();
     private int hashCode;
-    private ComponentType role = null;
+    private ComponentType role;
     @NotBlank(message = "{templates.error.nameNull}")
-    private String name = null;
-    private String description = null;
-    private String relativePath = null;
-    private Instant lastModified = null;
+    private String name;
+    private String description;
+    private String relativePath;
+    private Instant lastModified;
     private TemplateDerivation derivation = TemplateDerivation.SPECIFICBLOG;
     private String template = "";
 
     // associations
     @JsonIgnore
-    private Weblog weblog = null;
+    private Weblog weblog;
 
     // temporary non-persisted fields used for form entry
-    private String roleName = null;
+    private String roleName;
 
     public WeblogTemplate() {
     }

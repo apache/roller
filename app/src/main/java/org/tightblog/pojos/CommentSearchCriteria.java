@@ -41,7 +41,7 @@ public class CommentSearchCriteria {
     // True for results in latest-first order
     private boolean reverseChrono = true;
     // Offset into results for paging
-    private int offset = 0;
+    private int offset;
     // Max comments to return (or -1 for no limit)
     private int maxResults = -1;
 

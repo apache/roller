@@ -169,7 +169,7 @@ public class WeblogEntryController {
 
     public class WeblogEntryData {
         List<WeblogEntry> entries;
-        boolean hasMore = false;
+        boolean hasMore;
 
         public List<WeblogEntry> getEntries() {
             return entries;
@@ -202,8 +202,10 @@ public class WeblogEntryController {
 
             // sort by options
             fields.sortByOptions = new LinkedHashMap<>();
-            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(), messages.getString("entries.label.pubTime"));
-            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(), messages.getString("entries.label.updateTime"));
+            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(),
+                    messages.getString("entries.label.pubTime"));
+            fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(),
+                    messages.getString("entries.label.updateTime"));
 
             // status options
             fields.statusOptions = new LinkedHashMap<>();
@@ -299,7 +301,7 @@ public class WeblogEntryController {
         private String prefix;
         private List<WeblogEntryTagAggregate> tagcounts;
 
-        public WeblogTagData() {
+        WeblogTagData() {
         }
 
         public String getPrefix() {
@@ -349,7 +351,8 @@ public class WeblogEntryController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
+    public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response)
+            throws ServletException {
         try {
             WeblogEntry entry = weblogEntryManager.getWeblogEntry(id, true);
             if (entry != null) {
@@ -430,8 +433,8 @@ public class WeblogEntryController {
     public class EntryEditMetadata {
         Map<String, String> categories;
         Map<String, String> commentDayOptions;
-        boolean author = false;
-        boolean commentingEnabled = false;
+        boolean author;
+        boolean commentingEnabled;
         int defaultCommentDays = -1;
         Weblog.EditFormat defaultEditFormat;
         Map<Weblog.EditFormat, String> editFormatDescriptions = new HashMap<>();

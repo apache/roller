@@ -44,7 +44,7 @@ public class I18nMessages {
     // a map of cached messages instances, keyed by locale
     private static Map<Locale, I18nMessages> messagesMap = Collections.synchronizedMap(new HashMap<>());
 
-    private I18nMessages(Locale locale) {
+    I18nMessages(Locale locale) {
         this.locale = locale;
         this.bundle = ResourceBundle.getBundle("ApplicationResources", locale);
     }

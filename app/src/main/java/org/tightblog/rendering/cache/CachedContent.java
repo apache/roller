@@ -28,7 +28,7 @@ import org.tightblog.pojos.Template.ComponentType;
 public class CachedContent {
 
     // content-type of data in byte array
-    private ComponentType componentType = null;
+    private ComponentType componentType;
 
     // the byte array we use to maintain the cached content
     private byte[] content = new byte[0];

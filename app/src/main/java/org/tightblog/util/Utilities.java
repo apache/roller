@@ -59,12 +59,15 @@ import java.util.stream.Collectors;
 /**
  * General purpose utilities, not for use in templates.
  */
-public class Utilities {
+public final class Utilities {
+
+    private Utilities() {
+    }
 
     private static Logger log = LoggerFactory.getLogger(Utilities.class);
 
-    public static final DateTimeFormatter YMFormatter = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
-    public static final DateTimeFormatter YMDFormatter = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
+    public static final DateTimeFormatter YM_FORMATTER = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
+    public static final DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
     public static final String FORMAT_6CHARS = "yyyyMM";
     public static final String FORMAT_8CHARS = "yyyyMMdd";
     public static final int EIGHT_KB_IN_BYTES = 8192;
@@ -338,7 +341,7 @@ public class Utilities {
             JAXBContext jaxbContext = JAXBContext.newInstance(classesToBeBound);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             jaxbUnmarshaller.setSchema(schema);
-            jaxbUnmarshaller.setEventHandler((event) -> {
+            jaxbUnmarshaller.setEventHandler(event -> {
                 log.error("Parsing error: " +
                         event.getMessage() + "; Line #" +
                         event.getLocator().getLineNumber() + "; Column #" +
@@ -374,9 +377,9 @@ public class Utilities {
         try {
             if (dateString != null && StringUtils.isNumeric(dateString)) {
                 if (dateString.length() == 8) {
-                    ret = LocalDate.parse(dateString, Utilities.YMDFormatter);
+                    ret = LocalDate.parse(dateString, Utilities.YMD_FORMATTER);
                 } else if (dateString.length() == 6) {
-                    YearMonth tmp = YearMonth.parse(dateString, Utilities.YMFormatter);
+                    YearMonth tmp = YearMonth.parse(dateString, Utilities.YM_FORMATTER);
                     ret = tmp.atDay(1);
                 }
             }

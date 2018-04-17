@@ -30,11 +30,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-
 public class WeblogCategoryCRUDTest extends WebloggerTest {
 
-    User testUser = null;
-    Weblog testWeblog = null;
+    User testUser;
+    Weblog testWeblog;
     
     /**
      * All tests in this suite require a user and a weblog.

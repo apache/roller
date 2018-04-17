@@ -62,7 +62,7 @@ public class AkismetCommentValidator implements CommentValidator {
     // administrator may choose to have such super-spam automatically deleted
     // without ever appearing in the moderation queue.
     // see: https://blog.akismet.com/2014/04/23/theres-a-ninja-in-your-akismet/
-    private boolean deleteBlatantSpam = false;
+    private boolean deleteBlatantSpam;
 
     public void setDeleteBlatantSpam(boolean deleteBlatantSpam) {
         this.deleteBlatantSpam = deleteBlatantSpam;
@@ -107,7 +107,8 @@ public class AkismetCommentValidator implements CommentValidator {
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
-            conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
+            conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerStaticConfig.getProperty("weblogger.version",
+                    "Unknown"));
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
             conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
 

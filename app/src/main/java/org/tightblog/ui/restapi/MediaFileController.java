@@ -62,7 +62,7 @@ public class MediaFileController {
     }
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy = null;
+    private JPAPersistenceStrategy persistenceStrategy;
 
     public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
@@ -91,7 +91,8 @@ public class MediaFileController {
     @RequestMapping(value = "/tb-ui/authoring/rest/mediadirectories/{id}/files", method = RequestMethod.GET)
     public List<MediaFile> getMediaDirectoryContents(@PathVariable String id, Principal p, HttpServletResponse response) {
         MediaDirectory md = mediaFileManager.getMediaDirectory(id);
-        boolean permitted = md != null && userManager.checkWeblogRole(p.getName(), md.getWeblog().getHandle(), WeblogRole.EDIT_DRAFT);
+        boolean permitted = md != null
+                && userManager.checkWeblogRole(p.getName(), md.getWeblog().getHandle(), WeblogRole.EDIT_DRAFT);
         if (permitted) {
             return md.getMediaFiles()
                     .stream()
@@ -107,7 +108,8 @@ public class MediaFileController {
     @RequestMapping(value = "/tb-ui/authoring/rest/mediafile/{id}", method = RequestMethod.GET)
     public MediaFile getMediaFile(@PathVariable String id, Principal p, HttpServletResponse response) {
         MediaFile mf = mediaFileManager.getMediaFile(id);
-        boolean permitted = mf != null && userManager.checkWeblogRole(p.getName(), mf.getDirectory().getWeblog().getHandle(), WeblogRole.POST);
+        boolean permitted = mf != null
+                && userManager.checkWeblogRole(p.getName(), mf.getDirectory().getWeblog().getHandle(), WeblogRole.POST);
         if (permitted) {
             mf.setCreator(null);
             return mf;
@@ -123,7 +125,7 @@ public class MediaFileController {
             throws ServletException {
 
         MediaFile mf = mediaFileManager.getMediaFile(mediaFileData.getId());
-        boolean newMediaFile = (mf == null);
+        boolean newMediaFile = mf == null;
 
         // Check user permissions
         User user = userManager.getEnabledUserByUserName(p.getName());
@@ -147,7 +149,8 @@ public class MediaFileController {
             mf.setDirectory(dir);
         }
 
-        if (user == null || mf.getDirectory() == null || !userManager.checkWeblogRole(user, mf.getDirectory().getWeblog(), WeblogRole.POST)) {
+        if (user == null || mf.getDirectory() == null
+                || !userManager.checkWeblogRole(user, mf.getDirectory().getWeblog(), WeblogRole.POST)) {
             return ResponseEntity.status(403).body(messages.getString("error.title.403"));
         }
 
@@ -269,7 +272,8 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}/todirectory/{directoryId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}/todirectory/{directoryId}",
+            method = RequestMethod.POST)
     public void moveMediaFiles(@PathVariable String weblogId, @PathVariable String directoryId,
                                @RequestBody List<String> fileIdsToMove,
                                Principal p, HttpServletResponse response)

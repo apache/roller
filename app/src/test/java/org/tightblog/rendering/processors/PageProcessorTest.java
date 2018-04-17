@@ -294,9 +294,9 @@ public class PageProcessorTest {
         processor.handleRequest(mockRequest, mockResponse);
 
         // set up captors on thymeleafRenderer.render()
-        ArgumentCaptor<Map<String,Object>> modelCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map<String, Object>> modelCaptor = ArgumentCaptor.forClass(Map.class);
         verify(mockRenderer).render(eq(sharedTemplate), modelCaptor.capture());
-        Map<String,Object> results = modelCaptor.getValue();
+        Map<String, Object> results = modelCaptor.getValue();
         assertTrue(results.containsKey("model"));
         assertTrue(results.containsKey("site"));
 
@@ -310,7 +310,6 @@ public class PageProcessorTest {
         assertTrue(results.containsKey("model"));
         assertFalse(results.containsKey("site"));
     }
-
 
     @Test
     public void testCommentFormsSkipCache() throws IOException, WebloggerException {

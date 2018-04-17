@@ -25,7 +25,6 @@ import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.SharedTemplate;
-import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -55,11 +54,12 @@ public class PageModelTest {
     private PageModel pageModel;
     private WeblogPageRequest pageRequest;
     private Map<String, Object> initData;
+    private WeblogManager mockWeblogManager;
 
     @Before
     public void initialize() {
         mockUserManager = mock(UserManager.class);
-        WeblogManager mockWeblogManager = mock(WeblogManager.class);
+        mockWeblogManager = mock(WeblogManager.class);
         mockWeblogEntryManager = mock(WeblogEntryManager.class);
         mockThemeManager = mock(ThemeManager.class);
         pageModel = new PageModel();
@@ -76,6 +76,16 @@ public class PageModelTest {
         initData = new HashMap<>();
         initData.put("parsedRequest", pageRequest);
         pageModel.init(initData);
+    }
+
+    @Test
+    public void testGetAnalyticsTrackingCode() {
+        when(mockWeblogManager.getAnalyticsTrackingCode(pageRequest.getWeblog())).thenReturn("tracking code");
+        assertEquals("tracking code", pageModel.getAnalyticsTrackingCode());
+
+        // return empty string if preview
+        pageModel.setPreview(true);
+        assertEquals("", pageModel.getAnalyticsTrackingCode());
     }
 
     @Test
@@ -115,7 +125,6 @@ public class PageModelTest {
         wesc = captor.getValue();
         assertEquals(PageModel.MAX_ENTRIES, wesc.getMaxResults());
     }
-
 
     @Test
     public void testGetRecentComments() {

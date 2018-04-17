@@ -45,7 +45,8 @@ public class AjaxInvalidSessionRedirectFilter extends GenericFilterBean {
     private AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         try {
             chain.doFilter(request, response);
         } catch (IOException ex) {
@@ -93,7 +94,7 @@ public class AjaxInvalidSessionRedirectFilter extends GenericFilterBean {
         protected void initExtractorMap() {
             super.initExtractorMap();
 
-            registerExtractor(ServletException.class, (throwable) -> {
+            registerExtractor(ServletException.class, throwable -> {
                 ThrowableAnalyzer.verifyThrowableHierarchy(throwable, ServletException.class);
                 return ((ServletException) throwable).getRootCause();
             });

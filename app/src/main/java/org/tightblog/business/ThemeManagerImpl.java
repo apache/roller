@@ -80,13 +80,13 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
     // directory where themes are kept, override required when running tests (no servlet then)
     @Value("${themes.dir:#{null}}")
-    private String themeDir = null;
+    private String themeDir;
 
     // map of themes in format (theme id, Theme)
-    private Map<String, SharedTheme> themeMap = null;
+    private Map<String, SharedTheme> themeMap;
 
     // list of themes
-    private List<SharedTheme> themeList = null;
+    private List<SharedTheme> themeList;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -179,7 +179,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
      */
     private Map<String, SharedTheme> loadAllThemesFromDisk() {
 
-        Map<String, SharedTheme> themeMap = new HashMap<>();
+        Map<String, SharedTheme> sharedThemeMap = new HashMap<>();
 
         // first, get a list of the themes available
         File themesdir = new File(this.themeDir);
@@ -198,7 +198,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
             for (String themeName : themenames) {
                 try {
                     SharedTheme theme = loadThemeData(themeName);
-                    themeMap.put(theme.getId(), theme);
+                    sharedThemeMap.put(theme.getId(), theme);
                     log.info("Loaded theme '{}'", themeName);
                 } catch (Exception unexpected) {
                     // shouldn't happen, so let's learn why it did
@@ -207,7 +207,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
             }
         }
 
-        return themeMap;
+        return sharedThemeMap;
     }
 
     private SharedTheme loadThemeData(String themeName) {
@@ -259,8 +259,8 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         return sharedTheme;
     }
 
-    private boolean loadTemplateSource(String themeDir, SharedTemplate sharedTemplate) {
-        File templateFile = new File(themeDir + File.separator + sharedTemplate.getContentsFile());
+    private boolean loadTemplateSource(String loadThemeDir, SharedTemplate sharedTemplate) {
+        File templateFile = new File(loadThemeDir + File.separator + sharedTemplate.getContentsFile());
         String contents = loadTemplateSource(templateFile);
         if (contents == null) {
             log.error("Couldn't load template file [{}]", templateFile);

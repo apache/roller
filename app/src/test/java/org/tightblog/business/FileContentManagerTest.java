@@ -40,8 +40,8 @@ import static org.junit.Assert.*;
  */
 public class FileContentManagerTest extends WebloggerTest {
 
-    User testUser = null;
-    Weblog testWeblog = null;
+    User testUser;
+    Weblog testWeblog;
 
     @Resource
     private FileContentManager fileContentManager;

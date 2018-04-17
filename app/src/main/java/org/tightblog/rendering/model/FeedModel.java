@@ -41,10 +41,10 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FeedModel implements Model {
 
-    private WeblogFeedRequest feedRequest = null;
+    private WeblogFeedRequest feedRequest;
 
     @Autowired
-    private URLStrategy urlStrategy = null;
+    private URLStrategy urlStrategy;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;

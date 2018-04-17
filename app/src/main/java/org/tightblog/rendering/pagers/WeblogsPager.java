@@ -36,16 +36,16 @@ public class WeblogsPager implements Pager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogsPager.class);
 
-    private String letter = null;
-    private int length = 0;
-    private String url = null;
-    private int page = 0;
+    private String letter;
+    private int length;
+    private String url;
+    private int page;
 
     // collection for the pager
     private List<Weblog> weblogs;
 
     // are there more items?
-    private boolean more = false;
+    private boolean more;
 
     private WeblogManager weblogManager;
 
@@ -79,15 +79,14 @@ public class WeblogsPager implements Pager {
         return "Home";
     }
 
-
     @Override
     public String getNextLink() {
         // need to add letter param if it exists
         if (letter != null) {
-            int page = getPage() + 1;
+            int nextPage = getPage() + 1;
             if (hasMoreItems()) {
                 Map<String, String> params = new HashMap<>();
-                params.put("page", "" + page);
+                params.put("page", "" + nextPage);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
             }
@@ -103,8 +102,8 @@ public class WeblogsPager implements Pager {
         }
     }
 
-    private String createURL(String url, Map<String, String> params) {
-        return url + Utilities.getQueryString(params);
+    private String createURL(String urlToCreate, Map<String, String> params) {
+        return urlToCreate + Utilities.getQueryString(params);
     }
 
     @Override
@@ -127,10 +126,10 @@ public class WeblogsPager implements Pager {
     public String getPrevLink() {
         // need to add letter param if it exists
         if (letter != null) {
-            int page = getPage() - 1;
-            if (page >= 0) {
+            int prevPage = getPage() - 1;
+            if (prevPage >= 0) {
                 Map<String, String> params = new HashMap<>();
-                params.put("page", "" + page);
+                params.put("page", "" + prevPage);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
             }

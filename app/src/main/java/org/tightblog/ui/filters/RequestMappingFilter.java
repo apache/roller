@@ -50,9 +50,9 @@ import java.util.regex.Pattern;
 @Component("requestMappingFilter")
 public class RequestMappingFilter implements Filter {
 
-    private final static Logger log = LoggerFactory.getLogger(RequestMappingFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RequestMappingFilter.class);
 
-    private final static Pattern TRAILING_SLASHES = Pattern.compile("/+$");
+    private static final Pattern TRAILING_SLASHES = Pattern.compile("/+$");
 
     @Resource
     private Set<String> invalidWeblogHandles;
@@ -93,7 +93,7 @@ public class RequestMappingFilter implements Filter {
 
         // remove all training slashes from URI
         String servlet = TRAILING_SLASHES.matcher(request.getRequestURI()).replaceAll("");
-        log.debug("evaluating [{}]", servlet);
+        LOG.debug("evaluating [{}]", servlet);
 
         // figure out potential weblog handle
         String pathInfo = null;
@@ -122,7 +122,7 @@ public class RequestMappingFilter implements Filter {
 
         // Skip if weblog handle is actually referring to a static folder under webapp (i.e., not a weblog request)
         if (invalidWeblogHandles.contains(weblogHandle)) {
-            log.debug("SKIPPED {}", weblogHandle);
+            LOG.debug("SKIPPED {}", weblogHandle);
             return false;
         }
 
@@ -142,7 +142,7 @@ public class RequestMappingFilter implements Filter {
         // calculate forward url
         String forwardUrl = calculateForwardUrl(request, weblogHandle, weblogRequestContext, weblogRequestData);
         if (forwardUrl != null) {
-            log.debug("forwarding to {}", forwardUrl);
+            LOG.debug("forwarding to {}", forwardUrl);
             RequestDispatcher dispatch = request.getRequestDispatcher(forwardUrl);
             dispatch.forward(request, response);
             // we dealt with this request ourselves, so return
