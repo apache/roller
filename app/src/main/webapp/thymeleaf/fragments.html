@@ -211,7 +211,7 @@
         </div>
     </div>
     <div th:fragment="WeblogSearchAgainForm" id="searchAgain">
-        <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, model.resultCount)}">xxx</span>
+        <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, T(Math).max(model.resultCount, 0))}">xxx</span>
         <form method="get" th:action="${url.search}" style="margin: 5px">
             <input type="text" id="q" name="q" class="text medium" maxlength="255" th:value="${model.searchTerm}"
                    style="padding-left: 1px" required><br>
@@ -225,7 +225,7 @@
     </div>
     <div th:fragment="PreviousNextSearchPager" th:remove="tag" th:with="pager = ${model.weblogEntriesPager},
             min=${model.offset + 1}, max=${T(Math).min(model.offset+model.limit, model.resultCount)}">
-        <h3 th:utext="${utils.msg('searchSummary.text', min, max, model.resultCount)}">xxx</h3>
+        <h3 th:utext="${utils.msg('searchSummary.text', min, max, T(Math).max(model.resultCount, 0))}">xxx</h3>
         <span th:if="${pager.prevLink != null}">&laquo; <a th:href="${pager.prevLink}" th:text="${pager.prevLabel}">xxx</a> |</span>
         <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${pager.homeLink}"
                                                                              th:text="${pager.homeLabel}">xxx</a></span>

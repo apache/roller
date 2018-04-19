@@ -20,6 +20,7 @@
  */
 package org.tightblog.business.search.tasks;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -31,7 +32,6 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.util.BytesRef;
 import org.tightblog.business.search.FieldConstants;
 import org.tightblog.business.search.IndexManager;
-import org.tightblog.business.search.IndexManagerImpl;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -46,7 +46,7 @@ import java.util.List;
  */
 public abstract class AbstractIndexTask extends AbstractTask {
 
-    private static Logger log = LoggerFactory.getLogger(AbstractIndexTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractIndexTask.class);
 
     AbstractIndexTask(IndexManager mgr) {
         super(mgr);
@@ -55,11 +55,11 @@ public abstract class AbstractIndexTask extends AbstractTask {
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();
-            log.debug("Starting index task");
+            LOG.debug("Starting index task");
             doRun();
-            log.debug("Index task complete");
+            LOG.debug("Index task complete");
         } catch (Exception e) {
-            log.error("Error acquiring write lock on index", e);
+            LOG.error("Error acquiring write lock on index", e);
         } finally {
             manager.getReadWriteLock().writeLock().unlock();
         }
@@ -68,19 +68,16 @@ public abstract class AbstractIndexTask extends AbstractTask {
     IndexWriter beginWriting() {
         IndexWriter writer = null;
 
-        try {
-            // Limit to 1000 tokens.
-            LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(
-                    IndexManagerImpl.getAnalyzer(), 1000);
-
-            IndexWriterConfig config = new IndexWriterConfig(analyzer);
-
-            writer = new IndexWriter(manager.getIndexDirectory(), config);
-
-        } catch (IOException e) {
-            log.error("ERROR creating writer", e);
+        Analyzer analyzer = manager.getAnalyzer();
+        if (analyzer != null) {
+            try {
+                LimitTokenCountAnalyzer ltcAnalyzer = new LimitTokenCountAnalyzer(analyzer, manager.getMaxTokenCount());
+                IndexWriterConfig config = new IndexWriterConfig(ltcAnalyzer);
+                writer = new IndexWriter(manager.getIndexDirectory(), config);
+            } catch (IOException e) {
+                LOG.error("ERROR creating writer", e);
+            }
         }
-
         return writer;
     }
 
@@ -119,9 +116,9 @@ public abstract class AbstractIndexTask extends AbstractTask {
         }
 
         // index Category, needs to be in lower case as it is used in a term
-        WeblogCategory categorydata = data.getCategory();
-        if (categorydata != null) {
-            doc.add(new StringField(FieldConstants.CATEGORY, categorydata
+        WeblogCategory categoryData = data.getCategory();
+        if (categoryData != null) {
+            doc.add(new StringField(FieldConstants.CATEGORY, categoryData
                     .getName().toLowerCase(), Field.Store.YES));
         }
 
@@ -155,7 +152,7 @@ public abstract class AbstractIndexTask extends AbstractTask {
             }
         }
 
-        // index Comments, unstored
+        // index Comments, not stored
         doc.add(new TextField(FieldConstants.COMMENT_CONTENT, commentContent, Field.Store.NO));
 
         // keyword

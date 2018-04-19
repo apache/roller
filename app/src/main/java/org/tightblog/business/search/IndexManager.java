@@ -20,6 +20,7 @@
  */
 package org.tightblog.business.search;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
 import org.tightblog.business.search.tasks.AbstractTask;
@@ -71,6 +72,16 @@ public interface IndexManager {
      * Return directory used by Lucene index
      */
     Directory getIndexDirectory();
+
+    /**
+     * Return Lucene Analyzer used for text parsing, stopwords, etc.
+     */
+    Analyzer getAnalyzer();
+
+    /**
+     * Get maximum number of tokens to parse out of anything being indexed
+     */
+    int getMaxTokenCount();
 
     /**
      * Are comments to be indexed and used for search results?

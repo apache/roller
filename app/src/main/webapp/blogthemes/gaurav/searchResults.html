@@ -40,7 +40,7 @@
 			<div id="main_content" class="col-lg-8">
 				<div class="alert alert-info">
 					<p th:utext="${'Search Results for ' + model.searchTerm}">xxx</p>
-					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, model.resultCount)}">xxx</span>
+					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, T(Math).max(model.resultCount, 0)}">xxx</span>
 				</div>
 				<th:block th:switch="${model.resultCount > 0}">
 					<div th:case="${true}" id="search_results">
@@ -52,7 +52,9 @@
 							<li th:if="${pager.nextLink != null}" class="next"><a th:href="${pager.nextLink}" th:utext="${pager.nextName + ' →'">xxx</a></li>
 						 </ul>
 					</div>
-					<div th:case="${false}"><br><h3>Sorry, your search returned no results</h3><br></div>
+					<div th:case="${false}"><br><h3>Sorry, your search returned no results</h3><br>
+						<th:block th:if="${model.resultCount < 0}"><h3 th:utext="${utils.msg('error.searchProblem')}"></h3><br></th:block>
+					</div>
 				</th:block>
 			</div> <!-- /.main content -->
 

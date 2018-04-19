@@ -150,11 +150,15 @@ public class PageModelTest {
     }
 
     @Test
-    public void testCorrectPagerReturned() {
+    public void testTimePagerReturned() {
         WeblogEntriesPager pager = pageModel.getWeblogEntriesPager();
         assertTrue(pager instanceof WeblogEntriesTimePager);
+    }
+
+    @Test
+    public void testPermalinkPagerReturned() {
         pageRequest.setWeblogEntryAnchor("blog-entry");
-        pager = pageModel.getWeblogEntriesPager();
+        WeblogEntriesPager pager = pageModel.getWeblogEntriesPager();
         assertTrue(pager instanceof WeblogEntriesPermalinkPager);
     }
 

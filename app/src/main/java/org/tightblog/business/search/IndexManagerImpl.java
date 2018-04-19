@@ -22,7 +22,6 @@ package org.tightblog.business.search;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -30,6 +29,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerStaticConfig;
@@ -63,6 +63,14 @@ public class IndexManagerImpl implements IndexManager {
 
     @Autowired
     private WeblogEntryManager weblogEntryManager;
+
+    @Autowired
+    @Value("${search.analyzer.class:org.apache.lucene.analysis.standard.StandardAnalyzer}")
+    private String luceneAnalyzerName;
+
+    @Value("${search.analyzer.maxTokenCount:1000}")
+    private int maxTokenCount;
+
     private ExecutorService serviceScheduler;
 
     private boolean searchEnabled = true;
@@ -189,8 +197,19 @@ public class IndexManagerImpl implements IndexManager {
      *
      * @return Analyzer to be used in manipulating the database.
      */
-    public static Analyzer getAnalyzer() {
-        return new StandardAnalyzer();
+    @Override
+    public Analyzer getAnalyzer() {
+        try {
+            return (Analyzer) Class.forName(luceneAnalyzerName).newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            log.error("Cannot instantiate class {}", luceneAnalyzerName, e);
+        }
+        return null;
+    }
+
+    @Override
+    public int getMaxTokenCount() {
+        return maxTokenCount;
     }
 
     private void scheduleIndexOperation(final AbstractTask op) {
@@ -265,16 +284,19 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     private void createIndex(Directory dir) {
-        int maxTokenCount = 100;
+        int maxTokens = 100;
 
-        IndexWriterConfig config = new IndexWriterConfig(new LimitTokenCountAnalyzer(
-                IndexManagerImpl.getAnalyzer(), maxTokenCount));
+        try (Analyzer analyzer = getAnalyzer()) {
+            if (analyzer != null) {
+                IndexWriterConfig config = new IndexWriterConfig(new LimitTokenCountAnalyzer(analyzer, maxTokens));
 
-        // constructor makes directory available for indexing
-        try (IndexWriter writer = new IndexWriter(dir, config)) {
-            writer.close();
-        } catch (IOException e) {
-            log.error("Error creating index", e);
+                // constructor makes directory available for indexing
+                try (IndexWriter writer = new IndexWriter(dir, config)) {
+                    writer.close();
+                } catch (IOException e) {
+                    log.error("Error creating index", e);
+                }
+            }
         }
     }
 

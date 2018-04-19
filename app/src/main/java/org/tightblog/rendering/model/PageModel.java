@@ -59,7 +59,7 @@ public class PageModel implements Model {
 
     static final int MAX_ENTRIES = 100;
 
-    private WeblogPageRequest pageRequest;
+    protected WeblogPageRequest pageRequest;
     private WeblogEntryComment commentForm;
     private boolean preview;
 
@@ -104,6 +104,8 @@ public class PageModel implements Model {
     public void setPreview(boolean preview) {
         this.preview = preview;
     }
+
+    protected WeblogEntriesPager pager;
 
     /**
      * Creates an un-initialized new instance, Weblogger calls init() to complete
@@ -319,27 +321,29 @@ public class PageModel implements Model {
      * date they were published.
      */
     public WeblogEntriesPager getWeblogEntriesPager() {
-
-        // determine which mode to use
-        if (pageRequest.getWeblogEntryAnchor() != null) {
-            return new WeblogEntriesPermalinkPager(
-                    weblogEntryManager,
-                    urlStrategy,
-                    pageRequest.getWeblog(),
-                    pageRequest.getCustomPageName(),
-                    pageRequest.getWeblogEntryAnchor(),
-                    // preview can show draft entries
-                    preview);
-        } else {
-            return new WeblogEntriesTimePager(
-                    weblogEntryManager,
-                    urlStrategy,
-                    pageRequest.getWeblog(),
-                    pageRequest.getWeblogDate(),
-                    pageRequest.getWeblogCategoryName(),
-                    pageRequest.getTag(),
-                    pageRequest.getPageNum());
+        if (pager == null) {
+            // determine which mode to use
+            if (pageRequest.getWeblogEntryAnchor() != null) {
+                pager = new WeblogEntriesPermalinkPager(
+                        weblogEntryManager,
+                        urlStrategy,
+                        pageRequest.getWeblog(),
+                        pageRequest.getCustomPageName(),
+                        pageRequest.getWeblogEntryAnchor(),
+                        // preview can show draft entries
+                        preview);
+            } else {
+                pager = new WeblogEntriesTimePager(
+                        weblogEntryManager,
+                        urlStrategy,
+                        pageRequest.getWeblog(),
+                        pageRequest.getWeblogDate(),
+                        pageRequest.getWeblogCategoryName(),
+                        pageRequest.getTag(),
+                        pageRequest.getPageNum());
+            }
         }
+        return pager;
     }
 
     /**
