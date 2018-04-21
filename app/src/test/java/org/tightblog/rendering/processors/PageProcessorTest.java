@@ -341,23 +341,24 @@ public class PageProcessorTest {
 
         String test1 = processor.generateKey(request);
         assertEquals("bobsblog/entry/neatoentry/user=bob/deviceType=TABLET", test1);
-/*
-        when(request.getWeblogEntryAnchor()).thenReturn(null);
-        when(request.getAuthenticatedUser()).thenReturn(null);
-        when(request.getDeviceType()).thenReturn(DeviceType.MOBILE);
-        when(request.getCustomPageName()).thenReturn("mytemplate");
-        when(request.getWeblogDate()).thenReturn("20171006");
-        when(request.getWeblogCategoryName()).thenReturn("finance");
-        when(request.getTag()).thenReturn("taxes");
-        when(request.getQueryString()).thenReturn("a=foo&b=123");
-        when(request.getPageNum()).thenReturn(5);
-        when(request.isSiteWide()).thenReturn(true);
+
+        request.setWeblogEntryAnchor(null);
+        request.setAuthenticatedUser(null);
+        request.setDeviceType(DeviceType.MOBILE);
+        request.setCustomPageName("mytemplate");
+        request.setWeblogDate("20171006");
+        request.setCategory("finance");
+        request.setTag("taxes");
+        request.setQueryString("a=foo&b=123");
+        request.setPageNum(5);
+        request.setSiteWide(true);
+
         Instant testTime = Instant.now();
         webloggerProperties.setLastWeblogChange(testTime);
 
         test1 = processor.generateKey(request);
         assertEquals("bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
-                "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE/lastUpdate=" + testTime.toEpochMilli(), test1);*/
+                "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE/lastUpdate=" + testTime.toEpochMilli(), test1);
     }
 
 }

@@ -43,7 +43,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private String context;
     private String weblogEntryAnchor;
     private String customPageName;
-    private String weblogCategoryName;
+    private String category;
     private String weblogDate;
     private String tag;
     private String query;
@@ -89,7 +89,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
             // now check the rest of the path and extract other details
             if ("category".equals(this.context) && (pathElements.length == 2 || pathElements.length == 4)) {
-                this.weblogCategoryName = Utilities.decode(pathElements[1]);
+                this.category = Utilities.decode(pathElements[1]);
 
                 if (pathElements.length == 4) {
                     if ("tag".equals(pathElements[2])) {
@@ -126,7 +126,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
             } else if ("search".equals(this.context) && pathElements.length == 1) {
                 this.query = getRequestParameter("q");
-                this.weblogCategoryName = Utilities.decode(getRequestParameter("cat"));
+                this.category = Utilities.decode(getRequestParameter("cat"));
             } else {
                 throw new IllegalArgumentException("Invalid page request: " + extraPathInfo);
             }
@@ -141,7 +141,7 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("context = {}", context);
             log.debug("weblogEntryAnchor = {}", weblogEntryAnchor);
             log.debug("weblogDate = {}", weblogDate);
-            log.debug("weblogCategory = {}", weblogCategoryName);
+            log.debug("weblogCategory = {}", category);
             log.debug("tag = {}", tag);
             log.debug("template = {}", customPageName);
             log.debug("search query = {}", query);
@@ -174,12 +174,12 @@ public class WeblogPageRequest extends WeblogRequest {
         this.customPageName = customPageName;
     }
 
-    public String getWeblogCategoryName() {
-        return weblogCategoryName;
+    public String getCategory() {
+        return category;
     }
 
-    public void setWeblogCategoryName(String weblogCategory) {
-        this.weblogCategoryName = weblogCategory;
+    public void setCategory(String weblogCategory) {
+        this.category = weblogCategory;
     }
 
     public String getWeblogDate() {

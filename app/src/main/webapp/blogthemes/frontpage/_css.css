@@ -251,9 +251,6 @@ Colors
 #logobackground {
     background: #ad3431 !important; 
 }
-.bannerBox {
-    background: url([(${url.themeResource('frontpage', 'tan-banner.gif')})]) repeat-x top;
-}
 .bannerStatusBox {
     background: #ad3431;
     color: white;

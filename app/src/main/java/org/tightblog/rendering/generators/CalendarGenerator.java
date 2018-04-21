@@ -76,7 +76,7 @@ public class CalendarGenerator {
         wesc.setWeblog(pageRequest.getWeblog());
         wesc.setStartDate(startTime.atZone(ZoneId.systemDefault()).toInstant());
         wesc.setEndDate(endTime.atZone(ZoneId.systemDefault()).toInstant());
-        wesc.setCategoryName(pageRequest.getWeblogCategoryName());
+        wesc.setCategoryName(pageRequest.getCategory());
         wesc.setStatus(PubStatus.PUBLISHED);
         Map<LocalDate, List<WeblogEntry>> dateToEntryMap = weblogEntryManager.getDateToWeblogEntryMap(wesc);
 
@@ -96,14 +96,14 @@ public class CalendarGenerator {
 
         // determine if we should have next and prev month links, and if so, the months for them to point to
         WeblogEntry temp = weblogEntryManager.findNearestWeblogEntry(pageRequest.getWeblog(),
-                pageRequest.getWeblogCategoryName(), startTime.minusNanos(1), false);
+                pageRequest.getCategory(), startTime.minusNanos(1), false);
         data.setPrevMonthLink(computeMonthUrl(pageRequest, firstDayOfMonthOfWeblogEntry(temp)));
 
-        temp = weblogEntryManager.findNearestWeblogEntry(pageRequest.getWeblog(), pageRequest.getWeblogCategoryName(),
+        temp = weblogEntryManager.findNearestWeblogEntry(pageRequest.getWeblog(), pageRequest.getCategory(),
                 endTime.plusNanos(1), true);
         data.setNextMonthLink(computeMonthUrl(pageRequest, firstDayOfMonthOfWeblogEntry(temp)));
 
-        data.setHomeLink(urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getWeblogCategoryName(),
+        data.setHomeLink(urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
                 null, null, -1, false));
 
         // Weeks start on different days depending on locale (Sat, Sun, Mon)
@@ -134,7 +134,7 @@ public class CalendarGenerator {
                     if (dateToEntryMap.containsKey(dayPointer)) {
                         String dateString = Utilities.YMD_FORMATTER.format(dayPointer);
                         String link = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(),
-                                pageRequest.getWeblogCategoryName(), dateString, null, -1, false);
+                                pageRequest.getCategory(), dateString, null, -1, false);
                         dayIter.setLink(link);
                         if (includeBlogEntryData) {
                             dayIter.setEntries(getCalendarEntries(dayPointer, dateToEntryMap));
@@ -171,7 +171,7 @@ public class CalendarGenerator {
             String dateString = Utilities.YM_FORMATTER.format(day);
 
             if (pageRequest.getCustomPageName() == null) {
-                result = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getWeblogCategoryName(),
+                result = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
                         dateString, null, -1, false);
             } else {
                 result = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageRequest.getCustomPageName(), dateString,

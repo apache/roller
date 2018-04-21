@@ -44,7 +44,7 @@ public class WeblogPageRequestTest {
         assertEquals("entry", wpr.getContext());
         assertEquals("blog-anchor", wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
-        assertNull(wpr.getWeblogCategoryName());
+        assertNull(wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertNull(wpr.getTag());
         assertNull(wpr.getQuery());
@@ -64,7 +64,7 @@ public class WeblogPageRequestTest {
         assertEquals("category", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
-        assertEquals("stamps", wpr.getWeblogCategoryName());
+        assertEquals("stamps", wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertNull(wpr.getTag());
         assertNull(wpr.getQuery());
@@ -83,7 +83,7 @@ public class WeblogPageRequestTest {
         assertEquals("category", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
-        assertEquals("stamps", wpr.getWeblogCategoryName());
+        assertEquals("stamps", wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertEquals("semipostals", wpr.getTag());
         assertNull(wpr.getQuery());
@@ -111,7 +111,7 @@ public class WeblogPageRequestTest {
         assertEquals("tag", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
-        assertNull(wpr.getWeblogCategoryName());
+        assertNull(wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertEquals("commemoratives", wpr.getTag());
         assertNull(wpr.getQuery());
@@ -127,7 +127,7 @@ public class WeblogPageRequestTest {
         assertEquals("date", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
-        assertNull(wpr.getWeblogCategoryName());
+        assertNull(wpr.getCategory());
         assertEquals("201804", wpr.getWeblogDate());
         assertNull(wpr.getTag());
         assertNull(wpr.getQuery());
@@ -143,7 +143,7 @@ public class WeblogPageRequestTest {
         assertEquals("date", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
-        assertNull(wpr.getWeblogCategoryName());
+        assertNull(wpr.getCategory());
         assertEquals("20180402", wpr.getWeblogDate());
         assertNull(wpr.getTag());
         assertNull(wpr.getQuery());
@@ -172,7 +172,7 @@ public class WeblogPageRequestTest {
         assertEquals("page", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
         assertEquals("first-day-covers", wpr.getCustomPageName());
-        assertNull(wpr.getWeblogCategoryName());
+        assertNull(wpr.getCategory());
         assertEquals("20181002", wpr.getWeblogDate());
         assertNull(wpr.getTag());
         assertNull(wpr.getQuery());
@@ -191,7 +191,7 @@ public class WeblogPageRequestTest {
         assertEquals("search", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
-        assertEquals("stamps", wpr.getWeblogCategoryName());
+        assertEquals("stamps", wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertNull(wpr.getTag());
         assertEquals("definitives", wpr.getQuery());

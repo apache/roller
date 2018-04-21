@@ -130,7 +130,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getWeblogURL(Weblog weblog, boolean absolute) {
-        String url = getRootWeblogURL(weblog, absolute);
+        String url = getWeblogRootURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
         return url + Utilities.getQueryString(params);
     }
@@ -182,7 +182,7 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     /* Weblog URL before any params added */
-    private String getRootWeblogURL(Weblog weblog, boolean absolute) {
+    private String getWeblogRootURL(Weblog weblog, boolean absolute) {
         if (previewTheme == null) {
             return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
         } else {
@@ -192,7 +192,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getWeblogEntryURL(WeblogEntry entry, boolean absolute) {
-        String url = getRootWeblogURL(entry.getWeblog(), absolute) + "entry/" + Utilities.encode(entry.getAnchor());
+        String url = getWeblogRootURL(entry.getWeblog(), absolute) + "entry/" + Utilities.encode(entry.getAnchor());
         Map<String, String> params = new HashMap<>();
         addThemeOverrideIfPresent(params);
         return url + Utilities.getQueryString(params);
@@ -202,7 +202,7 @@ public class URLStrategyImpl implements URLStrategy {
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
                                          int pageNum, boolean absolute) {
 
-        String pathinfo = getRootWeblogURL(weblog, absolute);
+        String pathinfo = getWeblogRootURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
 
         if (category != null && dateString == null) {
@@ -233,7 +233,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getCustomPageURL(Weblog weblog, String pageLink, String dateString, boolean absolute) {
-        String url = getRootWeblogURL(weblog, absolute);
+        String url = getWeblogRootURL(weblog, absolute);
         Map<String, String> params = new HashMap<>();
 
         if (pageLink != null && pageLink.length() > 0) {

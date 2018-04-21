@@ -83,7 +83,7 @@ public class CalendarGeneratorTest {
         WeblogPageRequest wpr = new WeblogPageRequest();
         wpr.setWeblogDate("18581014");
         wpr.setWeblog(weblog);
-        wpr.setWeblogCategoryName("stamps");
+        wpr.setCategory("stamps");
 
         when(mockUrlStrategy.getWeblogCollectionURL(weblog, "stamps", "18581014",
                 null, -1, false)).thenReturn("WeblogCollectionURL");
@@ -118,7 +118,7 @@ public class CalendarGeneratorTest {
         weblog.setLocale("EN_US");
         WeblogPageRequest wpr = new WeblogPageRequest();
         wpr.setWeblog(weblog);
-        wpr.setWeblogCategoryName("stamps");
+        wpr.setCategory("stamps");
 
         LocalDate todaysDatePre;
         LocalDate todaysDatePost;
@@ -151,7 +151,7 @@ public class CalendarGeneratorTest {
         Weblog weblog = new Weblog();
         WeblogPageRequest wpr = new WeblogPageRequest();
         wpr.setWeblog(weblog);
-        wpr.setWeblogCategoryName("stamps");
+        wpr.setCategory("stamps");
 
         String test1 = calendarGenerator.computeMonthUrl(wpr, null);
         assertNull(test1);

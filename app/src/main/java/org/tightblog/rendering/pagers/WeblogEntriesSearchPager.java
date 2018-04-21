@@ -52,6 +52,13 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
     private int page;
     private boolean moreResults;
 
+    public static class Creator {
+        public WeblogEntriesSearchPager create(URLStrategy strat, WeblogPageRequest searchRequest,
+                                               Map<LocalDate, List<WeblogEntry>> entries, boolean more) {
+            return new WeblogEntriesSearchPager(strat, searchRequest, entries, more);
+        }
+    }
+
     public WeblogEntriesSearchPager(URLStrategy strat, WeblogPageRequest searchRequest,
                                     Map<LocalDate, List<WeblogEntry>> entries, boolean more) {
 
@@ -64,7 +71,7 @@ public class WeblogEntriesSearchPager implements WeblogEntriesPager {
         // data from search request
         this.weblog = searchRequest.getWeblog();
         this.query = searchRequest.getQuery();
-        this.category = searchRequest.getWeblogCategoryName();
+        this.category = searchRequest.getCategory();
         this.page = searchRequest.getPageNum();
 
         // does this pager have more results?

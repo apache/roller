@@ -59,15 +59,11 @@ public class SearchTask extends AbstractTask {
     private TopFieldDocs searchResults;
 
     private String term;
-    private String websiteHandle;
+    private String weblogHandle;
     private String category;
 
     public SearchTask(IndexManager mgr) {
         super(mgr);
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
     }
 
     @Override
@@ -91,7 +87,9 @@ public class SearchTask extends AbstractTask {
         try (Analyzer analyzer = manager.getAnalyzer()) {
             if (analyzer != null) {
                 IndexReader reader = manager.getDirectoryReader();
-                searcher = new IndexSearcher(reader);
+                if (searcher == null) {
+                    searcher = new IndexSearcher(reader);
+                }
 
                 MultiFieldQueryParser multiParser = new MultiFieldQueryParser(SEARCH_FIELDS, analyzer);
 
@@ -101,7 +99,7 @@ public class SearchTask extends AbstractTask {
                 // Create a query object out of our term
                 Query query = multiParser.parse(term);
 
-                Term tUsername = getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
+                Term tUsername = getTerm(FieldConstants.WEBSITE_HANDLE, weblogHandle);
 
                 if (tUsername != null) {
                     query = new BooleanQuery.Builder()
@@ -129,8 +127,18 @@ public class SearchTask extends AbstractTask {
         return searcher;
     }
 
+    // for testing
+    public void setSearcher(IndexSearcher searcher) {
+        this.searcher = searcher;
+    }
+
     public TopFieldDocs getResults() {
         return searchResults;
+    }
+
+    // for testing
+    public void setResults(TopFieldDocs results) {
+        this.searchResults = results;
     }
 
     public int getResultsCount() {
@@ -140,8 +148,24 @@ public class SearchTask extends AbstractTask {
         return searchResults.totalHits;
     }
 
-    public void setWebsiteHandle(String websiteHandle) {
-        this.websiteHandle = websiteHandle;
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public String getWeblogHandle() {
+        return weblogHandle;
+    }
+
+    public void setWeblogHandle(String weblogHandle) {
+        this.weblogHandle = weblogHandle;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public void setCategory(String category) {

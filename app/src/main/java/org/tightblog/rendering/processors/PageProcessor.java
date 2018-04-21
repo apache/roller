@@ -268,8 +268,8 @@ public class PageProcessor extends AbstractProcessor {
                 key.append("/date/").append(request.getWeblogDate());
             }
 
-            if (request.getWeblogCategoryName() != null) {
-                String cat = request.getWeblogCategoryName();
+            if (request.getCategory() != null) {
+                String cat = request.getCategory();
                 cat = Utilities.encode(cat);
                 key.append("/cat/").append(cat);
             }

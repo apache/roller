@@ -100,6 +100,16 @@ public class SearchResultsModel extends PageModel {
         return limit;
     }
 
+    private WeblogEntriesSearchPager.Creator searchPagerCreator;
+
+    SearchResultsModel() {
+        searchPagerCreator = new WeblogEntriesSearchPager.Creator();
+    }
+
+    void setSearchPagerCreator(WeblogEntriesSearchPager.Creator searchPagerCreator) {
+        this.searchPagerCreator = searchPagerCreator;
+    }
+
     // override page model and return search results pager
     public WeblogEntriesPager getWeblogEntriesPager() {
         if (pager == null) {
@@ -108,33 +118,33 @@ public class SearchResultsModel extends PageModel {
             if (pageRequest.getQuery() != null) {
 
                 // setup the search
-                SearchTask search = new SearchTask(indexManager);
-                search.setTerm(pageRequest.getQuery());
+                SearchTask searchTask = new SearchTask(indexManager);
+                searchTask.setTerm(pageRequest.getQuery());
 
                 if (!themeManager.getSharedTheme(pageRequest.getWeblog().getTheme()).isSiteWide()) {
-                    search.setWebsiteHandle(pageRequest.getWeblogHandle());
+                    searchTask.setWeblogHandle(pageRequest.getWeblogHandle());
                 }
 
-                if (StringUtils.isNotEmpty(pageRequest.getWeblogCategoryName())) {
-                    search.setCategory(pageRequest.getWeblogCategoryName());
+                if (StringUtils.isNotEmpty(pageRequest.getCategory())) {
+                    searchTask.setCategory(pageRequest.getCategory());
                 }
 
                 // execute search
-                indexManager.executeIndexOperationNow(search);
+                indexManager.executeIndexOperationNow(searchTask);
 
                 // -1 indicates a parsing/IO error
-                if (search.getResultsCount() >= 0) {
-                    TopFieldDocs docs = search.getResults();
+                if (searchTask.getResultsCount() >= 0) {
+                    TopFieldDocs docs = searchTask.getResults();
                     ScoreDoc[] hitsArr = docs.scoreDocs;
-                    this.resultCount = search.getResultsCount();
+                    this.resultCount = searchTask.getResultsCount();
 
                     // Convert hits into WeblogEntry instances.  Results are mapped by Day -> Set of entries
                     // to eliminate any duplicates and then converted into Day -> List map used by pagers
-                    listMap = convertHitsToEntries(hitsArr, search).entrySet().stream()
+                    listMap = convertHitsToEntries(hitsArr, searchTask).entrySet().stream()
                             .collect(Collectors.toMap(Map.Entry::getKey, e -> new ArrayList<>(e.getValue())));
                 }
             }
-            pager = new WeblogEntriesSearchPager(urlStrategy, pageRequest, listMap,
+            pager = searchPagerCreator.create(urlStrategy, pageRequest, listMap,
                     resultCount > (offset + limit));
         }
         return pager;

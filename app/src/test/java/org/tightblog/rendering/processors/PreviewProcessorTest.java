@@ -67,7 +67,6 @@ public class PreviewProcessorTest {
     private WeblogPageRequest pageRequest;
     private Weblog weblog;
     private SharedTheme sharedTheme;
-    private CachedContent cachedContent;
 
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
@@ -107,7 +106,7 @@ public class PreviewProcessorTest {
             when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
             processor.setWeblogManager(mockWM);
             mockRenderer = mock(ThymeleafRenderer.class);
-            cachedContent = new CachedContent(Template.ComponentType.JAVASCRIPT);
+            CachedContent cachedContent = new CachedContent(Template.ComponentType.JAVASCRIPT);
             when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
             processor.setThymeleafRenderer(mockRenderer);
             mockApplicationContext = mock(ApplicationContext.class);

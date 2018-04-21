@@ -82,7 +82,7 @@
             </div>
                                     
             <br />
-            <a th:href="${url.feed.atom}" title="Combined Atom feed for site.">
+            <a th:href="${url.getAtomFeed()}" title="Combined Atom feed for site.">
             <img th:src="${url.absoluteSite + '/images/feed-icon-12x12.gif'}" border="0" alt="Combined Atom feed for site."/>
             </a>
             Right-click, copy link and paste into your newsfeed reader

@@ -239,7 +239,7 @@ public class PageModel implements Model {
      * Get category name specified by request.
      */
     public String getCategoryName() {
-        return pageRequest.getWeblogCategoryName();
+        return pageRequest.getCategory();
     }
 
     /**
@@ -338,7 +338,7 @@ public class PageModel implements Model {
                         urlStrategy,
                         pageRequest.getWeblog(),
                         pageRequest.getWeblogDate(),
-                        pageRequest.getWeblogCategoryName(),
+                        pageRequest.getCategory(),
                         pageRequest.getTag(),
                         pageRequest.getPageNum());
             }
