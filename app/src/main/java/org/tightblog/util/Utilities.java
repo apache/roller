@@ -157,7 +157,7 @@ public final class Utilities {
 
     /**
      * Replaces occurrences of non-alphanumeric characters with a supplied char.
-     * Exception: apostrophes are skipped
+     * Exception: apostrophes are removed with no replacement
      */
     public static String replaceNonAlphanumeric(String str, char subst) {
         StringBuilder ret = new StringBuilder(str.length());

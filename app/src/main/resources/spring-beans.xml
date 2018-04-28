@@ -86,19 +86,11 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="mailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <beans:property name="templateMode" value="HTML5" />
-        <beans:property name="prefix" value="/mailtemplates/" />
-    </beans:bean>
-
-    <beans:bean id="mailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
-        <beans:property name="templateResolver" ref="mailTemplateResolver" />
-    </beans:bean>
-
     <beans:bean id="blogTemplateResolver" class="org.tightblog.rendering.thymeleaf.ThemeTemplateResolver">
         <beans:property name="templateMode" value="HTML5"/>
         <beans:property name="order" value="1"/>
         <beans:property name="checkExistence" value="true"/>
+        <!-- we want changes to blog templates to propagate immediately: https://stackoverflow.com/a/28530365 -->
         <beans:property name="cacheable" value="false"/>
         <beans:property name="themeManager" ref="themeManager"/>
         <beans:property name="weblogManager" ref="weblogManager"/>
@@ -109,7 +101,8 @@
         <beans:property name="prefix" value="/thymeleaf/" />
         <beans:property name="suffix" value=".html" />
         <beans:property name="order" value="2"/>
-        <beans:property name="cacheable" value="false"/>
+        <!-- templates here can't be modified via UI, so good to cache -->
+        <beans:property name="cacheable" value="true"/>
     </beans:bean>
 
     <beans:bean id="blogTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
@@ -122,7 +115,7 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="rssTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+    <beans:bean id="standardTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <beans:property name="templateResolver" ref="standardTemplateResolver" />
     </beans:bean>
 
@@ -131,7 +124,7 @@
     </beans:bean>
 
     <beans:bean id="atomRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
-        <beans:property name="templateEngine" ref="rssTemplateEngine"/>
+        <beans:property name="templateEngine" ref="standardTemplateEngine"/>
     </beans:bean>
 
     <beans:bean id="previewPageModel" parent="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">

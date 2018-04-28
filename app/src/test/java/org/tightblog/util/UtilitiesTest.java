@@ -58,6 +58,13 @@ public class UtilitiesTest {
         assertEquals(convertLinesFormatted, output);
     }
 
+    @Test
+    public void testReplaceNonAlphanumeric() {
+        assertEquals("A bc  345", Utilities.replaceNonAlphanumeric("A?bc!#345", ' '));
+        assertEquals("A-bc--345", Utilities.replaceNonAlphanumeric("A?bc!#345", '-'));
+        assertEquals("A bc345", Utilities.replaceNonAlphanumeric("A?bc''345", ' '));
+    }
+
     private abstract static class TestDevice implements Device {
         @Override
         public boolean isNormal() {

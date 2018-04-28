@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body style="background:white;color:black;font-size:12px">
+<div th:insert="emails/EmailFragments :: ${emailType}">
+    <p>Notification-specific email content goes here</p>
+</div>
+</body>
+</html>

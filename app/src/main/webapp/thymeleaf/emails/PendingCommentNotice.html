@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title th:remove="all">Email template for informing blogger of incoming comment needing approval</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body style="background:white;color:black;font-size:12px">
+<div>
 <span th:text="${comment.name} + ' ' + #{email.comment.wrote} + ': '">
     A user wrote
 </span><br><br>
@@ -13,7 +13,7 @@
 <span style="font-size:11px" th:text="#{email.comment.reply} + ': '"><br>
     Reply:
 </span>
-<a href="replyurl.html" th:href="${commentURL}" th:text="${commentURL}">replyurl</a>
+<a th:href="${commentURL}" th:text="${commentURL}">replyurl</a>
 
 <div th:if="${messages.size() > 0}">
     <p th:text="#{commentServlet.email.thereAreErrorMessages}"></p>
@@ -32,6 +32,7 @@
 </div>
 <span th:text="#{email.comment.management.link} + ': '"></span>
 <br>
-<a href="manageurl.html" th:href="${manageURL}" th:text="${manageURL}">manageurl</a>
+<a th:href="${manageURL}" th:text="${manageURL}">manageurl</a>
+</div>
 </body>
 </html>

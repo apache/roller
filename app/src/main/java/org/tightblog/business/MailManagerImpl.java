@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -78,268 +78,175 @@ public class MailManagerImpl implements MailManager {
     private JavaMailSender mailSender;
 
     @Autowired
-    private SpringTemplateEngine mailTemplateEngine;
-
-    public MailManagerImpl() {
-    }
+    private SpringTemplateEngine standardTemplateEngine;
 
     private boolean isMailEnabled() {
         return WebloggerStaticConfig.getBooleanProperty("mail.enabled");
     }
 
     @Override
-    public void sendPendingEntryNotice(WeblogEntry entry) {
-
-        if (!isMailEnabled()) {
-            return;
-        }
-
-        try {
-            String screenName = entry.getCreator().getScreenName();
-            String from = entry.getCreator().getEmailAddress();
-            String[] cc = new String[]{from};
-            String[] bcc = new String[0];
-            String[] to;
-            String subject;
-            String content;
-
-            // list of enabled website authors and admins
-            List<String> reviewers = new ArrayList<>();
-            List<User> websiteUsers = weblogManager.getWeblogUsers(entry.getWeblog());
-
-            // build list of reviewers (website users with author permission)
-            websiteUsers.forEach(user -> {
-                if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST) &&
-                        user.getEmailAddress() != null) {
-                    reviewers.add(user.getEmailAddress());
-                }
-            });
-
-            to = reviewers.toArray(new String[reviewers.size()]);
-
-            // Figure URL to entry edit page
-            String editURL =  urlStrategy.getEntryEditURL(entry.getWeblog().getHandle(), entry.getId(), true);
-
-            ResourceBundle resources = ResourceBundle.getBundle(
-                    "ApplicationResources", entry.getWeblog().getLocaleInstance());
-            StringBuilder sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("weblogEntry.pendingEntrySubject"),
-                            new Object[]{
-                                    entry.getWeblog().getName(),
-                                    entry.getWeblog().getHandle()
-                            }));
-            subject = sb.toString();
-            sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("weblogEntry.pendingEntryContent"),
-                            new Object[]{screenName, editURL})
-            );
-            content = sb.toString();
-            sendTextMessage(from, to, cc, bcc, subject, content);
-        } catch (MessagingException e) {
-            log.error("ERROR: Problem sending pending entry notification email.");
-        }
-    }
-
-    @Override
-    public void sendRegistrationApprovalRequest(User user) {
-
-        if (!isMailEnabled()) {
-            return;
-        }
-
-        try {
-            UserSearchCriteria criteria = new UserSearchCriteria();
-            criteria.setStatus(UserStatus.ENABLED);
-            criteria.setGlobalRole(GlobalRole.ADMIN);
-            List<User> admins = userManager.getUsers(criteria);
-
-            // build list of reviewers (website users with author permission)
-            List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
-            String[] to = adminEmails.toArray(new String[adminEmails.size()]);
-
-            String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin",
-                    null, null);
-
-            ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
-            StringBuilder sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("mailMessage.approveRegistrationSubject"),
-                            new Object[]{
-                                    user.getScreenName()
-                            }));
-            String subject = sb.toString();
-            sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("mailMessage.approveRegistrationContent"),
-                            new Object[]{
-                                    user.getScreenName(),
-                                    user.getEmailAddress(),
-                                    userAdminURL
-                            })
-            );
-            String content = sb.toString();
-            sendTextMessage(null, to, new String[0], new String[0], subject, content);
-
-        } catch (MessagingException e) {
-            log.error("ERROR: Problem sending pending entry notification email.");
-        }
-    }
-
-    @Override
-    public void sendRegistrationApprovedNotice(User user) {
-
-        if (!isMailEnabled()) {
-            return;
-        }
-
-        try {
-            String[] to = new String[]{user.getEmailAddress()};
-
-            String loginURL = urlStrategy.getLoginURL(true);
-
-            ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources",
-                    Locale.forLanguageTag(user.getLocale()));
-            StringBuilder sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("mailMessage.registrationApprovedSubject"),
-                            new Object[]{
-                                    user.getScreenName()
-                            }));
-            String subject = sb.toString();
-            sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("mailMessage.registrationApprovedContent"),
-                            new Object[]{
-                                    user.getScreenName(),
-                                    user.getUserName(),
-                                    loginURL
-                            })
-            );
-            String content = sb.toString();
-            sendTextMessage(null, to, new String[0], new String[0], subject, content);
-
-        } catch (MessagingException e) {
-            log.error("ERROR: Problem sending pending entry notification email.");
-        }
-    }
-
-    @Override
-    public void sendRegistrationRejectedNotice(User user) {
-
-        if (!isMailEnabled()) {
-            return;
-        }
-
-        try {
-            String[] to = new String[]{user.getEmailAddress()};
-
-            ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
-            StringBuilder sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("mailMessage.registrationRejectedSubject"),
-                            new Object[]{
-                            }));
-            String subject = sb.toString();
-            sb = new StringBuilder();
-            sb.append(
-                    MessageFormat.format(
-                            resources.getString("mailMessage.registrationRejectedContent"),
-                            new Object[]{
-                                    user.getScreenName()
-                            })
-            );
-            String content = sb.toString();
-            sendTextMessage(null, to, new String[0], new String[0], subject, content);
-
-        } catch (MessagingException e) {
-            log.error("ERROR: Problem sending pending entry notification email.");
-        }
-    }
-
-    @Override
-    public void sendWeblogInvitation(User user, Weblog weblog) {
-
-        if (!isMailEnabled()) {
-            return;
-        }
-
-        String from = weblog.getCreator().getEmailAddress();
-        String[] cc = new String[]{from};
-        String[] bcc = new String[0];
-        String[] to = new String[]{user.getEmailAddress()};
-        String subject;
-        String content;
-
-        // Figure URL to entry edit page
-        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
-        String url = rootURL + "/tb-ui/app/home";
-
-        ResourceBundle resources = ResourceBundle.getBundle(
-                "ApplicationResources",
-                weblog.getLocaleInstance());
-        StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(
-                resources.getString("members.inviteMemberEmailSubject"),
-                new Object[]{
-                        weblog.getName(),
-                        weblog.getHandle()})
-        );
-        subject = sb.toString();
-        sb = new StringBuilder();
-        sb.append(MessageFormat.format(
-                resources.getString("members.inviteMemberEmailContent"),
-                new Object[]{
-                        weblog.getName(),
-                        weblog.getHandle(),
-                        user.getUserName(),
-                        url
-                }));
-        content = sb.toString();
-        try {
-            sendTextMessage(from, to, cc, bcc, subject, content);
-        } catch (MessagingException ignored) {
-        }
-    }
-
-    @Override
     public void sendUserActivationEmail(User user) throws MessagingException {
-
         if (!isMailEnabled()) {
             return;
         }
+
+        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
+
+        String activationURL = rootURL + "/tb-ui/app/login?activationCode=" +
+                user.getActivationCode();
+
+        Context ctx = new Context();
+        ctx.setVariable("emailType", "UserActivation");
+        ctx.setVariable("userName", user.getUserName());
+        ctx.setVariable("activationURL", activationURL);
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
         ResourceBundle resources = ResourceBundle.getBundle(
                 "ApplicationResources", Locale.forLanguageTag(user.getLocale()));
 
-        String[] cc = new String[0];
-        String[] bcc = new String[0];
+        String subject = resources.getString("user.account.activation.mail.subject");
         String[] to = new String[]{user.getEmailAddress()};
-        String subject = resources.getString(
-                "user.account.activation.mail.subject");
-        String content;
+        sendMessage(null, to, null, subject, message);
+    }
 
-        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
+    @Override
+    public void sendRegistrationApprovalRequest(User user) {
+        if (!isMailEnabled()) {
+            return;
+        }
 
-        StringBuilder sb = new StringBuilder();
+        String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin",
+                null, null);
 
-        // activationURL=
-        String activationURL = rootURL + "/tb-ui/app/login?activationCode=" +
-                user.getActivationCode();
-        sb.append(MessageFormat.format(
-                resources.getString("user.account.activation.mail.content"),
-                new Object[]{user.getScreenName(), user.getUserName(), activationURL}));
-        content = sb.toString();
+        Context ctx = new Context();
+        ctx.setVariable("emailType", "RegistrationApprovalRequest");
+        ctx.setVariable("screenName", user.getScreenName());
+        ctx.setVariable("emailAddress", user.getEmailAddress());
+        ctx.setVariable("userAdminURL", userAdminURL);
 
-        sendHTMLMessage("", to, cc, bcc, subject, content);
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
+
+        UserSearchCriteria criteria = new UserSearchCriteria();
+        criteria.setStatus(UserStatus.ENABLED);
+        criteria.setGlobalRole(GlobalRole.ADMIN);
+        List<User> admins = userManager.getUsers(criteria);
+
+        // build list of reviewers (website users with author permission)
+        List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
+        String[] to = adminEmails.toArray(new String[adminEmails.size()]);
+
+        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
+        String subject = MessageFormat.format(resources.getString("mailMessage.approveRegistrationSubject"),
+                user.getScreenName());
+
+        sendMessage(null, to, null, subject, message);
+    }
+
+    @Override
+    public void sendRegistrationApprovedNotice(User user) {
+        if (!isMailEnabled()) {
+            return;
+        }
+
+        String loginURL = urlStrategy.getLoginURL(true);
+
+        Context ctx = new Context();
+        ctx.setVariable("emailType", "RegistrationApprovedNotice");
+        ctx.setVariable("screenName", user.getScreenName());
+        ctx.setVariable("userName", user.getUserName());
+        ctx.setVariable("loginURL", loginURL);
+
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
+
+        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources",
+                Locale.forLanguageTag(user.getLocale()));
+        String subject = MessageFormat.format(resources.getString("mailMessage.registrationApprovedSubject"),
+                user.getScreenName());
+
+        String[] to = new String[]{user.getEmailAddress()};
+        sendMessage(null, to, null, subject, message);
+    }
+
+    @Override
+    public void sendRegistrationRejectedNotice(User user) {
+        if (!isMailEnabled()) {
+            return;
+        }
+
+        Context ctx = new Context();
+        ctx.setVariable("emailType", "RegistrationRejectedNotice");
+        ctx.setVariable("screenName", user.getScreenName());
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
+
+        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
+        String subject = resources.getString("mailMessage.registrationRejectedSubject");
+
+        String[] to = new String[]{user.getEmailAddress()};
+        sendMessage(null, to, null, subject, message);
+    }
+
+    @Override
+    public void sendWeblogInvitation(User user, Weblog weblog) {
+        if (!isMailEnabled()) {
+            return;
+        }
+
+        String loginURL = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/home";
+        Context ctx = new Context();
+        ctx.setVariable("emailType", "WeblogInvitation");
+        ctx.setVariable("weblogName", weblog.getName());
+        ctx.setVariable("weblogHandle", weblog.getHandle());
+        ctx.setVariable("userName", user.getUserName());
+        ctx.setVariable("loginURL", loginURL);
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
+
+        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources",
+                weblog.getLocaleInstance());
+        String subject = MessageFormat.format(resources.getString("members.inviteMemberEmailSubject"),
+                weblog.getName(), weblog.getHandle());
+
+        String from = weblog.getCreator().getEmailAddress();
+        String[] to = new String[]{user.getEmailAddress()};
+        sendMessage(from, to, new String[]{from}, subject, message);
+    }
+
+    @Override
+    public void sendPendingEntryNotice(WeblogEntry entry) {
+        if (!isMailEnabled()) {
+            return;
+        }
+
+        String entryEditURL =  urlStrategy.getEntryEditURL(entry.getWeblog().getId(), entry.getId(), true);
+
+        Context ctx = new Context(entry.getWeblog().getLocaleInstance());
+        ctx.setVariable("emailType", "PendingEntryNotice");
+        ctx.setVariable("entryTitle", entry.getTitle());
+        ctx.setVariable("screenName", entry.getCreator().getScreenName());
+        ctx.setVariable("editURL", entryEditURL);
+
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
+
+        // get list of enabled admins and publishers to send notice to
+        List<User> weblogUsers = weblogManager.getWeblogUsers(entry.getWeblog());
+        List<String> reviewers = new ArrayList<>();
+
+        // build list of reviewers (website users with author permission)
+        weblogUsers.forEach(user -> {
+            if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST) &&
+                    user.getEmailAddress() != null) {
+                reviewers.add(user.getEmailAddress());
+            }
+        });
+
+        ResourceBundle resources = ResourceBundle.getBundle(
+                "ApplicationResources", entry.getWeblog().getLocaleInstance());
+
+        String subject = MessageFormat.format(resources.getString("weblogEntry.pendingEntrySubject"),
+               entry.getWeblog().getName(), entry.getWeblog().getHandle());
+        String from = entry.getCreator().getEmailAddress();
+        String[] to = reviewers.toArray(new String[reviewers.size()]);
+
+        sendMessage(from, to, new String[]{from}, subject, message);
     }
 
     @Override
@@ -364,32 +271,23 @@ public class MailManagerImpl implements MailManager {
         String manageURL = urlStrategy.getActionURL("comments", "/tb-ui/app/authoring", weblog, parameters);
         ctx.setVariable("manageURL", manageURL);
 
-        String msg = mailTemplateEngine.process("PendingCommentNotice.html", ctx);
+        String msg = standardTemplateEngine.process("emails/PendingCommentNotice", ctx);
 
-        // determine email subject
         String subject = resources.getString("email.comment.moderate.title") + ": ";
         subject += entry.getTitle();
 
-        // send message to email recipients
-        try {
-            List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
+        List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
 
-            String[] bloggerEmailAddrs = bloggerList.stream()
-                    .map(UserWeblogRole::getUser)
-                    .map(User::getEmailAddress)
-                    .collect(Collectors.toList()).toArray(new String[bloggerList.size()]);
+        String[] sendToList = bloggerList.stream()
+                .map(UserWeblogRole::getUser)
+                .map(User::getEmailAddress)
+                .collect(Collectors.toList()).toArray(new String[bloggerList.size()]);
 
-            String from = user.getEmailAddress();
+        String from = user.getEmailAddress();
 
-            if (comment.isPending() || weblog.getEmailComments()) {
-                sendHTMLMessage(from, bloggerEmailAddrs, null, null, subject, msg);
-            }
-        } catch (Exception e) {
-            log.warn("Exception sending pending comment mail", e);
-            log.debug("", e);
+        if (comment.isPending() || weblog.getEmailComments()) {
+            sendMessage(from, sendToList, null, subject, msg);
         }
-
-        log.debug("Done sending pending comment mail");
     }
 
     @Override
@@ -430,47 +328,39 @@ public class MailManagerImpl implements MailManager {
 
         String subject = resources.getString("email.comment.title") + ": " + entry.getTitle();
 
-        try {
-            String from = user.getEmailAddress();
+        String from = user.getEmailAddress();
 
-            // send message to blog members (same email for everyone)
-            if (weblog.getEmailComments() &&
-                    // if must moderate on, blogger(s) already got pending email, good enough.
-                    !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
-                List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
+        // send message to blog members (same email for everyone)
+        if (weblog.getEmailComments() &&
+                // if must moderate on, blogger(s) already got pending email, good enough.
+                !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
+            List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
 
-                Context ctx = getPublishedCommentNotificationContext(comment, null);
-                String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
+            Context ctx = getPublishedCommentNotificationContext(comment, null);
+            String msg = standardTemplateEngine.process("emails/NewCommentNotification", ctx);
 
-                String[] bloggerEmailAddrs = bloggerList.stream()
-                        .map(UserWeblogRole::getUser)
-                        .map(User::getEmailAddress)
-                        .collect(Collectors.toList()).toArray(new String[bloggerList.size()]);
+            String[] bloggerEmailAddrs = bloggerList.stream()
+                    .map(UserWeblogRole::getUser)
+                    .map(User::getEmailAddress)
+                    .collect(Collectors.toList()).toArray(new String[bloggerList.size()]);
 
-                sendHTMLMessage(from, bloggerEmailAddrs, null, null, subject, msg);
-            }
-
-            // now send to subscribers (different email each with different unsubscribe link)
-            if (subscribers.size() > 0) {
-                for (Map.Entry<String, String> subscriber : subscribers.entrySet()) {
-                    Context ctx = getPublishedCommentNotificationContext(comment, subscriber);
-                    String msg = mailTemplateEngine.process("NewCommentNotification.html", ctx);
-                    sendHTMLMessage(from, null, null, new String[]{subscriber.getKey()}, subject, msg);
-                }
-            }
-        } catch (Exception e) {
-            log.warn("Exception sending comment notification mail", e);
-            log.debug("", e);
+            sendMessage(from, bloggerEmailAddrs, null, subject, msg);
         }
 
-        log.debug("Done sending email message");
+        // now send to subscribers (different email each with different unsubscribe link)
+        if (subscribers.size() > 0) {
+            for (Map.Entry<String, String> subscriber : subscribers.entrySet()) {
+                Context ctx = getPublishedCommentNotificationContext(comment, subscriber);
+                String msg = standardTemplateEngine.process("emails/NewCommentNotification", ctx);
+                sendMessage(from, null, new String[]{subscriber.getKey()}, subject, msg);
+            }
+        }
     }
 
     private Context getPublishedCommentNotificationContext(WeblogEntryComment comment, Map.Entry<String, String> subscriber) {
         WeblogEntry entry = comment.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
 
-        // construct model for email
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
         String commentURL = urlStrategy.getWeblogCommentsURL(entry);
@@ -483,7 +373,6 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendYourCommentWasApprovedNotifications(List<WeblogEntryComment> comments) {
-
         if (!isMailEnabled() || comments == null || comments.size() < 1) {
             return;
         }
@@ -492,130 +381,84 @@ public class MailManagerImpl implements MailManager {
                 comments.get(0).getWeblogEntry().getWeblog().getLocaleInstance());
 
         for (WeblogEntryComment comment : comments) {
-
             // Send email notifications because a new comment has been approved
             sendNewPublishedCommentNotification(comment);
-
             // Send approval notification to author of approved comment
             sendYourCommentWasApprovedNotification(comment, resources);
         }
     }
 
-    private void sendYourCommentWasApprovedNotification(WeblogEntryComment cd, I18nMessages resources) {
+    private void sendYourCommentWasApprovedNotification(WeblogEntryComment wec, I18nMessages resources) {
+        WeblogEntry entry = wec.getWeblogEntry();
 
-        WeblogEntry entry = cd.getWeblogEntry();
-        User user = entry.getCreator();
-
-        String from = user.getEmailAddress();
-
-        // form the message to be sent
-        String subject = resources.getString("email.comment.commentApproved");
-
-        StringBuilder msg = new StringBuilder();
-        msg.append(resources.getString("email.comment.commentApproved"));
-        msg.append("\n\n");
-        msg.append(urlStrategy.getWeblogCommentsURL(entry));
+        Context ctx = new Context();
+        ctx.setVariable("emailType", "CommentApproved");
+        ctx.setVariable("commentURL", urlStrategy.getWeblogCommentsURL(entry));
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
         // send message to author of approved comment
-        try {
-            sendTextMessage(from, new String[]{cd.getEmail()}, null, null, subject, msg.toString());
-        } catch (Exception e) {
-            log.warn("Exception sending comment mail: {}", e.getMessage());
-            log.debug("", e);
-        }
-        log.debug("Done sending email message");
+        String subject = resources.getString("email.comment.commentApproved");
+        sendMessage(null, new String[]{wec.getEmail()}, null, subject, message);
     }
 
     /**
-     * This method is used to send a Text Message.
-     *
-     * @param from    e-mail address of sender
-     * @param to      e-mail addresses of recipients
-     * @param cc      e-mail address of cc recipients
-     * @param bcc     e-mail address of bcc recipients
-     * @param subject subject of e-mail
-     * @param content the body of the e-mail
-     * @throws MessagingException the exception to indicate failure
-     */
-    private void sendTextMessage(String from, String[] to, String[] cc, String[] bcc,
-                                 String subject, String content) throws MessagingException {
-        sendMessage(from, to, cc, bcc, subject, content, "text/plain; charset=utf-8");
-    }
-
-    /**
-     * This method is used to send a HTML Message
+     * This method is used to send an HTML Message
      *
      * @param from    e-mail address of sender
      * @param to      e-mail address(es) of recipients
      * @param subject subject of e-mail
      * @param content the body of the e-mail
-     * @throws MessagingException the exception to indicate failure
      */
-    private void sendHTMLMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
-                                 String content) throws MessagingException {
-        sendMessage(from, to, cc, bcc, subject, content, "text/html; charset=utf-8");
-    }
-
-    private void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
-                             String content, String mimeType) throws MessagingException {
-
-        MimeMessage message = mailSender.createMimeMessage();
-
-        // n.b. any default from address is expected to be determined by caller.
-        if (!StringUtils.isEmpty(from)) {
-            InternetAddress sentFrom = new InternetAddress(from);
-            message.setFrom(sentFrom);
-            log.debug("e-mail from: {}", sentFrom);
-        }
-
-        if (to != null) {
-            InternetAddress[] sendTo = new InternetAddress[to.length];
-
-            for (int i = 0; i < to.length; i++) {
-                sendTo[i] = new InternetAddress(to[i]);
-                log.debug("sending e-mail to: {}", to[i]);
-            }
-            message.setRecipients(Message.RecipientType.TO, sendTo);
-        }
-
-        if (cc != null) {
-            InternetAddress[] copyTo = new InternetAddress[cc.length];
-
-            for (int i = 0; i < cc.length; i++) {
-                copyTo[i] = new InternetAddress(cc[i]);
-                log.debug("copying e-mail to: {}", cc[i]);
-            }
-            message.setRecipients(Message.RecipientType.CC, copyTo);
-        }
-
-        if (bcc != null) {
-            InternetAddress[] copyTo = new InternetAddress[bcc.length];
-
-            for (int i = 0; i < bcc.length; i++) {
-                copyTo[i] = new InternetAddress(bcc[i]);
-                log.debug("blind copying e-mail to: {}", bcc[i]);
-            }
-            message.setRecipients(Message.RecipientType.BCC, copyTo);
-        }
-        message.setSubject((subject == null) ? "(no subject)" : subject, "UTF-8");
-        message.setContent(content, mimeType);
-        message.setSentDate(new java.util.Date());
-
-        // First collect all the addresses together.
-        boolean bFailedToSome = false;
-        SendFailedException sendex = new SendFailedException("Unable to send message to some recipients");
-
+    private void sendMessage(String from, String[] to, String[] cc, String subject, String content) {
         try {
-            // Send to the list of remaining addresses, ignoring the addresses attached to the message
-            mailSender.send(message);
-        } catch (MailAuthenticationException | MailSendException ex) {
-            bFailedToSome = true;
-            sendex.setNextException(ex);
-        }
+            MimeMessage message = mailSender.createMimeMessage();
 
-        if (bFailedToSome) {
-            throw sendex;
+            // n.b. any default from address is expected to be determined by caller.
+            if (!StringUtils.isEmpty(from)) {
+                InternetAddress sentFrom = new InternetAddress(from);
+                message.setFrom(sentFrom);
+                log.debug("e-mail from: {}", sentFrom);
+            }
+
+            if (to != null) {
+                InternetAddress[] sendTo = new InternetAddress[to.length];
+                for (int i = 0; i < to.length; i++) {
+                    sendTo[i] = new InternetAddress(to[i]);
+                    log.debug("sending e-mail to: {}", to[i]);
+                }
+                message.setRecipients(Message.RecipientType.TO, sendTo);
+            }
+
+            if (cc != null) {
+                InternetAddress[] copyTo = new InternetAddress[cc.length];
+                for (int i = 0; i < cc.length; i++) {
+                    copyTo[i] = new InternetAddress(cc[i]);
+                    log.debug("copying e-mail to: {}", cc[i]);
+                }
+                message.setRecipients(Message.RecipientType.CC, copyTo);
+            }
+
+            message.setSubject((subject == null) ? "(no subject)" : subject, "UTF-8");
+            message.setContent(content, "text/html; charset=utf-8");
+            message.setSentDate(new java.util.Date());
+
+            // First collect all the addresses together.
+            boolean bFailedToSome = false;
+            SendFailedException sendex = new SendFailedException("Unable to send message to some recipients");
+
+            try {
+                // Send to the list of remaining addresses, ignoring the addresses attached to the message
+                mailSender.send(message);
+            } catch (MailAuthenticationException | MailSendException ex) {
+                bFailedToSome = true;
+                sendex.setNextException(ex);
+            }
+
+            if (bFailedToSome) {
+                throw sendex;
+            }
+        } catch (MessagingException e) {
+            log.error("ERROR: Problem sending email with subject {}", subject, e);
         }
     }
-
 }

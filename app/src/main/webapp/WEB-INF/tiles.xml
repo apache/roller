@@ -58,7 +58,7 @@
     <!-- error pages -->
     <definition name=".denied" extends=".tiles-no-nav-page" >
         <put-attribute name="content" value="/tb-ui/errors/denied.jsp" />
-        <put-attribute name="titleRight" value="error.permissionDenied.title"/>
+        <put-attribute name="titleRight" value="denied.title"/>
     </definition>
 
     <!-- core pages (and associates) -->

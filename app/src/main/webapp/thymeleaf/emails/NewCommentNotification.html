@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title th:remove="all">Email template for informing readers of a newly published comment</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body style="background:white;color:black;font-size:12px">
+<div>
 <span th:text="${comment.name} + ' ' + #{email.comment.wrote} + ': '">
     A user wrote
 </span><br><br>
@@ -13,7 +13,7 @@
 <span style="font-size:11px" th:text="#{email.comment.reply} + ': '"><br>
     Reply:
 </span>
-<a href="replyurl.html" th:href="${commentURL}" th:text="${commentURL}">replyurl</a>
+<a th:href="${commentURL}" th:text="${commentURL}">replyurl</a>
 <br><br><hr>
 <span style="font-size:11px" th:text="#{email.comment.receiveReason}"><br>
     (receive reason)
@@ -21,5 +21,6 @@
 <span style="font-size:11px" th:utext="#{email.comment.unsubscribeLink(${unsubscribeURL})}"><br>
     (unsubscribe link)
 </span>
+</div>
 </body>
 </html>
