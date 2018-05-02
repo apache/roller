@@ -154,7 +154,7 @@ public class HitCountTest extends WebloggerTest {
         assertEquals(30, blog3.getHitsToday());
         
         // get hot weblogs
-        List<Weblog> hotBlogs = weblogManager.getHotWeblogs(1, 0, 5);
+        List<Weblog> hotBlogs = weblogManager.getHotWeblogs(0, 5);
         assertNotNull(hotBlogs);
         assertEquals(3, hotBlogs.size());
         

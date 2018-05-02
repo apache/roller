@@ -37,9 +37,9 @@ public class WeblogListGenerator {
         this.weblogManager = weblogManager;
     }
 
-    public List<WeblogData> getHotWeblogs(int sinceDays, int length) {
+    public List<WeblogData> getHotWeblogs(int length) {
         List<WeblogData> weblogDataList = new ArrayList<>();
-        List<Weblog> weblogs = weblogManager.getHotWeblogs(sinceDays, 0, length);
+        List<Weblog> weblogs = weblogManager.getHotWeblogs(0, length);
         for (Weblog weblog : weblogs) {
             weblogDataList.add(weblogToWeblogData(weblog));
         }
@@ -64,22 +64,23 @@ public class WeblogListGenerator {
             }
         }
 
-        if (pageNum > 0) {
-            Map<String, String> params = new HashMap<>();
-            params.put("page", "" + (pageNum - 1));
-            if (letter != null) {
-                params.put("letter", String.valueOf(letter));
-            }
-            weblogListData.setPrevLink(createURL(baseUrl, params));
-        }
+        boolean needNextLink = rawWeblogs.size() > weblogListData.getWeblogs().size();
 
-        if (rawWeblogs.size() > weblogListData.getWeblogs().size()) {
+        if (pageNum > 0 || needNextLink) {
             Map<String, String> params = new HashMap<>();
-            params.put("page", "" + (pageNum + 1));
             if (letter != null) {
                 params.put("letter", String.valueOf(letter));
             }
-            weblogListData.setNextLink(createURL(baseUrl, params));
+
+            if (pageNum > 0) {
+                params.put("page", "" + (pageNum - 1));
+                weblogListData.setPrevLink(createURL(baseUrl, params));
+            }
+
+            if (needNextLink) {
+                params.put("page", "" + (pageNum + 1));
+                weblogListData.setNextLink(createURL(baseUrl, params));
+            }
         }
 
         return weblogListData;

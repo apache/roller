@@ -49,6 +49,10 @@ public class SiteModel implements Model {
 
     private WeblogPageRequest pageRequest;
 
+    void setPageRequest(WeblogPageRequest pageRequest) {
+        this.pageRequest = pageRequest;
+    }
+
     @Autowired
     private URLStrategy urlStrategy;
 
@@ -77,6 +81,10 @@ public class SiteModel implements Model {
 
     @Autowired
     private WeblogListGenerator weblogListGenerator;
+
+    void setWeblogListGenerator(WeblogListGenerator weblogListGenerator) {
+        this.weblogListGenerator = weblogListGenerator;
+    }
 
     /**
      * Init page model, requires a WeblogPageRequest object.
@@ -134,11 +142,10 @@ public class SiteModel implements Model {
     /**
      * Get list of WebsiteDisplay objects, ordered by number of hits.
      *
-     * @param sinceDays Only consider weblogs updated in the last sinceDays
-     * @param length    Max number of results to return
-     * @return list of Weblog objects with just name, handle, and hitsToday fields populated
+     * @param length Max number of results to return
+     * @return list of WeblogListGenerator.WeblogData objects in descending order of hit counts
      */
-    public List<WeblogListGenerator.WeblogData> getHotWeblogs(int sinceDays, int length) {
-        return weblogListGenerator.getHotWeblogs(sinceDays, length);
+    public List<WeblogListGenerator.WeblogData> getHotWeblogs(int length) {
+        return weblogListGenerator.getHotWeblogs(length);
     }
 }

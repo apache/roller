@@ -69,8 +69,8 @@ import java.util.TimeZone;
                 query = "SELECT COUNT(w) FROM Weblog w"),
         @NamedQuery(name = "Weblog.getCountByHandleLike",
                 query = "SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
-        @NamedQuery(name = "Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                query = "SELECT w FROM Weblog w WHERE w.visible = true AND w.lastModified > ?1 AND w.hitsToday > 0 " +
+        @NamedQuery(name = "Weblog.getByWeblog&DailyHitsGreaterThenZeroOrderByDailyHitsDesc",
+                query = "SELECT w FROM Weblog w WHERE w.visible = true AND w.hitsToday > 0 " +
                         "ORDER BY w.hitsToday DESC"),
         @NamedQuery(name = "Weblog.updateDailyHitCountZero",
                 query = "UPDATE Weblog w SET w.hitsToday = 0, w.lastModified = CURRENT_TIMESTAMP")

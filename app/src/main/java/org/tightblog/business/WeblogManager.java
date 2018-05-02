@@ -154,20 +154,18 @@ public interface WeblogManager {
     long getWeblogCount();
 
     /**
-     * Get HitCountData objects for the hotest weblogs.
+     * Return the day's most popular weblog objects as determined by blog hit count.
      * <p>
-     * The results may be constrained to a certain number of days back from the
-     * current time, as well as pagable via the offset and length params.
+     * The results are pagable via the offset and length params.
      * <p>
      * The results are ordered by highest counts in descending order, and any
-     * weblogs which are not active or enabled are not included.
+     * weblogs which are not visible are not included.
      *
-     * @param sinceDays Number of days in the past to consider.
-     * @param offset    What index in the results to begin from.
+     * @param offset    What index in the results to begin from, positive number or 0 for beginning
      * @param length    The number of results to return.
      * @return A List of Weblogs, ranked by descending hit count.
      */
-    List<Weblog> getHotWeblogs(int sinceDays, int offset, int length);
+    List<Weblog> getHotWeblogs(int offset, int length);
 
     /**
      * Reset the hit counts for all weblogs.  This sets the counts back to 0.

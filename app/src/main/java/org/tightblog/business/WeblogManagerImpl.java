@@ -1,4 +1,4 @@
-/*
+ /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
@@ -45,7 +45,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -513,14 +512,15 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public List<Weblog> getHotWeblogs(int sinceDays, int offset, int length) {
+    public List<Weblog> getHotWeblogs(int offset, int length) {
 
         TypedQuery<Weblog> query = strategy.getNamedQuery(
-                "Weblog.getByWeblog&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc", Weblog.class);
-        query.setParameter(1, Instant.now().minus(sinceDays, ChronoUnit.DAYS));
+                "Weblog.getByWeblog&DailyHitsGreaterThenZeroOrderByDailyHitsDesc", Weblog.class);
+
         if (offset != 0) {
             query.setFirstResult(offset);
         }
+
         if (length != -1) {
             query.setMaxResults(length);
         }

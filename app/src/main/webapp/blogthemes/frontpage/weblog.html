@@ -118,7 +118,7 @@
 
             <div class="sidebarBody">  
                 <ul>
-                   <li th:each="blog : ${site.getHotWeblogs(365, maxResults)}">
+                   <li th:each="blog : ${site.getHotWeblogs(maxResults)}">
                        <a th:href="${url.site + '/' + blog.handle}" th:utext="${blog.name}">xxx</a> | <span th:utext="${blog.hitsToday}">xxx</span>
                    </li>
                 </ul>
