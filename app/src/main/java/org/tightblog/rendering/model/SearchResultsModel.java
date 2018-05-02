@@ -89,6 +89,10 @@ public class SearchResultsModel extends PageModel {
     }
 
     public int getResultCount() {
+        if (pager == null) {
+            // populates resultCount
+            getWeblogEntriesPager();
+        }
         return resultCount;
     }
 

@@ -492,7 +492,10 @@ public class WeblogManagerImpl implements WeblogManager {
     public List<Weblog> getWeblogsByLetter(char letter, int offset, int length) {
         TypedQuery<Weblog> query = strategy.getNamedQuery(
                 "Weblog.getByLetterOrderByHandle", Weblog.class);
-        query.setParameter(1, letter + "%");
+
+        Character upperCase = Character.toUpperCase(letter);
+
+        query.setParameter(1, upperCase + "%");
         if (offset != 0) {
             query.setFirstResult(offset);
         }

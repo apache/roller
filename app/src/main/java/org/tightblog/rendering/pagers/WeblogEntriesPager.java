@@ -29,7 +29,37 @@ import java.util.Map;
 /**
  * Pager for an ordered list of weblog entries.
  */
-public interface WeblogEntriesPager extends Pager {
+public interface WeblogEntriesPager {
+
+    /**
+     * URL to return to pager home.
+     */
+    String getHomeLink();
+
+    /**
+     * Label to use for pager home.
+     */
+    String getHomeLabel();
+
+    /**
+     * URL for next sublist of items held by the pager, null if at end of list
+     */
+    String getNextLink();
+
+    /**
+     * Label to use for next link.
+     */
+    String getNextLabel();
+
+    /**
+     * URL for previous sublist of items held by the pager, null if at beginning of list
+     */
+    String getPrevLink();
+
+    /**
+     * Label to use for previous link.
+     */
+    String getPrevLabel();
 
     /**
      * A map of all entries provided by the Pager.

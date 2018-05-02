@@ -55,7 +55,7 @@
                             <div class="pagingcontrols">
                                 <a th:if="${pager.nextLink != null}" th:href="${pager.nextLink}" th:text="${'&lt; ' + pager.nextLabel}">xxx</a>
                                 <span th:if="${pager.nextLink != null && pager.prevLink != null}">&nbsp;|&nbsp;</span>
-                                <a th:if="${pager.prevLink != null}" th:href="${pager.prevLink}" th:text="${pager.prevName + ' &gt;'}">xxx</a>
+                                <a th:if="${pager.prevLink != null}" th:href="${pager.prevLink}" th:text="${pager.prevLabel + ' &gt;'}">xxx</a>
                             </div>
                         </th:block>
                         <th:block th:case="${true}">

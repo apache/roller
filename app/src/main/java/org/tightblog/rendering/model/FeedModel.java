@@ -29,7 +29,7 @@ import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.rendering.pagers.Pager;
+import org.tightblog.rendering.pagers.WeblogEntriesPager;
 import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import java.util.Map;
@@ -92,7 +92,7 @@ public class FeedModel implements Model {
      * Gets most recent entries limited by: weblog and category specified in
      * request plus the weblog.entryDisplayCount.
      */
-    public Pager getWeblogEntriesPager() {
+    public WeblogEntriesPager getWeblogEntriesPager() {
         return new FeedEntriesPager(feedRequest);
     }
 

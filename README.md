@@ -13,10 +13,10 @@ This more realistic goal--along with adopting the Spring framework, REST, Angula
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
 |TightBlog 2.0.4|12 Febuary 2018|13|146|37|42.9K|
-|TightBlog 2.1|in Development|12|122|36|35.5K|
+|TightBlog 3.0|(expected June 2018)|12|121|36|36.4K|
 
-(Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test cases, however LOC do.
-LOC are expected to increase over time as more unit test cases are added.) 
+(Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test classes, however LOC do.
+LOC dropped to 35K before rising again due to increase in unit test coverage more than offsetting code savings elsewhere.) 
 
 In addition to the cleanout of old functionality some new features have been added:
 
@@ -28,6 +28,7 @@ In addition to the cleanout of old functionality some new features have been add
 * There is a new BLOGCREATOR global role separated from the earlier BLOGGER role.  While both roles allow a blogger full administration of his weblog (whether created by an admin for the blogger or the blogger himself) only users with the former role can create new weblogs.   
 * (TightBlog 3.0) Commenters who are logged-in bloggers now have their blogger ID stored with the comment, simplifying comment entry and allowing for different styling of comments (e.g., different background color for comments made by the blogger on his own blog).
 * (TightBlog 3.0) The blog template engine (used for customized themes) now uses modern Thymeleaf 3.0 instead of Apache Velocity. 
+* (TightBlog 3.0) All emails sent are in HTML format and customizable by modifying the Thymeleaf templates in the webapp/thymeleaf/emails folder. 
 
 
 Check <a href="https://glenmazza.net/blog">my blog</a> for recent status updates.
