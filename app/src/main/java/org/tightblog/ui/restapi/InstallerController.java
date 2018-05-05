@@ -145,18 +145,19 @@ public class InstallerController {
         List<String> messages = new ArrayList<>(100);
         map.put("messages", messages);
 
-        String script = "/createdb.sql";
         SQLScriptRunner runner = null;
 
+        String scriptPath = "";
+
         try (Connection conn = tbDataSource.getConnection()) {
-            String scriptPath = conn.getMetaData().getDatabaseProductName().toLowerCase() + script;
+            scriptPath = "/" + conn.getMetaData().getDatabaseProductName().toLowerCase() + "-createdb.sql";
             messages.add("Running database script: " + scriptPath);
             runner = new SQLScriptRunner(scriptPath, true);
             runner.runScript(conn, true);
             messages.addAll(runner.getMessages());
             map.put("status", StartupStatus.needsBootstrapping);
         } catch (Exception ex) {
-            messages.add("ERROR processing database script " + script);
+            messages.add("ERROR processing database script " + scriptPath);
             if (runner != null) {
                 messages.addAll(runner.getMessages());
             }

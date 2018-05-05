@@ -22,7 +22,7 @@ package org.tightblog.business;
 
 import java.time.Instant;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.tightblog.WebloggerTest;
 import org.tightblog.business.search.tasks.IndexEntryTask;
 import org.tightblog.business.search.tasks.SearchTask;

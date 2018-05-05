@@ -145,7 +145,7 @@ public class SearchTask extends AbstractTask {
         if (searchResults == null) {
             return -1;
         }
-        return searchResults.totalHits;
+        return (int) searchResults.totalHits;
     }
 
     public String getTerm() {

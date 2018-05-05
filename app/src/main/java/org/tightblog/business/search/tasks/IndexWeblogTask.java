@@ -20,7 +20,7 @@
  */
 package org.tightblog.business.search.tasks;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.tightblog.business.WeblogEntryManager;

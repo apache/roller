@@ -119,7 +119,7 @@
                             <port>4224</port>
                             <sources>
                                 <script>
-                                    <sourceFile>target/tightblog-selenium-tests-${project.version}/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
+                                    <sourceFile>target/tightblog-selenium-tests-${project.version}/WEB-INF/classes/sql/derby-createdb.sql</sourceFile>
                                 </script>
                             </sources>
                         </configuration>

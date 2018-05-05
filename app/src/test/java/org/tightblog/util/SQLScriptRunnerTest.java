@@ -52,7 +52,7 @@ public class SQLScriptRunnerTest extends WebloggerTest {
     @Test
     public void testParseOnly() throws Exception {
         String scriptPath = System.getProperty("project.build.directory")
-                + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-derby.sql";
+                + "/test-classes/WEB-INF/dbscripts/createdb-derby.sql";
         SQLScriptRunner runner = new SQLScriptRunner(scriptPath, false);
         assertTrue(runner.getCommandCount() == 5);
     }
@@ -64,22 +64,12 @@ public class SQLScriptRunnerTest extends WebloggerTest {
         // run script to create tables
         SQLScriptRunner create = 
             new SQLScriptRunner(System.getProperty("project.build.directory")
-                    + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-derby.sql", false);
+                    + "/test-classes/WEB-INF/dbscripts/createdb-derby.sql", false);
         create.runScript(con, true);
         
         // check to ensure tables were created
         assertTrue(tableExists(con, "testrolleruser"));
         assertTrue(tableExists(con, "testuserrole"));
-        
-        // drop tables
-        SQLScriptRunner drop = 
-            new SQLScriptRunner(System.getProperty("project.build.directory")
-                    + "/test-classes/WEB-INF/dbscripts/dummydb/droptables.sql", false);
-        drop.runScript(con, false);
-
-        // check to ensure tables were dropped
-        assertFalse(tableExists(con, "testrolleruser"));
-        assertFalse(tableExists(con, "testuserrole"));
     }
 
     private boolean tableExists(Connection con, String tableName) throws SQLException {

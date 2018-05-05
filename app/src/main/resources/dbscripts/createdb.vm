@@ -13,8 +13,8 @@ create table weblogger_user (
     global_role     varchar(16) not null,
     status          varchar(20) not null,
     locale          varchar(20),
-    datecreated     $db.TIMESTAMP_SQL_TYPE not null,
-    lastlogin       $db.TIMESTAMP_SQL_TYPE,
+    datecreated     $TIMESTAMP_SQL_TYPE not null,
+    lastlogin       $TIMESTAMP_SQL_TYPE,
     activationcode	varchar(48),
     encr_password   varchar(255)
 );
@@ -30,18 +30,18 @@ create table weblog (
     about             varchar(255),
     locale            varchar(20),
     timezone          varchar(50),
-    visible           $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    visible           $BOOLEAN_SQL_TYPE_TRUE not null,
     theme             varchar(255) not null,
     entriesperpage    integer default 15 not null,
     editformat        varchar(20) not null,
     creatorid         varchar(48) not null,
-    datecreated       $db.TIMESTAMP_SQL_TYPE not null,
-    lastmodified      $db.TIMESTAMP_SQL_TYPE not null,
+    datecreated       $TIMESTAMP_SQL_TYPE not null,
+    lastmodified      $TIMESTAMP_SQL_TYPE not null,
     allowcomments     varchar(20) not null,
-    emailcomments     $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    emailcomments     $BOOLEAN_SQL_TYPE_TRUE not null,
     commentdays       integer default 7 not null,
-    analyticscode     $db.TEXT_SQL_TYPE,
-    blacklist         $db.TEXT_SQL_TYPE,
+    analyticscode     $TEXT_SQL_TYPE,
+    blacklist         $TEXT_SQL_TYPE,
     hitstoday	      integer default 0 not null
 );
 create index ws_visible_idx on weblog(visible);
@@ -55,7 +55,7 @@ create table user_weblog_role (
    userid          varchar(48) not null,
    weblogid        varchar(48) not null,
    weblog_role     varchar(48) not null,
-   pending         $db.BOOLEAN_SQL_TYPE_TRUE not null
+   pending         $BOOLEAN_SQL_TYPE_TRUE not null
 );
 
 alter table user_weblog_role add constraint uwr_userid_fk
@@ -72,8 +72,8 @@ create table weblog_template (
     name            varchar(255) not null,
     relative_path   varchar(255),
     description     varchar(255),
-    template        $db.TEXT_SQL_TYPE not null,
-    updatetime      $db.TIMESTAMP_SQL_TYPE not null
+    template        $TEXT_SQL_TYPE not null,
+    updatetime      $TIMESTAMP_SQL_TYPE not null
 );
 create index wt_name_idx on weblog_template(name);
 create index wt_link_idx on weblog_template(relative_path);
@@ -83,7 +83,7 @@ alter table weblog_template add constraint wt_weblogid_fk
 
 alter table weblog_template add constraint wt_name_uq unique (weblogid, name);
 
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+#if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index wt_weblogid_idx on weblog_template(weblogid);
 #end
 
@@ -101,7 +101,7 @@ alter table blogroll_link add constraint bl_weblogid_fk
 
 alter table blogroll_link add constraint bl_name_uq unique (weblogid, name);
 
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+#if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index bl_weblogid_idx on blogroll_link( weblogid );
 #end
 
@@ -117,7 +117,7 @@ alter table weblog_category add constraint wc_name_uq unique (weblogid, name);
 alter table weblog_category add constraint wc_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+#if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index wc_weblogid_idx on weblog_category( weblogid );
 #end
 
@@ -126,16 +126,16 @@ create table weblog_entry (
     anchor          varchar(255)  not null,
     creatorid       varchar(48) not null,
     title           varchar(255)  not null,
-    text            $db.TEXT_SQL_TYPE not null,
-    pubtime         $db.TIMESTAMP_SQL_TYPE,
-    updatetime      $db.TIMESTAMP_SQL_TYPE not null,
+    text            $TEXT_SQL_TYPE not null,
+    pubtime         $TIMESTAMP_SQL_TYPE,
+    updatetime      $TIMESTAMP_SQL_TYPE not null,
     weblogid        varchar(48)  not null,
     categoryid      varchar(48)  not null,
     editformat      varchar(20) not null,
     commentdays     integer default 7 not null,
     status          varchar(20) not null,
-    summary         $db.TEXT_SQL_TYPE,
-    notes           $db.TEXT_SQL_TYPE,
+    summary         $TEXT_SQL_TYPE,
+    notes           $TEXT_SQL_TYPE,
     search_description varchar(255),
     enclosure_url   varchar(255),
     enclosure_type  varchar(48),
@@ -144,19 +144,19 @@ create table weblog_entry (
 
 alter table weblog_entry add constraint we_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+#if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index we_weblogid_idx on weblog_entry( weblogid );
 #end
 
 alter table weblog_entry add constraint we_categoryid_fk
     foreign key ( categoryid ) references weblog_category( id ) ;
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+#if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index we_categoryid_idx on weblog_entry( categoryid );
 #end
 
 alter table weblog_entry add constraint we_creatorid_fk
     foreign key ( creatorid ) references weblogger_user( id ) ;
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+#if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index we_creator_idx on weblog_entry(creatorid);
 #end
 
@@ -194,9 +194,9 @@ create table weblog_entry_comment (
     bloggerid  varchar(48),
     name       varchar(255) not null,
     email      varchar(255) not null,
-    notify     $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    content    $db.TEXT_SQL_TYPE,
-    posttime   $db.TIMESTAMP_SQL_TYPE not null,
+    notify     $BOOLEAN_SQL_TYPE_FALSE not null,
+    content    $TEXT_SQL_TYPE,
+    posttime   $TIMESTAMP_SQL_TYPE not null,
     url        varchar(255),
     remotehost varchar(128),
     referrer   varchar(255),
@@ -206,7 +206,7 @@ create table weblog_entry_comment (
 alter table weblog_entry_comment add constraint co_entryid_fk
     foreign key ( entryid ) references weblog_entry( id ) ;
 
-#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+#if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index co_entryid_idx on weblog_entry_comment( entryid );
 #end
 
@@ -221,23 +221,23 @@ create table weblogger_properties (
     database_version       integer not null,
     main_blog_id           varchar(48),
     registration_policy    varchar(24) default 'DISABLED' not null,
-    users_create_blogs     $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    users_create_blogs     $BOOLEAN_SQL_TYPE_TRUE not null,
     blog_html_policy       varchar(24) default 'RELAXED' not null,
-    users_customize_themes $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    users_customize_themes $BOOLEAN_SQL_TYPE_TRUE not null,
     newsfeed_items_page    integer default 30 not null,
-    default_analytics_code $db.TEXT_SQL_TYPE,
-    users_override_analytics_code $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    default_analytics_code $TEXT_SQL_TYPE,
+    users_override_analytics_code $BOOLEAN_SQL_TYPE_TRUE not null,
     comment_policy         varchar(24) default 'MUSTMODERATE' not null,
     comment_html_policy    varchar(24) default 'BASIC' not null,
-    autodelete_spam        $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    users_comment_notifications $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    comment_spam_filter    $db.TEXT_SQL_TYPE,
-    users_upload_media_files $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    autodelete_spam        $BOOLEAN_SQL_TYPE_FALSE not null,
+    users_comment_notifications $BOOLEAN_SQL_TYPE_TRUE not null,
+    comment_spam_filter    $TEXT_SQL_TYPE,
+    users_upload_media_files $BOOLEAN_SQL_TYPE_TRUE not null,
     allowed_file_extensions varchar(255),
     disallowed_file_extensions varchar(255) default 'exe',
     max_file_size_mb       integer default 3 not null,
     max_file_uploads_size_mb integer default 20 not null,
-    last_weblog_change     $db.TIMESTAMP_SQL_TYPE_DEFNOW not null
+    last_weblog_change     $TIMESTAMP_SQL_TYPE_DEFNOW not null
 );
 
 alter table weblogger_properties add constraint wp_weblogid_fk
@@ -271,8 +271,8 @@ create table media_file (
     height          integer,
     size_in_bytes   integer,
     creatorid       varchar(48) not null,
-    date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
-    last_updated    $db.TIMESTAMP_SQL_TYPE not null
+    date_uploaded   $TIMESTAMP_SQL_TYPE not null,
+    last_updated    $TIMESTAMP_SQL_TYPE not null
 );
 
 alter table media_file add constraint mf_directoryid_fk

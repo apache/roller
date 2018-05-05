@@ -25,7 +25,7 @@ package org.tightblog.business;
 
 import java.util.Map;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.tightblog.WebloggerTest;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.User;
