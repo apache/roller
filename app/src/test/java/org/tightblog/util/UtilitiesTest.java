@@ -31,6 +31,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -63,6 +65,18 @@ public class UtilitiesTest {
         assertEquals("A bc  345", Utilities.replaceNonAlphanumeric("A?bc!#345", ' '));
         assertEquals("A-bc--345", Utilities.replaceNonAlphanumeric("A?bc!#345", '-'));
         assertEquals("A bc345", Utilities.replaceNonAlphanumeric("A?bc''345", ' '));
+    }
+
+    @Test
+    public void testGetQueryString() {
+        Map<String, String> params = new LinkedHashMap<>();
+        assertEquals("", Utilities.getQueryString(params));
+        params.put("foo", "12");
+        assertEquals("?foo=12", Utilities.getQueryString(params));
+        params.put("bar", "yes");
+        assertEquals("?foo=12&bar=yes", Utilities.getQueryString(params));
+        params.put("bar2", "open");
+        assertEquals("?foo=12&bar=yes&bar2=open", Utilities.getQueryString(params));
     }
 
     private abstract static class TestDevice implements Device {

@@ -219,7 +219,7 @@ public final class Utilities {
                 // yes it was, so we'll cut it off here
                 str2 = str2.substring(0, loc);
             } else {
-                // no it wasnt, so we'll cut it off at the upper limit
+                // no it wasn't, so we'll cut it off at the upper limit
                 str2 = str2.substring(0, upper);
             }
             // the string was truncated, so we append the appendToEnd String
@@ -232,9 +232,10 @@ public final class Utilities {
      * Removes non-alphanumerics from tags.
      *
      * @param tag tag to strip invalid chars from
-     * @return tag without invalid chars.
+     * @param locale to determine lower-case, default if null
+     * @return lower case tag with alphanumerics removed
      */
-    public static String stripInvalidTagCharacters(String tag) {
+    public static String normalizeTag(String tag, Locale locale) {
         if (tag == null) {
             throw new NullPointerException();
         }
@@ -254,11 +255,7 @@ public final class Utilities {
                 sb.append(c);
             }
         }
-        return sb.toString();
-    }
-
-    public static String normalizeTag(String tag, Locale locale) {
-        tag = Utilities.stripInvalidTagCharacters(tag);
+        tag = sb.toString();
         return locale == null ? tag.toLowerCase() : tag.toLowerCase(locale);
     }
 
