@@ -245,12 +245,12 @@ public class WeblogEntryTest extends WebloggerTest {
         assertEquals(entry2, entries.get(0));
 
         // get next entry
-        entry = weblogEntryManager.getNextEntry(entry4, null);
+        entry = weblogEntryManager.getNextPublishedEntry(entry4);
         assertNotNull(entry);
         assertEquals(entry5, entry);
         
         // get previous entry
-        entry = weblogEntryManager.getPreviousEntry(entry5, null);
+        entry = weblogEntryManager.getPreviousPublishedEntry(entry5);
         assertNotNull(entry);
         assertEquals(entry4, entry);
         

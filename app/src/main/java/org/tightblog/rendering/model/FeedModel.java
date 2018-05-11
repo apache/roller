@@ -24,14 +24,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.rendering.pagers.WeblogEntriesPager;
-import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
+
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -44,10 +45,10 @@ public class FeedModel implements Model {
     private WeblogFeedRequest feedRequest;
 
     @Autowired
-    private URLStrategy urlStrategy;
+    protected WeblogEntryListGenerator weblogEntryListGenerator;
 
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
+    public void setWeblogEntryListGenerator(WeblogEntryListGenerator weblogEntryListGenerator) {
+        this.weblogEntryListGenerator = weblogEntryListGenerator;
     }
 
     @Autowired
@@ -92,12 +93,31 @@ public class FeedModel implements Model {
      * Gets most recent entries limited by: weblog and category specified in
      * request plus the weblog.entryDisplayCount.
      */
-    public WeblogEntriesPager getWeblogEntriesPager() {
-        return new FeedEntriesPager(feedRequest);
+    public WeblogEntryListData getWeblogEntriesPager() {
+        return weblogEntryListGenerator.getChronoPager(
+                feedRequest.getWeblog(),
+                null,
+                feedRequest.getWeblogCategoryName(), feedRequest.getTag(),
+                feedRequest.getPageNum(),
+                WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage(),
+                feedRequest.isSiteWide());
     }
 
     public boolean isSiteWideFeed() {
         return feedRequest.isSiteWide();
+    }
+
+    /**
+     * Returns the last updated date of either the weblog or the entire site, the latter if and
+     * only if the weblog is a site weblog.  Useful for supplying the "updated" element of the
+     * Atom feed.
+     *
+     * @return last update date for the feed
+     */
+    @SuppressWarnings("unused")
+    public Instant getLastUpdated() {
+        return isSiteWideFeed() ? WebloggerContext.getWebloggerProperties().getLastWeblogChange()
+                : feedRequest.getWeblog().getLastModified();
     }
 
     /**
@@ -120,26 +140,5 @@ public class FeedModel implements Model {
      */
     private String render(Weblog.EditFormat format, String str) {
         return weblogEntryManager.processBlogText(format, str);
-    }
-
-    public class FeedEntriesPager extends WeblogEntriesTimePager {
-
-        private WeblogFeedRequest feedRequest;
-
-        public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(weblogEntryManager, urlStrategy,
-                    feedRequest.isSiteWide() ? null : feedRequest.getWeblog(),
-                    feedRequest.getWeblogCategoryName(), feedRequest.getTag(),
-                    feedRequest.getPageNum(),
-                    WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage(),
-                    -1, feedRequest.getWeblog());
-            this.feedRequest = feedRequest;
-        }
-
-        @Override
-        public String getHomeLink() {
-            return urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), null, null);
-        }
-
     }
 }

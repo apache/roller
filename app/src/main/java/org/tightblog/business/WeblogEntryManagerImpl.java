@@ -70,16 +70,10 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     private JPAPersistenceStrategy strategy;
 
     @Autowired
-    private WeblogManager weblogManager;
-
-    @Autowired
     private URLStrategy urlStrategy;
 
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<>());
-
-    protected WeblogEntryManagerImpl() {
-    }
 
     @Override
     public void saveComment(WeblogEntryComment comment, boolean refreshWeblog) {
@@ -170,9 +164,9 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public WeblogEntry getNextEntry(WeblogEntry current, String catName) {
+    public WeblogEntry getNextPublishedEntry(WeblogEntry current) {
         WeblogEntry entry = null;
-        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, true);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, true);
         if (entryList != null && entryList.size() > 0) {
             entry = entryList.get(0);
         }
@@ -180,23 +174,22 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public WeblogEntry getPreviousEntry(WeblogEntry current, String catName) {
+    public WeblogEntry getPreviousPublishedEntry(WeblogEntry current) {
         WeblogEntry entry = null;
-        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, false);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, false);
         if (entryList != null && entryList.size() > 0) {
             entry = entryList.get(0);
         }
         return entry;
     }
 
-    private List<WeblogEntry> getNextPrevEntries(WeblogEntry current, String catName, boolean next) {
+    private List<WeblogEntry> getNextPrevEntries(WeblogEntry current, boolean next) {
 
         if (current == null || current.getPubTime() == null) {
             return Collections.emptyList();
         }
 
         TypedQuery<WeblogEntry> query;
-        WeblogCategory category;
 
         List<Object> params = new ArrayList<>();
         int size = 0;
@@ -220,19 +213,12 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
             whereClause.append(" AND e.pubTime <= ?").append(size);
         }
 
-        if (catName != null) {
-            category = weblogManager.getWeblogCategoryByName(current.getWeblog(), catName);
-            if (category != null) {
-                params.add(size++, category);
-                whereClause.append(" AND e.category = ?").append(size);
-            }
-        }
-
         if (next) {
             whereClause.append(" ORDER BY e.pubTime ASC, e.id ASC");
         } else {
             whereClause.append(" ORDER BY e.pubTime DESC, e.id DESC");
         }
+
         query = strategy.getDynamicQuery(queryString + whereClause.toString(), WeblogEntry.class);
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));

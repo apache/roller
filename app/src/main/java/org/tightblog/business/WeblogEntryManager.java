@@ -98,17 +98,15 @@ public interface WeblogEntryManager {
      * Get the WeblogEntry following, chronologically, the current entry.
      *
      * @param current The "current" WeblogEntry
-     * @param catName The value of the requested Category Name
      */
-    WeblogEntry getNextEntry(WeblogEntry current, String catName);
+    WeblogEntry getNextPublishedEntry(WeblogEntry current);
 
     /**
      * Get the WeblogEntry prior to, chronologically, the current entry.
      *
      * @param current The "current" WeblogEntry
-     * @param catName The value of the requested Category Name
      */
-    WeblogEntry getPreviousEntry(WeblogEntry current, String catName);
+    WeblogEntry getPreviousPublishedEntry(WeblogEntry current);
 
     /**
      * Save comment.

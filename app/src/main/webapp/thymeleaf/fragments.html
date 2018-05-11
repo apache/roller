@@ -62,7 +62,7 @@
     </div>
     <div th:fragment="PreviousNextPager" th:remove="tag" th:with="pager = ${model.weblogEntriesPager}">
         <span th:if="${pager.prevLink != null}">&laquo; <a th:href="${pager.prevLink}" th:text="${pager.prevLabel}">xxx</a> |</span>
-        <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${pager.homeLink}" th:text="${pager.homeLabel}">xxx</a></span>
+        <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${url.home}" th:text="${utils.msg('weblogEntriesPager.home.label')}">xxx</a></span>
         <span th:if="${pager.nextLink != null}">| <a th:href="${pager.nextLink}" th:text="${pager.nextLabel}">xxx</a> &raquo;</span>
     </div>
     <!--/* replace/insert within a fragment seems to work only with th:block */-->
@@ -227,8 +227,8 @@
             min=${model.offset + 1}, max=${T(Math).min(model.offset+model.limit, model.resultCount)}">
         <h3 th:utext="${utils.msg('searchSummary.text', min, max, T(Math).max(model.resultCount, 0))}">xxx</h3>
         <span th:if="${pager.prevLink != null}">&laquo; <a th:href="${pager.prevLink}" th:text="${pager.prevLabel}">xxx</a> |</span>
-        <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${pager.homeLink}"
-                                                                             th:text="${pager.homeLabel}">xxx</a></span>
+        <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${url.home}"
+                                                                             th:text="${utils.msg('weblogEntriesPager.home.label')}">xxx</a></span>
         <span th:if="${pager.nextLink != null}">| <a th:href="${pager.nextLink}" th:text="${pager.nextLabel}">xxx</a> &raquo;</span>
     </div>
 </body>

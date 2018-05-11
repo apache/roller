@@ -25,8 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.URLStrategyImpl;
-import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
@@ -41,9 +39,8 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.rendering.generators.CalendarGenerator;
-import org.tightblog.rendering.pagers.WeblogEntriesPager;
-import org.tightblog.rendering.pagers.WeblogEntriesPermalinkPager;
-import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
 import java.util.ArrayList;
@@ -64,10 +61,10 @@ public class PageModel implements Model {
     private boolean preview;
 
     @Autowired
-    protected URLStrategy urlStrategy;
+    protected WeblogEntryListGenerator weblogEntryListGenerator;
 
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
+    public void setWeblogEntryListGenerator(WeblogEntryListGenerator weblogEntryListGenerator) {
+        this.weblogEntryListGenerator = weblogEntryListGenerator;
     }
 
     @Autowired
@@ -105,7 +102,7 @@ public class PageModel implements Model {
         this.preview = preview;
     }
 
-    protected WeblogEntriesPager pager;
+    protected WeblogEntryListData pager;
 
     /**
      * Creates an un-initialized new instance, Weblogger calls init() to complete
@@ -135,11 +132,6 @@ public class PageModel implements Model {
 
         // see if there is a comment form
         this.commentForm = (WeblogEntryComment) initData.get("commentForm");
-
-        if (preview) {
-            this.urlStrategy = new URLStrategyImpl(pageRequest.getWeblog().getTheme(),
-                    pageRequest.getWeblog().isUsedForThemePreview());
-        }
     }
 
     /**
@@ -320,27 +312,24 @@ public class PageModel implements Model {
      * days of entries.  Each value is a list of entry objects keyed by the
      * date they were published.
      */
-    public WeblogEntriesPager getWeblogEntriesPager() {
+    public WeblogEntryListData getWeblogEntriesPager() {
         if (pager == null) {
             // determine which mode to use
             if (pageRequest.getWeblogEntryAnchor() != null) {
-                pager = new WeblogEntriesPermalinkPager(
-                        weblogEntryManager,
-                        urlStrategy,
+                pager = weblogEntryListGenerator.getPermalinkPager(
                         pageRequest.getWeblog(),
-                        pageRequest.getCustomPageName(),
                         pageRequest.getWeblogEntryAnchor(),
                         // preview can show draft entries
                         preview);
             } else {
-                pager = new WeblogEntriesTimePager(
-                        weblogEntryManager,
-                        urlStrategy,
+                pager = weblogEntryListGenerator.getChronoPager(
                         pageRequest.getWeblog(),
                         pageRequest.getWeblogDate(),
                         pageRequest.getCategory(),
                         pageRequest.getTag(),
-                        pageRequest.getPageNum());
+                        pageRequest.getPageNum(),
+                        -1,
+                        false);
             }
         }
         return pager;

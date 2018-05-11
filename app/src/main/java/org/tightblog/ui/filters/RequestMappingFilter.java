@@ -173,7 +173,7 @@ public class RequestMappingFilter implements Filter {
                     context.equals("date") || context.equals("category") || context.equals("tag")) {
                 forwardUrl = generateForwardUrl(PageProcessor.PATH, handle, context, data);
             } else if (context.equals("feed")) {
-                forwardUrl = generateForwardUrl(FeedProcessor.PATH, handle, null, data);
+                forwardUrl = generateForwardUrl(FeedProcessor.PATH, handle, context, data);
             } else if (context.equals("mediafile")) {
                 forwardUrl = generateForwardUrl(MediaFileProcessor.PATH, handle, null, data);
             } else if (context.equals("search")) {

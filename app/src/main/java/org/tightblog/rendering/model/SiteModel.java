@@ -25,15 +25,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategy;
-import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.rendering.generators.WeblogListGenerator;
-import org.tightblog.rendering.pagers.WeblogEntriesPager;
-import org.tightblog.rendering.pagers.WeblogEntriesTimePager;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -45,12 +42,17 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SiteModel implements Model {
 
-    private static Logger log = LoggerFactory.getLogger(SiteModel.class);
-
     private WeblogPageRequest pageRequest;
 
     void setPageRequest(WeblogPageRequest pageRequest) {
         this.pageRequest = pageRequest;
+    }
+
+    @Autowired
+    private WeblogEntryListGenerator weblogEntryListGenerator;
+
+    public void setWeblogEntryListGenerator(WeblogEntryListGenerator weblogEntryListGenerator) {
+        this.weblogEntryListGenerator = weblogEntryListGenerator;
     }
 
     @Autowired
@@ -65,13 +67,6 @@ public class SiteModel implements Model {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    private WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
     }
 
     @Override
@@ -100,21 +95,17 @@ public class SiteModel implements Model {
 
     /**
      * Get pager of WeblogEntry objects across all weblogs, in reverse chrono order by pubTime.
-     *
-     * @param sinceDays Limit to past X days in past (or -1 for no limit)
      * @param length    Max number of results to return
      */
-    public WeblogEntriesPager getWeblogEntriesPager(int sinceDays, int length) {
-        return new WeblogEntriesTimePager(
-                weblogEntryManager,
-                urlStrategy,
+    public WeblogEntryListData getWeblogEntriesPager(int length) {
+        return weblogEntryListGenerator.getChronoPager(
+                pageRequest.getWeblog(),
                 null,
                 null,
                 null,
                 pageRequest.getPageNum(),
                 length,
-                sinceDays,
-                pageRequest.getWeblog());
+                true);
     }
 
     /**

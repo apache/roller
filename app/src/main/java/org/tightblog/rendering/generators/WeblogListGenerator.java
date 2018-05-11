@@ -74,12 +74,12 @@ public class WeblogListGenerator {
 
             if (pageNum > 0) {
                 params.put("page", "" + (pageNum - 1));
-                weblogListData.setPrevLink(createURL(baseUrl, params));
+                weblogListData.prevLink = createURL(baseUrl, params);
             }
 
             if (needNextLink) {
                 params.put("page", "" + (pageNum + 1));
-                weblogListData.setNextLink(createURL(baseUrl, params));
+                weblogListData.nextLink = createURL(baseUrl, params);
             }
         }
 
@@ -92,12 +92,12 @@ public class WeblogListGenerator {
 
     private WeblogData weblogToWeblogData(Weblog weblog) {
         WeblogData wd = new WeblogData();
-        wd.setName(weblog.getName());
-        wd.setHandle(weblog.getHandle());
-        wd.setAbout(weblog.getAbout());
-        wd.setCreatorScreenName(weblog.getCreator().getScreenName());
-        wd.setLastModified(weblog.getLastModified());
-        wd.setHitsToday(weblog.getHitsToday());
+        wd.name = weblog.getName();
+        wd.handle = weblog.getHandle();
+        wd.about = weblog.getAbout();
+        wd.creatorScreenName = weblog.getCreator().getScreenName();
+        wd.lastModified = weblog.getLastModified();
+        wd.hitsToday = weblog.getHitsToday();
         return wd;
     }
 
@@ -110,16 +110,8 @@ public class WeblogListGenerator {
             return nextLink;
         }
 
-        public void setNextLink(String nextLink) {
-            this.nextLink = nextLink;
-        }
-
         public String getPrevLink() {
             return prevLink;
-        }
-
-        public void setPrevLink(String prevLink) {
-            this.prevLink = prevLink;
         }
 
         public List<WeblogData> getWeblogs() {
@@ -139,48 +131,24 @@ public class WeblogListGenerator {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
         public String getHandle() {
             return handle;
-        }
-
-        public void setHandle(String handle) {
-            this.handle = handle;
         }
 
         public String getAbout() {
             return about;
         }
 
-        public void setAbout(String about) {
-            this.about = about;
-        }
-
         public String getCreatorScreenName() {
             return creatorScreenName;
-        }
-
-        public void setCreatorScreenName(String creatorScreenName) {
-            this.creatorScreenName = creatorScreenName;
         }
 
         public Instant getLastModified() {
             return lastModified;
         }
 
-        public void setLastModified(Instant lastModified) {
-            this.lastModified = lastModified;
-        }
-
         public int getHitsToday() {
             return hitsToday;
-        }
-
-        public void setHitsToday(int hitsToday) {
-            this.hitsToday = hitsToday;
         }
     }
 }

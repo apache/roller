@@ -30,9 +30,9 @@
           th:href="${model.tag != null ? url.getAtomFeedByTag(model.tag) :
                    (model.categoryName != null ? url.getAtomFeedByCategory(model.categoryName) : url.atomFeed)}"/>
 
-    <updated th:utext="${utils.formatIsoOffsetDateTime(pager.lastUpdated)}">xxx</updated>
+    <updated th:utext="${utils.formatIsoOffsetDateTime(model.lastUpdated)}">xxx</updated>
     <generator uri="https://github.com/gmazza/tightblog" th:attr="version=${utils.systemVersion}">TightBlog</generator>
-    <entry th:each="entry : ${pager.items}">
+    <entry th:each="entry : ${pager.entriesAsList}">
         <id th:utext="${url.entry(entry)}">xxx</id>
         <title type="html" th:utext="${utils.escapeXML(entry.title)}">xxx</title>
         <author><name th:utext="${entry.creator.screenName}">xxx</name></author>

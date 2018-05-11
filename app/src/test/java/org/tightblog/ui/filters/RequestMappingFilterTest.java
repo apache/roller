@@ -173,7 +173,7 @@ public class RequestMappingFilterTest {
         assertEquals(filter.generateForwardUrl(PageProcessor.PATH, "handle", "tag", "data"), pageTest6);
 
         String feedTest = filter.calculateForwardUrl(mockRequest, "handle", "feed", "data");
-        assertEquals(filter.generateForwardUrl(FeedProcessor.PATH, "handle", null, "data"), feedTest);
+        assertEquals(filter.generateForwardUrl(FeedProcessor.PATH, "handle", "feed", "data"), feedTest);
         String mediaTest = filter.calculateForwardUrl(mockRequest, "handle", "mediafile", "data");
         assertEquals(filter.generateForwardUrl(MediaFileProcessor.PATH, "handle", null, "data"), mediaTest);
         String searchTest = filter.calculateForwardUrl(mockRequest, "handle", "search", "data");

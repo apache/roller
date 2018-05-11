@@ -34,7 +34,7 @@ import org.tightblog.pojos.SharedTheme;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntry.PubStatus;
-import org.tightblog.rendering.pagers.WeblogEntriesSearchPager;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
 import java.io.IOException;
@@ -62,14 +62,14 @@ public class SearchResultsModelTest {
     private IndexSearcher mockIndexSearcher;
     private WeblogEntryManager mockWeblogEntryManager;
     private IndexManager mockIndexManager;
-    private WeblogEntriesSearchPager.Creator mockPagerCreator;
+    private WeblogEntryListGenerator mockGenerator;
     private SearchResultsModel searchResultsModel;
     private WeblogPageRequest pageRequest;
     private Weblog weblog;
 
     @Before
     public void initialize() {
-        mockPagerCreator = mock(WeblogEntriesSearchPager.Creator.class);
+        mockGenerator = mock(WeblogEntryListGenerator.class);
         mockSearchTask = mock(SearchTask.class);
         mockIndexSearcher = mock(IndexSearcher.class);
         when(mockSearchTask.getSearcher()).thenReturn(mockIndexSearcher);
@@ -88,7 +88,7 @@ public class SearchResultsModelTest {
         initData.put("parsedRequest", pageRequest);
         searchResultsModel = new SearchResultsModel();
         searchResultsModel.setWeblogEntryManager(mockWeblogEntryManager);
-        searchResultsModel.setSearchPagerCreator(mockPagerCreator);
+        searchResultsModel.setWeblogEntryListGenerator(mockGenerator);
         searchResultsModel.setThemeManager(mockThemeManager);
         searchResultsModel.setIndexManager(mockIndexManager);
         searchResultsModel.init(initData);
@@ -99,7 +99,7 @@ public class SearchResultsModelTest {
         pageRequest.setQuery(null);
         searchResultsModel.getWeblogEntriesPager();
         ArgumentCaptor<Map<LocalDate, List<WeblogEntry>>> entriesCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mockPagerCreator).create(any(), any(), entriesCaptor.capture(), eq(false));
+        verify(mockGenerator).getSearchPager(any(), entriesCaptor.capture(), eq(false));
         Map<LocalDate, List<WeblogEntry>> results = entriesCaptor.getValue();
         assertEquals(0, results.size());
     }
@@ -115,7 +115,7 @@ public class SearchResultsModelTest {
         assertEquals("stamps", searchTask.getTerm());
         assertEquals("testblog", searchTask.getWeblogHandle());
         assertEquals("collectibles", searchTask.getCategory());
-        verify(mockPagerCreator).create(any(), any(), any(), eq(false));
+        verify(mockGenerator).getSearchPager(any(), any(), eq(false));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class SearchResultsModelTest {
 
         searchResultsModel.getWeblogEntriesPager();
         ArgumentCaptor<Map<LocalDate, List<WeblogEntry>>> entriesCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mockPagerCreator).create(any(), any(), entriesCaptor.capture(), eq(false));
+        verify(mockGenerator).getSearchPager(any(), entriesCaptor.capture(), eq(false));
         Map<LocalDate, List<WeblogEntry>> results = entriesCaptor.getValue();
         LocalDate expectedDate = now.atZone(ZoneId.systemDefault()).toLocalDate();
         assertEquals(1, results.size());
