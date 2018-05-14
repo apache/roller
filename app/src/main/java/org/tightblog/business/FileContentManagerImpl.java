@@ -34,6 +34,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
@@ -48,6 +49,9 @@ import org.tightblog.util.Utilities;
 public class FileContentManagerImpl implements FileContentManager {
 
     private static Logger log = LoggerFactory.getLogger(FileContentManagerImpl.class);
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
 
     private String storageDir;
 
@@ -125,7 +129,7 @@ public class FileContentManagerImpl implements FileContentManager {
     public boolean canSave(Weblog weblog, String fileName, String contentType, long size,
                            Map<String, List<String>> messages) {
 
-        WebloggerProperties webloggerProperties = WebloggerContext.getWebloggerProperties();
+        WebloggerProperties webloggerProperties = persistenceStrategy.getWebloggerProperties();
 
         // first check, is uploading enabled?
         if (!webloggerProperties.isUsersUploadMediaFiles()) {

@@ -32,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.SharedTheme;
@@ -282,10 +281,10 @@ public class WeblogController {
         metadata.relativeSiteURL = WebloggerStaticConfig.getRelativeContextURL();
 
         metadata.usersOverrideAnalyticsCode =
-                WebloggerContext.getWebloggerProperties().isUsersOverrideAnalyticsCode();
+                persistenceStrategy.getWebloggerProperties().isUsersOverrideAnalyticsCode();
 
         metadata.usersCommentNotifications =
-                WebloggerContext.getWebloggerProperties().isUsersCommentNotifications();
+                persistenceStrategy.getWebloggerProperties().isUsersCommentNotifications();
 
         metadata.sharedThemeMap = themeManager.getEnabledSharedThemesList().stream()
                 .collect(Utilities.toLinkedHashMap(SharedTheme::getId, st -> st));
@@ -303,7 +302,7 @@ public class WeblogController {
                 .collect(Utilities.toLinkedHashMap(tz -> tz, tz -> tz));
 
         WebloggerProperties.CommentPolicy globalCommentPolicy =
-                WebloggerContext.getWebloggerProperties().getCommentPolicy();
+                persistenceStrategy.getWebloggerProperties().getCommentPolicy();
 
         metadata.commentOptions = Arrays.stream(WebloggerProperties.CommentPolicy.values())
                 .filter(co -> co.getLevel() <= globalCommentPolicy.getLevel())

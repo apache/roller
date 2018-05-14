@@ -80,6 +80,9 @@ public class MailManagerImpl implements MailManager {
     @Autowired
     private SpringTemplateEngine standardTemplateEngine;
 
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
     private boolean isMailEnabled() {
         return WebloggerStaticConfig.getBooleanProperty("mail.enabled");
     }
@@ -293,7 +296,7 @@ public class MailManagerImpl implements MailManager {
     @Override
     public void sendNewPublishedCommentNotification(WeblogEntryComment comment) {
         if (!isMailEnabled() ||
-                !WebloggerContext.getWebloggerProperties().isUsersCommentNotifications() ||
+                !persistenceStrategy.getWebloggerProperties().isUsersCommentNotifications() ||
                 !comment.isApproved()) {
             return;
         }

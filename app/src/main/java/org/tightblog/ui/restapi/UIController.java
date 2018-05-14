@@ -16,11 +16,11 @@
 package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
@@ -75,6 +75,13 @@ public class UIController {
     }
 
     @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
+    }
+
+    @Autowired
     private MailManager mailManager;
 
     public void setMailManager(MailManager manager) {
@@ -109,7 +116,7 @@ public class UIController {
                 // enable user account
                 user.setActivationCode(null);
                 WebloggerProperties.RegistrationPolicy regProcess =
-                        WebloggerContext.getWebloggerProperties().getRegistrationPolicy();
+                        persistenceStrategy.getWebloggerProperties().getRegistrationPolicy();
                 if (WebloggerProperties.RegistrationPolicy.APPROVAL_REQUIRED.equals(regProcess)) {
                     user.setStatus(UserStatus.EMAILVERIFIED);
                     myMap.put("actionMessage", defaultMessages.getString("welcome.user.account.need.approval"));
@@ -176,7 +183,7 @@ public class UIController {
 
     @RequestMapping(value = "/get-default-blog")
     public void getDefaultBlog(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        Weblog defaultBlog = WebloggerContext.getWebloggerProperties().getMainBlog();
+        Weblog defaultBlog = persistenceStrategy.getWebloggerProperties().getMainBlog();
         String path;
 
         if (defaultBlog != null) {
@@ -222,14 +229,14 @@ public class UIController {
     @RequestMapping(value = "/createWeblog")
     public ModelAndView createWeblog(Principal principal) {
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("globalCommentPolicy", WebloggerContext.getWebloggerProperties().getCommentPolicy());
+        myMap.put("globalCommentPolicy", persistenceStrategy.getWebloggerProperties().getCommentPolicy());
         return tightblogModelAndView("createWeblog", myMap, principal, null);
     }
 
     @RequestMapping(value = "/authoring/weblogConfig")
     public ModelAndView weblogConfig(Principal principal, @RequestParam String weblogId) {
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("globalCommentPolicy", WebloggerContext.getWebloggerProperties().getCommentPolicy());
+        myMap.put("globalCommentPolicy", persistenceStrategy.getWebloggerProperties().getCommentPolicy());
         return getBlogOwnerPage(principal, myMap, weblogId, "weblogConfig");
     }
 
@@ -345,7 +352,7 @@ public class UIController {
     @RequestMapping(value = "/home")
     public ModelAndView home(Principal principal) {
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("usersCustomizeThemes", WebloggerContext.getWebloggerProperties().isUsersCustomizeThemes());
+        myMap.put("usersCustomizeThemes", persistenceStrategy.getWebloggerProperties().isUsersCustomizeThemes());
         return tightblogModelAndView("mainMenu", myMap, principal, null);
     }
 
@@ -374,7 +381,7 @@ public class UIController {
             map.putIfAbsent("pageTitle", defaultMessages.getString(actionName + ".title"));
         }
         map.put("authenticationMethod", WebloggerStaticConfig.getAuthMethod());
-        map.put("registrationPolicy", WebloggerContext.getWebloggerProperties().getRegistrationPolicy());
+        map.put("registrationPolicy", persistenceStrategy.getWebloggerProperties().getRegistrationPolicy());
         return new ModelAndView("." + actionName, map);
     }
 

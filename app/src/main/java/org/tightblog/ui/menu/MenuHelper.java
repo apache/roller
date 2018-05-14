@@ -22,8 +22,9 @@ package org.tightblog.ui.menu;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.WebloggerContext;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.WeblogRole;
@@ -54,6 +55,13 @@ public final class MenuHelper {
 
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
     private static Map<String, String> actionToMenuIdMap = new HashMap<>(25);
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
+    }
 
     private Cache<String, Menu> menuCache;
 
@@ -238,7 +246,7 @@ public final class MenuHelper {
      */
     private boolean getBooleanProperty(String propertyName) {
         if ("themes.customtheme.allowed".equals(propertyName)) {
-            return WebloggerContext.getWebloggerProperties().isUsersCustomizeThemes();
+            return persistenceStrategy.getWebloggerProperties().isUsersCustomizeThemes();
         }
         return WebloggerStaticConfig.getBooleanProperty(propertyName);
     }

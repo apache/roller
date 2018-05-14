@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WebloggerContext;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
@@ -56,6 +56,13 @@ public class FeedModel implements Model {
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
         this.weblogEntryManager = weblogEntryManager;
+    }
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
     }
 
     /**
@@ -99,7 +106,7 @@ public class FeedModel implements Model {
                 null,
                 feedRequest.getWeblogCategoryName(), feedRequest.getTag(),
                 feedRequest.getPageNum(),
-                WebloggerContext.getWebloggerProperties().getNewsfeedItemsPage(),
+                persistenceStrategy.getWebloggerProperties().getNewsfeedItemsPage(),
                 feedRequest.isSiteWide());
     }
 
@@ -116,7 +123,7 @@ public class FeedModel implements Model {
      */
     @SuppressWarnings("unused")
     public Instant getLastUpdated() {
-        return isSiteWideFeed() ? WebloggerContext.getWebloggerProperties().getLastWeblogChange()
+        return isSiteWideFeed() ? persistenceStrategy.getWebloggerProperties().getLastWeblogChange()
                 : feedRequest.getWeblog().getLastModified();
     }
 

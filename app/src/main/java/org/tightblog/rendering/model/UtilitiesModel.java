@@ -22,10 +22,11 @@ package org.tightblog.rendering.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.WebloggerContext;
+import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.requests.WeblogRequest;
@@ -48,6 +49,13 @@ import java.util.Map;
 public class UtilitiesModel implements Model {
     private ZoneId zoneId;
     private I18nMessages messages;
+
+    @Autowired
+    private JPAPersistenceStrategy persistenceStrategy;
+
+    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
+        this.persistenceStrategy = strategy;
+    }
 
     /**
      * Template context name to be used for model
@@ -91,7 +99,7 @@ public class UtilitiesModel implements Model {
     }
 
     public boolean getCommentEmailNotify() {
-        WebloggerProperties props = WebloggerContext.getWebloggerProperties();
+        WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
         return props.isUsersCommentNotifications();
     }
 

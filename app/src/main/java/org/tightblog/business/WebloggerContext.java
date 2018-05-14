@@ -21,7 +21,6 @@
 package org.tightblog.business;
 
 import org.tightblog.business.search.IndexManager;
-import org.tightblog.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -35,7 +34,7 @@ import javax.servlet.ServletContextEvent;
  * Subclass of Spring's ContextLoaderListener (http://stackoverflow.com/a/11817368/1207540)
  * used to initialize and configure the Spring web application context.  Also maintains
  * some globally accessible objects primarily for objects not instantiated by Spring
- * and hence not easily able to take advantage of its DI features.
+ * and hence not easily able to take advantage of DI features.
  */
 public class WebloggerContext extends ContextLoaderListener {
 
@@ -47,8 +46,6 @@ public class WebloggerContext extends ContextLoaderListener {
 
     private static ServletContext servletContext;
 
-    private static JPAPersistenceStrategy strategy;
-
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         WebloggerContext.servletContext = sce.getServletContext();
@@ -59,7 +56,7 @@ public class WebloggerContext extends ContextLoaderListener {
      * True if bootstrap process has been completed, false otherwise.
      */
     public static boolean isBootstrapped() {
-        return strategy != null;
+        return urlStrategy != null;
     }
 
     public static WeblogEntryManager getWeblogEntryManager() {
@@ -82,13 +79,6 @@ public class WebloggerContext extends ContextLoaderListener {
         return servletContext;
     }
 
-    public static WebloggerProperties getWebloggerProperties() {
-        if (!isBootstrapped()) {
-            throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
-        }
-        return strategy.getWebloggerProperties();
-    }
-
     /**
      * Bootstrap the Roller Weblogger business tier.
      * <p>
@@ -106,8 +96,6 @@ public class WebloggerContext extends ContextLoaderListener {
             throw new RuntimeException("Error bootstrapping, exception message: " + e.getMessage(), e);
         }
 
-        strategy = context.getBean("persistenceStrategy", JPAPersistenceStrategy.class);
-
         // IndexManager needs a functioning database, so delaying its initialization to this point.
         IndexManager indexManager = context.getBean("indexManager", IndexManager.class);
         indexManager.initialize();
@@ -116,5 +104,4 @@ public class WebloggerContext extends ContextLoaderListener {
         log.info("   Version: {}", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
         log.info("   Revision: {}", WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));
     }
-
 }
