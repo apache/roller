@@ -91,20 +91,18 @@
       <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
   </tr>
 
-  <c:if test="${authenticationMethod == 'DB'}">
-      <tr>
-          <td class="label"><label for="passwordText"><fmt:message key="userSettings.password" /></label></td>
-          <td class="field">
-          <input id="passwordText" type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20"></td>
-          <td class="description"><fmt:message key="userAdmin.tip.password" /></td>
-      </tr>
-      <tr>
-          <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm" /></label></td>
-          <td class="field">
-          <input id="passwordConfirm" type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20"></td>
-          <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
-      </tr>
-  </c:if>
+  <tr>
+      <td class="label"><label for="passwordText"><fmt:message key="userSettings.password" /></label></td>
+      <td class="field">
+      <input id="passwordText" type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20"></td>
+      <td class="description"><fmt:message key="userAdmin.tip.password" /></td>
+  </tr>
+  <tr>
+      <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm" /></label></td>
+      <td class="field">
+      <input id="passwordConfirm" type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20"></td>
+      <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
+  </tr>
 
   <tr>
       <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>

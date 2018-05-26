@@ -49,12 +49,6 @@ public final class WebloggerStaticConfig {
     private WebloggerStaticConfig() {
     }
 
-    // enum constant for properties file-configured authentication option (Database username/passwords or LDAP).
-    public enum AuthMethod {
-        DB,
-        LDAP
-    }
-
     /*
      * Static block run once at class loading
      *
@@ -212,19 +206,6 @@ public final class WebloggerStaticConfig {
      **/
     public static Enumeration keys() {
         return config.keys();
-    }
-
-    /**
-     * Return the value of the authentication.method property as an AuthMethod
-     * enum value.  Matching is done by checking the propertyName of each AuthMethod
-     * enum object.
-     * <p/>
-     *
-     * @throws IllegalArgumentException if property value defined in the properties
-     *                                  file is missing or not the property name of any AuthMethod enum object.
-     */
-    public static AuthMethod getAuthMethod() {
-        return AuthMethod.valueOf(getProperty("authentication.method", "DB"));
     }
 
 }

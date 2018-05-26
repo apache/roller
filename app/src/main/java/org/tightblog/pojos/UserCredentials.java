@@ -76,7 +76,7 @@ public class UserCredentials {
         this.userName = userName;
     }
 
-    @Column(name = "encr_password")
+    @Column(name = "encr_password", nullable = false)
     @JsonIgnore
     public String getPassword() {
         return this.password;

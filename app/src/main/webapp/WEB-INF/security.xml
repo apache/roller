@@ -101,12 +101,7 @@
     </beans:bean>
 
     <authentication-manager>
-        <!-- Uncomment one of the two below based on your preferred authentication mechanism.
-             Also set authentication.method property to "ldap" in your tightblog-custom.properties
-             if not using default of "db".
-        -->
         <authentication-provider ref="dbAuthProvider"/>
-        <!--authentication-provider ref="ldapAuthProvider"/-->
     </authentication-manager>
 
     <beans:bean id="dbAuthProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
@@ -118,39 +113,6 @@
 
     <beans:bean id="userDetailsService" class="org.tightblog.ui.security.CustomUserDetailsService">
         <beans:property name="userManager" ref="userManager"/>
-        <beans:property name="persistenceStrategy" ref="persistenceStrategy"/>
     </beans:bean>
-
-    <!-- Uncomment & customize below beans if using LDAP
-         LDAP guide: https://cwiki.apache.org/confluence/display/ROLLER/Roller+5.1+with+LDAP
-    -->
-    <!--beans:bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-        <beans:constructor-arg value="ldap://localhost:10389/dc=example,dc=com" />
-        <beans:property name="userDn" value="uid=admin,ou=system" />
-        <beans:property name="password" value="secret" />
-    </beans:bean>
-
-    <beans:bean id="ldapAuthProvider"
-                class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
-
-        <beans:constructor-arg>
-            <beans:bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
-                <beans:constructor-arg ref="contextSource" />
-                <beans:property name="userSearch" ref="userSearch" />
-            </beans:bean>
-        </beans:constructor-arg>
-        <beans:constructor-arg name="authoritiesPopulator">
-            <beans:bean class="org.springframework.security.ldap.authentication.UserDetailsServiceLdapAuthoritiesPopulator">
-                <beans:constructor-arg name="userService" ref="userDetailsService"/>
-            </beans:bean>
-        </beans:constructor-arg>
-    </beans:bean>
-
-    <beans:bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-        <beans:constructor-arg index="0" value="" />
-        <beans:constructor-arg index="1" value="(uid={0})" />
-        <beans:constructor-arg index="2" ref="contextSource" />
-        <beans:property name="searchSubtree" value="true" />
-    </beans:bean-->
 
 </beans:beans>

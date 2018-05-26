@@ -206,7 +206,7 @@
     </beans:bean>
 
     <!-- The Comment Authenticator is the first-round test a commentor must do before his comment is accepted
-         (answer a math question to confirm not a robot, or be already authenticated within LDAP for example.)
+         (answer a math question to confirm not a robot, or be already authenticated for example.)
          After authentication, the comment still needs to go through comment validation (possibly marking it
          as spam) as well as (if configured for the blog) comment approval.
 

@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
@@ -44,8 +43,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ldap.userdetails.LdapUserDetails;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -227,25 +224,6 @@ public class UserController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
-    }
-
-    @RequestMapping(value = "/tb-ui/register/rest/ldapdata", method = RequestMethod.GET)
-    public ResponseEntity getLDAPData(Principal p) throws ServletException {
-
-        // See if user is already logged in via Spring Security
-        if (WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.LDAP && p != null) {
-
-            UsernamePasswordAuthenticationToken p2 = (UsernamePasswordAuthenticationToken) p;
-            LdapUserDetails userDetails = (LdapUserDetails) p2.getPrincipal();
-            if (userDetails.isEnabled()) {
-                // Copy username from LDAP
-                User user = new User();
-                user.setUserName(userDetails.getUsername());
-                user.setLocale(Locale.getDefault().toString());
-                return ResponseEntity.ok().body(user);
-            }
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
@@ -500,9 +478,7 @@ public class UserController {
             }
         }
 
-        if (isAdd &&
-                WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB &&
-                StringUtils.isEmpty(data.credentials.getPasswordText())) {
+        if (isAdd && StringUtils.isEmpty(data.credentials.getPasswordText())) {
             be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
         }
 

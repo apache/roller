@@ -24,8 +24,6 @@
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
-    var authMethod = "<c:out value='${authenticationMethod}'/>";
-    var ldapMissing = "<fmt:message key='Register.error.ldap.notauthenticated'/>";
     // Below populated for logged-in user profile edit only
     var userId = "<c:out value='${authenticatedUser.id}'/>";
 </script>
@@ -60,97 +58,88 @@
     </ul>
 </div>
 
-<div ng-hide="ctrl.ldapInvalid" ng-cloak>
+<c:choose>
+    <c:when test="${authenticatedUser == null}">
+        <c:set var="usernameTipKey">userRegister.tip.userName</c:set>
+        <c:set var="passwordTipKey">userRegister.tip.password</c:set>
+        <c:set var="passwordConfirmTipKey">userRegister.tip.passwordConfirm</c:set>
+        <c:set var="saveButtonText">userRegister.button.save</c:set>
+        <input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
+        <c:url var="refreshUrl" value="/tb-ui/app/register"/>
+        <div ng-hide="ctrl.profileUserId">
+            <p><fmt:message key="userRegister.prompt"/></p>
+        </div>
+    </c:when>
+    <c:otherwise>
+        <c:set var="usernameTipKey">userSettings.tip.username</c:set>
+        <c:set var="passwordTipKey">userSettings.tip.password</c:set>
+        <c:set var="passwordConfirmTipKey">userSettings.tip.passwordConfirm</c:set>
+        <c:set var="saveButtonText">generic.save</c:set>
+        <input type="hidden" id="cancelURL" value="<c:url value='/tb-ui/app/home'/>"/>
+        <p class="subtitle"><fmt:message key="profile.subtitle"/></p>
+        <c:url var="refreshUrl" value="/tb-ui/app/profile"/>
+    </c:otherwise>
+</c:choose>
 
-    <c:choose>
-        <c:when test="${authenticatedUser == null}">
-            <c:set var="usernameTipKey">userRegister.tip.userName</c:set>
-            <c:set var="passwordTipKey">userRegister.tip.password</c:set>
-            <c:set var="passwordConfirmTipKey">userRegister.tip.passwordConfirm</c:set>
-            <c:set var="saveButtonText">userRegister.button.save</c:set>
-            <input type="hidden" id="cancelURL" value="${pageContext.request.contextPath}"/>
-            <c:url var="refreshUrl" value="/tb-ui/app/register"/>
-            <div ng-hide="ctrl.profileUserId">
-                <p><fmt:message key="userRegister.prompt"/></p>
-            </div>
-        </c:when>
-        <c:otherwise>
-            <c:set var="usernameTipKey">userSettings.tip.username</c:set>
-            <c:set var="passwordTipKey">userSettings.tip.password</c:set>
-            <c:set var="passwordConfirmTipKey">userSettings.tip.passwordConfirm</c:set>
-            <c:set var="saveButtonText">generic.save</c:set>
-            <input type="hidden" id="cancelURL" value="<c:url value='/tb-ui/app/home'/>"/>
-            <p class="subtitle"><fmt:message key="profile.subtitle"/></p>
-            <c:url var="refreshUrl" value="/tb-ui/app/profile"/>
-        </c:otherwise>
-    </c:choose>
+<input id="refreshURL" type="hidden" value="${refreshURL}"/>
 
-    <input id="refreshURL" type="hidden" value="${refreshURL}"/>
+<table class="formtable">
+  <tr>
+      <td class="label"><label for="userName"><fmt:message key="userSettings.username"/></label></td>
+      <td class="field">
+        <c:choose>
+            <c:when test="${authenticatedUser == null}">
+                <input id="userName" type="text" size="30" ng-model="ctrl.userBeingEdited.userName" minlength="5" maxlength="25">
+            </c:when>
+            <c:otherwise>
+                <input id="userName" type="text" size="30" ng-model="ctrl.userBeingEdited.userName" readonly>
+            </c:otherwise>
+        </c:choose>
+      </td>
+      <td class="description"><fmt:message key="${usernameTipKey}"/></td>
+  </tr>
 
-    <table class="formtable">
-      <tr>
-          <td class="label"><label for="userName"><fmt:message key="userSettings.username"/></label></td>
-          <td class="field">
-            <c:choose>
-                <c:when test="${authenticationMethod == 'LDAP'}">
-                    <strong>{{ctrl.userBeingEdited.userName}}</strong>
-                </c:when>
-                <c:when test="${authenticatedUser == null}">
-                    <input id="userName" type="text" size="30" ng-model="ctrl.userBeingEdited.userName" minlength="5" maxlength="25">
-                </c:when>
-                <c:otherwise>
-                    <input id="userName" type="text" size="30" ng-model="ctrl.userBeingEdited.userName" readonly>
-                </c:otherwise>
-            </c:choose>
-          </td>
-          <td class="description"><fmt:message key="${usernameTipKey}"/></td>
-      </tr>
+  <tr>
+      <td class="label"><label for="screenName"><fmt:message key="userSettings.screenname"/></label></td>
+      <td class="field"><input id="screenName" type="text" size="30" ng-model="ctrl.userBeingEdited.screenName" minlength="3" maxlength="30"></td>
+      <td class="description"><fmt:message key="userRegister.tip.screenName"/></td>
+  </tr>
 
-      <tr>
-          <td class="label"><label for="screenName"><fmt:message key="userSettings.screenname"/></label></td>
-          <td class="field"><input id="screenName" type="text" size="30" ng-model="ctrl.userBeingEdited.screenName" minlength="3" maxlength="30"></td>
-          <td class="description"><fmt:message key="userRegister.tip.screenName"/></td>
-      </tr>
+  <tr>
+      <td class="label"><label for="emailAddress"><fmt:message key="userSettings.email" /></label></td>
+      <td class="field"><input id="emailAddress" type="email" size="40" ng-model="ctrl.userBeingEdited.emailAddress" maxlength="40"></td>
+      <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
+  </tr>
 
-      <tr>
-          <td class="label"><label for="emailAddress"><fmt:message key="userSettings.email" /></label></td>
-          <td class="field"><input id="emailAddress" type="email" size="40" ng-model="ctrl.userBeingEdited.emailAddress" maxlength="40"></td>
-          <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
-      </tr>
+  <tr>
+      <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>
+      <td class="field">
+          <select id="locale" ng-model="ctrl.userBeingEdited.locale" size="1">
+              <option ng-repeat="(key, value) in ctrl.metadata.locales" value="{{key}}">{{value}}</option>
+          </select>
+      </td>
+      <td class="description"><fmt:message key="userRegister.tip.locale"/></td>
+  </tr>
 
-      <tr>
-          <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>
-          <td class="field">
-              <select id="locale" ng-model="ctrl.userBeingEdited.locale" size="1">
-                  <option ng-repeat="(key, value) in ctrl.metadata.locales" value="{{key}}">{{value}}</option>
-              </select>
-          </td>
-          <td class="description"><fmt:message key="userRegister.tip.locale"/></td>
-      </tr>
+    <tr>
+        <td class="label"><label for="passwordText"><fmt:message key="userSettings.password"/></label></td>
+        <td class="field">
+            <input id="passwordText" type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20">
+        </td>
+        <td class="description"><fmt:message key="${passwordTipKey}"/></td>
+    </tr>
+    <tr>
+        <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm"/></label></td>
+        <td class="field">
+            <input id="passwordConfirm" type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20">
+        </td>
+        <td class="description"><fmt:message key="${passwordConfirmTipKey}"/></td>
+    </tr>
+</table>
 
-      <c:if test="${authenticationMethod == 'DB'}">
-            <tr>
-                <td class="label"><label for="passwordText"><fmt:message key="userSettings.password"/></label></td>
-                <td class="field">
-                    <input id="passwordText" type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20">
-                </td>
-                <td class="description"><fmt:message key="${passwordTipKey}"/></td>
-            </tr>
-            <tr>
-                <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm"/></label></td>
-                <td class="field">
-                    <input id="passwordConfirm" type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20">
-                </td>
-                <td class="description"><fmt:message key="${passwordConfirmTipKey}"/></td>
-            </tr>
-      </c:if>
-    </table>
+<br/>
 
-    <br/>
-
-    <div class="control" ng-hide="ctrl.hideButtons">
-        <input class="buttonBox" type="button" value="<fmt:message key='${saveButtonText}'/>" ng-click="ctrl.updateUser()"/>
-        <input class="buttonBox" type="button" value="<fmt:message key='generic.cancel'/>" ng-click="ctrl.cancelChanges()"/>
-    </div>
-
+<div class="control" ng-hide="ctrl.hideButtons">
+    <input class="buttonBox" type="button" value="<fmt:message key='${saveButtonText}'/>" ng-click="ctrl.updateUser()"/>
+    <input class="buttonBox" type="button" value="<fmt:message key='generic.cancel'/>" ng-click="ctrl.cancelChanges()"/>
 </div>

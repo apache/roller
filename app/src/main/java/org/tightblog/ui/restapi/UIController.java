@@ -21,7 +21,6 @@ import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserSearchCriteria;
@@ -160,22 +159,16 @@ public class UIController {
         } else {
             User user = userManager.getEnabledUserByUserName(principal.getName());
 
-            if (user == null) {
-                /* If authentication successful but no user in DB, authentication must have been via LDAP without
-                   the user having registered yet.  So forward to the registration page... */
-                response.sendRedirect(request.getContextPath() + "/tb-ui/app/register");
+            if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
+                response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
             } else {
-                if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
+                List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+
+                if (roles.size() > 0) {
                     response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
                 } else {
-                    List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
-
-                    if (roles.size() > 0) {
-                        response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
-                    } else {
-                        // admin has no blog yet, possibly initial setup.
-                        response.sendRedirect(request.getContextPath() + "/tb-ui/app/admin/globalConfig");
-                    }
+                    // admin has no blog yet, possibly initial setup.
+                    response.sendRedirect(request.getContextPath() + "/tb-ui/app/admin/globalConfig");
                 }
             }
         }
@@ -380,7 +373,6 @@ public class UIController {
         } else {
             map.putIfAbsent("pageTitle", defaultMessages.getString(actionName + ".title"));
         }
-        map.put("authenticationMethod", WebloggerStaticConfig.getAuthMethod());
         map.put("registrationPolicy", persistenceStrategy.getWebloggerProperties().getRegistrationPolicy());
         return new ModelAndView("." + actionName, map);
     }

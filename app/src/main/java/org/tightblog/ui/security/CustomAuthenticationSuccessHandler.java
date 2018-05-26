@@ -19,10 +19,7 @@ import org.tightblog.business.UserManager;
 import org.tightblog.pojos.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.userdetails.LdapUserDetails;
-import org.springframework.security.web.PortResolverImpl;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.util.UrlUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,16 +43,6 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         UserDetails springUser = (UserDetails) authPrincipal;
         User user = userManager.getEnabledUserByUserName(springUser.getUsername());
-
-        // if authenticated via LDAP but not yet registered in system, redirect to registration page.
-        if (authPrincipal instanceof LdapUserDetails) {
-            if (user == null) {
-                String redirectUrl = UrlUtils.buildFullRequestUrl(request.getScheme(), request.getServerName(),
-                        new PortResolverImpl().getServerPort(request), "/tightblog/tb-ui/app/register", null);
-                getRedirectStrategy().sendRedirect(request, response, redirectUrl);
-                return;
-            }
-        }
 
         // Normal login sets the users locale via /tb-ui/app/login-redirect, below is for the case where the
         // user's session has expired (and login-redirect is usually not triggered).

@@ -22,8 +22,6 @@ package org.tightblog.ui.security;
 
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WebloggerContext;
-import org.tightblog.business.WebloggerStaticConfig;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.UserCredentials;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -36,23 +34,15 @@ import java.util.List;
 
 /**
  * Spring Security UserDetailsService implemented using Weblogger API.
- * Configured in security.xml to be used by both DB and LDAP authentication.
- * DB auth uses this class to obtain correct DB-stored credentials to compare against
- * user input to determine if login successful.
- * For LDAP, auth against directory already successful if this class entered, only
- * purpose of this class is to report Global Role of user.
+ * DB auth uses this class to obtain correct DB-stored credentials
+ * to compare against user input to determine if login successful.
+ * The user's GlobalRole is also determined here.
  */
 public class CustomUserDetailsService implements UserDetailsService {
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.persistenceStrategy = strategy;
     }
 
     /**
@@ -67,28 +57,15 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User info not available yet.");
         }
 
-        boolean usingDBAuth = WebloggerStaticConfig.getAuthMethod() == WebloggerStaticConfig.AuthMethod.DB;
         UserCredentials creds = userManager.getCredentialsByUserName(userName);
         GlobalRole targetGlobalRole;
         String targetPassword;
 
-        if (usingDBAuth) {
-            if (creds == null) {
-                throw new UsernameNotFoundException("ERROR no user: " + userName);
-            }
-            targetPassword = creds.getPassword();
-            targetGlobalRole = creds.getGlobalRole();
-        } else {
-            // for LDAP, password unused, auth already occurred
-            targetPassword = "";
-            if (userManager.getUserCount() == 0) {
-                targetGlobalRole = GlobalRole.ADMIN;
-            } else {
-                targetGlobalRole = (creds != null) ? creds.getGlobalRole() :
-                        persistenceStrategy.getWebloggerProperties().isUsersCreateBlogs() ?
-                                GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER;
-            }
+        if (creds == null) {
+            throw new UsernameNotFoundException("ERROR no user: " + userName);
         }
+        targetPassword = creds.getPassword();
+        targetGlobalRole = creds.getGlobalRole();
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>(1);
         authorities.add(new SimpleGrantedAuthority(targetGlobalRole.name()));

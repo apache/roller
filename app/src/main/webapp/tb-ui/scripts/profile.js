@@ -5,7 +5,6 @@ tightblogApp.controller('PageController', ['$http',
            "locale" : "en"
         };
         this.userCredentials = {};
-        this.ldapInvalid = false;
         this.errorObj = {};
         this.hideButtons = false;
 
@@ -23,23 +22,6 @@ tightblogApp.controller('PageController', ['$http',
               function(response) {
                  self.userBeingEdited = response.data;
                  self.userCredentials = {};
-              }
-            )
-        }
-
-        this.loadLDAPData = function() {
-            $http.get(contextPath + '/tb-ui/register/rest/ldapdata').then(
-              function(response) {
-                 self.userBeingEdited = response.data;
-                 self.userCredentials = {};
-              },
-              function(response, status) {
-                 if (status = 404) {
-                    self.ldapInvalid = true;
-                    self.errorObj.errorMessage = ldapMissing;
-                 } else {
-                    commonErrorResponse(response);
-                 }
               }
             )
         }
@@ -87,7 +69,6 @@ tightblogApp.controller('PageController', ['$http',
 
         this.messageClear = function() {
             this.errorObj = {};
-            this.ldapInvalid = false;
             this.showSuccessMessage = false;
         }
 
@@ -95,8 +76,6 @@ tightblogApp.controller('PageController', ['$http',
         this.loadMetadata();
         if (userId) {
             this.loadUser();
-        } else if (authMethod == "LDAP") {
-            this.loadLDAPData();
         }
     }]
 );
