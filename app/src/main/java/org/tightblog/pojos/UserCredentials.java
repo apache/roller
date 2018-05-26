@@ -39,7 +39,9 @@ import javax.validation.constraints.Pattern;
                 query = "SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
                         "AND u.id = uc.id AND u.status = org.tightblog.pojos.UserStatus.ENABLED"),
         @NamedQuery(name = "UserCredentials.changePassword",
-                query = "UPDATE UserCredentials u SET u.password = ?1 WHERE u.id = ?2")
+                query = "UPDATE UserCredentials u SET u.password = ?1 WHERE u.id = ?2"),
+        @NamedQuery(name = "UserCredentials.eraseMfaCode",
+                query = "UPDATE UserCredentials u SET u.mfaSecret = null WHERE u.id = ?1")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCredentials {
@@ -51,12 +53,32 @@ public class UserCredentials {
     private String password;
     private GlobalRole globalRole;
 
+    // for Google Authenticator use
+    // see http://www.baeldung.com/spring-security-two-factor-authentication-with-soft-token
+    private String mfaSecret;
+
     // below two fields not persisted but used for password entry and confirmation
     // on new user & user update forms.
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordText;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordConfirm;
+
+    // below two transient fields used to check status of MFA secret and whether it needs erasing
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private boolean hasMfaSecret;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean eraseMfaSecret;
+
+    @Column(name = "mfa_secret")
+    @JsonIgnore
+    public String getMfaSecret() {
+        return mfaSecret;
+    }
+
+    public void setMfaSecret(String mfaSecret) {
+        this.mfaSecret = mfaSecret;
+    }
 
     @Id
     public String getId() {
@@ -114,4 +136,17 @@ public class UserCredentials {
         this.passwordConfirm = passwordConfirm;
     }
 
+    @Transient
+    public boolean isHasMfaSecret() {
+        return mfaSecret != null;
+    }
+
+    @Transient
+    public boolean isEraseMfaSecret() {
+        return eraseMfaSecret;
+    }
+
+    public void setEraseMfaSecret(boolean eraseMfaSecret) {
+        this.eraseMfaSecret = eraseMfaSecret;
+    }
 }

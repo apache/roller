@@ -80,6 +80,11 @@
         <put-attribute name="titleRight" value="unsubscribed.header.title"/>
     </definition>
 
+    <definition name=".scanCode" extends=".tiles-no-nav-page" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/ScanCode.jsp" />
+        <put-attribute name="titleRight" value="scanCode.header.title"/>
+    </definition>
+
     <definition name=".mainMenu" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/MainMenu.jsp" />
     </definition>

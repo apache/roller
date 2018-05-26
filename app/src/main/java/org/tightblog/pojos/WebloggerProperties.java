@@ -234,7 +234,6 @@ public class WebloggerProperties {
     }
 
     public enum RegistrationPolicy {
-        EMAIL("globalConfig.registration.email"),
         APPROVAL_REQUIRED("globalConfig.registration.approvalRequired"),
         DISABLED("globalConfig.registration.disabled");
 

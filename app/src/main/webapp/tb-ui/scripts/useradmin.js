@@ -7,7 +7,7 @@ tightblogApp.controller('PageController', ['$http',
         this.userList = {};
         this.userToEdit = null;
         this.userBeingEdited = null;
-        this.userCredentials = {};
+        this.userCredentials = null;
         this.userBlogList = {};
         this.errorObj = {};
 
@@ -66,8 +66,8 @@ tightblogApp.controller('PageController', ['$http',
             this.messageClear();
             $http.get(this.urlRoot + 'user/' + this.userToEdit).then(
               function(response) {
-                 self.userBeingEdited = response.data;
-                 self.userCredentials = {};
+                 self.userBeingEdited = response.data.user;
+                 self.userCredentials = response.data.credentials;
               }
             )
 
@@ -86,8 +86,8 @@ tightblogApp.controller('PageController', ['$http',
 
             $http.put(self.urlRoot + 'user/' + this.userBeingEdited.id, JSON.stringify(userData)).then(
               function(response) {
-                  self.userBeingEdited = response.data;
-                  self.userCredentials = {};
+                  self.userBeingEdited = response.data.user;
+                  self.userCredentials  = response.data.credentials;
                   self.loadUserList();
                   self.getPendingRegistrations();
                   self.successMessage = "User [" + self.userBeingEdited.screenName + "] updated."
@@ -104,7 +104,7 @@ tightblogApp.controller('PageController', ['$http',
         this.cancelChanges = function() {
             this.messageClear();
             this.userBeingEdited = null;
-            this.credentials = {};
+            this.userCredentials = null;
         }
 
         this.commonErrorResponse = function(response) {

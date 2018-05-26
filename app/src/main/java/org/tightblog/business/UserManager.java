@@ -194,4 +194,17 @@ public interface UserManager {
      */
     UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog);
 
+    /**
+     * Generate a URL for the user's Google Authenticator code (for MFA)
+     * @param user User to obtain QA code for
+     * @return url Image URL for the QR code
+     */
+    String generateMFAQRUrl(User user);
+
+    /**
+     * Erases a user's MFA secret, requiring them to re-register for a new
+     * QR code upon re-login.
+     * @param user User to obtain QA code for
+     */
+    void eraseMFASecret(String userId);
 }

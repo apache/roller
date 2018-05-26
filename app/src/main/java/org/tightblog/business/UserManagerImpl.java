@@ -21,6 +21,7 @@
 package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tightblog.pojos.GlobalRole;
@@ -39,6 +40,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -367,4 +370,35 @@ public class UserManagerImpl implements UserManager {
         return q.getResultList();
     }
 
+    @Override
+    public String generateMFAQRUrl(User user) {
+        String url = "";
+        UserCredentials uc = getCredentialsByUserName(user.getUserName());
+
+        if (uc != null) {
+            if (uc.getMfaSecret() == null) {
+                uc.setMfaSecret(Base32.random());
+                strategy.store(uc);
+                strategy.flush();
+            }
+            try {
+                url = "https://chart.googleapis.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl="
+                        + URLEncoder.encode(String.format(
+                        "otpauth://totp/%s:%s?secret=%s&issuer=%s",
+                        "TightBlog", user.getEmailAddress(), uc.getMfaSecret(), "TightBlog"),
+                        "UTF-8");
+            } catch (UnsupportedEncodingException ignored) {
+            }
+        }
+
+        return url;
+    }
+
+    @Override
+    public void eraseMFASecret(String userId) {
+        Query q = strategy.getNamedUpdate("UserCredentials.eraseMfaCode");
+        q.setParameter(1, userId);
+        q.executeUpdate();
+        strategy.flush();
+    }
 }

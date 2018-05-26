@@ -133,6 +133,20 @@
       </td>
       <td class="description"><fmt:message key="userAdmin.tip.globalRole" /></td>
   </tr>
+
+  <c:if test='${mfaUse == "REQUIRED"}'>
+      <tr>
+          <td class="label"><label for="hasMfaSecret"><fmt:message key="userAdmin.hasMfaSecret" /></label></td>
+          <td class="field">
+              <input type="text" size="5" maxlength="5" ng-model="ctrl.userCredentials.hasMfaSecret" readonly>
+              <span ng-hide="ctrl.userCredentials.hasMfaSecret == false">
+                  <input type="checkbox" id="eraseSecret" ng-model="ctrl.userCredentials.eraseMfaSecret">
+                  <label for="eraseSecret"><fmt:message key="userAdmin.mfaSecret.erase" /></label>
+              </span>
+          </td>
+          <td class="description"><fmt:message key="userAdmin.tip.mfaSecret"/></td>
+      </tr>
+  </c:if>
 </table>
 
 <br>

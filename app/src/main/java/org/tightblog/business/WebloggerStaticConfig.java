@@ -49,6 +49,12 @@ public final class WebloggerStaticConfig {
     private WebloggerStaticConfig() {
     }
 
+    // Multifactor Authentication.  See tightblog.properties for documentation on "mfa.use" property.
+    public enum MFAOption {
+        REQUIRED,
+        OFF
+    }
+
     /*
      * Static block run once at class loading
      *
@@ -206,6 +212,10 @@ public final class WebloggerStaticConfig {
      **/
     public static Enumeration keys() {
         return config.keys();
+    }
+
+    public static MFAOption getMFAOption() {
+        return MFAOption.valueOf(getProperty("mfa.use", "REQUIRED"));
     }
 
 }

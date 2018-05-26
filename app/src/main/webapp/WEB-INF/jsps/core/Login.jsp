@@ -36,7 +36,14 @@
     </div>
 </c:if>
 
-<p><fmt:message key="login.prompt" /></p>
+<c:choose>
+    <c:when test='${mfaUse == "REQUIRED"}'>
+        <p><fmt:message key="login.prompt.totp" /></p>
+    </c:when>
+    <c:otherwise>
+        <p><fmt:message key="login.prompt" /></p>
+    </c:otherwise>
+</c:choose>
 
 <form method="post" id="loginForm"
       action="<c:url value='/roller_j_security_check'/>">
@@ -58,6 +65,15 @@
                 <input type="password" name="password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
+
+        <c:if test='${mfaUse == "REQUIRED"}'>
+            <tr>
+                <td width="20%" align="right"><fmt:message key="login.totpCode" /></td>
+                <td width="80%">
+                    <input type="text" name="totpCode" size="20" onBlur="this.value=this.value.trim()"/>
+                </td>
+            </tr>
+        </c:if>
 
         <tr>
             <td width="20%"></td>

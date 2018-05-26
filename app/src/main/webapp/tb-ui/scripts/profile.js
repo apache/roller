@@ -36,7 +36,7 @@ tightblogApp.controller('PageController', ['$http',
 
             $http.post(urlToUse, JSON.stringify(userData)).then(
               function(response) {
-                  self.userBeingEdited = response.data;
+                  self.userBeingEdited = response.data.user;
                   if (!userId) {
                      self.hideButtons = true;
                      userId = self.userBeingEdited.id;

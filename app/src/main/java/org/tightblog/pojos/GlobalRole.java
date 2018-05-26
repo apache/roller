@@ -20,6 +20,8 @@ package org.tightblog.pojos;
 public enum GlobalRole {
     // For pages that don't need authenticated users (initial install, user registration, login, etc.)
     NOAUTHNEEDED(0),
+    // For users missing Google Authenticator secret and system requires multifactor authentication
+    MISSING_MFA_SECRET(0),
     // Users can edit weblogs for which they have permission
     BLOGGER(1),
     // Users can create new blogs

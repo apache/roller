@@ -37,8 +37,9 @@
         <intercept-url pattern="/tb-ui/authoring/**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
         <intercept-url pattern="/tb-ui/app/authoring/**" access="ADMIN,BLOGCREATOR,BLOGGER"/>
         <intercept-url pattern="/tb-ui/app/createWeblog" access="ADMIN,BLOGCREATOR"/>
-        <intercept-url pattern="/tb-ui/app/login-redirect" access="ADMIN,BLOGCREATOR,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/app/login-redirect" access="ADMIN,BLOGCREATOR,BLOGGER,MISSING_MFA_SECRET"/>
         <intercept-url pattern="/tb-ui/app/profile" access="ADMIN,BLOGCREATOR,BLOGGER"/>
+        <intercept-url pattern="/tb-ui/app/scanCode" access="MISSING_MFA_SECRET"/>
         <intercept-url pattern="/tb-ui/app/home" access="ADMIN,BLOGCREATOR,BLOGGER"/>
 
         <!-- Detect login redirects occurring as a result of Ajax GET calls and send a 408 (timeout) response
@@ -60,6 +61,7 @@
 
         <form-login login-page="/tb-ui/app/login"
                     authentication-failure-url="/tb-ui/app/login?error=true"
+                    authentication-details-source-ref="customWebAuthenticationDetailsSource"
                     login-processing-url="/roller_j_security_check"
                     authentication-success-handler-ref="authenticationSuccessHandler" />
 
@@ -76,8 +78,9 @@
     <beans:bean id="ajaxInvalidSessionRedirectFilter"
                 class="org.tightblog.ui.filters.AjaxInvalidSessionRedirectFilter"/>
 
-    <beans:bean id="csrfRequestMatcher"
-                class="org.tightblog.ui.security.CsrfSecurityRequestMatcher"/>
+    <beans:bean id="csrfRequestMatcher" class="org.tightblog.ui.security.CsrfSecurityRequestMatcher"/>
+
+    <beans:bean id="customWebAuthenticationDetailsSource" class="org.tightblog.ui.security.CustomWebAuthenticationDetailsSource"/>
 
     <beans:bean id="authenticationSuccessHandler"
                 class="org.tightblog.ui.security.CustomAuthenticationSuccessHandler">
@@ -104,8 +107,9 @@
         <authentication-provider ref="dbAuthProvider"/>
     </authentication-manager>
 
-    <beans:bean id="dbAuthProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+    <beans:bean id="dbAuthProvider" class="org.tightblog.ui.security.MultiFactorAuthenticationProvider">
         <beans:property name="userDetailsService" ref="userDetailsService"/>
+        <beans:property name="userManager" ref="userManager"/>
         <beans:property name="passwordEncoder">
             <beans:bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
         </beans:property>

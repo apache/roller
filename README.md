@@ -13,7 +13,7 @@ This more realistic goal--along with adopting the Spring framework, REST, Angula
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
 |TightBlog 2.0.4|12 Febuary 2018|13|146|37|42.9K|
-|TightBlog 3.0|(expected June 2018)|12|118|36|36.4K|
+|TightBlog 3.0|(expected June 2018)|12|121|37|36.4K|
 
 (Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test classes, however LOC do.
 LOC dropped to 35K before rising again due to increase in unit test coverage more than offsetting code savings elsewhere.) 
@@ -29,7 +29,7 @@ In addition to the cleanout of old functionality some new features have been add
 * (TightBlog 3.0) Commenters who are logged-in bloggers now have their blogger ID stored with the comment, simplifying comment entry and allowing for different styling of comments (e.g., different background color for comments made by the blogger on his own blog).
 * (TightBlog 3.0) The blog template engine (used for customized themes) now uses modern Thymeleaf 3.0 instead of Apache Velocity. 
 * (TightBlog 3.0) All emails sent are in HTML format and customizable by modifying the Thymeleaf templates in the webapp/thymeleaf/emails folder. 
-
+* (TightBlog 3.0) Login Multifactor Authentication (MFA) with Google Authenticator support added (Admin setting provided to either require it for all bloggers--the default--or have it disabled).
 
 Check <a href="https://glenmazza.net/blog">my blog</a> for recent status updates.
 

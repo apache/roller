@@ -21,7 +21,6 @@
 package org.tightblog.ui.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
@@ -203,10 +202,15 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.GET)
-    public User getUserData(@PathVariable String id, HttpServletResponse response) throws ServletException {
+    public UserData getUserData(@PathVariable String id, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
+
         if (user != null) {
-            return user;
+            UserData data = new UserData();
+            UserCredentials creds = userManager.getCredentialsByUserName(user.getUserName());
+            data.setUser(user);
+            data.setCredentials(creds);
+            return data;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
@@ -254,7 +258,8 @@ public class UserController {
 
             if (re.getStatusCode() == HttpStatus.OK && mustActivate) {
                 try {
-                    mailManager.sendUserActivationEmail((User) re.getBody());
+                    UserData data = (UserData) re.getBody();
+                    mailManager.sendUserActivationEmail(data.getUser());
                 } catch (MessagingException ignored) {
                 }
             }
@@ -297,7 +302,6 @@ public class UserController {
         @Valid
         User user;
 
-        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         UserCredentials credentials;
 
         UserData() {
@@ -403,6 +407,10 @@ public class UserController {
                     if (!StringUtils.isEmpty(newData.credentials.getPasswordText())) {
                         userManager.updateCredentials(user.getId(), newData.credentials.getPasswordText());
                     }
+                    // reset MFA secret if requested
+                    if (newData.credentials.isEraseMfaSecret()) {
+                        userManager.eraseMFASecret(user.getId());
+                    }
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (RollbackException e) {
                     return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body("Persistence Problem");
@@ -410,7 +418,11 @@ public class UserController {
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            return ResponseEntity.ok(user);
+            UserData data = new UserData();
+            data.setUser(user);
+            UserCredentials creds = userManager.getCredentialsByUserName(user.getUserName());
+            data.setCredentials(creds);
+            return ResponseEntity.ok(data);
         } catch (Exception e) {
             log.error("Error updating user", e);
             throw new ServletException(e.getMessage());
