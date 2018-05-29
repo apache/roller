@@ -275,10 +275,9 @@ public class WeblogEntryComment {
 
     @Override
     public String toString() {
-        return "WeblogEntryComment: id=" + id + ", weblog="
-                + (weblogEntry != null && weblogEntry.getWeblog() != null ? weblogEntry.getWeblog().getHandle() : "(no weblog)")
-                + ", entry=" + (weblogEntry != null && weblogEntry.getAnchor() != null ?
-                    weblogEntry.getAnchor() : "(no weblog entry)")
-                + ", name=" + name + ", email=" + email + ", postTime=" + postTime;
+        return String.format("WeblogEntryComment: id=%s, weblog=%s, entry=%s, name=%s, email=%s, postTime=%s", id,
+                (weblogEntry != null && weblogEntry.getWeblog() != null) ? weblogEntry.getWeblog().getHandle() : "(no weblog)",
+                (weblogEntry != null && weblogEntry.getAnchor() != null) ? weblogEntry.getAnchor() : "(no weblog entry)",
+                name, email, postTime);
     }
 }

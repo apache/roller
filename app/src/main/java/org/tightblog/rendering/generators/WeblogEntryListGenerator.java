@@ -46,8 +46,16 @@ public class WeblogEntryListGenerator {
     @Autowired
     private WeblogEntryManager weblogEntryManager;
 
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
     @Autowired
     private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
 
     public WeblogEntryListData getSearchPager(WeblogPageRequest pageRequest, Map<LocalDate, List<WeblogEntry>> entries,
                                               boolean moreResults) {

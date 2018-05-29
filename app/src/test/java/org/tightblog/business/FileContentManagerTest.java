@@ -23,6 +23,8 @@ package org.tightblog.business;
 import java.io.File;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tightblog.WebloggerTest;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
@@ -39,6 +41,8 @@ import static org.junit.Assert.*;
  * Test File Management business layer operations.
  */
 public class FileContentManagerTest extends WebloggerTest {
+
+    private static Logger log = LoggerFactory.getLogger(FileContentManagerTest.class);
 
     User testUser;
     Weblog testWeblog;
@@ -86,6 +90,7 @@ public class FileContentManagerTest extends WebloggerTest {
         /* NOTE: upload dir for unit tests is set in tightblog-custom.properties */
 
         // File should not exist initially
+        WebloggerTest.logExpectedException(log, "FileNotFoundException");
         File test = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
         assertNull("Non-existent file retrieved", test);
 
@@ -94,6 +99,7 @@ public class FileContentManagerTest extends WebloggerTest {
         fileContentManager.saveFileContent(testWeblog, "bookmarks-file-id", is);
 
         // make sure file was stored successfully
+        WebloggerTest.logExpectedException(log, "FileNotFoundException");
         File fileContent1 = fileContentManager.getFileContent(testWeblog, "bookmarks-file-id");
         assertNotNull(fileContent1);
 

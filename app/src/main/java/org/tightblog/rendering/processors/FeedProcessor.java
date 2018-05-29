@@ -135,9 +135,9 @@ public class FeedProcessor extends AbstractProcessor {
         boolean newContent = false;
         try {
             if (rendererOutput != null) {
-                log.debug("HIT {}", cacheKey);
+                log.trace("HIT {}", cacheKey);
             } else {
-                log.debug("MISS {}", cacheKey);
+                log.trace("MISS {}", cacheKey);
                 newContent = true;
 
                 // not in cache so need to generate content

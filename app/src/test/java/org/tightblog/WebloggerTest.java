@@ -15,6 +15,7 @@
 */
 package org.tightblog;
 
+import org.slf4j.Logger;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -38,6 +39,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring-beans.xml")
@@ -261,6 +263,26 @@ public abstract class WebloggerTest {
         WeblogEntryComment comment = weblogEntryManager.getComment(id);
         weblogEntryManager.removeComment(comment);
         strategy.flush();
+    }
+
+    public static WeblogEntry genWeblogEntry(String anchor, Instant pubTime,
+                                             Weblog weblog) {
+        WeblogEntry entry = new WeblogEntry();
+        entry.setAnchor(anchor);
+        entry.setWeblog(weblog == null ? new Weblog() : weblog);
+        entry.setPubTime(pubTime == null ? Instant.now().minus(2,
+                ChronoUnit.DAYS) : pubTime);
+        return entry;
+    }
+
+    /**
+     * Some tests are expected to log an exception while running, this notice
+     * helps to separate expected exceptions vs. non-expected ones in the logging
+     * @param log - logger to log to
+     * @param exceptionType - name of exception (IllegalArgumentException, FileNotFoundException, etc.)
+     */
+    public static void logExpectedException(Logger log, String exceptionType) {
+        log.info("Test is expected to log a/an {}:", exceptionType);
     }
 
 }

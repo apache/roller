@@ -2,6 +2,9 @@ package org.tightblog.rendering.comment;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tightblog.WebloggerTest;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -22,6 +25,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class AkismetCommentValidatorTest {
+
+    private static Logger log = LoggerFactory.getLogger(AkismetCommentValidatorTest.class);
 
     private Weblog weblog;
     private WeblogEntry entry;
@@ -153,6 +158,7 @@ public class AkismetCommentValidatorTest {
         validator.setAkismetCaller(mockCaller);
 
         Map<String, List<String>> messageMap = new HashMap<>();
+        WebloggerTest.logExpectedException(log, "Exception");
         ValidationResult result = validator.validate(testComment, messageMap);
         String expectedKey = "comment.validator.akismetMessage.error";
         assertEquals("Comment not marked as spam", ValidationResult.SPAM, result);

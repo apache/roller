@@ -86,7 +86,6 @@ public class FileContentManagerImpl implements FileContentManager {
             log.warn("Problem retrieving file id [" + fileId + "]", e);
         }
 
-        // everything looks good, return resource
         return resourceFile;
     }
 
@@ -141,8 +140,7 @@ public class FileContentManagerImpl implements FileContentManager {
 
         // second check, does upload exceed max size for file?
         int maxFileMB = webloggerProperties.getMaxFileSizeMb();
-        log.debug("max allowed file size = {} MB", maxFileMB);
-        log.debug("attempted save file size = {}", size);
+        log.debug("Max allowed file size (MB) = {}, attempted size = {}", maxFileMB, size);
         if (size > maxFileMB * Utilities.ONE_MB_IN_BYTES) {
             if (messages != null) {
                 messages.put("error.upload.filemax", Arrays.asList(fileName, Integer.toString(maxFileMB)));
@@ -153,8 +151,7 @@ public class FileContentManagerImpl implements FileContentManager {
         // third check, does file cause weblog to exceed quota?
         int maxDirMB = webloggerProperties.getMaxFileUploadsSizeMb();
         long maxDirBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxDirMB);
-        log.debug("max allowed dir size = {}", maxDirBytes);
-        log.debug("attempted save file size = {}", size);
+        log.debug("Max allowed dir size (MB) = {}, attempted file size = {}", maxDirBytes, size);
         try {
             File storageDirectory = this.getRealFile(weblog, null);
             long userDirSize = getDirSize(storageDirectory);

@@ -387,7 +387,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
         // add mapping to cache
         if (entry != null) {
-            log.debug("entryAnchorToIdMap CACHE MISS - {}", mappingKey);
+            log.trace("entryAnchorToIdMap CACHE MISS - {}", mappingKey);
             this.entryAnchorToIdMap.put(mappingKey, entry.getId());
         }
         return entry;

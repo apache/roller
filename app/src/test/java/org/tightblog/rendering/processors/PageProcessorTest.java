@@ -18,8 +18,11 @@ package org.tightblog.rendering.processors;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mobile.device.DeviceType;
+import org.tightblog.WebloggerTest;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
@@ -55,16 +58,15 @@ import java.util.Map;
 import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class PageProcessorTest {
+
+    private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
 
     private PageProcessor processor;
     private HttpServletRequest mockRequest;
@@ -267,6 +269,8 @@ public class PageProcessorTest {
         doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
 
         Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
+
+        WebloggerTest.logExpectedException(log, "IllegalArgumentException");
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
@@ -286,6 +290,13 @@ public class PageProcessorTest {
         when(mockThemeManager.getWeblogTheme(any())).thenReturn(mockTheme);
         SharedTemplate sharedTemplate = new SharedTemplate();
         sharedTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
+
+        CachedContent cachedContent = new CachedContent(ComponentType.CUSTOM_EXTERNAL);
+        cachedContent.setContent("mytest1".getBytes("UTF-8"));
+        when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
+
+        ServletOutputStream mockSOS = mock(ServletOutputStream.class);
+        when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         // testing that sitewide themes get the "site" & (page) "model" added to the rendering map.

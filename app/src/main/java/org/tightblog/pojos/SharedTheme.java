@@ -192,8 +192,8 @@ public class SharedTheme {
     }
 
     public String toString() {
-        return "SharedTheme: id=" + id + ", name=" + name + ", isSiteWide=" + isSiteWide() + ", # templates="
-                + templatesByName.size();
+        return String.format("SharedTheme: id=%s, name=%s, isSiteWide=%s, # templates=%d", id, name, isSiteWide(),
+                templatesByName.size());
     }
 
 }

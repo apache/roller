@@ -111,12 +111,12 @@ public class LazyExpiringCache {
                 entry = lazyEntry.getValue(lastModified);
 
                 if (entry != null) {
-                    log.debug("HIT {}", key);
+                    log.trace("HIT {}", key);
                 } else {
-                    log.debug("HIT-EXPIRED {}", key);
+                    log.trace("HIT-EXPIRED {}", key);
                 }
             } else {
-                log.debug("MISS {}", key);
+                log.trace("MISS {}", key);
             }
             return entry;
         } else {

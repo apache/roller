@@ -137,15 +137,7 @@ public class WeblogPageRequest extends WeblogRequest {
             noIndex = true;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("context = {}", context);
-            log.debug("weblogEntryAnchor = {}", weblogEntryAnchor);
-            log.debug("weblogDate = {}", weblogDate);
-            log.debug("weblogCategory = {}", category);
-            log.debug("tag = {}", tag);
-            log.debug("template = {}", customPageName);
-            log.debug("search query = {}", query);
-        }
+        log.debug(toString());
     }
 
     private boolean isValidDateString(String dateString) {
@@ -226,4 +218,9 @@ public class WeblogPageRequest extends WeblogRequest {
         this.query = query;
     }
 
+    @Override
+    public String toString() {
+        return String.format("WeblogPageRequest: context=%s anchor=%s date=%s category=%s tag=%s template=%s query=%s",
+                context, weblogEntryAnchor, weblogDate, category, tag, customPageName, query);
+    }
 }

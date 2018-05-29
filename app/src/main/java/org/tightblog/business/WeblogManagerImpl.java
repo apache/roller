@@ -323,7 +323,7 @@ public class WeblogManagerImpl implements WeblogManager {
 
         // add mapping to cache
         if (weblog != null) {
-            log.debug("weblogHandleToId CACHE MISS - {}", handle);
+            log.trace("weblogHandleToId CACHE MISS - {}", handle);
             weblogHandleToIdMap.put(weblog.getHandle(), weblog.getId());
         }
 

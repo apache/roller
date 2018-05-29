@@ -134,7 +134,7 @@ public class UserManagerImpl implements UserManager {
                 if (tmpUser != null) {
                     // return the user only if enabled
                     if (UserStatus.ENABLED.equals(tmpUser.getStatus())) {
-                        log.debug("userNameToIdMap CACHE HIT - {}", userName);
+                        log.trace("userNameToIdMap CACHE HIT - {}", userName);
                         enabledUser = tmpUser;
                     }
                 } else {
@@ -156,7 +156,7 @@ public class UserManagerImpl implements UserManager {
 
                 // add mapping to cache
                 if (enabledUser != null) {
-                    log.debug("userNameToIdMap CACHE MISS - {}", userName);
+                    log.trace("userNameToIdMap CACHE MISS - {}", userName);
                     this.userNameToIdMap.put(enabledUser.getUserName(), enabledUser.getId());
                 }
             }

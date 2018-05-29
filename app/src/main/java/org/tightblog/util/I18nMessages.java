@@ -54,7 +54,7 @@ public class I18nMessages {
      */
     public static I18nMessages getMessages(Locale locale) {
 
-        log.debug("request for messages in locale = {}", locale.toString());
+        log.trace("request for messages in locale = {}", locale.toString());
 
         // check if we already have a message utils created for that locale
         I18nMessages messages = messagesMap.get(locale);

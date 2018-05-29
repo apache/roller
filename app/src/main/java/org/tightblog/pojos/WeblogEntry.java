@@ -483,6 +483,7 @@ public class WeblogEntry {
         this.previewUrl = previewUrl;
     }
 
+    @Override
     public String toString() {
         return "WeblogEntry: id=" + id + ", weblog=" + weblog.getHandle() + ", anchor=" + anchor + ", pub time=" + pubTime;
     }

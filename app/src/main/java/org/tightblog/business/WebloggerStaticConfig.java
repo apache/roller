@@ -107,13 +107,14 @@ public final class WebloggerStaticConfig {
 
             // some debugging for those that want it
             if (log.isDebugEnabled()) {
-                log.debug("WebloggerStaticConfig looks like this ...");
+                log.debug("WebloggerStaticConfig values:");
 
                 String key;
                 Enumeration keys = config.keys();
                 while (keys.hasMoreElements()) {
                     key = (String) keys.nextElement();
-                    log.debug(key + " = {}", WebloggerStaticConfig.getProperty(key));
+                    // each .getProperty call will log the key & value
+                    WebloggerStaticConfig.getProperty(key);
                 }
             }
 

@@ -18,6 +18,9 @@ package org.tightblog.rendering.processors;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tightblog.WebloggerTest;
 import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.MediaFile;
@@ -45,6 +48,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class MediaFileProcessorTest {
+
+    private static Logger log = LoggerFactory.getLogger(MediaFileProcessorTest.class);
 
     private MediaFileProcessor processor;
     private WeblogRequest mediaFileRequest;
@@ -161,6 +166,7 @@ public class MediaFileProcessorTest {
         when(mockMFM.getMediaFile(anyString(), anyBoolean())).thenReturn(mediaFile);
         File regularFile = new File(getClass().getResource(TEST_IMAGE).toURI());
         mediaFile.setContent(regularFile);
+        WebloggerTest.logExpectedException(log, "IllegalArgumentException");
         when(mockResponse.getOutputStream()).thenThrow(new IllegalArgumentException());
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
