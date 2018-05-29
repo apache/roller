@@ -34,7 +34,8 @@
                                           org.tightblog.business.search
                                           org.tightblog.rendering.*
                                           org.tightblog.ui.filters
-                                          org.tightblog.ui.menu">
+                                          org.tightblog.ui.menu
+                                          org.tightblog.ui.security">
     </context:component-scan>
 
     <beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

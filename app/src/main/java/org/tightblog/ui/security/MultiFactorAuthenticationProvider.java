@@ -61,7 +61,7 @@ public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider
         return result;
     }
 
-    private boolean isValidLong(String code) {
+    private static boolean isValidLong(String code) {
         try {
             NumberUtils.createLong(code);
         } catch (NumberFormatException e) {

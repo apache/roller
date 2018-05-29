@@ -8,7 +8,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:spring-app.xml, /WEB-INF/security.xml, classpath*:tightblog-custom.xml</param-value>
+        <param-value>classpath:spring-app.xml, classpath*:tightblog-custom.xml</param-value>
     </context-param>
 
     <context-param>
@@ -199,7 +199,7 @@
          Servlet container-specific SSL configuration must be done,
          see your servlet container's documentation for details.
 
-         SSL can also be enforced via the Spring security.xml file:
+         SSL can also be enforced via Spring config:
          http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-requires-channel
     -->
     <security-constraint>

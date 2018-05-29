@@ -21,6 +21,8 @@
 package org.tightblog.ui.security;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
@@ -40,12 +42,11 @@ import java.util.List;
  * to compare against user input to determine if login successful.
  * The user's GlobalRole is also determined here.
  */
+@Component
 public class CustomUserDetailsService implements UserDetailsService {
-    private UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
+    @Autowired
+    private UserManager userManager;
 
     /**
      * @throws UsernameNotFoundException, DataAccessException

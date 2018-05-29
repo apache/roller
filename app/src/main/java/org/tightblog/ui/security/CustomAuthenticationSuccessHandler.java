@@ -15,6 +15,8 @@
  */
 package org.tightblog.ui.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.UserManager;
 import org.tightblog.pojos.User;
 import org.springframework.security.core.Authentication;
@@ -28,11 +30,16 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Locale;
 
+@Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+
+    @Autowired
     private UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
+    public CustomAuthenticationSuccessHandler() {
+        /* userReferer works in conjuction with CustomAccessDeniedHandlerImpl, so non-AJAX CSRF exceptions
+        can redirect back to appropriate page after re-authentication */
+        setUseReferer(true);
     }
 
     @Override

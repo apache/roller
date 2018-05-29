@@ -19,6 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.MissingCsrfTokenException;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import java.io.IOException;
  * Note Ajax GETs do not trigger CSRF checking, so the AjaxInvalidSessionRedirectFilter is used
  * instead for those calls to send 408s.
  */
+@Component
 public class CustomAccessDeniedHandlerImpl extends AccessDeniedHandlerImpl {
 
     @Override

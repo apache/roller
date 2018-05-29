@@ -16,11 +16,11 @@
 package org.tightblog.ui.filters;
 
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.ThrowableAnalyzer;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -39,10 +39,8 @@ import java.io.IOException;
  * Based on sample originally from DuyHai Doan:
  * https://doanduyhai.wordpress.com/2012/04/21/spring-security-part-vi-session-timeout-handling-for-ajax-calls/
  */
+@Component
 public class AjaxInvalidSessionRedirectFilter extends GenericFilterBean {
-
-    private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
-    private AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -52,6 +50,7 @@ public class AjaxInvalidSessionRedirectFilter extends GenericFilterBean {
         } catch (IOException ex) {
             throw ex;
         } catch (Exception ex) {
+            ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
             Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
 
             // Trap AccessDeniedExceptions that *don't* have a corresponding AuthenticationException --
@@ -66,7 +65,7 @@ public class AjaxInvalidSessionRedirectFilter extends GenericFilterBean {
             ase = (AccessDeniedException) throwableAnalyzer.getFirstThrowableOfType(AccessDeniedException.class, causeChain);
 
             if (ase != null && ase instanceof AccessDeniedException) {
-                if (authenticationTrustResolver.isAnonymous(SecurityContextHolder.getContext().getAuthentication())) {
+                if (new AuthenticationTrustResolverImpl().isAnonymous(SecurityContextHolder.getContext().getAuthentication())) {
                     // User session expired or not logged in yet
                     String ajaxHeader = ((HttpServletRequest) request).getHeader("X-Requested-With");
 
