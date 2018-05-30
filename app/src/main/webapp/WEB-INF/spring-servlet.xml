@@ -42,11 +42,14 @@
         <beans:property name="alwaysUseFullPath" value="true"/>
     </beans:bean>
 
-    <!-- Scan components in given packages marked @Component, @Controller, etc. and register them as beans -->
-    <context:component-scan base-package="org.tightblog.rendering.processors,
-                                          org.tightblog.ui.restapi,
-                                          org.tightblog.ui.security">
-    </context:component-scan>
+    <!--
+        Scan Spring MVC components in given packages marked @Component, @Controller, etc.
+            and register them as beans
+    -->
+    <context:component-scan base-package="
+                                    org.tightblog.rendering.processors,
+                                    org.tightblog.ui.restapi
+    "/>
 
     <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>
 
