@@ -4,6 +4,27 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
 
+    <!-- Default servlet used by Jetty during mvn jetty:run, overriding some of its defaults below -->
+    <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+        <init-param>
+            <param-name>dirAllowed</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <!-- Welcome file list in web.xml points to a servlet so need to allow -->
+        <init-param>
+            <param-name>welcomeServlets</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
     <!-- As configured in app/pom.xml for Jetty Maven Plugin, overrides main web.xml, turning off
          SSL requirements when demoing via mvn jetty:run -->
     <security-constraint>
