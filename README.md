@@ -33,10 +33,9 @@ In addition to the cleanout of old functionality some new features have been add
 
 Check <a href="https://glenmazza.net/blog">my blog</a> for recent status updates.
 
-The top-level TightBlog directory consists of the following folders:
+The top-level TightBlog directory consists of two folders:
 
 * app:                    TightBlog application - WAR application meant for deployment on a servlet container
-* it-selenium:            Integrated browser tests for TightBlog using Selenium
 * etc:                    Utility scripts and screenshots for documentation
 
 To obtain the source code:
